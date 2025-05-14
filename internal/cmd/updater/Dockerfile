@@ -1,4 +1,4 @@
-FROM golang:1.21-bookworm
+FROM golang:1.24-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
