@@ -5,7 +5,7 @@ on:
       - v*
 env:
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/Recidiviz/go-zetasql
+  REGISTRY_IMAGE: ghcr.io/recidiviz/go-zetasql
 
 jobs:
   build-image:
