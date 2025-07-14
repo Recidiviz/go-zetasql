@@ -63,8 +63,6 @@ jobs:
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           platforms: ${{ matrix.platform }}
           cache-from: type=local,src=~/.cache/go-build
-          build-args: |
-            VERSION=v${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
 
       - name: Export digest
         run: |
