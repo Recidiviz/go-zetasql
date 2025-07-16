@@ -36,9 +36,9 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{matrix.asset_name}}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-${{matrix.asset_name}}-
       - name: cache for macOS
         uses: actions/cache@v3
         if: runner.os == 'macOS'
@@ -46,9 +46,9 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{matrix.asset_name}}-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-${{matrix.asset_name}}
       - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
