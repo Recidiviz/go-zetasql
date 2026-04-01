@@ -63,6 +63,7 @@
 #include "zetasql/resolved_ast/resolved_column.h"
 #include "zetasql/resolved_ast/resolved_node.h"
 #include <cstdint>
+#include "absl/container/flat_hash_map.h"
 #include "absl/container/node_hash_map.h"
 #include "absl/hash/hash.h"
 #include "absl/memory/memory.h"
@@ -3076,24 +3077,91 @@ class IfExpr final : public ValueExpr {
   ValueExpr* mutable_false_value();
 };
 
+// Operator backing IFERROR. 'try_expr' is evaluated first and if any unhandled
+// errors arise that would be absorbed in a SAFE function scenario, handle_expr
+// is evaluated and returned instead. It is not a regular function since its
+// inputs cannot be evaluated prior to evaluating the operator.
+class IfErrorExpr final : public ValueExpr {
+ public:
+  IfErrorExpr(const IfErrorExpr&) = delete;
+  IfErrorExpr& operator=(const IfErrorExpr&) = delete;
+
+  static absl::StatusOr<std::unique_ptr<IfErrorExpr>> Create(
+      std::unique_ptr<ValueExpr> try_value,
+      std::unique_ptr<ValueExpr> handle_value);
+
+  absl::Status SetSchemasForEvaluation(
+      absl::Span<const TupleSchema* const> params_schemas) override;
+
+  bool Eval(absl::Span<const TupleData* const> params,
+            EvaluationContext* context, VirtualTupleSlot* result,
+            absl::Status* status) const override;
+
+  std::string DebugInternal(const std::string& indent,
+                            bool verbose) const override;
+
+ private:
+  enum ArgKind { kTryValue, kHandleValue };
+
+  IfErrorExpr(std::unique_ptr<ValueExpr> try_value,
+              std::unique_ptr<ValueExpr> handle_value);
+
+  const ValueExpr* try_value() const;
+  ValueExpr* mutable_try_value();
+
+  const ValueExpr* handle_value() const;
+  ValueExpr* mutable_handle_value();
+};
+
+// Operator backing ISERROR. 'try_expr' is evaluated and if any unhandled errors
+// arise that would be absorbed in a SAFE function scenario, returns true.
+// Otherwise, returns false. It is not a regular function since its inputs
+// cannot be evaluated prior to evaluating the operator.
+class IsErrorExpr final : public ValueExpr {
+ public:
+  IsErrorExpr(const IsErrorExpr&) = delete;
+  IsErrorExpr& operator=(const IsErrorExpr&) = delete;
+
+  static absl::StatusOr<std::unique_ptr<IsErrorExpr>> Create(
+      std::unique_ptr<ValueExpr> try_value);
+
+  absl::Status SetSchemasForEvaluation(
+      absl::Span<const TupleSchema* const> params_schemas) override;
+
+  bool Eval(absl::Span<const TupleData* const> params,
+            EvaluationContext* context, VirtualTupleSlot* result,
+            absl::Status* status) const override;
+
+  std::string DebugInternal(const std::string& indent,
+                            bool verbose) const override;
+
+ private:
+  enum ArgKind { kTryValue };
+
+  explicit IsErrorExpr(std::unique_ptr<ValueExpr> try_value);
+
+  const ValueExpr* try_value() const;
+  ValueExpr* mutable_try_value();
+};
+
 // Let operator creates local variables in value expressions and can be used to
 // eliminate common subexpressions. It is equivalent to applying a lambda
-// expression. LetExpr specifies the variables to be bound and the body to be
+// expression. WithExpr specifies the variables to be bound and the body to be
 // evaluated. For example, expressing Coalesce via IfExpr below requires two
 // occurrences of subexpression a+1:
 //     Coalesce(a+1, b) = IfExpr(IsNull(a+1), b, a+1)
-// In contrast, only one a+1 is used with LetExpr:
-//     Coalesce(a+1, b) = LetExpr(x:=a+1, IfExpr(IsNull(x), b, x))
+// In contrast, only one a+1 is used with WithExpr:
+//     Coalesce(a+1, b) = WithExpr(x:=a+1, IfExpr(IsNull(x), b, x))
 // Assignments can reference variables from previous assignments, e.g.,
-// LetExpr(x:=expr,y:=x+1, ...).
-// LetExpr can also be used to represent the WITH statement if we are
+// WithExpr(x:=expr,y:=x+1, ...).
+// WithExpr can also be used to represent the WITH statement if we are
 // representing the results as a Value (instead of a TupleIterator).
-class LetExpr final : public ValueExpr {
+class WithExpr final : public ValueExpr {
  public:
-  LetExpr(const LetExpr&) = delete;
-  LetExpr& operator=(const LetExpr&) = delete;
+  WithExpr(const WithExpr&) = delete;
+  WithExpr& operator=(const WithExpr&) = delete;
 
-  static absl::StatusOr<std::unique_ptr<LetExpr>> Create(
+  static absl::StatusOr<std::unique_ptr<WithExpr>> Create(
       std::vector<std::unique_ptr<ExprArg>> assign,
       std::unique_ptr<ValueExpr> body);
 
@@ -3110,8 +3178,8 @@ class LetExpr final : public ValueExpr {
  private:
   enum ArgKind { kAssign, kBody };
 
-  LetExpr(std::vector<std::unique_ptr<ExprArg>> assign,
-          std::unique_ptr<ValueExpr> body);
+  WithExpr(std::vector<std::unique_ptr<ExprArg>> assign,
+           std::unique_ptr<ValueExpr> body);
 
   absl::Span<const ExprArg* const> assign() const;
   absl::Span<ExprArg* const> mutable_assign();
@@ -3165,13 +3233,13 @@ class InlineLambdaExpr : public AlgebraNode {
 // descendants of a ResolvedExpr or another ResolvedScan) to their corresponding
 // RelationalOps.
 using ResolvedScanMap =
-    absl::node_hash_map<const ResolvedScan*, std::unique_ptr<RelationalOp>>;
+    absl::flat_hash_map<const ResolvedScan*, std::unique_ptr<RelationalOp>>;
 
 // Maps all ResolvedExpr descendants of a node (except those that are also
 // descendants of a ResolvedScan or another ResolvedExpr) to their corresponding
 // ValueExprs.
 using ResolvedExprMap =
-    absl::node_hash_map<const ResolvedExpr*, std::unique_ptr<ValueExpr>>;
+    absl::flat_hash_map<const ResolvedExpr*, std::unique_ptr<ValueExpr>>;
 
 // This abstract class is a hack to allow executing a resolved DML statement
 // directly off its resolved AST node without using an intermediate algebra.
@@ -3306,7 +3374,7 @@ class DMLValueExpr : public ValueExpr {
 
   // Returns indexes of the primary columns in 'column_list_', if there exists
   // a primary key.
-  absl::StatusOr<absl::optional<std::vector<int>>> GetPrimaryKeyColumnIndexes(
+  absl::StatusOr<std::optional<std::vector<int>>> GetPrimaryKeyColumnIndexes(
       EvaluationContext* context) const;
 
   // Returns the output of Eval(), which has type 'dml_output_type_',
@@ -3525,7 +3593,7 @@ class DMLUpdateValueExpr final : public DMLValueExpr {
     }
 
     // Returns true if this is a leaf node, false if this is an internal node.
-    bool is_leaf() const { return absl::holds_alternative<Value>(contents_); }
+    bool is_leaf() const { return std::holds_alternative<Value>(contents_); }
 
     // Returns the value for a leaf node. Must only be called if 'is_leaf()'
     // returns true.
@@ -3573,7 +3641,7 @@ class DMLUpdateValueExpr final : public DMLValueExpr {
     }
 
     // Changes 'kind()' to DELETED.
-    void delete_value() { new_value_ = absl::optional<Value>(); }
+    void delete_value() { new_value_ = std::optional<Value>(); }
 
     // Returns the new value for this UpdatedElement. Must only be called if
     // 'kind()' returns MODIFIED.
@@ -3586,10 +3654,10 @@ class DMLUpdateValueExpr final : public DMLValueExpr {
     }
 
    private:
-    // If the outer absl::optional has no value, the element is UNMODIFIED. If
-    // the inner absl::optional has no value, the element is DELETED. Otherwise
+    // If the outer std::optional has no value, the element is UNMODIFIED. If
+    // the inner std::optional has no value, the element is DELETED. Otherwise
     // the element is MODIFIED.
-    absl::optional<absl::optional<Value>> new_value_;
+    std::optional<std::optional<Value>> new_value_;
 
     // Allow copy/move/assign.
   };

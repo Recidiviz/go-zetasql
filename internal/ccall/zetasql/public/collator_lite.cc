@@ -15,6 +15,7 @@
 //
 
 #include <cstdint>
+#include <functional>
 
 #include "zetasql/public/collator.h"
 #include "absl/base/thread_annotations.h"
@@ -91,7 +92,7 @@ class CollatorRegistration {
 
     if (collation_name == "binary" ||
         (mode != CollatorLegacyUnicodeMode::kError && is_unicode)) {
-      return absl::make_unique<CaseSensitiveUnicodeCollator>();
+      return std::make_unique<CaseSensitiveUnicodeCollator>();
     }
     // Should match zetasql::MakeEvalError(), but we want to avoid pulling
     // in those dependencies.

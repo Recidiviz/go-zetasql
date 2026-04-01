@@ -56,6 +56,7 @@ constexpr SimpleColumnProto::SimpleColumnProto(
   , type_(nullptr)
   , annotation_map_(nullptr)
   , is_pseudo_column_(false)
+  , can_update_unwritable_to_default_(false)
   , is_writable_column_(true){}
 struct SimpleColumnProtoDefaultTypeInternal {
   constexpr SimpleColumnProtoDefaultTypeInternal()
@@ -115,17 +116,19 @@ const uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets[] 
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, type_),
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, is_pseudo_column_),
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, is_writable_column_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, can_update_unwritable_to_default_),
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, annotation_map_),
   0,
   1,
   3,
+  5,
   4,
   2,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::SimpleAnonymizationInfoProto)},
   { 7, 23, -1, sizeof(::zetasql::SimpleTableProto)},
-  { 33, 44, -1, sizeof(::zetasql::SimpleColumnProto)},
+  { 33, 45, -1, sizeof(::zetasql::SimpleColumnProto)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -147,13 +150,14 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto[]
   "w_anonymous_column_name\030\006 \001(\010\022$\n\034allow_d"
   "uplicate_column_names\030\007 \001(\010\022A\n\022anonymiza"
   "tion_info\030\010 \001(\0132%.zetasql.SimpleAnonymiz"
-  "ationInfoProto\022\021\n\tfull_name\030\n \001(\t\"\264\001\n\021Si"
+  "ationInfoProto\022\021\n\tfull_name\030\n \001(\t\"\336\001\n\021Si"
   "mpleColumnProto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 "
   "\001(\0132\022.zetasql.TypeProto\022\030\n\020is_pseudo_col"
   "umn\030\003 \001(\010\022 \n\022is_writable_column\030\004 \001(\010:\004t"
-  "rue\0223\n\016annotation_map\030\005 \001(\0132\033.zetasql.An"
-  "notationMapProtoB\'\n\022com.google.zetasqlB\021"
-  "SimpleTableProtos"
+  "rue\022(\n can_update_unwritable_to_default\030"
+  "\006 \001(\010\0223\n\016annotation_map\030\005 \001(\0132\033.zetasql."
+  "AnnotationMapProtoB\'\n\022com.google.zetasql"
+  "B\021SimpleTableProtos"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_deps[2] = {
   &::descriptor_table_zetasql_2fpublic_2fannotation_2eproto,
@@ -161,7 +165,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto = {
-  false, false, 737, descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto, "zetasql/public/simple_table.proto", 
+  false, false, 779, descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto, "zetasql/public/simple_table.proto", 
   &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once, descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_deps, 2, 3,
   schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fsimple_5ftable_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fsimple_5ftable_2eproto,
@@ -958,6 +962,9 @@ class SimpleColumnProto::_Internal {
     (*has_bits)[0] |= 8u;
   }
   static void set_has_is_writable_column(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
+  static void set_has_can_update_unwritable_to_default(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
   static const ::zetasql::AnnotationMapProto& annotation_map(const SimpleColumnProto* msg);
@@ -1026,8 +1033,8 @@ name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&type_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&is_pseudo_column_) -
-    reinterpret_cast<char*>(&type_)) + sizeof(is_pseudo_column_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&can_update_unwritable_to_default_) -
+    reinterpret_cast<char*>(&type_)) + sizeof(can_update_unwritable_to_default_));
 is_writable_column_ = true;
 }
 
@@ -1075,10 +1082,10 @@ void SimpleColumnProto::Clear() {
       annotation_map_->Clear();
     }
   }
-  if (cached_has_bits & 0x00000018u) {
-    is_pseudo_column_ = false;
-    is_writable_column_ = true;
-  }
+  ::memset(&is_pseudo_column_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&can_update_unwritable_to_default_) -
+      reinterpret_cast<char*>(&is_pseudo_column_)) + sizeof(can_update_unwritable_to_default_));
+  is_writable_column_ = true;
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1132,6 +1139,15 @@ const char* SimpleColumnProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_annotation_map(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional bool can_update_unwritable_to_default = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _Internal::set_has_can_update_unwritable_to_default(&has_bits);
+          can_update_unwritable_to_default_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1192,7 +1208,7 @@ uint8_t* SimpleColumnProto::_InternalSerialize(
   }
 
   // optional bool is_writable_column = 4 [default = true];
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(4, this->_internal_is_writable_column(), target);
   }
@@ -1203,6 +1219,12 @@ uint8_t* SimpleColumnProto::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
         5, _Internal::annotation_map(this), target, stream);
+  }
+
+  // optional bool can_update_unwritable_to_default = 6;
+  if (cached_has_bits & 0x00000010u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_can_update_unwritable_to_default(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1222,7 +1244,7 @@ size_t SimpleColumnProto::ByteSizeLong() const {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -1249,8 +1271,13 @@ size_t SimpleColumnProto::ByteSizeLong() const {
       total_size += 1 + 1;
     }
 
-    // optional bool is_writable_column = 4 [default = true];
+    // optional bool can_update_unwritable_to_default = 6;
     if (cached_has_bits & 0x00000010u) {
+      total_size += 1 + 1;
+    }
+
+    // optional bool is_writable_column = 4 [default = true];
+    if (cached_has_bits & 0x00000020u) {
       total_size += 1 + 1;
     }
 
@@ -1278,7 +1305,7 @@ void SimpleColumnProto::MergeFrom(const SimpleColumnProto& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_set_name(from._internal_name());
     }
@@ -1292,6 +1319,9 @@ void SimpleColumnProto::MergeFrom(const SimpleColumnProto& from) {
       is_pseudo_column_ = from.is_pseudo_column_;
     }
     if (cached_has_bits & 0x00000010u) {
+      can_update_unwritable_to_default_ = from.can_update_unwritable_to_default_;
+    }
+    if (cached_has_bits & 0x00000020u) {
       is_writable_column_ = from.is_writable_column_;
     }
     _has_bits_[0] |= cached_has_bits;
@@ -1325,8 +1355,8 @@ void SimpleColumnProto::InternalSwap(SimpleColumnProto* other) {
       &other->name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SimpleColumnProto, is_pseudo_column_)
-      + sizeof(SimpleColumnProto::is_pseudo_column_)
+      PROTOBUF_FIELD_OFFSET(SimpleColumnProto, can_update_unwritable_to_default_)
+      + sizeof(SimpleColumnProto::can_update_unwritable_to_default_)
       - PROTOBUF_FIELD_OFFSET(SimpleColumnProto, type_)>(
           reinterpret_cast<char*>(&type_),
           reinterpret_cast<char*>(&other->type_));

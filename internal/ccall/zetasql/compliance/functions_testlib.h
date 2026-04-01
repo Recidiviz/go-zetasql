@@ -130,6 +130,15 @@ std::vector<QueryParamsWithResult> GetFunctionTestsGreatest(
 std::vector<QueryParamsWithResult> GetFunctionTestsLeast(
     bool include_nano_timestamp);
 
+// Test function for ARRAY_FIRST and ARRAY_LAST
+// `is_safe` controls the SAFE version of function call.
+// true means `SAFE.ARRAY_FIRST` tests and false means `ARRAY_FIRST` tests.
+std::vector<QueryParamsWithResult> GetFunctionTestsArrayFirst(bool is_safe);
+std::vector<QueryParamsWithResult> GetFunctionTestsArrayLast(bool is_safe);
+
+// Test function for ARRAY_SLICE
+std::vector<QueryParamsWithResult> GetFunctionTestsArraySlice(bool is_safe);
+
 std::vector<QueryParamsWithResult> GetFunctionTestsLike();
 
 std::vector<FunctionTestCall> GetFunctionTestsDateTime();
@@ -199,9 +208,10 @@ std::vector<QueryParamsWithResult> GetFunctionTestsToProto3TimeOfDay();
 std::vector<FunctionTestCall> GetFunctionTestsMath();
 std::vector<FunctionTestCall> GetFunctionTestsRounding();
 std::vector<FunctionTestCall> GetFunctionTestsTrigonometric();
-std::vector<FunctionTestCall> GetFunctionTestsCsch();
-std::vector<FunctionTestCall> GetFunctionTestsSech();
-std::vector<FunctionTestCall> GetFunctionTestsCoth();
+std::vector<FunctionTestCall> GetFunctionTestsInverseTrigonometric();
+std::vector<FunctionTestCall> GetFunctionTestsDegreesRadiansPi();
+std::vector<FunctionTestCall> GetFunctionTestsCbrt();
+
 std::vector<FunctionTestCall> GetFunctionTestsAscii();
 std::vector<FunctionTestCall> GetFunctionTestsUnicode();
 std::vector<FunctionTestCall> GetFunctionTestsChr();

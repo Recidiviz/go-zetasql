@@ -150,6 +150,21 @@ class ValidateVariableDeclarationsVisitor
     return stmt_list->variable_declarations_allowed();
   }
 
+  absl::StatusOr<VisitResult> visitASTCreateProcedureStatement(
+      const ASTCreateProcedureStatement* node) override {
+    // CREATE PROCEDURE initiates a nested name scope thus the set of variables
+    // is saved and restored after the validation of the procedure is done.
+    absl::flat_hash_map<IdString, ParseLocationPoint, IdStringCaseHash,
+                        IdStringCaseEqualFunc>
+        saved;
+    std::swap(saved, variables_);
+    return VisitResult::VisitChildren(node, [this, saved = std::move(saved)]() {
+      // Restores the variable stack.
+      variables_ = std::move(saved);
+      return absl::OkStatus();
+    });
+  }
+
   absl::StatusOr<VisitResult> visitASTStatementList(
       const ASTStatementList* node) override {
     bool found_non_variable_decl = false;
@@ -625,8 +640,8 @@ absl::Status ParsedScript::CheckQueryParametersInternal(
   if (num_positionals > 0) {
     int64_t known_num_positionals = 0;
     if (parameters.has_value() &&
-        absl::holds_alternative<int64_t>(parameters.value())) {
-      known_num_positionals = absl::get<int64_t>(parameters.value());
+        std::holds_alternative<int64_t>(parameters.value())) {
+      known_num_positionals = std::get<int64_t>(parameters.value());
     }
     if (num_positionals > known_num_positionals) {
       return MakeScriptExceptionAt(script())

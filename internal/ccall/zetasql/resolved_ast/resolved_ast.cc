@@ -79,10 +79,11 @@ struct TestIsDefaultValue<Value> {
   }
 };
 template <>
-struct TestIsDefaultValue<FunctionSignature> {
-  static bool IsDefaultValue(const FunctionSignature& signature) {
-    return signature.NumOptionalArguments() == -1 &&
-           signature.NumRepeatedArguments() == -1;
+struct TestIsDefaultValue<absl::optional<FunctionSignature>> {
+  static bool IsDefaultValue(const absl::optional<FunctionSignature>& signature) {
+    return !signature.has_value() ||
+        (signature->NumOptionalArguments() == -1 &&
+           signature->NumRepeatedArguments() == -1);
   }
 };
 template <>
@@ -232,8 +233,8 @@ static std::string ToStringImpl(ResolvedAuxLoadDataStmt::InsertionMode mode) {
   ZETASQL_LOG(DFATAL) << "Invalid InsertionMode: " << mode;
   return absl::StrCat("INVALID_INSERTION_MODE(", mode, ")");
 }
-static std::string ToStringImpl(const FunctionSignature& signature) {
-  return signature.DebugString();
+static std::string ToStringImpl(const absl::optional<FunctionSignature>& signature) {
+  return signature->DebugString();
 }
 static std::string ToStringImpl(const std::shared_ptr<FunctionSignature>& signature) {
   return signature->DebugString();
@@ -243,8 +244,8 @@ static std::string ToStringImpl(
   if (function_call_info == nullptr) return "<null>";
   return function_call_info->DebugString();
 }
-static std::string ToStringVerbose(const FunctionSignature& signature) {
-  return signature.DebugString("" /* function_name */, true /* verbose */);
+static std::string ToStringVerbose(const absl::optional<FunctionSignature>& signature) {
+  return signature->DebugString("" /* function_name */, true /* verbose */);
 }
 static std::string ToStringVerbose(const std::shared_ptr<FunctionSignature>& signature) {
   return signature->DebugString("" /* function_name */, true /* verbose */);
@@ -547,10 +548,10 @@ absl::StatusOr<const Procedure*> RestoreFromImpl(
 }
 
 static absl::Status SaveToImpl(
-    const FunctionSignature& sig,
+    const absl::optional<FunctionSignature>& sig,
     FileDescriptorSetMap* file_descriptor_set_map,
     FunctionSignatureProto* proto) {
-  return sig.Serialize(file_descriptor_set_map, proto);
+  return sig.value().Serialize(file_descriptor_set_map, proto);
 }
 
 template<>
@@ -1034,7 +1035,7 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_REPLACE_FIELD_ITEM: return "ReplaceFieldItem";
     case RESOLVED_REPLACE_FIELD: return "ReplaceField";
     case RESOLVED_SUBQUERY_EXPR: return "SubqueryExpr";
-    case RESOLVED_LET_EXPR: return "LetExpr";
+    case RESOLVED_WITH_EXPR: return "WithExpr";
     case RESOLVED_MODEL: return "Model";
     case RESOLVED_CONNECTION: return "Connection";
     case RESOLVED_DESCRIPTOR: return "Descriptor";
@@ -1127,9 +1128,13 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_ALTER_DATABASE_STMT: return "AlterDatabaseStmt";
     case RESOLVED_ALTER_MATERIALIZED_VIEW_STMT: return "AlterMaterializedViewStmt";
     case RESOLVED_ALTER_SCHEMA_STMT: return "AlterSchemaStmt";
+    case RESOLVED_ALTER_MODEL_STMT: return "AlterModelStmt";
     case RESOLVED_ALTER_TABLE_STMT: return "AlterTableStmt";
     case RESOLVED_ALTER_VIEW_STMT: return "AlterViewStmt";
     case RESOLVED_SET_OPTIONS_ACTION: return "SetOptionsAction";
+    case RESOLVED_ALTER_SUB_ENTITY_ACTION: return "AlterSubEntityAction";
+    case RESOLVED_ADD_SUB_ENTITY_ACTION: return "AddSubEntityAction";
+    case RESOLVED_DROP_SUB_ENTITY_ACTION: return "DropSubEntityAction";
     case RESOLVED_ADD_COLUMN_ACTION: return "AddColumnAction";
     case RESOLVED_ADD_CONSTRAINT_ACTION: return "AddConstraintAction";
     case RESOLVED_DROP_CONSTRAINT_ACTION: return "DropConstraintAction";
@@ -1210,7 +1215,7 @@ absl::Status ResolvedArgument::SaveTo(
     ResolvedArgumentProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -1397,7 +1402,7 @@ absl::Status ResolvedExpr::SaveTo(
     ResolvedExprProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -1473,9 +1478,9 @@ absl::StatusOr<std::unique_ptr<ResolvedExpr>> ResolvedExpr::RestoreFrom(
     case AnyResolvedExprProto::kResolvedFilterFieldNode:
       return ResolvedFilterField::RestoreFrom(
           proto.resolved_filter_field_node(), params);
-    case AnyResolvedExprProto::kResolvedLetExprNode:
-      return ResolvedLetExpr::RestoreFrom(
-          proto.resolved_let_expr_node(), params);
+    case AnyResolvedExprProto::kResolvedWithExprNode:
+      return ResolvedWithExpr::RestoreFrom(
+          proto.resolved_with_expr_node(), params);
   case AnyResolvedExprProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(ZETASQL_LOC)
         << "No subnode types set in ResolvedExprProto";
@@ -1554,7 +1559,7 @@ absl::Status ResolvedLiteral::SaveTo(
     ResolvedLiteralProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -1690,7 +1695,7 @@ absl::Status ResolvedParameter::SaveTo(
     ResolvedParameterProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -1833,7 +1838,7 @@ absl::Status ResolvedExpressionColumn::SaveTo(
     ResolvedExpressionColumnProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -1944,7 +1949,7 @@ absl::Status ResolvedColumnRef::SaveTo(
     ResolvedColumnRefProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -2066,7 +2071,7 @@ absl::Status ResolvedConstant::SaveTo(
     ResolvedConstantProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -2173,7 +2178,7 @@ absl::Status ResolvedSystemVariable::SaveTo(
     ResolvedSystemVariableProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -2280,7 +2285,7 @@ absl::Status ResolvedInlineLambda::SaveTo(
     ResolvedInlineLambdaProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : argument_list_) {
@@ -2495,7 +2500,7 @@ absl::Status ResolvedFilterFieldArg::SaveTo(
     ResolvedFilterFieldArgProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_include(include_);
@@ -2625,7 +2630,7 @@ absl::Status ResolvedFilterField::SaveTo(
     ResolvedFilterFieldProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -2843,7 +2848,7 @@ absl::Status ResolvedFunctionCallBase::SaveTo(
     ResolvedFunctionCallBaseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -3093,7 +3098,7 @@ absl::Status ResolvedFunctionCall::SaveTo(
     ResolvedFunctionCallProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -3137,7 +3142,7 @@ absl::StatusOr<std::unique_ptr<ResolvedFunctionCall>> ResolvedFunctionCall::Rest
                      ResolvedFunctionArgument::RestoreFrom(elem, params));
     generic_argument_list.push_back(std::move(elem_restored));
   }
-  ErrorMode error_mode =
+  ResolvedFunctionCallBase::ErrorMode error_mode =
       proto.parent().error_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().hint_list()) {
@@ -3238,7 +3243,7 @@ absl::Status ResolvedNonScalarFunctionCallBase::SaveTo(
     ResolvedNonScalarFunctionCallBaseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_distinct(distinct_);
@@ -3461,7 +3466,7 @@ absl::Status ResolvedAggregateFunctionCall::SaveTo(
     ResolvedAggregateFunctionCallProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (having_modifier_ != nullptr) {
@@ -3537,7 +3542,7 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
                      ResolvedFunctionArgument::RestoreFrom(elem, params));
     generic_argument_list.push_back(std::move(elem_restored));
   }
-  ErrorMode error_mode =
+  ResolvedFunctionCallBase::ErrorMode error_mode =
       proto.parent().parent().error_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().parent().hint_list()) {
@@ -3554,7 +3559,7 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
   }
   bool distinct =
       proto.parent().distinct();
-  NullHandlingModifier null_handling_modifier =
+  ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier =
       proto.parent().null_handling_modifier();
   std::unique_ptr<const ResolvedScan> with_group_rows_subquery;
   if (proto.parent().
@@ -3793,7 +3798,7 @@ absl::Status ResolvedAnalyticFunctionCall::SaveTo(
     ResolvedAnalyticFunctionCallProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (window_frame_ != nullptr) {
@@ -3841,7 +3846,7 @@ absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionCall>> ResolvedAnalyticFu
                      ResolvedFunctionArgument::RestoreFrom(elem, params));
     generic_argument_list.push_back(std::move(elem_restored));
   }
-  ErrorMode error_mode =
+  ResolvedFunctionCallBase::ErrorMode error_mode =
       proto.parent().parent().error_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().parent().hint_list()) {
@@ -3858,7 +3863,7 @@ absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionCall>> ResolvedAnalyticFu
   }
   bool distinct =
       proto.parent().distinct();
-  NullHandlingModifier null_handling_modifier =
+  ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier =
       proto.parent().null_handling_modifier();
   std::unique_ptr<const ResolvedScan> with_group_rows_subquery;
   if (proto.parent().
@@ -4002,7 +4007,7 @@ absl::Status ResolvedExtendedCastElement::SaveTo(
     ResolvedExtendedCastElementProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -4101,7 +4106,7 @@ absl::Status ResolvedExtendedCast::SaveTo(
     ResolvedExtendedCastProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : element_list_) {
@@ -4231,7 +4236,7 @@ absl::Status ResolvedCast::SaveTo(
     ResolvedCastProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -4562,7 +4567,7 @@ absl::Status ResolvedMakeStruct::SaveTo(
     ResolvedMakeStructProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : field_list_) {
@@ -4702,7 +4707,7 @@ absl::Status ResolvedMakeProto::SaveTo(
     ResolvedMakeProtoProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : field_list_) {
@@ -4842,7 +4847,7 @@ absl::Status ResolvedMakeProtoField::SaveTo(
     ResolvedMakeProtoFieldProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -5012,7 +5017,7 @@ absl::Status ResolvedGetStructField::SaveTo(
     ResolvedGetStructFieldProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -5179,7 +5184,7 @@ absl::Status ResolvedGetProtoField::SaveTo(
     ResolvedGetProtoFieldProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -5430,7 +5435,7 @@ absl::Status ResolvedGetJsonField::SaveTo(
     ResolvedGetJsonFieldProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -5597,7 +5602,7 @@ absl::Status ResolvedFlatten::SaveTo(
     ResolvedFlattenProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -5793,7 +5798,7 @@ absl::Status ResolvedFlattenedArg::SaveTo(
     ResolvedFlattenedArgProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -5843,7 +5848,7 @@ absl::Status ResolvedReplaceFieldItem::SaveTo(
     ResolvedReplaceFieldItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -6037,7 +6042,7 @@ absl::Status ResolvedReplaceField::SaveTo(
     ResolvedReplaceFieldProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -6240,7 +6245,7 @@ absl::Status ResolvedSubqueryExpr::SaveTo(
     ResolvedSubqueryExprProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_subquery_type(subquery_type_);
@@ -6269,7 +6274,7 @@ absl::Status ResolvedSubqueryExpr::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedSubqueryExpr>> ResolvedSubqueryExpr::RestoreFrom(
     const ResolvedSubqueryExprProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  SubqueryType subquery_type =
+  ResolvedSubqueryExpr::SubqueryType subquery_type =
       proto.subquery_type();
   std::vector<std::unique_ptr<const ResolvedColumnRef>> parameter_list;
   for (const auto& elem : proto.parameter_list()) {
@@ -6563,24 +6568,24 @@ void ResolvedSubqueryExpr::MarkFieldsAccessed() const {
   for (const auto& it : hint_list_) it->MarkFieldsAccessed();
 }
 
-const ResolvedNodeKind ResolvedLetExpr::TYPE;
+const ResolvedNodeKind ResolvedWithExpr::TYPE;
 
-ResolvedLetExpr::~ResolvedLetExpr() {
+ResolvedWithExpr::~ResolvedWithExpr() {
 }
 
-absl::Status ResolvedLetExpr::SaveTo(
+absl::Status ResolvedWithExpr::SaveTo(
     Type::FileDescriptorSetMap* file_descriptor_set_map,
     AnyResolvedExprProto* proto) const {
   return SaveTo(
-      file_descriptor_set_map, proto->mutable_resolved_let_expr_node());
+      file_descriptor_set_map, proto->mutable_resolved_with_expr_node());
 }
 
-absl::Status ResolvedLetExpr::SaveTo(
+absl::Status ResolvedWithExpr::SaveTo(
     Type::FileDescriptorSetMap* file_descriptor_set_map,
-    ResolvedLetExprProto* proto) const {
+    ResolvedWithExprProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : assignment_list_) {
@@ -6594,8 +6599,8 @@ absl::Status ResolvedLetExpr::SaveTo(
   return absl::OkStatus();
 }
 
-absl::StatusOr<std::unique_ptr<ResolvedLetExpr>> ResolvedLetExpr::RestoreFrom(
-    const ResolvedLetExprProto& proto,
+absl::StatusOr<std::unique_ptr<ResolvedWithExpr>> ResolvedWithExpr::RestoreFrom(
+    const ResolvedWithExprProto& proto,
     const ResolvedNode::RestoreParams& params) {
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> assignment_list;
   for (const auto& elem : proto.assignment_list()) {
@@ -6618,7 +6623,7 @@ absl::StatusOr<std::unique_ptr<ResolvedLetExpr>> ResolvedLetExpr::RestoreFrom(
                    RestoreFromImpl<const AnnotationMap*>(
                        proto.parent().type_annotation_map(),
                        params));
-  auto node = MakeResolvedLetExpr(
+  auto node = MakeResolvedWithExpr(
       std::move(type),
       std::move(assignment_list),
       std::move(expr));
@@ -6627,7 +6632,7 @@ absl::StatusOr<std::unique_ptr<ResolvedLetExpr>> ResolvedLetExpr::RestoreFrom(
   return node;
 }
 
-void ResolvedLetExpr::GetChildNodes(
+void ResolvedWithExpr::GetChildNodes(
     std::vector<const ResolvedNode*>* child_nodes) const {
   SUPER::GetChildNodes(child_nodes);
   for (const auto& elem : assignment_list_) {
@@ -6638,7 +6643,7 @@ void ResolvedLetExpr::GetChildNodes(
   }
 }
 
-void ResolvedLetExpr::AddMutableChildNodePointers(
+void ResolvedWithExpr::AddMutableChildNodePointers(
     std::vector<std::unique_ptr<const ResolvedNode>*>*
         mutable_child_node_ptrs) {
   SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
@@ -6656,11 +6661,11 @@ void ResolvedLetExpr::AddMutableChildNodePointers(
   }
 }
 
-absl::Status ResolvedLetExpr::Accept(ResolvedASTVisitor* visitor) const {
-  return visitor->VisitResolvedLetExpr(this);
+absl::Status ResolvedWithExpr::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedWithExpr(this);
 }
 
-absl::Status ResolvedLetExpr::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+absl::Status ResolvedWithExpr::ChildrenAccept(ResolvedASTVisitor* visitor) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
   for (const auto& elem : assignment_list_) {
     ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
@@ -6671,7 +6676,7 @@ absl::Status ResolvedLetExpr::ChildrenAccept(ResolvedASTVisitor* visitor) const 
   return absl::OkStatus();
 }
 
-void ResolvedLetExpr::CollectDebugStringFields(
+void ResolvedWithExpr::CollectDebugStringFields(
     std::vector<DebugStringField>* fields) const {
   SUPER::CollectDebugStringFields(fields);
   if (!assignment_list_.empty()) {
@@ -6682,7 +6687,7 @@ void ResolvedLetExpr::CollectDebugStringFields(
   }
 }
 
-absl::Status ResolvedLetExpr::CheckFieldsAccessedImpl(
+absl::Status ResolvedWithExpr::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
@@ -6693,7 +6698,7 @@ absl::Status ResolvedLetExpr::CheckFieldsAccessedImpl(
     };
     return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
         << "Unimplemented feature "
-           "(ResolvedLetExpr::assignment_list not accessed)\n"
+           "(ResolvedWithExpr::assignment_list not accessed)\n"
         << root->DebugString({annotation});
   }
   if ((accessed_ & (1<<1)) == 0) {
@@ -6703,7 +6708,7 @@ absl::Status ResolvedLetExpr::CheckFieldsAccessedImpl(
     };
     return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
         << "Unimplemented feature "
-           "(ResolvedLetExpr::expr not accessed)\n"
+           "(ResolvedWithExpr::expr not accessed)\n"
         << root->DebugString({annotation});
   }
   if ((accessed_ & (1<<0)) != 0) {
@@ -6720,16 +6725,16 @@ absl::Status ResolvedLetExpr::CheckFieldsAccessedImpl(
   return absl::OkStatus();
 }
 
-absl::Status ResolvedLetExpr::CheckNoFieldsAccessed() const {
+absl::Status ResolvedWithExpr::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
   if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-        << "(ResolvedLetExpr::assignment_list is accessed, but shouldn't be)";
+        << "(ResolvedWithExpr::assignment_list is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-        << "(ResolvedLetExpr::expr is accessed, but shouldn't be)";
+        << "(ResolvedWithExpr::expr is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : assignment_list_) {
@@ -6744,7 +6749,7 @@ absl::Status ResolvedLetExpr::CheckNoFieldsAccessed() const {
   return absl::OkStatus();
 }
 
-void ResolvedLetExpr::ClearFieldsAccessed() const {
+void ResolvedWithExpr::ClearFieldsAccessed() const {
   SUPER::ClearFieldsAccessed();
 
   accessed_ = 0;
@@ -6752,7 +6757,7 @@ void ResolvedLetExpr::ClearFieldsAccessed() const {
   if (expr_ != nullptr) expr_->ClearFieldsAccessed();
 }
 
-void ResolvedLetExpr::MarkFieldsAccessed() const {
+void ResolvedWithExpr::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
   for (const auto& it : assignment_list_) it->MarkFieldsAccessed();
@@ -6774,7 +6779,7 @@ absl::Status ResolvedScan::SaveTo(
     ResolvedScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_list_) {
@@ -6959,7 +6964,7 @@ absl::Status ResolvedModel::SaveTo(
     ResolvedModelProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -7064,7 +7069,7 @@ absl::Status ResolvedConnection::SaveTo(
     ResolvedConnectionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -7169,7 +7174,7 @@ absl::Status ResolvedDescriptor::SaveTo(
     ResolvedDescriptorProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : descriptor_column_list_) {
@@ -7307,7 +7312,7 @@ absl::Status ResolvedSingleRowScan::SaveTo(
     ResolvedSingleRowScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -7365,7 +7370,7 @@ absl::Status ResolvedTableScan::SaveTo(
     ResolvedTableScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -7569,7 +7574,7 @@ absl::Status ResolvedJoinScan::SaveTo(
     ResolvedJoinScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_join_type(join_type_);
@@ -7591,7 +7596,7 @@ absl::Status ResolvedJoinScan::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedJoinScan>> ResolvedJoinScan::RestoreFrom(
     const ResolvedJoinScanProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  JoinType join_type =
+  ResolvedJoinScan::JoinType join_type =
       proto.join_type();
   std::unique_ptr<const ResolvedScan> left_scan;
   if (proto.
@@ -7860,7 +7865,7 @@ absl::Status ResolvedArrayScan::SaveTo(
     ResolvedArrayScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -8236,7 +8241,7 @@ absl::Status ResolvedColumnHolder::SaveTo(
     ResolvedColumnHolderProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -8341,7 +8346,7 @@ absl::Status ResolvedFilterScan::SaveTo(
     ResolvedFilterScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -8551,7 +8556,7 @@ absl::Status ResolvedGroupingSet::SaveTo(
     ResolvedGroupingSetProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : group_by_column_list_) {
@@ -8679,7 +8684,7 @@ absl::Status ResolvedAggregateScanBase::SaveTo(
     ResolvedAggregateScanBaseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -8924,7 +8929,7 @@ absl::Status ResolvedAggregateScan::SaveTo(
     ResolvedAggregateScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : grouping_set_list_) {
@@ -9156,7 +9161,7 @@ absl::Status ResolvedAnonymizedAggregateScan::SaveTo(
     ResolvedAnonymizedAggregateScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (k_threshold_expr_ != nullptr) {
@@ -9392,7 +9397,7 @@ absl::Status ResolvedSetOperationItem::SaveTo(
     ResolvedSetOperationItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (scan_ != nullptr) {
@@ -9564,7 +9569,7 @@ absl::Status ResolvedSetOperationScan::SaveTo(
     ResolvedSetOperationScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_op_type(op_type_);
@@ -9578,7 +9583,7 @@ absl::Status ResolvedSetOperationScan::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedSetOperationScan>> ResolvedSetOperationScan::RestoreFrom(
     const ResolvedSetOperationScanProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  SetOperationType op_type =
+  ResolvedSetOperationScan::SetOperationType op_type =
       proto.op_type();
   std::vector<std::unique_ptr<const ResolvedSetOperationItem>> input_item_list;
   for (const auto& elem : proto.input_item_list()) {
@@ -9733,7 +9738,7 @@ absl::Status ResolvedOrderByScan::SaveTo(
     ResolvedOrderByScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -9937,7 +9942,7 @@ absl::Status ResolvedLimitOffsetScan::SaveTo(
     ResolvedLimitOffsetScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -10203,7 +10208,7 @@ absl::Status ResolvedWithRefScan::SaveTo(
     ResolvedWithRefScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_with_query_name(with_query_name_);
@@ -10322,7 +10327,7 @@ absl::Status ResolvedAnalyticScan::SaveTo(
     ResolvedAnalyticScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -10529,7 +10534,7 @@ absl::Status ResolvedSampleScan::SaveTo(
     ResolvedSampleScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -10576,7 +10581,7 @@ absl::StatusOr<std::unique_ptr<ResolvedSampleScan>> ResolvedSampleScan::RestoreF
                      ResolvedExpr::RestoreFrom(
                          proto.size(), params));
   }
-  SampleUnit unit =
+  ResolvedSampleScan::SampleUnit unit =
       proto.unit();
   std::unique_ptr<const ResolvedExpr> repeatable_argument;
   if (proto.
@@ -10947,7 +10952,7 @@ absl::Status ResolvedComputedColumn::SaveTo(
     ResolvedComputedColumnProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -11087,7 +11092,7 @@ absl::Status ResolvedOrderByItem::SaveTo(
     ResolvedOrderByItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (column_ref_ != nullptr) {
@@ -11125,7 +11130,7 @@ absl::StatusOr<std::unique_ptr<ResolvedOrderByItem>> ResolvedOrderByItem::Restor
   }
   bool is_descending =
       proto.is_descending();
-  NullOrderMode null_order =
+  ResolvedOrderByItem::NullOrderMode null_order =
       proto.null_order();
   ZETASQL_ASSIGN_OR_RETURN(auto collation,
                    RestoreFromImpl<ResolvedCollation>(
@@ -11354,7 +11359,7 @@ absl::Status ResolvedColumnAnnotations::SaveTo(
     ResolvedColumnAnnotationsProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (collation_name_ != nullptr) {
@@ -11650,7 +11655,7 @@ absl::Status ResolvedGeneratedColumnInfo::SaveTo(
     ResolvedGeneratedColumnInfoProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expression_ != nullptr) {
@@ -11671,7 +11676,7 @@ absl::StatusOr<std::unique_ptr<ResolvedGeneratedColumnInfo>> ResolvedGeneratedCo
                      ResolvedExpr::RestoreFrom(
                          proto.expression(), params));
   }
-  StoredMode stored_mode =
+  ResolvedGeneratedColumnInfo::StoredMode stored_mode =
       proto.stored_mode();
   auto node = MakeResolvedGeneratedColumnInfo(
       std::move(expression),
@@ -11793,7 +11798,7 @@ absl::Status ResolvedColumnDefaultValue::SaveTo(
     ResolvedColumnDefaultValueProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expression_ != nullptr) {
@@ -11950,7 +11955,7 @@ absl::Status ResolvedColumnDefinition::SaveTo(
     ResolvedColumnDefinitionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -12282,7 +12287,7 @@ absl::Status ResolvedConstraint::SaveTo(
     ResolvedConstraintProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -12333,7 +12338,7 @@ absl::Status ResolvedPrimaryKey::SaveTo(
     ResolvedPrimaryKeyProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_offset_list_) {
@@ -12555,7 +12560,7 @@ absl::Status ResolvedForeignKey::SaveTo(
     ResolvedForeignKeyProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_constraint_name(constraint_name_);
@@ -12599,11 +12604,11 @@ absl::StatusOr<std::unique_ptr<ResolvedForeignKey>> ResolvedForeignKey::RestoreF
   for (const auto& elem : proto.referenced_column_offset_list()) {
     referenced_column_offset_list.push_back(elem);
   }
-  MatchMode match_mode =
+  ResolvedForeignKey::MatchMode match_mode =
       proto.match_mode();
-  ActionOperation update_action =
+  ResolvedForeignKey::ActionOperation update_action =
       proto.update_action();
-  ActionOperation delete_action =
+  ResolvedForeignKey::ActionOperation delete_action =
       proto.delete_action();
   bool enforced =
       proto.enforced();
@@ -12876,7 +12881,7 @@ absl::Status ResolvedCheckConstraint::SaveTo(
     ResolvedCheckConstraintProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_constraint_name(constraint_name_);
@@ -13104,7 +13109,7 @@ absl::Status ResolvedOutputColumn::SaveTo(
     ResolvedOutputColumnProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -13205,7 +13210,7 @@ absl::Status ResolvedProjectScan::SaveTo(
     ResolvedProjectScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : expr_list_) {
@@ -13409,7 +13414,7 @@ absl::Status ResolvedTVFScan::SaveTo(
     ResolvedTVFScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -13660,7 +13665,7 @@ absl::Status ResolvedGroupRowsScan::SaveTo(
     ResolvedGroupRowsScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : input_column_list_) {
@@ -13815,7 +13820,7 @@ absl::Status ResolvedFunctionArgument::SaveTo(
     ResolvedFunctionArgumentProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -14277,7 +14282,7 @@ absl::Status ResolvedStatement::SaveTo(
     ResolvedStatementProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : hint_list_) {
@@ -14517,7 +14522,7 @@ absl::Status ResolvedExplainStmt::SaveTo(
     ResolvedExplainStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (statement_ != nullptr) {
@@ -14660,7 +14665,7 @@ absl::Status ResolvedQueryStmt::SaveTo(
     ResolvedQueryStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : output_column_list_) {
@@ -14876,7 +14881,7 @@ absl::Status ResolvedCreateDatabaseStmt::SaveTo(
     ResolvedCreateDatabaseStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -15055,7 +15060,7 @@ absl::Status ResolvedCreateStatement::SaveTo(
     ResolvedCreateStatementProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -15235,7 +15240,7 @@ absl::Status ResolvedIndexItem::SaveTo(
     ResolvedIndexItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (column_ref_ != nullptr) {
@@ -15392,7 +15397,7 @@ absl::Status ResolvedUnnestItem::SaveTo(
     ResolvedUnnestItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (array_expr_ != nullptr) {
@@ -15611,7 +15616,7 @@ absl::Status ResolvedCreateIndexStmt::SaveTo(
     ResolvedCreateIndexStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : table_name_path_) {
@@ -15707,9 +15712,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateIndexStmt>> ResolvedCreateIndexStmt
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateIndexStmt(
       std::move(name_path),
@@ -16101,7 +16106,7 @@ absl::Status ResolvedCreateSchemaStmt::SaveTo(
     ResolvedCreateSchemaStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (collation_name_ != nullptr) {
@@ -16141,9 +16146,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateSchemaStmt>> ResolvedCreateSchemaSt
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateSchemaStmt(
       std::move(name_path),
@@ -16307,7 +16312,7 @@ absl::Status ResolvedCreateTableStmtBase::SaveTo(
     ResolvedCreateTableStmtBaseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : option_list_) {
@@ -16711,7 +16716,7 @@ absl::Status ResolvedCreateTableStmt::SaveTo(
     ResolvedCreateTableStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (clone_from_ != nullptr) {
@@ -16772,9 +16777,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateTableStmt>> ResolvedCreateTableStmt
   for (const auto& elem : proto.parent().parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().parent().create_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> option_list;
   for (const auto& elem : proto.parent().option_list()) {
@@ -17089,7 +17094,7 @@ absl::Status ResolvedCreateTableAsSelectStmt::SaveTo(
     ResolvedCreateTableAsSelectStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : partition_by_list_) {
@@ -17149,9 +17154,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateTableAsSelectStmt>> ResolvedCreateT
   for (const auto& elem : proto.parent().parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().parent().create_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> option_list;
   for (const auto& elem : proto.parent().option_list()) {
@@ -17457,7 +17462,7 @@ absl::Status ResolvedCreateModelStmt::SaveTo(
     ResolvedCreateModelStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : option_list_) {
@@ -17547,9 +17552,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateModelStmt>> ResolvedCreateModelStmt
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateModelStmt(
       std::move(name_path),
@@ -17919,7 +17924,7 @@ absl::Status ResolvedCreateViewBase::SaveTo(
     ResolvedCreateViewBaseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : option_list_) {
@@ -18197,7 +18202,7 @@ absl::Status ResolvedCreateViewStmt::SaveTo(
     ResolvedCreateViewStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -18216,9 +18221,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateViewStmt>> ResolvedCreateViewStmt::
   for (const auto& elem : proto.parent().parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().parent().create_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> option_list;
   for (const auto& elem : proto.parent().option_list()) {
@@ -18243,7 +18248,7 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateViewStmt>> ResolvedCreateViewStmt::
   }
   std::string sql =
       proto.parent().sql();
-  SqlSecurity sql_security =
+  ResolvedCreateStatement::SqlSecurity sql_security =
       proto.parent().sql_security();
   bool is_value_table =
       proto.parent().is_value_table();
@@ -18292,7 +18297,7 @@ absl::Status ResolvedWithPartitionColumns::SaveTo(
     ResolvedWithPartitionColumnsProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_definition_list_) {
@@ -18424,7 +18429,7 @@ absl::Status ResolvedCreateSnapshotTableStmt::SaveTo(
     ResolvedCreateSnapshotTableStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (clone_from_ != nullptr) {
@@ -18464,9 +18469,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateSnapshotTableStmt>> ResolvedCreateS
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateSnapshotTableStmt(
       std::move(name_path),
@@ -18630,7 +18635,7 @@ absl::Status ResolvedCreateExternalTableStmt::SaveTo(
     ResolvedCreateExternalTableStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (with_partition_columns_ != nullptr) {
@@ -18671,9 +18676,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateExternalTableStmt>> ResolvedCreateE
   for (const auto& elem : proto.parent().parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().parent().create_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> option_list;
   for (const auto& elem : proto.parent().option_list()) {
@@ -18904,7 +18909,7 @@ absl::Status ResolvedExportModelStmt::SaveTo(
     ResolvedExportModelStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : model_name_path_) {
@@ -19124,7 +19129,7 @@ absl::Status ResolvedExportDataStmt::SaveTo(
     ResolvedExportDataStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (connection_ != nullptr) {
@@ -19450,7 +19455,7 @@ absl::Status ResolvedDefineTableStmt::SaveTo(
     ResolvedDefineTableStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -19612,7 +19617,7 @@ absl::Status ResolvedDescribeStmt::SaveTo(
     ResolvedDescribeStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_object_type(object_type_);
@@ -19772,7 +19777,7 @@ absl::Status ResolvedShowStmt::SaveTo(
     ResolvedShowStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_identifier(identifier_);
@@ -19969,7 +19974,7 @@ absl::Status ResolvedBeginStmt::SaveTo(
     ResolvedBeginStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_read_write_mode(read_write_mode_);
@@ -19982,7 +19987,7 @@ absl::Status ResolvedBeginStmt::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedBeginStmt>> ResolvedBeginStmt::RestoreFrom(
     const ResolvedBeginStmtProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ReadWriteMode read_write_mode =
+  ResolvedBeginStmt::ReadWriteMode read_write_mode =
       proto.read_write_mode();
   std::vector<std::string> isolation_level_list;
   for (const auto& elem : proto.isolation_level_list()) {
@@ -20106,7 +20111,7 @@ absl::Status ResolvedSetTransactionStmt::SaveTo(
     ResolvedSetTransactionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_read_write_mode(read_write_mode_);
@@ -20119,7 +20124,7 @@ absl::Status ResolvedSetTransactionStmt::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedSetTransactionStmt>> ResolvedSetTransactionStmt::RestoreFrom(
     const ResolvedSetTransactionStmtProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ReadWriteMode read_write_mode =
+  ResolvedBeginStmt::ReadWriteMode read_write_mode =
       proto.read_write_mode();
   std::vector<std::string> isolation_level_list;
   for (const auto& elem : proto.isolation_level_list()) {
@@ -20243,7 +20248,7 @@ absl::Status ResolvedCommitStmt::SaveTo(
     ResolvedCommitStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -20291,7 +20296,7 @@ absl::Status ResolvedRollbackStmt::SaveTo(
     ResolvedRollbackStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -20339,7 +20344,7 @@ absl::Status ResolvedStartBatchStmt::SaveTo(
     ResolvedStartBatchStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_batch_type(batch_type_);
@@ -20449,7 +20454,7 @@ absl::Status ResolvedRunBatchStmt::SaveTo(
     ResolvedRunBatchStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -20497,7 +20502,7 @@ absl::Status ResolvedAbortBatchStmt::SaveTo(
     ResolvedAbortBatchStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -20549,7 +20554,7 @@ absl::Status ResolvedDropStmt::SaveTo(
     ResolvedDropStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_object_type(object_type_);
@@ -20572,7 +20577,7 @@ absl::StatusOr<std::unique_ptr<ResolvedDropStmt>> ResolvedDropStmt::RestoreFrom(
   for (const auto& elem : proto.name_path()) {
     name_path.push_back(elem);
   }
-  DropMode drop_mode =
+  ResolvedDropStmt::DropMode drop_mode =
       proto.drop_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().hint_list()) {
@@ -20726,7 +20731,7 @@ absl::Status ResolvedDropMaterializedViewStmt::SaveTo(
     ResolvedDropMaterializedViewStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -20859,7 +20864,7 @@ absl::Status ResolvedDropSnapshotTableStmt::SaveTo(
     ResolvedDropSnapshotTableStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -20992,7 +20997,7 @@ absl::Status ResolvedRecursiveRefScan::SaveTo(
     ResolvedRecursiveRefScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -21053,7 +21058,7 @@ absl::Status ResolvedRecursiveScan::SaveTo(
     ResolvedRecursiveScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_op_type(op_type_);
@@ -21071,7 +21076,7 @@ absl::Status ResolvedRecursiveScan::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedRecursiveScan>> ResolvedRecursiveScan::RestoreFrom(
     const ResolvedRecursiveScanProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  RecursiveSetOperationType op_type =
+  ResolvedRecursiveScan::RecursiveSetOperationType op_type =
       proto.op_type();
   std::unique_ptr<const ResolvedSetOperationItem> non_recursive_term;
   if (proto.
@@ -21284,7 +21289,7 @@ absl::Status ResolvedWithScan::SaveTo(
     ResolvedWithScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : with_entry_list_) {
@@ -21495,7 +21500,7 @@ absl::Status ResolvedWithEntry::SaveTo(
     ResolvedWithEntryProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_with_query_name(with_query_name_);
@@ -21652,7 +21657,7 @@ absl::Status ResolvedOption::SaveTo(
     ResolvedOptionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_qualifier(qualifier_);
@@ -21724,14 +21729,16 @@ absl::Status ResolvedOption::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
+  if ((accessed_ & (1<<0)) == 0 &&
+      !IsDefaultValue(qualifier_)) {
     NodeAnnotation annotation = {
       .node = this,
       .annotation = "(*** This node has unaccessed field ***)"
     };
     return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
         << "Unimplemented feature "
-           "(ResolvedOption::qualifier not accessed)\n"
+           "(ResolvedOption::qualifier not accessed "
+           "and has non-default value)\n"
         << root->DebugString({annotation});
   }
   if ((accessed_ & (1<<2)) != 0) {
@@ -21746,7 +21753,7 @@ absl::Status ResolvedOption::CheckFieldsAccessedImpl(
 absl::Status ResolvedOption::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0) {
+  if ((accessed_ & (1<<0)) != 0 ) {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
         << "(ResolvedOption::qualifier is accessed, but shouldn't be)";
   }
@@ -21788,7 +21795,7 @@ absl::Status ResolvedWindowPartitioning::SaveTo(
     ResolvedWindowPartitioningProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : partition_by_list_) {
@@ -21954,7 +21961,7 @@ absl::Status ResolvedWindowOrdering::SaveTo(
     ResolvedWindowOrderingProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : order_by_item_list_) {
@@ -22123,7 +22130,7 @@ absl::Status ResolvedWindowFrame::SaveTo(
     ResolvedWindowFrameProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_frame_unit(frame_unit_);
@@ -22141,7 +22148,7 @@ absl::Status ResolvedWindowFrame::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedWindowFrame>> ResolvedWindowFrame::RestoreFrom(
     const ResolvedWindowFrameProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  FrameUnit frame_unit =
+  ResolvedWindowFrame::FrameUnit frame_unit =
       proto.frame_unit();
   std::unique_ptr<const ResolvedWindowFrameExpr> start_expr;
   if (proto.
@@ -22322,7 +22329,7 @@ absl::Status ResolvedAnalyticFunctionGroup::SaveTo(
     ResolvedAnalyticFunctionGroupProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (partition_by_ != nullptr) {
@@ -22570,7 +22577,7 @@ absl::Status ResolvedWindowFrameExpr::SaveTo(
     ResolvedWindowFrameExprProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_boundary_type(boundary_type_);
@@ -22584,7 +22591,7 @@ absl::Status ResolvedWindowFrameExpr::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedWindowFrameExpr>> ResolvedWindowFrameExpr::RestoreFrom(
     const ResolvedWindowFrameExprProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  BoundaryType boundary_type =
+  ResolvedWindowFrameExpr::BoundaryType boundary_type =
       proto.boundary_type();
   std::unique_ptr<const ResolvedExpr> expression;
   if (proto.
@@ -22716,7 +22723,7 @@ absl::Status ResolvedDMLValue::SaveTo(
     ResolvedDMLValueProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (value_ != nullptr) {
@@ -22852,7 +22859,7 @@ absl::Status ResolvedDMLDefault::SaveTo(
     ResolvedDMLDefaultProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -22902,7 +22909,7 @@ absl::Status ResolvedAssertStmt::SaveTo(
     ResolvedAssertStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expression_ != nullptr) {
@@ -23068,7 +23075,7 @@ absl::Status ResolvedAssertRowsModified::SaveTo(
     ResolvedAssertRowsModifiedProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (rows_ != nullptr) {
@@ -23204,7 +23211,7 @@ absl::Status ResolvedInsertRow::SaveTo(
     ResolvedInsertRowProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : value_list_) {
@@ -23339,7 +23346,7 @@ absl::Status ResolvedInsertStmt::SaveTo(
     ResolvedInsertStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (table_scan_ != nullptr) {
@@ -23375,6 +23382,9 @@ absl::Status ResolvedInsertStmt::SaveTo(
     ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
       file_descriptor_set_map, proto->add_row_list()));
   }
+  for (const auto& elem : column_access_list_) {
+    proto->add_column_access_list(elem);
+  }
   return absl::OkStatus();
 }
 
@@ -23388,7 +23398,7 @@ absl::StatusOr<std::unique_ptr<ResolvedInsertStmt>> ResolvedInsertStmt::RestoreF
                      ResolvedTableScan::RestoreFrom(
                          proto.table_scan(), params));
   }
-  InsertMode insert_mode =
+  ResolvedInsertStmt::InsertMode insert_mode =
       proto.insert_mode();
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified;
   if (proto.
@@ -23437,6 +23447,12 @@ absl::StatusOr<std::unique_ptr<ResolvedInsertStmt>> ResolvedInsertStmt::RestoreF
                      ResolvedInsertRow::RestoreFrom(elem, params));
     row_list.push_back(std::move(elem_restored));
   }
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list;
+  for (const auto& elem : proto.column_access_list()) {
+    // We need a static cast because the proto getter returns a
+    // RepeatedField<int>, not RepeatedField<enum>.
+    column_access_list.push_back(static_cast<ResolvedStatement::ObjectAccess>(elem));
+  }
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().hint_list()) {
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
@@ -23455,6 +23471,7 @@ absl::StatusOr<std::unique_ptr<ResolvedInsertStmt>> ResolvedInsertStmt::RestoreF
       std::move(row_list));
 
   node->set_hint_list(std::move(hint_list));
+  node->set_column_access_list(std::move(column_access_list));
   return node;
 }
 
@@ -23583,6 +23600,9 @@ void ResolvedInsertStmt::CollectDebugStringFields(
   }
   if (!row_list_.empty()) {
     fields->emplace_back("row_list", row_list_);
+  }
+  if (!IsDefaultValue(column_access_list_)) {
+    fields->emplace_back("column_access_list", ToStringImpl(column_access_list_));
   }
 }
 
@@ -23847,7 +23867,7 @@ absl::Status ResolvedDeleteStmt::SaveTo(
     ResolvedDeleteStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (table_scan_ != nullptr) {
@@ -23861,6 +23881,9 @@ absl::Status ResolvedDeleteStmt::SaveTo(
   if (returning_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(returning_->SaveTo(
         file_descriptor_set_map, proto->mutable_returning()));
+  }
+  for (const auto& elem : column_access_list_) {
+    proto->add_column_access_list(elem);
   }
   if (array_offset_column_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(array_offset_column_->SaveTo(
@@ -23897,6 +23920,12 @@ absl::StatusOr<std::unique_ptr<ResolvedDeleteStmt>> ResolvedDeleteStmt::RestoreF
                      ResolvedReturningClause::RestoreFrom(
                          proto.returning(), params));
   }
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list;
+  for (const auto& elem : proto.column_access_list()) {
+    // We need a static cast because the proto getter returns a
+    // RepeatedField<int>, not RepeatedField<enum>.
+    column_access_list.push_back(static_cast<ResolvedStatement::ObjectAccess>(elem));
+  }
   std::unique_ptr<const ResolvedColumnHolder> array_offset_column;
   if (proto.
   has_array_offset_column()) {
@@ -23925,6 +23954,7 @@ absl::StatusOr<std::unique_ptr<ResolvedDeleteStmt>> ResolvedDeleteStmt::RestoreF
       std::move(where_expr));
 
   node->set_hint_list(std::move(hint_list));
+  node->set_column_access_list(std::move(column_access_list));
   return node;
 }
 
@@ -24030,6 +24060,9 @@ void ResolvedDeleteStmt::CollectDebugStringFields(
   if (returning_ != nullptr) {
     fields->emplace_back("returning", returning_.get());
   }
+  if (!IsDefaultValue(column_access_list_)) {
+    fields->emplace_back("column_access_list", ToStringImpl(column_access_list_));
+  }
   if (array_offset_column_ != nullptr) {
     fields->emplace_back("array_offset_column", array_offset_column_.get());
   }
@@ -24078,7 +24111,7 @@ absl::Status ResolvedDeleteStmt::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString({annotation});
   }
-  if ((accessed_ & (1<<3)) == 0 &&
+  if ((accessed_ & (1<<4)) == 0 &&
       !IsDefaultValue(array_offset_column_)) {
     NodeAnnotation annotation = {
       .node = this,
@@ -24090,7 +24123,7 @@ absl::Status ResolvedDeleteStmt::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString({annotation});
   }
-  if ((accessed_ & (1<<4)) == 0) {
+  if ((accessed_ & (1<<5)) == 0) {
     NodeAnnotation annotation = {
       .node = this,
       .annotation = "(*** This node has unaccessed field ***)"
@@ -24118,13 +24151,13 @@ absl::Status ResolvedDeleteStmt::CheckFieldsAccessedImpl(
           returning_.get(), root));
     }
   }
-  if ((accessed_ & (1<<3)) != 0) {
+  if ((accessed_ & (1<<4)) != 0) {
     if (array_offset_column_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
           array_offset_column_.get(), root));
     }
   }
-  if ((accessed_ & (1<<4)) != 0) {
+  if ((accessed_ & (1<<5)) != 0) {
     if (where_expr_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
           where_expr_.get(), root));
@@ -24148,11 +24181,11 @@ absl::Status ResolvedDeleteStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
         << "(ResolvedDeleteStmt::returning is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0 ) {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
         << "(ResolvedDeleteStmt::array_offset_column is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
         << "(ResolvedDeleteStmt::where_expr is accessed, but shouldn't be)";
   }
@@ -24171,12 +24204,12 @@ absl::Status ResolvedDeleteStmt::CheckNoFieldsAccessed() const {
       ZETASQL_RETURN_IF_ERROR(returning_->CheckNoFieldsAccessed());
     }
   }
-  if ((accessed_ & (1<<3)) != 0) {
+  if ((accessed_ & (1<<4)) != 0) {
     if (array_offset_column_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(array_offset_column_->CheckNoFieldsAccessed());
     }
   }
-  if ((accessed_ & (1<<4)) != 0) {
+  if ((accessed_ & (1<<5)) != 0) {
     if (where_expr_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(where_expr_->CheckNoFieldsAccessed());
     }
@@ -24222,7 +24255,7 @@ absl::Status ResolvedUpdateItem::SaveTo(
     ResolvedUpdateItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (target_ != nullptr) {
@@ -24680,7 +24713,7 @@ absl::Status ResolvedUpdateArrayItem::SaveTo(
     ResolvedUpdateArrayItemProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (offset_ != nullptr) {
@@ -24872,7 +24905,7 @@ absl::Status ResolvedUpdateStmt::SaveTo(
     ResolvedUpdateStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (table_scan_ != nullptr) {
@@ -24919,11 +24952,11 @@ absl::StatusOr<std::unique_ptr<ResolvedUpdateStmt>> ResolvedUpdateStmt::RestoreF
                      ResolvedTableScan::RestoreFrom(
                          proto.table_scan(), params));
   }
-  std::vector<ObjectAccess> column_access_list;
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list;
   for (const auto& elem : proto.column_access_list()) {
     // We need a static cast because the proto getter returns a
     // RepeatedField<int>, not RepeatedField<enum>.
-    column_access_list.push_back(static_cast<ObjectAccess>(elem));
+    column_access_list.push_back(static_cast<ResolvedStatement::ObjectAccess>(elem));
   }
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified;
   if (proto.
@@ -25375,7 +25408,7 @@ absl::Status ResolvedMergeWhen::SaveTo(
     ResolvedMergeWhenProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_match_type(match_type_);
@@ -25402,7 +25435,7 @@ absl::Status ResolvedMergeWhen::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedMergeWhen>> ResolvedMergeWhen::RestoreFrom(
     const ResolvedMergeWhenProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  MatchType match_type =
+  ResolvedMergeWhen::MatchType match_type =
       proto.match_type();
   std::unique_ptr<const ResolvedExpr> match_expr;
   if (proto.
@@ -25411,7 +25444,7 @@ absl::StatusOr<std::unique_ptr<ResolvedMergeWhen>> ResolvedMergeWhen::RestoreFro
                      ResolvedExpr::RestoreFrom(
                          proto.match_expr(), params));
   }
-  ActionType action_type =
+  ResolvedMergeWhen::ActionType action_type =
       proto.action_type();
   std::vector<ResolvedColumn> insert_column_list;
   for (const auto& elem : proto.insert_column_list()) {
@@ -25694,7 +25727,7 @@ absl::Status ResolvedMergeStmt::SaveTo(
     ResolvedMergeStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (table_scan_ != nullptr) {
@@ -25729,11 +25762,11 @@ absl::StatusOr<std::unique_ptr<ResolvedMergeStmt>> ResolvedMergeStmt::RestoreFro
                      ResolvedTableScan::RestoreFrom(
                          proto.table_scan(), params));
   }
-  std::vector<ObjectAccess> column_access_list;
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list;
   for (const auto& elem : proto.column_access_list()) {
     // We need a static cast because the proto getter returns a
     // RepeatedField<int>, not RepeatedField<enum>.
-    column_access_list.push_back(static_cast<ObjectAccess>(elem));
+    column_access_list.push_back(static_cast<ResolvedStatement::ObjectAccess>(elem));
   }
   std::unique_ptr<const ResolvedScan> from_scan;
   if (proto.
@@ -26012,7 +26045,7 @@ absl::Status ResolvedTruncateStmt::SaveTo(
     ResolvedTruncateStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (table_scan_ != nullptr) {
@@ -26211,7 +26244,7 @@ absl::Status ResolvedObjectUnit::SaveTo(
     ResolvedObjectUnitProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -26316,7 +26349,7 @@ absl::Status ResolvedPrivilege::SaveTo(
     ResolvedPrivilegeProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_action_type(action_type_);
@@ -26465,7 +26498,7 @@ absl::Status ResolvedGrantOrRevokeStmt::SaveTo(
     ResolvedGrantOrRevokeStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : privilege_list_) {
@@ -26701,7 +26734,7 @@ absl::Status ResolvedGrantStmt::SaveTo(
     ResolvedGrantStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -26775,7 +26808,7 @@ absl::Status ResolvedRevokeStmt::SaveTo(
     ResolvedRevokeStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -26847,7 +26880,7 @@ absl::Status ResolvedAlterObjectStmt::SaveTo(
     ResolvedAlterObjectStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -26892,6 +26925,9 @@ absl::StatusOr<std::unique_ptr<ResolvedAlterObjectStmt>> ResolvedAlterObjectStmt
     case AnyResolvedAlterObjectStmtProto::kResolvedAlterPrivilegeRestrictionStmtNode:
       return ResolvedAlterPrivilegeRestrictionStmt::RestoreFrom(
           proto.resolved_alter_privilege_restriction_stmt_node(), params);
+    case AnyResolvedAlterObjectStmtProto::kResolvedAlterModelStmtNode:
+      return ResolvedAlterModelStmt::RestoreFrom(
+          proto.resolved_alter_model_stmt_node(), params);
   case AnyResolvedAlterObjectStmtProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(ZETASQL_LOC)
         << "No subnode types set in ResolvedAlterObjectStmtProto";
@@ -27041,7 +27077,7 @@ absl::Status ResolvedAlterDatabaseStmt::SaveTo(
     ResolvedAlterDatabaseStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -27103,7 +27139,7 @@ absl::Status ResolvedAlterMaterializedViewStmt::SaveTo(
     ResolvedAlterMaterializedViewStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -27165,7 +27201,7 @@ absl::Status ResolvedAlterSchemaStmt::SaveTo(
     ResolvedAlterSchemaStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -27210,6 +27246,68 @@ absl::Status ResolvedAlterSchemaStmt::ChildrenAccept(ResolvedASTVisitor* visitor
   return absl::OkStatus();
 }
 
+const ResolvedNodeKind ResolvedAlterModelStmt::TYPE;
+
+ResolvedAlterModelStmt::~ResolvedAlterModelStmt() {
+}
+
+absl::Status ResolvedAlterModelStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterObjectStmtProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_alter_model_stmt_node());
+}
+
+absl::Status ResolvedAlterModelStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAlterModelStmtProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAlterModelStmt>> ResolvedAlterModelStmt::RestoreFrom(
+    const ResolvedAlterModelStmtProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::string> name_path;
+  for (const auto& elem : proto.parent().name_path()) {
+    name_path.push_back(elem);
+  }
+  std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list;
+  for (const auto& elem : proto.parent().alter_action_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedAlterAction> elem_restored,
+                     ResolvedAlterAction::RestoreFrom(elem, params));
+    alter_action_list.push_back(std::move(elem_restored));
+  }
+  bool is_if_exists =
+      proto.parent().is_if_exists();
+  auto node = MakeResolvedAlterModelStmt(
+      std::move(name_path),
+      std::move(alter_action_list),
+      std::move(is_if_exists));
+
+  node->set_hint_list(std::move(hint_list));
+  return node;
+}
+
+absl::Status ResolvedAlterModelStmt::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAlterModelStmt(this);
+}
+
+absl::Status ResolvedAlterModelStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  return absl::OkStatus();
+}
+
 const ResolvedNodeKind ResolvedAlterTableStmt::TYPE;
 
 ResolvedAlterTableStmt::~ResolvedAlterTableStmt() {
@@ -27227,7 +27325,7 @@ absl::Status ResolvedAlterTableStmt::SaveTo(
     ResolvedAlterTableStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -27289,7 +27387,7 @@ absl::Status ResolvedAlterViewStmt::SaveTo(
     ResolvedAlterViewStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -27349,7 +27447,7 @@ absl::Status ResolvedAlterAction::SaveTo(
     ResolvedAlterActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -27410,6 +27508,15 @@ absl::StatusOr<std::unique_ptr<ResolvedAlterAction>> ResolvedAlterAction::Restor
     case AnyResolvedAlterActionProto::kResolvedAlterColumnActionNode:
       return ResolvedAlterColumnAction::RestoreFrom(
           proto.resolved_alter_column_action_node(), params);
+    case AnyResolvedAlterActionProto::kResolvedAlterSubEntityActionNode:
+      return ResolvedAlterSubEntityAction::RestoreFrom(
+          proto.resolved_alter_sub_entity_action_node(), params);
+    case AnyResolvedAlterActionProto::kResolvedAddSubEntityActionNode:
+      return ResolvedAddSubEntityAction::RestoreFrom(
+          proto.resolved_add_sub_entity_action_node(), params);
+    case AnyResolvedAlterActionProto::kResolvedDropSubEntityActionNode:
+      return ResolvedDropSubEntityAction::RestoreFrom(
+          proto.resolved_drop_sub_entity_action_node(), params);
   case AnyResolvedAlterActionProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(ZETASQL_LOC)
         << "No subnode types set in ResolvedAlterActionProto";
@@ -27440,7 +27547,7 @@ absl::Status ResolvedAlterColumnAction::SaveTo(
     ResolvedAlterColumnActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -27575,7 +27682,7 @@ absl::Status ResolvedSetOptionsAction::SaveTo(
     ResolvedSetOptionsActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : option_list_) {
@@ -27688,6 +27795,547 @@ void ResolvedSetOptionsAction::MarkFieldsAccessed() const {
   for (const auto& it : option_list_) it->MarkFieldsAccessed();
 }
 
+const ResolvedNodeKind ResolvedAlterSubEntityAction::TYPE;
+
+ResolvedAlterSubEntityAction::~ResolvedAlterSubEntityAction() {
+}
+
+absl::Status ResolvedAlterSubEntityAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterActionProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_alter_sub_entity_action_node());
+}
+
+absl::Status ResolvedAlterSubEntityAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAlterSubEntityActionProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  proto->set_entity_type(entity_type_);
+  proto->set_name(name_);
+  if (alter_action_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(alter_action_->SaveTo(
+        file_descriptor_set_map, proto->mutable_alter_action()));
+  }
+  proto->set_is_if_exists(is_if_exists_);
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAlterSubEntityAction>> ResolvedAlterSubEntityAction::RestoreFrom(
+    const ResolvedAlterSubEntityActionProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::string entity_type =
+      proto.entity_type();
+  std::string name =
+      proto.name();
+  std::unique_ptr<const ResolvedAlterAction> alter_action;
+  if (proto.
+  has_alter_action()) {
+    ZETASQL_ASSIGN_OR_RETURN(alter_action,
+                     ResolvedAlterAction::RestoreFrom(
+                         proto.alter_action(), params));
+  }
+  bool is_if_exists =
+      proto.is_if_exists();
+  auto node = MakeResolvedAlterSubEntityAction(
+      std::move(entity_type),
+      std::move(name),
+      std::move(alter_action),
+      std::move(is_if_exists));
+
+  return node;
+}
+
+void ResolvedAlterSubEntityAction::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (alter_action_ != nullptr) {
+    child_nodes->emplace_back(alter_action_.get());
+  }
+}
+
+void ResolvedAlterSubEntityAction::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (alter_action_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &alter_action_));
+    static_assert(sizeof(alter_action_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedAlterSubEntityAction::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAlterSubEntityAction(this);
+}
+
+absl::Status ResolvedAlterSubEntityAction::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (alter_action_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(alter_action_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAlterSubEntityAction::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  {
+    fields->emplace_back("entity_type", ToStringImpl(entity_type_));
+  }
+  {
+    fields->emplace_back("name", ToStringImpl(name_));
+  }
+  if (alter_action_ != nullptr) {
+    fields->emplace_back("alter_action", alter_action_.get());
+  }
+  if (!IsDefaultValue(is_if_exists_)) {
+    fields->emplace_back("is_if_exists", ToStringImpl(is_if_exists_));
+  }
+}
+
+absl::Status ResolvedAlterSubEntityAction::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAlterSubEntityAction::entity_type not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<1)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAlterSubEntityAction::name not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<2)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAlterSubEntityAction::alter_action not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<3)) == 0 &&
+      !IsDefaultValue(is_if_exists_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAlterSubEntityAction::is_if_exists not accessed "
+           "and has non-default value)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    if (alter_action_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          alter_action_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedAlterSubEntityAction::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAlterSubEntityAction::entity_type is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAlterSubEntityAction::name is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAlterSubEntityAction::alter_action is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<3)) != 0 ) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAlterSubEntityAction::is_if_exists is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    if (alter_action_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(alter_action_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAlterSubEntityAction::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (alter_action_ != nullptr) alter_action_->ClearFieldsAccessed();
+}
+
+void ResolvedAlterSubEntityAction::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (alter_action_ != nullptr) alter_action_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedAddSubEntityAction::TYPE;
+
+ResolvedAddSubEntityAction::~ResolvedAddSubEntityAction() {
+}
+
+absl::Status ResolvedAddSubEntityAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterActionProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_add_sub_entity_action_node());
+}
+
+absl::Status ResolvedAddSubEntityAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAddSubEntityActionProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  proto->set_entity_type(entity_type_);
+  proto->set_name(name_);
+  for (const auto& elem : options_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_options_list()));
+  }
+  proto->set_is_if_not_exists(is_if_not_exists_);
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAddSubEntityAction>> ResolvedAddSubEntityAction::RestoreFrom(
+    const ResolvedAddSubEntityActionProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::string entity_type =
+      proto.entity_type();
+  std::string name =
+      proto.name();
+  std::vector<std::unique_ptr<const ResolvedOption>> options_list;
+  for (const auto& elem : proto.options_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    options_list.push_back(std::move(elem_restored));
+  }
+  bool is_if_not_exists =
+      proto.is_if_not_exists();
+  auto node = MakeResolvedAddSubEntityAction(
+      std::move(entity_type),
+      std::move(name),
+      std::move(options_list),
+      std::move(is_if_not_exists));
+
+  return node;
+}
+
+void ResolvedAddSubEntityAction::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  for (const auto& elem : options_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+}
+
+void ResolvedAddSubEntityAction::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  for (auto& elem : options_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+}
+
+absl::Status ResolvedAddSubEntityAction::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAddSubEntityAction(this);
+}
+
+absl::Status ResolvedAddSubEntityAction::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  for (const auto& elem : options_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAddSubEntityAction::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  {
+    fields->emplace_back("entity_type", ToStringImpl(entity_type_));
+  }
+  {
+    fields->emplace_back("name", ToStringImpl(name_));
+  }
+  if (!options_list_.empty()) {
+    fields->emplace_back("options_list", options_list_);
+  }
+  if (!IsDefaultValue(is_if_not_exists_)) {
+    fields->emplace_back("is_if_not_exists", ToStringImpl(is_if_not_exists_));
+  }
+}
+
+absl::Status ResolvedAddSubEntityAction::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAddSubEntityAction::entity_type not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<1)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAddSubEntityAction::name not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<2)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAddSubEntityAction::options_list not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<3)) == 0 &&
+      !IsDefaultValue(is_if_not_exists_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAddSubEntityAction::is_if_not_exists not accessed "
+           "and has non-default value)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    for (const auto& it : options_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedAddSubEntityAction::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAddSubEntityAction::entity_type is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAddSubEntityAction::name is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAddSubEntityAction::options_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<3)) != 0 ) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedAddSubEntityAction::is_if_not_exists is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    for (const auto& it : options_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAddSubEntityAction::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  for (const auto& it : options_list_) it->ClearFieldsAccessed();
+}
+
+void ResolvedAddSubEntityAction::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  for (const auto& it : options_list_) it->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedDropSubEntityAction::TYPE;
+
+ResolvedDropSubEntityAction::~ResolvedDropSubEntityAction() {
+}
+
+absl::Status ResolvedDropSubEntityAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterActionProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_drop_sub_entity_action_node());
+}
+
+absl::Status ResolvedDropSubEntityAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedDropSubEntityActionProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  proto->set_entity_type(entity_type_);
+  proto->set_name(name_);
+  proto->set_is_if_exists(is_if_exists_);
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedDropSubEntityAction>> ResolvedDropSubEntityAction::RestoreFrom(
+    const ResolvedDropSubEntityActionProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::string entity_type =
+      proto.entity_type();
+  std::string name =
+      proto.name();
+  bool is_if_exists =
+      proto.is_if_exists();
+  auto node = MakeResolvedDropSubEntityAction(
+      std::move(entity_type),
+      std::move(name),
+      std::move(is_if_exists));
+
+  return node;
+}
+
+void ResolvedDropSubEntityAction::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+}
+
+void ResolvedDropSubEntityAction::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+}
+
+absl::Status ResolvedDropSubEntityAction::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedDropSubEntityAction(this);
+}
+
+absl::Status ResolvedDropSubEntityAction::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  return absl::OkStatus();
+}
+
+void ResolvedDropSubEntityAction::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  {
+    fields->emplace_back("entity_type", ToStringImpl(entity_type_));
+  }
+  {
+    fields->emplace_back("name", ToStringImpl(name_));
+  }
+  if (!IsDefaultValue(is_if_exists_)) {
+    fields->emplace_back("is_if_exists", ToStringImpl(is_if_exists_));
+  }
+}
+
+absl::Status ResolvedDropSubEntityAction::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedDropSubEntityAction::entity_type not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<1)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedDropSubEntityAction::name not accessed)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<2)) == 0 &&
+      !IsDefaultValue(is_if_exists_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedDropSubEntityAction::is_if_exists not accessed "
+           "and has non-default value)\n"
+        << root->DebugString({annotation});
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedDropSubEntityAction::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedDropSubEntityAction::entity_type is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedDropSubEntityAction::name is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0 ) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedDropSubEntityAction::is_if_exists is accessed, but shouldn't be)";
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedDropSubEntityAction::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+}
+
+void ResolvedDropSubEntityAction::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+}
+
 const ResolvedNodeKind ResolvedAddColumnAction::TYPE;
 
 ResolvedAddColumnAction::~ResolvedAddColumnAction() {
@@ -27705,7 +28353,7 @@ absl::Status ResolvedAddColumnAction::SaveTo(
     ResolvedAddColumnActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_not_exists(is_if_not_exists_);
@@ -27862,7 +28510,7 @@ absl::Status ResolvedAddConstraintAction::SaveTo(
     ResolvedAddConstraintActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_not_exists(is_if_not_exists_);
@@ -28046,7 +28694,7 @@ absl::Status ResolvedDropConstraintAction::SaveTo(
     ResolvedDropConstraintActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -28168,7 +28816,7 @@ absl::Status ResolvedDropPrimaryKeyAction::SaveTo(
     ResolvedDropPrimaryKeyActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -28269,7 +28917,7 @@ absl::Status ResolvedAlterColumnOptionsAction::SaveTo(
     ResolvedAlterColumnOptionsActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : option_list_) {
@@ -28405,7 +29053,7 @@ absl::Status ResolvedAlterColumnDropNotNullAction::SaveTo(
     ResolvedAlterColumnDropNotNullActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -28451,7 +29099,7 @@ absl::Status ResolvedAlterColumnSetDataTypeAction::SaveTo(
     ResolvedAlterColumnSetDataTypeActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -28631,7 +29279,7 @@ absl::Status ResolvedAlterColumnSetDefaultAction::SaveTo(
     ResolvedAlterColumnSetDefaultActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (default_value_ != nullptr) {
@@ -28773,7 +29421,7 @@ absl::Status ResolvedAlterColumnDropDefaultAction::SaveTo(
     ResolvedAlterColumnDropDefaultActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   return absl::OkStatus();
@@ -28819,7 +29467,7 @@ absl::Status ResolvedDropColumnAction::SaveTo(
     ResolvedDropColumnActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -28941,7 +29589,7 @@ absl::Status ResolvedRenameColumnAction::SaveTo(
     ResolvedRenameColumnActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -29086,7 +29734,7 @@ absl::Status ResolvedSetAsAction::SaveTo(
     ResolvedSetAsActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_entity_body_json(entity_body_json_);
@@ -29212,7 +29860,7 @@ absl::Status ResolvedSetCollateClause::SaveTo(
     ResolvedSetCollateClauseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (collation_name_ != nullptr) {
@@ -29348,7 +29996,7 @@ absl::Status ResolvedAlterTableSetOptionsStmt::SaveTo(
     ResolvedAlterTableSetOptionsStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -29533,7 +30181,7 @@ absl::Status ResolvedRenameStmt::SaveTo(
     ResolvedRenameStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_object_type(object_type_);
@@ -29691,7 +30339,7 @@ absl::Status ResolvedCreatePrivilegeRestrictionStmt::SaveTo(
     ResolvedCreatePrivilegeRestrictionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_privilege_list_) {
@@ -29733,9 +30381,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreatePrivilegeRestrictionStmt>> Resolved
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreatePrivilegeRestrictionStmt(
       std::move(name_path),
@@ -29912,7 +30560,7 @@ absl::Status ResolvedCreateRowAccessPolicyStmt::SaveTo(
     ResolvedCreateRowAccessPolicyStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_create_mode(create_mode_);
@@ -29942,7 +30590,7 @@ absl::Status ResolvedCreateRowAccessPolicyStmt::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedCreateRowAccessPolicyStmt>> ResolvedCreateRowAccessPolicyStmt::RestoreFrom(
     const ResolvedCreateRowAccessPolicyStmtProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.create_mode();
   std::string name =
       proto.name();
@@ -30240,7 +30888,7 @@ absl::Status ResolvedDropPrivilegeRestrictionStmt::SaveTo(
     ResolvedDropPrivilegeRestrictionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_object_type(object_type_);
@@ -30446,7 +31094,7 @@ absl::Status ResolvedDropRowAccessPolicyStmt::SaveTo(
     ResolvedDropRowAccessPolicyStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_drop_all(is_drop_all_);
@@ -30627,7 +31275,7 @@ absl::Status ResolvedDropSearchIndexStmt::SaveTo(
     ResolvedDropSearchIndexStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -30781,7 +31429,7 @@ absl::Status ResolvedGrantToAction::SaveTo(
     ResolvedGrantToActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : grantee_expr_list_) {
@@ -30911,7 +31559,7 @@ absl::Status ResolvedRestrictToAction::SaveTo(
     ResolvedRestrictToActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : restrictee_list_) {
@@ -31043,7 +31691,7 @@ absl::Status ResolvedAddToRestricteeListAction::SaveTo(
     ResolvedAddToRestricteeListActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_not_exists(is_if_not_exists_);
@@ -31198,7 +31846,7 @@ absl::Status ResolvedRemoveFromRestricteeListAction::SaveTo(
     ResolvedRemoveFromRestricteeListActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -31353,7 +32001,7 @@ absl::Status ResolvedFilterUsingAction::SaveTo(
     ResolvedFilterUsingActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (predicate_ != nullptr) {
@@ -31496,7 +32144,7 @@ absl::Status ResolvedRevokeFromAction::SaveTo(
     ResolvedRevokeFromActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : revokee_expr_list_) {
@@ -31651,7 +32299,7 @@ absl::Status ResolvedRenameToAction::SaveTo(
     ResolvedRenameToActionProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : new_path_) {
@@ -31756,7 +32404,7 @@ absl::Status ResolvedAlterPrivilegeRestrictionStmt::SaveTo(
     ResolvedAlterPrivilegeRestrictionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_privilege_list_) {
@@ -31929,7 +32577,7 @@ absl::Status ResolvedAlterRowAccessPolicyStmt::SaveTo(
     ResolvedAlterRowAccessPolicyStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -32094,7 +32742,7 @@ absl::Status ResolvedAlterAllRowAccessPoliciesStmt::SaveTo(
     ResolvedAlterAllRowAccessPoliciesStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (table_scan_ != nullptr) {
@@ -32238,7 +32886,7 @@ absl::Status ResolvedCreateConstantStmt::SaveTo(
     ResolvedCreateConstantStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (expr_ != nullptr) {
@@ -32268,9 +32916,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateConstantStmt>> ResolvedCreateConsta
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateConstantStmt(
       std::move(name_path),
@@ -32392,7 +33040,7 @@ absl::Status ResolvedCreateFunctionStmt::SaveTo(
     ResolvedCreateFunctionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_has_explicit_return_type(has_explicit_return_type_);
@@ -32472,9 +33120,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateFunctionStmt>> ResolvedCreateFuncti
                      ResolvedOption::RestoreFrom(elem, params));
     option_list.push_back(std::move(elem_restored));
   }
-  SqlSecurity sql_security =
+  ResolvedCreateStatement::SqlSecurity sql_security =
       proto.sql_security();
-  DeterminismLevel determinism_level =
+  ResolvedCreateStatement::DeterminismLevel determinism_level =
       proto.determinism_level();
   bool is_remote =
       proto.is_remote();
@@ -32495,9 +33143,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateFunctionStmt>> ResolvedCreateFuncti
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateFunctionStmt(
       std::move(name_path),
@@ -32844,7 +33492,7 @@ absl::Status ResolvedArgumentDef::SaveTo(
     ResolvedArgumentDefProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -32864,7 +33512,7 @@ absl::StatusOr<std::unique_ptr<ResolvedArgumentDef>> ResolvedArgumentDef::Restor
                    RestoreFromImpl<const Type*>(
                        proto.type(),
                        params));
-  ArgumentKind argument_kind =
+  ResolvedArgumentDef::ArgumentKind argument_kind =
       proto.argument_kind();
   auto node = MakeResolvedArgumentDef(
       std::move(name),
@@ -32983,7 +33631,7 @@ absl::Status ResolvedArgumentRef::SaveTo(
     ResolvedArgumentRefProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -32996,7 +33644,7 @@ absl::StatusOr<std::unique_ptr<ResolvedArgumentRef>> ResolvedArgumentRef::Restor
     const ResolvedNode::RestoreParams& params) {
   std::string name =
       proto.name();
-  ArgumentKind argument_kind =
+  ResolvedArgumentDef::ArgumentKind argument_kind =
       proto.argument_kind();
   ZETASQL_ASSIGN_OR_RETURN(auto type,
                    RestoreFromImpl<const Type*>(
@@ -33101,7 +33749,7 @@ absl::Status ResolvedCreateTableFunctionStmt::SaveTo(
     ResolvedCreateTableFunctionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : argument_name_list_) {
@@ -33168,7 +33816,7 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateTableFunctionStmt>> ResolvedCreateT
   }
   bool is_value_table =
       proto.is_value_table();
-  SqlSecurity sql_security =
+  ResolvedCreateStatement::SqlSecurity sql_security =
       proto.sql_security();
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().parent().hint_list()) {
@@ -33180,9 +33828,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateTableFunctionStmt>> ResolvedCreateT
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateTableFunctionStmt(
       std::move(name_path),
@@ -33464,7 +34112,7 @@ absl::Status ResolvedRelationArgumentScan::SaveTo(
     ResolvedRelationArgumentScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -33606,7 +34254,7 @@ absl::Status ResolvedArgumentList::SaveTo(
     ResolvedArgumentListProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : arg_list_) {
@@ -33722,7 +34370,7 @@ absl::Status ResolvedFunctionSignatureHolder::SaveTo(
     ResolvedFunctionSignatureHolderProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -33827,7 +34475,7 @@ absl::Status ResolvedDropFunctionStmt::SaveTo(
     ResolvedDropFunctionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -34044,7 +34692,7 @@ absl::Status ResolvedDropTableFunctionStmt::SaveTo(
     ResolvedDropTableFunctionStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_is_if_exists(is_if_exists_);
@@ -34177,7 +34825,7 @@ absl::Status ResolvedCallStmt::SaveTo(
     ResolvedCallStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -34354,7 +35002,7 @@ absl::Status ResolvedImportStmt::SaveTo(
     ResolvedImportStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_import_kind(import_kind_);
@@ -34378,7 +35026,7 @@ absl::Status ResolvedImportStmt::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedImportStmt>> ResolvedImportStmt::RestoreFrom(
     const ResolvedImportStmtProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ImportKind import_kind =
+  ResolvedImportStmt::ImportKind import_kind =
       proto.import_kind();
   std::vector<std::string> name_path;
   for (const auto& elem : proto.name_path()) {
@@ -34618,7 +35266,7 @@ absl::Status ResolvedModuleStmt::SaveTo(
     ResolvedModuleStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : name_path_) {
@@ -34786,7 +35434,7 @@ absl::Status ResolvedAggregateHavingModifier::SaveTo(
     ResolvedAggregateHavingModifierProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_kind(kind_);
@@ -34800,7 +35448,7 @@ absl::Status ResolvedAggregateHavingModifier::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedAggregateHavingModifier>> ResolvedAggregateHavingModifier::RestoreFrom(
     const ResolvedAggregateHavingModifierProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  HavingModifierKind kind =
+  ResolvedAggregateHavingModifier::HavingModifierKind kind =
       proto.kind();
   std::unique_ptr<const ResolvedExpr> having_expr;
   if (proto.
@@ -34943,7 +35591,7 @@ absl::Status ResolvedCreateMaterializedViewStmt::SaveTo(
     ResolvedCreateMaterializedViewStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_definition_list_) {
@@ -34992,9 +35640,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateMaterializedViewStmt>> ResolvedCrea
   for (const auto& elem : proto.parent().parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().parent().create_mode();
   std::vector<std::unique_ptr<const ResolvedOption>> option_list;
   for (const auto& elem : proto.parent().option_list()) {
@@ -35019,7 +35667,7 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateMaterializedViewStmt>> ResolvedCrea
   }
   std::string sql =
       proto.parent().sql();
-  SqlSecurity sql_security =
+  ResolvedCreateStatement::SqlSecurity sql_security =
       proto.parent().sql_security();
   bool is_value_table =
       proto.parent().is_value_table();
@@ -35218,7 +35866,7 @@ absl::Status ResolvedCreateProcedureStmt::SaveTo(
     ResolvedCreateProcedureStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : argument_name_list_) {
@@ -35232,6 +35880,12 @@ absl::Status ResolvedCreateProcedureStmt::SaveTo(
       file_descriptor_set_map, proto->add_option_list()));
   }
   proto->set_procedure_body(procedure_body_);
+  if (connection_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(connection_->SaveTo(
+        file_descriptor_set_map, proto->mutable_connection()));
+  }
+  proto->set_language(language_);
+  proto->set_code(code_);
   return absl::OkStatus();
 }
 
@@ -35254,6 +35908,17 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateProcedureStmt>> ResolvedCreateProce
   }
   std::string procedure_body =
       proto.procedure_body();
+  std::unique_ptr<const ResolvedConnection> connection;
+  if (proto.
+  has_connection()) {
+    ZETASQL_ASSIGN_OR_RETURN(connection,
+                     ResolvedConnection::RestoreFrom(
+                         proto.connection(), params));
+  }
+  std::string language =
+      proto.language();
+  std::string code =
+      proto.code();
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().parent().hint_list()) {
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
@@ -35264,9 +35929,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateProcedureStmt>> ResolvedCreateProce
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateProcedureStmt(
       std::move(name_path),
@@ -35275,7 +35940,10 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateProcedureStmt>> ResolvedCreateProce
       std::move(argument_name_list),
       std::move(signature),
       std::move(option_list),
-      std::move(procedure_body));
+      std::move(procedure_body),
+      std::move(connection),
+      std::move(language),
+      std::move(code));
 
   node->set_hint_list(std::move(hint_list));
   return node;
@@ -35287,6 +35955,9 @@ void ResolvedCreateProcedureStmt::GetChildNodes(
   for (const auto& elem : option_list_) {
     child_nodes->emplace_back(elem.get());
   }
+  if (connection_ != nullptr) {
+    child_nodes->emplace_back(connection_.get());
+  }
 }
 
 void ResolvedCreateProcedureStmt::AddMutableChildNodePointers(
@@ -35296,6 +35967,14 @@ void ResolvedCreateProcedureStmt::AddMutableChildNodePointers(
   for (auto& elem : option_list_) {
     mutable_child_node_ptrs->emplace_back(
         reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+  if (connection_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &connection_));
+    static_assert(sizeof(connection_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
   }
 }
 
@@ -35307,6 +35986,9 @@ absl::Status ResolvedCreateProcedureStmt::ChildrenAccept(ResolvedASTVisitor* vis
   ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
   for (const auto& elem : option_list_) {
     ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  if (connection_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(connection_.get()->Accept(visitor));
   }
   return absl::OkStatus();
 }
@@ -35323,8 +36005,17 @@ void ResolvedCreateProcedureStmt::CollectDebugStringFields(
   if (!option_list_.empty()) {
     fields->emplace_back("option_list", option_list_);
   }
-  {
+  if (!IsDefaultValue(procedure_body_)) {
     fields->emplace_back("procedure_body", ToStringImpl(procedure_body_));
+  }
+  if (connection_ != nullptr) {
+    fields->emplace_back("connection", connection_.get());
+  }
+  if (!IsDefaultValue(language_)) {
+    fields->emplace_back("language", ToStringImpl(language_));
+  }
+  if (!IsDefaultValue(code_)) {
+    fields->emplace_back("code", ToStringImpl(code_));
   }
 }
 
@@ -35364,19 +36055,63 @@ absl::Status ResolvedCreateProcedureStmt::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString({annotation});
   }
-  if ((accessed_ & (1<<3)) == 0) {
+  if ((accessed_ & (1<<3)) == 0 &&
+      !IsDefaultValue(procedure_body_)) {
     NodeAnnotation annotation = {
       .node = this,
       .annotation = "(*** This node has unaccessed field ***)"
     };
     return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
         << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::procedure_body not accessed)\n"
+           "(ResolvedCreateProcedureStmt::procedure_body not accessed "
+           "and has non-default value)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<4)) == 0 &&
+      !IsDefaultValue(connection_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedCreateProcedureStmt::connection not accessed "
+           "and has non-default value)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<5)) == 0 &&
+      !IsDefaultValue(language_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedCreateProcedureStmt::language not accessed "
+           "and has non-default value)\n"
+        << root->DebugString({annotation});
+  }
+  if ((accessed_ & (1<<6)) == 0 &&
+      !IsDefaultValue(code_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(ZETASQL_LOC).LogError()
+        << "Unimplemented feature "
+           "(ResolvedCreateProcedureStmt::code not accessed "
+           "and has non-default value)\n"
         << root->DebugString({annotation});
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : option_list_) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<4)) != 0) {
+    if (connection_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          connection_.get(), root));
     }
   }
   return absl::OkStatus();
@@ -35397,13 +36132,30 @@ absl::Status ResolvedCreateProcedureStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
         << "(ResolvedCreateProcedureStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0) {
+  if ((accessed_ & (1<<3)) != 0 ) {
     return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
         << "(ResolvedCreateProcedureStmt::procedure_body is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<4)) != 0 ) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedCreateProcedureStmt::connection is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<5)) != 0 ) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedCreateProcedureStmt::language is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<6)) != 0 ) {
+    return ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+        << "(ResolvedCreateProcedureStmt::code is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : option_list_) {
       ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<4)) != 0) {
+    if (connection_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(connection_->CheckNoFieldsAccessed());
     }
   }
   return absl::OkStatus();
@@ -35414,12 +36166,14 @@ void ResolvedCreateProcedureStmt::ClearFieldsAccessed() const {
 
   accessed_ = 0;
   for (const auto& it : option_list_) it->ClearFieldsAccessed();
+  if (connection_ != nullptr) connection_->ClearFieldsAccessed();
 }
 
 void ResolvedCreateProcedureStmt::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
   for (const auto& it : option_list_) it->MarkFieldsAccessed();
+  if (connection_ != nullptr) connection_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedExecuteImmediateArgument::TYPE;
@@ -35439,7 +36193,7 @@ absl::Status ResolvedExecuteImmediateArgument::SaveTo(
     ResolvedExecuteImmediateArgumentProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_name(name_);
@@ -35596,7 +36350,7 @@ absl::Status ResolvedExecuteImmediateStmt::SaveTo(
     ResolvedExecuteImmediateStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (sql_ != nullptr) {
@@ -35814,7 +36568,7 @@ absl::Status ResolvedAssignmentStmt::SaveTo(
     ResolvedAssignmentStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (target_ != nullptr) {
@@ -36013,7 +36767,7 @@ absl::Status ResolvedCreateEntityStmt::SaveTo(
     ResolvedCreateEntityStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_entity_type(entity_type_);
@@ -36051,9 +36805,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateEntityStmt>> ResolvedCreateEntitySt
   for (const auto& elem : proto.parent().name_path()) {
     name_path.push_back(elem);
   }
-  CreateScope create_scope =
+  ResolvedCreateStatement::CreateScope create_scope =
       proto.parent().create_scope();
-  CreateMode create_mode =
+  ResolvedCreateStatement::CreateMode create_mode =
       proto.parent().create_mode();
   auto node = MakeResolvedCreateEntityStmt(
       std::move(name_path),
@@ -36230,7 +36984,7 @@ absl::Status ResolvedAlterEntityStmt::SaveTo(
     ResolvedAlterEntityStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_entity_type(entity_type_);
@@ -36353,7 +37107,7 @@ absl::Status ResolvedPivotColumn::SaveTo(
     ResolvedPivotColumnProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -36500,7 +37254,7 @@ absl::Status ResolvedPivotScan::SaveTo(
     ResolvedPivotScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -36910,7 +37664,7 @@ absl::Status ResolvedReturningClause::SaveTo(
     ResolvedReturningClauseProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : output_column_list_) {
@@ -37146,7 +37900,7 @@ absl::Status ResolvedUnpivotArg::SaveTo(
     ResolvedUnpivotArgProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : column_list_) {
@@ -37276,7 +38030,7 @@ absl::Status ResolvedUnpivotScan::SaveTo(
     ResolvedUnpivotScanProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (input_scan_ != nullptr) {
@@ -37641,7 +38395,7 @@ absl::Status ResolvedCloneDataStmt::SaveTo(
     ResolvedCloneDataStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   if (target_table_ != nullptr) {
@@ -37840,7 +38594,7 @@ absl::Status ResolvedTableAndColumnInfo::SaveTo(
     ResolvedTableAndColumnInfoProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
@@ -37974,7 +38728,7 @@ absl::Status ResolvedAnalyzeStmt::SaveTo(
     ResolvedAnalyzeStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   for (const auto& elem : option_list_) {
@@ -38169,7 +38923,7 @@ absl::Status ResolvedAuxLoadDataStmt::SaveTo(
     ResolvedAuxLoadDataStmtProto* proto) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
       file_descriptor_set_map, proto->mutable_parent()));
-  if (proto->parent().ByteSize() == 0) {
+  if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
   proto->set_insertion_mode(insertion_mode_);
@@ -38230,7 +38984,7 @@ absl::Status ResolvedAuxLoadDataStmt::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedAuxLoadDataStmt>> ResolvedAuxLoadDataStmt::RestoreFrom(
     const ResolvedAuxLoadDataStmtProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  InsertionMode insertion_mode =
+  ResolvedAuxLoadDataStmt::InsertionMode insertion_mode =
       proto.insertion_mode();
   std::vector<std::string> name_path;
   for (const auto& elem : proto.name_path()) {

@@ -995,7 +995,8 @@ void GO_EXPORT(SimpleColumn_AnnotatedType)(void * arg0,void ** arg1)
 void GO_EXPORT(SimpleColumn_SetIsPseudoColumn)(void * arg0,int arg1)
 {
   zetasql::SimpleColumn *col = (zetasql::SimpleColumn *)arg0;
-  col->set_is_pseudo_column(arg1);
+  auto &attrs = const_cast<zetasql::SimpleColumn::Attributes &>(col->attributes());
+  attrs.is_pseudo_column = static_cast<bool>(arg1);
 }
 
 void GO_EXPORT(Table_Name)(void * arg0,void ** arg1)

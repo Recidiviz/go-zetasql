@@ -18,6 +18,7 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "zetasql/base/logging.h"
@@ -226,7 +227,7 @@ TEST(SimpleFunctionTests,
       "Having two signatures with the same lambda at the same argument index "
       "is not allowed");
 
-  auto function = absl::make_unique<Function>(
+  auto function = std::make_unique<Function>(
       "fp_test", Function::kZetaSQLFunctionGroupName, Function::SCALAR);
   function->AddSignature(sig1);
   EXPECT_DEATH(

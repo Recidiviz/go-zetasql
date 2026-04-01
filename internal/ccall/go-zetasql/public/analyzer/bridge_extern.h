@@ -236,11 +236,6 @@ extern void GO_EXPORT(ResolvedSubqueryExpr_set_subquery)(void * arg0,void * arg1
 extern void GO_EXPORT(ResolvedSubqueryExpr_hint_list)(void * arg0,void ** arg1);
 extern void GO_EXPORT(ResolvedSubqueryExpr_set_hint_list)(void * arg0,void * arg1);
 extern void GO_EXPORT(ResolvedSubqueryExpr_add_hint_list)(void * arg0,void * arg1);
-extern void GO_EXPORT(ResolvedLetExpr_assignment_list)(void * arg0,void ** arg1);
-extern void GO_EXPORT(ResolvedLetExpr_set_assignment_list)(void * arg0,void * arg1);
-extern void GO_EXPORT(ResolvedLetExpr_add_assignment_list)(void * arg0,void * arg1);
-extern void GO_EXPORT(ResolvedLetExpr_expr)(void * arg0,void ** arg1);
-extern void GO_EXPORT(ResolvedLetExpr_set_expr)(void * arg0,void * arg1);
 extern void GO_EXPORT(ResolvedScan_column_list)(void * arg0,void ** arg1);
 extern void GO_EXPORT(ResolvedScan_set_column_list)(void * arg0,void * arg1);
 extern void GO_EXPORT(ResolvedScan_add_column_list)(void * arg0,void * arg1);

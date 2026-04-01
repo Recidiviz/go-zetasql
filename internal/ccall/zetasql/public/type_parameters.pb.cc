@@ -95,7 +95,7 @@ const uint32_t TableStruct_zetasql_2fpublic_2ftype_5fparameters_2eproto::offsets
   PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, param_),
   PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _internal_metadata_),
-  ~0u,  // no _extensions_
+  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _extensions_),
   PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
@@ -140,20 +140,20 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eprot
   "H\000\0220\n\nchild_list\030d \003(\0132\034.zetasql.TypePar"
   "ametersProtoB\021\n\017type_parameters\"S\n\031Strin"
   "gTypeParametersProto\022\024\n\nmax_length\030\001 \001(\003"
-  "H\000\022\027\n\ris_max_length\030\002 \001(\010H\000B\007\n\005param\"o\n\032"
+  "H\000\022\027\n\ris_max_length\030\002 \001(\010H\000B\007\n\005param\"w\n\032"
   "NumericTypeParametersProto\022\023\n\tprecision\030"
   "\001 \001(\003H\000\022\032\n\020is_max_precision\030\002 \001(\010H\000\022\r\n\005s"
-  "cale\030\003 \001(\003B\021\n\017precision_param\"L\n\033Extende"
-  "dTypeParametersProto\022-\n\nparameters\030\001 \003(\013"
-  "2\031.zetasql.SimpleValueProtoB+\n\022com.googl"
-  "e.zetasqlB\025ZetaSQLTypeParameters"
+  "cale\030\003 \001(\003*\006\010\350\007\020\321\017B\021\n\017precision_param\"L\n"
+  "\033ExtendedTypeParametersProto\022-\n\nparamete"
+  "rs\030\001 \003(\0132\031.zetasql.SimpleValueProtoB+\n\022c"
+  "om.google.zetasqlB\025ZetaSQLTypeParameters"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_deps[1] = {
   &::descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto = {
-  false, false, 712, descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eproto, "zetasql/public/type_parameters.proto", 
+  false, false, 720, descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eproto, "zetasql/public/type_parameters.proto", 
   &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once, descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_deps, 1, 4,
   schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ftype_5fparameters_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto,
@@ -539,6 +539,25 @@ void TypeParametersProto::CopyFrom(const TypeParametersProto& from) {
 }
 
 bool TypeParametersProto::IsInitialized() const {
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(child_list_))
+    return false;
+  switch (type_parameters_case()) {
+    case kStringTypeParameters: {
+      break;
+    }
+    case kNumericTypeParameters: {
+      if (_internal_has_numeric_type_parameters()) {
+        if (!type_parameters_.numeric_type_parameters_->IsInitialized()) return false;
+      }
+      break;
+    }
+    case kExtendedTypeParameters: {
+      break;
+    }
+    case TYPE_PARAMETERS_NOT_SET: {
+      break;
+    }
+  }
   return true;
 }
 
@@ -817,7 +836,8 @@ class NumericTypeParametersProto::_Internal {
 
 NumericTypeParametersProto::NumericTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  _extensions_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -828,6 +848,7 @@ NumericTypeParametersProto::NumericTypeParametersProto(const NumericTypeParamete
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
   scale_ = from.scale_;
   clear_has_precision_param();
   switch (from.precision_param_case()) {
@@ -900,6 +921,7 @@ void NumericTypeParametersProto::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _extensions_.Clear();
   scale_ = int64_t{0};
   clear_precision_param();
   _has_bits_.Clear();
@@ -947,6 +969,11 @@ const char* NumericTypeParametersProto::_InternalParse(const char* ptr, ::PROTOB
       ctx->SetLastTag(tag);
       goto message_done;
     }
+    if ((8000u <= tag && tag < 16008u)) {
+      ptr = _extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
+      CHK_(ptr != nullptr);
+      continue;
+    }
     ptr = UnknownFieldParse(
         tag,
         _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
@@ -988,6 +1015,10 @@ uint8_t* NumericTypeParametersProto::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(3, this->_internal_scale(), target);
   }
 
+  // Extension range [1000, 2001)
+  target = _extensions_._InternalSerialize(
+  internal_default_instance(), 1000, 2001, target, stream);
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -999,6 +1030,8 @@ uint8_t* NumericTypeParametersProto::_InternalSerialize(
 size_t NumericTypeParametersProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.NumericTypeParametersProto)
   size_t total_size = 0;
+
+  total_size += _extensions_.ByteSize();
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -1063,6 +1096,7 @@ void NumericTypeParametersProto::MergeFrom(const NumericTypeParametersProto& fro
       break;
     }
   }
+  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1074,11 +1108,16 @@ void NumericTypeParametersProto::CopyFrom(const NumericTypeParametersProto& from
 }
 
 bool NumericTypeParametersProto::IsInitialized() const {
+  if (!_extensions_.IsInitialized()) {
+    return false;
+  }
+
   return true;
 }
 
 void NumericTypeParametersProto::InternalSwap(NumericTypeParametersProto* other) {
   using std::swap;
+  _extensions_.InternalSwap(&other->_extensions_);
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   swap(scale_, other->scale_);

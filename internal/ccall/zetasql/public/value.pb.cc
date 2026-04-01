@@ -54,6 +54,19 @@ struct ValueProto_DatetimeDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ValueProto_DatetimeDefaultTypeInternal _ValueProto_Datetime_default_instance_;
+constexpr ValueProto_Range::ValueProto_Range(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : start_(nullptr)
+  , end_(nullptr){}
+struct ValueProto_RangeDefaultTypeInternal {
+  constexpr ValueProto_RangeDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ValueProto_RangeDefaultTypeInternal() {}
+  union {
+    ValueProto_Range _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ValueProto_RangeDefaultTypeInternal _ValueProto_Range_default_instance_;
 constexpr ValueProto::ValueProto(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : _oneof_case_{}{}
@@ -67,7 +80,7 @@ struct ValueProtoDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ValueProtoDefaultTypeInternal _ValueProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[4];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[5];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2fvalue_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fvalue_2eproto = nullptr;
 
@@ -94,6 +107,16 @@ const uint32_t TableStruct_zetasql_2fpublic_2fvalue_2eproto::offsets[] PROTOBUF_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Datetime, bit_field_datetime_seconds_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Datetime, nanos_),
+  0,
+  1,
+  PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Range, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Range, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Range, start_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Range, end_),
   0,
   1,
   ~0u,  // no _has_bits_
@@ -125,25 +148,28 @@ const uint32_t TableStruct_zetasql_2fpublic_2fvalue_2eproto::offsets[] PROTOBUF_
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto, value_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::ValueProto_Array)},
   { 7, -1, -1, sizeof(::zetasql::ValueProto_Struct)},
   { 14, 22, -1, sizeof(::zetasql::ValueProto_Datetime)},
-  { 24, -1, -1, sizeof(::zetasql::ValueProto)},
+  { 24, 32, -1, sizeof(::zetasql::ValueProto_Range)},
+  { 34, -1, -1, sizeof(::zetasql::ValueProto)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ValueProto_Array_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ValueProto_Struct_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ValueProto_Datetime_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ValueProto_Range_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ValueProto_default_instance_),
 };
 
 const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\032zetasql/public/value.proto\022\007zetasql\032\037g"
-  "oogle/protobuf/timestamp.proto\"\362\006\n\nValue"
+  "oogle/protobuf/timestamp.proto\"\363\007\n\nValue"
   "Proto\022\025\n\013int32_value\030\001 \001(\005H\000\022\025\n\013int64_va"
   "lue\030\002 \001(\003H\000\022\026\n\014uint32_value\030\003 \001(\rH\000\022\026\n\014u"
   "int64_value\030\004 \001(\004H\000\022\024\n\nbool_value\030\005 \001(\010H"
@@ -160,21 +186,25 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF
   "\017geography_value\030\023 \001(\014H\000\022\027\n\rnumeric_valu"
   "e\030\024 \001(\014H\000\022\032\n\020bignumeric_value\030\025 \001(\014H\000\022\024\n"
   "\njson_value\030\027 \001(\tH\000\022\030\n\016interval_value\030\030 "
-  "\001(\014H\000\0223\n(__ValueProto__switch_must_have_"
-  "a_default\030\377\001 \001(\010H\000\032-\n\005Array\022$\n\007element\030\001"
-  " \003(\0132\023.zetasql.ValueProto\032,\n\006Struct\022\"\n\005f"
-  "ield\030\001 \003(\0132\023.zetasql.ValueProto\032=\n\010Datet"
-  "ime\022\"\n\032bit_field_datetime_seconds\030\001 \001(\003\022"
-  "\r\n\005nanos\030\002 \001(\005B\007\n\005valueJ\004\010\013\020\014J\004\010\026\020\027B%\n\022c"
-  "om.google.zetasqlB\014ZetaSQLValue\370\001\001"
+  "\001(\014H\000\0220\n\013range_value\030\032 \001(\0132\031.zetasql.Val"
+  "ueProto.RangeH\000\0223\n(__ValueProto__switch_"
+  "must_have_a_default\030\377\001 \001(\010H\000\032-\n\005Array\022$\n"
+  "\007element\030\001 \003(\0132\023.zetasql.ValueProto\032,\n\006S"
+  "truct\022\"\n\005field\030\001 \003(\0132\023.zetasql.ValueProt"
+  "o\032=\n\010Datetime\022\"\n\032bit_field_datetime_seco"
+  "nds\030\001 \001(\003\022\r\n\005nanos\030\002 \001(\005\032M\n\005Range\022\"\n\005sta"
+  "rt\030\001 \001(\0132\023.zetasql.ValueProto\022 \n\003end\030\002 \001"
+  "(\0132\023.zetasql.ValueProtoB\007\n\005valueJ\004\010\013\020\014J\004"
+  "\010\026\020\027B%\n\022com.google.zetasqlB\014ZetaSQLValue"
+  "\370\001\001"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fvalue_2eproto = {
-  false, false, 994, descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto, "zetasql/public/value.proto", 
-  &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once, descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps, 1, 4,
+  false, false, 1123, descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto, "zetasql/public/value.proto", 
+  &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once, descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps, 1, 5,
   schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fvalue_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2fvalue_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fvalue_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fvalue_2eproto,
 };
@@ -795,12 +825,279 @@ void ValueProto_Datetime::InternalSwap(ValueProto_Datetime* other) {
 
 // ===================================================================
 
+class ValueProto_Range::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ValueProto_Range>()._has_bits_);
+  static const ::zetasql::ValueProto& start(const ValueProto_Range* msg);
+  static void set_has_start(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static const ::zetasql::ValueProto& end(const ValueProto_Range* msg);
+  static void set_has_end(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
+
+const ::zetasql::ValueProto&
+ValueProto_Range::_Internal::start(const ValueProto_Range* msg) {
+  return *msg->start_;
+}
+const ::zetasql::ValueProto&
+ValueProto_Range::_Internal::end(const ValueProto_Range* msg) {
+  return *msg->end_;
+}
+ValueProto_Range::ValueProto_Range(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ValueProto.Range)
+}
+ValueProto_Range::ValueProto_Range(const ValueProto_Range& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_start()) {
+    start_ = new ::zetasql::ValueProto(*from.start_);
+  } else {
+    start_ = nullptr;
+  }
+  if (from._internal_has_end()) {
+    end_ = new ::zetasql::ValueProto(*from.end_);
+  } else {
+    end_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.ValueProto.Range)
+}
+
+inline void ValueProto_Range::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&start_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&end_) -
+    reinterpret_cast<char*>(&start_)) + sizeof(end_));
+}
+
+ValueProto_Range::~ValueProto_Range() {
+  // @@protoc_insertion_point(destructor:zetasql.ValueProto.Range)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ValueProto_Range::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete start_;
+  if (this != internal_default_instance()) delete end_;
+}
+
+void ValueProto_Range::ArenaDtor(void* object) {
+  ValueProto_Range* _this = reinterpret_cast< ValueProto_Range* >(object);
+  (void)_this;
+}
+void ValueProto_Range::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ValueProto_Range::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ValueProto_Range::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.ValueProto.Range)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      GOOGLE_DCHECK(start_ != nullptr);
+      start_->Clear();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      GOOGLE_DCHECK(end_ != nullptr);
+      end_->Clear();
+    }
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ValueProto_Range::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional .zetasql.ValueProto start = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_start(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional .zetasql.ValueProto end = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_end(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ValueProto_Range::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.ValueProto.Range)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // optional .zetasql.ValueProto start = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        1, _Internal::start(this), target, stream);
+  }
+
+  // optional .zetasql.ValueProto end = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::end(this), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.ValueProto.Range)
+  return target;
+}
+
+size_t ValueProto_Range::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.ValueProto.Range)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // optional .zetasql.ValueProto start = 1;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *start_);
+    }
+
+    // optional .zetasql.ValueProto end = 2;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *end_);
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ValueProto_Range::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ValueProto_Range::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ValueProto_Range::GetClassData() const { return &_class_data_; }
+
+void ValueProto_Range::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ValueProto_Range *>(to)->MergeFrom(
+      static_cast<const ValueProto_Range &>(from));
+}
+
+
+void ValueProto_Range::MergeFrom(const ValueProto_Range& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ValueProto.Range)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _internal_mutable_start()->::zetasql::ValueProto::MergeFrom(from._internal_start());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _internal_mutable_end()->::zetasql::ValueProto::MergeFrom(from._internal_end());
+    }
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ValueProto_Range::CopyFrom(const ValueProto_Range& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.ValueProto.Range)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ValueProto_Range::IsInitialized() const {
+  return true;
+}
+
+void ValueProto_Range::InternalSwap(ValueProto_Range* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ValueProto_Range, end_)
+      + sizeof(ValueProto_Range::end_)
+      - PROTOBUF_FIELD_OFFSET(ValueProto_Range, start_)>(
+          reinterpret_cast<char*>(&start_),
+          reinterpret_cast<char*>(&other->start_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ValueProto_Range::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[3]);
+}
+
+// ===================================================================
+
 class ValueProto::_Internal {
  public:
   static const ::zetasql::ValueProto_Array& array_value(const ValueProto* msg);
   static const ::zetasql::ValueProto_Struct& struct_value(const ValueProto* msg);
   static const ::PROTOBUF_NAMESPACE_ID::Timestamp& timestamp_value(const ValueProto* msg);
   static const ::zetasql::ValueProto_Datetime& datetime_value(const ValueProto* msg);
+  static const ::zetasql::ValueProto_Range& range_value(const ValueProto* msg);
 };
 
 const ::zetasql::ValueProto_Array&
@@ -818,6 +1115,10 @@ ValueProto::_Internal::timestamp_value(const ValueProto* msg) {
 const ::zetasql::ValueProto_Datetime&
 ValueProto::_Internal::datetime_value(const ValueProto* msg) {
   return *msg->value_.datetime_value_;
+}
+const ::zetasql::ValueProto_Range&
+ValueProto::_Internal::range_value(const ValueProto* msg) {
+  return *msg->value_.range_value_;
 }
 void ValueProto::set_allocated_array_value(::zetasql::ValueProto_Array* array_value) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -888,6 +1189,21 @@ void ValueProto::set_allocated_datetime_value(::zetasql::ValueProto_Datetime* da
     value_.datetime_value_ = datetime_value;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.ValueProto.datetime_value)
+}
+void ValueProto::set_allocated_range_value(::zetasql::ValueProto_Range* range_value) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_value();
+  if (range_value) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ValueProto_Range>::GetOwningArena(range_value);
+    if (message_arena != submessage_arena) {
+      range_value = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, range_value, submessage_arena);
+    }
+    set_has_range_value();
+    value_.range_value_ = range_value;
+  }
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ValueProto.range_value)
 }
 ValueProto::ValueProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -989,6 +1305,10 @@ ValueProto::ValueProto(const ValueProto& from)
     }
     case kIntervalValue: {
       _internal_set_interval_value(from._internal_interval_value());
+      break;
+    }
+    case kRangeValue: {
+      _internal_mutable_range_value()->::zetasql::ValueProto_Range::MergeFrom(from._internal_range_value());
       break;
     }
     case kValueProtoSwitchMustHaveADefault: {
@@ -1127,6 +1447,12 @@ void ValueProto::clear_value() {
     }
     case kIntervalValue: {
       value_.interval_value_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+      break;
+    }
+    case kRangeValue: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete value_.range_value_;
+      }
       break;
     }
     case kValueProtoSwitchMustHaveADefault: {
@@ -1347,6 +1673,14 @@ const char* ValueProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         } else
           goto handle_unusual;
         continue;
+      // .zetasql.ValueProto.Range range_value = 26;
+      case 26:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 210)) {
+          ptr = ctx->ParseMessage(_internal_mutable_range_value(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       // bool __ValueProto__switch_must_have_a_default = 255;
       case 255:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 248)) {
@@ -1511,6 +1845,13 @@ uint8_t* ValueProto::_InternalSerialize(
           24, this->_internal_interval_value(), target);
       break;
     }
+    case kRangeValue: {
+      target = stream->EnsureSpace(target);
+      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(
+          26, _Internal::range_value(this), target, stream);
+      break;
+    }
     case kValueProtoSwitchMustHaveADefault: {
       target = stream->EnsureSpace(target);
       target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(255, this->_internal___valueproto__switch_must_have_a_default(), target);
@@ -1671,6 +2012,13 @@ size_t ValueProto::ByteSizeLong() const {
           this->_internal_interval_value());
       break;
     }
+    // .zetasql.ValueProto.Range range_value = 26;
+    case kRangeValue: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *value_.range_value_);
+      break;
+    }
     // bool __ValueProto__switch_must_have_a_default = 255;
     case kValueProtoSwitchMustHaveADefault: {
       total_size += 2 + 1;
@@ -1791,6 +2139,10 @@ void ValueProto::MergeFrom(const ValueProto& from) {
       _internal_set_interval_value(from._internal_interval_value());
       break;
     }
+    case kRangeValue: {
+      _internal_mutable_range_value()->::zetasql::ValueProto_Range::MergeFrom(from._internal_range_value());
+      break;
+    }
     case kValueProtoSwitchMustHaveADefault: {
       _internal_set___valueproto__switch_must_have_a_default(from._internal___valueproto__switch_must_have_a_default());
       break;
@@ -1823,7 +2175,7 @@ void ValueProto::InternalSwap(ValueProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ValueProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[3]);
+      file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[4]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -1837,6 +2189,9 @@ template<> PROTOBUF_NOINLINE ::zetasql::ValueProto_Struct* Arena::CreateMaybeMes
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ValueProto_Datetime* Arena::CreateMaybeMessage< ::zetasql::ValueProto_Datetime >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ValueProto_Datetime >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ValueProto_Range* Arena::CreateMaybeMessage< ::zetasql::ValueProto_Range >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ValueProto_Range >(arena);
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ValueProto* Arena::CreateMaybeMessage< ::zetasql::ValueProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ValueProto >(arena);

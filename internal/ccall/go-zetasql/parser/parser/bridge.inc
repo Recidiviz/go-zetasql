@@ -136,12 +136,6 @@ void GO_EXPORT(ParserOutput_expression)(void * arg0,void ** arg1) {
   *arg1 = (void *)out->expression();
 }
 
-void GO_EXPORT(ASTNode_getId)(void * arg0,int* arg1)
-{
-  zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
-  *arg1 = node->getId();
-}
-
 void GO_EXPORT(ASTNode_node_kind)(void * arg0,int* arg1)
 {
   zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
@@ -216,30 +210,6 @@ void GO_EXPORT(ASTNode_DebugString)(void * arg0,int arg1,void ** arg2)
 {
   zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
   *arg2 = (void *)((new std::string(node->DebugString(arg1)))->c_str());
-}
-
-void GO_EXPORT(ASTNode_MoveStartLocation)(void * arg0,int arg1)
-{
-  zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
-  node->MoveStartLocation(arg1);
-}
-
-void GO_EXPORT(ASTNode_MoveStartLocationBack)(void * arg0,int arg1)
-{
-  zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
-  node->MoveStartLocationBack(arg1);
-}
-
-void GO_EXPORT(ASTNode_SetStartLocationToEndLocation)(void * arg0)
-{
-  zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
-  node->SetStartLocationToEndLocation();
-}
-
-void GO_EXPORT(ASTNode_MoveEndLocationBack)(void * arg0,int arg1)
-{
-  zetasql::ASTNode *node = (zetasql::ASTNode *)arg0;
-  node->MoveEndLocationBack(arg1);
 }
 
 void GO_EXPORT(ASTNode_set_start_location)(void * arg0,void * arg1)
@@ -4192,9 +4162,9 @@ void GO_EXPORT(ASTPrimaryKey_enforced)(void * arg0,char* arg1){
   *arg1 = node->enforced();
 }
 
-void GO_EXPORT(ASTPrimaryKey_column_list)(void * arg0,void ** arg1){
+void GO_EXPORT(ASTPrimaryKey_element_list)(void * arg0,void ** arg1){
   zetasql::ASTPrimaryKey *node = (zetasql::ASTPrimaryKey *)arg0;
-  *arg1 = (void *)node->column_list();
+  *arg1 = (void *)node->element_list();
 }
 
 void GO_EXPORT(ASTPrimaryKey_options_list)(void * arg0,void ** arg1){

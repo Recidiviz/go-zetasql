@@ -690,6 +690,196 @@ class NumericTypeParametersProto final :
   void _internal_set_is_max_precision(bool value);
   public:
 
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline bool HasExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) const {
+
+    return _extensions_.Has(id.number());
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline void ClearExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) {
+    _extensions_.ClearExtension(id.number());
+
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline int ExtensionSize(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) const {
+
+    return _extensions_.ExtensionSize(id.number());
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Singular::ConstType GetExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) const {
+
+    return _proto_TypeTraits::Get(id.number(), _extensions_,
+                                  id.default_value());
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Singular::MutableType MutableExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) {
+
+    return _proto_TypeTraits::Mutable(id.number(), _field_type,
+                                      &_extensions_);
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline void SetExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      typename _proto_TypeTraits::Singular::ConstType value) {
+    _proto_TypeTraits::Set(id.number(), _field_type, value, &_extensions_);
+
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline void SetAllocatedExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      typename _proto_TypeTraits::Singular::MutableType value) {
+    _proto_TypeTraits::SetAllocated(id.number(), _field_type, value,
+                                    &_extensions_);
+
+  }
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline void UnsafeArenaSetAllocatedExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      typename _proto_TypeTraits::Singular::MutableType value) {
+    _proto_TypeTraits::UnsafeArenaSetAllocated(id.number(), _field_type,
+                                               value, &_extensions_);
+
+  }
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  PROTOBUF_NODISCARD inline
+      typename _proto_TypeTraits::Singular::MutableType
+      ReleaseExtension(
+          const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+              NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) {
+
+    return _proto_TypeTraits::Release(id.number(), _field_type,
+                                      &_extensions_);
+  }
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Singular::MutableType
+  UnsafeArenaReleaseExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) {
+
+    return _proto_TypeTraits::UnsafeArenaRelease(id.number(), _field_type,
+                                                 &_extensions_);
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Repeated::ConstType GetExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      int index) const {
+
+    return _proto_TypeTraits::Get(id.number(), _extensions_, index);
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Repeated::MutableType MutableExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      int index) {
+
+    return _proto_TypeTraits::Mutable(id.number(), index, &_extensions_);
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline void SetExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      int index, typename _proto_TypeTraits::Repeated::ConstType value) {
+    _proto_TypeTraits::Set(id.number(), index, value, &_extensions_);
+
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Repeated::MutableType AddExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) {
+    typename _proto_TypeTraits::Repeated::MutableType to_add =
+        _proto_TypeTraits::Add(id.number(), _field_type, &_extensions_);
+
+    return to_add;
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline void AddExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id,
+      typename _proto_TypeTraits::Repeated::ConstType value) {
+    _proto_TypeTraits::Add(id.number(), _field_type, _is_packed, value,
+                           &_extensions_);
+
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline const typename _proto_TypeTraits::Repeated::RepeatedFieldType&
+  GetRepeatedExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) const {
+
+    return _proto_TypeTraits::GetRepeated(id.number(), _extensions_);
+  }
+
+  template <typename _proto_TypeTraits,
+            ::PROTOBUF_NAMESPACE_ID::internal::FieldType _field_type,
+            bool _is_packed>
+  inline typename _proto_TypeTraits::Repeated::RepeatedFieldType*
+  MutableRepeatedExtension(
+      const ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier<
+          NumericTypeParametersProto, _proto_TypeTraits, _field_type, _is_packed>& id) {
+
+    return _proto_TypeTraits::MutableRepeated(id.number(), _field_type,
+                                              _is_packed, &_extensions_);
+  }
+
   void clear_precision_param();
   PrecisionParamCase precision_param_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.NumericTypeParametersProto)
@@ -700,6 +890,8 @@ class NumericTypeParametersProto final :
 
   inline bool has_precision_param() const;
   inline void clear_has_precision_param();
+
+  ::PROTOBUF_NAMESPACE_ID::internal::ExtensionSet _extensions_;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;

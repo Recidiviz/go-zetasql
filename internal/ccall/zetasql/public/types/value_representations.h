@@ -19,8 +19,10 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <variant>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/public/interval_value.h"
@@ -56,22 +58,19 @@ namespace internal {  // For ZetaSQL internal use only
 // associated with a ProtoRep (specifically, already deserialized fields).
 class ProtoRep : public zetasql_base::SimpleReferenceCounted {
  public:
-  ProtoRep(const ProtoType* type, absl::Cord value)
-      : type_(type), value_(std::move(value)) {
+  ProtoRep(const ProtoType* type, absl::Cord value) : value_(std::move(value)) {
     ZETASQL_CHECK(type != nullptr);
   }
 
   ProtoRep(const ProtoRep&) = delete;
   ProtoRep& operator=(const ProtoRep&) = delete;
 
-  const ProtoType* type() const { return type_; }
   const absl::Cord& value() const { return value_; }
   uint64_t physical_byte_size() const {
     return sizeof(ProtoRep) + value_.size();
   }
 
  private:
-  const ProtoType* type_;
   const absl::Cord value_;
 };
 
@@ -179,41 +178,41 @@ class JSONRef : public zetasql_base::SimpleReferenceCounted {
 
   // Returns the json document representation if the value is represented
   // through the document object. Otherwrise, returns null.
-  absl::optional<JSONValueConstRef> document() {
-    JSONValue* document = absl::get_if<JSONValue>(&value_);
+  std::optional<JSONValueConstRef> document() {
+    JSONValue* document = std::get_if<JSONValue>(&value_);
     if (document != nullptr) {
       return document->GetConstRef();
     }
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   // Returns the unparsed string representation if the value is represented
   // through an unparsed string. Otherwrise, returns null. There is no guarantee
   // that the unparsed string is a valid JSON document.
   const std::string* unparsed_string() const {
-    return absl::get_if<std::string>(&value_);
+    return std::get_if<std::string>(&value_);
   }
 
   uint64_t physical_byte_size() const {
-    if (absl::holds_alternative<std::string>(value_)) {
-      return sizeof(JSONRef) + absl::get<std::string>(value_).size();
+    if (std::holds_alternative<std::string>(value_)) {
+      return sizeof(JSONRef) + std::get<std::string>(value_).size();
     } else {
       return sizeof(JSONRef) +
-             absl::get<JSONValue>(value_).GetConstRef().SpaceUsed();
+             std::get<JSONValue>(value_).GetConstRef().SpaceUsed();
     }
   }
 
   // Returns the string representation of the JSONValue.
   std::string ToString() const {
-    if (absl::holds_alternative<std::string>(value_)) {
-      return absl::get<std::string>(value_);
+    if (std::holds_alternative<std::string>(value_)) {
+      return std::get<std::string>(value_);
     } else {
-      return absl::get<JSONValue>(value_).GetConstRef().ToString();
+      return std::get<JSONValue>(value_).GetConstRef().ToString();
     }
   }
 
  private:
-  absl::variant<JSONValue, std::string> value_;
+  std::variant<JSONValue, std::string> value_;
 };
 
 }  // namespace internal

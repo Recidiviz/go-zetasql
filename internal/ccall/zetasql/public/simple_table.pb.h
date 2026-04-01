@@ -703,6 +703,7 @@ class SimpleColumnProto final :
     kTypeFieldNumber = 2,
     kAnnotationMapFieldNumber = 5,
     kIsPseudoColumnFieldNumber = 3,
+    kCanUpdateUnwritableToDefaultFieldNumber = 6,
     kIsWritableColumnFieldNumber = 4,
   };
   // optional string name = 1;
@@ -772,6 +773,19 @@ class SimpleColumnProto final :
   void _internal_set_is_pseudo_column(bool value);
   public:
 
+  // optional bool can_update_unwritable_to_default = 6;
+  bool has_can_update_unwritable_to_default() const;
+  private:
+  bool _internal_has_can_update_unwritable_to_default() const;
+  public:
+  void clear_can_update_unwritable_to_default();
+  bool can_update_unwritable_to_default() const;
+  void set_can_update_unwritable_to_default(bool value);
+  private:
+  bool _internal_can_update_unwritable_to_default() const;
+  void _internal_set_can_update_unwritable_to_default(bool value);
+  public:
+
   // optional bool is_writable_column = 4 [default = true];
   bool has_is_writable_column() const;
   private:
@@ -798,6 +812,7 @@ class SimpleColumnProto final :
   ::zetasql::TypeProto* type_;
   ::zetasql::AnnotationMapProto* annotation_map_;
   bool is_pseudo_column_;
+  bool can_update_unwritable_to_default_;
   bool is_writable_column_;
   friend struct ::TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto;
 };
@@ -1578,7 +1593,7 @@ inline void SimpleColumnProto::set_is_pseudo_column(bool value) {
 
 // optional bool is_writable_column = 4 [default = true];
 inline bool SimpleColumnProto::_internal_has_is_writable_column() const {
-  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
 inline bool SimpleColumnProto::has_is_writable_column() const {
@@ -1586,7 +1601,7 @@ inline bool SimpleColumnProto::has_is_writable_column() const {
 }
 inline void SimpleColumnProto::clear_is_writable_column() {
   is_writable_column_ = true;
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline bool SimpleColumnProto::_internal_is_writable_column() const {
   return is_writable_column_;
@@ -1596,12 +1611,40 @@ inline bool SimpleColumnProto::is_writable_column() const {
   return _internal_is_writable_column();
 }
 inline void SimpleColumnProto::_internal_set_is_writable_column(bool value) {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
   is_writable_column_ = value;
 }
 inline void SimpleColumnProto::set_is_writable_column(bool value) {
   _internal_set_is_writable_column(value);
   // @@protoc_insertion_point(field_set:zetasql.SimpleColumnProto.is_writable_column)
+}
+
+// optional bool can_update_unwritable_to_default = 6;
+inline bool SimpleColumnProto::_internal_has_can_update_unwritable_to_default() const {
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline bool SimpleColumnProto::has_can_update_unwritable_to_default() const {
+  return _internal_has_can_update_unwritable_to_default();
+}
+inline void SimpleColumnProto::clear_can_update_unwritable_to_default() {
+  can_update_unwritable_to_default_ = false;
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline bool SimpleColumnProto::_internal_can_update_unwritable_to_default() const {
+  return can_update_unwritable_to_default_;
+}
+inline bool SimpleColumnProto::can_update_unwritable_to_default() const {
+  // @@protoc_insertion_point(field_get:zetasql.SimpleColumnProto.can_update_unwritable_to_default)
+  return _internal_can_update_unwritable_to_default();
+}
+inline void SimpleColumnProto::_internal_set_can_update_unwritable_to_default(bool value) {
+  _has_bits_[0] |= 0x00000010u;
+  can_update_unwritable_to_default_ = value;
+}
+inline void SimpleColumnProto::set_can_update_unwritable_to_default(bool value) {
+  _internal_set_can_update_unwritable_to_default(value);
+  // @@protoc_insertion_point(field_set:zetasql.SimpleColumnProto.can_update_unwritable_to_default)
 }
 
 // optional .zetasql.AnnotationMapProto annotation_map = 5;

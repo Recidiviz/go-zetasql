@@ -26,6 +26,7 @@
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/type.pb.h"
 #include "zetasql/public/types/type.h"
+#include "zetasql/public/types/type_modifiers.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/value_content.h"
 #include "absl/hash/hash.h"
@@ -150,19 +151,28 @@ std::string ArrayType::TypeName(ProductMode mode) const {
   return absl::StrCat("ARRAY<", element_type_->TypeName(mode), ">");
 }
 
-absl::StatusOr<std::string> ArrayType::TypeNameWithParameters(
-    const TypeParameters& type_params, ProductMode mode) const {
-  if (type_params.IsEmpty()) {
-    return TypeName(mode);
-  }
-  if (type_params.num_children() != 1) {
+absl::StatusOr<std::string> ArrayType::TypeNameWithModifiers(
+    const TypeModifiers& type_modifiers, ProductMode mode) const {
+  const TypeParameters& type_params = type_modifiers.type_parameters();
+  if (!type_params.IsEmpty() && type_params.num_children() != 1) {
     return MakeSqlError()
            << "Input type parameter does not correspond to ArrayType";
   }
+
+  const Collation& collation = type_modifiers.collation();
+  if (!collation.HasCompatibleStructure(this)) {
+    return MakeSqlError() << "Input collation " << collation.DebugString()
+                          << " is not compatible with type " << DebugString();
+  }
+
   ZETASQL_ASSIGN_OR_RETURN(
-      std::string element_parameters,
-      element_type_->TypeNameWithParameters(type_params.child(0), mode));
-  return absl::StrCat("ARRAY<", element_parameters, ">");
+      std::string element_type_name,
+      element_type_->TypeNameWithModifiers(
+          TypeModifiers::MakeTypeModifiers(
+              type_params.IsEmpty() ? TypeParameters() : type_params.child(0),
+              collation.Empty() ? Collation() : collation.child(0)),
+          mode));
+  return absl::StrCat("ARRAY<", element_type_name, ">");
 }
 
 absl::StatusOr<TypeParameters> ArrayType::ValidateAndResolveTypeParameters(
@@ -179,7 +189,6 @@ absl::Status ArrayType::ValidateResolvedTypeParameters(
   if (type_parameters.IsEmpty()) {
     return absl::OkStatus();
   }
-  ZETASQL_RET_CHECK(type_parameters.IsStructOrArrayParameters());
   ZETASQL_RET_CHECK_EQ(type_parameters.num_children(), 1);
   return element_type_->ValidateResolvedTypeParameters(type_parameters.child(0),
                                                        mode);

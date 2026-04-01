@@ -37,6 +37,7 @@ constexpr LanguageOptionsProto::LanguageOptionsProto(
   , supported_statement_kinds_()
   , supported_generic_entity_types_()
   , reserved_keywords_()
+  , supported_generic_sub_entity_types_()
   , name_resolution_mode_(0)
 
   , product_mode_(0)
@@ -130,6 +131,7 @@ constexpr AnalyzerOptionsProto::AnalyzerOptionsProto(
   , target_column_types_()
   , enabled_rewrites_()
   , default_timezone_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , default_anon_function_report_format_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , language_options_(nullptr)
   , in_scope_expression_column_(nullptr)
   , allowed_hints_and_options_(nullptr)
@@ -145,7 +147,8 @@ constexpr AnalyzerOptionsProto::AnalyzerOptionsProto(
   , preserve_column_aliases_(false)
   , parse_location_record_type_(0)
 
-  , preserve_unnecessary_cast_(false){}
+  , preserve_unnecessary_cast_(false)
+  , default_anon_kappa_value_(int64_t{0}){}
 struct AnalyzerOptionsProtoDefaultTypeInternal {
   constexpr AnalyzerOptionsProtoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -186,9 +189,11 @@ const uint32_t TableStruct_zetasql_2fproto_2foptions_2eproto::offsets[] PROTOBUF
   PROTOBUF_FIELD_OFFSET(::zetasql::LanguageOptionsProto, supported_statement_kinds_),
   PROTOBUF_FIELD_OFFSET(::zetasql::LanguageOptionsProto, supported_generic_entity_types_),
   PROTOBUF_FIELD_OFFSET(::zetasql::LanguageOptionsProto, reserved_keywords_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageOptionsProto, supported_generic_sub_entity_types_),
   0,
   1,
   2,
+  ~0u,
   ~0u,
   ~0u,
   ~0u,
@@ -277,36 +282,40 @@ const uint32_t TableStruct_zetasql_2fproto_2foptions_2eproto::offsets[] PROTOBUF
   PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, enabled_rewrites_),
   PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, parse_location_record_type_),
   PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, preserve_unnecessary_cast_),
-  1,
-  ~0u,
-  ~0u,
-  ~0u,
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, default_anon_function_report_format_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, default_anon_kappa_value_),
   2,
   ~0u,
-  4,
+  ~0u,
+  ~0u,
+  3,
+  ~0u,
+  5,
   0,
-  7,
   8,
   9,
-  5,
-  3,
-  6,
   10,
-  ~0u,
-  ~0u,
-  ~0u,
+  6,
+  4,
+  7,
   11,
+  ~0u,
+  ~0u,
+  ~0u,
   12,
+  13,
+  1,
+  14,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, -1, sizeof(::zetasql::ZetaSQLBuiltinFunctionOptionsProto)},
-  { 12, 25, -1, sizeof(::zetasql::LanguageOptionsProto)},
-  { 32, 42, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_HintProto)},
-  { 46, 54, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_OptionProto)},
-  { 56, 66, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto)},
-  { 70, 78, -1, sizeof(::zetasql::AnalyzerOptionsProto_QueryParameterProto)},
-  { 80, 88, -1, sizeof(::zetasql::AnalyzerOptionsProto_SystemVariableProto)},
-  { 90, 116, -1, sizeof(::zetasql::AnalyzerOptionsProto)},
+  { 12, 26, -1, sizeof(::zetasql::LanguageOptionsProto)},
+  { 34, 44, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_HintProto)},
+  { 48, 56, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_OptionProto)},
+  { 58, 68, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto)},
+  { 72, 80, -1, sizeof(::zetasql::AnalyzerOptionsProto_QueryParameterProto)},
+  { 82, 90, -1, sizeof(::zetasql::AnalyzerOptionsProto_SystemVariableProto)},
+  { 92, 120, -1, sizeof(::zetasql::AnalyzerOptionsProto)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -330,7 +339,7 @@ const char descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto[] PROTOBU
   "\030\001 \001(\0132\035.zetasql.LanguageOptionsProto\022:\n"
   "\024include_function_ids\030\002 \003(\0162\034.zetasql.Fu"
   "nctionSignatureId\022:\n\024exclude_function_id"
-  "s\030\003 \003(\0162\034.zetasql.FunctionSignatureId\"\345\002"
+  "s\030\003 \003(\0162\034.zetasql.FunctionSignatureId\"\221\003"
   "\n\024LanguageOptionsProto\0229\n\024name_resolutio"
   "n_mode\030\002 \001(\0162\033.zetasql.NameResolutionMod"
   "e\022*\n\014product_mode\030\003 \001(\0162\024.zetasql.Produc"
@@ -339,52 +348,55 @@ const char descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto[] PROTOBU
   "etasql.LanguageFeature\022<\n\031supported_stat"
   "ement_kinds\030\006 \003(\0162\031.zetasql.ResolvedNode"
   "Kind\022&\n\036supported_generic_entity_types\030\007"
-  " \003(\t\022\031\n\021reserved_keywords\030\010 \003(\tJ\004\010\001\020\002\"\230\003"
-  "\n\033AllowedHintsAndOptionsProto\022 \n\030disallo"
-  "w_unknown_options\030\001 \001(\010\022-\n%disallow_unkn"
-  "own_hints_with_qualifier\030\002 \003(\t\022<\n\004hint\030\003"
-  " \003(\0132..zetasql.AllowedHintsAndOptionsPro"
-  "to.HintProto\022@\n\006option\030\004 \003(\01320.zetasql.A"
-  "llowedHintsAndOptionsProto.OptionProto\032i"
-  "\n\tHintProto\022\021\n\tqualifier\030\001 \001(\t\022\014\n\004name\030\002"
-  " \001(\t\022 \n\004type\030\003 \001(\0132\022.zetasql.TypeProto\022\031"
-  "\n\021allow_unqualified\030\004 \001(\010\032=\n\013OptionProto"
-  "\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.T"
-  "ypeProto\"\246\n\n\024AnalyzerOptionsProto\0227\n\020lan"
-  "guage_options\030\001 \001(\0132\035.zetasql.LanguageOp"
-  "tionsProto\022K\n\020query_parameters\030\002 \003(\01321.z"
-  "etasql.AnalyzerOptionsProto.QueryParamet"
-  "erProto\0227\n\033positional_query_parameters\030\014"
-  " \003(\0132\022.zetasql.TypeProto\022M\n\022expression_c"
-  "olumns\030\003 \003(\01321.zetasql.AnalyzerOptionsPr"
-  "oto.QueryParameterProto\022U\n\032in_scope_expr"
-  "ession_column\030\004 \001(\01321.zetasql.AnalyzerOp"
-  "tionsProto.QueryParameterProto\022M\n\022ddl_ps"
-  "eudo_columns\030\017 \003(\01321.zetasql.AnalyzerOpt"
-  "ionsProto.QueryParameterProto\0225\n\022error_m"
-  "essage_mode\030\006 \001(\0162\031.zetasql.ErrorMessage"
-  "Mode\022\030\n\020default_timezone\030\007 \001(\t\0223\n+create"
-  "_new_column_for_each_projected_output\030\024 "
-  "\001(\010\022\034\n\024prune_unused_columns\030\t \001(\010\022#\n\033all"
-  "ow_undeclared_parameters\030\n \001(\010\022.\n\016parame"
-  "ter_mode\030\r \001(\0162\026.zetasql.ParameterMode\022G"
-  "\n\031allowed_hints_and_options\030\013 \001(\0132$.zeta"
-  "sql.AllowedHintsAndOptionsProto\0224\n\021state"
-  "ment_context\030\016 \001(\0162\031.zetasql.StatementCo"
-  "ntext\022\037\n\027preserve_column_aliases\030\021 \001(\010\022K"
-  "\n\020system_variables\030\022 \003(\01321.zetasql.Analy"
-  "zerOptionsProto.SystemVariableProto\022/\n\023t"
-  "arget_column_types\030\023 \003(\0132\022.zetasql.TypeP"
-  "roto\0225\n\020enabled_rewrites\030\025 \003(\0162\033.zetasql"
-  ".ResolvedASTRewrite\022D\n\032parse_location_re"
-  "cord_type\030\027 \001(\0162 .zetasql.ParseLocationR"
-  "ecordType\022!\n\031preserve_unnecessary_cast\030\030"
-  " \001(\010\032E\n\023QueryParameterProto\022\014\n\004name\030\001 \001("
-  "\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto\032J\n\023S"
-  "ystemVariableProto\022\021\n\tname_path\030\001 \003(\t\022 \n"
-  "\004type\030\002 \001(\0132\022.zetasql.TypeProtoJ\004\010\010\020\tJ\004\010"
-  "\026\020\027J\004\010\020\020\021B)\n\022com.google.zetasqlB\023ZetaSQL"
-  "OptionsProto"
+  " \003(\t\022\031\n\021reserved_keywords\030\010 \003(\t\022*\n\"suppo"
+  "rted_generic_sub_entity_types\030\t \003(\tJ\004\010\001\020"
+  "\002\"\230\003\n\033AllowedHintsAndOptionsProto\022 \n\030dis"
+  "allow_unknown_options\030\001 \001(\010\022-\n%disallow_"
+  "unknown_hints_with_qualifier\030\002 \003(\t\022<\n\004hi"
+  "nt\030\003 \003(\0132..zetasql.AllowedHintsAndOption"
+  "sProto.HintProto\022@\n\006option\030\004 \003(\01320.zetas"
+  "ql.AllowedHintsAndOptionsProto.OptionPro"
+  "to\032i\n\tHintProto\022\021\n\tqualifier\030\001 \001(\t\022\014\n\004na"
+  "me\030\002 \001(\t\022 \n\004type\030\003 \001(\0132\022.zetasql.TypePro"
+  "to\022\031\n\021allow_unqualified\030\004 \001(\010\032=\n\013OptionP"
+  "roto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zetas"
+  "ql.TypeProto\"\365\n\n\024AnalyzerOptionsProto\0227\n"
+  "\020language_options\030\001 \001(\0132\035.zetasql.Langua"
+  "geOptionsProto\022K\n\020query_parameters\030\002 \003(\013"
+  "21.zetasql.AnalyzerOptionsProto.QueryPar"
+  "ameterProto\0227\n\033positional_query_paramete"
+  "rs\030\014 \003(\0132\022.zetasql.TypeProto\022M\n\022expressi"
+  "on_columns\030\003 \003(\01321.zetasql.AnalyzerOptio"
+  "nsProto.QueryParameterProto\022U\n\032in_scope_"
+  "expression_column\030\004 \001(\01321.zetasql.Analyz"
+  "erOptionsProto.QueryParameterProto\022M\n\022dd"
+  "l_pseudo_columns\030\017 \003(\01321.zetasql.Analyze"
+  "rOptionsProto.QueryParameterProto\0225\n\022err"
+  "or_message_mode\030\006 \001(\0162\031.zetasql.ErrorMes"
+  "sageMode\022\030\n\020default_timezone\030\007 \001(\t\0223\n+cr"
+  "eate_new_column_for_each_projected_outpu"
+  "t\030\024 \001(\010\022\034\n\024prune_unused_columns\030\t \001(\010\022#\n"
+  "\033allow_undeclared_parameters\030\n \001(\010\022.\n\016pa"
+  "rameter_mode\030\r \001(\0162\026.zetasql.ParameterMo"
+  "de\022G\n\031allowed_hints_and_options\030\013 \001(\0132$."
+  "zetasql.AllowedHintsAndOptionsProto\0224\n\021s"
+  "tatement_context\030\016 \001(\0162\031.zetasql.Stateme"
+  "ntContext\022\037\n\027preserve_column_aliases\030\021 \001"
+  "(\010\022K\n\020system_variables\030\022 \003(\01321.zetasql.A"
+  "nalyzerOptionsProto.SystemVariableProto\022"
+  "/\n\023target_column_types\030\023 \003(\0132\022.zetasql.T"
+  "ypeProto\0225\n\020enabled_rewrites\030\025 \003(\0162\033.zet"
+  "asql.ResolvedASTRewrite\022D\n\032parse_locatio"
+  "n_record_type\030\027 \001(\0162 .zetasql.ParseLocat"
+  "ionRecordType\022!\n\031preserve_unnecessary_ca"
+  "st\030\030 \001(\010\022+\n#default_anon_function_report"
+  "_format\030\031 \001(\t\022 \n\030default_anon_kappa_valu"
+  "e\030\032 \001(\003\032E\n\023QueryParameterProto\022\014\n\004name\030\001"
+  " \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto\032J"
+  "\n\023SystemVariableProto\022\021\n\tname_path\030\001 \003(\t"
+  "\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProtoJ\004\010\010\020\t"
+  "J\004\010\026\020\027J\004\010\020\020\021B)\n\022com.google.zetasqlB\023Zeta"
+  "SQLOptionsProto"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fproto_2foptions_2eproto_deps[4] = {
   &::descriptor_table_zetasql_2fpublic_2fbuiltin_5ffunction_2eproto,
@@ -394,7 +406,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fproto_2foptions_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fproto_2foptions_2eproto = {
-  false, false, 2532, descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto, "zetasql/proto/options.proto", 
+  false, false, 2655, descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto, "zetasql/proto/options.proto", 
   &descriptor_table_zetasql_2fproto_2foptions_2eproto_once, descriptor_table_zetasql_2fproto_2foptions_2eproto_deps, 4, 8,
   schemas, file_default_instances, TableStruct_zetasql_2fproto_2foptions_2eproto::offsets,
   file_level_metadata_zetasql_2fproto_2foptions_2eproto, file_level_enum_descriptors_zetasql_2fproto_2foptions_2eproto, file_level_service_descriptors_zetasql_2fproto_2foptions_2eproto,
@@ -722,7 +734,8 @@ LanguageOptionsProto::LanguageOptionsProto(::PROTOBUF_NAMESPACE_ID::Arena* arena
   enabled_language_features_(arena),
   supported_statement_kinds_(arena),
   supported_generic_entity_types_(arena),
-  reserved_keywords_(arena) {
+  reserved_keywords_(arena),
+  supported_generic_sub_entity_types_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -735,7 +748,8 @@ LanguageOptionsProto::LanguageOptionsProto(const LanguageOptionsProto& from)
       enabled_language_features_(from.enabled_language_features_),
       supported_statement_kinds_(from.supported_statement_kinds_),
       supported_generic_entity_types_(from.supported_generic_entity_types_),
-      reserved_keywords_(from.reserved_keywords_) {
+      reserved_keywords_(from.reserved_keywords_),
+      supported_generic_sub_entity_types_(from.supported_generic_sub_entity_types_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&name_resolution_mode_, &from.name_resolution_mode_,
     static_cast<size_t>(reinterpret_cast<char*>(&error_on_deprecated_syntax_) -
@@ -781,6 +795,7 @@ void LanguageOptionsProto::Clear() {
   supported_statement_kinds_.Clear();
   supported_generic_entity_types_.Clear();
   reserved_keywords_.Clear();
+  supported_generic_sub_entity_types_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     ::memset(&name_resolution_mode_, 0, static_cast<size_t>(
@@ -909,6 +924,23 @@ const char* LanguageOptionsProto::_InternalParse(const char* ptr, ::PROTOBUF_NAM
         } else
           goto handle_unusual;
         continue;
+      // repeated string supported_generic_sub_entity_types = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_supported_generic_sub_entity_types();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            #ifndef NDEBUG
+            ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.LanguageOptionsProto.supported_generic_sub_entity_types");
+            #endif  // !NDEBUG
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -994,6 +1026,16 @@ uint8_t* LanguageOptionsProto::_InternalSerialize(
     target = stream->WriteString(8, s, target);
   }
 
+  // repeated string supported_generic_sub_entity_types = 9;
+  for (int i = 0, n = this->_internal_supported_generic_sub_entity_types_size(); i < n; i++) {
+    const auto& s = this->_internal_supported_generic_sub_entity_types(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "zetasql.LanguageOptionsProto.supported_generic_sub_entity_types");
+    target = stream->WriteString(9, s, target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1046,6 +1088,14 @@ size_t LanguageOptionsProto::ByteSizeLong() const {
       reserved_keywords_.Get(i));
   }
 
+  // repeated string supported_generic_sub_entity_types = 9;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(supported_generic_sub_entity_types_.size());
+  for (int i = 0, n = supported_generic_sub_entity_types_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      supported_generic_sub_entity_types_.Get(i));
+  }
+
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional .zetasql.NameResolutionMode name_resolution_mode = 2;
@@ -1092,6 +1142,7 @@ void LanguageOptionsProto::MergeFrom(const LanguageOptionsProto& from) {
   supported_statement_kinds_.MergeFrom(from.supported_statement_kinds_);
   supported_generic_entity_types_.MergeFrom(from.supported_generic_entity_types_);
   reserved_keywords_.MergeFrom(from.reserved_keywords_);
+  supported_generic_sub_entity_types_.MergeFrom(from.supported_generic_sub_entity_types_);
   cached_has_bits = from._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
@@ -1127,6 +1178,7 @@ void LanguageOptionsProto::InternalSwap(LanguageOptionsProto* other) {
   supported_statement_kinds_.InternalSwap(&other->supported_statement_kinds_);
   supported_generic_entity_types_.InternalSwap(&other->supported_generic_entity_types_);
   reserved_keywords_.InternalSwap(&other->reserved_keywords_);
+  supported_generic_sub_entity_types_.InternalSwap(&other->supported_generic_sub_entity_types_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(LanguageOptionsProto, error_on_deprecated_syntax_)
       + sizeof(LanguageOptionsProto::error_on_deprecated_syntax_)
@@ -2632,45 +2684,51 @@ class AnalyzerOptionsProto::_Internal {
   using HasBits = decltype(std::declval<AnalyzerOptionsProto>()._has_bits_);
   static const ::zetasql::LanguageOptionsProto& language_options(const AnalyzerOptionsProto* msg);
   static void set_has_language_options(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
+    (*has_bits)[0] |= 4u;
   }
   static const ::zetasql::AnalyzerOptionsProto_QueryParameterProto& in_scope_expression_column(const AnalyzerOptionsProto* msg);
   static void set_has_in_scope_expression_column(HasBits* has_bits) {
-    (*has_bits)[0] |= 4u;
+    (*has_bits)[0] |= 8u;
   }
   static void set_has_error_message_mode(HasBits* has_bits) {
-    (*has_bits)[0] |= 16u;
+    (*has_bits)[0] |= 32u;
   }
   static void set_has_default_timezone(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
   static void set_has_create_new_column_for_each_projected_output(HasBits* has_bits) {
-    (*has_bits)[0] |= 128u;
-  }
-  static void set_has_prune_unused_columns(HasBits* has_bits) {
     (*has_bits)[0] |= 256u;
   }
-  static void set_has_allow_undeclared_parameters(HasBits* has_bits) {
+  static void set_has_prune_unused_columns(HasBits* has_bits) {
     (*has_bits)[0] |= 512u;
   }
+  static void set_has_allow_undeclared_parameters(HasBits* has_bits) {
+    (*has_bits)[0] |= 1024u;
+  }
   static void set_has_parameter_mode(HasBits* has_bits) {
-    (*has_bits)[0] |= 32u;
+    (*has_bits)[0] |= 64u;
   }
   static const ::zetasql::AllowedHintsAndOptionsProto& allowed_hints_and_options(const AnalyzerOptionsProto* msg);
   static void set_has_allowed_hints_and_options(HasBits* has_bits) {
-    (*has_bits)[0] |= 8u;
+    (*has_bits)[0] |= 16u;
   }
   static void set_has_statement_context(HasBits* has_bits) {
-    (*has_bits)[0] |= 64u;
+    (*has_bits)[0] |= 128u;
   }
   static void set_has_preserve_column_aliases(HasBits* has_bits) {
-    (*has_bits)[0] |= 1024u;
-  }
-  static void set_has_parse_location_record_type(HasBits* has_bits) {
     (*has_bits)[0] |= 2048u;
   }
-  static void set_has_preserve_unnecessary_cast(HasBits* has_bits) {
+  static void set_has_parse_location_record_type(HasBits* has_bits) {
     (*has_bits)[0] |= 4096u;
+  }
+  static void set_has_preserve_unnecessary_cast(HasBits* has_bits) {
+    (*has_bits)[0] |= 8192u;
+  }
+  static void set_has_default_anon_function_report_format(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_default_anon_kappa_value(HasBits* has_bits) {
+    (*has_bits)[0] |= 16384u;
   }
 };
 
@@ -2727,6 +2785,14 @@ AnalyzerOptionsProto::AnalyzerOptionsProto(const AnalyzerOptionsProto& from)
     default_timezone_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_default_timezone(), 
       GetArenaForAllocation());
   }
+  default_anon_function_report_format_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    default_anon_function_report_format_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_default_anon_function_report_format()) {
+    default_anon_function_report_format_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_default_anon_function_report_format(), 
+      GetArenaForAllocation());
+  }
   if (from._internal_has_language_options()) {
     language_options_ = new ::zetasql::LanguageOptionsProto(*from.language_options_);
   } else {
@@ -2743,8 +2809,8 @@ AnalyzerOptionsProto::AnalyzerOptionsProto(const AnalyzerOptionsProto& from)
     allowed_hints_and_options_ = nullptr;
   }
   ::memcpy(&error_message_mode_, &from.error_message_mode_,
-    static_cast<size_t>(reinterpret_cast<char*>(&preserve_unnecessary_cast_) -
-    reinterpret_cast<char*>(&error_message_mode_)) + sizeof(preserve_unnecessary_cast_));
+    static_cast<size_t>(reinterpret_cast<char*>(&default_anon_kappa_value_) -
+    reinterpret_cast<char*>(&error_message_mode_)) + sizeof(default_anon_kappa_value_));
   // @@protoc_insertion_point(copy_constructor:zetasql.AnalyzerOptionsProto)
 }
 
@@ -2753,10 +2819,14 @@ default_timezone_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyS
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   default_timezone_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+default_anon_function_report_format_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  default_anon_function_report_format_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&language_options_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&preserve_unnecessary_cast_) -
-    reinterpret_cast<char*>(&language_options_)) + sizeof(preserve_unnecessary_cast_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&default_anon_kappa_value_) -
+    reinterpret_cast<char*>(&language_options_)) + sizeof(default_anon_kappa_value_));
 }
 
 AnalyzerOptionsProto::~AnalyzerOptionsProto() {
@@ -2769,6 +2839,7 @@ AnalyzerOptionsProto::~AnalyzerOptionsProto() {
 inline void AnalyzerOptionsProto::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   default_timezone_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  default_anon_function_report_format_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete language_options_;
   if (this != internal_default_instance()) delete in_scope_expression_column_;
   if (this != internal_default_instance()) delete allowed_hints_and_options_;
@@ -2798,32 +2869,35 @@ void AnalyzerOptionsProto::Clear() {
   target_column_types_.Clear();
   enabled_rewrites_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
       default_timezone_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
+      default_anon_function_report_format_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000004u) {
       GOOGLE_DCHECK(language_options_ != nullptr);
       language_options_->Clear();
     }
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000008u) {
       GOOGLE_DCHECK(in_scope_expression_column_ != nullptr);
       in_scope_expression_column_->Clear();
     }
-    if (cached_has_bits & 0x00000008u) {
+    if (cached_has_bits & 0x00000010u) {
       GOOGLE_DCHECK(allowed_hints_and_options_ != nullptr);
       allowed_hints_and_options_->Clear();
     }
   }
-  if (cached_has_bits & 0x000000f0u) {
+  if (cached_has_bits & 0x000000e0u) {
     ::memset(&error_message_mode_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&create_new_column_for_each_projected_output_) -
-        reinterpret_cast<char*>(&error_message_mode_)) + sizeof(create_new_column_for_each_projected_output_));
+        reinterpret_cast<char*>(&statement_context_) -
+        reinterpret_cast<char*>(&error_message_mode_)) + sizeof(statement_context_));
   }
-  if (cached_has_bits & 0x00001f00u) {
-    ::memset(&prune_unused_columns_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&preserve_unnecessary_cast_) -
-        reinterpret_cast<char*>(&prune_unused_columns_)) + sizeof(preserve_unnecessary_cast_));
+  if (cached_has_bits & 0x00007f00u) {
+    ::memset(&create_new_column_for_each_projected_output_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&default_anon_kappa_value_) -
+        reinterpret_cast<char*>(&create_new_column_for_each_projected_output_)) + sizeof(default_anon_kappa_value_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -3068,6 +3142,27 @@ const char* AnalyzerOptionsProto::_InternalParse(const char* ptr, ::PROTOBUF_NAM
         } else
           goto handle_unusual;
         continue;
+      // optional string default_anon_function_report_format = 25;
+      case 25:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 202)) {
+          auto str = _internal_mutable_default_anon_function_report_format();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.AnalyzerOptionsProto.default_anon_function_report_format");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional int64 default_anon_kappa_value = 26;
+      case 26:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 208)) {
+          _Internal::set_has_default_anon_kappa_value(&has_bits);
+          default_anon_kappa_value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -3100,7 +3195,7 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
 
   cached_has_bits = _has_bits_[0];
   // optional .zetasql.LanguageOptionsProto language_options = 1;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
@@ -3124,7 +3219,7 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional .zetasql.AnalyzerOptionsProto.QueryParameterProto in_scope_expression_column = 4;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
@@ -3132,7 +3227,7 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional .zetasql.ErrorMessageMode error_message_mode = 6;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
       6, this->_internal_error_message_mode(), target);
@@ -3149,19 +3244,19 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional bool prune_unused_columns = 9;
-  if (cached_has_bits & 0x00000100u) {
+  if (cached_has_bits & 0x00000200u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(9, this->_internal_prune_unused_columns(), target);
   }
 
   // optional bool allow_undeclared_parameters = 10;
-  if (cached_has_bits & 0x00000200u) {
+  if (cached_has_bits & 0x00000400u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(10, this->_internal_allow_undeclared_parameters(), target);
   }
 
   // optional .zetasql.AllowedHintsAndOptionsProto allowed_hints_and_options = 11;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
@@ -3177,14 +3272,14 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional .zetasql.ParameterMode parameter_mode = 13;
-  if (cached_has_bits & 0x00000020u) {
+  if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
       13, this->_internal_parameter_mode(), target);
   }
 
   // optional .zetasql.StatementContext statement_context = 14;
-  if (cached_has_bits & 0x00000040u) {
+  if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
       14, this->_internal_statement_context(), target);
@@ -3199,7 +3294,7 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional bool preserve_column_aliases = 17;
-  if (cached_has_bits & 0x00000400u) {
+  if (cached_has_bits & 0x00000800u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(17, this->_internal_preserve_column_aliases(), target);
   }
@@ -3221,7 +3316,7 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional bool create_new_column_for_each_projected_output = 20;
-  if (cached_has_bits & 0x00000080u) {
+  if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(20, this->_internal_create_new_column_for_each_projected_output(), target);
   }
@@ -3234,16 +3329,32 @@ uint8_t* AnalyzerOptionsProto::_InternalSerialize(
   }
 
   // optional .zetasql.ParseLocationRecordType parse_location_record_type = 23;
-  if (cached_has_bits & 0x00000800u) {
+  if (cached_has_bits & 0x00001000u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
       23, this->_internal_parse_location_record_type(), target);
   }
 
   // optional bool preserve_unnecessary_cast = 24;
-  if (cached_has_bits & 0x00001000u) {
+  if (cached_has_bits & 0x00002000u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(24, this->_internal_preserve_unnecessary_cast(), target);
+  }
+
+  // optional string default_anon_function_report_format = 25;
+  if (cached_has_bits & 0x00000002u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_default_anon_function_report_format().data(), static_cast<int>(this->_internal_default_anon_function_report_format().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "zetasql.AnalyzerOptionsProto.default_anon_function_report_format");
+    target = stream->WriteStringMaybeAliased(
+        25, this->_internal_default_anon_function_report_format(), target);
+  }
+
+  // optional int64 default_anon_kappa_value = 26;
+  if (cached_has_bits & 0x00004000u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(26, this->_internal_default_anon_kappa_value(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3323,76 +3434,90 @@ size_t AnalyzerOptionsProto::ByteSizeLong() const {
           this->_internal_default_timezone());
     }
 
-    // optional .zetasql.LanguageOptionsProto language_options = 1;
+    // optional string default_anon_function_report_format = 25;
     if (cached_has_bits & 0x00000002u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_default_anon_function_report_format());
+    }
+
+    // optional .zetasql.LanguageOptionsProto language_options = 1;
+    if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *language_options_);
     }
 
     // optional .zetasql.AnalyzerOptionsProto.QueryParameterProto in_scope_expression_column = 4;
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *in_scope_expression_column_);
     }
 
     // optional .zetasql.AllowedHintsAndOptionsProto allowed_hints_and_options = 11;
-    if (cached_has_bits & 0x00000008u) {
+    if (cached_has_bits & 0x00000010u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *allowed_hints_and_options_);
     }
 
     // optional .zetasql.ErrorMessageMode error_message_mode = 6;
-    if (cached_has_bits & 0x00000010u) {
+    if (cached_has_bits & 0x00000020u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_error_message_mode());
     }
 
     // optional .zetasql.ParameterMode parameter_mode = 13;
-    if (cached_has_bits & 0x00000020u) {
+    if (cached_has_bits & 0x00000040u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_parameter_mode());
     }
 
     // optional .zetasql.StatementContext statement_context = 14;
-    if (cached_has_bits & 0x00000040u) {
+    if (cached_has_bits & 0x00000080u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_statement_context());
     }
 
+  }
+  if (cached_has_bits & 0x00007f00u) {
     // optional bool create_new_column_for_each_projected_output = 20;
-    if (cached_has_bits & 0x00000080u) {
+    if (cached_has_bits & 0x00000100u) {
       total_size += 2 + 1;
     }
 
-  }
-  if (cached_has_bits & 0x00001f00u) {
     // optional bool prune_unused_columns = 9;
-    if (cached_has_bits & 0x00000100u) {
-      total_size += 1 + 1;
-    }
-
-    // optional bool allow_undeclared_parameters = 10;
     if (cached_has_bits & 0x00000200u) {
       total_size += 1 + 1;
     }
 
-    // optional bool preserve_column_aliases = 17;
+    // optional bool allow_undeclared_parameters = 10;
     if (cached_has_bits & 0x00000400u) {
+      total_size += 1 + 1;
+    }
+
+    // optional bool preserve_column_aliases = 17;
+    if (cached_has_bits & 0x00000800u) {
       total_size += 2 + 1;
     }
 
     // optional .zetasql.ParseLocationRecordType parse_location_record_type = 23;
-    if (cached_has_bits & 0x00000800u) {
+    if (cached_has_bits & 0x00001000u) {
       total_size += 2 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_parse_location_record_type());
     }
 
     // optional bool preserve_unnecessary_cast = 24;
-    if (cached_has_bits & 0x00001000u) {
+    if (cached_has_bits & 0x00002000u) {
       total_size += 2 + 1;
+    }
+
+    // optional int64 default_anon_kappa_value = 26;
+    if (cached_has_bits & 0x00004000u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
+          this->_internal_default_anon_kappa_value());
     }
 
   }
@@ -3431,43 +3556,49 @@ void AnalyzerOptionsProto::MergeFrom(const AnalyzerOptionsProto& from) {
       _internal_set_default_timezone(from._internal_default_timezone());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_language_options()->::zetasql::LanguageOptionsProto::MergeFrom(from._internal_language_options());
+      _internal_set_default_anon_function_report_format(from._internal_default_anon_function_report_format());
     }
     if (cached_has_bits & 0x00000004u) {
-      _internal_mutable_in_scope_expression_column()->::zetasql::AnalyzerOptionsProto_QueryParameterProto::MergeFrom(from._internal_in_scope_expression_column());
+      _internal_mutable_language_options()->::zetasql::LanguageOptionsProto::MergeFrom(from._internal_language_options());
     }
     if (cached_has_bits & 0x00000008u) {
-      _internal_mutable_allowed_hints_and_options()->::zetasql::AllowedHintsAndOptionsProto::MergeFrom(from._internal_allowed_hints_and_options());
+      _internal_mutable_in_scope_expression_column()->::zetasql::AnalyzerOptionsProto_QueryParameterProto::MergeFrom(from._internal_in_scope_expression_column());
     }
     if (cached_has_bits & 0x00000010u) {
-      error_message_mode_ = from.error_message_mode_;
+      _internal_mutable_allowed_hints_and_options()->::zetasql::AllowedHintsAndOptionsProto::MergeFrom(from._internal_allowed_hints_and_options());
     }
     if (cached_has_bits & 0x00000020u) {
-      parameter_mode_ = from.parameter_mode_;
+      error_message_mode_ = from.error_message_mode_;
     }
     if (cached_has_bits & 0x00000040u) {
-      statement_context_ = from.statement_context_;
+      parameter_mode_ = from.parameter_mode_;
     }
     if (cached_has_bits & 0x00000080u) {
-      create_new_column_for_each_projected_output_ = from.create_new_column_for_each_projected_output_;
+      statement_context_ = from.statement_context_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
-  if (cached_has_bits & 0x00001f00u) {
+  if (cached_has_bits & 0x00007f00u) {
     if (cached_has_bits & 0x00000100u) {
-      prune_unused_columns_ = from.prune_unused_columns_;
+      create_new_column_for_each_projected_output_ = from.create_new_column_for_each_projected_output_;
     }
     if (cached_has_bits & 0x00000200u) {
-      allow_undeclared_parameters_ = from.allow_undeclared_parameters_;
+      prune_unused_columns_ = from.prune_unused_columns_;
     }
     if (cached_has_bits & 0x00000400u) {
-      preserve_column_aliases_ = from.preserve_column_aliases_;
+      allow_undeclared_parameters_ = from.allow_undeclared_parameters_;
     }
     if (cached_has_bits & 0x00000800u) {
-      parse_location_record_type_ = from.parse_location_record_type_;
+      preserve_column_aliases_ = from.preserve_column_aliases_;
     }
     if (cached_has_bits & 0x00001000u) {
+      parse_location_record_type_ = from.parse_location_record_type_;
+    }
+    if (cached_has_bits & 0x00002000u) {
       preserve_unnecessary_cast_ = from.preserve_unnecessary_cast_;
+    }
+    if (cached_has_bits & 0x00004000u) {
+      default_anon_kappa_value_ = from.default_anon_kappa_value_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -3521,9 +3652,14 @@ void AnalyzerOptionsProto::InternalSwap(AnalyzerOptionsProto* other) {
       &default_timezone_, lhs_arena,
       &other->default_timezone_, rhs_arena
   );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &default_anon_function_report_format_, lhs_arena,
+      &other->default_anon_function_report_format_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AnalyzerOptionsProto, preserve_unnecessary_cast_)
-      + sizeof(AnalyzerOptionsProto::preserve_unnecessary_cast_)
+      PROTOBUF_FIELD_OFFSET(AnalyzerOptionsProto, default_anon_kappa_value_)
+      + sizeof(AnalyzerOptionsProto::default_anon_kappa_value_)
       - PROTOBUF_FIELD_OFFSET(AnalyzerOptionsProto, language_options_)>(
           reinterpret_cast<char*>(&language_options_),
           reinterpret_cast<char*>(&other->language_options_));

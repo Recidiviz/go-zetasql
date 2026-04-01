@@ -50,6 +50,17 @@ go get github.com/goccy/go-zetasql
 
 The first time you run it, it takes time to build all the ZetaSQL code used by go-zetasql.
 
+# Editor Tips
+
+Opening this repository in VS Code or Cursor can be expensive because the Go extension loads a large CGO-backed package graph.
+
+- Open `go-zetasql.code-workspace` when you only need this repository. This avoids indexing sibling repositories in the same window.
+- The repository includes `.vscode/settings.json` with conservative Go extension defaults for this module:
+  - disables build, lint, and vet on save
+  - reduces `gopls` background work
+  - excludes large vendored C++ trees from search and file watching
+- If you still see high memory use, disable the Go extension for this workspace when you are only reading generated binding code.
+
 # Synopsis
 
 ## Parse SQL statement

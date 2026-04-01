@@ -146,8 +146,8 @@ inline absl::StatusOr<Value> GetStatusOrValue(
   if (!arg.ok()) {
     return arg.status();
   }
-  ZETASQL_CHECK(absl::holds_alternative<Value>(arg.value()));
-  return absl::StatusOr<Value>(absl::get<Value>(arg.value()));
+  ZETASQL_CHECK(std::holds_alternative<Value>(arg.value()));
+  return absl::StatusOr<Value>(std::get<Value>(arg.value()));
 }
 }  // namespace internal
 
@@ -260,6 +260,9 @@ Value StructArray(absl::Span<const std::string> names,
                   OrderPreservationKind order_kind = kPreservesOrder,
                   TypeFactory* type_factory = nullptr);
 
+// Creates a range with values 'start' and 'end'.
+Value Range(const ValueConstructor start, const ValueConstructor end);
+
 // If type_factory is not provided the function will use the default static type
 // factory (see: static_type_factory())
 const ArrayType* MakeArrayType(const Type* element_type,
@@ -280,6 +283,11 @@ const ProtoType* MakeProtoType(const google::protobuf::Descriptor* descriptor,
 // factory (see: static_type_factory())
 const EnumType* MakeEnumType(const google::protobuf::EnumDescriptor* descriptor,
                              TypeFactory* type_factory = nullptr);
+
+// If type_factory is not provided the function will use the default static type
+// factory (see: static_type_factory())
+const RangeType* MakeRangeType(const Type* element_type,
+                               TypeFactory* type_factory = nullptr);
 
 // Matches x against y respecting array orderedness and using the default
 // floating point error margin. If the reason parameter is nullptr then no

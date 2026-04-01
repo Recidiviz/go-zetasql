@@ -5,9 +5,6 @@
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
 #include "go-zetasql/public/sql_formatter/export.inc"
-#define ZETASQL_GOOGLE_TYPE_DATE_SYM_PREFIX zetasql_google_type_date
-#define ZETASQL_GOOGLE_TYPE_TIMEOFDAY_SYM_PREFIX zetasql_google_type_timeofday
-#include "go-zetasql/public/types/types/google_type_pb.inc"
 #include "go-zetasql/parser/parser/bridge.h"
 #include "go-zetasql/public/analyzer/bridge.h"
 #include "go-zetasql/public/catalog/bridge.h"

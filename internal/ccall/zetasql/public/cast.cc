@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "zetasql/base/logging.h"
@@ -94,6 +95,7 @@ const CastHashMap* InitializeZetaSQLCasts() {
   // Note that by convention, all type kinds are currently castable to
   // themselves as IMPLICIT.
 
+  // clang-format off
   ADD_TO_MAP(BOOL,       BOOL,       IMPLICIT);
   ADD_TO_MAP(BOOL,       INT32,      EXPLICIT);
   ADD_TO_MAP(BOOL,       INT64,      EXPLICIT);
@@ -207,6 +209,7 @@ const CastHashMap* InitializeZetaSQLCasts() {
   ADD_TO_MAP(STRING,     BOOL,       EXPLICIT);
   ADD_TO_MAP(STRING,     NUMERIC,    EXPLICIT);
   ADD_TO_MAP(STRING,     BIGNUMERIC, EXPLICIT);
+  ADD_TO_MAP(STRING,     RANGE,      EXPLICIT);
 
   ADD_TO_MAP(BYTES,      BYTES,      IMPLICIT);
   ADD_TO_MAP(BYTES,      STRING,     EXPLICIT);
@@ -251,6 +254,8 @@ const CastHashMap* InitializeZetaSQLCasts() {
   ADD_TO_MAP(PROTO,      STRING,     EXPLICIT);
   ADD_TO_MAP(PROTO,      BYTES,      EXPLICIT);
 
+  ADD_TO_MAP(RANGE,      STRING,     EXPLICIT);
+
   // The non-simple types show up in this table as IMPLICIT, but coercions of
   // any kind should only be allowed if the types are Equivalent.
   // This must be checked by the caller, like in TypeCoercesTo.
@@ -258,6 +263,8 @@ const CastHashMap* InitializeZetaSQLCasts() {
   ADD_TO_MAP(PROTO,      PROTO,      IMPLICIT);
   ADD_TO_MAP(ARRAY,      ARRAY,      IMPLICIT);
   ADD_TO_MAP(STRUCT,     STRUCT,     IMPLICIT);
+  ADD_TO_MAP(RANGE,      RANGE,      IMPLICIT);
+  // clang-format on
 
   return map;
 }
@@ -460,10 +467,10 @@ class CastContext {
               const LanguageOptions& language_options)
       : default_timezone_(default_timezone),
         language_options_(language_options),
-        current_timestamp_(absl::nullopt) {}
+        current_timestamp_(std::nullopt) {}
 
   CastContext(absl::TimeZone default_timezone,
-              absl::optional<absl::Time> current_timestamp,
+              std::optional<absl::Time> current_timestamp,
               const LanguageOptions& language_options)
       : default_timezone_(default_timezone),
         language_options_(language_options),
@@ -485,18 +492,16 @@ class CastContext {
   CastContext& operator=(const CastContext&) = delete;
 
   absl::StatusOr<Value> CastValue(
-      const Value& from_value,
-      const Type* to_type,
-      const absl::optional<std::string>& format = absl::nullopt)
-      const;
+      const Value& from_value, const Type* to_type,
+      const std::optional<std::string>& format = std::nullopt) const;
 
  protected:
   const absl::TimeZone& default_timezone() const { return default_timezone_; }
   const LanguageOptions& language_options() const { return language_options_; }
-  const absl::optional<absl::Time> current_timestamp() const {
+  const std::optional<absl::Time> current_timestamp() const {
     return current_timestamp_;
   }
-  const absl::optional<int32_t> current_date() const { return current_date_; }
+  const std::optional<int32_t> current_date() const { return current_date_; }
 
  private:
   // Executes a cast which involves extended types: source and/or destination
@@ -510,8 +515,8 @@ class CastContext {
 
   const absl::TimeZone default_timezone_;
   const LanguageOptions& language_options_;
-  const absl::optional<absl::Time> current_timestamp_;
-  absl::optional<int32_t> current_date_;
+  const std::optional<absl::Time> current_timestamp_;
+  std::optional<int32_t> current_date_;
 };
 
 static absl::Status ValidateFormatStringToDate(absl::string_view format) {
@@ -565,9 +570,8 @@ absl::StatusOr<Value> NumericToStringWithFormat(const Value& v,
 }
 
 absl::StatusOr<Value> CastContext::CastValue(
-    const Value& from_value,
-    const Type* to_type,
-    const absl::optional<std::string>& format) const {
+    const Value& from_value, const Type* to_type,
+    const std::optional<std::string>& format) const {
   ZETASQL_RET_CHECK(from_value.is_valid());
   // Use a shorter name inside the body of this method.
   const Value& v = from_value;
@@ -1110,8 +1114,7 @@ absl::StatusOr<Value> CastContext::CastValue(
     }
     case FCT(TYPE_STRING, TYPE_INTERVAL): {
       ZETASQL_ASSIGN_OR_RETURN(IntervalValue interval,
-                       IntervalValue::Parse(v.string_value()),
-                       _.SetPrepend() << "Invalid INTERVAL value: ");
+                       IntervalValue::Parse(v.string_value()));
       return Value::Interval(interval);
     }
 
@@ -1244,7 +1247,7 @@ absl::StatusOr<Value> CastContext::CastValue(
 class CastContextWithValidation : public CastContext {
  public:
   CastContextWithValidation(absl::TimeZone default_timezone,
-                            absl::optional<absl::Time> current_timestamp,
+                            std::optional<absl::Time> current_timestamp,
                             const LanguageOptions& language_options,
                             Catalog* catalog)
       : CastContext(default_timezone, current_timestamp, language_options),
@@ -1292,7 +1295,7 @@ class CastContextWithoutValidation : public CastContext {
  public:
   CastContextWithoutValidation(
       absl::TimeZone default_timezone,
-      absl::optional<absl::Time> current_timestamp,
+      std::optional<absl::Time> current_timestamp,
       const LanguageOptions& language_options,
       const ExtendedCompositeCastEvaluator* extended_cast_evaluator)
       : CastContext(default_timezone, current_timestamp, language_options),
@@ -1325,17 +1328,17 @@ absl::StatusOr<Value> CastValue(const Value& from_value,
                                 const LanguageOptions& language_options,
                                 const Type* to_type, Catalog* catalog) {
   return CastValue(from_value, default_timezone, language_options, to_type,
-                   /*format=*/absl::nullopt, catalog);
+                   /*format=*/std::nullopt, catalog);
 }
 
 absl::StatusOr<Value> CastValue(const Value& from_value,
                                 absl::TimeZone default_timezone,
                                 const LanguageOptions& language_options,
                                 const Type* to_type,
-                                const absl::optional<std::string>& format,
+                                const std::optional<std::string>& format,
                                 Catalog* catalog) {
   return CastContextWithValidation(default_timezone,
-                                   /*current_timestamp=*/absl::nullopt,
+                                   /*current_timestamp=*/std::nullopt,
                                    language_options, catalog)
       .CastValue(from_value, to_type, format);
 }
@@ -1344,10 +1347,10 @@ namespace internal {
 
 absl::StatusOr<Value> CastValueWithoutTypeValidation(
     const Value& from_value, absl::TimeZone default_timezone,
-    absl::optional<absl::Time> current_timestamp,
+    std::optional<absl::Time> current_timestamp,
     const LanguageOptions& language_options, const Type* to_type,
-    const absl::optional<std::string>& format,
-    const absl::optional<std::string>& explicit_time_zone,
+    const std::optional<std::string>& format,
+    const std::optional<std::string>& explicit_time_zone,
     const ExtendedCompositeCastEvaluator* extended_cast_evaluator) {
   absl::TimeZone timezone = default_timezone;
   if (explicit_time_zone.has_value()) {
@@ -1425,7 +1428,6 @@ absl::StatusOr<ConversionEvaluator> ConversionEvaluator::Create(
   ZETASQL_RET_CHECK(from_type);
   ZETASQL_RET_CHECK(to_type);
   ZETASQL_RET_CHECK(function);
-  ZETASQL_RET_CHECK(!from_type->Equals(to_type));
 
   return ConversionEvaluator(from_type, to_type, function);
 }
@@ -1449,9 +1451,19 @@ absl::StatusOr<Value> ConversionEvaluator::Eval(const Value& from_value) const {
               "conversion";
   }
 
+  if (from_type_->Equals(to_type_)) {
+    return from_value;
+  }
+
   ZETASQL_ASSIGN_OR_RETURN(auto evaluator, function_->GetFunctionEvaluatorFactory()(
                                        function_signature()));
-  return evaluator({from_value});
+  absl::StatusOr<Value> result = evaluator({from_value});
+  ZETASQL_DCHECK(!result.ok() || to_type_->Equals(result.value().type()))
+      << "Conversion evaluator from type " << from_type_->DebugString()
+      << " to type " << to_type_->DebugString() << " returned a value of type "
+      << result.value().type()->DebugString();
+
+  return result;
 }
 
 absl::StatusOr<Conversion> Conversion::Create(

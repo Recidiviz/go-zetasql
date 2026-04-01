@@ -69,6 +69,13 @@ struct KeywordInfoPOD {
 };
 
 constexpr KeywordInfoPOD kAllKeywords[] = {
+    // Spanner-specific keywords
+    {"interleave", KW_INTERLEAVE},
+    {"null_filtered", KW_NULL_FILTERED},
+    {"parent", KW_PARENT},
+    // End of Spanner-specific keywords
+
+    // (broken link) start
     {"abort", KW_ABORT},
     {"access", KW_ACCESS},
     {"action", KW_ACTION},
@@ -99,6 +106,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"cast", KW_CAST, kReserved},
     {"check", KW_CHECK},
     {"clamped", KW_CLAMPED},
+    {"clone", KW_CLONE},
     {"cluster", KW_CLUSTER},
     {"collate", KW_COLLATE, kReserved},
     {"column", KW_COLUMN},
@@ -109,7 +117,6 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"constraint", KW_CONSTRAINT},
     {"contains", KW_CONTAINS, kReserved},
     {"continue", KW_CONTINUE},
-    {"clone", KW_CLONE},
     {"copy", KW_COPY},
     {"create", KW_CREATE, kReserved},
     {"cross", KW_CROSS, kReserved},
@@ -125,6 +132,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"define", KW_DEFINE, kReserved},
     {"definer", KW_DEFINER},
     {"delete", KW_DELETE},
+    {"deletion", KW_DELETION},
     {"desc", KW_DESC, kReserved},
     {"describe", KW_DESCRIBE},
     {"descriptor", KW_DESCRIPTOR},
@@ -151,9 +159,9 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"false", KW_FALSE, kReserved},
     {"fetch", KW_FETCH, kReserved},
     {"files", KW_FILES},
+    {"fill", KW_FILL},
     {"filter", KW_FILTER},
     {"filter_fields", KW_FILTER_FIELDS},
-    {"fill", KW_FILL},
     {"first", KW_FIRST},
     {"following", KW_FOLLOWING, kReserved},
     {"for", KW_FOR, kReserved},
@@ -178,17 +186,17 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"import", KW_IMPORT},
     {"in", KW_IN, kReserved},
     {"include", KW_INCLUDE},
-    {"inout", KW_INOUT},
     {"index", KW_INDEX},
     {"inner", KW_INNER, kReserved},
+    {"inout", KW_INOUT},
     {"insert", KW_INSERT},
     {"intersect", KW_INTERSECT, kReserved},
     {"interval", KW_INTERVAL, kReserved},
-    {"iterate", KW_ITERATE},
     {"into", KW_INTO, kReserved},
     {"invoker", KW_INVOKER},
     {"is", KW_IS, kReserved},
     {"isolation", KW_ISOLATION},
+    {"iterate", KW_ITERATE},
     {"join", KW_JOIN, kReserved},
     {"json", KW_JSON},
     {"key", KW_KEY},
@@ -207,11 +215,11 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"matched", KW_MATCHED},
     {"materialized", KW_MATERIALIZED},
     {"max", KW_MAX},
+    {"merge", KW_MERGE, kReserved},
     {"message", KW_MESSAGE},
     {"min", KW_MIN},
     {"model", KW_MODEL},
     {"module", KW_MODULE},
-    {"merge", KW_MERGE, kReserved},
     {"natural", KW_NATURAL, kReserved},
     {"new", KW_NEW, kReserved},
     {"no", KW_NO, kReserved},
@@ -233,15 +241,14 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"partition", KW_PARTITION, kReserved},
     {"percent", KW_PERCENT},
     {"pivot", KW_PIVOT},
-    {"unpivot", KW_UNPIVOT},
     {"policies", KW_POLICIES},
     {"policy", KW_POLICY},
-    {"primary", KW_PRIMARY},
     {"preceding", KW_PRECEDING, kReserved},
-    {"procedure", KW_PROCEDURE},
+    {"primary", KW_PRIMARY},
     {"private", KW_PRIVATE},
     {"privilege", KW_PRIVILEGE},
     {"privileges", KW_PRIVILEGES},
+    {"procedure", KW_PROCEDURE},
     {"proto", KW_PROTO, kReserved},
     {"public", KW_PUBLIC},
     {"qualify",
@@ -259,6 +266,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"repeatable", KW_REPEATABLE},
     {"replace", KW_REPLACE},
     {"replace_fields", KW_REPLACE_FIELDS},
+    {"report", KW_REPORT},
     {"respect", KW_RESPECT, kReserved},
     {"restrict", KW_RESTRICT},
     {"restriction", KW_RESTRICTION},
@@ -282,11 +290,11 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"snapshot", KW_SNAPSHOT},
     {"some", KW_SOME, kReserved},
     {"source", KW_SOURCE},
-    {"storing", KW_STORING},
     {"sql", KW_SQL},
     {"stable", KW_STABLE},
     {"start", KW_START},
     {"stored", KW_STORED},
+    {"storing", KW_STORING},
     {"struct", KW_STRUCT, kReserved},
     {"system", KW_SYSTEM},
     {"system_time", KW_SYSTEM_TIME},
@@ -307,17 +315,18 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"type", KW_TYPE},
     {"unbounded", KW_UNBOUNDED, kReserved},
     {"union", KW_UNION, kReserved},
+    {"unique", KW_UNIQUE},
     {"unknown", KW_UNKNOWN},
     {"unnest", KW_UNNEST, kReserved},
-    {"unique", KW_UNIQUE},
+    {"unpivot", KW_UNPIVOT},
     {"until", KW_UNTIL},
     {"update", KW_UPDATE},
     {"using", KW_USING, kReserved},
     {"value", KW_VALUE},
     {"values", KW_VALUES},
-    {"volatile", KW_VOLATILE},
     {"view", KW_VIEW},
     {"views", KW_VIEWS},
+    {"volatile", KW_VOLATILE},
     {"weight", KW_WEIGHT},
     {"when", KW_WHEN, kReserved},
     {"where", KW_WHERE, kReserved},
@@ -327,6 +336,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"within", KW_WITHIN, kReserved},
     {"write", KW_WRITE},
     {"zone", KW_ZONE},
+    // (broken link) end
 };
 
 // A case insensitive trie implementation. The ValueType is the type of value
@@ -400,7 +410,7 @@ std::unique_ptr<const CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>
 CreateKeywordTrie() {
   const auto& all_keywords = GetAllKeywords();
   auto trie =
-      absl::make_unique<CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>();
+      std::make_unique<CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>();
   for (const auto& keyword_info : all_keywords) {
     trie->Insert(keyword_info.keyword(), &keyword_info);
   }
@@ -416,7 +426,7 @@ static std::unique_ptr<const absl::flat_hash_map<int, const KeywordInfo*>>
 CreateTokenToKeywordInfoMap() {
   const auto& all_keywords = GetAllKeywords();
   auto keyword_info_map =
-      absl::make_unique<absl::flat_hash_map<int, const KeywordInfo*>>();
+      std::make_unique<absl::flat_hash_map<int, const KeywordInfo*>>();
   for (const KeywordInfo& keyword_info : all_keywords) {
     if (keyword_info.CanBeReserved()) {
       zetasql_base::InsertOrDie(keyword_info_map.get(),
@@ -455,16 +465,16 @@ const std::vector<KeywordInfo>& GetAllKeywords() {
       switch (keyword.keyword_class) {
         case kReserved:
           keywords->push_back({keyword.keyword,
-                               absl::get<int>(keyword.bison_token),
+                               std::get<int>(keyword.bison_token),
                                absl::nullopt});
           break;
         case kNotReserved:
           keywords->push_back({keyword.keyword, absl::nullopt,
-                               absl::get<int>(keyword.bison_token)});
+                               std::get<int>(keyword.bison_token)});
           break;
         case kConditionallyReserved: {
           auto bison_token =
-              absl::get<ConditionallyReservedToken>(keyword.bison_token);
+              std::get<ConditionallyReservedToken>(keyword.bison_token);
           keywords->push_back({keyword.keyword,
                                bison_token.reserved_bison_token,
                                bison_token.nonreserved_bison_token});
@@ -479,7 +489,7 @@ const std::vector<KeywordInfo>& GetAllKeywords() {
 static std::unique_ptr<const CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>
 CreateKeywordInTokenizerTrie() {
   auto trie =
-      absl::make_unique<CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>();
+      std::make_unique<CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>();
   // These words are keywords in JavaCC, so we want to treat them as keywords in
   // the tokenizer API even though they are not always treated as keywords in
   // the Bison parser.
@@ -509,7 +519,7 @@ bool IsKeywordInTokenizer(absl::string_view identifier) {
 static std::unique_ptr<const CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>
 CreateNonReservedIdentifiersThatMustBeBackquotedTrie() {
   auto trie =
-      absl::make_unique<CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>();
+      std::make_unique<CaseInsensitiveAsciiAlphaTrie<const KeywordInfo>>();
   // These non-reserved keywords are used in the grammar in a location where
   // identifiers also occur, and their meaning is different when they are
   // used without backquoting.

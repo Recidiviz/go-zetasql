@@ -16,7 +16,10 @@
 
 #include "zetasql/resolved_ast/resolved_node.h"
 
+#include <algorithm>
+#include <functional>
 #include <queue>
+#include <string>
 
 #include "zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
@@ -33,7 +36,6 @@
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_collation.h"
 #include "zetasql/resolved_ast/resolved_column.h"
-#include "absl/memory/memory.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
@@ -54,7 +56,7 @@ absl::Status ResolvedNode::ChildrenAccept(ResolvedASTVisitor* visitor) const {
 void ResolvedNode::SetParseLocationRange(
     const ParseLocationRange& parse_location_range) {
   parse_location_range_ =
-      absl::make_unique<ParseLocationRange>(parse_location_range);
+      std::make_unique<ParseLocationRange>(parse_location_range);
 }
 
 void ResolvedNode::ClearParseLocationRange() { parse_location_range_.reset(); }
@@ -408,7 +410,7 @@ std::string ResolvedFunctionCallBase::GetNameForDebugString() const {
       node_kind_string(), "(",
       error_mode_ == SAFE_ERROR_MODE ? "{SAFE_ERROR_MODE} " : "",
       function_ != nullptr ? function_->DebugString() : "<unknown>",
-      signature_.DebugString(), ")");
+      signature_->DebugString(), ")");
 }
 
 // ResolvedCast gets formatted as

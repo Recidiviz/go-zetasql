@@ -556,6 +556,7 @@ namespace zetasql {
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
 #include "go-zetasql/proto/options_cc_proto/export.inc"
 #include "go-zetasql/public/anon_function/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"

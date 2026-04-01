@@ -48,200 +48,391 @@ class ResolvedASTVisitor;
 class ResolvedArgument;
 class ResolvedExpr;
 class ResolvedLiteral;
+class ResolvedLiteralBuilder;
 class ResolvedParameter;
+class ResolvedParameterBuilder;
 class ResolvedExpressionColumn;
+class ResolvedExpressionColumnBuilder;
 class ResolvedColumnRef;
+class ResolvedColumnRefBuilder;
 class ResolvedConstant;
+class ResolvedConstantBuilder;
 class ResolvedSystemVariable;
+class ResolvedSystemVariableBuilder;
 class ResolvedInlineLambda;
+class ResolvedInlineLambdaBuilder;
 class ResolvedFilterFieldArg;
+class ResolvedFilterFieldArgBuilder;
 class ResolvedFilterField;
+class ResolvedFilterFieldBuilder;
 class ResolvedFunctionCallBase;
 class ResolvedFunctionCall;
+class ResolvedFunctionCallBuilder;
 class ResolvedNonScalarFunctionCallBase;
 class ResolvedAggregateFunctionCall;
+class ResolvedAggregateFunctionCallBuilder;
 class ResolvedAnalyticFunctionCall;
+class ResolvedAnalyticFunctionCallBuilder;
 class ResolvedExtendedCastElement;
+class ResolvedExtendedCastElementBuilder;
 class ResolvedExtendedCast;
+class ResolvedExtendedCastBuilder;
 class ResolvedCast;
+class ResolvedCastBuilder;
 class ResolvedMakeStruct;
+class ResolvedMakeStructBuilder;
 class ResolvedMakeProto;
+class ResolvedMakeProtoBuilder;
 class ResolvedMakeProtoField;
+class ResolvedMakeProtoFieldBuilder;
 class ResolvedGetStructField;
+class ResolvedGetStructFieldBuilder;
 class ResolvedGetProtoField;
+class ResolvedGetProtoFieldBuilder;
 class ResolvedGetJsonField;
+class ResolvedGetJsonFieldBuilder;
 class ResolvedFlatten;
+class ResolvedFlattenBuilder;
 class ResolvedFlattenedArg;
+class ResolvedFlattenedArgBuilder;
 class ResolvedReplaceFieldItem;
+class ResolvedReplaceFieldItemBuilder;
 class ResolvedReplaceField;
+class ResolvedReplaceFieldBuilder;
 class ResolvedSubqueryExpr;
-class ResolvedLetExpr;
+class ResolvedSubqueryExprBuilder;
+class ResolvedWithExpr;
+class ResolvedWithExprBuilder;
 class ResolvedScan;
 class ResolvedModel;
+class ResolvedModelBuilder;
 class ResolvedConnection;
+class ResolvedConnectionBuilder;
 class ResolvedDescriptor;
+class ResolvedDescriptorBuilder;
 class ResolvedSingleRowScan;
+class ResolvedSingleRowScanBuilder;
 class ResolvedTableScan;
+class ResolvedTableScanBuilder;
 class ResolvedJoinScan;
+class ResolvedJoinScanBuilder;
 class ResolvedArrayScan;
+class ResolvedArrayScanBuilder;
 class ResolvedColumnHolder;
+class ResolvedColumnHolderBuilder;
 class ResolvedFilterScan;
+class ResolvedFilterScanBuilder;
 class ResolvedGroupingSet;
+class ResolvedGroupingSetBuilder;
 class ResolvedAggregateScanBase;
 class ResolvedAggregateScan;
+class ResolvedAggregateScanBuilder;
 class ResolvedAnonymizedAggregateScan;
+class ResolvedAnonymizedAggregateScanBuilder;
 class ResolvedSetOperationItem;
+class ResolvedSetOperationItemBuilder;
 class ResolvedSetOperationScan;
+class ResolvedSetOperationScanBuilder;
 class ResolvedOrderByScan;
+class ResolvedOrderByScanBuilder;
 class ResolvedLimitOffsetScan;
+class ResolvedLimitOffsetScanBuilder;
 class ResolvedWithRefScan;
+class ResolvedWithRefScanBuilder;
 class ResolvedAnalyticScan;
+class ResolvedAnalyticScanBuilder;
 class ResolvedSampleScan;
+class ResolvedSampleScanBuilder;
 class ResolvedComputedColumn;
+class ResolvedComputedColumnBuilder;
 class ResolvedOrderByItem;
+class ResolvedOrderByItemBuilder;
 class ResolvedColumnAnnotations;
+class ResolvedColumnAnnotationsBuilder;
 class ResolvedGeneratedColumnInfo;
+class ResolvedGeneratedColumnInfoBuilder;
 class ResolvedColumnDefaultValue;
+class ResolvedColumnDefaultValueBuilder;
 class ResolvedColumnDefinition;
+class ResolvedColumnDefinitionBuilder;
 class ResolvedConstraint;
 class ResolvedPrimaryKey;
+class ResolvedPrimaryKeyBuilder;
 class ResolvedForeignKey;
+class ResolvedForeignKeyBuilder;
 class ResolvedCheckConstraint;
+class ResolvedCheckConstraintBuilder;
 class ResolvedOutputColumn;
+class ResolvedOutputColumnBuilder;
 class ResolvedProjectScan;
+class ResolvedProjectScanBuilder;
 class ResolvedTVFScan;
+class ResolvedTVFScanBuilder;
 class ResolvedGroupRowsScan;
+class ResolvedGroupRowsScanBuilder;
 class ResolvedFunctionArgument;
+class ResolvedFunctionArgumentBuilder;
 class ResolvedStatement;
 class ResolvedExplainStmt;
+class ResolvedExplainStmtBuilder;
 class ResolvedQueryStmt;
+class ResolvedQueryStmtBuilder;
 class ResolvedCreateDatabaseStmt;
+class ResolvedCreateDatabaseStmtBuilder;
 class ResolvedCreateStatement;
 class ResolvedIndexItem;
+class ResolvedIndexItemBuilder;
 class ResolvedUnnestItem;
+class ResolvedUnnestItemBuilder;
 class ResolvedCreateIndexStmt;
+class ResolvedCreateIndexStmtBuilder;
 class ResolvedCreateSchemaStmt;
+class ResolvedCreateSchemaStmtBuilder;
 class ResolvedCreateTableStmtBase;
 class ResolvedCreateTableStmt;
+class ResolvedCreateTableStmtBuilder;
 class ResolvedCreateTableAsSelectStmt;
+class ResolvedCreateTableAsSelectStmtBuilder;
 class ResolvedCreateModelStmt;
+class ResolvedCreateModelStmtBuilder;
 class ResolvedCreateViewBase;
 class ResolvedCreateViewStmt;
+class ResolvedCreateViewStmtBuilder;
 class ResolvedWithPartitionColumns;
+class ResolvedWithPartitionColumnsBuilder;
 class ResolvedCreateSnapshotTableStmt;
+class ResolvedCreateSnapshotTableStmtBuilder;
 class ResolvedCreateExternalTableStmt;
+class ResolvedCreateExternalTableStmtBuilder;
 class ResolvedExportModelStmt;
+class ResolvedExportModelStmtBuilder;
 class ResolvedExportDataStmt;
+class ResolvedExportDataStmtBuilder;
 class ResolvedDefineTableStmt;
+class ResolvedDefineTableStmtBuilder;
 class ResolvedDescribeStmt;
+class ResolvedDescribeStmtBuilder;
 class ResolvedShowStmt;
+class ResolvedShowStmtBuilder;
 class ResolvedBeginStmt;
+class ResolvedBeginStmtBuilder;
 class ResolvedSetTransactionStmt;
+class ResolvedSetTransactionStmtBuilder;
 class ResolvedCommitStmt;
+class ResolvedCommitStmtBuilder;
 class ResolvedRollbackStmt;
+class ResolvedRollbackStmtBuilder;
 class ResolvedStartBatchStmt;
+class ResolvedStartBatchStmtBuilder;
 class ResolvedRunBatchStmt;
+class ResolvedRunBatchStmtBuilder;
 class ResolvedAbortBatchStmt;
+class ResolvedAbortBatchStmtBuilder;
 class ResolvedDropStmt;
+class ResolvedDropStmtBuilder;
 class ResolvedDropMaterializedViewStmt;
+class ResolvedDropMaterializedViewStmtBuilder;
 class ResolvedDropSnapshotTableStmt;
+class ResolvedDropSnapshotTableStmtBuilder;
 class ResolvedRecursiveRefScan;
+class ResolvedRecursiveRefScanBuilder;
 class ResolvedRecursiveScan;
+class ResolvedRecursiveScanBuilder;
 class ResolvedWithScan;
+class ResolvedWithScanBuilder;
 class ResolvedWithEntry;
+class ResolvedWithEntryBuilder;
 class ResolvedOption;
+class ResolvedOptionBuilder;
 class ResolvedWindowPartitioning;
+class ResolvedWindowPartitioningBuilder;
 class ResolvedWindowOrdering;
+class ResolvedWindowOrderingBuilder;
 class ResolvedWindowFrame;
+class ResolvedWindowFrameBuilder;
 class ResolvedAnalyticFunctionGroup;
+class ResolvedAnalyticFunctionGroupBuilder;
 class ResolvedWindowFrameExpr;
+class ResolvedWindowFrameExprBuilder;
 class ResolvedDMLValue;
+class ResolvedDMLValueBuilder;
 class ResolvedDMLDefault;
+class ResolvedDMLDefaultBuilder;
 class ResolvedAssertStmt;
+class ResolvedAssertStmtBuilder;
 class ResolvedAssertRowsModified;
+class ResolvedAssertRowsModifiedBuilder;
 class ResolvedInsertRow;
+class ResolvedInsertRowBuilder;
 class ResolvedInsertStmt;
+class ResolvedInsertStmtBuilder;
 class ResolvedDeleteStmt;
+class ResolvedDeleteStmtBuilder;
 class ResolvedUpdateItem;
+class ResolvedUpdateItemBuilder;
 class ResolvedUpdateArrayItem;
+class ResolvedUpdateArrayItemBuilder;
 class ResolvedUpdateStmt;
+class ResolvedUpdateStmtBuilder;
 class ResolvedMergeWhen;
+class ResolvedMergeWhenBuilder;
 class ResolvedMergeStmt;
+class ResolvedMergeStmtBuilder;
 class ResolvedTruncateStmt;
+class ResolvedTruncateStmtBuilder;
 class ResolvedObjectUnit;
+class ResolvedObjectUnitBuilder;
 class ResolvedPrivilege;
+class ResolvedPrivilegeBuilder;
 class ResolvedGrantOrRevokeStmt;
 class ResolvedGrantStmt;
+class ResolvedGrantStmtBuilder;
 class ResolvedRevokeStmt;
+class ResolvedRevokeStmtBuilder;
 class ResolvedAlterObjectStmt;
 class ResolvedAlterDatabaseStmt;
+class ResolvedAlterDatabaseStmtBuilder;
 class ResolvedAlterMaterializedViewStmt;
+class ResolvedAlterMaterializedViewStmtBuilder;
 class ResolvedAlterSchemaStmt;
+class ResolvedAlterSchemaStmtBuilder;
+class ResolvedAlterModelStmt;
+class ResolvedAlterModelStmtBuilder;
 class ResolvedAlterTableStmt;
+class ResolvedAlterTableStmtBuilder;
 class ResolvedAlterViewStmt;
+class ResolvedAlterViewStmtBuilder;
 class ResolvedAlterAction;
 class ResolvedAlterColumnAction;
 class ResolvedSetOptionsAction;
+class ResolvedSetOptionsActionBuilder;
+class ResolvedAlterSubEntityAction;
+class ResolvedAlterSubEntityActionBuilder;
+class ResolvedAddSubEntityAction;
+class ResolvedAddSubEntityActionBuilder;
+class ResolvedDropSubEntityAction;
+class ResolvedDropSubEntityActionBuilder;
 class ResolvedAddColumnAction;
+class ResolvedAddColumnActionBuilder;
 class ResolvedAddConstraintAction;
+class ResolvedAddConstraintActionBuilder;
 class ResolvedDropConstraintAction;
+class ResolvedDropConstraintActionBuilder;
 class ResolvedDropPrimaryKeyAction;
+class ResolvedDropPrimaryKeyActionBuilder;
 class ResolvedAlterColumnOptionsAction;
+class ResolvedAlterColumnOptionsActionBuilder;
 class ResolvedAlterColumnDropNotNullAction;
+class ResolvedAlterColumnDropNotNullActionBuilder;
 class ResolvedAlterColumnSetDataTypeAction;
+class ResolvedAlterColumnSetDataTypeActionBuilder;
 class ResolvedAlterColumnSetDefaultAction;
+class ResolvedAlterColumnSetDefaultActionBuilder;
 class ResolvedAlterColumnDropDefaultAction;
+class ResolvedAlterColumnDropDefaultActionBuilder;
 class ResolvedDropColumnAction;
+class ResolvedDropColumnActionBuilder;
 class ResolvedRenameColumnAction;
+class ResolvedRenameColumnActionBuilder;
 class ResolvedSetAsAction;
+class ResolvedSetAsActionBuilder;
 class ResolvedSetCollateClause;
+class ResolvedSetCollateClauseBuilder;
 class ResolvedAlterTableSetOptionsStmt;
+class ResolvedAlterTableSetOptionsStmtBuilder;
 class ResolvedRenameStmt;
+class ResolvedRenameStmtBuilder;
 class ResolvedCreatePrivilegeRestrictionStmt;
+class ResolvedCreatePrivilegeRestrictionStmtBuilder;
 class ResolvedCreateRowAccessPolicyStmt;
+class ResolvedCreateRowAccessPolicyStmtBuilder;
 class ResolvedDropPrivilegeRestrictionStmt;
+class ResolvedDropPrivilegeRestrictionStmtBuilder;
 class ResolvedDropRowAccessPolicyStmt;
+class ResolvedDropRowAccessPolicyStmtBuilder;
 class ResolvedDropSearchIndexStmt;
+class ResolvedDropSearchIndexStmtBuilder;
 class ResolvedGrantToAction;
+class ResolvedGrantToActionBuilder;
 class ResolvedRestrictToAction;
+class ResolvedRestrictToActionBuilder;
 class ResolvedAddToRestricteeListAction;
+class ResolvedAddToRestricteeListActionBuilder;
 class ResolvedRemoveFromRestricteeListAction;
+class ResolvedRemoveFromRestricteeListActionBuilder;
 class ResolvedFilterUsingAction;
+class ResolvedFilterUsingActionBuilder;
 class ResolvedRevokeFromAction;
+class ResolvedRevokeFromActionBuilder;
 class ResolvedRenameToAction;
+class ResolvedRenameToActionBuilder;
 class ResolvedAlterPrivilegeRestrictionStmt;
+class ResolvedAlterPrivilegeRestrictionStmtBuilder;
 class ResolvedAlterRowAccessPolicyStmt;
+class ResolvedAlterRowAccessPolicyStmtBuilder;
 class ResolvedAlterAllRowAccessPoliciesStmt;
+class ResolvedAlterAllRowAccessPoliciesStmtBuilder;
 class ResolvedCreateConstantStmt;
+class ResolvedCreateConstantStmtBuilder;
 class ResolvedCreateFunctionStmt;
+class ResolvedCreateFunctionStmtBuilder;
 class ResolvedArgumentDef;
+class ResolvedArgumentDefBuilder;
 class ResolvedArgumentRef;
+class ResolvedArgumentRefBuilder;
 class ResolvedCreateTableFunctionStmt;
+class ResolvedCreateTableFunctionStmtBuilder;
 class ResolvedRelationArgumentScan;
+class ResolvedRelationArgumentScanBuilder;
 class ResolvedArgumentList;
+class ResolvedArgumentListBuilder;
 class ResolvedFunctionSignatureHolder;
+class ResolvedFunctionSignatureHolderBuilder;
 class ResolvedDropFunctionStmt;
+class ResolvedDropFunctionStmtBuilder;
 class ResolvedDropTableFunctionStmt;
+class ResolvedDropTableFunctionStmtBuilder;
 class ResolvedCallStmt;
+class ResolvedCallStmtBuilder;
 class ResolvedImportStmt;
+class ResolvedImportStmtBuilder;
 class ResolvedModuleStmt;
+class ResolvedModuleStmtBuilder;
 class ResolvedAggregateHavingModifier;
+class ResolvedAggregateHavingModifierBuilder;
 class ResolvedCreateMaterializedViewStmt;
+class ResolvedCreateMaterializedViewStmtBuilder;
 class ResolvedCreateProcedureStmt;
+class ResolvedCreateProcedureStmtBuilder;
 class ResolvedExecuteImmediateArgument;
+class ResolvedExecuteImmediateArgumentBuilder;
 class ResolvedExecuteImmediateStmt;
+class ResolvedExecuteImmediateStmtBuilder;
 class ResolvedAssignmentStmt;
+class ResolvedAssignmentStmtBuilder;
 class ResolvedCreateEntityStmt;
+class ResolvedCreateEntityStmtBuilder;
 class ResolvedAlterEntityStmt;
+class ResolvedAlterEntityStmtBuilder;
 class ResolvedPivotColumn;
+class ResolvedPivotColumnBuilder;
 class ResolvedPivotScan;
+class ResolvedPivotScanBuilder;
 class ResolvedReturningClause;
+class ResolvedReturningClauseBuilder;
 class ResolvedUnpivotArg;
+class ResolvedUnpivotArgBuilder;
 class ResolvedUnpivotScan;
+class ResolvedUnpivotScanBuilder;
 class ResolvedCloneDataStmt;
+class ResolvedCloneDataStmtBuilder;
 class ResolvedTableAndColumnInfo;
+class ResolvedTableAndColumnInfoBuilder;
 class ResolvedAnalyzeStmt;
+class ResolvedAnalyzeStmtBuilder;
 class ResolvedAuxLoadDataStmt;
+class ResolvedAuxLoadDataStmtBuilder;
+
 // Argument nodes are not self-contained nodes in the tree.  They exist
 // only to describe parameters to another node (e.g. columns in an OrderBy).
 // This node is here for organizational purposes only, to cluster these
@@ -251,11 +442,8 @@ class ResolvedArgument  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 71;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 74;
 
-  ResolvedArgument()
-      : ResolvedNode()
-  {}
  public:
 
   ResolvedArgument(const ResolvedArgument&) = delete;
@@ -297,6 +485,10 @@ class ResolvedArgument  : public ResolvedNode {
   // Member fields
 
  protected:
+  ResolvedArgument()
+      : ResolvedNode()
+  {}
+
   explicit ResolvedArgument(
       ConstructorOverload)
       : ResolvedNode(
@@ -304,6 +496,53 @@ class ResolvedArgument  : public ResolvedNode {
   }
 
  private:
+  friend class ResolvedInlineLambdaBuilder;
+  friend class ResolvedFilterFieldArgBuilder;
+  friend class ResolvedExtendedCastElementBuilder;
+  friend class ResolvedExtendedCastBuilder;
+  friend class ResolvedMakeProtoFieldBuilder;
+  friend class ResolvedReplaceFieldItemBuilder;
+  friend class ResolvedModelBuilder;
+  friend class ResolvedConnectionBuilder;
+  friend class ResolvedDescriptorBuilder;
+  friend class ResolvedColumnHolderBuilder;
+  friend class ResolvedGroupingSetBuilder;
+  friend class ResolvedSetOperationItemBuilder;
+  friend class ResolvedComputedColumnBuilder;
+  friend class ResolvedOrderByItemBuilder;
+  friend class ResolvedColumnAnnotationsBuilder;
+  friend class ResolvedGeneratedColumnInfoBuilder;
+  friend class ResolvedColumnDefaultValueBuilder;
+  friend class ResolvedColumnDefinitionBuilder;
+  friend class ResolvedOutputColumnBuilder;
+  friend class ResolvedFunctionArgumentBuilder;
+  friend class ResolvedIndexItemBuilder;
+  friend class ResolvedUnnestItemBuilder;
+  friend class ResolvedWithPartitionColumnsBuilder;
+  friend class ResolvedWithEntryBuilder;
+  friend class ResolvedOptionBuilder;
+  friend class ResolvedWindowPartitioningBuilder;
+  friend class ResolvedWindowOrderingBuilder;
+  friend class ResolvedWindowFrameBuilder;
+  friend class ResolvedAnalyticFunctionGroupBuilder;
+  friend class ResolvedWindowFrameExprBuilder;
+  friend class ResolvedDMLValueBuilder;
+  friend class ResolvedAssertRowsModifiedBuilder;
+  friend class ResolvedInsertRowBuilder;
+  friend class ResolvedUpdateItemBuilder;
+  friend class ResolvedUpdateArrayItemBuilder;
+  friend class ResolvedMergeWhenBuilder;
+  friend class ResolvedObjectUnitBuilder;
+  friend class ResolvedPrivilegeBuilder;
+  friend class ResolvedArgumentDefBuilder;
+  friend class ResolvedArgumentListBuilder;
+  friend class ResolvedFunctionSignatureHolderBuilder;
+  friend class ResolvedAggregateHavingModifierBuilder;
+  friend class ResolvedExecuteImmediateArgumentBuilder;
+  friend class ResolvedPivotColumnBuilder;
+  friend class ResolvedReturningClauseBuilder;
+  friend class ResolvedUnpivotArgBuilder;
+  friend class ResolvedTableAndColumnInfoBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -323,11 +562,6 @@ class ResolvedExpr  : public ResolvedNode {
     return {type(), type_annotation_map()};
   }
 
-  ResolvedExpr()
-      : ResolvedNode()
-      , type_()
-      , type_annotation_map_()
-  {}
  public:
 
   ResolvedExpr(const ResolvedExpr&) = delete;
@@ -399,6 +633,12 @@ class ResolvedExpr  : public ResolvedNode {
   }
 
  protected:
+  ResolvedExpr()
+      : ResolvedNode()
+      , type_()
+      , type_annotation_map_()
+  {}
+
   explicit ResolvedExpr(
       const Type* type,
       ConstructorOverload)
@@ -411,6 +651,26 @@ class ResolvedExpr  : public ResolvedNode {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedLiteralBuilder;
+  friend class ResolvedParameterBuilder;
+  friend class ResolvedExpressionColumnBuilder;
+  friend class ResolvedColumnRefBuilder;
+  friend class ResolvedConstantBuilder;
+  friend class ResolvedSystemVariableBuilder;
+  friend class ResolvedFilterFieldBuilder;
+  friend class ResolvedCastBuilder;
+  friend class ResolvedMakeStructBuilder;
+  friend class ResolvedMakeProtoBuilder;
+  friend class ResolvedGetStructFieldBuilder;
+  friend class ResolvedGetProtoFieldBuilder;
+  friend class ResolvedGetJsonFieldBuilder;
+  friend class ResolvedFlattenBuilder;
+  friend class ResolvedFlattenedArgBuilder;
+  friend class ResolvedReplaceFieldBuilder;
+  friend class ResolvedSubqueryExprBuilder;
+  friend class ResolvedWithExprBuilder;
+  friend class ResolvedDMLDefaultBuilder;
+  friend class ResolvedArgumentRefBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -429,7 +689,6 @@ class ResolvedLiteral final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_LITERAL;
 
-  friend std::unique_ptr<ResolvedLiteral> MakeResolvedLiteral();
  protected:
   ResolvedLiteral()
       : ResolvedExpr()
@@ -438,6 +697,7 @@ class ResolvedLiteral final : public ResolvedExpr {
       , float_literal_id_()
       , preserve_in_literal_remover_()
   {}
+
  public:
 
   ResolvedLiteral(const ResolvedLiteral&) = delete;
@@ -562,6 +822,9 @@ class ResolvedLiteral final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedLiteral> MakeResolvedLiteral();
+  friend class ResolvedLiteralBuilder;
+  friend ResolvedLiteralBuilder ToBuilder(std::unique_ptr<const ResolvedLiteral>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -606,7 +869,6 @@ class ResolvedParameter final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_PARAMETER;
 
-  friend std::unique_ptr<ResolvedParameter> MakeResolvedParameter();
  protected:
   ResolvedParameter()
       : ResolvedExpr()
@@ -614,6 +876,7 @@ class ResolvedParameter final : public ResolvedExpr {
       , position_()
       , is_untyped_()
   {}
+
  public:
 
   ResolvedParameter(const ResolvedParameter&) = delete;
@@ -728,6 +991,9 @@ class ResolvedParameter final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedParameter> MakeResolvedParameter();
+  friend class ResolvedParameterBuilder;
+  friend ResolvedParameterBuilder ToBuilder(std::unique_ptr<const ResolvedParameter>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -776,12 +1042,12 @@ class ResolvedExpressionColumn final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXPRESSION_COLUMN;
 
-  friend std::unique_ptr<ResolvedExpressionColumn> MakeResolvedExpressionColumn();
  protected:
   ResolvedExpressionColumn()
       : ResolvedExpr()
       , name_()
   {}
+
  public:
 
   ResolvedExpressionColumn(const ResolvedExpressionColumn&) = delete;
@@ -862,6 +1128,9 @@ class ResolvedExpressionColumn final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExpressionColumn> MakeResolvedExpressionColumn();
+  friend class ResolvedExpressionColumnBuilder;
+  friend ResolvedExpressionColumnBuilder ToBuilder(std::unique_ptr<const ResolvedExpressionColumn>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -901,13 +1170,13 @@ class ResolvedColumnRef final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_COLUMN_REF;
 
-  friend std::unique_ptr<ResolvedColumnRef> MakeResolvedColumnRef();
  protected:
   ResolvedColumnRef()
       : ResolvedExpr()
       , column_()
       , is_correlated_()
   {}
+
  public:
 
   ResolvedColumnRef(const ResolvedColumnRef&) = delete;
@@ -999,6 +1268,9 @@ class ResolvedColumnRef final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedColumnRef> MakeResolvedColumnRef();
+  friend class ResolvedColumnRefBuilder;
+  friend ResolvedColumnRefBuilder ToBuilder(std::unique_ptr<const ResolvedColumnRef>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -1031,12 +1303,12 @@ class ResolvedConstant final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CONSTANT;
 
-  friend std::unique_ptr<ResolvedConstant> MakeResolvedConstant();
  protected:
   ResolvedConstant()
       : ResolvedExpr()
       , constant_()
   {}
+
  public:
 
   ResolvedConstant(const ResolvedConstant&) = delete;
@@ -1119,6 +1391,9 @@ class ResolvedConstant final : public ResolvedExpr {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedConstant> MakeResolvedConstant();
+  friend class ResolvedConstantBuilder;
+  friend ResolvedConstantBuilder ToBuilder(std::unique_ptr<const ResolvedConstant>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -1148,12 +1423,12 @@ class ResolvedSystemVariable final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SYSTEM_VARIABLE;
 
-  friend std::unique_ptr<ResolvedSystemVariable> MakeResolvedSystemVariable();
  protected:
   ResolvedSystemVariable()
       : ResolvedExpr()
       , name_path_()
   {}
+
  public:
 
   ResolvedSystemVariable(const ResolvedSystemVariable&) = delete;
@@ -1251,6 +1526,9 @@ class ResolvedSystemVariable final : public ResolvedExpr {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedSystemVariable> MakeResolvedSystemVariable();
+  friend class ResolvedSystemVariableBuilder;
+  friend ResolvedSystemVariableBuilder ToBuilder(std::unique_ptr<const ResolvedSystemVariable>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -1302,7 +1580,6 @@ class ResolvedInlineLambda final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_INLINE_LAMBDA;
 
-  friend std::unique_ptr<ResolvedInlineLambda> MakeResolvedInlineLambda();
  protected:
   ResolvedInlineLambda()
       : ResolvedArgument()
@@ -1310,6 +1587,7 @@ class ResolvedInlineLambda final : public ResolvedArgument {
       , parameter_list_()
       , body_()
   {}
+
  public:
 
   ResolvedInlineLambda(const ResolvedInlineLambda&) = delete;
@@ -1445,6 +1723,9 @@ class ResolvedInlineLambda final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedInlineLambda> MakeResolvedInlineLambda();
+  friend class ResolvedInlineLambdaBuilder;
+  friend ResolvedInlineLambdaBuilder ToBuilder(std::unique_ptr<const ResolvedInlineLambda>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -1508,13 +1789,13 @@ class ResolvedFilterFieldArg final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FILTER_FIELD_ARG;
 
-  friend std::unique_ptr<ResolvedFilterFieldArg> MakeResolvedFilterFieldArg();
  protected:
   ResolvedFilterFieldArg()
       : ResolvedArgument()
       , include_()
       , field_descriptor_path_()
   {}
+
  public:
 
   ResolvedFilterFieldArg(const ResolvedFilterFieldArg&) = delete;
@@ -1624,6 +1905,9 @@ class ResolvedFilterFieldArg final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedFilterFieldArg> MakeResolvedFilterFieldArg();
+  friend class ResolvedFilterFieldArgBuilder;
+  friend ResolvedFilterFieldArgBuilder ToBuilder(std::unique_ptr<const ResolvedFilterFieldArg>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -1683,7 +1967,6 @@ class ResolvedFilterField final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FILTER_FIELD;
 
-  friend std::unique_ptr<ResolvedFilterField> MakeResolvedFilterField();
  protected:
   ResolvedFilterField()
       : ResolvedExpr()
@@ -1691,6 +1974,7 @@ class ResolvedFilterField final : public ResolvedExpr {
       , filter_field_arg_list_()
       , reset_cleared_required_fields_()
   {}
+
  public:
 
   ResolvedFilterField(const ResolvedFilterField&) = delete;
@@ -1819,6 +2103,9 @@ class ResolvedFilterField final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedFilterField> MakeResolvedFilterField();
+  friend class ResolvedFilterFieldBuilder;
+  friend ResolvedFilterFieldBuilder ToBuilder(std::unique_ptr<const ResolvedFilterField>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -1908,6 +2195,11 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
   static const ErrorMode DEFAULT_ERROR_MODE = ResolvedFunctionCallBaseEnums::DEFAULT_ERROR_MODE;
   static const ErrorMode SAFE_ERROR_MODE = ResolvedFunctionCallBaseEnums::SAFE_ERROR_MODE;
 
+ public:
+
+  ResolvedFunctionCallBase(const ResolvedFunctionCallBase&) = delete;
+  ResolvedFunctionCallBase& operator=(const ResolvedFunctionCallBase&) = delete;
+
   ~ResolvedFunctionCallBase() override;
 
   absl::Status Accept(ResolvedASTVisitor* visitor) const override;
@@ -1973,7 +2265,7 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
   // ResolvedAggregateFunctionCall or ResolvedAnalyticFunctionCall.
   const FunctionSignature& signature() const {
     accessed_ |= (1<<1);
-    return signature_;
+    return signature_.value();
   }
   void set_signature(const FunctionSignature& v) {
     signature_ = v;
@@ -2033,11 +2325,11 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
   // semantic error (based on input data, not transient server
   // problems), return NULL instead of an error. This is used for
   // functions called using SAFE, as in SAFE.FUNCTION(...).
-  ErrorMode error_mode() const {
+  ResolvedFunctionCallBase::ErrorMode error_mode() const {
     accessed_ |= (1<<4);
     return error_mode_;
   }
-  void set_error_mode(ErrorMode v) {
+  void set_error_mode(ResolvedFunctionCallBase::ErrorMode v) {
     error_mode_ = v;
   }
 
@@ -2091,13 +2383,24 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
   }
 
  protected:
+  ResolvedFunctionCallBase()
+      : ResolvedExpr()
+      , function_()
+      , signature_()
+      , argument_list_()
+      , generic_argument_list_()
+      , error_mode_()
+      , hint_list_()
+      , collation_list_()
+  {}
+
   explicit ResolvedFunctionCallBase(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       ConstructorOverload)
       : ResolvedExpr(
             type,
@@ -2115,15 +2418,16 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
       std::vector<DebugStringField>* fields) const override;
   std::string GetNameForDebugString() const override;
  private:
+  friend class ResolvedFunctionCallBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   const Function* function_;
-  FunctionSignature signature_;
+  absl::optional<FunctionSignature> signature_;
   std::vector<std::unique_ptr<const ResolvedExpr>> argument_list_;
   std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list_;
-  ErrorMode error_mode_;
+  ResolvedFunctionCallBase::ErrorMode error_mode_;
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list_;
   std::vector<ResolvedCollation> collation_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -2137,13 +2441,18 @@ class ResolvedFunctionCall final : public ResolvedFunctionCallBase {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FUNCTION_CALL;
 
+ public:
+
+  ResolvedFunctionCall(const ResolvedFunctionCall&) = delete;
+  ResolvedFunctionCall& operator=(const ResolvedFunctionCall&) = delete;
+
   friend std::unique_ptr<ResolvedFunctionCall> MakeResolvedFunctionCall(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info
   );
   ~ResolvedFunctionCall() final;
@@ -2216,13 +2525,18 @@ class ResolvedFunctionCall final : public ResolvedFunctionCallBase {
   }
 
  protected:
+  ResolvedFunctionCall()
+      : ResolvedFunctionCallBase()
+      , function_call_info_()
+  {}
+
   explicit ResolvedFunctionCall(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
       ConstructorOverload)
       : ResolvedFunctionCallBase(
@@ -2239,6 +2553,8 @@ class ResolvedFunctionCall final : public ResolvedFunctionCallBase {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedFunctionCallBuilder;
+  friend ResolvedFunctionCallBuilder ToBuilder(std::unique_ptr<const ResolvedFunctionCall>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -2326,7 +2642,7 @@ std::unique_ptr<ResolvedFunctionCall> MakeResolvedFunctionCall(
       function_call_info);
 }
 
-// Common base class for scalar and aggregate function calls.
+// Common base class for analytic and aggregate function calls.
 class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
  public:
   typedef ResolvedFunctionCallBase SUPER;
@@ -2338,6 +2654,11 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
   static const NullHandlingModifier DEFAULT_NULL_HANDLING = ResolvedNonScalarFunctionCallBaseEnums::DEFAULT_NULL_HANDLING;
   static const NullHandlingModifier IGNORE_NULLS = ResolvedNonScalarFunctionCallBaseEnums::IGNORE_NULLS;
   static const NullHandlingModifier RESPECT_NULLS = ResolvedNonScalarFunctionCallBaseEnums::RESPECT_NULLS;
+
+ public:
+
+  ResolvedNonScalarFunctionCallBase(const ResolvedNonScalarFunctionCallBase&) = delete;
+  ResolvedNonScalarFunctionCallBase& operator=(const ResolvedNonScalarFunctionCallBase&) = delete;
 
   ~ResolvedNonScalarFunctionCallBase() override;
 
@@ -2400,11 +2721,11 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
 
   // Apply IGNORE/RESPECT NULLS filtering to the stream of input
   // values.
-  NullHandlingModifier null_handling_modifier() const {
+  ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier() const {
     accessed_ |= (1<<1);
     return null_handling_modifier_;
   }
-  void set_null_handling_modifier(NullHandlingModifier v) {
+  void set_null_handling_modifier(ResolvedNonScalarFunctionCallBase::NullHandlingModifier v) {
     null_handling_modifier_ = v;
   }
 
@@ -2472,15 +2793,23 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
   }
 
  protected:
+  ResolvedNonScalarFunctionCallBase()
+      : ResolvedFunctionCallBase()
+      , distinct_()
+      , null_handling_modifier_()
+      , with_group_rows_subquery_()
+      , with_group_rows_parameter_list_()
+  {}
+
   explicit ResolvedNonScalarFunctionCallBase(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       bool distinct,
-      NullHandlingModifier null_handling_modifier,
+      ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier,
       ConstructorOverload)
       : ResolvedFunctionCallBase(
             type,
@@ -2499,12 +2828,14 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedAggregateFunctionCallBuilder;
+  friend class ResolvedAnalyticFunctionCallBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   bool distinct_;
-  NullHandlingModifier null_handling_modifier_;
+  ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier_;
   std::unique_ptr<const ResolvedScan> with_group_rows_subquery_;
   std::vector<std::unique_ptr<const ResolvedColumnRef>> with_group_rows_parameter_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -2519,15 +2850,20 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
 
   static const ResolvedNodeKind TYPE = RESOLVED_AGGREGATE_FUNCTION_CALL;
 
+ public:
+
+  ResolvedAggregateFunctionCall(const ResolvedAggregateFunctionCall&) = delete;
+  ResolvedAggregateFunctionCall& operator=(const ResolvedAggregateFunctionCall&) = delete;
+
   friend std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       bool distinct,
-      NullHandlingModifier null_handling_modifier,
+      ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier,
       std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier,
       std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
       std::unique_ptr<const ResolvedExpr> limit,
@@ -2655,15 +2991,23 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
   }
 
  protected:
+  ResolvedAggregateFunctionCall()
+      : ResolvedNonScalarFunctionCallBase()
+      , having_modifier_()
+      , order_by_item_list_()
+      , limit_()
+      , function_call_info_()
+  {}
+
   explicit ResolvedAggregateFunctionCall(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       bool distinct,
-      NullHandlingModifier null_handling_modifier,
+      ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier,
       std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier,
       std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
       std::unique_ptr<const ResolvedExpr> limit,
@@ -2688,6 +3032,8 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedAggregateFunctionCallBuilder;
+  friend ResolvedAggregateFunctionCallBuilder ToBuilder(std::unique_ptr<const ResolvedAggregateFunctionCall>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -2828,15 +3174,20 @@ class ResolvedAnalyticFunctionCall final : public ResolvedNonScalarFunctionCallB
 
   static const ResolvedNodeKind TYPE = RESOLVED_ANALYTIC_FUNCTION_CALL;
 
+ public:
+
+  ResolvedAnalyticFunctionCall(const ResolvedAnalyticFunctionCall&) = delete;
+  ResolvedAnalyticFunctionCall& operator=(const ResolvedAnalyticFunctionCall&) = delete;
+
   friend std::unique_ptr<ResolvedAnalyticFunctionCall> MakeResolvedAnalyticFunctionCall(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       bool distinct,
-      NullHandlingModifier null_handling_modifier,
+      ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier,
       std::unique_ptr<const ResolvedWindowFrame> window_frame
   );
   ~ResolvedAnalyticFunctionCall() final;
@@ -2901,15 +3252,20 @@ class ResolvedAnalyticFunctionCall final : public ResolvedNonScalarFunctionCallB
   }
 
  protected:
+  ResolvedAnalyticFunctionCall()
+      : ResolvedNonScalarFunctionCallBase()
+      , window_frame_()
+  {}
+
   explicit ResolvedAnalyticFunctionCall(
       const Type* type,
       const Function* function,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
       std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
-      ErrorMode error_mode,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
       bool distinct,
-      NullHandlingModifier null_handling_modifier,
+      ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier,
       std::unique_ptr<const ResolvedWindowFrame> window_frame,
       ConstructorOverload)
       : ResolvedNonScalarFunctionCallBase(
@@ -2928,6 +3284,8 @@ class ResolvedAnalyticFunctionCall final : public ResolvedNonScalarFunctionCallB
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedAnalyticFunctionCallBuilder;
+  friend ResolvedAnalyticFunctionCallBuilder ToBuilder(std::unique_ptr<const ResolvedAnalyticFunctionCall>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3036,7 +3394,6 @@ class ResolvedExtendedCastElement final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXTENDED_CAST_ELEMENT;
 
-  friend std::unique_ptr<ResolvedExtendedCastElement> MakeResolvedExtendedCastElement();
  protected:
   ResolvedExtendedCastElement()
       : ResolvedArgument()
@@ -3044,6 +3401,7 @@ class ResolvedExtendedCastElement final : public ResolvedArgument {
       , to_type_()
       , function_()
   {}
+
  public:
 
   ResolvedExtendedCastElement(const ResolvedExtendedCastElement&) = delete;
@@ -3144,6 +3502,9 @@ class ResolvedExtendedCastElement final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedExtendedCastElement> MakeResolvedExtendedCastElement();
+  friend class ResolvedExtendedCastElementBuilder;
+  friend ResolvedExtendedCastElementBuilder ToBuilder(std::unique_ptr<const ResolvedExtendedCastElement>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3178,12 +3539,12 @@ class ResolvedExtendedCast final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXTENDED_CAST;
 
-  friend std::unique_ptr<ResolvedExtendedCast> MakeResolvedExtendedCast();
  protected:
   ResolvedExtendedCast()
       : ResolvedArgument()
       , element_list_()
   {}
+
  public:
 
   ResolvedExtendedCast(const ResolvedExtendedCast&) = delete;
@@ -3284,6 +3645,9 @@ class ResolvedExtendedCast final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExtendedCast> MakeResolvedExtendedCast();
+  friend class ResolvedExtendedCastBuilder;
+  friend ResolvedExtendedCastBuilder ToBuilder(std::unique_ptr<const ResolvedExtendedCast>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3341,7 +3705,6 @@ class ResolvedCast final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CAST;
 
-  friend std::unique_ptr<ResolvedCast> MakeResolvedCast();
  protected:
   ResolvedCast()
       : ResolvedExpr()
@@ -3352,6 +3715,7 @@ class ResolvedCast final : public ResolvedExpr {
       , time_zone_()
       , type_parameters_()
   {}
+
  public:
 
   ResolvedCast(const ResolvedCast&) = delete;
@@ -3528,6 +3892,9 @@ class ResolvedCast final : public ResolvedExpr {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedCast> MakeResolvedCast();
+  friend class ResolvedCastBuilder;
+  friend ResolvedCastBuilder ToBuilder(std::unique_ptr<const ResolvedCast>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3587,12 +3954,12 @@ class ResolvedMakeStruct final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_MAKE_STRUCT;
 
-  friend std::unique_ptr<ResolvedMakeStruct> MakeResolvedMakeStruct();
  protected:
   ResolvedMakeStruct()
       : ResolvedExpr()
       , field_list_()
   {}
+
  public:
 
   ResolvedMakeStruct(const ResolvedMakeStruct&) = delete;
@@ -3690,6 +4057,9 @@ class ResolvedMakeStruct final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedMakeStruct> MakeResolvedMakeStruct();
+  friend class ResolvedMakeStructBuilder;
+  friend ResolvedMakeStructBuilder ToBuilder(std::unique_ptr<const ResolvedMakeStruct>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3748,12 +4118,12 @@ class ResolvedMakeProto final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_MAKE_PROTO;
 
-  friend std::unique_ptr<ResolvedMakeProto> MakeResolvedMakeProto();
  protected:
   ResolvedMakeProto()
       : ResolvedExpr()
       , field_list_()
   {}
+
  public:
 
   ResolvedMakeProto(const ResolvedMakeProto&) = delete;
@@ -3851,6 +4221,9 @@ class ResolvedMakeProto final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedMakeProto> MakeResolvedMakeProto();
+  friend class ResolvedMakeProtoBuilder;
+  friend ResolvedMakeProtoBuilder ToBuilder(std::unique_ptr<const ResolvedMakeProto>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3914,7 +4287,6 @@ class ResolvedMakeProtoField final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_MAKE_PROTO_FIELD;
 
-  friend std::unique_ptr<ResolvedMakeProtoField> MakeResolvedMakeProtoField();
  protected:
   ResolvedMakeProtoField()
       : ResolvedArgument()
@@ -3922,6 +4294,7 @@ class ResolvedMakeProtoField final : public ResolvedArgument {
       , format_()
       , expr_()
   {}
+
  public:
 
   ResolvedMakeProtoField(const ResolvedMakeProtoField&) = delete;
@@ -4029,6 +4402,9 @@ class ResolvedMakeProtoField final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedMakeProtoField> MakeResolvedMakeProtoField();
+  friend class ResolvedMakeProtoFieldBuilder;
+  friend ResolvedMakeProtoFieldBuilder ToBuilder(std::unique_ptr<const ResolvedMakeProtoField>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -4063,13 +4439,13 @@ class ResolvedGetStructField final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GET_STRUCT_FIELD;
 
-  friend std::unique_ptr<ResolvedGetStructField> MakeResolvedGetStructField();
  protected:
   ResolvedGetStructField()
       : ResolvedExpr()
       , expr_()
       , field_idx_()
   {}
+
  public:
 
   ResolvedGetStructField(const ResolvedGetStructField&) = delete;
@@ -4165,6 +4541,9 @@ class ResolvedGetStructField final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedGetStructField> MakeResolvedGetStructField();
+  friend class ResolvedGetStructFieldBuilder;
+  friend ResolvedGetStructFieldBuilder ToBuilder(std::unique_ptr<const ResolvedGetStructField>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -4196,7 +4575,6 @@ class ResolvedGetProtoField final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GET_PROTO_FIELD;
 
-  friend std::unique_ptr<ResolvedGetProtoField> MakeResolvedGetProtoField();
  protected:
   ResolvedGetProtoField()
       : ResolvedExpr()
@@ -4207,6 +4585,7 @@ class ResolvedGetProtoField final : public ResolvedExpr {
       , format_()
       , return_default_value_when_unset_()
   {}
+
  public:
 
   ResolvedGetProtoField(const ResolvedGetProtoField&) = delete;
@@ -4395,6 +4774,9 @@ class ResolvedGetProtoField final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedGetProtoField> MakeResolvedGetProtoField();
+  friend class ResolvedGetProtoFieldBuilder;
+  friend ResolvedGetProtoFieldBuilder ToBuilder(std::unique_ptr<const ResolvedGetProtoField>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -4439,13 +4821,13 @@ class ResolvedGetJsonField final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GET_JSON_FIELD;
 
-  friend std::unique_ptr<ResolvedGetJsonField> MakeResolvedGetJsonField();
  protected:
   ResolvedGetJsonField()
       : ResolvedExpr()
       , expr_()
       , field_name_()
   {}
+
  public:
 
   ResolvedGetJsonField(const ResolvedGetJsonField&) = delete;
@@ -4541,6 +4923,9 @@ class ResolvedGetJsonField final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedGetJsonField> MakeResolvedGetJsonField();
+  friend class ResolvedGetJsonFieldBuilder;
+  friend ResolvedGetJsonFieldBuilder ToBuilder(std::unique_ptr<const ResolvedGetJsonField>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -4581,13 +4966,13 @@ class ResolvedFlatten final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FLATTEN;
 
-  friend std::unique_ptr<ResolvedFlatten> MakeResolvedFlatten();
  protected:
   ResolvedFlatten()
       : ResolvedExpr()
       , expr_()
       , get_field_list_()
   {}
+
  public:
 
   ResolvedFlatten(const ResolvedFlatten&) = delete;
@@ -4708,6 +5093,9 @@ class ResolvedFlatten final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedFlatten> MakeResolvedFlatten();
+  friend class ResolvedFlattenBuilder;
+  friend ResolvedFlattenBuilder ToBuilder(std::unique_ptr<const ResolvedFlatten>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -4771,11 +5159,11 @@ class ResolvedFlattenedArg final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FLATTENED_ARG;
 
-  friend std::unique_ptr<ResolvedFlattenedArg> MakeResolvedFlattenedArg();
  protected:
   ResolvedFlattenedArg()
       : ResolvedExpr()
   {}
+
  public:
 
   ResolvedFlattenedArg(const ResolvedFlattenedArg&) = delete;
@@ -4829,6 +5217,9 @@ class ResolvedFlattenedArg final : public ResolvedExpr {
   }
 
  private:
+  friend std::unique_ptr<ResolvedFlattenedArg> MakeResolvedFlattenedArg();
+  friend class ResolvedFlattenedArgBuilder;
+  friend ResolvedFlattenedArgBuilder ToBuilder(std::unique_ptr<const ResolvedFlattenedArg>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -4871,7 +5262,6 @@ class ResolvedReplaceFieldItem final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_REPLACE_FIELD_ITEM;
 
-  friend std::unique_ptr<ResolvedReplaceFieldItem> MakeResolvedReplaceFieldItem();
  protected:
   ResolvedReplaceFieldItem()
       : ResolvedArgument()
@@ -4879,6 +5269,7 @@ class ResolvedReplaceFieldItem final : public ResolvedArgument {
       , struct_index_path_()
       , proto_field_path_()
   {}
+
  public:
 
   ResolvedReplaceFieldItem(const ResolvedReplaceFieldItem&) = delete;
@@ -5028,6 +5419,9 @@ class ResolvedReplaceFieldItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedReplaceFieldItem> MakeResolvedReplaceFieldItem();
+  friend class ResolvedReplaceFieldItemBuilder;
+  friend ResolvedReplaceFieldItemBuilder ToBuilder(std::unique_ptr<const ResolvedReplaceFieldItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -5066,13 +5460,13 @@ class ResolvedReplaceField final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_REPLACE_FIELD;
 
-  friend std::unique_ptr<ResolvedReplaceField> MakeResolvedReplaceField();
  protected:
   ResolvedReplaceField()
       : ResolvedExpr()
       , expr_()
       , replace_field_item_list_()
   {}
+
  public:
 
   ResolvedReplaceField(const ResolvedReplaceField&) = delete;
@@ -5195,6 +5589,9 @@ class ResolvedReplaceField final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedReplaceField> MakeResolvedReplaceField();
+  friend class ResolvedReplaceFieldBuilder;
+  friend ResolvedReplaceFieldBuilder ToBuilder(std::unique_ptr<const ResolvedReplaceField>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -5332,7 +5729,6 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
   static const SubqueryType LIKE_ANY = ResolvedSubqueryExprEnums::LIKE_ANY;
   static const SubqueryType LIKE_ALL = ResolvedSubqueryExprEnums::LIKE_ALL;
 
-  friend std::unique_ptr<ResolvedSubqueryExpr> MakeResolvedSubqueryExpr();
  protected:
   ResolvedSubqueryExpr()
       : ResolvedExpr()
@@ -5343,6 +5739,7 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
       , subquery_()
       , hint_list_()
   {}
+
  public:
 
   ResolvedSubqueryExpr(const ResolvedSubqueryExpr&) = delete;
@@ -5350,7 +5747,7 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
 
   friend std::unique_ptr<ResolvedSubqueryExpr> MakeResolvedSubqueryExpr(
       const Type* type,
-      SubqueryType subquery_type,
+      ResolvedSubqueryExpr::SubqueryType subquery_type,
       std::vector<std::unique_ptr<const ResolvedColumnRef>> parameter_list,
       std::unique_ptr<const ResolvedExpr> in_expr,
       std::unique_ptr<const ResolvedScan> subquery
@@ -5404,11 +5801,11 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
 
   // Member fields
 
-  SubqueryType subquery_type() const {
+  ResolvedSubqueryExpr::SubqueryType subquery_type() const {
     accessed_ |= (1<<0);
     return subquery_type_;
   }
-  void set_subquery_type(SubqueryType v) {
+  void set_subquery_type(ResolvedSubqueryExpr::SubqueryType v) {
     subquery_type_ = v;
   }
 
@@ -5504,7 +5901,7 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
  protected:
   explicit ResolvedSubqueryExpr(
       const Type* type,
-      SubqueryType subquery_type,
+      ResolvedSubqueryExpr::SubqueryType subquery_type,
       std::vector<std::unique_ptr<const ResolvedColumnRef>> parameter_list,
       std::unique_ptr<const ResolvedExpr> in_expr,
       std::unique_ptr<const ResolvedScan> subquery,
@@ -5523,11 +5920,14 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSubqueryExpr> MakeResolvedSubqueryExpr();
+  friend class ResolvedSubqueryExprBuilder;
+  friend ResolvedSubqueryExprBuilder ToBuilder(std::unique_ptr<const ResolvedSubqueryExpr>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  SubqueryType subquery_type_;
+  ResolvedSubqueryExpr::SubqueryType subquery_type_;
   std::vector<std::unique_ptr<const ResolvedColumnRef>> parameter_list_;
   std::unique_ptr<const ResolvedExpr> in_expr_;
   ResolvedCollation in_collation_;
@@ -5589,7 +5989,7 @@ inline std::unique_ptr<ResolvedSubqueryExpr> MakeResolvedSubqueryExpr() {
       new ResolvedSubqueryExpr());
 }
 
-// ResolvedLetExpr introduces one or more columns in <assignment_list> that
+// ResolvedWithExpr introduces one or more columns in <assignment_list> that
 // can then be referenced inside <expr>. Each assigned expression is
 // evaluated once, and each reference to that column in <expr> sees the same
 // value even if the assigned expression is volatile. Multiple assignment
@@ -5598,26 +5998,31 @@ inline std::unique_ptr<ResolvedSubqueryExpr> MakeResolvedSubqueryExpr() {
 //
 // <assignment_list> One or more columns that are computed before evaluating
 //                   <expr>, and which may be referenced by <expr>.
-// <expr> Computes the result of the ResolvedLetExpr. May reference columns
+// <expr> Computes the result of the ResolvedWithExpr. May reference columns
 //        from <assignment_list>.
-class ResolvedLetExpr final : public ResolvedExpr {
+class ResolvedWithExpr final : public ResolvedExpr {
  public:
   typedef ResolvedExpr SUPER;
 
-  static const ResolvedNodeKind TYPE = RESOLVED_LET_EXPR;
+  static const ResolvedNodeKind TYPE = RESOLVED_WITH_EXPR;
 
-  friend std::unique_ptr<ResolvedLetExpr> MakeResolvedLetExpr(
+ public:
+
+  ResolvedWithExpr(const ResolvedWithExpr&) = delete;
+  ResolvedWithExpr& operator=(const ResolvedWithExpr&) = delete;
+
+  friend std::unique_ptr<ResolvedWithExpr> MakeResolvedWithExpr(
       const Type* type,
       std::vector<std::unique_ptr<const ResolvedComputedColumn>> assignment_list,
       std::unique_ptr<const ResolvedExpr> expr
   );
-  ~ResolvedLetExpr() final;
+  ~ResolvedWithExpr() final;
 
   absl::Status Accept(ResolvedASTVisitor* visitor) const final;
   absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
 
-  ResolvedNodeKind node_kind() const final { return RESOLVED_LET_EXPR; }
-  std::string node_kind_string() const final { return "LetExpr"; }
+  ResolvedNodeKind node_kind() const final { return RESOLVED_WITH_EXPR; }
+  std::string node_kind_string() const final { return "WithExpr"; }
 
   absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
       final;
@@ -5641,13 +6046,13 @@ class ResolvedLetExpr final : public ResolvedExpr {
 
   using SUPER::SaveTo;
   absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
-                      ResolvedLetExprProto* proto) const;
+                      ResolvedWithExprProto* proto) const;
 
   absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
                       AnyResolvedExprProto* proto) const final;
 
-  static absl::StatusOr<std::unique_ptr<ResolvedLetExpr>> RestoreFrom(
-      const ResolvedLetExprProto& proto,
+  static absl::StatusOr<std::unique_ptr<ResolvedWithExpr>> RestoreFrom(
+      const ResolvedWithExprProto& proto,
       const ResolvedNode::RestoreParams& params);
 
   void GetChildNodes(
@@ -5698,7 +6103,13 @@ class ResolvedLetExpr final : public ResolvedExpr {
   }
 
  protected:
-  explicit ResolvedLetExpr(
+  ResolvedWithExpr()
+      : ResolvedExpr()
+      , assignment_list_()
+      , expr_()
+  {}
+
+  explicit ResolvedWithExpr(
       const Type* type,
       std::vector<std::unique_ptr<const ResolvedComputedColumn>> assignment_list,
       std::unique_ptr<const ResolvedExpr> expr,
@@ -5713,6 +6124,8 @@ class ResolvedLetExpr final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedWithExprBuilder;
+  friend ResolvedWithExprBuilder ToBuilder(std::unique_ptr<const ResolvedWithExpr>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -5722,18 +6135,18 @@ class ResolvedLetExpr final : public ResolvedExpr {
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
-inline std::unique_ptr<ResolvedLetExpr> MakeResolvedLetExpr(
+inline std::unique_ptr<ResolvedWithExpr> MakeResolvedWithExpr(
     const Type* type,
     std::vector<std::unique_ptr<const ResolvedComputedColumn>> assignment_list,
     std::unique_ptr<const ResolvedExpr> expr) {
-  return std::unique_ptr<ResolvedLetExpr>(new ResolvedLetExpr(
+  return std::unique_ptr<ResolvedWithExpr>(new ResolvedWithExpr(
         type,
         std::move(assignment_list),
         std::move(expr),
-        ResolvedLetExpr::NEW_CONSTRUCTOR));
+        ResolvedWithExpr::NEW_CONSTRUCTOR));
 }
 
-// Overloaded factory method for the construction of ResolvedLetExpr with
+// Overloaded factory method for the construction of ResolvedWithExpr with
 // a wider range of inputs for node-vector inputs.  In particular allows:
 // 1. unique_ptr element type can be non-const.
 // 2. unique_ptr element type can be any descendant of the required type.
@@ -5746,7 +6159,7 @@ inline std::unique_ptr<ResolvedLetExpr> MakeResolvedLetExpr(
 template <
   typename assignment_list_t
       = std::vector<std::unique_ptr<const ResolvedComputedColumn>>>
-std::unique_ptr<ResolvedLetExpr> MakeResolvedLetExpr(
+std::unique_ptr<ResolvedWithExpr> MakeResolvedWithExpr(
     const Type* type,
     assignment_list_t assignment_list,
     std::unique_ptr<const ResolvedExpr> expr) {
@@ -5755,7 +6168,7 @@ std::unique_ptr<ResolvedLetExpr> MakeResolvedLetExpr(
       typename std::decay<decltype(**(assignment_list.begin()))>::type>::value,
       "assignment_list must be a container of unique_ptr with elements of type "
       "ResolvedComputedColumn (or its descendants).");
-  return MakeResolvedLetExpr(
+  return MakeResolvedWithExpr(
       type,
       {std::make_move_iterator(assignment_list.begin()),
        std::make_move_iterator(assignment_list.end())},
@@ -5786,12 +6199,6 @@ class ResolvedScan  : public ResolvedNode {
 
   bool IsScan() const final { return true; }
 
-  ResolvedScan()
-      : ResolvedNode()
-      , column_list_()
-      , hint_list_()
-      , is_ordered_()
-  {}
  public:
 
   ResolvedScan(const ResolvedScan&) = delete;
@@ -5903,6 +6310,13 @@ class ResolvedScan  : public ResolvedNode {
   }
 
  protected:
+  ResolvedScan()
+      : ResolvedNode()
+      , column_list_()
+      , hint_list_()
+      , is_ordered_()
+  {}
+
   explicit ResolvedScan(
       const std::vector<ResolvedColumn>& column_list,
       ConstructorOverload)
@@ -5916,6 +6330,26 @@ class ResolvedScan  : public ResolvedNode {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedSingleRowScanBuilder;
+  friend class ResolvedTableScanBuilder;
+  friend class ResolvedJoinScanBuilder;
+  friend class ResolvedArrayScanBuilder;
+  friend class ResolvedFilterScanBuilder;
+  friend class ResolvedSetOperationScanBuilder;
+  friend class ResolvedOrderByScanBuilder;
+  friend class ResolvedLimitOffsetScanBuilder;
+  friend class ResolvedWithRefScanBuilder;
+  friend class ResolvedAnalyticScanBuilder;
+  friend class ResolvedSampleScanBuilder;
+  friend class ResolvedProjectScanBuilder;
+  friend class ResolvedTVFScanBuilder;
+  friend class ResolvedGroupRowsScanBuilder;
+  friend class ResolvedRecursiveRefScanBuilder;
+  friend class ResolvedRecursiveScanBuilder;
+  friend class ResolvedWithScanBuilder;
+  friend class ResolvedRelationArgumentScanBuilder;
+  friend class ResolvedPivotScanBuilder;
+  friend class ResolvedUnpivotScanBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -5935,12 +6369,12 @@ class ResolvedModel final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_MODEL;
 
-  friend std::unique_ptr<ResolvedModel> MakeResolvedModel();
  protected:
   ResolvedModel()
       : ResolvedArgument()
       , model_()
   {}
+
  public:
 
   ResolvedModel(const ResolvedModel&) = delete;
@@ -6018,6 +6452,9 @@ class ResolvedModel final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedModel> MakeResolvedModel();
+  friend class ResolvedModelBuilder;
+  friend ResolvedModelBuilder ToBuilder(std::unique_ptr<const ResolvedModel>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -6047,12 +6484,12 @@ class ResolvedConnection final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CONNECTION;
 
-  friend std::unique_ptr<ResolvedConnection> MakeResolvedConnection();
  protected:
   ResolvedConnection()
       : ResolvedArgument()
       , connection_()
   {}
+
  public:
 
   ResolvedConnection(const ResolvedConnection&) = delete;
@@ -6130,6 +6567,9 @@ class ResolvedConnection final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedConnection> MakeResolvedConnection();
+  friend class ResolvedConnectionBuilder;
+  friend ResolvedConnectionBuilder ToBuilder(std::unique_ptr<const ResolvedConnection>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -6166,13 +6606,13 @@ class ResolvedDescriptor final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DESCRIPTOR;
 
-  friend std::unique_ptr<ResolvedDescriptor> MakeResolvedDescriptor();
  protected:
   ResolvedDescriptor()
       : ResolvedArgument()
       , descriptor_column_list_()
       , descriptor_column_name_list_()
   {}
+
  public:
 
   ResolvedDescriptor(const ResolvedDescriptor&) = delete;
@@ -6291,6 +6731,9 @@ class ResolvedDescriptor final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDescriptor> MakeResolvedDescriptor();
+  friend class ResolvedDescriptorBuilder;
+  friend ResolvedDescriptorBuilder ToBuilder(std::unique_ptr<const ResolvedDescriptor>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -6322,11 +6765,11 @@ class ResolvedSingleRowScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SINGLE_ROW_SCAN;
 
-  friend std::unique_ptr<ResolvedSingleRowScan> MakeResolvedSingleRowScan();
  protected:
   ResolvedSingleRowScan()
       : ResolvedScan()
   {}
+
  public:
 
   ResolvedSingleRowScan(const ResolvedSingleRowScan&) = delete;
@@ -6380,6 +6823,9 @@ class ResolvedSingleRowScan final : public ResolvedScan {
   }
 
  private:
+  friend std::unique_ptr<ResolvedSingleRowScan> MakeResolvedSingleRowScan();
+  friend class ResolvedSingleRowScanBuilder;
+  friend ResolvedSingleRowScanBuilder ToBuilder(std::unique_ptr<const ResolvedSingleRowScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -6432,7 +6878,6 @@ class ResolvedTableScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_TABLE_SCAN;
 
-  friend std::unique_ptr<ResolvedTableScan> MakeResolvedTableScan();
  protected:
   ResolvedTableScan()
       : ResolvedScan()
@@ -6441,6 +6886,7 @@ class ResolvedTableScan final : public ResolvedScan {
       , column_index_list_()
       , alias_()
   {}
+
  public:
 
   ResolvedTableScan(const ResolvedTableScan&) = delete;
@@ -6571,6 +7017,9 @@ class ResolvedTableScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedTableScan> MakeResolvedTableScan();
+  friend class ResolvedTableScanBuilder;
+  friend ResolvedTableScanBuilder ToBuilder(std::unique_ptr<const ResolvedTableScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -6627,7 +7076,6 @@ class ResolvedJoinScan final : public ResolvedScan {
   static const JoinType RIGHT = ResolvedJoinScanEnums::RIGHT;
   static const JoinType FULL = ResolvedJoinScanEnums::FULL;
 
-  friend std::unique_ptr<ResolvedJoinScan> MakeResolvedJoinScan();
  protected:
   ResolvedJoinScan()
       : ResolvedScan()
@@ -6636,6 +7084,7 @@ class ResolvedJoinScan final : public ResolvedScan {
       , right_scan_()
       , join_expr_()
   {}
+
  public:
 
   ResolvedJoinScan(const ResolvedJoinScan&) = delete;
@@ -6643,7 +7092,7 @@ class ResolvedJoinScan final : public ResolvedScan {
 
   friend std::unique_ptr<ResolvedJoinScan> MakeResolvedJoinScan(
       const std::vector<ResolvedColumn>& column_list,
-      JoinType join_type,
+      ResolvedJoinScan::JoinType join_type,
       std::unique_ptr<const ResolvedScan> left_scan,
       std::unique_ptr<const ResolvedScan> right_scan,
       std::unique_ptr<const ResolvedExpr> join_expr
@@ -6697,11 +7146,11 @@ class ResolvedJoinScan final : public ResolvedScan {
 
   // Member fields
 
-  JoinType join_type() const {
+  ResolvedJoinScan::JoinType join_type() const {
     accessed_ |= (1<<0);
     return join_type_;
   }
-  void set_join_type(JoinType v) {
+  void set_join_type(ResolvedJoinScan::JoinType v) {
     join_type_ = v;
   }
 
@@ -6744,7 +7193,7 @@ class ResolvedJoinScan final : public ResolvedScan {
  protected:
   explicit ResolvedJoinScan(
       const std::vector<ResolvedColumn>& column_list,
-      JoinType join_type,
+      ResolvedJoinScan::JoinType join_type,
       std::unique_ptr<const ResolvedScan> left_scan,
       std::unique_ptr<const ResolvedScan> right_scan,
       std::unique_ptr<const ResolvedExpr> join_expr,
@@ -6761,11 +7210,14 @@ class ResolvedJoinScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedJoinScan> MakeResolvedJoinScan();
+  friend class ResolvedJoinScanBuilder;
+  friend ResolvedJoinScanBuilder ToBuilder(std::unique_ptr<const ResolvedJoinScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  JoinType join_type_;
+  ResolvedJoinScan::JoinType join_type_;
   std::unique_ptr<const ResolvedScan> left_scan_;
   std::unique_ptr<const ResolvedScan> right_scan_;
   std::unique_ptr<const ResolvedExpr> join_expr_;
@@ -6825,7 +7277,6 @@ class ResolvedArrayScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ARRAY_SCAN;
 
-  friend std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan();
  protected:
   ResolvedArrayScan()
       : ResolvedScan()
@@ -6836,6 +7287,7 @@ class ResolvedArrayScan final : public ResolvedScan {
       , join_expr_()
       , is_outer_()
   {}
+
  public:
 
   ResolvedArrayScan(const ResolvedArrayScan&) = delete;
@@ -6987,6 +7439,9 @@ class ResolvedArrayScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan();
+  friend class ResolvedArrayScanBuilder;
+  friend ResolvedArrayScanBuilder ToBuilder(std::unique_ptr<const ResolvedArrayScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7031,12 +7486,12 @@ class ResolvedColumnHolder final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_COLUMN_HOLDER;
 
-  friend std::unique_ptr<ResolvedColumnHolder> MakeResolvedColumnHolder();
  protected:
   ResolvedColumnHolder()
       : ResolvedArgument()
       , column_()
   {}
+
  public:
 
   ResolvedColumnHolder(const ResolvedColumnHolder&) = delete;
@@ -7114,6 +7569,9 @@ class ResolvedColumnHolder final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedColumnHolder> MakeResolvedColumnHolder();
+  friend class ResolvedColumnHolderBuilder;
+  friend ResolvedColumnHolderBuilder ToBuilder(std::unique_ptr<const ResolvedColumnHolder>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7143,13 +7601,13 @@ class ResolvedFilterScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FILTER_SCAN;
 
-  friend std::unique_ptr<ResolvedFilterScan> MakeResolvedFilterScan();
  protected:
   ResolvedFilterScan()
       : ResolvedScan()
       , input_scan_()
       , filter_expr_()
   {}
+
  public:
 
   ResolvedFilterScan(const ResolvedFilterScan&) = delete;
@@ -7249,6 +7707,9 @@ class ResolvedFilterScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedFilterScan> MakeResolvedFilterScan();
+  friend class ResolvedFilterScanBuilder;
+  friend ResolvedFilterScanBuilder ToBuilder(std::unique_ptr<const ResolvedFilterScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7286,12 +7747,12 @@ class ResolvedGroupingSet final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GROUPING_SET;
 
-  friend std::unique_ptr<ResolvedGroupingSet> MakeResolvedGroupingSet();
  protected:
   ResolvedGroupingSet()
       : ResolvedArgument()
       , group_by_column_list_()
   {}
+
  public:
 
   ResolvedGroupingSet(const ResolvedGroupingSet&) = delete;
@@ -7386,6 +7847,9 @@ class ResolvedGroupingSet final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedGroupingSet> MakeResolvedGroupingSet();
+  friend class ResolvedGroupingSetBuilder;
+  friend ResolvedGroupingSetBuilder ToBuilder(std::unique_ptr<const ResolvedGroupingSet>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7460,13 +7924,6 @@ class ResolvedAggregateScanBase  : public ResolvedScan {
   // Number of leaf node types that exist as descendants of this abstract type.
   static const int NUM_DESCENDANT_LEAF_TYPES = 2;
 
-  ResolvedAggregateScanBase()
-      : ResolvedScan()
-      , input_scan_()
-      , group_by_list_()
-      , collation_list_()
-      , aggregate_list_()
-  {}
  public:
 
   ResolvedAggregateScanBase(const ResolvedAggregateScanBase&) = delete;
@@ -7607,6 +8064,14 @@ class ResolvedAggregateScanBase  : public ResolvedScan {
   }
 
  protected:
+  ResolvedAggregateScanBase()
+      : ResolvedScan()
+      , input_scan_()
+      , group_by_list_()
+      , collation_list_()
+      , aggregate_list_()
+  {}
+
   explicit ResolvedAggregateScanBase(
       const std::vector<ResolvedColumn>& column_list,
       std::unique_ptr<const ResolvedScan> input_scan,
@@ -7625,6 +8090,8 @@ class ResolvedAggregateScanBase  : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedAggregateScanBuilder;
+  friend class ResolvedAnonymizedAggregateScanBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7659,13 +8126,13 @@ class ResolvedAggregateScan final : public ResolvedAggregateScanBase {
 
   static const ResolvedNodeKind TYPE = RESOLVED_AGGREGATE_SCAN;
 
-  friend std::unique_ptr<ResolvedAggregateScan> MakeResolvedAggregateScan();
  protected:
   ResolvedAggregateScan()
       : ResolvedAggregateScanBase()
       , grouping_set_list_()
       , rollup_column_list_()
   {}
+
  public:
 
   ResolvedAggregateScan(const ResolvedAggregateScan&) = delete;
@@ -7800,6 +8267,9 @@ class ResolvedAggregateScan final : public ResolvedAggregateScanBase {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAggregateScan> MakeResolvedAggregateScan();
+  friend class ResolvedAggregateScanBuilder;
+  friend ResolvedAggregateScanBuilder ToBuilder(std::unique_ptr<const ResolvedAggregateScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7910,13 +8380,13 @@ class ResolvedAnonymizedAggregateScan final : public ResolvedAggregateScanBase {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ANONYMIZED_AGGREGATE_SCAN;
 
-  friend std::unique_ptr<ResolvedAnonymizedAggregateScan> MakeResolvedAnonymizedAggregateScan();
  protected:
   ResolvedAnonymizedAggregateScan()
       : ResolvedAggregateScanBase()
       , k_threshold_expr_()
       , anonymization_option_list_()
   {}
+
  public:
 
   ResolvedAnonymizedAggregateScan(const ResolvedAnonymizedAggregateScan&) = delete;
@@ -8038,6 +8508,9 @@ class ResolvedAnonymizedAggregateScan final : public ResolvedAggregateScanBase {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAnonymizedAggregateScan> MakeResolvedAnonymizedAggregateScan();
+  friend class ResolvedAnonymizedAggregateScanBuilder;
+  friend ResolvedAnonymizedAggregateScanBuilder ToBuilder(std::unique_ptr<const ResolvedAnonymizedAggregateScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -8130,13 +8603,13 @@ class ResolvedSetOperationItem final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SET_OPERATION_ITEM;
 
-  friend std::unique_ptr<ResolvedSetOperationItem> MakeResolvedSetOperationItem();
  protected:
   ResolvedSetOperationItem()
       : ResolvedArgument()
       , scan_()
       , output_column_list_()
   {}
+
  public:
 
   ResolvedSetOperationItem(const ResolvedSetOperationItem&) = delete;
@@ -8244,6 +8717,9 @@ class ResolvedSetOperationItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSetOperationItem> MakeResolvedSetOperationItem();
+  friend class ResolvedSetOperationItemBuilder;
+  friend ResolvedSetOperationItemBuilder ToBuilder(std::unique_ptr<const ResolvedSetOperationItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -8304,13 +8780,13 @@ class ResolvedSetOperationScan final : public ResolvedScan {
   static const SetOperationType EXCEPT_ALL = ResolvedSetOperationScanEnums::EXCEPT_ALL;
   static const SetOperationType EXCEPT_DISTINCT = ResolvedSetOperationScanEnums::EXCEPT_DISTINCT;
 
-  friend std::unique_ptr<ResolvedSetOperationScan> MakeResolvedSetOperationScan();
  protected:
   ResolvedSetOperationScan()
       : ResolvedScan()
       , op_type_()
       , input_item_list_()
   {}
+
  public:
 
   ResolvedSetOperationScan(const ResolvedSetOperationScan&) = delete;
@@ -8318,7 +8794,7 @@ class ResolvedSetOperationScan final : public ResolvedScan {
 
   friend std::unique_ptr<ResolvedSetOperationScan> MakeResolvedSetOperationScan(
       const std::vector<ResolvedColumn>& column_list,
-      SetOperationType op_type,
+      ResolvedSetOperationScan::SetOperationType op_type,
       std::vector<std::unique_ptr<const ResolvedSetOperationItem>> input_item_list
   );
   ~ResolvedSetOperationScan() final;
@@ -8370,11 +8846,11 @@ class ResolvedSetOperationScan final : public ResolvedScan {
 
   // Member fields
 
-  SetOperationType op_type() const {
+  ResolvedSetOperationScan::SetOperationType op_type() const {
     accessed_ |= (1<<0);
     return op_type_;
   }
-  void set_op_type(SetOperationType v) {
+  void set_op_type(ResolvedSetOperationScan::SetOperationType v) {
     op_type_ = v;
   }
 
@@ -8406,7 +8882,7 @@ class ResolvedSetOperationScan final : public ResolvedScan {
  protected:
   explicit ResolvedSetOperationScan(
       const std::vector<ResolvedColumn>& column_list,
-      SetOperationType op_type,
+      ResolvedSetOperationScan::SetOperationType op_type,
       std::vector<std::unique_ptr<const ResolvedSetOperationItem>> input_item_list,
       ConstructorOverload)
       : ResolvedScan(
@@ -8419,11 +8895,14 @@ class ResolvedSetOperationScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSetOperationScan> MakeResolvedSetOperationScan();
+  friend class ResolvedSetOperationScanBuilder;
+  friend ResolvedSetOperationScanBuilder ToBuilder(std::unique_ptr<const ResolvedSetOperationScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  SetOperationType op_type_;
+  ResolvedSetOperationScan::SetOperationType op_type_;
   std::vector<std::unique_ptr<const ResolvedSetOperationItem>> input_item_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -8498,13 +8977,13 @@ class ResolvedOrderByScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ORDER_BY_SCAN;
 
-  friend std::unique_ptr<ResolvedOrderByScan> MakeResolvedOrderByScan();
  protected:
   ResolvedOrderByScan()
       : ResolvedScan()
       , input_scan_()
       , order_by_item_list_()
   {}
+
  public:
 
   ResolvedOrderByScan(const ResolvedOrderByScan&) = delete;
@@ -8617,6 +9096,9 @@ class ResolvedOrderByScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedOrderByScan> MakeResolvedOrderByScan();
+  friend class ResolvedOrderByScanBuilder;
+  friend ResolvedOrderByScanBuilder ToBuilder(std::unique_ptr<const ResolvedOrderByScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -8689,7 +9171,6 @@ class ResolvedLimitOffsetScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_LIMIT_OFFSET_SCAN;
 
-  friend std::unique_ptr<ResolvedLimitOffsetScan> MakeResolvedLimitOffsetScan();
  protected:
   ResolvedLimitOffsetScan()
       : ResolvedScan()
@@ -8697,6 +9178,7 @@ class ResolvedLimitOffsetScan final : public ResolvedScan {
       , limit_()
       , offset_()
   {}
+
  public:
 
   ResolvedLimitOffsetScan(const ResolvedLimitOffsetScan&) = delete;
@@ -8813,6 +9295,9 @@ class ResolvedLimitOffsetScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedLimitOffsetScan> MakeResolvedLimitOffsetScan();
+  friend class ResolvedLimitOffsetScanBuilder;
+  friend ResolvedLimitOffsetScanBuilder ToBuilder(std::unique_ptr<const ResolvedLimitOffsetScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -8844,20 +9329,20 @@ inline std::unique_ptr<ResolvedLimitOffsetScan> MakeResolvedLimitOffsetScan() {
 // Scan the subquery defined in a WITH statement.
 // See ResolvedWithScan for more detail.
 // The column_list produced here will match 1:1 with the column_list produced
-// by the referenced subquery and will given a new unique name to each
-// column produced for this scan.
+// by the referenced subquery and will given a new unique id to each column
+// produced for this scan.
 class ResolvedWithRefScan final : public ResolvedScan {
  public:
   typedef ResolvedScan SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_WITH_REF_SCAN;
 
-  friend std::unique_ptr<ResolvedWithRefScan> MakeResolvedWithRefScan();
  protected:
   ResolvedWithRefScan()
       : ResolvedScan()
       , with_query_name_()
   {}
+
  public:
 
   ResolvedWithRefScan(const ResolvedWithRefScan&) = delete;
@@ -8938,6 +9423,9 @@ class ResolvedWithRefScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedWithRefScan> MakeResolvedWithRefScan();
+  friend class ResolvedWithRefScanBuilder;
+  friend ResolvedWithRefScanBuilder ToBuilder(std::unique_ptr<const ResolvedWithRefScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -8975,13 +9463,13 @@ class ResolvedAnalyticScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ANALYTIC_SCAN;
 
-  friend std::unique_ptr<ResolvedAnalyticScan> MakeResolvedAnalyticScan();
  protected:
   ResolvedAnalyticScan()
       : ResolvedScan()
       , input_scan_()
       , function_group_list_()
   {}
+
  public:
 
   ResolvedAnalyticScan(const ResolvedAnalyticScan&) = delete;
@@ -9094,6 +9582,9 @@ class ResolvedAnalyticScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAnalyticScan> MakeResolvedAnalyticScan();
+  friend class ResolvedAnalyticScanBuilder;
+  friend ResolvedAnalyticScanBuilder ToBuilder(std::unique_ptr<const ResolvedAnalyticScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -9182,7 +9673,6 @@ class ResolvedSampleScan final : public ResolvedScan {
   static const SampleUnit ROWS = ResolvedSampleScanEnums::ROWS;
   static const SampleUnit PERCENT = ResolvedSampleScanEnums::PERCENT;
 
-  friend std::unique_ptr<ResolvedSampleScan> MakeResolvedSampleScan();
  protected:
   ResolvedSampleScan()
       : ResolvedScan()
@@ -9194,6 +9684,7 @@ class ResolvedSampleScan final : public ResolvedScan {
       , weight_column_()
       , partition_by_list_()
   {}
+
  public:
 
   ResolvedSampleScan(const ResolvedSampleScan&) = delete;
@@ -9204,7 +9695,7 @@ class ResolvedSampleScan final : public ResolvedScan {
       std::unique_ptr<const ResolvedScan> input_scan,
       const std::string& method,
       std::unique_ptr<const ResolvedExpr> size,
-      SampleUnit unit,
+      ResolvedSampleScan::SampleUnit unit,
       std::unique_ptr<const ResolvedExpr> repeatable_argument,
       std::unique_ptr<const ResolvedColumnHolder> weight_column,
       std::vector<std::unique_ptr<const ResolvedExpr>> partition_by_list
@@ -9290,11 +9781,11 @@ class ResolvedSampleScan final : public ResolvedScan {
     return std::move(size_);
   }
 
-  SampleUnit unit() const {
+  ResolvedSampleScan::SampleUnit unit() const {
     accessed_ |= (1<<3);
     return unit_;
   }
-  void set_unit(SampleUnit v) {
+  void set_unit(ResolvedSampleScan::SampleUnit v) {
     unit_ = v;
   }
 
@@ -9353,7 +9844,7 @@ class ResolvedSampleScan final : public ResolvedScan {
       std::unique_ptr<const ResolvedScan> input_scan,
       const std::string& method,
       std::unique_ptr<const ResolvedExpr> size,
-      SampleUnit unit,
+      ResolvedSampleScan::SampleUnit unit,
       std::unique_ptr<const ResolvedExpr> repeatable_argument,
       std::unique_ptr<const ResolvedColumnHolder> weight_column,
       std::vector<std::unique_ptr<const ResolvedExpr>> partition_by_list,
@@ -9373,6 +9864,9 @@ class ResolvedSampleScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSampleScan> MakeResolvedSampleScan();
+  friend class ResolvedSampleScanBuilder;
+  friend ResolvedSampleScanBuilder ToBuilder(std::unique_ptr<const ResolvedSampleScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -9380,7 +9874,7 @@ class ResolvedSampleScan final : public ResolvedScan {
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::string method_;
   std::unique_ptr<const ResolvedExpr> size_;
-  SampleUnit unit_;
+  ResolvedSampleScan::SampleUnit unit_;
   std::unique_ptr<const ResolvedExpr> repeatable_argument_;
   std::unique_ptr<const ResolvedColumnHolder> weight_column_;
   std::vector<std::unique_ptr<const ResolvedExpr>> partition_by_list_;
@@ -9463,13 +9957,13 @@ class ResolvedComputedColumn final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_COMPUTED_COLUMN;
 
-  friend std::unique_ptr<ResolvedComputedColumn> MakeResolvedComputedColumn();
  protected:
   ResolvedComputedColumn()
       : ResolvedArgument()
       , column_()
       , expr_()
   {}
+
  public:
 
   ResolvedComputedColumn(const ResolvedComputedColumn&) = delete;
@@ -9563,6 +10057,9 @@ class ResolvedComputedColumn final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedComputedColumn> MakeResolvedComputedColumn();
+  friend class ResolvedComputedColumnBuilder;
+  friend ResolvedComputedColumnBuilder ToBuilder(std::unique_ptr<const ResolvedComputedColumn>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -9618,7 +10115,6 @@ class ResolvedOrderByItem final : public ResolvedArgument {
   static const NullOrderMode NULLS_FIRST = ResolvedOrderByItemEnums::NULLS_FIRST;
   static const NullOrderMode NULLS_LAST = ResolvedOrderByItemEnums::NULLS_LAST;
 
-  friend std::unique_ptr<ResolvedOrderByItem> MakeResolvedOrderByItem();
  protected:
   ResolvedOrderByItem()
       : ResolvedArgument()
@@ -9628,6 +10124,7 @@ class ResolvedOrderByItem final : public ResolvedArgument {
       , null_order_()
       , collation_()
   {}
+
  public:
 
   ResolvedOrderByItem(const ResolvedOrderByItem&) = delete;
@@ -9637,7 +10134,7 @@ class ResolvedOrderByItem final : public ResolvedArgument {
       std::unique_ptr<const ResolvedColumnRef> column_ref,
       std::unique_ptr<const ResolvedExpr> collation_name,
       bool is_descending,
-      NullOrderMode null_order
+      ResolvedOrderByItem::NullOrderMode null_order
   );
   ~ResolvedOrderByItem() final;
 
@@ -9720,11 +10217,11 @@ class ResolvedOrderByItem final : public ResolvedArgument {
     is_descending_ = v;
   }
 
-  NullOrderMode null_order() const {
+  ResolvedOrderByItem::NullOrderMode null_order() const {
     accessed_ |= (1<<3);
     return null_order_;
   }
-  void set_null_order(NullOrderMode v) {
+  void set_null_order(ResolvedOrderByItem::NullOrderMode v) {
     null_order_ = v;
   }
 
@@ -9741,7 +10238,7 @@ class ResolvedOrderByItem final : public ResolvedArgument {
       std::unique_ptr<const ResolvedColumnRef> column_ref,
       std::unique_ptr<const ResolvedExpr> collation_name,
       bool is_descending,
-      NullOrderMode null_order,
+      ResolvedOrderByItem::NullOrderMode null_order,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -9755,6 +10252,9 @@ class ResolvedOrderByItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedOrderByItem> MakeResolvedOrderByItem();
+  friend class ResolvedOrderByItemBuilder;
+  friend ResolvedOrderByItemBuilder ToBuilder(std::unique_ptr<const ResolvedOrderByItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -9762,7 +10262,7 @@ class ResolvedOrderByItem final : public ResolvedArgument {
   std::unique_ptr<const ResolvedColumnRef> column_ref_;
   std::unique_ptr<const ResolvedExpr> collation_name_;
   bool is_descending_;
-  NullOrderMode null_order_;
+  ResolvedOrderByItem::NullOrderMode null_order_;
   ResolvedCollation collation_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -9813,7 +10313,6 @@ class ResolvedColumnAnnotations final : public ResolvedArgument {
   absl::StatusOr<TypeParameters> GetFullTypeParameters(
       const Type* type) const;
 
-  friend std::unique_ptr<ResolvedColumnAnnotations> MakeResolvedColumnAnnotations();
  protected:
   ResolvedColumnAnnotations()
       : ResolvedArgument()
@@ -9823,6 +10322,7 @@ class ResolvedColumnAnnotations final : public ResolvedArgument {
       , child_list_()
       , type_parameters_()
   {}
+
  public:
 
   ResolvedColumnAnnotations(const ResolvedColumnAnnotations&) = delete;
@@ -9990,6 +10490,9 @@ class ResolvedColumnAnnotations final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedColumnAnnotations> MakeResolvedColumnAnnotations();
+  friend class ResolvedColumnAnnotationsBuilder;
+  friend ResolvedColumnAnnotationsBuilder ToBuilder(std::unique_ptr<const ResolvedColumnAnnotations>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -10090,13 +10593,13 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
   static const StoredMode STORED = ResolvedGeneratedColumnInfoEnums::STORED;
   static const StoredMode STORED_VOLATILE = ResolvedGeneratedColumnInfoEnums::STORED_VOLATILE;
 
-  friend std::unique_ptr<ResolvedGeneratedColumnInfo> MakeResolvedGeneratedColumnInfo();
  protected:
   ResolvedGeneratedColumnInfo()
       : ResolvedArgument()
       , expression_()
       , stored_mode_()
   {}
+
  public:
 
   ResolvedGeneratedColumnInfo(const ResolvedGeneratedColumnInfo&) = delete;
@@ -10104,7 +10607,7 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
 
   friend std::unique_ptr<ResolvedGeneratedColumnInfo> MakeResolvedGeneratedColumnInfo(
       std::unique_ptr<const ResolvedExpr> expression,
-      StoredMode stored_mode
+      ResolvedGeneratedColumnInfo::StoredMode stored_mode
   );
   ~ResolvedGeneratedColumnInfo() final;
 
@@ -10167,18 +10670,18 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
     return std::move(expression_);
   }
 
-  StoredMode stored_mode() const {
+  ResolvedGeneratedColumnInfo::StoredMode stored_mode() const {
     accessed_ |= (1<<1);
     return stored_mode_;
   }
-  void set_stored_mode(StoredMode v) {
+  void set_stored_mode(ResolvedGeneratedColumnInfo::StoredMode v) {
     stored_mode_ = v;
   }
 
  protected:
   explicit ResolvedGeneratedColumnInfo(
       std::unique_ptr<const ResolvedExpr> expression,
-      StoredMode stored_mode,
+      ResolvedGeneratedColumnInfo::StoredMode stored_mode,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -10189,12 +10692,15 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedGeneratedColumnInfo> MakeResolvedGeneratedColumnInfo();
+  friend class ResolvedGeneratedColumnInfoBuilder;
+  friend ResolvedGeneratedColumnInfoBuilder ToBuilder(std::unique_ptr<const ResolvedGeneratedColumnInfo>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::unique_ptr<const ResolvedExpr> expression_;
-  StoredMode stored_mode_;
+  ResolvedGeneratedColumnInfo::StoredMode stored_mode_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -10229,13 +10735,13 @@ class ResolvedColumnDefaultValue final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_COLUMN_DEFAULT_VALUE;
 
-  friend std::unique_ptr<ResolvedColumnDefaultValue> MakeResolvedColumnDefaultValue();
  protected:
   ResolvedColumnDefaultValue()
       : ResolvedArgument()
       , expression_()
       , sql_()
   {}
+
  public:
 
   ResolvedColumnDefaultValue(const ResolvedColumnDefaultValue&) = delete;
@@ -10328,6 +10834,9 @@ class ResolvedColumnDefaultValue final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedColumnDefaultValue> MakeResolvedColumnDefaultValue();
+  friend class ResolvedColumnDefaultValueBuilder;
+  friend ResolvedColumnDefaultValueBuilder ToBuilder(std::unique_ptr<const ResolvedColumnDefaultValue>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -10378,7 +10887,6 @@ class ResolvedColumnDefinition final : public ResolvedArgument {
   // only parameters on the outermost type.
   absl::StatusOr<TypeParameters> GetFullTypeParameters() const;
 
-  friend std::unique_ptr<ResolvedColumnDefinition> MakeResolvedColumnDefinition();
  protected:
   ResolvedColumnDefinition()
       : ResolvedArgument()
@@ -10390,6 +10898,7 @@ class ResolvedColumnDefinition final : public ResolvedArgument {
       , generated_column_info_()
       , default_value_()
   {}
+
  public:
 
   ResolvedColumnDefinition(const ResolvedColumnDefinition&) = delete;
@@ -10545,6 +11054,9 @@ class ResolvedColumnDefinition final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedColumnDefinition> MakeResolvedColumnDefinition();
+  friend class ResolvedColumnDefinitionBuilder;
+  friend ResolvedColumnDefinitionBuilder ToBuilder(std::unique_ptr<const ResolvedColumnDefinition>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -10591,9 +11103,6 @@ class ResolvedConstraint  : public ResolvedArgument {
   // Number of leaf node types that exist as descendants of this abstract type.
   static const int NUM_DESCENDANT_LEAF_TYPES = 3;
 
-  ResolvedConstraint()
-      : ResolvedArgument()
-  {}
  public:
 
   ResolvedConstraint(const ResolvedConstraint&) = delete;
@@ -10635,6 +11144,10 @@ class ResolvedConstraint  : public ResolvedArgument {
   // Member fields
 
  protected:
+  ResolvedConstraint()
+      : ResolvedArgument()
+  {}
+
   explicit ResolvedConstraint(
       ConstructorOverload)
       : ResolvedArgument(
@@ -10642,6 +11155,9 @@ class ResolvedConstraint  : public ResolvedArgument {
   }
 
  private:
+  friend class ResolvedPrimaryKeyBuilder;
+  friend class ResolvedForeignKeyBuilder;
+  friend class ResolvedCheckConstraintBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -10663,7 +11179,6 @@ class ResolvedPrimaryKey final : public ResolvedConstraint {
 
   static const ResolvedNodeKind TYPE = RESOLVED_PRIMARY_KEY;
 
-  friend std::unique_ptr<ResolvedPrimaryKey> MakeResolvedPrimaryKey();
  protected:
   ResolvedPrimaryKey()
       : ResolvedConstraint()
@@ -10673,6 +11188,7 @@ class ResolvedPrimaryKey final : public ResolvedConstraint {
       , constraint_name_()
       , column_name_list_()
   {}
+
  public:
 
   ResolvedPrimaryKey(const ResolvedPrimaryKey&) = delete;
@@ -10841,6 +11357,9 @@ class ResolvedPrimaryKey final : public ResolvedConstraint {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedPrimaryKey> MakeResolvedPrimaryKey();
+  friend class ResolvedPrimaryKeyBuilder;
+  friend ResolvedPrimaryKeyBuilder ToBuilder(std::unique_ptr<const ResolvedPrimaryKey>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -10958,7 +11477,6 @@ class ResolvedForeignKey final : public ResolvedConstraint {
   static const ActionOperation CASCADE = ResolvedForeignKeyEnums::CASCADE;
   static const ActionOperation SET_NULL = ResolvedForeignKeyEnums::SET_NULL;
 
-  friend std::unique_ptr<ResolvedForeignKey> MakeResolvedForeignKey();
  protected:
   ResolvedForeignKey()
       : ResolvedConstraint()
@@ -10973,6 +11491,7 @@ class ResolvedForeignKey final : public ResolvedConstraint {
       , option_list_()
       , referencing_column_list_()
   {}
+
  public:
 
   ResolvedForeignKey(const ResolvedForeignKey&) = delete;
@@ -10983,9 +11502,9 @@ class ResolvedForeignKey final : public ResolvedConstraint {
       const std::vector<int>& referencing_column_offset_list,
       const Table* referenced_table,
       const std::vector<int>& referenced_column_offset_list,
-      MatchMode match_mode,
-      ActionOperation update_action,
-      ActionOperation delete_action,
+      ResolvedForeignKey::MatchMode match_mode,
+      ResolvedForeignKey::ActionOperation update_action,
+      ResolvedForeignKey::ActionOperation delete_action,
       bool enforced,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       const std::vector<std::string>& referencing_column_list
@@ -11101,27 +11620,27 @@ class ResolvedForeignKey final : public ResolvedConstraint {
     return &referenced_column_offset_list_;
   }
 
-  MatchMode match_mode() const {
+  ResolvedForeignKey::MatchMode match_mode() const {
     accessed_ |= (1<<4);
     return match_mode_;
   }
-  void set_match_mode(MatchMode v) {
+  void set_match_mode(ResolvedForeignKey::MatchMode v) {
     match_mode_ = v;
   }
 
-  ActionOperation update_action() const {
+  ResolvedForeignKey::ActionOperation update_action() const {
     accessed_ |= (1<<5);
     return update_action_;
   }
-  void set_update_action(ActionOperation v) {
+  void set_update_action(ResolvedForeignKey::ActionOperation v) {
     update_action_ = v;
   }
 
-  ActionOperation delete_action() const {
+  ResolvedForeignKey::ActionOperation delete_action() const {
     accessed_ |= (1<<6);
     return delete_action_;
   }
-  void set_delete_action(ActionOperation v) {
+  void set_delete_action(ResolvedForeignKey::ActionOperation v) {
     delete_action_ = v;
   }
 
@@ -11187,9 +11706,9 @@ class ResolvedForeignKey final : public ResolvedConstraint {
       const std::vector<int>& referencing_column_offset_list,
       const Table* referenced_table,
       const std::vector<int>& referenced_column_offset_list,
-      MatchMode match_mode,
-      ActionOperation update_action,
-      ActionOperation delete_action,
+      ResolvedForeignKey::MatchMode match_mode,
+      ResolvedForeignKey::ActionOperation update_action,
+      ResolvedForeignKey::ActionOperation delete_action,
       bool enforced,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       const std::vector<std::string>& referencing_column_list,
@@ -11211,6 +11730,9 @@ class ResolvedForeignKey final : public ResolvedConstraint {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedForeignKey> MakeResolvedForeignKey();
+  friend class ResolvedForeignKeyBuilder;
+  friend ResolvedForeignKeyBuilder ToBuilder(std::unique_ptr<const ResolvedForeignKey>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -11219,9 +11741,9 @@ class ResolvedForeignKey final : public ResolvedConstraint {
   std::vector<int> referencing_column_offset_list_;
   const Table* referenced_table_;
   std::vector<int> referenced_column_offset_list_;
-  MatchMode match_mode_;
-  ActionOperation update_action_;
-  ActionOperation delete_action_;
+  ResolvedForeignKey::MatchMode match_mode_;
+  ResolvedForeignKey::ActionOperation update_action_;
+  ResolvedForeignKey::ActionOperation delete_action_;
   bool enforced_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::vector<std::string> referencing_column_list_;
@@ -11324,7 +11846,6 @@ class ResolvedCheckConstraint final : public ResolvedConstraint {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CHECK_CONSTRAINT;
 
-  friend std::unique_ptr<ResolvedCheckConstraint> MakeResolvedCheckConstraint();
  protected:
   ResolvedCheckConstraint()
       : ResolvedConstraint()
@@ -11333,6 +11854,7 @@ class ResolvedCheckConstraint final : public ResolvedConstraint {
       , enforced_()
       , option_list_()
   {}
+
  public:
 
   ResolvedCheckConstraint(const ResolvedCheckConstraint&) = delete;
@@ -11464,6 +11986,9 @@ class ResolvedCheckConstraint final : public ResolvedConstraint {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCheckConstraint> MakeResolvedCheckConstraint();
+  friend class ResolvedCheckConstraintBuilder;
+  friend ResolvedCheckConstraintBuilder ToBuilder(std::unique_ptr<const ResolvedCheckConstraint>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -11532,13 +12057,13 @@ class ResolvedOutputColumn final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_OUTPUT_COLUMN;
 
-  friend std::unique_ptr<ResolvedOutputColumn> MakeResolvedOutputColumn();
  protected:
   ResolvedOutputColumn()
       : ResolvedArgument()
       , name_()
       , column_()
   {}
+
  public:
 
   ResolvedOutputColumn(const ResolvedOutputColumn&) = delete;
@@ -11628,6 +12153,9 @@ class ResolvedOutputColumn final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedOutputColumn> MakeResolvedOutputColumn();
+  friend class ResolvedOutputColumnBuilder;
+  friend ResolvedOutputColumnBuilder ToBuilder(std::unique_ptr<const ResolvedOutputColumn>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -11667,13 +12195,13 @@ class ResolvedProjectScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_PROJECT_SCAN;
 
-  friend std::unique_ptr<ResolvedProjectScan> MakeResolvedProjectScan();
  protected:
   ResolvedProjectScan()
       : ResolvedScan()
       , expr_list_()
       , input_scan_()
   {}
+
  public:
 
   ResolvedProjectScan(const ResolvedProjectScan&) = delete;
@@ -11788,6 +12316,9 @@ class ResolvedProjectScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedProjectScan> MakeResolvedProjectScan();
+  friend class ResolvedProjectScanBuilder;
+  friend ResolvedProjectScanBuilder ToBuilder(std::unique_ptr<const ResolvedProjectScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -11911,6 +12442,11 @@ class ResolvedTVFScan final : public ResolvedScan {
   typedef ResolvedScan SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_TVFSCAN;
+
+ public:
+
+  ResolvedTVFScan(const ResolvedTVFScan&) = delete;
+  ResolvedTVFScan& operator=(const ResolvedTVFScan&) = delete;
 
   friend std::unique_ptr<ResolvedTVFScan> MakeResolvedTVFScan(
       const std::vector<ResolvedColumn>& column_list,
@@ -12051,6 +12587,16 @@ class ResolvedTVFScan final : public ResolvedScan {
   }
 
  protected:
+  ResolvedTVFScan()
+      : ResolvedScan()
+      , tvf_()
+      , signature_()
+      , argument_list_()
+      , column_index_list_()
+      , alias_()
+      , function_call_signature_()
+  {}
+
   explicit ResolvedTVFScan(
       const std::vector<ResolvedColumn>& column_list,
       const TableValuedFunction* tvf,
@@ -12074,6 +12620,8 @@ class ResolvedTVFScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedTVFScanBuilder;
+  friend ResolvedTVFScanBuilder ToBuilder(std::unique_ptr<const ResolvedTVFScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -12177,6 +12725,11 @@ class ResolvedGroupRowsScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GROUP_ROWS_SCAN;
 
+ public:
+
+  ResolvedGroupRowsScan(const ResolvedGroupRowsScan&) = delete;
+  ResolvedGroupRowsScan& operator=(const ResolvedGroupRowsScan&) = delete;
+
   friend std::unique_ptr<ResolvedGroupRowsScan> MakeResolvedGroupRowsScan(
       const std::vector<ResolvedColumn>& column_list,
       std::vector<std::unique_ptr<const ResolvedComputedColumn>> input_column_list,
@@ -12265,6 +12818,12 @@ class ResolvedGroupRowsScan final : public ResolvedScan {
   }
 
  protected:
+  ResolvedGroupRowsScan()
+      : ResolvedScan()
+      , input_column_list_()
+      , alias_()
+  {}
+
   explicit ResolvedGroupRowsScan(
       const std::vector<ResolvedColumn>& column_list,
       std::vector<std::unique_ptr<const ResolvedComputedColumn>> input_column_list,
@@ -12280,6 +12839,8 @@ class ResolvedGroupRowsScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedGroupRowsScanBuilder;
+  friend ResolvedGroupRowsScanBuilder ToBuilder(std::unique_ptr<const ResolvedGroupRowsScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -12355,7 +12916,6 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FUNCTION_ARGUMENT;
 
-  friend std::unique_ptr<ResolvedFunctionArgument> MakeResolvedFunctionArgument();
  protected:
   ResolvedFunctionArgument()
       : ResolvedArgument()
@@ -12367,6 +12927,7 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
       , argument_column_list_()
       , inline_lambda_()
   {}
+
  public:
 
   ResolvedFunctionArgument(const ResolvedFunctionArgument&) = delete;
@@ -12549,6 +13110,9 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedFunctionArgument> MakeResolvedFunctionArgument();
+  friend class ResolvedFunctionArgumentBuilder;
+  friend ResolvedFunctionArgumentBuilder ToBuilder(std::unique_ptr<const ResolvedFunctionArgument>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -12593,7 +13157,7 @@ class ResolvedStatement  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 66;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 67;
 
   typedef ResolvedStatementEnums::ObjectAccess ObjectAccess;
   static const ObjectAccess NONE = ResolvedStatementEnums::NONE;
@@ -12603,10 +13167,6 @@ class ResolvedStatement  : public ResolvedNode {
 
   bool IsStatement() const final { return true; }
 
-  ResolvedStatement()
-      : ResolvedNode()
-      , hint_list_()
-  {}
  public:
 
   ResolvedStatement(const ResolvedStatement&) = delete;
@@ -12687,6 +13247,11 @@ class ResolvedStatement  : public ResolvedNode {
   }
 
  protected:
+  ResolvedStatement()
+      : ResolvedNode()
+      , hint_list_()
+  {}
+
   explicit ResolvedStatement(
       ConstructorOverload)
       : ResolvedNode(
@@ -12697,6 +13262,46 @@ class ResolvedStatement  : public ResolvedNode {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedExplainStmtBuilder;
+  friend class ResolvedQueryStmtBuilder;
+  friend class ResolvedCreateDatabaseStmtBuilder;
+  friend class ResolvedExportModelStmtBuilder;
+  friend class ResolvedExportDataStmtBuilder;
+  friend class ResolvedDefineTableStmtBuilder;
+  friend class ResolvedDescribeStmtBuilder;
+  friend class ResolvedShowStmtBuilder;
+  friend class ResolvedBeginStmtBuilder;
+  friend class ResolvedSetTransactionStmtBuilder;
+  friend class ResolvedCommitStmtBuilder;
+  friend class ResolvedRollbackStmtBuilder;
+  friend class ResolvedStartBatchStmtBuilder;
+  friend class ResolvedRunBatchStmtBuilder;
+  friend class ResolvedAbortBatchStmtBuilder;
+  friend class ResolvedDropStmtBuilder;
+  friend class ResolvedDropMaterializedViewStmtBuilder;
+  friend class ResolvedDropSnapshotTableStmtBuilder;
+  friend class ResolvedAssertStmtBuilder;
+  friend class ResolvedInsertStmtBuilder;
+  friend class ResolvedDeleteStmtBuilder;
+  friend class ResolvedUpdateStmtBuilder;
+  friend class ResolvedMergeStmtBuilder;
+  friend class ResolvedTruncateStmtBuilder;
+  friend class ResolvedAlterTableSetOptionsStmtBuilder;
+  friend class ResolvedRenameStmtBuilder;
+  friend class ResolvedCreateRowAccessPolicyStmtBuilder;
+  friend class ResolvedDropPrivilegeRestrictionStmtBuilder;
+  friend class ResolvedDropRowAccessPolicyStmtBuilder;
+  friend class ResolvedDropSearchIndexStmtBuilder;
+  friend class ResolvedDropFunctionStmtBuilder;
+  friend class ResolvedDropTableFunctionStmtBuilder;
+  friend class ResolvedCallStmtBuilder;
+  friend class ResolvedImportStmtBuilder;
+  friend class ResolvedModuleStmtBuilder;
+  friend class ResolvedExecuteImmediateStmtBuilder;
+  friend class ResolvedAssignmentStmtBuilder;
+  friend class ResolvedCloneDataStmtBuilder;
+  friend class ResolvedAnalyzeStmtBuilder;
+  friend class ResolvedAuxLoadDataStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -12716,12 +13321,12 @@ class ResolvedExplainStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXPLAIN_STMT;
 
-  friend std::unique_ptr<ResolvedExplainStmt> MakeResolvedExplainStmt();
  protected:
   ResolvedExplainStmt()
       : ResolvedStatement()
       , statement_()
   {}
+
  public:
 
   ResolvedExplainStmt(const ResolvedExplainStmt&) = delete;
@@ -12803,6 +13408,9 @@ class ResolvedExplainStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExplainStmt> MakeResolvedExplainStmt();
+  friend class ResolvedExplainStmtBuilder;
+  friend ResolvedExplainStmtBuilder ToBuilder(std::unique_ptr<const ResolvedExplainStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -12837,7 +13445,6 @@ class ResolvedQueryStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_QUERY_STMT;
 
-  friend std::unique_ptr<ResolvedQueryStmt> MakeResolvedQueryStmt();
  protected:
   ResolvedQueryStmt()
       : ResolvedStatement()
@@ -12845,6 +13452,7 @@ class ResolvedQueryStmt final : public ResolvedStatement {
       , is_value_table_()
       , query_()
   {}
+
  public:
 
   ResolvedQueryStmt(const ResolvedQueryStmt&) = delete;
@@ -12969,6 +13577,9 @@ class ResolvedQueryStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedQueryStmt> MakeResolvedQueryStmt();
+  friend class ResolvedQueryStmtBuilder;
+  friend ResolvedQueryStmtBuilder ToBuilder(std::unique_ptr<const ResolvedQueryStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -13034,13 +13645,13 @@ class ResolvedCreateDatabaseStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_DATABASE_STMT;
 
-  friend std::unique_ptr<ResolvedCreateDatabaseStmt> MakeResolvedCreateDatabaseStmt();
  protected:
   ResolvedCreateDatabaseStmt()
       : ResolvedStatement()
       , name_path_()
       , option_list_()
   {}
+
  public:
 
   ResolvedCreateDatabaseStmt(const ResolvedCreateDatabaseStmt&) = delete;
@@ -13161,6 +13772,9 @@ class ResolvedCreateDatabaseStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateDatabaseStmt> MakeResolvedCreateDatabaseStmt();
+  friend class ResolvedCreateDatabaseStmtBuilder;
+  friend ResolvedCreateDatabaseStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateDatabaseStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -13250,12 +13864,6 @@ class ResolvedCreateStatement  : public ResolvedStatement {
   static const DeterminismLevel DETERMINISM_STABLE = ResolvedCreateStatementEnums::DETERMINISM_STABLE;
   static const DeterminismLevel DETERMINISM_VOLATILE = ResolvedCreateStatementEnums::DETERMINISM_VOLATILE;
 
-  ResolvedCreateStatement()
-      : ResolvedStatement()
-      , name_path_()
-      , create_scope_()
-      , create_mode_()
-  {}
  public:
 
   ResolvedCreateStatement(const ResolvedCreateStatement&) = delete;
@@ -13333,27 +13941,34 @@ class ResolvedCreateStatement  : public ResolvedStatement {
     return &name_path_;
   }
 
-  CreateScope create_scope() const {
+  ResolvedCreateStatement::CreateScope create_scope() const {
     accessed_ |= (1<<1);
     return create_scope_;
   }
-  void set_create_scope(CreateScope v) {
+  void set_create_scope(ResolvedCreateStatement::CreateScope v) {
     create_scope_ = v;
   }
 
-  CreateMode create_mode() const {
+  ResolvedCreateStatement::CreateMode create_mode() const {
     accessed_ |= (1<<2);
     return create_mode_;
   }
-  void set_create_mode(CreateMode v) {
+  void set_create_mode(ResolvedCreateStatement::CreateMode v) {
     create_mode_ = v;
   }
 
  protected:
+  ResolvedCreateStatement()
+      : ResolvedStatement()
+      , name_path_()
+      , create_scope_()
+      , create_mode_()
+  {}
+
   explicit ResolvedCreateStatement(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       ConstructorOverload)
       : ResolvedStatement(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -13365,13 +13980,23 @@ class ResolvedCreateStatement  : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedCreateIndexStmtBuilder;
+  friend class ResolvedCreateSchemaStmtBuilder;
+  friend class ResolvedCreateModelStmtBuilder;
+  friend class ResolvedCreateSnapshotTableStmtBuilder;
+  friend class ResolvedCreatePrivilegeRestrictionStmtBuilder;
+  friend class ResolvedCreateConstantStmtBuilder;
+  friend class ResolvedCreateFunctionStmtBuilder;
+  friend class ResolvedCreateTableFunctionStmtBuilder;
+  friend class ResolvedCreateProcedureStmtBuilder;
+  friend class ResolvedCreateEntityStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::vector<std::string> name_path_;
-  CreateScope create_scope_;
-  CreateMode create_mode_;
+  ResolvedCreateStatement::CreateScope create_scope_;
+  ResolvedCreateStatement::CreateMode create_mode_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -13383,13 +14008,13 @@ class ResolvedIndexItem final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_INDEX_ITEM;
 
-  friend std::unique_ptr<ResolvedIndexItem> MakeResolvedIndexItem();
  protected:
   ResolvedIndexItem()
       : ResolvedArgument()
       , column_ref_()
       , descending_()
   {}
+
  public:
 
   ResolvedIndexItem(const ResolvedIndexItem&) = delete;
@@ -13482,6 +14107,9 @@ class ResolvedIndexItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedIndexItem> MakeResolvedIndexItem();
+  friend class ResolvedIndexItemBuilder;
+  friend ResolvedIndexItemBuilder ToBuilder(std::unique_ptr<const ResolvedIndexItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -13522,7 +14150,6 @@ class ResolvedUnnestItem final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_UNNEST_ITEM;
 
-  friend std::unique_ptr<ResolvedUnnestItem> MakeResolvedUnnestItem();
  protected:
   ResolvedUnnestItem()
       : ResolvedArgument()
@@ -13530,6 +14157,7 @@ class ResolvedUnnestItem final : public ResolvedArgument {
       , element_column_()
       , array_offset_column_()
   {}
+
  public:
 
   ResolvedUnnestItem(const ResolvedUnnestItem&) = delete;
@@ -13637,6 +14265,9 @@ class ResolvedUnnestItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedUnnestItem> MakeResolvedUnnestItem();
+  friend class ResolvedUnnestItemBuilder;
+  friend ResolvedUnnestItemBuilder ToBuilder(std::unique_ptr<const ResolvedUnnestItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -13695,7 +14326,6 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_INDEX_STMT;
 
-  friend std::unique_ptr<ResolvedCreateIndexStmt> MakeResolvedCreateIndexStmt();
  protected:
   ResolvedCreateIndexStmt()
       : ResolvedCreateStatement()
@@ -13710,6 +14340,7 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
       , computed_columns_list_()
       , unnest_expressions_list_()
   {}
+
  public:
 
   ResolvedCreateIndexStmt(const ResolvedCreateIndexStmt&) = delete;
@@ -13717,8 +14348,8 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
 
   friend std::unique_ptr<ResolvedCreateIndexStmt> MakeResolvedCreateIndexStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::vector<std::string>& table_name_path,
       std::unique_ptr<const ResolvedTableScan> table_scan,
       bool is_unique,
@@ -13966,8 +14597,8 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
  protected:
   explicit ResolvedCreateIndexStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::vector<std::string>& table_name_path,
       std::unique_ptr<const ResolvedTableScan> table_scan,
       bool is_unique,
@@ -13999,6 +14630,9 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateIndexStmt> MakeResolvedCreateIndexStmt();
+  friend class ResolvedCreateIndexStmtBuilder;
+  friend ResolvedCreateIndexStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateIndexStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -14182,13 +14816,13 @@ class ResolvedCreateSchemaStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_SCHEMA_STMT;
 
-  friend std::unique_ptr<ResolvedCreateSchemaStmt> MakeResolvedCreateSchemaStmt();
  protected:
   ResolvedCreateSchemaStmt()
       : ResolvedCreateStatement()
       , collation_name_()
       , option_list_()
   {}
+
  public:
 
   ResolvedCreateSchemaStmt(const ResolvedCreateSchemaStmt&) = delete;
@@ -14196,8 +14830,8 @@ class ResolvedCreateSchemaStmt final : public ResolvedCreateStatement {
 
   friend std::unique_ptr<ResolvedCreateSchemaStmt> MakeResolvedCreateSchemaStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::unique_ptr<const ResolvedExpr> collation_name,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list
   );
@@ -14290,8 +14924,8 @@ class ResolvedCreateSchemaStmt final : public ResolvedCreateStatement {
  protected:
   explicit ResolvedCreateSchemaStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::unique_ptr<const ResolvedExpr> collation_name,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       ConstructorOverload)
@@ -14307,6 +14941,9 @@ class ResolvedCreateSchemaStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateSchemaStmt> MakeResolvedCreateSchemaStmt();
+  friend class ResolvedCreateSchemaStmtBuilder;
+  friend ResolvedCreateSchemaStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateSchemaStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -14416,18 +15053,6 @@ class ResolvedCreateTableStmtBase  : public ResolvedCreateStatement {
   // Number of leaf node types that exist as descendants of this abstract type.
   static const int NUM_DESCENDANT_LEAF_TYPES = 3;
 
-  ResolvedCreateTableStmtBase()
-      : ResolvedCreateStatement()
-      , option_list_()
-      , column_definition_list_()
-      , pseudo_column_list_()
-      , primary_key_()
-      , foreign_key_list_()
-      , check_constraint_list_()
-      , is_value_table_()
-      , like_table_()
-      , collation_name_()
-  {}
  public:
 
   ResolvedCreateTableStmtBase(const ResolvedCreateTableStmtBase&) = delete;
@@ -14646,10 +15271,23 @@ class ResolvedCreateTableStmtBase  : public ResolvedCreateStatement {
   }
 
  protected:
+  ResolvedCreateTableStmtBase()
+      : ResolvedCreateStatement()
+      , option_list_()
+      , column_definition_list_()
+      , pseudo_column_list_()
+      , primary_key_()
+      , foreign_key_list_()
+      , check_constraint_list_()
+      , is_value_table_()
+      , like_table_()
+      , collation_name_()
+  {}
+
   explicit ResolvedCreateTableStmtBase(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -14679,6 +15317,9 @@ class ResolvedCreateTableStmtBase  : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedCreateTableStmtBuilder;
+  friend class ResolvedCreateTableAsSelectStmtBuilder;
+  friend class ResolvedCreateExternalTableStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -14729,7 +15370,6 @@ class ResolvedCreateTableStmt final : public ResolvedCreateTableStmtBase {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_TABLE_STMT;
 
-  friend std::unique_ptr<ResolvedCreateTableStmt> MakeResolvedCreateTableStmt();
  protected:
   ResolvedCreateTableStmt()
       : ResolvedCreateTableStmtBase()
@@ -14738,6 +15378,7 @@ class ResolvedCreateTableStmt final : public ResolvedCreateTableStmtBase {
       , partition_by_list_()
       , cluster_by_list_()
   {}
+
  public:
 
   ResolvedCreateTableStmt(const ResolvedCreateTableStmt&) = delete;
@@ -14745,8 +15386,8 @@ class ResolvedCreateTableStmt final : public ResolvedCreateTableStmtBase {
 
   friend std::unique_ptr<ResolvedCreateTableStmt> MakeResolvedCreateTableStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -14887,8 +15528,8 @@ class ResolvedCreateTableStmt final : public ResolvedCreateTableStmtBase {
  protected:
   explicit ResolvedCreateTableStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -14926,6 +15567,9 @@ class ResolvedCreateTableStmt final : public ResolvedCreateTableStmtBase {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateTableStmt> MakeResolvedCreateTableStmt();
+  friend class ResolvedCreateTableStmtBuilder;
+  friend ResolvedCreateTableStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateTableStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -15100,7 +15744,6 @@ class ResolvedCreateTableAsSelectStmt final : public ResolvedCreateTableStmtBase
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_TABLE_AS_SELECT_STMT;
 
-  friend std::unique_ptr<ResolvedCreateTableAsSelectStmt> MakeResolvedCreateTableAsSelectStmt();
  protected:
   ResolvedCreateTableAsSelectStmt()
       : ResolvedCreateTableStmtBase()
@@ -15109,6 +15752,7 @@ class ResolvedCreateTableAsSelectStmt final : public ResolvedCreateTableStmtBase
       , output_column_list_()
       , query_()
   {}
+
  public:
 
   ResolvedCreateTableAsSelectStmt(const ResolvedCreateTableAsSelectStmt&) = delete;
@@ -15116,8 +15760,8 @@ class ResolvedCreateTableAsSelectStmt final : public ResolvedCreateTableStmtBase
 
   friend std::unique_ptr<ResolvedCreateTableAsSelectStmt> MakeResolvedCreateTableAsSelectStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -15271,8 +15915,8 @@ class ResolvedCreateTableAsSelectStmt final : public ResolvedCreateTableStmtBase
  protected:
   explicit ResolvedCreateTableAsSelectStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -15310,6 +15954,9 @@ class ResolvedCreateTableAsSelectStmt final : public ResolvedCreateTableStmtBase
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateTableAsSelectStmt> MakeResolvedCreateTableAsSelectStmt();
+  friend class ResolvedCreateTableAsSelectStmtBuilder;
+  friend ResolvedCreateTableAsSelectStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateTableAsSelectStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -15513,7 +16160,6 @@ class ResolvedCreateModelStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_MODEL_STMT;
 
-  friend std::unique_ptr<ResolvedCreateModelStmt> MakeResolvedCreateModelStmt();
  protected:
   ResolvedCreateModelStmt()
       : ResolvedCreateStatement()
@@ -15525,6 +16171,7 @@ class ResolvedCreateModelStmt final : public ResolvedCreateStatement {
       , transform_output_column_list_()
       , transform_analytic_function_group_list_()
   {}
+
  public:
 
   ResolvedCreateModelStmt(const ResolvedCreateModelStmt&) = delete;
@@ -15532,8 +16179,8 @@ class ResolvedCreateModelStmt final : public ResolvedCreateStatement {
 
   friend std::unique_ptr<ResolvedCreateModelStmt> MakeResolvedCreateModelStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       std::unique_ptr<const ResolvedScan> query,
@@ -15756,8 +16403,8 @@ class ResolvedCreateModelStmt final : public ResolvedCreateStatement {
  protected:
   explicit ResolvedCreateModelStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       std::unique_ptr<const ResolvedScan> query,
@@ -15783,6 +16430,9 @@ class ResolvedCreateModelStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateModelStmt> MakeResolvedCreateModelStmt();
+  friend class ResolvedCreateModelStmtBuilder;
+  friend ResolvedCreateModelStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateModelStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -15945,17 +16595,6 @@ class ResolvedCreateViewBase  : public ResolvedCreateStatement {
   // Number of leaf node types that exist as descendants of this abstract type.
   static const int NUM_DESCENDANT_LEAF_TYPES = 2;
 
-  ResolvedCreateViewBase()
-      : ResolvedCreateStatement()
-      , option_list_()
-      , output_column_list_()
-      , has_explicit_columns_()
-      , query_()
-      , sql_()
-      , sql_security_()
-      , is_value_table_()
-      , recursive_()
-  {}
  public:
 
   ResolvedCreateViewBase(const ResolvedCreateViewBase&) = delete;
@@ -16088,11 +16727,11 @@ class ResolvedCreateViewBase  : public ResolvedCreateStatement {
     sql_ = v;
   }
 
-  SqlSecurity sql_security() const {
+  ResolvedCreateStatement::SqlSecurity sql_security() const {
     accessed_ |= (1<<5);
     return sql_security_;
   }
-  void set_sql_security(SqlSecurity v) {
+  void set_sql_security(ResolvedCreateStatement::SqlSecurity v) {
     sql_security_ = v;
   }
 
@@ -16119,16 +16758,28 @@ class ResolvedCreateViewBase  : public ResolvedCreateStatement {
   }
 
  protected:
+  ResolvedCreateViewBase()
+      : ResolvedCreateStatement()
+      , option_list_()
+      , output_column_list_()
+      , has_explicit_columns_()
+      , query_()
+      , sql_()
+      , sql_security_()
+      , is_value_table_()
+      , recursive_()
+  {}
+
   explicit ResolvedCreateViewBase(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool has_explicit_columns,
       std::unique_ptr<const ResolvedScan> query,
       const std::string& sql,
-      SqlSecurity sql_security,
+      ResolvedCreateStatement::SqlSecurity sql_security,
       bool is_value_table,
       bool recursive,
       ConstructorOverload)
@@ -16150,6 +16801,8 @@ class ResolvedCreateViewBase  : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedCreateViewStmtBuilder;
+  friend class ResolvedCreateMaterializedViewStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -16159,7 +16812,7 @@ class ResolvedCreateViewBase  : public ResolvedCreateStatement {
   bool has_explicit_columns_;
   std::unique_ptr<const ResolvedScan> query_;
   std::string sql_;
-  SqlSecurity sql_security_;
+  ResolvedCreateStatement::SqlSecurity sql_security_;
   bool is_value_table_;
   bool recursive_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -16173,11 +16826,11 @@ class ResolvedCreateViewStmt final : public ResolvedCreateViewBase {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_VIEW_STMT;
 
-  friend std::unique_ptr<ResolvedCreateViewStmt> MakeResolvedCreateViewStmt();
  protected:
   ResolvedCreateViewStmt()
       : ResolvedCreateViewBase()
   {}
+
  public:
 
   ResolvedCreateViewStmt(const ResolvedCreateViewStmt&) = delete;
@@ -16185,14 +16838,14 @@ class ResolvedCreateViewStmt final : public ResolvedCreateViewBase {
 
   friend std::unique_ptr<ResolvedCreateViewStmt> MakeResolvedCreateViewStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool has_explicit_columns,
       std::unique_ptr<const ResolvedScan> query,
       const std::string& sql,
-      SqlSecurity sql_security,
+      ResolvedCreateStatement::SqlSecurity sql_security,
       bool is_value_table,
       bool recursive
   );
@@ -16234,14 +16887,14 @@ class ResolvedCreateViewStmt final : public ResolvedCreateViewBase {
  protected:
   explicit ResolvedCreateViewStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool has_explicit_columns,
       std::unique_ptr<const ResolvedScan> query,
       const std::string& sql,
-      SqlSecurity sql_security,
+      ResolvedCreateStatement::SqlSecurity sql_security,
       bool is_value_table,
       bool recursive,
       ConstructorOverload)
@@ -16261,6 +16914,9 @@ class ResolvedCreateViewStmt final : public ResolvedCreateViewBase {
   }
 
  private:
+  friend std::unique_ptr<ResolvedCreateViewStmt> MakeResolvedCreateViewStmt();
+  friend class ResolvedCreateViewStmtBuilder;
+  friend ResolvedCreateViewStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateViewStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -16360,12 +17016,12 @@ class ResolvedWithPartitionColumns final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_WITH_PARTITION_COLUMNS;
 
-  friend std::unique_ptr<ResolvedWithPartitionColumns> MakeResolvedWithPartitionColumns();
  protected:
   ResolvedWithPartitionColumns()
       : ResolvedArgument()
       , column_definition_list_()
   {}
+
  public:
 
   ResolvedWithPartitionColumns(const ResolvedWithPartitionColumns&) = delete;
@@ -16460,6 +17116,9 @@ class ResolvedWithPartitionColumns final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedWithPartitionColumns> MakeResolvedWithPartitionColumns();
+  friend class ResolvedWithPartitionColumnsBuilder;
+  friend ResolvedWithPartitionColumnsBuilder ToBuilder(std::unique_ptr<const ResolvedWithPartitionColumns>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -16528,13 +17187,13 @@ class ResolvedCreateSnapshotTableStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_SNAPSHOT_TABLE_STMT;
 
-  friend std::unique_ptr<ResolvedCreateSnapshotTableStmt> MakeResolvedCreateSnapshotTableStmt();
  protected:
   ResolvedCreateSnapshotTableStmt()
       : ResolvedCreateStatement()
       , clone_from_()
       , option_list_()
   {}
+
  public:
 
   ResolvedCreateSnapshotTableStmt(const ResolvedCreateSnapshotTableStmt&) = delete;
@@ -16542,8 +17201,8 @@ class ResolvedCreateSnapshotTableStmt final : public ResolvedCreateStatement {
 
   friend std::unique_ptr<ResolvedCreateSnapshotTableStmt> MakeResolvedCreateSnapshotTableStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::unique_ptr<const ResolvedScan> clone_from,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list
   );
@@ -16636,8 +17295,8 @@ class ResolvedCreateSnapshotTableStmt final : public ResolvedCreateStatement {
  protected:
   explicit ResolvedCreateSnapshotTableStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::unique_ptr<const ResolvedScan> clone_from,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       ConstructorOverload)
@@ -16653,6 +17312,9 @@ class ResolvedCreateSnapshotTableStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateSnapshotTableStmt> MakeResolvedCreateSnapshotTableStmt();
+  friend class ResolvedCreateSnapshotTableStmtBuilder;
+  friend ResolvedCreateSnapshotTableStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateSnapshotTableStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -16727,13 +17389,13 @@ class ResolvedCreateExternalTableStmt final : public ResolvedCreateTableStmtBase
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_EXTERNAL_TABLE_STMT;
 
-  friend std::unique_ptr<ResolvedCreateExternalTableStmt> MakeResolvedCreateExternalTableStmt();
  protected:
   ResolvedCreateExternalTableStmt()
       : ResolvedCreateTableStmtBase()
       , with_partition_columns_()
       , connection_()
   {}
+
  public:
 
   ResolvedCreateExternalTableStmt(const ResolvedCreateExternalTableStmt&) = delete;
@@ -16741,8 +17403,8 @@ class ResolvedCreateExternalTableStmt final : public ResolvedCreateTableStmtBase
 
   friend std::unique_ptr<ResolvedCreateExternalTableStmt> MakeResolvedCreateExternalTableStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -16831,8 +17493,8 @@ class ResolvedCreateExternalTableStmt final : public ResolvedCreateTableStmtBase
  protected:
   explicit ResolvedCreateExternalTableStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
       const std::vector<ResolvedColumn>& pseudo_column_list,
@@ -16866,6 +17528,9 @@ class ResolvedCreateExternalTableStmt final : public ResolvedCreateTableStmtBase
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateExternalTableStmt> MakeResolvedCreateExternalTableStmt();
+  friend class ResolvedCreateExternalTableStmtBuilder;
+  friend ResolvedCreateExternalTableStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateExternalTableStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -17001,7 +17666,6 @@ class ResolvedExportModelStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXPORT_MODEL_STMT;
 
-  friend std::unique_ptr<ResolvedExportModelStmt> MakeResolvedExportModelStmt();
  protected:
   ResolvedExportModelStmt()
       : ResolvedStatement()
@@ -17009,6 +17673,7 @@ class ResolvedExportModelStmt final : public ResolvedStatement {
       , connection_()
       , option_list_()
   {}
+
  public:
 
   ResolvedExportModelStmt(const ResolvedExportModelStmt&) = delete;
@@ -17144,6 +17809,9 @@ class ResolvedExportModelStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExportModelStmt> MakeResolvedExportModelStmt();
+  friend class ResolvedExportModelStmtBuilder;
+  friend ResolvedExportModelStmtBuilder ToBuilder(std::unique_ptr<const ResolvedExportModelStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -17219,7 +17887,6 @@ class ResolvedExportDataStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXPORT_DATA_STMT;
 
-  friend std::unique_ptr<ResolvedExportDataStmt> MakeResolvedExportDataStmt();
  protected:
   ResolvedExportDataStmt()
       : ResolvedStatement()
@@ -17229,6 +17896,7 @@ class ResolvedExportDataStmt final : public ResolvedStatement {
       , is_value_table_()
       , query_()
   {}
+
  public:
 
   ResolvedExportDataStmt(const ResolvedExportDataStmt&) = delete;
@@ -17396,6 +18064,9 @@ class ResolvedExportDataStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExportDataStmt> MakeResolvedExportDataStmt();
+  friend class ResolvedExportDataStmtBuilder;
+  friend ResolvedExportDataStmtBuilder ToBuilder(std::unique_ptr<const ResolvedExportDataStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -17481,13 +18152,13 @@ class ResolvedDefineTableStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DEFINE_TABLE_STMT;
 
-  friend std::unique_ptr<ResolvedDefineTableStmt> MakeResolvedDefineTableStmt();
  protected:
   ResolvedDefineTableStmt()
       : ResolvedStatement()
       , name_path_()
       , option_list_()
   {}
+
  public:
 
   ResolvedDefineTableStmt(const ResolvedDefineTableStmt&) = delete;
@@ -17608,6 +18279,9 @@ class ResolvedDefineTableStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDefineTableStmt> MakeResolvedDefineTableStmt();
+  friend class ResolvedDefineTableStmtBuilder;
+  friend ResolvedDefineTableStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDefineTableStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -17672,7 +18346,6 @@ class ResolvedDescribeStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DESCRIBE_STMT;
 
-  friend std::unique_ptr<ResolvedDescribeStmt> MakeResolvedDescribeStmt();
  protected:
   ResolvedDescribeStmt()
       : ResolvedStatement()
@@ -17680,6 +18353,7 @@ class ResolvedDescribeStmt final : public ResolvedStatement {
       , name_path_()
       , from_name_path_()
   {}
+
  public:
 
   ResolvedDescribeStmt(const ResolvedDescribeStmt&) = delete;
@@ -17809,6 +18483,9 @@ class ResolvedDescribeStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDescribeStmt> MakeResolvedDescribeStmt();
+  friend class ResolvedDescribeStmtBuilder;
+  friend ResolvedDescribeStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDescribeStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -17851,7 +18528,6 @@ class ResolvedShowStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SHOW_STMT;
 
-  friend std::unique_ptr<ResolvedShowStmt> MakeResolvedShowStmt();
  protected:
   ResolvedShowStmt()
       : ResolvedStatement()
@@ -17859,6 +18535,7 @@ class ResolvedShowStmt final : public ResolvedStatement {
       , name_path_()
       , like_expr_()
   {}
+
  public:
 
   ResolvedShowStmt(const ResolvedShowStmt&) = delete;
@@ -17977,6 +18654,9 @@ class ResolvedShowStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedShowStmt> MakeResolvedShowStmt();
+  friend class ResolvedShowStmtBuilder;
+  friend ResolvedShowStmtBuilder ToBuilder(std::unique_ptr<const ResolvedShowStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18032,20 +18712,20 @@ class ResolvedBeginStmt final : public ResolvedStatement {
   static const ReadWriteMode MODE_READ_ONLY = ResolvedBeginStmtEnums::MODE_READ_ONLY;
   static const ReadWriteMode MODE_READ_WRITE = ResolvedBeginStmtEnums::MODE_READ_WRITE;
 
-  friend std::unique_ptr<ResolvedBeginStmt> MakeResolvedBeginStmt();
  protected:
   ResolvedBeginStmt()
       : ResolvedStatement()
       , read_write_mode_()
       , isolation_level_list_()
   {}
+
  public:
 
   ResolvedBeginStmt(const ResolvedBeginStmt&) = delete;
   ResolvedBeginStmt& operator=(const ResolvedBeginStmt&) = delete;
 
   friend std::unique_ptr<ResolvedBeginStmt> MakeResolvedBeginStmt(
-      ReadWriteMode read_write_mode,
+      ResolvedBeginStmt::ReadWriteMode read_write_mode,
       const std::vector<std::string>& isolation_level_list
   );
   ~ResolvedBeginStmt() final;
@@ -18097,11 +18777,11 @@ class ResolvedBeginStmt final : public ResolvedStatement {
 
   // Member fields
 
-  ReadWriteMode read_write_mode() const {
+  ResolvedBeginStmt::ReadWriteMode read_write_mode() const {
     accessed_ |= (1<<0);
     return read_write_mode_;
   }
-  void set_read_write_mode(ReadWriteMode v) {
+  void set_read_write_mode(ResolvedBeginStmt::ReadWriteMode v) {
     read_write_mode_ = v;
   }
 
@@ -18130,7 +18810,7 @@ class ResolvedBeginStmt final : public ResolvedStatement {
 
  protected:
   explicit ResolvedBeginStmt(
-      ReadWriteMode read_write_mode,
+      ResolvedBeginStmt::ReadWriteMode read_write_mode,
       const std::vector<std::string>& isolation_level_list,
       ConstructorOverload)
       : ResolvedStatement(
@@ -18142,11 +18822,14 @@ class ResolvedBeginStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedBeginStmt> MakeResolvedBeginStmt();
+  friend class ResolvedBeginStmtBuilder;
+  friend ResolvedBeginStmtBuilder ToBuilder(std::unique_ptr<const ResolvedBeginStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  ReadWriteMode read_write_mode_;
+  ResolvedBeginStmt::ReadWriteMode read_write_mode_;
   std::vector<std::string> isolation_level_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -18191,20 +18874,20 @@ class ResolvedSetTransactionStmt final : public ResolvedStatement {
 
   typedef ResolvedBeginStmt::ReadWriteMode ReadWriteMode;
 
-  friend std::unique_ptr<ResolvedSetTransactionStmt> MakeResolvedSetTransactionStmt();
  protected:
   ResolvedSetTransactionStmt()
       : ResolvedStatement()
       , read_write_mode_()
       , isolation_level_list_()
   {}
+
  public:
 
   ResolvedSetTransactionStmt(const ResolvedSetTransactionStmt&) = delete;
   ResolvedSetTransactionStmt& operator=(const ResolvedSetTransactionStmt&) = delete;
 
   friend std::unique_ptr<ResolvedSetTransactionStmt> MakeResolvedSetTransactionStmt(
-      ReadWriteMode read_write_mode,
+      ResolvedBeginStmt::ReadWriteMode read_write_mode,
       const std::vector<std::string>& isolation_level_list
   );
   ~ResolvedSetTransactionStmt() final;
@@ -18256,11 +18939,11 @@ class ResolvedSetTransactionStmt final : public ResolvedStatement {
 
   // Member fields
 
-  ReadWriteMode read_write_mode() const {
+  ResolvedBeginStmt::ReadWriteMode read_write_mode() const {
     accessed_ |= (1<<0);
     return read_write_mode_;
   }
-  void set_read_write_mode(ReadWriteMode v) {
+  void set_read_write_mode(ResolvedBeginStmt::ReadWriteMode v) {
     read_write_mode_ = v;
   }
 
@@ -18289,7 +18972,7 @@ class ResolvedSetTransactionStmt final : public ResolvedStatement {
 
  protected:
   explicit ResolvedSetTransactionStmt(
-      ReadWriteMode read_write_mode,
+      ResolvedBeginStmt::ReadWriteMode read_write_mode,
       const std::vector<std::string>& isolation_level_list,
       ConstructorOverload)
       : ResolvedStatement(
@@ -18301,11 +18984,14 @@ class ResolvedSetTransactionStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSetTransactionStmt> MakeResolvedSetTransactionStmt();
+  friend class ResolvedSetTransactionStmtBuilder;
+  friend ResolvedSetTransactionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedSetTransactionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  ReadWriteMode read_write_mode_;
+  ResolvedBeginStmt::ReadWriteMode read_write_mode_;
   std::vector<std::string> isolation_level_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -18331,11 +19017,11 @@ class ResolvedCommitStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_COMMIT_STMT;
 
-  friend std::unique_ptr<ResolvedCommitStmt> MakeResolvedCommitStmt();
  protected:
   ResolvedCommitStmt()
       : ResolvedStatement()
   {}
+
  public:
 
   ResolvedCommitStmt(const ResolvedCommitStmt&) = delete;
@@ -18384,6 +19070,9 @@ class ResolvedCommitStmt final : public ResolvedStatement {
   }
 
  private:
+  friend std::unique_ptr<ResolvedCommitStmt> MakeResolvedCommitStmt();
+  friend class ResolvedCommitStmtBuilder;
+  friend ResolvedCommitStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCommitStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18402,11 +19091,11 @@ class ResolvedRollbackStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ROLLBACK_STMT;
 
-  friend std::unique_ptr<ResolvedRollbackStmt> MakeResolvedRollbackStmt();
  protected:
   ResolvedRollbackStmt()
       : ResolvedStatement()
   {}
+
  public:
 
   ResolvedRollbackStmt(const ResolvedRollbackStmt&) = delete;
@@ -18455,6 +19144,9 @@ class ResolvedRollbackStmt final : public ResolvedStatement {
   }
 
  private:
+  friend std::unique_ptr<ResolvedRollbackStmt> MakeResolvedRollbackStmt();
+  friend class ResolvedRollbackStmtBuilder;
+  friend ResolvedRollbackStmtBuilder ToBuilder(std::unique_ptr<const ResolvedRollbackStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18476,12 +19168,12 @@ class ResolvedStartBatchStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_START_BATCH_STMT;
 
-  friend std::unique_ptr<ResolvedStartBatchStmt> MakeResolvedStartBatchStmt();
  protected:
   ResolvedStartBatchStmt()
       : ResolvedStatement()
       , batch_type_()
   {}
+
  public:
 
   ResolvedStartBatchStmt(const ResolvedStartBatchStmt&) = delete;
@@ -18559,6 +19251,9 @@ class ResolvedStartBatchStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedStartBatchStmt> MakeResolvedStartBatchStmt();
+  friend class ResolvedStartBatchStmtBuilder;
+  friend ResolvedStartBatchStmtBuilder ToBuilder(std::unique_ptr<const ResolvedStartBatchStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18586,11 +19281,11 @@ class ResolvedRunBatchStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RUN_BATCH_STMT;
 
-  friend std::unique_ptr<ResolvedRunBatchStmt> MakeResolvedRunBatchStmt();
  protected:
   ResolvedRunBatchStmt()
       : ResolvedStatement()
   {}
+
  public:
 
   ResolvedRunBatchStmt(const ResolvedRunBatchStmt&) = delete;
@@ -18639,6 +19334,9 @@ class ResolvedRunBatchStmt final : public ResolvedStatement {
   }
 
  private:
+  friend std::unique_ptr<ResolvedRunBatchStmt> MakeResolvedRunBatchStmt();
+  friend class ResolvedRunBatchStmtBuilder;
+  friend ResolvedRunBatchStmtBuilder ToBuilder(std::unique_ptr<const ResolvedRunBatchStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18657,11 +19355,11 @@ class ResolvedAbortBatchStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ABORT_BATCH_STMT;
 
-  friend std::unique_ptr<ResolvedAbortBatchStmt> MakeResolvedAbortBatchStmt();
  protected:
   ResolvedAbortBatchStmt()
       : ResolvedStatement()
   {}
+
  public:
 
   ResolvedAbortBatchStmt(const ResolvedAbortBatchStmt&) = delete;
@@ -18710,6 +19408,9 @@ class ResolvedAbortBatchStmt final : public ResolvedStatement {
   }
 
  private:
+  friend std::unique_ptr<ResolvedAbortBatchStmt> MakeResolvedAbortBatchStmt();
+  friend class ResolvedAbortBatchStmtBuilder;
+  friend ResolvedAbortBatchStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAbortBatchStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18740,7 +19441,6 @@ class ResolvedDropStmt final : public ResolvedStatement {
   static const DropMode RESTRICT = ResolvedDropStmtEnums::RESTRICT;
   static const DropMode CASCADE = ResolvedDropStmtEnums::CASCADE;
 
-  friend std::unique_ptr<ResolvedDropStmt> MakeResolvedDropStmt();
  protected:
   ResolvedDropStmt()
       : ResolvedStatement()
@@ -18749,6 +19449,7 @@ class ResolvedDropStmt final : public ResolvedStatement {
       , name_path_()
       , drop_mode_()
   {}
+
  public:
 
   ResolvedDropStmt(const ResolvedDropStmt&) = delete;
@@ -18758,7 +19459,7 @@ class ResolvedDropStmt final : public ResolvedStatement {
       const std::string& object_type,
       bool is_if_exists,
       const std::vector<std::string>& name_path,
-      DropMode drop_mode
+      ResolvedDropStmt::DropMode drop_mode
   );
   ~ResolvedDropStmt() final;
 
@@ -18848,11 +19549,11 @@ class ResolvedDropStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
-  DropMode drop_mode() const {
+  ResolvedDropStmt::DropMode drop_mode() const {
     accessed_ |= (1<<3);
     return drop_mode_;
   }
-  void set_drop_mode(DropMode v) {
+  void set_drop_mode(ResolvedDropStmt::DropMode v) {
     drop_mode_ = v;
   }
 
@@ -18861,7 +19562,7 @@ class ResolvedDropStmt final : public ResolvedStatement {
       const std::string& object_type,
       bool is_if_exists,
       const std::vector<std::string>& name_path,
-      DropMode drop_mode,
+      ResolvedDropStmt::DropMode drop_mode,
       ConstructorOverload)
       : ResolvedStatement(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -18874,6 +19575,9 @@ class ResolvedDropStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropStmt> MakeResolvedDropStmt();
+  friend class ResolvedDropStmtBuilder;
+  friend ResolvedDropStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -18881,7 +19585,7 @@ class ResolvedDropStmt final : public ResolvedStatement {
   std::string object_type_;
   bool is_if_exists_;
   std::vector<std::string> name_path_;
-  DropMode drop_mode_;
+  ResolvedDropStmt::DropMode drop_mode_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -18914,13 +19618,13 @@ class ResolvedDropMaterializedViewStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_MATERIALIZED_VIEW_STMT;
 
-  friend std::unique_ptr<ResolvedDropMaterializedViewStmt> MakeResolvedDropMaterializedViewStmt();
  protected:
   ResolvedDropMaterializedViewStmt()
       : ResolvedStatement()
       , is_if_exists_()
       , name_path_()
   {}
+
  public:
 
   ResolvedDropMaterializedViewStmt(const ResolvedDropMaterializedViewStmt&) = delete;
@@ -19024,6 +19728,9 @@ class ResolvedDropMaterializedViewStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropMaterializedViewStmt> MakeResolvedDropMaterializedViewStmt();
+  friend class ResolvedDropMaterializedViewStmtBuilder;
+  friend ResolvedDropMaterializedViewStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropMaterializedViewStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -19058,13 +19765,13 @@ class ResolvedDropSnapshotTableStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_SNAPSHOT_TABLE_STMT;
 
-  friend std::unique_ptr<ResolvedDropSnapshotTableStmt> MakeResolvedDropSnapshotTableStmt();
  protected:
   ResolvedDropSnapshotTableStmt()
       : ResolvedStatement()
       , is_if_exists_()
       , name_path_()
   {}
+
  public:
 
   ResolvedDropSnapshotTableStmt(const ResolvedDropSnapshotTableStmt&) = delete;
@@ -19168,6 +19875,9 @@ class ResolvedDropSnapshotTableStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropSnapshotTableStmt> MakeResolvedDropSnapshotTableStmt();
+  friend class ResolvedDropSnapshotTableStmtBuilder;
+  friend ResolvedDropSnapshotTableStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropSnapshotTableStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -19203,11 +19913,11 @@ class ResolvedRecursiveRefScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RECURSIVE_REF_SCAN;
 
-  friend std::unique_ptr<ResolvedRecursiveRefScan> MakeResolvedRecursiveRefScan();
  protected:
   ResolvedRecursiveRefScan()
       : ResolvedScan()
   {}
+
  public:
 
   ResolvedRecursiveRefScan(const ResolvedRecursiveRefScan&) = delete;
@@ -19261,6 +19971,9 @@ class ResolvedRecursiveRefScan final : public ResolvedScan {
   }
 
  private:
+  friend std::unique_ptr<ResolvedRecursiveRefScan> MakeResolvedRecursiveRefScan();
+  friend class ResolvedRecursiveRefScanBuilder;
+  friend ResolvedRecursiveRefScanBuilder ToBuilder(std::unique_ptr<const ResolvedRecursiveRefScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -19325,7 +20038,6 @@ class ResolvedRecursiveScan final : public ResolvedScan {
   static const RecursiveSetOperationType UNION_ALL = ResolvedRecursiveScanEnums::UNION_ALL;
   static const RecursiveSetOperationType UNION_DISTINCT = ResolvedRecursiveScanEnums::UNION_DISTINCT;
 
-  friend std::unique_ptr<ResolvedRecursiveScan> MakeResolvedRecursiveScan();
  protected:
   ResolvedRecursiveScan()
       : ResolvedScan()
@@ -19333,6 +20045,7 @@ class ResolvedRecursiveScan final : public ResolvedScan {
       , non_recursive_term_()
       , recursive_term_()
   {}
+
  public:
 
   ResolvedRecursiveScan(const ResolvedRecursiveScan&) = delete;
@@ -19340,7 +20053,7 @@ class ResolvedRecursiveScan final : public ResolvedScan {
 
   friend std::unique_ptr<ResolvedRecursiveScan> MakeResolvedRecursiveScan(
       const std::vector<ResolvedColumn>& column_list,
-      RecursiveSetOperationType op_type,
+      ResolvedRecursiveScan::RecursiveSetOperationType op_type,
       std::unique_ptr<const ResolvedSetOperationItem> non_recursive_term,
       std::unique_ptr<const ResolvedSetOperationItem> recursive_term
   );
@@ -19393,11 +20106,11 @@ class ResolvedRecursiveScan final : public ResolvedScan {
 
   // Member fields
 
-  RecursiveSetOperationType op_type() const {
+  ResolvedRecursiveScan::RecursiveSetOperationType op_type() const {
     accessed_ |= (1<<0);
     return op_type_;
   }
-  void set_op_type(RecursiveSetOperationType v) {
+  void set_op_type(ResolvedRecursiveScan::RecursiveSetOperationType v) {
     op_type_ = v;
   }
 
@@ -19428,7 +20141,7 @@ class ResolvedRecursiveScan final : public ResolvedScan {
  protected:
   explicit ResolvedRecursiveScan(
       const std::vector<ResolvedColumn>& column_list,
-      RecursiveSetOperationType op_type,
+      ResolvedRecursiveScan::RecursiveSetOperationType op_type,
       std::unique_ptr<const ResolvedSetOperationItem> non_recursive_term,
       std::unique_ptr<const ResolvedSetOperationItem> recursive_term,
       ConstructorOverload)
@@ -19443,11 +20156,14 @@ class ResolvedRecursiveScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRecursiveScan> MakeResolvedRecursiveScan();
+  friend class ResolvedRecursiveScanBuilder;
+  friend ResolvedRecursiveScanBuilder ToBuilder(std::unique_ptr<const ResolvedRecursiveScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  RecursiveSetOperationType op_type_;
+  ResolvedRecursiveScan::RecursiveSetOperationType op_type_;
   std::unique_ptr<const ResolvedSetOperationItem> non_recursive_term_;
   std::unique_ptr<const ResolvedSetOperationItem> recursive_term_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -19528,7 +20244,6 @@ class ResolvedWithScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_WITH_SCAN;
 
-  friend std::unique_ptr<ResolvedWithScan> MakeResolvedWithScan();
  protected:
   ResolvedWithScan()
       : ResolvedScan()
@@ -19536,6 +20251,7 @@ class ResolvedWithScan final : public ResolvedScan {
       , query_()
       , recursive_()
   {}
+
  public:
 
   ResolvedWithScan(const ResolvedWithScan&) = delete;
@@ -19662,6 +20378,9 @@ class ResolvedWithScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedWithScan> MakeResolvedWithScan();
+  friend class ResolvedWithScanBuilder;
+  friend ResolvedWithScanBuilder ToBuilder(std::unique_ptr<const ResolvedWithScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -19734,13 +20453,13 @@ class ResolvedWithEntry final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_WITH_ENTRY;
 
-  friend std::unique_ptr<ResolvedWithEntry> MakeResolvedWithEntry();
  protected:
   ResolvedWithEntry()
       : ResolvedArgument()
       , with_query_name_()
       , with_subquery_()
   {}
+
  public:
 
   ResolvedWithEntry(const ResolvedWithEntry&) = delete;
@@ -19833,6 +20552,9 @@ class ResolvedWithEntry final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedWithEntry> MakeResolvedWithEntry();
+  friend class ResolvedWithEntryBuilder;
+  friend ResolvedWithEntryBuilder ToBuilder(std::unique_ptr<const ResolvedWithEntry>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -19883,6 +20605,9 @@ inline std::unique_ptr<ResolvedWithEntry> MakeResolvedWithEntry() {
 // and a database system should ignore any hints targeted to different
 // systems.
 //
+// <qualifier> is set only for hints, and will always be empty in options
+// lists.
+//
 // The SQL syntax allows using an identifier as a hint value.
 // Such values are stored here as ResolvedLiterals with string type.
 class ResolvedOption final : public ResolvedArgument {
@@ -19891,7 +20616,6 @@ class ResolvedOption final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_OPTION;
 
-  friend std::unique_ptr<ResolvedOption> MakeResolvedOption();
  protected:
   ResolvedOption()
       : ResolvedArgument()
@@ -19899,6 +20623,7 @@ class ResolvedOption final : public ResolvedArgument {
       , name_()
       , value_()
   {}
+
  public:
 
   ResolvedOption(const ResolvedOption&) = delete;
@@ -20003,6 +20728,9 @@ class ResolvedOption final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedOption> MakeResolvedOption();
+  friend class ResolvedOptionBuilder;
+  friend ResolvedOptionBuilder ToBuilder(std::unique_ptr<const ResolvedOption>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -20038,13 +20766,13 @@ class ResolvedWindowPartitioning final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_WINDOW_PARTITIONING;
 
-  friend std::unique_ptr<ResolvedWindowPartitioning> MakeResolvedWindowPartitioning();
  protected:
   ResolvedWindowPartitioning()
       : ResolvedArgument()
       , partition_by_list_()
       , hint_list_()
   {}
+
  public:
 
   ResolvedWindowPartitioning(const ResolvedWindowPartitioning&) = delete;
@@ -20165,6 +20893,9 @@ class ResolvedWindowPartitioning final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedWindowPartitioning> MakeResolvedWindowPartitioning();
+  friend class ResolvedWindowPartitioningBuilder;
+  friend ResolvedWindowPartitioningBuilder ToBuilder(std::unique_ptr<const ResolvedWindowPartitioning>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -20221,13 +20952,13 @@ class ResolvedWindowOrdering final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_WINDOW_ORDERING;
 
-  friend std::unique_ptr<ResolvedWindowOrdering> MakeResolvedWindowOrdering();
  protected:
   ResolvedWindowOrdering()
       : ResolvedArgument()
       , order_by_item_list_()
       , hint_list_()
   {}
+
  public:
 
   ResolvedWindowOrdering(const ResolvedWindowOrdering&) = delete;
@@ -20348,6 +21079,9 @@ class ResolvedWindowOrdering final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedWindowOrdering> MakeResolvedWindowOrdering();
+  friend class ResolvedWindowOrderingBuilder;
+  friend ResolvedWindowOrderingBuilder ToBuilder(std::unique_ptr<const ResolvedWindowOrdering>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -20418,7 +21152,6 @@ class ResolvedWindowFrame final : public ResolvedArgument {
   std::string GetFrameUnitString() const;
   static std::string FrameUnitToString(FrameUnit frame_unit);
 
-  friend std::unique_ptr<ResolvedWindowFrame> MakeResolvedWindowFrame();
  protected:
   ResolvedWindowFrame()
       : ResolvedArgument()
@@ -20426,13 +21159,14 @@ class ResolvedWindowFrame final : public ResolvedArgument {
       , start_expr_()
       , end_expr_()
   {}
+
  public:
 
   ResolvedWindowFrame(const ResolvedWindowFrame&) = delete;
   ResolvedWindowFrame& operator=(const ResolvedWindowFrame&) = delete;
 
   friend std::unique_ptr<ResolvedWindowFrame> MakeResolvedWindowFrame(
-      FrameUnit frame_unit,
+      ResolvedWindowFrame::FrameUnit frame_unit,
       std::unique_ptr<const ResolvedWindowFrameExpr> start_expr,
       std::unique_ptr<const ResolvedWindowFrameExpr> end_expr
   );
@@ -20485,11 +21219,11 @@ class ResolvedWindowFrame final : public ResolvedArgument {
 
   // Member fields
 
-  FrameUnit frame_unit() const {
+  ResolvedWindowFrame::FrameUnit frame_unit() const {
     accessed_ |= (1<<0);
     return frame_unit_;
   }
-  void set_frame_unit(FrameUnit v) {
+  void set_frame_unit(ResolvedWindowFrame::FrameUnit v) {
     frame_unit_ = v;
   }
 
@@ -20519,7 +21253,7 @@ class ResolvedWindowFrame final : public ResolvedArgument {
 
  protected:
   explicit ResolvedWindowFrame(
-      FrameUnit frame_unit,
+      ResolvedWindowFrame::FrameUnit frame_unit,
       std::unique_ptr<const ResolvedWindowFrameExpr> start_expr,
       std::unique_ptr<const ResolvedWindowFrameExpr> end_expr,
       ConstructorOverload)
@@ -20534,11 +21268,14 @@ class ResolvedWindowFrame final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedWindowFrame> MakeResolvedWindowFrame();
+  friend class ResolvedWindowFrameBuilder;
+  friend ResolvedWindowFrameBuilder ToBuilder(std::unique_ptr<const ResolvedWindowFrame>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  FrameUnit frame_unit_;
+  ResolvedWindowFrame::FrameUnit frame_unit_;
   std::unique_ptr<const ResolvedWindowFrameExpr> start_expr_;
   std::unique_ptr<const ResolvedWindowFrameExpr> end_expr_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -20576,7 +21313,6 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ANALYTIC_FUNCTION_GROUP;
 
-  friend std::unique_ptr<ResolvedAnalyticFunctionGroup> MakeResolvedAnalyticFunctionGroup();
  protected:
   ResolvedAnalyticFunctionGroup()
       : ResolvedArgument()
@@ -20584,6 +21320,7 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
       , order_by_()
       , analytic_function_list_()
   {}
+
  public:
 
   ResolvedAnalyticFunctionGroup(const ResolvedAnalyticFunctionGroup&) = delete;
@@ -20708,6 +21445,9 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAnalyticFunctionGroup> MakeResolvedAnalyticFunctionGroup();
+  friend class ResolvedAnalyticFunctionGroupBuilder;
+  friend ResolvedAnalyticFunctionGroupBuilder ToBuilder(std::unique_ptr<const ResolvedAnalyticFunctionGroup>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -20788,20 +21528,20 @@ class ResolvedWindowFrameExpr final : public ResolvedArgument {
   std::string GetBoundaryTypeString() const;
   static std::string BoundaryTypeToString(BoundaryType boundary_type);
 
-  friend std::unique_ptr<ResolvedWindowFrameExpr> MakeResolvedWindowFrameExpr();
  protected:
   ResolvedWindowFrameExpr()
       : ResolvedArgument()
       , boundary_type_()
       , expression_()
   {}
+
  public:
 
   ResolvedWindowFrameExpr(const ResolvedWindowFrameExpr&) = delete;
   ResolvedWindowFrameExpr& operator=(const ResolvedWindowFrameExpr&) = delete;
 
   friend std::unique_ptr<ResolvedWindowFrameExpr> MakeResolvedWindowFrameExpr(
-      BoundaryType boundary_type,
+      ResolvedWindowFrameExpr::BoundaryType boundary_type,
       std::unique_ptr<const ResolvedExpr> expression
   );
   ~ResolvedWindowFrameExpr() final;
@@ -20853,11 +21593,11 @@ class ResolvedWindowFrameExpr final : public ResolvedArgument {
 
   // Member fields
 
-  BoundaryType boundary_type() const {
+  ResolvedWindowFrameExpr::BoundaryType boundary_type() const {
     accessed_ |= (1<<0);
     return boundary_type_;
   }
-  void set_boundary_type(BoundaryType v) {
+  void set_boundary_type(ResolvedWindowFrameExpr::BoundaryType v) {
     boundary_type_ = v;
   }
 
@@ -20875,7 +21615,7 @@ class ResolvedWindowFrameExpr final : public ResolvedArgument {
 
  protected:
   explicit ResolvedWindowFrameExpr(
-      BoundaryType boundary_type,
+      ResolvedWindowFrameExpr::BoundaryType boundary_type,
       std::unique_ptr<const ResolvedExpr> expression,
       ConstructorOverload)
       : ResolvedArgument(
@@ -20888,11 +21628,14 @@ class ResolvedWindowFrameExpr final : public ResolvedArgument {
       std::vector<DebugStringField>* fields) const final;
   std::string GetNameForDebugString() const final;
  private:
+  friend std::unique_ptr<ResolvedWindowFrameExpr> MakeResolvedWindowFrameExpr();
+  friend class ResolvedWindowFrameExprBuilder;
+  friend ResolvedWindowFrameExprBuilder ToBuilder(std::unique_ptr<const ResolvedWindowFrameExpr>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  BoundaryType boundary_type_;
+  ResolvedWindowFrameExpr::BoundaryType boundary_type_;
   std::unique_ptr<const ResolvedExpr> expression_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -20922,12 +21665,12 @@ class ResolvedDMLValue final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DMLVALUE;
 
-  friend std::unique_ptr<ResolvedDMLValue> MakeResolvedDMLValue();
  protected:
   ResolvedDMLValue()
       : ResolvedArgument()
       , value_()
   {}
+
  public:
 
   ResolvedDMLValue(const ResolvedDMLValue&) = delete;
@@ -21009,6 +21752,9 @@ class ResolvedDMLValue final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDMLValue> MakeResolvedDMLValue();
+  friend class ResolvedDMLValueBuilder;
+  friend ResolvedDMLValueBuilder ToBuilder(std::unique_ptr<const ResolvedDMLValue>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -21041,11 +21787,11 @@ class ResolvedDMLDefault final : public ResolvedExpr {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DMLDEFAULT;
 
-  friend std::unique_ptr<ResolvedDMLDefault> MakeResolvedDMLDefault();
  protected:
   ResolvedDMLDefault()
       : ResolvedExpr()
   {}
+
  public:
 
   ResolvedDMLDefault(const ResolvedDMLDefault&) = delete;
@@ -21099,6 +21845,9 @@ class ResolvedDMLDefault final : public ResolvedExpr {
   }
 
  private:
+  friend std::unique_ptr<ResolvedDMLDefault> MakeResolvedDMLDefault();
+  friend class ResolvedDMLDefaultBuilder;
+  friend ResolvedDMLDefaultBuilder ToBuilder(std::unique_ptr<const ResolvedDMLDefault>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -21129,13 +21878,13 @@ class ResolvedAssertStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ASSERT_STMT;
 
-  friend std::unique_ptr<ResolvedAssertStmt> MakeResolvedAssertStmt();
  protected:
   ResolvedAssertStmt()
       : ResolvedStatement()
       , expression_()
       , description_()
   {}
+
  public:
 
   ResolvedAssertStmt(const ResolvedAssertStmt&) = delete;
@@ -21228,6 +21977,9 @@ class ResolvedAssertStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAssertStmt> MakeResolvedAssertStmt();
+  friend class ResolvedAssertStmtBuilder;
+  friend ResolvedAssertStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAssertStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -21262,12 +22014,12 @@ class ResolvedAssertRowsModified final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ASSERT_ROWS_MODIFIED;
 
-  friend std::unique_ptr<ResolvedAssertRowsModified> MakeResolvedAssertRowsModified();
  protected:
   ResolvedAssertRowsModified()
       : ResolvedArgument()
       , rows_()
   {}
+
  public:
 
   ResolvedAssertRowsModified(const ResolvedAssertRowsModified&) = delete;
@@ -21349,6 +22101,9 @@ class ResolvedAssertRowsModified final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAssertRowsModified> MakeResolvedAssertRowsModified();
+  friend class ResolvedAssertRowsModifiedBuilder;
+  friend ResolvedAssertRowsModifiedBuilder ToBuilder(std::unique_ptr<const ResolvedAssertRowsModified>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -21376,12 +22131,12 @@ class ResolvedInsertRow final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_INSERT_ROW;
 
-  friend std::unique_ptr<ResolvedInsertRow> MakeResolvedInsertRow();
  protected:
   ResolvedInsertRow()
       : ResolvedArgument()
       , value_list_()
   {}
+
  public:
 
   ResolvedInsertRow(const ResolvedInsertRow&) = delete;
@@ -21476,6 +22231,9 @@ class ResolvedInsertRow final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedInsertRow> MakeResolvedInsertRow();
+  friend class ResolvedInsertRowBuilder;
+  friend ResolvedInsertRowBuilder ToBuilder(std::unique_ptr<const ResolvedInsertRow>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -21556,7 +22314,12 @@ inline std::unique_ptr<ResolvedInsertRow> MakeResolvedInsertRow() {
 // rows. <returning> can only occur on top-level statements.
 //
 // The returning clause has a <output_column_list> to represent the data
-// sent back to clients. It can only acccess columns from the <table_scan>.
+// sent back to clients. It can only access columns from the <table_scan>.
+//
+// <column_access_list> indicates for each column in <table_scan.column_list>
+// whether it was read and/or written. The query engine may also require
+// read or write permissions across all columns, including unreferenced
+// columns, depending on the operation.
 class ResolvedInsertStmt final : public ResolvedStatement {
  public:
   typedef ResolvedStatement SUPER;
@@ -21572,7 +22335,6 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   std::string GetInsertModeString() const;
   static std::string InsertModeToString(InsertMode boundary_type);
 
-  friend std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt();
  protected:
   ResolvedInsertStmt()
       : ResolvedStatement()
@@ -21585,7 +22347,9 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       , query_()
       , query_output_column_list_()
       , row_list_()
+      , column_access_list_()
   {}
+
  public:
 
   ResolvedInsertStmt(const ResolvedInsertStmt&) = delete;
@@ -21593,7 +22357,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
 
   friend std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       std::unique_ptr<const ResolvedTableScan> table_scan,
-      InsertMode insert_mode,
+      ResolvedInsertStmt::InsertMode insert_mode,
       std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified,
       std::unique_ptr<const ResolvedReturningClause> returning,
       const std::vector<ResolvedColumn>& insert_column_list,
@@ -21665,11 +22429,11 @@ class ResolvedInsertStmt final : public ResolvedStatement {
 
   // Behavior on duplicate rows (normally defined to mean duplicate
   // primary keys).
-  InsertMode insert_mode() const {
+  ResolvedInsertStmt::InsertMode insert_mode() const {
     accessed_ |= (1<<1);
     return insert_mode_;
   }
-  void set_insert_mode(InsertMode v) {
+  void set_insert_mode(ResolvedInsertStmt::InsertMode v) {
     insert_mode_ = v;
   }
 
@@ -21805,10 +22569,33 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     return tmp;
   }
 
+  const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
+    accessed_ |= (1<<9);
+    return column_access_list_;
+  }
+  int column_access_list_size() const {
+    if (column_access_list_.empty()) accessed_ |= (1<<9);
+    return static_cast<int>(column_access_list_.size());
+  }
+  ResolvedStatement::ObjectAccess column_access_list(int i) const {
+    accessed_ |= (1<<9);
+    return column_access_list_.at(i);
+  }
+  void add_column_access_list(ResolvedStatement::ObjectAccess v) {
+    column_access_list_.push_back(v);
+  }
+  void set_column_access_list(const std::vector<ResolvedStatement::ObjectAccess>& v) {
+    column_access_list_ = v;
+  }
+  std::vector<ResolvedStatement::ObjectAccess>* mutable_column_access_list() {
+    accessed_ |= (1<<9);
+    return &column_access_list_;
+  }
+
  protected:
   explicit ResolvedInsertStmt(
       std::unique_ptr<const ResolvedTableScan> table_scan,
-      InsertMode insert_mode,
+      ResolvedInsertStmt::InsertMode insert_mode,
       std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified,
       std::unique_ptr<const ResolvedReturningClause> returning,
       const std::vector<ResolvedColumn>& insert_column_list,
@@ -21827,18 +22614,22 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       query_parameter_list_(std::move(query_parameter_list)),
       query_(std::move(query)),
       query_output_column_list_(query_output_column_list),
-      row_list_(std::move(row_list)) {
+      row_list_(std::move(row_list)),
+      column_access_list_() {
   }
 
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt();
+  friend class ResolvedInsertStmtBuilder;
+  friend ResolvedInsertStmtBuilder ToBuilder(std::unique_ptr<const ResolvedInsertStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::unique_ptr<const ResolvedTableScan> table_scan_;
-  InsertMode insert_mode_;
+  ResolvedInsertStmt::InsertMode insert_mode_;
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified_;
   std::unique_ptr<const ResolvedReturningClause> returning_;
   std::vector<ResolvedColumn> insert_column_list_;
@@ -21846,6 +22637,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   std::unique_ptr<const ResolvedScan> query_;
   std::vector<ResolvedColumn> query_output_column_list_;
   std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list_;
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -21947,23 +22739,29 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt() {
 // back. It can only occur on top-level statements.
 //
 // This returning clause has a <output_column_list> to represent the data
-// sent back to clients. It can only acccess columns from the <table_scan>.
+// sent back to clients. It can only access columns from the <table_scan>.
+//
+// <column_access_list> indicates for each column in <table_scan.column_list>
+// whether it was read and/or written. The query engine may also require
+// read or write permissions across all columns, including unreferenced
+// columns, depending on the operation.
 class ResolvedDeleteStmt final : public ResolvedStatement {
  public:
   typedef ResolvedStatement SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_DELETE_STMT;
 
-  friend std::unique_ptr<ResolvedDeleteStmt> MakeResolvedDeleteStmt();
  protected:
   ResolvedDeleteStmt()
       : ResolvedStatement()
       , table_scan_()
       , assert_rows_modified_()
       , returning_()
+      , column_access_list_()
       , array_offset_column_()
       , where_expr_()
   {}
+
  public:
 
   ResolvedDeleteStmt(const ResolvedDeleteStmt&) = delete;
@@ -22061,8 +22859,31 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
     return std::move(returning_);
   }
 
-  const ResolvedColumnHolder* array_offset_column() const {
+  const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
     accessed_ |= (1<<3);
+    return column_access_list_;
+  }
+  int column_access_list_size() const {
+    if (column_access_list_.empty()) accessed_ |= (1<<3);
+    return static_cast<int>(column_access_list_.size());
+  }
+  ResolvedStatement::ObjectAccess column_access_list(int i) const {
+    accessed_ |= (1<<3);
+    return column_access_list_.at(i);
+  }
+  void add_column_access_list(ResolvedStatement::ObjectAccess v) {
+    column_access_list_.push_back(v);
+  }
+  void set_column_access_list(const std::vector<ResolvedStatement::ObjectAccess>& v) {
+    column_access_list_ = v;
+  }
+  std::vector<ResolvedStatement::ObjectAccess>* mutable_column_access_list() {
+    accessed_ |= (1<<3);
+    return &column_access_list_;
+  }
+
+  const ResolvedColumnHolder* array_offset_column() const {
+    accessed_ |= (1<<4);
     return array_offset_column_.get();
   }
   void set_array_offset_column(std::unique_ptr<const ResolvedColumnHolder> v) {
@@ -22074,7 +22895,7 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
   }
 
   const ResolvedExpr* where_expr() const {
-    accessed_ |= (1<<4);
+    accessed_ |= (1<<5);
     return where_expr_.get();
   }
   void set_where_expr(std::unique_ptr<const ResolvedExpr> v) {
@@ -22098,6 +22919,7 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
       table_scan_(std::move(table_scan)),
       assert_rows_modified_(std::move(assert_rows_modified)),
       returning_(std::move(returning)),
+      column_access_list_(),
       array_offset_column_(std::move(array_offset_column)),
       where_expr_(std::move(where_expr)) {
   }
@@ -22105,6 +22927,9 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDeleteStmt> MakeResolvedDeleteStmt();
+  friend class ResolvedDeleteStmtBuilder;
+  friend ResolvedDeleteStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDeleteStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -22112,6 +22937,7 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified_;
   std::unique_ptr<const ResolvedReturningClause> returning_;
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
   std::unique_ptr<const ResolvedColumnHolder> array_offset_column_;
   std::unique_ptr<const ResolvedExpr> where_expr_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -22209,7 +23035,6 @@ class ResolvedUpdateItem final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_UPDATE_ITEM;
 
-  friend std::unique_ptr<ResolvedUpdateItem> MakeResolvedUpdateItem();
  protected:
   ResolvedUpdateItem()
       : ResolvedArgument()
@@ -22221,6 +23046,7 @@ class ResolvedUpdateItem final : public ResolvedArgument {
       , update_list_()
       , insert_list_()
   {}
+
  public:
 
   ResolvedUpdateItem(const ResolvedUpdateItem&) = delete;
@@ -22518,6 +23344,9 @@ class ResolvedUpdateItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedUpdateItem> MakeResolvedUpdateItem();
+  friend class ResolvedUpdateItemBuilder;
+  friend ResolvedUpdateItemBuilder ToBuilder(std::unique_ptr<const ResolvedUpdateItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -22627,13 +23456,13 @@ class ResolvedUpdateArrayItem final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_UPDATE_ARRAY_ITEM;
 
-  friend std::unique_ptr<ResolvedUpdateArrayItem> MakeResolvedUpdateArrayItem();
  protected:
   ResolvedUpdateArrayItem()
       : ResolvedArgument()
       , offset_()
       , update_item_()
   {}
+
  public:
 
   ResolvedUpdateArrayItem(const ResolvedUpdateArrayItem&) = delete;
@@ -22732,6 +23561,9 @@ class ResolvedUpdateArrayItem final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedUpdateArrayItem> MakeResolvedUpdateArrayItem();
+  friend class ResolvedUpdateArrayItemBuilder;
+  friend ResolvedUpdateArrayItemBuilder ToBuilder(std::unique_ptr<const ResolvedUpdateArrayItem>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -22804,7 +23636,6 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_UPDATE_STMT;
 
-  friend std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt();
  protected:
   ResolvedUpdateStmt()
       : ResolvedStatement()
@@ -22817,6 +23648,7 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
       , update_item_list_()
       , from_scan_()
   {}
+
  public:
 
   ResolvedUpdateStmt(const ResolvedUpdateStmt&) = delete;
@@ -22892,7 +23724,7 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
     return std::move(table_scan_);
   }
 
-  const std::vector<ObjectAccess>& column_access_list() const {
+  const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
     accessed_ |= (1<<1);
     return column_access_list_;
   }
@@ -22900,17 +23732,17 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
     if (column_access_list_.empty()) accessed_ |= (1<<1);
     return static_cast<int>(column_access_list_.size());
   }
-  ObjectAccess column_access_list(int i) const {
+  ResolvedStatement::ObjectAccess column_access_list(int i) const {
     accessed_ |= (1<<1);
     return column_access_list_.at(i);
   }
-  void add_column_access_list(ObjectAccess v) {
+  void add_column_access_list(ResolvedStatement::ObjectAccess v) {
     column_access_list_.push_back(v);
   }
-  void set_column_access_list(const std::vector<ObjectAccess>& v) {
+  void set_column_access_list(const std::vector<ResolvedStatement::ObjectAccess>& v) {
     column_access_list_ = v;
   }
-  std::vector<ObjectAccess>* mutable_column_access_list() {
+  std::vector<ResolvedStatement::ObjectAccess>* mutable_column_access_list() {
     accessed_ |= (1<<1);
     return &column_access_list_;
   }
@@ -23025,12 +23857,15 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt();
+  friend class ResolvedUpdateStmtBuilder;
+  friend ResolvedUpdateStmtBuilder ToBuilder(std::unique_ptr<const ResolvedUpdateStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::unique_ptr<const ResolvedTableScan> table_scan_;
-  std::vector<ObjectAccess> column_access_list_;
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified_;
   std::unique_ptr<const ResolvedReturningClause> returning_;
   std::unique_ptr<const ResolvedColumnHolder> array_offset_column_;
@@ -23159,7 +23994,6 @@ class ResolvedMergeWhen final : public ResolvedArgument {
   static const ActionType UPDATE = ResolvedMergeWhenEnums::UPDATE;
   static const ActionType DELETE = ResolvedMergeWhenEnums::DELETE;
 
-  friend std::unique_ptr<ResolvedMergeWhen> MakeResolvedMergeWhen();
  protected:
   ResolvedMergeWhen()
       : ResolvedArgument()
@@ -23170,15 +24004,16 @@ class ResolvedMergeWhen final : public ResolvedArgument {
       , insert_row_()
       , update_item_list_()
   {}
+
  public:
 
   ResolvedMergeWhen(const ResolvedMergeWhen&) = delete;
   ResolvedMergeWhen& operator=(const ResolvedMergeWhen&) = delete;
 
   friend std::unique_ptr<ResolvedMergeWhen> MakeResolvedMergeWhen(
-      MatchType match_type,
+      ResolvedMergeWhen::MatchType match_type,
       std::unique_ptr<const ResolvedExpr> match_expr,
-      ActionType action_type,
+      ResolvedMergeWhen::ActionType action_type,
       const std::vector<ResolvedColumn>& insert_column_list,
       std::unique_ptr<const ResolvedInsertRow> insert_row,
       std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list
@@ -23232,11 +24067,11 @@ class ResolvedMergeWhen final : public ResolvedArgument {
 
   // Member fields
 
-  MatchType match_type() const {
+  ResolvedMergeWhen::MatchType match_type() const {
     accessed_ |= (1<<0);
     return match_type_;
   }
-  void set_match_type(MatchType v) {
+  void set_match_type(ResolvedMergeWhen::MatchType v) {
     match_type_ = v;
   }
 
@@ -23252,11 +24087,11 @@ class ResolvedMergeWhen final : public ResolvedArgument {
     return std::move(match_expr_);
   }
 
-  ActionType action_type() const {
+  ResolvedMergeWhen::ActionType action_type() const {
     accessed_ |= (1<<2);
     return action_type_;
   }
-  void set_action_type(ActionType v) {
+  void set_action_type(ResolvedMergeWhen::ActionType v) {
     action_type_ = v;
   }
 
@@ -23322,9 +24157,9 @@ class ResolvedMergeWhen final : public ResolvedArgument {
 
  protected:
   explicit ResolvedMergeWhen(
-      MatchType match_type,
+      ResolvedMergeWhen::MatchType match_type,
       std::unique_ptr<const ResolvedExpr> match_expr,
-      ActionType action_type,
+      ResolvedMergeWhen::ActionType action_type,
       const std::vector<ResolvedColumn>& insert_column_list,
       std::unique_ptr<const ResolvedInsertRow> insert_row,
       std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
@@ -23342,13 +24177,16 @@ class ResolvedMergeWhen final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedMergeWhen> MakeResolvedMergeWhen();
+  friend class ResolvedMergeWhenBuilder;
+  friend ResolvedMergeWhenBuilder ToBuilder(std::unique_ptr<const ResolvedMergeWhen>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  MatchType match_type_;
+  ResolvedMergeWhen::MatchType match_type_;
   std::unique_ptr<const ResolvedExpr> match_expr_;
-  ActionType action_type_;
+  ResolvedMergeWhen::ActionType action_type_;
   std::vector<ResolvedColumn> insert_column_list_;
   std::unique_ptr<const ResolvedInsertRow> insert_row_;
   std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list_;
@@ -23440,7 +24278,6 @@ class ResolvedMergeStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_MERGE_STMT;
 
-  friend std::unique_ptr<ResolvedMergeStmt> MakeResolvedMergeStmt();
  protected:
   ResolvedMergeStmt()
       : ResolvedStatement()
@@ -23450,6 +24287,7 @@ class ResolvedMergeStmt final : public ResolvedStatement {
       , merge_expr_()
       , when_clause_list_()
   {}
+
  public:
 
   ResolvedMergeStmt(const ResolvedMergeStmt&) = delete;
@@ -23522,7 +24360,7 @@ class ResolvedMergeStmt final : public ResolvedStatement {
     return std::move(table_scan_);
   }
 
-  const std::vector<ObjectAccess>& column_access_list() const {
+  const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
     accessed_ |= (1<<1);
     return column_access_list_;
   }
@@ -23530,17 +24368,17 @@ class ResolvedMergeStmt final : public ResolvedStatement {
     if (column_access_list_.empty()) accessed_ |= (1<<1);
     return static_cast<int>(column_access_list_.size());
   }
-  ObjectAccess column_access_list(int i) const {
+  ResolvedStatement::ObjectAccess column_access_list(int i) const {
     accessed_ |= (1<<1);
     return column_access_list_.at(i);
   }
-  void add_column_access_list(ObjectAccess v) {
+  void add_column_access_list(ResolvedStatement::ObjectAccess v) {
     column_access_list_.push_back(v);
   }
-  void set_column_access_list(const std::vector<ObjectAccess>& v) {
+  void set_column_access_list(const std::vector<ResolvedStatement::ObjectAccess>& v) {
     column_access_list_ = v;
   }
-  std::vector<ObjectAccess>* mutable_column_access_list() {
+  std::vector<ResolvedStatement::ObjectAccess>* mutable_column_access_list() {
     accessed_ |= (1<<1);
     return &column_access_list_;
   }
@@ -23613,12 +24451,15 @@ class ResolvedMergeStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedMergeStmt> MakeResolvedMergeStmt();
+  friend class ResolvedMergeStmtBuilder;
+  friend ResolvedMergeStmtBuilder ToBuilder(std::unique_ptr<const ResolvedMergeStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::unique_ptr<const ResolvedTableScan> table_scan_;
-  std::vector<ObjectAccess> column_access_list_;
+  std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
   std::unique_ptr<const ResolvedScan> from_scan_;
   std::unique_ptr<const ResolvedExpr> merge_expr_;
   std::vector<std::unique_ptr<const ResolvedMergeWhen>> when_clause_list_;
@@ -23692,13 +24533,13 @@ class ResolvedTruncateStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_TRUNCATE_STMT;
 
-  friend std::unique_ptr<ResolvedTruncateStmt> MakeResolvedTruncateStmt();
  protected:
   ResolvedTruncateStmt()
       : ResolvedStatement()
       , table_scan_()
       , where_expr_()
   {}
+
  public:
 
   ResolvedTruncateStmt(const ResolvedTruncateStmt&) = delete;
@@ -23795,6 +24636,9 @@ class ResolvedTruncateStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedTruncateStmt> MakeResolvedTruncateStmt();
+  friend class ResolvedTruncateStmtBuilder;
+  friend ResolvedTruncateStmtBuilder ToBuilder(std::unique_ptr<const ResolvedTruncateStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -23827,12 +24671,12 @@ class ResolvedObjectUnit final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_OBJECT_UNIT;
 
-  friend std::unique_ptr<ResolvedObjectUnit> MakeResolvedObjectUnit();
  protected:
   ResolvedObjectUnit()
       : ResolvedArgument()
       , name_path_()
   {}
+
  public:
 
   ResolvedObjectUnit(const ResolvedObjectUnit&) = delete;
@@ -23925,6 +24769,9 @@ class ResolvedObjectUnit final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedObjectUnit> MakeResolvedObjectUnit();
+  friend class ResolvedObjectUnitBuilder;
+  friend ResolvedObjectUnitBuilder ToBuilder(std::unique_ptr<const ResolvedObjectUnit>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -23958,13 +24805,13 @@ class ResolvedPrivilege final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_PRIVILEGE;
 
-  friend std::unique_ptr<ResolvedPrivilege> MakeResolvedPrivilege();
  protected:
   ResolvedPrivilege()
       : ResolvedArgument()
       , action_type_()
       , unit_list_()
   {}
+
  public:
 
   ResolvedPrivilege(const ResolvedPrivilege&) = delete;
@@ -24070,6 +24917,9 @@ class ResolvedPrivilege final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedPrivilege> MakeResolvedPrivilege();
+  friend class ResolvedPrivilegeBuilder;
+  friend ResolvedPrivilegeBuilder ToBuilder(std::unique_ptr<const ResolvedPrivilege>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -24142,14 +24992,6 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
   // Number of leaf node types that exist as descendants of this abstract type.
   static const int NUM_DESCENDANT_LEAF_TYPES = 2;
 
-  ResolvedGrantOrRevokeStmt()
-      : ResolvedStatement()
-      , privilege_list_()
-      , object_type_()
-      , name_path_()
-      , grantee_list_()
-      , grantee_expr_list_()
-  {}
  public:
 
   ResolvedGrantOrRevokeStmt(const ResolvedGrantOrRevokeStmt&) = delete;
@@ -24309,6 +25151,15 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
   }
 
  protected:
+  ResolvedGrantOrRevokeStmt()
+      : ResolvedStatement()
+      , privilege_list_()
+      , object_type_()
+      , name_path_()
+      , grantee_list_()
+      , grantee_expr_list_()
+  {}
+
   explicit ResolvedGrantOrRevokeStmt(
       std::vector<std::unique_ptr<const ResolvedPrivilege>> privilege_list,
       const std::string& object_type,
@@ -24328,6 +25179,8 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedGrantStmtBuilder;
+  friend class ResolvedRevokeStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -24348,11 +25201,11 @@ class ResolvedGrantStmt final : public ResolvedGrantOrRevokeStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GRANT_STMT;
 
-  friend std::unique_ptr<ResolvedGrantStmt> MakeResolvedGrantStmt();
  protected:
   ResolvedGrantStmt()
       : ResolvedGrantOrRevokeStmt()
   {}
+
  public:
 
   ResolvedGrantStmt(const ResolvedGrantStmt&) = delete;
@@ -24418,6 +25271,9 @@ class ResolvedGrantStmt final : public ResolvedGrantOrRevokeStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedGrantStmt> MakeResolvedGrantStmt();
+  friend class ResolvedGrantStmtBuilder;
+  friend ResolvedGrantStmtBuilder ToBuilder(std::unique_ptr<const ResolvedGrantStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -24493,11 +25349,11 @@ class ResolvedRevokeStmt final : public ResolvedGrantOrRevokeStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_REVOKE_STMT;
 
-  friend std::unique_ptr<ResolvedRevokeStmt> MakeResolvedRevokeStmt();
  protected:
   ResolvedRevokeStmt()
       : ResolvedGrantOrRevokeStmt()
   {}
+
  public:
 
   ResolvedRevokeStmt(const ResolvedRevokeStmt&) = delete;
@@ -24563,6 +25419,9 @@ class ResolvedRevokeStmt final : public ResolvedGrantOrRevokeStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedRevokeStmt> MakeResolvedRevokeStmt();
+  friend class ResolvedRevokeStmtBuilder;
+  friend ResolvedRevokeStmtBuilder ToBuilder(std::unique_ptr<const ResolvedRevokeStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -24643,14 +25502,8 @@ class ResolvedAlterObjectStmt  : public ResolvedStatement {
   typedef ResolvedStatement SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 9;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 10;
 
-  ResolvedAlterObjectStmt()
-      : ResolvedStatement()
-      , name_path_()
-      , alter_action_list_()
-      , is_if_exists_()
-  {}
  public:
 
   ResolvedAlterObjectStmt(const ResolvedAlterObjectStmt&) = delete;
@@ -24762,6 +25615,13 @@ class ResolvedAlterObjectStmt  : public ResolvedStatement {
   }
 
  protected:
+  ResolvedAlterObjectStmt()
+      : ResolvedStatement()
+      , name_path_()
+      , alter_action_list_()
+      , is_if_exists_()
+  {}
+
   explicit ResolvedAlterObjectStmt(
       const std::vector<std::string>& name_path,
       std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list,
@@ -24777,6 +25637,16 @@ class ResolvedAlterObjectStmt  : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedAlterDatabaseStmtBuilder;
+  friend class ResolvedAlterMaterializedViewStmtBuilder;
+  friend class ResolvedAlterSchemaStmtBuilder;
+  friend class ResolvedAlterModelStmtBuilder;
+  friend class ResolvedAlterTableStmtBuilder;
+  friend class ResolvedAlterViewStmtBuilder;
+  friend class ResolvedAlterPrivilegeRestrictionStmtBuilder;
+  friend class ResolvedAlterRowAccessPolicyStmtBuilder;
+  friend class ResolvedAlterAllRowAccessPoliciesStmtBuilder;
+  friend class ResolvedAlterEntityStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -24797,11 +25667,11 @@ class ResolvedAlterDatabaseStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_DATABASE_STMT;
 
-  friend std::unique_ptr<ResolvedAlterDatabaseStmt> MakeResolvedAlterDatabaseStmt();
  protected:
   ResolvedAlterDatabaseStmt()
       : ResolvedAlterObjectStmt()
   {}
+
  public:
 
   ResolvedAlterDatabaseStmt(const ResolvedAlterDatabaseStmt&) = delete;
@@ -24861,6 +25731,9 @@ class ResolvedAlterDatabaseStmt final : public ResolvedAlterObjectStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterDatabaseStmt> MakeResolvedAlterDatabaseStmt();
+  friend class ResolvedAlterDatabaseStmtBuilder;
+  friend ResolvedAlterDatabaseStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterDatabaseStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -24928,11 +25801,11 @@ class ResolvedAlterMaterializedViewStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_MATERIALIZED_VIEW_STMT;
 
-  friend std::unique_ptr<ResolvedAlterMaterializedViewStmt> MakeResolvedAlterMaterializedViewStmt();
  protected:
   ResolvedAlterMaterializedViewStmt()
       : ResolvedAlterObjectStmt()
   {}
+
  public:
 
   ResolvedAlterMaterializedViewStmt(const ResolvedAlterMaterializedViewStmt&) = delete;
@@ -24992,6 +25865,9 @@ class ResolvedAlterMaterializedViewStmt final : public ResolvedAlterObjectStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterMaterializedViewStmt> MakeResolvedAlterMaterializedViewStmt();
+  friend class ResolvedAlterMaterializedViewStmtBuilder;
+  friend ResolvedAlterMaterializedViewStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterMaterializedViewStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25059,11 +25935,11 @@ class ResolvedAlterSchemaStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_SCHEMA_STMT;
 
-  friend std::unique_ptr<ResolvedAlterSchemaStmt> MakeResolvedAlterSchemaStmt();
  protected:
   ResolvedAlterSchemaStmt()
       : ResolvedAlterObjectStmt()
   {}
+
  public:
 
   ResolvedAlterSchemaStmt(const ResolvedAlterSchemaStmt&) = delete;
@@ -25123,6 +25999,9 @@ class ResolvedAlterSchemaStmt final : public ResolvedAlterObjectStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterSchemaStmt> MakeResolvedAlterSchemaStmt();
+  friend class ResolvedAlterSchemaStmtBuilder;
+  friend ResolvedAlterSchemaStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterSchemaStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25183,6 +26062,140 @@ inline std::unique_ptr<ResolvedAlterSchemaStmt> MakeResolvedAlterSchemaStmt() {
 }
 
 // This statement:
+// ALTER MODEL [IF EXISTS] <name_path> <alter_action_list>
+class ResolvedAlterModelStmt final : public ResolvedAlterObjectStmt {
+ public:
+  typedef ResolvedAlterObjectStmt SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_ALTER_MODEL_STMT;
+
+ protected:
+  ResolvedAlterModelStmt()
+      : ResolvedAlterObjectStmt()
+  {}
+
+ public:
+
+  ResolvedAlterModelStmt(const ResolvedAlterModelStmt&) = delete;
+  ResolvedAlterModelStmt& operator=(const ResolvedAlterModelStmt&) = delete;
+
+  friend std::unique_ptr<ResolvedAlterModelStmt> MakeResolvedAlterModelStmt(
+      const std::vector<std::string>& name_path,
+      std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list,
+      bool is_if_exists
+  );
+  ~ResolvedAlterModelStmt() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_ALTER_MODEL_STMT; }
+  std::string node_kind_string() const final { return "AlterModelStmt"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedAlterModelStmtProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedAlterObjectStmtProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedAlterModelStmt>> RestoreFrom(
+      const ResolvedAlterModelStmtProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedAlterModelStmt(
+      const std::vector<std::string>& name_path,
+      std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list,
+      bool is_if_exists,
+      ConstructorOverload)
+      : ResolvedAlterObjectStmt(
+            name_path,
+            std::move(alter_action_list),
+            is_if_exists,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedAlterModelStmt> MakeResolvedAlterModelStmt();
+  friend class ResolvedAlterModelStmtBuilder;
+  friend ResolvedAlterModelStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterModelStmt>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedAlterModelStmt> MakeResolvedAlterModelStmt(
+    const std::vector<std::string>& name_path,
+    std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list,
+    bool is_if_exists) {
+  return std::unique_ptr<ResolvedAlterModelStmt>(new ResolvedAlterModelStmt(
+        name_path,
+        std::move(alter_action_list),
+        is_if_exists,
+        ResolvedAlterModelStmt::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedAlterModelStmt> MakeResolvedAlterModelStmt(
+    std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list,
+    bool is_if_exists) {
+  return MakeResolvedAlterModelStmt(
+      /*name_path=*/{},
+      std::move(alter_action_list),
+      is_if_exists);
+}
+
+// Overloaded factory method for the construction of ResolvedAlterModelStmt with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  alter_action_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename alter_action_list_t
+      = std::vector<std::unique_ptr<const ResolvedAlterAction>>>
+std::unique_ptr<ResolvedAlterModelStmt> MakeResolvedAlterModelStmt(
+    const std::vector<std::string>& name_path,
+    alter_action_list_t alter_action_list,
+    bool is_if_exists) {
+  static_assert(std::is_base_of<
+      ResolvedAlterAction,
+      typename std::decay<decltype(**(alter_action_list.begin()))>::type>::value,
+      "alter_action_list must be a container of unique_ptr with elements of type "
+      "ResolvedAlterAction (or its descendants).");
+  return MakeResolvedAlterModelStmt(
+      name_path,
+      {std::make_move_iterator(alter_action_list.begin()),
+       std::make_move_iterator(alter_action_list.end())},
+      is_if_exists);
+}
+
+inline std::unique_ptr<ResolvedAlterModelStmt> MakeResolvedAlterModelStmt() {
+  return std::unique_ptr<ResolvedAlterModelStmt>(
+      new ResolvedAlterModelStmt());
+}
+
+// This statement:
 // ALTER TABLE [IF EXISTS] <name_path> <alter_action_list>
 class ResolvedAlterTableStmt final : public ResolvedAlterObjectStmt {
  public:
@@ -25190,11 +26203,11 @@ class ResolvedAlterTableStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_TABLE_STMT;
 
-  friend std::unique_ptr<ResolvedAlterTableStmt> MakeResolvedAlterTableStmt();
  protected:
   ResolvedAlterTableStmt()
       : ResolvedAlterObjectStmt()
   {}
+
  public:
 
   ResolvedAlterTableStmt(const ResolvedAlterTableStmt&) = delete;
@@ -25254,6 +26267,9 @@ class ResolvedAlterTableStmt final : public ResolvedAlterObjectStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterTableStmt> MakeResolvedAlterTableStmt();
+  friend class ResolvedAlterTableStmtBuilder;
+  friend ResolvedAlterTableStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterTableStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25321,11 +26337,11 @@ class ResolvedAlterViewStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_VIEW_STMT;
 
-  friend std::unique_ptr<ResolvedAlterViewStmt> MakeResolvedAlterViewStmt();
  protected:
   ResolvedAlterViewStmt()
       : ResolvedAlterObjectStmt()
   {}
+
  public:
 
   ResolvedAlterViewStmt(const ResolvedAlterViewStmt&) = delete;
@@ -25385,6 +26401,9 @@ class ResolvedAlterViewStmt final : public ResolvedAlterObjectStmt {
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterViewStmt> MakeResolvedAlterViewStmt();
+  friend class ResolvedAlterViewStmtBuilder;
+  friend ResolvedAlterViewStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterViewStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25450,11 +26469,8 @@ class ResolvedAlterAction  : public ResolvedArgument {
   typedef ResolvedArgument SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 21;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 24;
 
-  ResolvedAlterAction()
-      : ResolvedArgument()
-  {}
  public:
 
   ResolvedAlterAction(const ResolvedAlterAction&) = delete;
@@ -25496,6 +26512,10 @@ class ResolvedAlterAction  : public ResolvedArgument {
   // Member fields
 
  protected:
+  ResolvedAlterAction()
+      : ResolvedArgument()
+  {}
+
   explicit ResolvedAlterAction(
       ConstructorOverload)
       : ResolvedArgument(
@@ -25503,6 +26523,25 @@ class ResolvedAlterAction  : public ResolvedArgument {
   }
 
  private:
+  friend class ResolvedSetOptionsActionBuilder;
+  friend class ResolvedAlterSubEntityActionBuilder;
+  friend class ResolvedAddSubEntityActionBuilder;
+  friend class ResolvedDropSubEntityActionBuilder;
+  friend class ResolvedAddColumnActionBuilder;
+  friend class ResolvedAddConstraintActionBuilder;
+  friend class ResolvedDropConstraintActionBuilder;
+  friend class ResolvedDropPrimaryKeyActionBuilder;
+  friend class ResolvedDropColumnActionBuilder;
+  friend class ResolvedRenameColumnActionBuilder;
+  friend class ResolvedSetAsActionBuilder;
+  friend class ResolvedSetCollateClauseBuilder;
+  friend class ResolvedGrantToActionBuilder;
+  friend class ResolvedRestrictToActionBuilder;
+  friend class ResolvedAddToRestricteeListActionBuilder;
+  friend class ResolvedRemoveFromRestricteeListActionBuilder;
+  friend class ResolvedFilterUsingActionBuilder;
+  friend class ResolvedRevokeFromActionBuilder;
+  friend class ResolvedRenameToActionBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25521,11 +26560,6 @@ class ResolvedAlterColumnAction  : public ResolvedAlterAction {
   // Number of leaf node types that exist as descendants of this abstract type.
   static const int NUM_DESCENDANT_LEAF_TYPES = 5;
 
-  ResolvedAlterColumnAction()
-      : ResolvedAlterAction()
-      , is_if_exists_()
-      , column_()
-  {}
  public:
 
   ResolvedAlterColumnAction(const ResolvedAlterColumnAction&) = delete;
@@ -25597,6 +26631,12 @@ class ResolvedAlterColumnAction  : public ResolvedAlterAction {
   }
 
  protected:
+  ResolvedAlterColumnAction()
+      : ResolvedAlterAction()
+      , is_if_exists_()
+      , column_()
+  {}
+
   explicit ResolvedAlterColumnAction(
       bool is_if_exists,
       const std::string& column,
@@ -25610,6 +26650,11 @@ class ResolvedAlterColumnAction  : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const override;
  private:
+  friend class ResolvedAlterColumnOptionsActionBuilder;
+  friend class ResolvedAlterColumnDropNotNullActionBuilder;
+  friend class ResolvedAlterColumnSetDataTypeActionBuilder;
+  friend class ResolvedAlterColumnSetDefaultActionBuilder;
+  friend class ResolvedAlterColumnDropDefaultActionBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25629,12 +26674,12 @@ class ResolvedSetOptionsAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SET_OPTIONS_ACTION;
 
-  friend std::unique_ptr<ResolvedSetOptionsAction> MakeResolvedSetOptionsAction();
  protected:
   ResolvedSetOptionsAction()
       : ResolvedAlterAction()
       , option_list_()
   {}
+
  public:
 
   ResolvedSetOptionsAction(const ResolvedSetOptionsAction&) = delete;
@@ -25729,6 +26774,9 @@ class ResolvedSetOptionsAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSetOptionsAction> MakeResolvedSetOptionsAction();
+  friend class ResolvedSetOptionsActionBuilder;
+  friend ResolvedSetOptionsActionBuilder ToBuilder(std::unique_ptr<const ResolvedSetOptionsAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25774,6 +26822,544 @@ inline std::unique_ptr<ResolvedSetOptionsAction> MakeResolvedSetOptionsAction() 
       new ResolvedSetOptionsAction());
 }
 
+// Alter sub-entity action for ALTER <object> statement.
+// (broken link)
+//
+// ALTER <entity_type> [IF EXISTS] <name> <alter_action>
+//
+// <entity_type> engine-specific sub-entity type to be altered.
+// <name> the identifier for the sub-entity resource being altered.
+// <alter_action> action for the sub-entity resource, such as
+//     SET OPTIONS or a further nested ALTER sub-entity action.
+// <is_if_exists> if set, skip the alter action if the resource does
+//     not exist.
+class ResolvedAlterSubEntityAction final : public ResolvedAlterAction {
+ public:
+  typedef ResolvedAlterAction SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_ALTER_SUB_ENTITY_ACTION;
+
+ protected:
+  ResolvedAlterSubEntityAction()
+      : ResolvedAlterAction()
+      , entity_type_()
+      , name_()
+      , alter_action_()
+      , is_if_exists_()
+  {}
+
+ public:
+
+  ResolvedAlterSubEntityAction(const ResolvedAlterSubEntityAction&) = delete;
+  ResolvedAlterSubEntityAction& operator=(const ResolvedAlterSubEntityAction&) = delete;
+
+  friend std::unique_ptr<ResolvedAlterSubEntityAction> MakeResolvedAlterSubEntityAction(
+      const std::string& entity_type,
+      const std::string& name,
+      std::unique_ptr<const ResolvedAlterAction> alter_action,
+      bool is_if_exists
+  );
+  ~ResolvedAlterSubEntityAction() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_ALTER_SUB_ENTITY_ACTION; }
+  std::string node_kind_string() const final { return "AlterSubEntityAction"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedAlterSubEntityActionProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedAlterActionProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedAlterSubEntityAction>> RestoreFrom(
+      const ResolvedAlterSubEntityActionProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& entity_type() const {
+    accessed_ |= (1<<0);
+    return entity_type_;
+  }
+  void set_entity_type(const std::string& v) {
+    entity_type_ = v;
+  }
+
+  const std::string& name() const {
+    accessed_ |= (1<<1);
+    return name_;
+  }
+  void set_name(const std::string& v) {
+    name_ = v;
+  }
+
+  const ResolvedAlterAction* alter_action() const {
+    accessed_ |= (1<<2);
+    return alter_action_.get();
+  }
+  void set_alter_action(std::unique_ptr<const ResolvedAlterAction> v) {
+    alter_action_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedAlterAction> release_alter_action() {
+    return std::move(alter_action_);
+  }
+
+  bool is_if_exists() const {
+    accessed_ |= (1<<3);
+    return is_if_exists_;
+  }
+  void set_is_if_exists(bool v) {
+    is_if_exists_ = v;
+  }
+
+ protected:
+  explicit ResolvedAlterSubEntityAction(
+      const std::string& entity_type,
+      const std::string& name,
+      std::unique_ptr<const ResolvedAlterAction> alter_action,
+      bool is_if_exists,
+      ConstructorOverload)
+      : ResolvedAlterAction(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      entity_type_(entity_type),
+      name_(name),
+      alter_action_(std::move(alter_action)),
+      is_if_exists_(is_if_exists) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedAlterSubEntityAction> MakeResolvedAlterSubEntityAction();
+  friend class ResolvedAlterSubEntityActionBuilder;
+  friend ResolvedAlterSubEntityActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterSubEntityAction>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  std::string entity_type_;
+  std::string name_;
+  std::unique_ptr<const ResolvedAlterAction> alter_action_;
+  bool is_if_exists_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedAlterSubEntityAction> MakeResolvedAlterSubEntityAction(
+    const std::string& entity_type,
+    const std::string& name,
+    std::unique_ptr<const ResolvedAlterAction> alter_action,
+    bool is_if_exists) {
+  return std::unique_ptr<ResolvedAlterSubEntityAction>(new ResolvedAlterSubEntityAction(
+        entity_type,
+        name,
+        std::move(alter_action),
+        is_if_exists,
+        ResolvedAlterSubEntityAction::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedAlterSubEntityAction> MakeResolvedAlterSubEntityAction() {
+  return std::unique_ptr<ResolvedAlterSubEntityAction>(
+      new ResolvedAlterSubEntityAction());
+}
+
+// Add sub-entity action for ALTER <object> statement.
+// (broken link)
+//
+// ADD <entity_type> [IF NOT EXISTS] <name> [OPTIONS(...)]
+//
+// <entity_type> engine-specific sub-entity type to be added.
+// <name> the identifier for the sub-entity resource being added.
+// <options_list> engine specific options_list for the sub-entity resource.
+// <is_if_not_exists> if set, skip the add action if the resource
+//     already exists.
+class ResolvedAddSubEntityAction final : public ResolvedAlterAction {
+ public:
+  typedef ResolvedAlterAction SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_ADD_SUB_ENTITY_ACTION;
+
+ protected:
+  ResolvedAddSubEntityAction()
+      : ResolvedAlterAction()
+      , entity_type_()
+      , name_()
+      , options_list_()
+      , is_if_not_exists_()
+  {}
+
+ public:
+
+  ResolvedAddSubEntityAction(const ResolvedAddSubEntityAction&) = delete;
+  ResolvedAddSubEntityAction& operator=(const ResolvedAddSubEntityAction&) = delete;
+
+  friend std::unique_ptr<ResolvedAddSubEntityAction> MakeResolvedAddSubEntityAction(
+      const std::string& entity_type,
+      const std::string& name,
+      std::vector<std::unique_ptr<const ResolvedOption>> options_list,
+      bool is_if_not_exists
+  );
+  ~ResolvedAddSubEntityAction() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_ADD_SUB_ENTITY_ACTION; }
+  std::string node_kind_string() const final { return "AddSubEntityAction"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedAddSubEntityActionProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedAlterActionProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedAddSubEntityAction>> RestoreFrom(
+      const ResolvedAddSubEntityActionProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& entity_type() const {
+    accessed_ |= (1<<0);
+    return entity_type_;
+  }
+  void set_entity_type(const std::string& v) {
+    entity_type_ = v;
+  }
+
+  const std::string& name() const {
+    accessed_ |= (1<<1);
+    return name_;
+  }
+  void set_name(const std::string& v) {
+    name_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& options_list() const {
+    accessed_ |= (1<<2);
+    return options_list_;
+  }
+  int options_list_size() const {
+    if (options_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(options_list_.size());
+  }
+  const ResolvedOption* options_list(int i) const {
+    accessed_ |= (1<<2);
+    return options_list_.at(i).get();
+  }
+  void add_options_list(std::unique_ptr<const ResolvedOption> v) {
+    options_list_.emplace_back(std::move(v));
+  }
+  void set_options_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    options_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_options_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    options_list_.swap(tmp);
+    return tmp;
+  }
+
+  bool is_if_not_exists() const {
+    accessed_ |= (1<<3);
+    return is_if_not_exists_;
+  }
+  void set_is_if_not_exists(bool v) {
+    is_if_not_exists_ = v;
+  }
+
+ protected:
+  explicit ResolvedAddSubEntityAction(
+      const std::string& entity_type,
+      const std::string& name,
+      std::vector<std::unique_ptr<const ResolvedOption>> options_list,
+      bool is_if_not_exists,
+      ConstructorOverload)
+      : ResolvedAlterAction(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      entity_type_(entity_type),
+      name_(name),
+      options_list_(std::move(options_list)),
+      is_if_not_exists_(is_if_not_exists) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedAddSubEntityAction> MakeResolvedAddSubEntityAction();
+  friend class ResolvedAddSubEntityActionBuilder;
+  friend ResolvedAddSubEntityActionBuilder ToBuilder(std::unique_ptr<const ResolvedAddSubEntityAction>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  std::string entity_type_;
+  std::string name_;
+  std::vector<std::unique_ptr<const ResolvedOption>> options_list_;
+  bool is_if_not_exists_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedAddSubEntityAction> MakeResolvedAddSubEntityAction(
+    const std::string& entity_type,
+    const std::string& name,
+    std::vector<std::unique_ptr<const ResolvedOption>> options_list,
+    bool is_if_not_exists) {
+  return std::unique_ptr<ResolvedAddSubEntityAction>(new ResolvedAddSubEntityAction(
+        entity_type,
+        name,
+        std::move(options_list),
+        is_if_not_exists,
+        ResolvedAddSubEntityAction::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedAddSubEntityAction with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  options_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename options_list_t
+      = std::vector<std::unique_ptr<const ResolvedOption>>>
+std::unique_ptr<ResolvedAddSubEntityAction> MakeResolvedAddSubEntityAction(
+    const std::string& entity_type,
+    const std::string& name,
+    options_list_t options_list,
+    bool is_if_not_exists) {
+  static_assert(std::is_base_of<
+      ResolvedOption,
+      typename std::decay<decltype(**(options_list.begin()))>::type>::value,
+      "options_list must be a container of unique_ptr with elements of type "
+      "ResolvedOption (or its descendants).");
+  return MakeResolvedAddSubEntityAction(
+      entity_type,
+      name,
+      {std::make_move_iterator(options_list.begin()),
+       std::make_move_iterator(options_list.end())},
+      is_if_not_exists);
+}
+
+inline std::unique_ptr<ResolvedAddSubEntityAction> MakeResolvedAddSubEntityAction() {
+  return std::unique_ptr<ResolvedAddSubEntityAction>(
+      new ResolvedAddSubEntityAction());
+}
+
+// Drop sub-entity action for ALTER <object> statement.
+// (broken link)
+//
+// DROP <entity_type> [IF EXISTS] <name>
+//
+// <entity_type> engine-specific sub-entity type to be dropped.
+// <name> the identifier for the sub-entity resource being dropped.
+// <is_if_exists> if set, skip the drop action if the resource does
+//     not exist.
+class ResolvedDropSubEntityAction final : public ResolvedAlterAction {
+ public:
+  typedef ResolvedAlterAction SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_DROP_SUB_ENTITY_ACTION;
+
+ protected:
+  ResolvedDropSubEntityAction()
+      : ResolvedAlterAction()
+      , entity_type_()
+      , name_()
+      , is_if_exists_()
+  {}
+
+ public:
+
+  ResolvedDropSubEntityAction(const ResolvedDropSubEntityAction&) = delete;
+  ResolvedDropSubEntityAction& operator=(const ResolvedDropSubEntityAction&) = delete;
+
+  friend std::unique_ptr<ResolvedDropSubEntityAction> MakeResolvedDropSubEntityAction(
+      const std::string& entity_type,
+      const std::string& name,
+      bool is_if_exists
+  );
+  ~ResolvedDropSubEntityAction() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_DROP_SUB_ENTITY_ACTION; }
+  std::string node_kind_string() const final { return "DropSubEntityAction"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedDropSubEntityActionProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedAlterActionProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedDropSubEntityAction>> RestoreFrom(
+      const ResolvedDropSubEntityActionProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& entity_type() const {
+    accessed_ |= (1<<0);
+    return entity_type_;
+  }
+  void set_entity_type(const std::string& v) {
+    entity_type_ = v;
+  }
+
+  const std::string& name() const {
+    accessed_ |= (1<<1);
+    return name_;
+  }
+  void set_name(const std::string& v) {
+    name_ = v;
+  }
+
+  bool is_if_exists() const {
+    accessed_ |= (1<<2);
+    return is_if_exists_;
+  }
+  void set_is_if_exists(bool v) {
+    is_if_exists_ = v;
+  }
+
+ protected:
+  explicit ResolvedDropSubEntityAction(
+      const std::string& entity_type,
+      const std::string& name,
+      bool is_if_exists,
+      ConstructorOverload)
+      : ResolvedAlterAction(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      entity_type_(entity_type),
+      name_(name),
+      is_if_exists_(is_if_exists) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedDropSubEntityAction> MakeResolvedDropSubEntityAction();
+  friend class ResolvedDropSubEntityActionBuilder;
+  friend ResolvedDropSubEntityActionBuilder ToBuilder(std::unique_ptr<const ResolvedDropSubEntityAction>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  std::string entity_type_;
+  std::string name_;
+  bool is_if_exists_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedDropSubEntityAction> MakeResolvedDropSubEntityAction(
+    const std::string& entity_type,
+    const std::string& name,
+    bool is_if_exists) {
+  return std::unique_ptr<ResolvedDropSubEntityAction>(new ResolvedDropSubEntityAction(
+        entity_type,
+        name,
+        is_if_exists,
+        ResolvedDropSubEntityAction::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedDropSubEntityAction> MakeResolvedDropSubEntityAction() {
+  return std::unique_ptr<ResolvedDropSubEntityAction>(
+      new ResolvedDropSubEntityAction());
+}
+
 // ADD COLUMN action for ALTER TABLE statement
 class ResolvedAddColumnAction final : public ResolvedAlterAction {
  public:
@@ -25781,13 +27367,13 @@ class ResolvedAddColumnAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ADD_COLUMN_ACTION;
 
-  friend std::unique_ptr<ResolvedAddColumnAction> MakeResolvedAddColumnAction();
  protected:
   ResolvedAddColumnAction()
       : ResolvedAlterAction()
       , is_if_not_exists_()
       , column_definition_()
   {}
+
  public:
 
   ResolvedAddColumnAction(const ResolvedAddColumnAction&) = delete;
@@ -25880,6 +27466,9 @@ class ResolvedAddColumnAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAddColumnAction> MakeResolvedAddColumnAction();
+  friend class ResolvedAddColumnActionBuilder;
+  friend ResolvedAddColumnActionBuilder ToBuilder(std::unique_ptr<const ResolvedAddColumnAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -25910,7 +27499,6 @@ class ResolvedAddConstraintAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ADD_CONSTRAINT_ACTION;
 
-  friend std::unique_ptr<ResolvedAddConstraintAction> MakeResolvedAddConstraintAction();
  protected:
   ResolvedAddConstraintAction()
       : ResolvedAlterAction()
@@ -25918,6 +27506,7 @@ class ResolvedAddConstraintAction final : public ResolvedAlterAction {
       , constraint_()
       , table_()
   {}
+
  public:
 
   ResolvedAddConstraintAction(const ResolvedAddConstraintAction&) = delete;
@@ -26021,6 +27610,9 @@ class ResolvedAddConstraintAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAddConstraintAction> MakeResolvedAddConstraintAction();
+  friend class ResolvedAddConstraintActionBuilder;
+  friend ResolvedAddConstraintActionBuilder ToBuilder(std::unique_ptr<const ResolvedAddConstraintAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26054,13 +27646,13 @@ class ResolvedDropConstraintAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_CONSTRAINT_ACTION;
 
-  friend std::unique_ptr<ResolvedDropConstraintAction> MakeResolvedDropConstraintAction();
  protected:
   ResolvedDropConstraintAction()
       : ResolvedAlterAction()
       , is_if_exists_()
       , name_()
   {}
+
  public:
 
   ResolvedDropConstraintAction(const ResolvedDropConstraintAction&) = delete;
@@ -26149,6 +27741,9 @@ class ResolvedDropConstraintAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropConstraintAction> MakeResolvedDropConstraintAction();
+  friend class ResolvedDropConstraintActionBuilder;
+  friend ResolvedDropConstraintActionBuilder ToBuilder(std::unique_ptr<const ResolvedDropConstraintAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26179,12 +27774,12 @@ class ResolvedDropPrimaryKeyAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_PRIMARY_KEY_ACTION;
 
-  friend std::unique_ptr<ResolvedDropPrimaryKeyAction> MakeResolvedDropPrimaryKeyAction();
  protected:
   ResolvedDropPrimaryKeyAction()
       : ResolvedAlterAction()
       , is_if_exists_()
   {}
+
  public:
 
   ResolvedDropPrimaryKeyAction(const ResolvedDropPrimaryKeyAction&) = delete;
@@ -26262,6 +27857,9 @@ class ResolvedDropPrimaryKeyAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropPrimaryKeyAction> MakeResolvedDropPrimaryKeyAction();
+  friend class ResolvedDropPrimaryKeyActionBuilder;
+  friend ResolvedDropPrimaryKeyActionBuilder ToBuilder(std::unique_ptr<const ResolvedDropPrimaryKeyAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26293,12 +27891,12 @@ class ResolvedAlterColumnOptionsAction final : public ResolvedAlterColumnAction 
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_COLUMN_OPTIONS_ACTION;
 
-  friend std::unique_ptr<ResolvedAlterColumnOptionsAction> MakeResolvedAlterColumnOptionsAction();
  protected:
   ResolvedAlterColumnOptionsAction()
       : ResolvedAlterColumnAction()
       , option_list_()
   {}
+
  public:
 
   ResolvedAlterColumnOptionsAction(const ResolvedAlterColumnOptionsAction&) = delete;
@@ -26399,6 +27997,9 @@ class ResolvedAlterColumnOptionsAction final : public ResolvedAlterColumnAction 
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterColumnOptionsAction> MakeResolvedAlterColumnOptionsAction();
+  friend class ResolvedAlterColumnOptionsActionBuilder;
+  friend ResolvedAlterColumnOptionsActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterColumnOptionsAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26462,11 +28063,11 @@ class ResolvedAlterColumnDropNotNullAction final : public ResolvedAlterColumnAct
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_COLUMN_DROP_NOT_NULL_ACTION;
 
-  friend std::unique_ptr<ResolvedAlterColumnDropNotNullAction> MakeResolvedAlterColumnDropNotNullAction();
  protected:
   ResolvedAlterColumnDropNotNullAction()
       : ResolvedAlterColumnAction()
   {}
+
  public:
 
   ResolvedAlterColumnDropNotNullAction(const ResolvedAlterColumnDropNotNullAction&) = delete;
@@ -26523,6 +28124,9 @@ class ResolvedAlterColumnDropNotNullAction final : public ResolvedAlterColumnAct
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterColumnDropNotNullAction> MakeResolvedAlterColumnDropNotNullAction();
+  friend class ResolvedAlterColumnDropNotNullActionBuilder;
+  friend ResolvedAlterColumnDropNotNullActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterColumnDropNotNullAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26553,7 +28157,6 @@ class ResolvedAlterColumnSetDataTypeAction final : public ResolvedAlterColumnAct
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_COLUMN_SET_DATA_TYPE_ACTION;
 
-  friend std::unique_ptr<ResolvedAlterColumnSetDataTypeAction> MakeResolvedAlterColumnSetDataTypeAction();
  protected:
   ResolvedAlterColumnSetDataTypeAction()
       : ResolvedAlterColumnAction()
@@ -26561,6 +28164,7 @@ class ResolvedAlterColumnSetDataTypeAction final : public ResolvedAlterColumnAct
       , updated_type_parameters_()
       , updated_annotations_()
   {}
+
  public:
 
   ResolvedAlterColumnSetDataTypeAction(const ResolvedAlterColumnSetDataTypeAction&) = delete;
@@ -26678,6 +28282,9 @@ class ResolvedAlterColumnSetDataTypeAction final : public ResolvedAlterColumnAct
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterColumnSetDataTypeAction> MakeResolvedAlterColumnSetDataTypeAction();
+  friend class ResolvedAlterColumnSetDataTypeActionBuilder;
+  friend ResolvedAlterColumnSetDataTypeActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26724,12 +28331,12 @@ class ResolvedAlterColumnSetDefaultAction final : public ResolvedAlterColumnActi
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_COLUMN_SET_DEFAULT_ACTION;
 
-  friend std::unique_ptr<ResolvedAlterColumnSetDefaultAction> MakeResolvedAlterColumnSetDefaultAction();
  protected:
   ResolvedAlterColumnSetDefaultAction()
       : ResolvedAlterColumnAction()
       , default_value_()
   {}
+
  public:
 
   ResolvedAlterColumnSetDefaultAction(const ResolvedAlterColumnSetDefaultAction&) = delete;
@@ -26817,6 +28424,9 @@ class ResolvedAlterColumnSetDefaultAction final : public ResolvedAlterColumnActi
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterColumnSetDefaultAction> MakeResolvedAlterColumnSetDefaultAction();
+  friend class ResolvedAlterColumnSetDefaultActionBuilder;
+  friend ResolvedAlterColumnSetDefaultActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterColumnSetDefaultAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26851,11 +28461,11 @@ class ResolvedAlterColumnDropDefaultAction final : public ResolvedAlterColumnAct
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_COLUMN_DROP_DEFAULT_ACTION;
 
-  friend std::unique_ptr<ResolvedAlterColumnDropDefaultAction> MakeResolvedAlterColumnDropDefaultAction();
  protected:
   ResolvedAlterColumnDropDefaultAction()
       : ResolvedAlterColumnAction()
   {}
+
  public:
 
   ResolvedAlterColumnDropDefaultAction(const ResolvedAlterColumnDropDefaultAction&) = delete;
@@ -26912,6 +28522,9 @@ class ResolvedAlterColumnDropDefaultAction final : public ResolvedAlterColumnAct
   }
 
  private:
+  friend std::unique_ptr<ResolvedAlterColumnDropDefaultAction> MakeResolvedAlterColumnDropDefaultAction();
+  friend class ResolvedAlterColumnDropDefaultActionBuilder;
+  friend ResolvedAlterColumnDropDefaultActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterColumnDropDefaultAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -26941,13 +28554,13 @@ class ResolvedDropColumnAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_COLUMN_ACTION;
 
-  friend std::unique_ptr<ResolvedDropColumnAction> MakeResolvedDropColumnAction();
  protected:
   ResolvedDropColumnAction()
       : ResolvedAlterAction()
       , is_if_exists_()
       , name_()
   {}
+
  public:
 
   ResolvedDropColumnAction(const ResolvedDropColumnAction&) = delete;
@@ -27036,6 +28649,9 @@ class ResolvedDropColumnAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropColumnAction> MakeResolvedDropColumnAction();
+  friend class ResolvedDropColumnActionBuilder;
+  friend ResolvedDropColumnActionBuilder ToBuilder(std::unique_ptr<const ResolvedDropColumnAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -27075,7 +28691,6 @@ class ResolvedRenameColumnAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RENAME_COLUMN_ACTION;
 
-  friend std::unique_ptr<ResolvedRenameColumnAction> MakeResolvedRenameColumnAction();
  protected:
   ResolvedRenameColumnAction()
       : ResolvedAlterAction()
@@ -27083,6 +28698,7 @@ class ResolvedRenameColumnAction final : public ResolvedAlterAction {
       , name_()
       , new_name_()
   {}
+
  public:
 
   ResolvedRenameColumnAction(const ResolvedRenameColumnAction&) = delete;
@@ -27182,6 +28798,9 @@ class ResolvedRenameColumnAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRenameColumnAction> MakeResolvedRenameColumnAction();
+  friend class ResolvedRenameColumnActionBuilder;
+  friend ResolvedRenameColumnActionBuilder ToBuilder(std::unique_ptr<const ResolvedRenameColumnAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -27219,13 +28838,13 @@ class ResolvedSetAsAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SET_AS_ACTION;
 
-  friend std::unique_ptr<ResolvedSetAsAction> MakeResolvedSetAsAction();
  protected:
   ResolvedSetAsAction()
       : ResolvedAlterAction()
       , entity_body_json_()
       , entity_body_text_()
   {}
+
  public:
 
   ResolvedSetAsAction(const ResolvedSetAsAction&) = delete;
@@ -27314,6 +28933,9 @@ class ResolvedSetAsAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSetAsAction> MakeResolvedSetAsAction();
+  friend class ResolvedSetAsActionBuilder;
+  friend ResolvedSetAsActionBuilder ToBuilder(std::unique_ptr<const ResolvedSetAsAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -27350,12 +28972,12 @@ class ResolvedSetCollateClause final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_SET_COLLATE_CLAUSE;
 
-  friend std::unique_ptr<ResolvedSetCollateClause> MakeResolvedSetCollateClause();
  protected:
   ResolvedSetCollateClause()
       : ResolvedAlterAction()
       , collation_name_()
   {}
+
  public:
 
   ResolvedSetCollateClause(const ResolvedSetCollateClause&) = delete;
@@ -27437,6 +29059,9 @@ class ResolvedSetCollateClause final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedSetCollateClause> MakeResolvedSetCollateClause();
+  friend class ResolvedSetCollateClauseBuilder;
+  friend ResolvedSetCollateClauseBuilder ToBuilder(std::unique_ptr<const ResolvedSetCollateClause>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -27472,7 +29097,6 @@ class ResolvedAlterTableSetOptionsStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_TABLE_SET_OPTIONS_STMT;
 
-  friend std::unique_ptr<ResolvedAlterTableSetOptionsStmt> MakeResolvedAlterTableSetOptionsStmt();
  protected:
   ResolvedAlterTableSetOptionsStmt()
       : ResolvedStatement()
@@ -27480,6 +29104,7 @@ class ResolvedAlterTableSetOptionsStmt final : public ResolvedStatement {
       , option_list_()
       , is_if_exists_()
   {}
+
  public:
 
   ResolvedAlterTableSetOptionsStmt(const ResolvedAlterTableSetOptionsStmt&) = delete;
@@ -27611,6 +29236,9 @@ class ResolvedAlterTableSetOptionsStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterTableSetOptionsStmt> MakeResolvedAlterTableSetOptionsStmt();
+  friend class ResolvedAlterTableSetOptionsStmtBuilder;
+  friend ResolvedAlterTableSetOptionsStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterTableSetOptionsStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -27680,7 +29308,6 @@ class ResolvedRenameStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RENAME_STMT;
 
-  friend std::unique_ptr<ResolvedRenameStmt> MakeResolvedRenameStmt();
  protected:
   ResolvedRenameStmt()
       : ResolvedStatement()
@@ -27688,6 +29315,7 @@ class ResolvedRenameStmt final : public ResolvedStatement {
       , old_name_path_()
       , new_name_path_()
   {}
+
  public:
 
   ResolvedRenameStmt(const ResolvedRenameStmt&) = delete;
@@ -27817,6 +29445,9 @@ class ResolvedRenameStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRenameStmt> MakeResolvedRenameStmt();
+  friend class ResolvedRenameStmtBuilder;
+  friend ResolvedRenameStmtBuilder ToBuilder(std::unique_ptr<const ResolvedRenameStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -27861,7 +29492,6 @@ class ResolvedCreatePrivilegeRestrictionStmt final : public ResolvedCreateStatem
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_PRIVILEGE_RESTRICTION_STMT;
 
-  friend std::unique_ptr<ResolvedCreatePrivilegeRestrictionStmt> MakeResolvedCreatePrivilegeRestrictionStmt();
  protected:
   ResolvedCreatePrivilegeRestrictionStmt()
       : ResolvedCreateStatement()
@@ -27869,6 +29499,7 @@ class ResolvedCreatePrivilegeRestrictionStmt final : public ResolvedCreateStatem
       , object_type_()
       , restrictee_list_()
   {}
+
  public:
 
   ResolvedCreatePrivilegeRestrictionStmt(const ResolvedCreatePrivilegeRestrictionStmt&) = delete;
@@ -27876,8 +29507,8 @@ class ResolvedCreatePrivilegeRestrictionStmt final : public ResolvedCreateStatem
 
   friend std::unique_ptr<ResolvedCreatePrivilegeRestrictionStmt> MakeResolvedCreatePrivilegeRestrictionStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedPrivilege>> column_privilege_list,
       const std::string& object_type,
       std::vector<std::unique_ptr<const ResolvedExpr>> restrictee_list
@@ -27992,8 +29623,8 @@ class ResolvedCreatePrivilegeRestrictionStmt final : public ResolvedCreateStatem
  protected:
   explicit ResolvedCreatePrivilegeRestrictionStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedPrivilege>> column_privilege_list,
       const std::string& object_type,
       std::vector<std::unique_ptr<const ResolvedExpr>> restrictee_list,
@@ -28011,6 +29642,9 @@ class ResolvedCreatePrivilegeRestrictionStmt final : public ResolvedCreateStatem
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreatePrivilegeRestrictionStmt> MakeResolvedCreatePrivilegeRestrictionStmt();
+  friend class ResolvedCreatePrivilegeRestrictionStmtBuilder;
+  friend ResolvedCreatePrivilegeRestrictionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreatePrivilegeRestrictionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -28122,7 +29756,6 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
 
   typedef ResolvedCreateStatement::CreateMode CreateMode;
 
-  friend std::unique_ptr<ResolvedCreateRowAccessPolicyStmt> MakeResolvedCreateRowAccessPolicyStmt();
  protected:
   ResolvedCreateRowAccessPolicyStmt()
       : ResolvedStatement()
@@ -28135,13 +29768,14 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
       , predicate_()
       , predicate_str_()
   {}
+
  public:
 
   ResolvedCreateRowAccessPolicyStmt(const ResolvedCreateRowAccessPolicyStmt&) = delete;
   ResolvedCreateRowAccessPolicyStmt& operator=(const ResolvedCreateRowAccessPolicyStmt&) = delete;
 
   friend std::unique_ptr<ResolvedCreateRowAccessPolicyStmt> MakeResolvedCreateRowAccessPolicyStmt(
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::string& name,
       const std::vector<std::string>& target_name_path,
       const std::vector<std::string>& grantee_list,
@@ -28199,11 +29833,11 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
 
   // Member fields
 
-  CreateMode create_mode() const {
+  ResolvedCreateStatement::CreateMode create_mode() const {
     accessed_ |= (1<<0);
     return create_mode_;
   }
-  void set_create_mode(CreateMode v) {
+  void set_create_mode(ResolvedCreateStatement::CreateMode v) {
     create_mode_ = v;
   }
 
@@ -28320,7 +29954,7 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
 
  protected:
   explicit ResolvedCreateRowAccessPolicyStmt(
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::string& name,
       const std::vector<std::string>& target_name_path,
       const std::vector<std::string>& grantee_list,
@@ -28344,11 +29978,14 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateRowAccessPolicyStmt> MakeResolvedCreateRowAccessPolicyStmt();
+  friend class ResolvedCreateRowAccessPolicyStmtBuilder;
+  friend ResolvedCreateRowAccessPolicyStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateRowAccessPolicyStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  CreateMode create_mode_;
+  ResolvedCreateStatement::CreateMode create_mode_;
   std::string name_;
   std::vector<std::string> target_name_path_;
   std::vector<std::string> grantee_list_;
@@ -28439,7 +30076,6 @@ class ResolvedDropPrivilegeRestrictionStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_PRIVILEGE_RESTRICTION_STMT;
 
-  friend std::unique_ptr<ResolvedDropPrivilegeRestrictionStmt> MakeResolvedDropPrivilegeRestrictionStmt();
  protected:
   ResolvedDropPrivilegeRestrictionStmt()
       : ResolvedStatement()
@@ -28448,6 +30084,7 @@ class ResolvedDropPrivilegeRestrictionStmt final : public ResolvedStatement {
       , name_path_()
       , column_privilege_list_()
   {}
+
  public:
 
   ResolvedDropPrivilegeRestrictionStmt(const ResolvedDropPrivilegeRestrictionStmt&) = delete;
@@ -28590,6 +30227,9 @@ class ResolvedDropPrivilegeRestrictionStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropPrivilegeRestrictionStmt> MakeResolvedDropPrivilegeRestrictionStmt();
+  friend class ResolvedDropPrivilegeRestrictionStmtBuilder;
+  friend ResolvedDropPrivilegeRestrictionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropPrivilegeRestrictionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -28666,7 +30306,6 @@ class ResolvedDropRowAccessPolicyStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_ROW_ACCESS_POLICY_STMT;
 
-  friend std::unique_ptr<ResolvedDropRowAccessPolicyStmt> MakeResolvedDropRowAccessPolicyStmt();
  protected:
   ResolvedDropRowAccessPolicyStmt()
       : ResolvedStatement()
@@ -28675,6 +30314,7 @@ class ResolvedDropRowAccessPolicyStmt final : public ResolvedStatement {
       , name_()
       , target_name_path_()
   {}
+
  public:
 
   ResolvedDropRowAccessPolicyStmt(const ResolvedDropRowAccessPolicyStmt&) = delete;
@@ -28800,6 +30440,9 @@ class ResolvedDropRowAccessPolicyStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropRowAccessPolicyStmt> MakeResolvedDropRowAccessPolicyStmt();
+  friend class ResolvedDropRowAccessPolicyStmtBuilder;
+  friend ResolvedDropRowAccessPolicyStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropRowAccessPolicyStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -28840,7 +30483,6 @@ class ResolvedDropSearchIndexStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_SEARCH_INDEX_STMT;
 
-  friend std::unique_ptr<ResolvedDropSearchIndexStmt> MakeResolvedDropSearchIndexStmt();
  protected:
   ResolvedDropSearchIndexStmt()
       : ResolvedStatement()
@@ -28848,6 +30490,7 @@ class ResolvedDropSearchIndexStmt final : public ResolvedStatement {
       , name_()
       , table_name_path_()
   {}
+
  public:
 
   ResolvedDropSearchIndexStmt(const ResolvedDropSearchIndexStmt&) = delete;
@@ -28962,6 +30605,9 @@ class ResolvedDropSearchIndexStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropSearchIndexStmt> MakeResolvedDropSearchIndexStmt();
+  friend class ResolvedDropSearchIndexStmtBuilder;
+  friend ResolvedDropSearchIndexStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropSearchIndexStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -28997,12 +30643,12 @@ class ResolvedGrantToAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_GRANT_TO_ACTION;
 
-  friend std::unique_ptr<ResolvedGrantToAction> MakeResolvedGrantToAction();
  protected:
   ResolvedGrantToAction()
       : ResolvedAlterAction()
       , grantee_expr_list_()
   {}
+
  public:
 
   ResolvedGrantToAction(const ResolvedGrantToAction&) = delete;
@@ -29097,6 +30743,9 @@ class ResolvedGrantToAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedGrantToAction> MakeResolvedGrantToAction();
+  friend class ResolvedGrantToActionBuilder;
+  friend ResolvedGrantToActionBuilder ToBuilder(std::unique_ptr<const ResolvedGrantToAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -29154,12 +30803,12 @@ class ResolvedRestrictToAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RESTRICT_TO_ACTION;
 
-  friend std::unique_ptr<ResolvedRestrictToAction> MakeResolvedRestrictToAction();
  protected:
   ResolvedRestrictToAction()
       : ResolvedAlterAction()
       , restrictee_list_()
   {}
+
  public:
 
   ResolvedRestrictToAction(const ResolvedRestrictToAction&) = delete;
@@ -29254,6 +30903,9 @@ class ResolvedRestrictToAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRestrictToAction> MakeResolvedRestrictToAction();
+  friend class ResolvedRestrictToActionBuilder;
+  friend ResolvedRestrictToActionBuilder ToBuilder(std::unique_ptr<const ResolvedRestrictToAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -29311,13 +30963,13 @@ class ResolvedAddToRestricteeListAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ADD_TO_RESTRICTEE_LIST_ACTION;
 
-  friend std::unique_ptr<ResolvedAddToRestricteeListAction> MakeResolvedAddToRestricteeListAction();
  protected:
   ResolvedAddToRestricteeListAction()
       : ResolvedAlterAction()
       , is_if_not_exists_()
       , restrictee_list_()
   {}
+
  public:
 
   ResolvedAddToRestricteeListAction(const ResolvedAddToRestricteeListAction&) = delete;
@@ -29423,6 +31075,9 @@ class ResolvedAddToRestricteeListAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAddToRestricteeListAction> MakeResolvedAddToRestricteeListAction();
+  friend class ResolvedAddToRestricteeListActionBuilder;
+  friend ResolvedAddToRestricteeListActionBuilder ToBuilder(std::unique_ptr<const ResolvedAddToRestricteeListAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -29485,13 +31140,13 @@ class ResolvedRemoveFromRestricteeListAction final : public ResolvedAlterAction 
 
   static const ResolvedNodeKind TYPE = RESOLVED_REMOVE_FROM_RESTRICTEE_LIST_ACTION;
 
-  friend std::unique_ptr<ResolvedRemoveFromRestricteeListAction> MakeResolvedRemoveFromRestricteeListAction();
  protected:
   ResolvedRemoveFromRestricteeListAction()
       : ResolvedAlterAction()
       , is_if_exists_()
       , restrictee_list_()
   {}
+
  public:
 
   ResolvedRemoveFromRestricteeListAction(const ResolvedRemoveFromRestricteeListAction&) = delete;
@@ -29597,6 +31252,9 @@ class ResolvedRemoveFromRestricteeListAction final : public ResolvedAlterAction 
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRemoveFromRestricteeListAction> MakeResolvedRemoveFromRestricteeListAction();
+  friend class ResolvedRemoveFromRestricteeListActionBuilder;
+  friend ResolvedRemoveFromRestricteeListActionBuilder ToBuilder(std::unique_ptr<const ResolvedRemoveFromRestricteeListAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -29658,13 +31316,13 @@ class ResolvedFilterUsingAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_FILTER_USING_ACTION;
 
-  friend std::unique_ptr<ResolvedFilterUsingAction> MakeResolvedFilterUsingAction();
  protected:
   ResolvedFilterUsingAction()
       : ResolvedAlterAction()
       , predicate_()
       , predicate_str_()
   {}
+
  public:
 
   ResolvedFilterUsingAction(const ResolvedFilterUsingAction&) = delete;
@@ -29757,6 +31415,9 @@ class ResolvedFilterUsingAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedFilterUsingAction> MakeResolvedFilterUsingAction();
+  friend class ResolvedFilterUsingActionBuilder;
+  friend ResolvedFilterUsingActionBuilder ToBuilder(std::unique_ptr<const ResolvedFilterUsingAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -29791,13 +31452,13 @@ class ResolvedRevokeFromAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_REVOKE_FROM_ACTION;
 
-  friend std::unique_ptr<ResolvedRevokeFromAction> MakeResolvedRevokeFromAction();
  protected:
   ResolvedRevokeFromAction()
       : ResolvedAlterAction()
       , revokee_expr_list_()
       , is_revoke_from_all_()
   {}
+
  public:
 
   ResolvedRevokeFromAction(const ResolvedRevokeFromAction&) = delete;
@@ -29903,6 +31564,9 @@ class ResolvedRevokeFromAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRevokeFromAction> MakeResolvedRevokeFromAction();
+  friend class ResolvedRevokeFromActionBuilder;
+  friend ResolvedRevokeFromActionBuilder ToBuilder(std::unique_ptr<const ResolvedRevokeFromAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -29964,12 +31628,12 @@ class ResolvedRenameToAction final : public ResolvedAlterAction {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RENAME_TO_ACTION;
 
-  friend std::unique_ptr<ResolvedRenameToAction> MakeResolvedRenameToAction();
  protected:
   ResolvedRenameToAction()
       : ResolvedAlterAction()
       , new_path_()
   {}
+
  public:
 
   ResolvedRenameToAction(const ResolvedRenameToAction&) = delete;
@@ -30062,6 +31726,9 @@ class ResolvedRenameToAction final : public ResolvedAlterAction {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRenameToAction> MakeResolvedRenameToAction();
+  friend class ResolvedRenameToActionBuilder;
+  friend ResolvedRenameToActionBuilder ToBuilder(std::unique_ptr<const ResolvedRenameToAction>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -30097,13 +31764,13 @@ class ResolvedAlterPrivilegeRestrictionStmt final : public ResolvedAlterObjectSt
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_PRIVILEGE_RESTRICTION_STMT;
 
-  friend std::unique_ptr<ResolvedAlterPrivilegeRestrictionStmt> MakeResolvedAlterPrivilegeRestrictionStmt();
  protected:
   ResolvedAlterPrivilegeRestrictionStmt()
       : ResolvedAlterObjectStmt()
       , column_privilege_list_()
       , object_type_()
   {}
+
  public:
 
   ResolvedAlterPrivilegeRestrictionStmt(const ResolvedAlterPrivilegeRestrictionStmt&) = delete;
@@ -30218,6 +31885,9 @@ class ResolvedAlterPrivilegeRestrictionStmt final : public ResolvedAlterObjectSt
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterPrivilegeRestrictionStmt> MakeResolvedAlterPrivilegeRestrictionStmt();
+  friend class ResolvedAlterPrivilegeRestrictionStmtBuilder;
+  friend ResolvedAlterPrivilegeRestrictionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterPrivilegeRestrictionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -30316,13 +31986,13 @@ class ResolvedAlterRowAccessPolicyStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_ROW_ACCESS_POLICY_STMT;
 
-  friend std::unique_ptr<ResolvedAlterRowAccessPolicyStmt> MakeResolvedAlterRowAccessPolicyStmt();
  protected:
   ResolvedAlterRowAccessPolicyStmt()
       : ResolvedAlterObjectStmt()
       , name_()
       , table_scan_()
   {}
+
  public:
 
   ResolvedAlterRowAccessPolicyStmt(const ResolvedAlterRowAccessPolicyStmt&) = delete;
@@ -30424,6 +32094,9 @@ class ResolvedAlterRowAccessPolicyStmt final : public ResolvedAlterObjectStmt {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterRowAccessPolicyStmt> MakeResolvedAlterRowAccessPolicyStmt();
+  friend class ResolvedAlterRowAccessPolicyStmtBuilder;
+  friend ResolvedAlterRowAccessPolicyStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterRowAccessPolicyStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -30514,12 +32187,12 @@ class ResolvedAlterAllRowAccessPoliciesStmt final : public ResolvedAlterObjectSt
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_ALL_ROW_ACCESS_POLICIES_STMT;
 
-  friend std::unique_ptr<ResolvedAlterAllRowAccessPoliciesStmt> MakeResolvedAlterAllRowAccessPoliciesStmt();
  protected:
   ResolvedAlterAllRowAccessPoliciesStmt()
       : ResolvedAlterObjectStmt()
       , table_scan_()
   {}
+
  public:
 
   ResolvedAlterAllRowAccessPoliciesStmt(const ResolvedAlterAllRowAccessPoliciesStmt&) = delete;
@@ -30610,6 +32283,9 @@ class ResolvedAlterAllRowAccessPoliciesStmt final : public ResolvedAlterObjectSt
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterAllRowAccessPoliciesStmt> MakeResolvedAlterAllRowAccessPoliciesStmt();
+  friend class ResolvedAlterAllRowAccessPoliciesStmtBuilder;
+  friend ResolvedAlterAllRowAccessPoliciesStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterAllRowAccessPoliciesStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -30693,10 +32369,15 @@ class ResolvedCreateConstantStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_CONSTANT_STMT;
 
+ public:
+
+  ResolvedCreateConstantStmt(const ResolvedCreateConstantStmt&) = delete;
+  ResolvedCreateConstantStmt& operator=(const ResolvedCreateConstantStmt&) = delete;
+
   friend std::unique_ptr<ResolvedCreateConstantStmt> MakeResolvedCreateConstantStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::unique_ptr<const ResolvedExpr> expr
   );
   ~ResolvedCreateConstantStmt() final;
@@ -30761,10 +32442,15 @@ class ResolvedCreateConstantStmt final : public ResolvedCreateStatement {
   }
 
  protected:
+  ResolvedCreateConstantStmt()
+      : ResolvedCreateStatement()
+      , expr_()
+  {}
+
   explicit ResolvedCreateConstantStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::unique_ptr<const ResolvedExpr> expr,
       ConstructorOverload)
       : ResolvedCreateStatement(
@@ -30778,6 +32464,8 @@ class ResolvedCreateConstantStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedCreateConstantStmtBuilder;
+  friend ResolvedCreateConstantStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateConstantStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -30911,10 +32599,15 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
   // with the stable specifier are considered stable.
   FunctionEnums::Volatility volatility() const;
 
+ public:
+
+  ResolvedCreateFunctionStmt(const ResolvedCreateFunctionStmt&) = delete;
+  ResolvedCreateFunctionStmt& operator=(const ResolvedCreateFunctionStmt&) = delete;
+
   friend std::unique_ptr<ResolvedCreateFunctionStmt> MakeResolvedCreateFunctionStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       bool has_explicit_return_type,
       const Type* return_type,
       const std::vector<std::string>& argument_name_list,
@@ -30925,8 +32618,8 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
       std::vector<std::unique_ptr<const ResolvedComputedColumn>> aggregate_expression_list,
       std::unique_ptr<const ResolvedExpr> function_expression,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
-      SqlSecurity sql_security,
-      DeterminismLevel determinism_level,
+      ResolvedCreateStatement::SqlSecurity sql_security,
+      ResolvedCreateStatement::DeterminismLevel determinism_level,
       bool is_remote,
       std::unique_ptr<const ResolvedConnection> connection
   );
@@ -31020,7 +32713,7 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
 
   const FunctionSignature& signature() const {
     accessed_ |= (1<<3);
-    return signature_;
+    return signature_.value();
   }
   void set_signature(const FunctionSignature& v) {
     signature_ = v;
@@ -31112,19 +32805,19 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
     return tmp;
   }
 
-  SqlSecurity sql_security() const {
+  ResolvedCreateStatement::SqlSecurity sql_security() const {
     accessed_ |= (1<<10);
     return sql_security_;
   }
-  void set_sql_security(SqlSecurity v) {
+  void set_sql_security(ResolvedCreateStatement::SqlSecurity v) {
     sql_security_ = v;
   }
 
-  DeterminismLevel determinism_level() const {
+  ResolvedCreateStatement::DeterminismLevel determinism_level() const {
     accessed_ |= (1<<11);
     return determinism_level_;
   }
-  void set_determinism_level(DeterminismLevel v) {
+  void set_determinism_level(ResolvedCreateStatement::DeterminismLevel v) {
     determinism_level_ = v;
   }
 
@@ -31149,10 +32842,28 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
   }
 
  protected:
+  ResolvedCreateFunctionStmt()
+      : ResolvedCreateStatement()
+      , has_explicit_return_type_()
+      , return_type_()
+      , argument_name_list_()
+      , signature_()
+      , is_aggregate_()
+      , language_()
+      , code_()
+      , aggregate_expression_list_()
+      , function_expression_()
+      , option_list_()
+      , sql_security_()
+      , determinism_level_()
+      , is_remote_()
+      , connection_()
+  {}
+
   explicit ResolvedCreateFunctionStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       bool has_explicit_return_type,
       const Type* return_type,
       const std::vector<std::string>& argument_name_list,
@@ -31163,8 +32874,8 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
       std::vector<std::unique_ptr<const ResolvedComputedColumn>> aggregate_expression_list,
       std::unique_ptr<const ResolvedExpr> function_expression,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
-      SqlSecurity sql_security,
-      DeterminismLevel determinism_level,
+      ResolvedCreateStatement::SqlSecurity sql_security,
+      ResolvedCreateStatement::DeterminismLevel determinism_level,
       bool is_remote,
       std::unique_ptr<const ResolvedConnection> connection,
       ConstructorOverload)
@@ -31192,6 +32903,8 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedCreateFunctionStmtBuilder;
+  friend ResolvedCreateFunctionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateFunctionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -31199,15 +32912,15 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
   bool has_explicit_return_type_;
   const Type* return_type_;
   std::vector<std::string> argument_name_list_;
-  FunctionSignature signature_;
+  absl::optional<FunctionSignature> signature_;
   bool is_aggregate_;
   std::string language_;
   std::string code_;
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> aggregate_expression_list_;
   std::unique_ptr<const ResolvedExpr> function_expression_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
-  SqlSecurity sql_security_;
-  DeterminismLevel determinism_level_;
+  ResolvedCreateStatement::SqlSecurity sql_security_;
+  ResolvedCreateStatement::DeterminismLevel determinism_level_;
   bool is_remote_;
   std::unique_ptr<const ResolvedConnection> connection_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -31379,7 +33092,6 @@ class ResolvedArgumentDef final : public ResolvedArgument {
   static const ArgumentKind AGGREGATE = ResolvedArgumentDefEnums::AGGREGATE;
   static const ArgumentKind NOT_AGGREGATE = ResolvedArgumentDefEnums::NOT_AGGREGATE;
 
-  friend std::unique_ptr<ResolvedArgumentDef> MakeResolvedArgumentDef();
  protected:
   ResolvedArgumentDef()
       : ResolvedArgument()
@@ -31387,6 +33099,7 @@ class ResolvedArgumentDef final : public ResolvedArgument {
       , type_()
       , argument_kind_()
   {}
+
  public:
 
   ResolvedArgumentDef(const ResolvedArgumentDef&) = delete;
@@ -31395,7 +33108,7 @@ class ResolvedArgumentDef final : public ResolvedArgument {
   friend std::unique_ptr<ResolvedArgumentDef> MakeResolvedArgumentDef(
       const std::string& name,
       const Type* type,
-      ArgumentKind argument_kind
+      ResolvedArgumentDef::ArgumentKind argument_kind
   );
   ~ResolvedArgumentDef() final;
 
@@ -31462,11 +33175,11 @@ class ResolvedArgumentDef final : public ResolvedArgument {
     type_ = v;
   }
 
-  ArgumentKind argument_kind() const {
+  ResolvedArgumentDef::ArgumentKind argument_kind() const {
     accessed_ |= (1<<2);
     return argument_kind_;
   }
-  void set_argument_kind(ArgumentKind v) {
+  void set_argument_kind(ResolvedArgumentDef::ArgumentKind v) {
     argument_kind_ = v;
   }
 
@@ -31474,7 +33187,7 @@ class ResolvedArgumentDef final : public ResolvedArgument {
   explicit ResolvedArgumentDef(
       const std::string& name,
       const Type* type,
-      ArgumentKind argument_kind,
+      ResolvedArgumentDef::ArgumentKind argument_kind,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -31486,13 +33199,16 @@ class ResolvedArgumentDef final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedArgumentDef> MakeResolvedArgumentDef();
+  friend class ResolvedArgumentDefBuilder;
+  friend ResolvedArgumentDefBuilder ToBuilder(std::unique_ptr<const ResolvedArgumentDef>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::string name_;
   const Type* type_;
-  ArgumentKind argument_kind_;
+  ResolvedArgumentDef::ArgumentKind argument_kind_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -31532,13 +33248,13 @@ class ResolvedArgumentRef final : public ResolvedExpr {
   static const ArgumentKind AGGREGATE = ResolvedArgumentDefEnums::AGGREGATE;
   static const ArgumentKind NOT_AGGREGATE = ResolvedArgumentDefEnums::NOT_AGGREGATE;
 
-  friend std::unique_ptr<ResolvedArgumentRef> MakeResolvedArgumentRef();
  protected:
   ResolvedArgumentRef()
       : ResolvedExpr()
       , name_()
       , argument_kind_()
   {}
+
  public:
 
   ResolvedArgumentRef(const ResolvedArgumentRef&) = delete;
@@ -31547,7 +33263,7 @@ class ResolvedArgumentRef final : public ResolvedExpr {
   friend std::unique_ptr<ResolvedArgumentRef> MakeResolvedArgumentRef(
       const Type* type,
       const std::string& name,
-      ArgumentKind argument_kind
+      ResolvedArgumentDef::ArgumentKind argument_kind
   );
   ~ResolvedArgumentRef() final;
 
@@ -31606,11 +33322,11 @@ class ResolvedArgumentRef final : public ResolvedExpr {
     name_ = v;
   }
 
-  ArgumentKind argument_kind() const {
+  ResolvedArgumentDef::ArgumentKind argument_kind() const {
     accessed_ |= (1<<1);
     return argument_kind_;
   }
-  void set_argument_kind(ArgumentKind v) {
+  void set_argument_kind(ResolvedArgumentDef::ArgumentKind v) {
     argument_kind_ = v;
   }
 
@@ -31618,7 +33334,7 @@ class ResolvedArgumentRef final : public ResolvedExpr {
   explicit ResolvedArgumentRef(
       const Type* type,
       const std::string& name,
-      ArgumentKind argument_kind,
+      ResolvedArgumentDef::ArgumentKind argument_kind,
       ConstructorOverload)
       : ResolvedExpr(
             type,
@@ -31630,12 +33346,15 @@ class ResolvedArgumentRef final : public ResolvedExpr {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedArgumentRef> MakeResolvedArgumentRef();
+  friend class ResolvedArgumentRefBuilder;
+  friend ResolvedArgumentRefBuilder ToBuilder(std::unique_ptr<const ResolvedArgumentRef>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::string name_;
-  ArgumentKind argument_kind_;
+  ResolvedArgumentDef::ArgumentKind argument_kind_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -31752,10 +33471,15 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_TABLE_FUNCTION_STMT;
 
+ public:
+
+  ResolvedCreateTableFunctionStmt(const ResolvedCreateTableFunctionStmt&) = delete;
+  ResolvedCreateTableFunctionStmt& operator=(const ResolvedCreateTableFunctionStmt&) = delete;
+
   friend std::unique_ptr<ResolvedCreateTableFunctionStmt> MakeResolvedCreateTableFunctionStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::vector<std::string>& argument_name_list,
       const FunctionSignature& signature,
       bool has_explicit_return_schema,
@@ -31765,7 +33489,7 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
       std::unique_ptr<const ResolvedScan> query,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool is_value_table,
-      SqlSecurity sql_security
+      ResolvedCreateStatement::SqlSecurity sql_security
   );
   ~ResolvedCreateTableFunctionStmt() final;
 
@@ -31841,7 +33565,7 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
 
   const FunctionSignature& signature() const {
     accessed_ |= (1<<1);
-    return signature_;
+    return signature_.value();
   }
   void set_signature(const FunctionSignature& v) {
     signature_ = v;
@@ -31941,19 +33665,33 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
     is_value_table_ = v;
   }
 
-  SqlSecurity sql_security() const {
+  ResolvedCreateStatement::SqlSecurity sql_security() const {
     accessed_ |= (1<<9);
     return sql_security_;
   }
-  void set_sql_security(SqlSecurity v) {
+  void set_sql_security(ResolvedCreateStatement::SqlSecurity v) {
     sql_security_ = v;
   }
 
  protected:
+  ResolvedCreateTableFunctionStmt()
+      : ResolvedCreateStatement()
+      , argument_name_list_()
+      , signature_()
+      , has_explicit_return_schema_()
+      , option_list_()
+      , language_()
+      , code_()
+      , query_()
+      , output_column_list_()
+      , is_value_table_()
+      , sql_security_()
+  {}
+
   explicit ResolvedCreateTableFunctionStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::vector<std::string>& argument_name_list,
       const FunctionSignature& signature,
       bool has_explicit_return_schema,
@@ -31963,7 +33701,7 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
       std::unique_ptr<const ResolvedScan> query,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool is_value_table,
-      SqlSecurity sql_security,
+      ResolvedCreateStatement::SqlSecurity sql_security,
       ConstructorOverload)
       : ResolvedCreateStatement(
             name_path,
@@ -31985,12 +33723,14 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedCreateTableFunctionStmtBuilder;
+  friend ResolvedCreateTableFunctionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateTableFunctionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::vector<std::string> argument_name_list_;
-  FunctionSignature signature_;
+  absl::optional<FunctionSignature> signature_;
   bool has_explicit_return_schema_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::string language_;
@@ -31998,7 +33738,7 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
   std::unique_ptr<const ResolvedScan> query_;
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
   bool is_value_table_;
-  SqlSecurity sql_security_;
+  ResolvedCreateStatement::SqlSecurity sql_security_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -32099,13 +33839,13 @@ class ResolvedRelationArgumentScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RELATION_ARGUMENT_SCAN;
 
-  friend std::unique_ptr<ResolvedRelationArgumentScan> MakeResolvedRelationArgumentScan();
  protected:
   ResolvedRelationArgumentScan()
       : ResolvedScan()
       , name_()
       , is_value_table_()
   {}
+
  public:
 
   ResolvedRelationArgumentScan(const ResolvedRelationArgumentScan&) = delete;
@@ -32204,6 +33944,9 @@ class ResolvedRelationArgumentScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedRelationArgumentScan> MakeResolvedRelationArgumentScan();
+  friend class ResolvedRelationArgumentScanBuilder;
+  friend ResolvedRelationArgumentScanBuilder ToBuilder(std::unique_ptr<const ResolvedRelationArgumentScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -32245,12 +33988,12 @@ class ResolvedArgumentList final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ARGUMENT_LIST;
 
-  friend std::unique_ptr<ResolvedArgumentList> MakeResolvedArgumentList();
  protected:
   ResolvedArgumentList()
       : ResolvedArgument()
       , arg_list_()
   {}
+
  public:
 
   ResolvedArgumentList(const ResolvedArgumentList&) = delete;
@@ -32345,6 +34088,9 @@ class ResolvedArgumentList final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedArgumentList> MakeResolvedArgumentList();
+  friend class ResolvedArgumentListBuilder;
+  friend ResolvedArgumentListBuilder ToBuilder(std::unique_ptr<const ResolvedArgumentList>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -32396,6 +34142,11 @@ class ResolvedFunctionSignatureHolder final : public ResolvedArgument {
   typedef ResolvedArgument SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_FUNCTION_SIGNATURE_HOLDER;
+
+ public:
+
+  ResolvedFunctionSignatureHolder(const ResolvedFunctionSignatureHolder&) = delete;
+  ResolvedFunctionSignatureHolder& operator=(const ResolvedFunctionSignatureHolder&) = delete;
 
   friend std::unique_ptr<ResolvedFunctionSignatureHolder> MakeResolvedFunctionSignatureHolder(
       const FunctionSignature& signature
@@ -32451,13 +34202,18 @@ class ResolvedFunctionSignatureHolder final : public ResolvedArgument {
 
   const FunctionSignature& signature() const {
     accessed_ |= (1<<0);
-    return signature_;
+    return signature_.value();
   }
   void set_signature(const FunctionSignature& v) {
     signature_ = v;
   }
 
  protected:
+  ResolvedFunctionSignatureHolder()
+      : ResolvedArgument()
+      , signature_()
+  {}
+
   explicit ResolvedFunctionSignatureHolder(
       const FunctionSignature& signature,
       ConstructorOverload)
@@ -32469,11 +34225,13 @@ class ResolvedFunctionSignatureHolder final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedFunctionSignatureHolderBuilder;
+  friend ResolvedFunctionSignatureHolderBuilder ToBuilder(std::unique_ptr<const ResolvedFunctionSignatureHolder>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  FunctionSignature signature_;
+  absl::optional<FunctionSignature> signature_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -32505,7 +34263,6 @@ class ResolvedDropFunctionStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_FUNCTION_STMT;
 
-  friend std::unique_ptr<ResolvedDropFunctionStmt> MakeResolvedDropFunctionStmt();
  protected:
   ResolvedDropFunctionStmt()
       : ResolvedStatement()
@@ -32514,6 +34271,7 @@ class ResolvedDropFunctionStmt final : public ResolvedStatement {
       , arguments_()
       , signature_()
   {}
+
  public:
 
   ResolvedDropFunctionStmt(const ResolvedDropFunctionStmt&) = delete;
@@ -32655,6 +34413,9 @@ class ResolvedDropFunctionStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropFunctionStmt> MakeResolvedDropFunctionStmt();
+  friend class ResolvedDropFunctionStmtBuilder;
+  friend ResolvedDropFunctionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropFunctionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -32694,13 +34455,13 @@ class ResolvedDropTableFunctionStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_DROP_TABLE_FUNCTION_STMT;
 
-  friend std::unique_ptr<ResolvedDropTableFunctionStmt> MakeResolvedDropTableFunctionStmt();
  protected:
   ResolvedDropTableFunctionStmt()
       : ResolvedStatement()
       , is_if_exists_()
       , name_path_()
   {}
+
  public:
 
   ResolvedDropTableFunctionStmt(const ResolvedDropTableFunctionStmt&) = delete;
@@ -32804,6 +34565,9 @@ class ResolvedDropTableFunctionStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedDropTableFunctionStmt> MakeResolvedDropTableFunctionStmt();
+  friend class ResolvedDropTableFunctionStmtBuilder;
+  friend ResolvedDropTableFunctionStmtBuilder ToBuilder(std::unique_ptr<const ResolvedDropTableFunctionStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -32837,6 +34601,11 @@ class ResolvedCallStmt final : public ResolvedStatement {
   typedef ResolvedStatement SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_CALL_STMT;
+
+ public:
+
+  ResolvedCallStmt(const ResolvedCallStmt&) = delete;
+  ResolvedCallStmt& operator=(const ResolvedCallStmt&) = delete;
 
   friend std::unique_ptr<ResolvedCallStmt> MakeResolvedCallStmt(
       const Procedure* procedure,
@@ -32902,7 +34671,7 @@ class ResolvedCallStmt final : public ResolvedStatement {
 
   const FunctionSignature& signature() const {
     accessed_ |= (1<<1);
-    return signature_;
+    return signature_.value();
   }
   void set_signature(const FunctionSignature& v) {
     signature_ = v;
@@ -32934,6 +34703,13 @@ class ResolvedCallStmt final : public ResolvedStatement {
   }
 
  protected:
+  ResolvedCallStmt()
+      : ResolvedStatement()
+      , procedure_()
+      , signature_()
+      , argument_list_()
+  {}
+
   explicit ResolvedCallStmt(
       const Procedure* procedure,
       const FunctionSignature& signature,
@@ -32949,12 +34725,14 @@ class ResolvedCallStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedCallStmtBuilder;
+  friend ResolvedCallStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCallStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   const Procedure* procedure_;
-  FunctionSignature signature_;
+  absl::optional<FunctionSignature> signature_;
   std::vector<std::unique_ptr<const ResolvedExpr>> argument_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -33039,7 +34817,6 @@ class ResolvedImportStmt final : public ResolvedStatement {
   std::string GetImportKindString() const;
   static std::string ImportKindToString(ImportKind kind);
 
-  friend std::unique_ptr<ResolvedImportStmt> MakeResolvedImportStmt();
  protected:
   ResolvedImportStmt()
       : ResolvedStatement()
@@ -33050,13 +34827,14 @@ class ResolvedImportStmt final : public ResolvedStatement {
       , into_alias_path_()
       , option_list_()
   {}
+
  public:
 
   ResolvedImportStmt(const ResolvedImportStmt&) = delete;
   ResolvedImportStmt& operator=(const ResolvedImportStmt&) = delete;
 
   friend std::unique_ptr<ResolvedImportStmt> MakeResolvedImportStmt(
-      ImportKind import_kind,
+      ResolvedImportStmt::ImportKind import_kind,
       const std::vector<std::string>& name_path,
       const std::string& file_path,
       const std::vector<std::string>& alias_path,
@@ -33112,11 +34890,11 @@ class ResolvedImportStmt final : public ResolvedStatement {
 
   // Member fields
 
-  ImportKind import_kind() const {
+  ResolvedImportStmt::ImportKind import_kind() const {
     accessed_ |= (1<<0);
     return import_kind_;
   }
-  void set_import_kind(ImportKind v) {
+  void set_import_kind(ResolvedImportStmt::ImportKind v) {
     import_kind_ = v;
   }
 
@@ -33224,7 +35002,7 @@ class ResolvedImportStmt final : public ResolvedStatement {
 
  protected:
   explicit ResolvedImportStmt(
-      ImportKind import_kind,
+      ResolvedImportStmt::ImportKind import_kind,
       const std::vector<std::string>& name_path,
       const std::string& file_path,
       const std::vector<std::string>& alias_path,
@@ -33244,11 +35022,14 @@ class ResolvedImportStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedImportStmt> MakeResolvedImportStmt();
+  friend class ResolvedImportStmtBuilder;
+  friend ResolvedImportStmtBuilder ToBuilder(std::unique_ptr<const ResolvedImportStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  ImportKind import_kind_;
+  ResolvedImportStmt::ImportKind import_kind_;
   std::vector<std::string> name_path_;
   std::string file_path_;
   std::vector<std::string> alias_path_;
@@ -33326,13 +35107,13 @@ class ResolvedModuleStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_MODULE_STMT;
 
-  friend std::unique_ptr<ResolvedModuleStmt> MakeResolvedModuleStmt();
  protected:
   ResolvedModuleStmt()
       : ResolvedStatement()
       , name_path_()
       , option_list_()
   {}
+
  public:
 
   ResolvedModuleStmt(const ResolvedModuleStmt&) = delete;
@@ -33453,6 +35234,9 @@ class ResolvedModuleStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedModuleStmt> MakeResolvedModuleStmt();
+  friend class ResolvedModuleStmtBuilder;
+  friend ResolvedModuleStmtBuilder ToBuilder(std::unique_ptr<const ResolvedModuleStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -33524,20 +35308,20 @@ class ResolvedAggregateHavingModifier final : public ResolvedArgument {
   std::string GetHavingModifierKindString() const;
   static std::string HavingModifierKindToString(HavingModifierKind kind);
 
-  friend std::unique_ptr<ResolvedAggregateHavingModifier> MakeResolvedAggregateHavingModifier();
  protected:
   ResolvedAggregateHavingModifier()
       : ResolvedArgument()
       , kind_()
       , having_expr_()
   {}
+
  public:
 
   ResolvedAggregateHavingModifier(const ResolvedAggregateHavingModifier&) = delete;
   ResolvedAggregateHavingModifier& operator=(const ResolvedAggregateHavingModifier&) = delete;
 
   friend std::unique_ptr<ResolvedAggregateHavingModifier> MakeResolvedAggregateHavingModifier(
-      HavingModifierKind kind,
+      ResolvedAggregateHavingModifier::HavingModifierKind kind,
       std::unique_ptr<const ResolvedExpr> having_expr
   );
   ~ResolvedAggregateHavingModifier() final;
@@ -33589,11 +35373,11 @@ class ResolvedAggregateHavingModifier final : public ResolvedArgument {
 
   // Member fields
 
-  HavingModifierKind kind() const {
+  ResolvedAggregateHavingModifier::HavingModifierKind kind() const {
     accessed_ |= (1<<0);
     return kind_;
   }
-  void set_kind(HavingModifierKind v) {
+  void set_kind(ResolvedAggregateHavingModifier::HavingModifierKind v) {
     kind_ = v;
   }
 
@@ -33611,7 +35395,7 @@ class ResolvedAggregateHavingModifier final : public ResolvedArgument {
 
  protected:
   explicit ResolvedAggregateHavingModifier(
-      HavingModifierKind kind,
+      ResolvedAggregateHavingModifier::HavingModifierKind kind,
       std::unique_ptr<const ResolvedExpr> having_expr,
       ConstructorOverload)
       : ResolvedArgument(
@@ -33623,11 +35407,14 @@ class ResolvedAggregateHavingModifier final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAggregateHavingModifier> MakeResolvedAggregateHavingModifier();
+  friend class ResolvedAggregateHavingModifierBuilder;
+  friend ResolvedAggregateHavingModifierBuilder ToBuilder(std::unique_ptr<const ResolvedAggregateHavingModifier>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  HavingModifierKind kind_;
+  ResolvedAggregateHavingModifier::HavingModifierKind kind_;
   std::unique_ptr<const ResolvedExpr> having_expr_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -33674,7 +35461,6 @@ class ResolvedCreateMaterializedViewStmt final : public ResolvedCreateViewBase {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_MATERIALIZED_VIEW_STMT;
 
-  friend std::unique_ptr<ResolvedCreateMaterializedViewStmt> MakeResolvedCreateMaterializedViewStmt();
  protected:
   ResolvedCreateMaterializedViewStmt()
       : ResolvedCreateViewBase()
@@ -33682,6 +35468,7 @@ class ResolvedCreateMaterializedViewStmt final : public ResolvedCreateViewBase {
       , partition_by_list_()
       , cluster_by_list_()
   {}
+
  public:
 
   ResolvedCreateMaterializedViewStmt(const ResolvedCreateMaterializedViewStmt&) = delete;
@@ -33689,14 +35476,14 @@ class ResolvedCreateMaterializedViewStmt final : public ResolvedCreateViewBase {
 
   friend std::unique_ptr<ResolvedCreateMaterializedViewStmt> MakeResolvedCreateMaterializedViewStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool has_explicit_columns,
       std::unique_ptr<const ResolvedScan> query,
       const std::string& sql,
-      SqlSecurity sql_security,
+      ResolvedCreateStatement::SqlSecurity sql_security,
       bool is_value_table,
       bool recursive,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
@@ -33830,14 +35617,14 @@ class ResolvedCreateMaterializedViewStmt final : public ResolvedCreateViewBase {
  protected:
   explicit ResolvedCreateMaterializedViewStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       bool has_explicit_columns,
       std::unique_ptr<const ResolvedScan> query,
       const std::string& sql,
-      SqlSecurity sql_security,
+      ResolvedCreateStatement::SqlSecurity sql_security,
       bool is_value_table,
       bool recursive,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
@@ -33865,6 +35652,9 @@ class ResolvedCreateMaterializedViewStmt final : public ResolvedCreateViewBase {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateMaterializedViewStmt> MakeResolvedCreateMaterializedViewStmt();
+  friend class ResolvedCreateMaterializedViewStmtBuilder;
+  friend ResolvedCreateMaterializedViewStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateMaterializedViewStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -33998,20 +35788,20 @@ inline std::unique_ptr<ResolvedCreateMaterializedViewStmt> MakeResolvedCreateMat
 
 // This statement creates a user-defined procedure:
 // CREATE [OR REPLACE] [TEMP] PROCEDURE [IF NOT EXISTS] <name_path>
-// (<arg_list>) [OPTIONS (<option_list>)]
-// BEGIN
-// <procedure_body>
-// END;
+// (<arg_list>) [WITH CONNECTION <connection>] [OPTIONS (<option_list>)]
+// [BEGIN <procedure_body> END | LANGUAGE <language> [AS <code>]];
 //
 // <name_path> is the identifier path of the procedure.
 // <argument_name_list> The names of the function arguments.
 // <signature> is the FunctionSignature of the created procedure, with all
 //        options.  This can be used to create a procedure to load into a
 //        Catalog for future queries.
+// <connection> is the identifier path of the connection object.
 // <option_list> has engine-specific directives for modifying procedures.
-// <procedure_body> is a string literal that contains the procedure body.
-//        It includes everything from the BEGIN keyword to the END keyword,
-//        inclusive.
+// <procedure_body> is a string literal that contains the SQL procedure
+//        body. It includes everything from the BEGIN keyword to the END
+//        keyword, inclusive. This will always be set for SQL procedures
+//        and unset for external language procedures.
 //
 //        The resolver will perform some basic validation on the procedure
 //        body, for example, verifying that DECLARE statements are in the
@@ -34022,20 +35812,33 @@ inline std::unique_ptr<ResolvedCreateMaterializedViewStmt> MakeResolvedCreateMat
 //        makes it possible to define a procedure which references a table
 //        or routine that does not yet exist, so long as the entity is
 //        created before the procedure is called.
+// <language> is the programming language used by the procedure. This field
+//        is set to the language name specified in the LANGUAGE clause.
+//        Exactly one of <procedure_body> and <language> must be set.
+// <code> is a string literal that contains the external language procedure
+//        definition. It is allowed only if <language> is set.
 class ResolvedCreateProcedureStmt final : public ResolvedCreateStatement {
  public:
   typedef ResolvedCreateStatement SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_PROCEDURE_STMT;
 
+ public:
+
+  ResolvedCreateProcedureStmt(const ResolvedCreateProcedureStmt&) = delete;
+  ResolvedCreateProcedureStmt& operator=(const ResolvedCreateProcedureStmt&) = delete;
+
   friend std::unique_ptr<ResolvedCreateProcedureStmt> MakeResolvedCreateProcedureStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::vector<std::string>& argument_name_list,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
-      const std::string& procedure_body
+      const std::string& procedure_body,
+      std::unique_ptr<const ResolvedConnection> connection,
+      const std::string& language,
+      const std::string& code
   );
   ~ResolvedCreateProcedureStmt() final;
 
@@ -34111,7 +35914,7 @@ class ResolvedCreateProcedureStmt final : public ResolvedCreateStatement {
 
   const FunctionSignature& signature() const {
     accessed_ |= (1<<1);
-    return signature_;
+    return signature_.value();
   }
   void set_signature(const FunctionSignature& v) {
     signature_ = v;
@@ -34150,15 +35953,57 @@ class ResolvedCreateProcedureStmt final : public ResolvedCreateStatement {
     procedure_body_ = v;
   }
 
+  const ResolvedConnection* connection() const {
+    accessed_ |= (1<<4);
+    return connection_.get();
+  }
+  void set_connection(std::unique_ptr<const ResolvedConnection> v) {
+    connection_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return std::move(connection_);
+  }
+
+  const std::string& language() const {
+    accessed_ |= (1<<5);
+    return language_;
+  }
+  void set_language(const std::string& v) {
+    language_ = v;
+  }
+
+  const std::string& code() const {
+    accessed_ |= (1<<6);
+    return code_;
+  }
+  void set_code(const std::string& v) {
+    code_ = v;
+  }
+
  protected:
+  ResolvedCreateProcedureStmt()
+      : ResolvedCreateStatement()
+      , argument_name_list_()
+      , signature_()
+      , option_list_()
+      , procedure_body_()
+      , connection_()
+      , language_()
+      , code_()
+  {}
+
   explicit ResolvedCreateProcedureStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::vector<std::string>& argument_name_list,
       const FunctionSignature& signature,
       std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       const std::string& procedure_body,
+      std::unique_ptr<const ResolvedConnection> connection,
+      const std::string& language,
+      const std::string& code,
       ConstructorOverload)
       : ResolvedCreateStatement(
             name_path,
@@ -34168,20 +36013,28 @@ class ResolvedCreateProcedureStmt final : public ResolvedCreateStatement {
       argument_name_list_(argument_name_list),
       signature_(signature),
       option_list_(std::move(option_list)),
-      procedure_body_(procedure_body) {
+      procedure_body_(procedure_body),
+      connection_(std::move(connection)),
+      language_(language),
+      code_(code) {
   }
 
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend class ResolvedCreateProcedureStmtBuilder;
+  friend ResolvedCreateProcedureStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateProcedureStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
   std::vector<std::string> argument_name_list_;
-  FunctionSignature signature_;
+  absl::optional<FunctionSignature> signature_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::string procedure_body_;
+  std::unique_ptr<const ResolvedConnection> connection_;
+  std::string language_;
+  std::string code_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -34192,7 +36045,10 @@ inline std::unique_ptr<ResolvedCreateProcedureStmt> MakeResolvedCreateProcedureS
     const std::vector<std::string>& argument_name_list,
     const FunctionSignature& signature,
     std::vector<std::unique_ptr<const ResolvedOption>> option_list,
-    const std::string& procedure_body) {
+    const std::string& procedure_body,
+    std::unique_ptr<const ResolvedConnection> connection,
+    const std::string& language,
+    const std::string& code) {
   return std::unique_ptr<ResolvedCreateProcedureStmt>(new ResolvedCreateProcedureStmt(
         name_path,
         create_scope,
@@ -34201,6 +36057,9 @@ inline std::unique_ptr<ResolvedCreateProcedureStmt> MakeResolvedCreateProcedureS
         signature,
         std::move(option_list),
         procedure_body,
+        std::move(connection),
+        language,
+        code,
         ResolvedCreateProcedureStmt::NEW_CONSTRUCTOR));
 }
 
@@ -34224,7 +36083,10 @@ std::unique_ptr<ResolvedCreateProcedureStmt> MakeResolvedCreateProcedureStmt(
     const std::vector<std::string>& argument_name_list,
     const FunctionSignature& signature,
     option_list_t option_list,
-    const std::string& procedure_body) {
+    const std::string& procedure_body,
+    std::unique_ptr<const ResolvedConnection> connection,
+    const std::string& language,
+    const std::string& code) {
   static_assert(std::is_base_of<
       ResolvedOption,
       typename std::decay<decltype(**(option_list.begin()))>::type>::value,
@@ -34238,7 +36100,10 @@ std::unique_ptr<ResolvedCreateProcedureStmt> MakeResolvedCreateProcedureStmt(
       signature,
       {std::make_move_iterator(option_list.begin()),
        std::make_move_iterator(option_list.end())},
-      procedure_body);
+      procedure_body,
+      std::move(connection),
+      language,
+      code);
 }
 
 // An argument for an EXECUTE IMMEDIATE's USING clause.
@@ -34251,13 +36116,13 @@ class ResolvedExecuteImmediateArgument final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXECUTE_IMMEDIATE_ARGUMENT;
 
-  friend std::unique_ptr<ResolvedExecuteImmediateArgument> MakeResolvedExecuteImmediateArgument();
  protected:
   ResolvedExecuteImmediateArgument()
       : ResolvedArgument()
       , name_()
       , expression_()
   {}
+
  public:
 
   ResolvedExecuteImmediateArgument(const ResolvedExecuteImmediateArgument&) = delete;
@@ -34350,6 +36215,9 @@ class ResolvedExecuteImmediateArgument final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExecuteImmediateArgument> MakeResolvedExecuteImmediateArgument();
+  friend class ResolvedExecuteImmediateArgumentBuilder;
+  friend ResolvedExecuteImmediateArgumentBuilder ToBuilder(std::unique_ptr<const ResolvedExecuteImmediateArgument>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -34389,7 +36257,6 @@ class ResolvedExecuteImmediateStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_EXECUTE_IMMEDIATE_STMT;
 
-  friend std::unique_ptr<ResolvedExecuteImmediateStmt> MakeResolvedExecuteImmediateStmt();
  protected:
   ResolvedExecuteImmediateStmt()
       : ResolvedStatement()
@@ -34397,6 +36264,7 @@ class ResolvedExecuteImmediateStmt final : public ResolvedStatement {
       , into_identifier_list_()
       , using_argument_list_()
   {}
+
  public:
 
   ResolvedExecuteImmediateStmt(const ResolvedExecuteImmediateStmt&) = delete;
@@ -34532,6 +36400,9 @@ class ResolvedExecuteImmediateStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedExecuteImmediateStmt> MakeResolvedExecuteImmediateStmt();
+  friend class ResolvedExecuteImmediateStmtBuilder;
+  friend ResolvedExecuteImmediateStmtBuilder ToBuilder(std::unique_ptr<const ResolvedExecuteImmediateStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -34594,13 +36465,13 @@ class ResolvedAssignmentStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ASSIGNMENT_STMT;
 
-  friend std::unique_ptr<ResolvedAssignmentStmt> MakeResolvedAssignmentStmt();
  protected:
   ResolvedAssignmentStmt()
       : ResolvedStatement()
       , target_()
       , expr_()
   {}
+
  public:
 
   ResolvedAssignmentStmt(const ResolvedAssignmentStmt&) = delete;
@@ -34699,6 +36570,9 @@ class ResolvedAssignmentStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAssignmentStmt> MakeResolvedAssignmentStmt();
+  friend class ResolvedAssignmentStmtBuilder;
+  friend ResolvedAssignmentStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAssignmentStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -34741,7 +36615,6 @@ class ResolvedCreateEntityStmt final : public ResolvedCreateStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CREATE_ENTITY_STMT;
 
-  friend std::unique_ptr<ResolvedCreateEntityStmt> MakeResolvedCreateEntityStmt();
  protected:
   ResolvedCreateEntityStmt()
       : ResolvedCreateStatement()
@@ -34750,6 +36623,7 @@ class ResolvedCreateEntityStmt final : public ResolvedCreateStatement {
       , entity_body_text_()
       , option_list_()
   {}
+
  public:
 
   ResolvedCreateEntityStmt(const ResolvedCreateEntityStmt&) = delete;
@@ -34757,8 +36631,8 @@ class ResolvedCreateEntityStmt final : public ResolvedCreateStatement {
 
   friend std::unique_ptr<ResolvedCreateEntityStmt> MakeResolvedCreateEntityStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::string& entity_type,
       const std::string& entity_body_json,
       const std::string& entity_body_text,
@@ -34865,8 +36739,8 @@ class ResolvedCreateEntityStmt final : public ResolvedCreateStatement {
  protected:
   explicit ResolvedCreateEntityStmt(
       const std::vector<std::string>& name_path,
-      CreateScope create_scope,
-      CreateMode create_mode,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
       const std::string& entity_type,
       const std::string& entity_body_json,
       const std::string& entity_body_text,
@@ -34886,6 +36760,9 @@ class ResolvedCreateEntityStmt final : public ResolvedCreateStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCreateEntityStmt> MakeResolvedCreateEntityStmt();
+  friend class ResolvedCreateEntityStmtBuilder;
+  friend ResolvedCreateEntityStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreateEntityStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -34970,12 +36847,12 @@ class ResolvedAlterEntityStmt final : public ResolvedAlterObjectStmt {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ALTER_ENTITY_STMT;
 
-  friend std::unique_ptr<ResolvedAlterEntityStmt> MakeResolvedAlterEntityStmt();
  protected:
   ResolvedAlterEntityStmt()
       : ResolvedAlterObjectStmt()
       , entity_type_()
   {}
+
  public:
 
   ResolvedAlterEntityStmt(const ResolvedAlterEntityStmt&) = delete;
@@ -35062,6 +36939,9 @@ class ResolvedAlterEntityStmt final : public ResolvedAlterObjectStmt {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAlterEntityStmt> MakeResolvedAlterEntityStmt();
+  friend class ResolvedAlterEntityStmtBuilder;
+  friend ResolvedAlterEntityStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAlterEntityStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -35148,7 +37028,6 @@ class ResolvedPivotColumn final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_PIVOT_COLUMN;
 
-  friend std::unique_ptr<ResolvedPivotColumn> MakeResolvedPivotColumn();
  protected:
   ResolvedPivotColumn()
       : ResolvedArgument()
@@ -35156,6 +37035,7 @@ class ResolvedPivotColumn final : public ResolvedArgument {
       , pivot_expr_index_()
       , pivot_value_index_()
   {}
+
  public:
 
   ResolvedPivotColumn(const ResolvedPivotColumn&) = delete;
@@ -35263,6 +37143,9 @@ class ResolvedPivotColumn final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedPivotColumn> MakeResolvedPivotColumn();
+  friend class ResolvedPivotColumnBuilder;
+  friend ResolvedPivotColumnBuilder ToBuilder(std::unique_ptr<const ResolvedPivotColumn>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -35302,7 +37185,6 @@ class ResolvedPivotScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_PIVOT_SCAN;
 
-  friend std::unique_ptr<ResolvedPivotScan> MakeResolvedPivotScan();
  protected:
   ResolvedPivotScan()
       : ResolvedScan()
@@ -35313,6 +37195,7 @@ class ResolvedPivotScan final : public ResolvedScan {
       , pivot_value_list_()
       , pivot_column_list_()
   {}
+
  public:
 
   ResolvedPivotScan(const ResolvedPivotScan&) = delete;
@@ -35551,6 +37434,9 @@ class ResolvedPivotScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedPivotScan> MakeResolvedPivotScan();
+  friend class ResolvedPivotScanBuilder;
+  friend ResolvedPivotScanBuilder ToBuilder(std::unique_ptr<const ResolvedPivotScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -35656,7 +37542,6 @@ class ResolvedReturningClause final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_RETURNING_CLAUSE;
 
-  friend std::unique_ptr<ResolvedReturningClause> MakeResolvedReturningClause();
  protected:
   ResolvedReturningClause()
       : ResolvedArgument()
@@ -35664,6 +37549,7 @@ class ResolvedReturningClause final : public ResolvedArgument {
       , action_column_()
       , expr_list_()
   {}
+
  public:
 
   ResolvedReturningClause(const ResolvedReturningClause&) = delete;
@@ -35812,6 +37698,9 @@ class ResolvedReturningClause final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedReturningClause> MakeResolvedReturningClause();
+  friend class ResolvedReturningClauseBuilder;
+  friend ResolvedReturningClauseBuilder ToBuilder(std::unique_ptr<const ResolvedReturningClause>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -35886,12 +37775,12 @@ class ResolvedUnpivotArg final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_UNPIVOT_ARG;
 
-  friend std::unique_ptr<ResolvedUnpivotArg> MakeResolvedUnpivotArg();
  protected:
   ResolvedUnpivotArg()
       : ResolvedArgument()
       , column_list_()
   {}
+
  public:
 
   ResolvedUnpivotArg(const ResolvedUnpivotArg&) = delete;
@@ -35989,6 +37878,9 @@ class ResolvedUnpivotArg final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedUnpivotArg> MakeResolvedUnpivotArg();
+  friend class ResolvedUnpivotArgBuilder;
+  friend ResolvedUnpivotArgBuilder ToBuilder(std::unique_ptr<const ResolvedUnpivotArg>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -36083,7 +37975,6 @@ class ResolvedUnpivotScan final : public ResolvedScan {
 
   static const ResolvedNodeKind TYPE = RESOLVED_UNPIVOT_SCAN;
 
-  friend std::unique_ptr<ResolvedUnpivotScan> MakeResolvedUnpivotScan();
  protected:
   ResolvedUnpivotScan()
       : ResolvedScan()
@@ -36095,6 +37986,7 @@ class ResolvedUnpivotScan final : public ResolvedScan {
       , projected_input_column_list_()
       , include_nulls_()
   {}
+
  public:
 
   ResolvedUnpivotScan(const ResolvedUnpivotScan&) = delete;
@@ -36333,6 +38225,9 @@ class ResolvedUnpivotScan final : public ResolvedScan {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedUnpivotScan> MakeResolvedUnpivotScan();
+  friend class ResolvedUnpivotScanBuilder;
+  friend ResolvedUnpivotScanBuilder ToBuilder(std::unique_ptr<const ResolvedUnpivotScan>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -36452,13 +38347,13 @@ class ResolvedCloneDataStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_CLONE_DATA_STMT;
 
-  friend std::unique_ptr<ResolvedCloneDataStmt> MakeResolvedCloneDataStmt();
  protected:
   ResolvedCloneDataStmt()
       : ResolvedStatement()
       , target_table_()
       , clone_from_()
   {}
+
  public:
 
   ResolvedCloneDataStmt(const ResolvedCloneDataStmt&) = delete;
@@ -36555,6 +38450,9 @@ class ResolvedCloneDataStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedCloneDataStmt> MakeResolvedCloneDataStmt();
+  friend class ResolvedCloneDataStmtBuilder;
+  friend ResolvedCloneDataStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCloneDataStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -36589,13 +38487,13 @@ class ResolvedTableAndColumnInfo final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_TABLE_AND_COLUMN_INFO;
 
-  friend std::unique_ptr<ResolvedTableAndColumnInfo> MakeResolvedTableAndColumnInfo();
  protected:
   ResolvedTableAndColumnInfo()
       : ResolvedArgument()
       , table_()
       , column_index_list_()
   {}
+
  public:
 
   ResolvedTableAndColumnInfo(const ResolvedTableAndColumnInfo&) = delete;
@@ -36697,6 +38595,9 @@ class ResolvedTableAndColumnInfo final : public ResolvedArgument {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedTableAndColumnInfo> MakeResolvedTableAndColumnInfo();
+  friend class ResolvedTableAndColumnInfoBuilder;
+  friend ResolvedTableAndColumnInfoBuilder ToBuilder(std::unique_ptr<const ResolvedTableAndColumnInfo>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -36731,13 +38632,13 @@ class ResolvedAnalyzeStmt final : public ResolvedStatement {
 
   static const ResolvedNodeKind TYPE = RESOLVED_ANALYZE_STMT;
 
-  friend std::unique_ptr<ResolvedAnalyzeStmt> MakeResolvedAnalyzeStmt();
  protected:
   ResolvedAnalyzeStmt()
       : ResolvedStatement()
       , option_list_()
       , table_and_column_index_list_()
   {}
+
  public:
 
   ResolvedAnalyzeStmt(const ResolvedAnalyzeStmt&) = delete;
@@ -36860,6 +38761,9 @@ class ResolvedAnalyzeStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAnalyzeStmt> MakeResolvedAnalyzeStmt();
+  friend class ResolvedAnalyzeStmtBuilder;
+  friend ResolvedAnalyzeStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAnalyzeStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -36986,7 +38890,6 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
   static const InsertionMode APPEND = ResolvedAuxLoadDataStmtEnums::APPEND;
   static const InsertionMode OVERWRITE = ResolvedAuxLoadDataStmtEnums::OVERWRITE;
 
-  friend std::unique_ptr<ResolvedAuxLoadDataStmt> MakeResolvedAuxLoadDataStmt();
  protected:
   ResolvedAuxLoadDataStmt()
       : ResolvedStatement()
@@ -37005,13 +38908,14 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
       , connection_()
       , from_files_option_list_()
   {}
+
  public:
 
   ResolvedAuxLoadDataStmt(const ResolvedAuxLoadDataStmt&) = delete;
   ResolvedAuxLoadDataStmt& operator=(const ResolvedAuxLoadDataStmt&) = delete;
 
   friend std::unique_ptr<ResolvedAuxLoadDataStmt> MakeResolvedAuxLoadDataStmt(
-      InsertionMode insertion_mode,
+      ResolvedAuxLoadDataStmt::InsertionMode insertion_mode,
       const std::vector<std::string>& name_path,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
@@ -37075,11 +38979,11 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
 
   // Member fields
 
-  InsertionMode insertion_mode() const {
+  ResolvedAuxLoadDataStmt::InsertionMode insertion_mode() const {
     accessed_ |= (1<<0);
     return insertion_mode_;
   }
-  void set_insertion_mode(InsertionMode v) {
+  void set_insertion_mode(ResolvedAuxLoadDataStmt::InsertionMode v) {
     insertion_mode_ = v;
   }
 
@@ -37367,7 +39271,7 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
 
  protected:
   explicit ResolvedAuxLoadDataStmt(
-      InsertionMode insertion_mode,
+      ResolvedAuxLoadDataStmt::InsertionMode insertion_mode,
       const std::vector<std::string>& name_path,
       std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
       std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list,
@@ -37403,11 +39307,14 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
   void CollectDebugStringFields(
       std::vector<DebugStringField>* fields) const final;
  private:
+  friend std::unique_ptr<ResolvedAuxLoadDataStmt> MakeResolvedAuxLoadDataStmt();
+  friend class ResolvedAuxLoadDataStmtBuilder;
+  friend ResolvedAuxLoadDataStmtBuilder ToBuilder(std::unique_ptr<const ResolvedAuxLoadDataStmt>);
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
-  InsertionMode insertion_mode_;
+  ResolvedAuxLoadDataStmt::InsertionMode insertion_mode_;
   std::vector<std::string> name_path_;
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
   std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list_;

@@ -133,7 +133,7 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedSubqueryExpr(const ResolvedSubqueryExpr* node) {
     return DefaultVisit(node);
   }
-  virtual absl::Status VisitResolvedLetExpr(const ResolvedLetExpr* node) {
+  virtual absl::Status VisitResolvedWithExpr(const ResolvedWithExpr* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedScan(const ResolvedScan* node) {
@@ -439,6 +439,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedAlterSchemaStmt(const ResolvedAlterSchemaStmt* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedAlterModelStmt(const ResolvedAlterModelStmt* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedAlterTableStmt(const ResolvedAlterTableStmt* node) {
     return DefaultVisit(node);
   }
@@ -452,6 +455,15 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedSetOptionsAction(const ResolvedSetOptionsAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterSubEntityAction(const ResolvedAlterSubEntityAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddSubEntityAction(const ResolvedAddSubEntityAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropSubEntityAction(const ResolvedDropSubEntityAction* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAddColumnAction(const ResolvedAddColumnAction* node) {

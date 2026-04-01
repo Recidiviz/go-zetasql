@@ -14,6 +14,9 @@
 // limitations under the License.
 //
 
+#include <functional>
+#include <numeric>
+#include <optional>
 #include <string>
 
 #include "zetasql/compliance/functions_testlib.h"
@@ -37,8 +40,8 @@ constexpr absl::StatusCode OUT_OF_RANGE = absl::StatusCode::kOutOfRange;
 // values (can be either array of STRINGs or JSONs).
 const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
     bool sql_standard_mode, bool scalar_test_cases,
-    const std::function<Value(absl::optional<absl::string_view>)>& from_json,
-    const std::function<Value(absl::optional<std::vector<std::string>>)>&
+    const std::function<Value(std::optional<absl::string_view>)>& from_json,
+    const std::function<Value(std::optional<std::vector<std::string>>)>&
         from_array) {
   std::string function_name;
   if (sql_standard_mode) {
@@ -49,7 +52,8 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
   }
 
   const Value json1 = from_json(
-      R"({"a":{"b":[{"c" : "foo", "d": 1.23, "f":null }], "e": true}})");
+      R"({"a":{"b":[{"c" : "foo", "d": 1.23, "f":null }], "e": true},
+      "b": [10, "", "foo"]})");
   const Value json2 =
       from_json(R"({"x": [1, 2, 3, 4, 5], "y": [{"a": "bar"}, {"b":"baz"}] })");
   const Value json3 = from_json(R"({"a":[{"b": [{"c": [{"d": [3]}]}]}]})");
@@ -122,16 +126,16 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
   std::vector<FunctionTestCall> test_cases = {
       // Null inputs
       {function_name,
-       {from_json(absl::nullopt), NullString()},
-       from_array(absl::nullopt)},
-      {function_name, {json1, NullString()}, from_array(absl::nullopt)},
+       {from_json(std::nullopt), NullString()},
+       from_array(std::nullopt)},
+      {function_name, {json1, NullString()}, from_array(std::nullopt)},
       {function_name,
-       {from_json(absl::nullopt), String("$")},
-       from_array(absl::nullopt)},
+       {from_json(std::nullopt), String("$")},
+       from_array(std::nullopt)},
       // Non-array object
-      {function_name, {json1, String("$.a")}, from_array(absl::nullopt)},
+      {function_name, {json1, String("$.a")}, from_array(std::nullopt)},
       // Key missing
-      {function_name, {json1, String("$.g")}, from_array(absl::nullopt)},
+      {function_name, {json1, String("$.g")}, from_array(std::nullopt)},
       // Cases with inputs
       // - Integer array
       {function_name,
@@ -147,9 +151,9 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
        from_array({{"3"}})},
       {function_name,
        {json3, String("$.a[0].b[0].c[1].d")},
-       from_array(absl::nullopt)},
+       from_array(std::nullopt)},
       {function_name, {json5, String("$.a[1]")}, from_array({{"3", "2", "1"}})},
-      {function_name, {json5, String("$.a[2]")}, from_array(absl::nullopt)},
+      {function_name, {json5, String("$.a[2]")}, from_array(std::nullopt)},
       {function_name, {json10, String("$.b[0][0]")}, from_array({{"1"}})},
       // Deep JSON
       {function_name,
@@ -158,24 +162,24 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
       // Deep JSON error cases
       {function_name,
        {deep_json, String("$.a.b.c.d.e.f.g.h.i.j.k.l.m.x")},
-       from_array(absl::nullopt)},
+       from_array(std::nullopt)},
       {function_name, {wide_json, String("$.j")}, from_array({{"-3", "0"}})},
-      {function_name, {wide_json, String("$.k")}, from_array(absl::nullopt)},
-      {function_name, {wide_json, String("$.e[0]")}, from_array(absl::nullopt)},
+      {function_name, {wide_json, String("$.k")}, from_array(std::nullopt)},
+      {function_name, {wide_json, String("$.e[0]")}, from_array(std::nullopt)},
       // Invalid JSONPath syntax
       {function_name,
        {json1, String("abc")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json1, String("")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
-      {function_name, {json2, String("$.x[-1]")}, from_array(absl::nullopt)},
-      {function_name, {json2, String("$.y.a")}, from_array(absl::nullopt)},
+      {function_name, {json2, String("$.x[-1]")}, from_array(std::nullopt)},
+      {function_name, {json2, String("$.y.a")}, from_array(std::nullopt)},
       {function_name,
        {json3, String("$[a.b.c]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json7, String("$.longer_field_name")},
@@ -188,7 +192,7 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
        from_array({std::vector<std::string>()})},
       {function_name,
        {array_of_deep_json, String("$.arr[13]")},
-       from_array(absl::nullopt)},
+       from_array(std::nullopt)},
       {function_name,
        {array_of_deep_json, String("$.arr[13].a.b.c.d.e.f.g.h.i.j.k.l.m.z")},
        from_array({{"1", "2", "3"}})},
@@ -204,39 +208,39 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
       // Unsupported/unimplemented JSONPath features.
       {function_name,
        {json1, String("$.a.*")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json1, String("$.a.b..c")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String("$.x[(@.length-1)]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String("$.x[-1:]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String("$.x[0:4:2]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String("$.x[:2]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String("$.x[0,1]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String("$.y[?(@.a)]")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json2, String(R"($.y[?(@.a==='bar')])")},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       // Tests of which results vary by sql_standard_mode;
       // Bracket/Dot notation for children/sub-trees
@@ -245,11 +249,11 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
        from_array({{"1", "2", "3", "4", "5"}})},
       {function_name,
        {json2, sql_standard_mode ? String("$.x.a") : String("$.x['a']")},
-       from_array(absl::nullopt)},
+       from_array(std::nullopt)},
       // Query with dots in the middle of the key
       {function_name,
        {json6, absl::StrCat("$", EscapeKey(!sql_standard_mode, "d.e.f"))},
-       from_array(absl::nullopt),
+       from_array(std::nullopt),
        OUT_OF_RANGE},
       {function_name,
        {json6, absl::StrCat("$", EscapeKey(sql_standard_mode, "d.e.f"))},
@@ -258,18 +262,22 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
   if (scalar_test_cases) {
     // Not scalar array - object array
     test_cases.push_back(
-        {function_name, {json2, String("$.y")}, from_array(absl::nullopt)});
+        {function_name, {json2, String("$.y")}, from_array(std::nullopt)});
     // Not scalar array - nested array
     test_cases.push_back(
-        {function_name, {json5, String("$.a")}, from_array(absl::nullopt)});
+        {function_name, {json5, String("$.a")}, from_array(std::nullopt)});
     test_cases.push_back(
-        {function_name, {json10, String("$.b")}, from_array(absl::nullopt)});
+        {function_name, {json10, String("$.b")}, from_array(std::nullopt)});
     test_cases.push_back(
-        {function_name, {json10, String("$.b[0]")}, from_array(absl::nullopt)});
+        {function_name, {json10, String("$.b[0]")}, from_array(std::nullopt)});
     // String array
     test_cases.push_back({function_name,
                           {json4, String("$.a")},
                           from_array({{"foo", "bar", "baz"}})});
+    // Empty string
+    test_cases.push_back({function_name,
+                          {json1, String("$.b")},
+                          from_array({{"10", "", "foo"}})});
     // String array - Non-ASCII UTF-8 and special cases.
     test_cases.push_back(
         {function_name,
@@ -298,6 +306,10 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
     test_cases.push_back({function_name,
                           {json4, String("$.a")},
                           from_array({{"\"foo\"", "\"bar\"", "\"baz\""}})});
+    // Empty string
+    test_cases.push_back({function_name,
+                          {json1, String("$.b")},
+                          from_array({{"10", "\"\"", "\"foo\""}})});
     // String array - Non-ASCII UTF-8 and special cases.
     test_cases.push_back(
         {function_name,
@@ -317,12 +329,12 @@ const std::vector<FunctionTestCall> GetStringJsonArrayTests(
   std::vector<FunctionTestCall> tests = GetJsonArrayTestsCommon(
       sql_standard_mode, scalar_test_cases,
       /*from_json=*/
-      [](absl::optional<absl::string_view> input) {
+      [](std::optional<absl::string_view> input) {
         if (input.has_value()) return String(input.value());
         return NullString();
       },
       /*from_array=*/
-      [](absl::optional<std::vector<std::string>> inputs) {
+      [](std::optional<std::vector<std::string>> inputs) {
         if (!inputs.has_value()) return Null(StringArrayType());
         return StringArray(*inputs);
       });
@@ -366,16 +378,16 @@ const std::vector<FunctionTestCall> GetStringJsonArrayTests(
 
 std::vector<FunctionTestCall> GetNativeJsonArrayTests(bool sql_standard_mode,
                                                       bool scalar_test_cases) {
-  auto from_json = [](absl::optional<absl::string_view> input) {
+  auto from_json = [](std::optional<absl::string_view> input) {
     if (!input.has_value()) return NullJson();
     return Json(JSONValue::ParseJSONString(input.value()).value());
   };
   auto from_array = scalar_test_cases ?
-      [](absl::optional<std::vector<std::string>> inputs) {
+      [](std::optional<std::vector<std::string>> inputs) {
         if (!inputs.has_value()) return Null(StringArrayType());
         return StringArray(*inputs);
       } :
-      [](absl::optional<std::vector<std::string>> inputs) {
+      [](std::optional<std::vector<std::string>> inputs) {
     if (!inputs.has_value()) return Null(JsonArrayType());
     std::vector<JSONValue> json_inputs;
     for (const std::string& input : *inputs) {
@@ -400,7 +412,7 @@ std::vector<FunctionTestCall> GetNativeJsonArrayTests(bool sql_standard_mode,
       {function_name,
        QueryParamsWithResult(
            {Value::UnvalidatedJsonString(R"({"a": )"), String("$")},
-           from_array(absl::nullopt), OUT_OF_RANGE)
+           from_array(std::nullopt), OUT_OF_RANGE)
            .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_ARRAY_FUNCTIONS,
                                 FEATURE_JSON_NO_VALIDATION})});
 

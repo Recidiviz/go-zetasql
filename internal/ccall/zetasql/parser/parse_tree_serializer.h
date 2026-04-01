@@ -1966,6 +1966,18 @@ class ParseTreeSerializer {
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
 
+  static absl::Status Serialize(const ASTWithReportModifier* node,
+                                ASTWithReportModifierProto* proto);
+  static absl::Status DeserializeFields(
+      ASTWithReportModifier* node, const ASTWithReportModifierProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTWithReportModifier*> Deserialize(
+      const ASTWithReportModifierProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
   static absl::Status Serialize(const ASTFormatClause* node,
                                 ASTFormatClauseProto* proto);
   static absl::Status DeserializeFields(
@@ -2110,6 +2122,60 @@ class ParseTreeSerializer {
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
   static absl::StatusOr<ASTNewConstructor*> Deserialize(
       const ASTNewConstructorProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTBracedConstructorFieldValue* node,
+                                ASTBracedConstructorFieldValueProto* proto);
+  static absl::Status Serialize(const ASTBracedConstructorFieldValue* node,
+                                AnyASTExpressionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTBracedConstructorFieldValue* node, const ASTBracedConstructorFieldValueProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTBracedConstructorFieldValue*> Deserialize(
+      const ASTBracedConstructorFieldValueProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTBracedConstructorField* node,
+                                ASTBracedConstructorFieldProto* proto);
+  static absl::Status DeserializeFields(
+      ASTBracedConstructorField* node, const ASTBracedConstructorFieldProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTBracedConstructorField*> Deserialize(
+      const ASTBracedConstructorFieldProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTBracedConstructor* node,
+                                ASTBracedConstructorProto* proto);
+  static absl::Status Serialize(const ASTBracedConstructor* node,
+                                AnyASTExpressionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTBracedConstructor* node, const ASTBracedConstructorProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTBracedConstructor*> Deserialize(
+      const ASTBracedConstructorProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTBracedNewConstructor* node,
+                                ASTBracedNewConstructorProto* proto);
+  static absl::Status Serialize(const ASTBracedNewConstructor* node,
+                                AnyASTExpressionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTBracedNewConstructor* node, const ASTBracedNewConstructorProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTBracedNewConstructor*> Deserialize(
+      const ASTBracedNewConstructorProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
@@ -3586,6 +3652,90 @@ class ParseTreeSerializer {
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
 
+  static absl::Status Serialize(const ASTAlterSubEntityAction* node,
+                                ASTAlterSubEntityActionProto* proto);
+  static absl::Status Serialize(const ASTAlterSubEntityAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTAlterSubEntityAction* node, const ASTAlterSubEntityActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTAlterSubEntityAction*> Deserialize(
+      const ASTAlterSubEntityActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTAddSubEntityAction* node,
+                                ASTAddSubEntityActionProto* proto);
+  static absl::Status Serialize(const ASTAddSubEntityAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTAddSubEntityAction* node, const ASTAddSubEntityActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTAddSubEntityAction*> Deserialize(
+      const ASTAddSubEntityActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTDropSubEntityAction* node,
+                                ASTDropSubEntityActionProto* proto);
+  static absl::Status Serialize(const ASTDropSubEntityAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTDropSubEntityAction* node, const ASTDropSubEntityActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTDropSubEntityAction*> Deserialize(
+      const ASTDropSubEntityActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTAddTtlAction* node,
+                                ASTAddTtlActionProto* proto);
+  static absl::Status Serialize(const ASTAddTtlAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTAddTtlAction* node, const ASTAddTtlActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTAddTtlAction*> Deserialize(
+      const ASTAddTtlActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTReplaceTtlAction* node,
+                                ASTReplaceTtlActionProto* proto);
+  static absl::Status Serialize(const ASTReplaceTtlAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTReplaceTtlAction* node, const ASTReplaceTtlActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTReplaceTtlAction*> Deserialize(
+      const ASTReplaceTtlActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTDropTtlAction* node,
+                                ASTDropTtlActionProto* proto);
+  static absl::Status Serialize(const ASTDropTtlAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTDropTtlAction* node, const ASTDropTtlActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTDropTtlAction*> Deserialize(
+      const ASTDropTtlActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
   static absl::Status Serialize(const ASTAlterActionList* node,
                                 ASTAlterActionListProto* proto);
   static absl::Status DeserializeFields(
@@ -3818,6 +3968,30 @@ class ParseTreeSerializer {
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
   static absl::StatusOr<ASTArrayColumnSchema*> Deserialize(
       const ASTArrayColumnSchemaProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTPrimaryKeyElement* node,
+                                ASTPrimaryKeyElementProto* proto);
+  static absl::Status DeserializeFields(
+      ASTPrimaryKeyElement* node, const ASTPrimaryKeyElementProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTPrimaryKeyElement*> Deserialize(
+      const ASTPrimaryKeyElementProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTPrimaryKeyElementList* node,
+                                ASTPrimaryKeyElementListProto* proto);
+  static absl::Status DeserializeFields(
+      ASTPrimaryKeyElementList* node, const ASTPrimaryKeyElementListProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTPrimaryKeyElementList*> Deserialize(
+      const ASTPrimaryKeyElementListProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
@@ -4562,6 +4736,24 @@ class ParseTreeSerializer {
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
 
+  static absl::Status Serialize(const ASTAlterModelStatement* node,
+                                ASTAlterModelStatementProto* proto);
+  static absl::Status Serialize(const ASTAlterModelStatement* node,
+                                AnyASTStatementProto* proto);
+  static absl::Status Serialize(const ASTAlterModelStatement* node,
+                                AnyASTDdlStatementProto* proto);
+  static absl::Status Serialize(const ASTAlterModelStatement* node,
+                                AnyASTAlterStatementBaseProto* proto);
+  static absl::Status DeserializeFields(
+      ASTAlterModelStatement* node, const ASTAlterModelStatementProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTAlterModelStatement*> Deserialize(
+      const ASTAlterModelStatementProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
   static absl::Status Serialize(const ASTAlterPrivilegeRestrictionStatement* node,
                                 ASTAlterPrivilegeRestrictionStatementProto* proto);
   static absl::Status Serialize(const ASTAlterPrivilegeRestrictionStatement* node,
@@ -4798,6 +4990,110 @@ class ParseTreeSerializer {
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
   static absl::StatusOr<ASTLabel*> Deserialize(
       const ASTLabelProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTWithExpression* node,
+                                ASTWithExpressionProto* proto);
+  static absl::Status Serialize(const ASTWithExpression* node,
+                                AnyASTExpressionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTWithExpression* node, const ASTWithExpressionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTWithExpression*> Deserialize(
+      const ASTWithExpressionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTTtlClause* node,
+                                ASTTtlClauseProto* proto);
+  static absl::Status DeserializeFields(
+      ASTTtlClause* node, const ASTTtlClauseProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTTtlClause*> Deserialize(
+      const ASTTtlClauseProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTLocation* node,
+                                ASTLocationProto* proto);
+  static absl::Status DeserializeFields(
+      ASTLocation* node, const ASTLocationProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTLocation*> Deserialize(
+      const ASTLocationProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTSpannerTableOptions* node,
+                                ASTSpannerTableOptionsProto* proto);
+  static absl::Status DeserializeFields(
+      ASTSpannerTableOptions* node, const ASTSpannerTableOptionsProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTSpannerTableOptions*> Deserialize(
+      const ASTSpannerTableOptionsProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTSpannerInterleaveClause* node,
+                                ASTSpannerInterleaveClauseProto* proto);
+  static absl::Status DeserializeFields(
+      ASTSpannerInterleaveClause* node, const ASTSpannerInterleaveClauseProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTSpannerInterleaveClause*> Deserialize(
+      const ASTSpannerInterleaveClauseProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTSpannerAlterColumnAction* node,
+                                ASTSpannerAlterColumnActionProto* proto);
+  static absl::Status Serialize(const ASTSpannerAlterColumnAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTSpannerAlterColumnAction* node, const ASTSpannerAlterColumnActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTSpannerAlterColumnAction*> Deserialize(
+      const ASTSpannerAlterColumnActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTSpannerSetOnDeleteAction* node,
+                                ASTSpannerSetOnDeleteActionProto* proto);
+  static absl::Status Serialize(const ASTSpannerSetOnDeleteAction* node,
+                                AnyASTAlterActionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTSpannerSetOnDeleteAction* node, const ASTSpannerSetOnDeleteActionProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTSpannerSetOnDeleteAction*> Deserialize(
+      const ASTSpannerSetOnDeleteActionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTRangeLiteral* node,
+                                ASTRangeLiteralProto* proto);
+  static absl::Status Serialize(const ASTRangeLiteral* node,
+                                AnyASTExpressionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTRangeLiteral* node, const ASTRangeLiteralProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTRangeLiteral*> Deserialize(
+      const ASTRangeLiteralProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);

@@ -21,8 +21,10 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -50,9 +52,11 @@ class EnumType;
 class ExtendedType;
 class LanguageOptions;
 class ProtoType;
+class RangeType;
 class StructType;
 class Type;
 class TypeFactory;
+class TypeModifiers;
 class TypeParameterValue;
 class TypeParameters;
 class Value;
@@ -99,6 +103,7 @@ class Type {
   bool IsNumericType() const { return kind_ == TYPE_NUMERIC; }
   bool IsBigNumericType() const { return kind_ == TYPE_BIGNUMERIC; }
   bool IsJsonType() const { return kind_ == TYPE_JSON; }
+  bool IsRangeType() const { return kind_ == TYPE_RANGE; }
 
   // DEPRECATED, use UsingFeatureV12CivilTimeType() instead.
   //
@@ -135,6 +140,7 @@ class Type {
   bool IsStruct() const { return kind_ == TYPE_STRUCT; }
   bool IsProto() const { return kind_ == TYPE_PROTO; }
   bool IsStructOrProto() const { return IsStruct() || IsProto(); }
+  bool IsRange() const { return kind_ == TYPE_RANGE; }
 
   bool IsFloatingPoint() const { return IsFloat() || IsDouble(); }
   bool IsNumerical() const {
@@ -201,6 +207,7 @@ class Type {
   virtual const ProtoType* AsProto() const { return nullptr; }
   virtual const EnumType* AsEnum() const { return nullptr; }
   virtual const ExtendedType* AsExtendedType() const { return nullptr; }
+  virtual const RangeType* AsRange() const { return nullptr; }
 
   // Returns true if the type supports grouping with respect to the
   // 'language_options'. E.g. struct type supports grouping if the
@@ -396,7 +403,7 @@ class Type {
   // the FileDescriptorSets in the <file_descriptor_set_map>.
   absl::Status SerializeToProtoAndDistinctFileDescriptors(
       TypeProto* type_proto,
-      absl::optional<int64_t> file_descriptor_sets_max_size_bytes,
+      std::optional<int64_t> file_descriptor_sets_max_size_bytes,
       FileDescriptorSetMap* file_descriptor_set_map) const;
 
   // Returns the SQL name for this type, which in general is not reparseable as
@@ -411,12 +418,22 @@ class Type {
   // messages.
   virtual std::string TypeName(ProductMode mode) const = 0;
 
+  ABSL_DEPRECATED("Use TypeNameWithModifiers function.")
+  // TODO: Refactor and remove the deprecated function in a quick
+  // follow up.
   // Same as above, but if <type_params> is not empty, then the type parameter
   // values are included with the SQL name for this type. The output is
   // reparseable as part of a query. If <type_params> is an invalid input for
   // the given Type, then an error status will be returned.
   virtual absl::StatusOr<std::string> TypeNameWithParameters(
-      const TypeParameters& type_params, ProductMode mode) const = 0;
+      const TypeParameters& type_params, ProductMode mode) const;
+
+  // Same as above, but if <type_modifiers> contains non-empty modifiers, then
+  // these modifiers are included with the SQL name for this type. The output is
+  // reparseable as part of a query. If <type_modifiers> contains modifiers that
+  // are not invalid for the given Type, then an error status will be returned.
+  virtual absl::StatusOr<std::string> TypeNameWithModifiers(
+      const TypeModifiers& type_modifiers, ProductMode mode) const = 0;
 
   // Returns the full description of the type without truncation. This should
   // only be used for logging or tests and not for any user-facing messages. For
@@ -539,7 +556,7 @@ class Type {
     // A limit for the size of the FileDescriptorSets. If the sum of the sizes
     // passes this limit, the next attempt to add an element will cause an
     // error.
-    absl::optional<int64_t> file_descriptor_sets_max_size_bytes = absl::nullopt;
+    std::optional<int64_t> file_descriptor_sets_max_size_bytes = std::nullopt;
   };
 
  protected:
@@ -619,7 +636,7 @@ class Type {
   // Note: SWIG will fail to process this file if we remove a white space
   // between '>' at the TypeOrStringVector definition or use "using" instead of
   // "typedef".
-  typedef std::vector<absl::variant<const Type*, std::string> >
+  typedef std::vector<std::variant<const Type*, std::string> >
       TypeOrStringVector;
 
   // Returns an error status code in case serialized proto Value representation
@@ -745,6 +762,7 @@ class Type {
 
   friend class ArrayType;
   friend class StructType;
+  friend class RangeType;
 
   const internal::TypeStore* type_store_;  // Used for lifetime checking only.
   const TypeKind kind_;

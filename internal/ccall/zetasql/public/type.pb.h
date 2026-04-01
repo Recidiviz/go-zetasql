@@ -48,7 +48,7 @@ struct TableStruct_zetasql_2fpublic_2ftype_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -65,6 +65,9 @@ extern EnumTypeProtoDefaultTypeInternal _EnumTypeProto_default_instance_;
 class ProtoTypeProto;
 struct ProtoTypeProtoDefaultTypeInternal;
 extern ProtoTypeProtoDefaultTypeInternal _ProtoTypeProto_default_instance_;
+class RangeTypeProto;
+struct RangeTypeProtoDefaultTypeInternal;
+extern RangeTypeProtoDefaultTypeInternal _RangeTypeProto_default_instance_;
 class StructFieldProto;
 struct StructFieldProtoDefaultTypeInternal;
 extern StructFieldProtoDefaultTypeInternal _StructFieldProto_default_instance_;
@@ -79,6 +82,7 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::zetasql::ArrayTypeProto* Arena::CreateMaybeMessage<::zetasql::ArrayTypeProto>(Arena*);
 template<> ::zetasql::EnumTypeProto* Arena::CreateMaybeMessage<::zetasql::EnumTypeProto>(Arena*);
 template<> ::zetasql::ProtoTypeProto* Arena::CreateMaybeMessage<::zetasql::ProtoTypeProto>(Arena*);
+template<> ::zetasql::RangeTypeProto* Arena::CreateMaybeMessage<::zetasql::RangeTypeProto>(Arena*);
 template<> ::zetasql::StructFieldProto* Arena::CreateMaybeMessage<::zetasql::StructFieldProto>(Arena*);
 template<> ::zetasql::StructTypeProto* Arena::CreateMaybeMessage<::zetasql::StructTypeProto>(Arena*);
 template<> ::zetasql::TypeProto* Arena::CreateMaybeMessage<::zetasql::TypeProto>(Arena*);
@@ -110,11 +114,12 @@ enum TypeKind : int {
   TYPE_BIGNUMERIC = 24,
   TYPE_EXTENDED = 25,
   TYPE_JSON = 26,
-  TYPE_INTERVAL = 27
+  TYPE_INTERVAL = 27,
+  TYPE_RANGE = 29
 };
 bool TypeKind_IsValid(int value);
 constexpr TypeKind TypeKind_MIN = __TypeKind__switch_must_have_a_default__;
-constexpr TypeKind TypeKind_MAX = TYPE_INTERVAL;
+constexpr TypeKind TypeKind_MAX = TYPE_RANGE;
 constexpr int TypeKind_ARRAYSIZE = TypeKind_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TypeKind_descriptor();
@@ -268,6 +273,7 @@ class TypeProto final :
     kStructTypeFieldNumber = 3,
     kProtoTypeFieldNumber = 4,
     kEnumTypeFieldNumber = 5,
+    kRangeTypeFieldNumber = 8,
     kTypeKindFieldNumber = 1,
   };
   // repeated .google.protobuf.FileDescriptorSet file_descriptor_set = 6;
@@ -377,6 +383,24 @@ class TypeProto final :
   void unsafe_arena_set_allocated_enum_type(
       ::zetasql::EnumTypeProto* enum_type);
   ::zetasql::EnumTypeProto* unsafe_arena_release_enum_type();
+
+  // optional .zetasql.RangeTypeProto range_type = 8;
+  bool has_range_type() const;
+  private:
+  bool _internal_has_range_type() const;
+  public:
+  void clear_range_type();
+  const ::zetasql::RangeTypeProto& range_type() const;
+  PROTOBUF_NODISCARD ::zetasql::RangeTypeProto* release_range_type();
+  ::zetasql::RangeTypeProto* mutable_range_type();
+  void set_allocated_range_type(::zetasql::RangeTypeProto* range_type);
+  private:
+  const ::zetasql::RangeTypeProto& _internal_range_type() const;
+  ::zetasql::RangeTypeProto* _internal_mutable_range_type();
+  public:
+  void unsafe_arena_set_allocated_range_type(
+      ::zetasql::RangeTypeProto* range_type);
+  ::zetasql::RangeTypeProto* unsafe_arena_release_range_type();
 
   // optional .zetasql.TypeKind type_kind = 1;
   bool has_type_kind() const;
@@ -598,6 +622,7 @@ class TypeProto final :
   ::zetasql::StructTypeProto* struct_type_;
   ::zetasql::ProtoTypeProto* proto_type_;
   ::zetasql::EnumTypeProto* enum_type_;
+  ::zetasql::RangeTypeProto* range_type_;
   int type_kind_;
   friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
 };
@@ -1557,6 +1582,169 @@ class EnumTypeProto final :
   int32_t file_descriptor_set_index_;
   friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
 };
+// -------------------------------------------------------------------
+
+class RangeTypeProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.RangeTypeProto) */ {
+ public:
+  inline RangeTypeProto() : RangeTypeProto(nullptr) {}
+  ~RangeTypeProto() override;
+  explicit constexpr RangeTypeProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RangeTypeProto(const RangeTypeProto& from);
+  RangeTypeProto(RangeTypeProto&& from) noexcept
+    : RangeTypeProto() {
+    *this = ::std::move(from);
+  }
+
+  inline RangeTypeProto& operator=(const RangeTypeProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RangeTypeProto& operator=(RangeTypeProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RangeTypeProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RangeTypeProto* internal_default_instance() {
+    return reinterpret_cast<const RangeTypeProto*>(
+               &_RangeTypeProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(RangeTypeProto& a, RangeTypeProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RangeTypeProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RangeTypeProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RangeTypeProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RangeTypeProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const RangeTypeProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const RangeTypeProto& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RangeTypeProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.RangeTypeProto";
+  }
+  protected:
+  explicit RangeTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kElementTypeFieldNumber = 1,
+  };
+  // optional .zetasql.TypeProto element_type = 1;
+  bool has_element_type() const;
+  private:
+  bool _internal_has_element_type() const;
+  public:
+  void clear_element_type();
+  const ::zetasql::TypeProto& element_type() const;
+  PROTOBUF_NODISCARD ::zetasql::TypeProto* release_element_type();
+  ::zetasql::TypeProto* mutable_element_type();
+  void set_allocated_element_type(::zetasql::TypeProto* element_type);
+  private:
+  const ::zetasql::TypeProto& _internal_element_type() const;
+  ::zetasql::TypeProto* _internal_mutable_element_type();
+  public:
+  void unsafe_arena_set_allocated_element_type(
+      ::zetasql::TypeProto* element_type);
+  ::zetasql::TypeProto* unsafe_arena_release_element_type();
+
+  // @@protoc_insertion_point(class_scope:zetasql.RangeTypeProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::zetasql::TypeProto* element_type_;
+  friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
+};
 // ===================================================================
 
 
@@ -1570,7 +1758,7 @@ class EnumTypeProto final :
 
 // optional .zetasql.TypeKind type_kind = 1;
 inline bool TypeProto::_internal_has_type_kind() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
+  bool value = (_has_bits_[0] & 0x00000040u) != 0;
   return value;
 }
 inline bool TypeProto::has_type_kind() const {
@@ -1578,7 +1766,7 @@ inline bool TypeProto::has_type_kind() const {
 }
 inline void TypeProto::clear_type_kind() {
   type_kind_ = -1;
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline ::zetasql::TypeKind TypeProto::_internal_type_kind() const {
   return static_cast< ::zetasql::TypeKind >(type_kind_);
@@ -1589,7 +1777,7 @@ inline ::zetasql::TypeKind TypeProto::type_kind() const {
 }
 inline void TypeProto::_internal_set_type_kind(::zetasql::TypeKind value) {
   assert(::zetasql::TypeKind_IsValid(value));
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000040u;
   type_kind_ = value;
 }
 inline void TypeProto::set_type_kind(::zetasql::TypeKind value) {
@@ -1955,6 +2143,96 @@ inline void TypeProto::set_allocated_enum_type(::zetasql::EnumTypeProto* enum_ty
   }
   enum_type_ = enum_type;
   // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.enum_type)
+}
+
+// optional .zetasql.RangeTypeProto range_type = 8;
+inline bool TypeProto::_internal_has_range_type() const {
+  bool value = (_has_bits_[0] & 0x00000020u) != 0;
+  PROTOBUF_ASSUME(!value || range_type_ != nullptr);
+  return value;
+}
+inline bool TypeProto::has_range_type() const {
+  return _internal_has_range_type();
+}
+inline void TypeProto::clear_range_type() {
+  if (range_type_ != nullptr) range_type_->Clear();
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline const ::zetasql::RangeTypeProto& TypeProto::_internal_range_type() const {
+  const ::zetasql::RangeTypeProto* p = range_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::RangeTypeProto&>(
+      ::zetasql::_RangeTypeProto_default_instance_);
+}
+inline const ::zetasql::RangeTypeProto& TypeProto::range_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.TypeProto.range_type)
+  return _internal_range_type();
+}
+inline void TypeProto::unsafe_arena_set_allocated_range_type(
+    ::zetasql::RangeTypeProto* range_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(range_type_);
+  }
+  range_type_ = range_type;
+  if (range_type) {
+    _has_bits_[0] |= 0x00000020u;
+  } else {
+    _has_bits_[0] &= ~0x00000020u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.TypeProto.range_type)
+}
+inline ::zetasql::RangeTypeProto* TypeProto::release_range_type() {
+  _has_bits_[0] &= ~0x00000020u;
+  ::zetasql::RangeTypeProto* temp = range_type_;
+  range_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::RangeTypeProto* TypeProto::unsafe_arena_release_range_type() {
+  // @@protoc_insertion_point(field_release:zetasql.TypeProto.range_type)
+  _has_bits_[0] &= ~0x00000020u;
+  ::zetasql::RangeTypeProto* temp = range_type_;
+  range_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::RangeTypeProto* TypeProto::_internal_mutable_range_type() {
+  _has_bits_[0] |= 0x00000020u;
+  if (range_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::RangeTypeProto>(GetArenaForAllocation());
+    range_type_ = p;
+  }
+  return range_type_;
+}
+inline ::zetasql::RangeTypeProto* TypeProto::mutable_range_type() {
+  ::zetasql::RangeTypeProto* _msg = _internal_mutable_range_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.TypeProto.range_type)
+  return _msg;
+}
+inline void TypeProto::set_allocated_range_type(::zetasql::RangeTypeProto* range_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete range_type_;
+  }
+  if (range_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::RangeTypeProto>::GetOwningArena(range_type);
+    if (message_arena != submessage_arena) {
+      range_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, range_type, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000020u;
+  } else {
+    _has_bits_[0] &= ~0x00000020u;
+  }
+  range_type_ = range_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.range_type)
 }
 
 // repeated .google.protobuf.FileDescriptorSet file_descriptor_set = 6;
@@ -2854,9 +3132,105 @@ EnumTypeProto::mutable_catalog_name_path() {
   return &catalog_name_path_;
 }
 
+// -------------------------------------------------------------------
+
+// RangeTypeProto
+
+// optional .zetasql.TypeProto element_type = 1;
+inline bool RangeTypeProto::_internal_has_element_type() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || element_type_ != nullptr);
+  return value;
+}
+inline bool RangeTypeProto::has_element_type() const {
+  return _internal_has_element_type();
+}
+inline void RangeTypeProto::clear_element_type() {
+  if (element_type_ != nullptr) element_type_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::TypeProto& RangeTypeProto::_internal_element_type() const {
+  const ::zetasql::TypeProto* p = element_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TypeProto&>(
+      ::zetasql::_TypeProto_default_instance_);
+}
+inline const ::zetasql::TypeProto& RangeTypeProto::element_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.RangeTypeProto.element_type)
+  return _internal_element_type();
+}
+inline void RangeTypeProto::unsafe_arena_set_allocated_element_type(
+    ::zetasql::TypeProto* element_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(element_type_);
+  }
+  element_type_ = element_type;
+  if (element_type) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.RangeTypeProto.element_type)
+}
+inline ::zetasql::TypeProto* RangeTypeProto::release_element_type() {
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::TypeProto* temp = element_type_;
+  element_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::TypeProto* RangeTypeProto::unsafe_arena_release_element_type() {
+  // @@protoc_insertion_point(field_release:zetasql.RangeTypeProto.element_type)
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::TypeProto* temp = element_type_;
+  element_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::TypeProto* RangeTypeProto::_internal_mutable_element_type() {
+  _has_bits_[0] |= 0x00000001u;
+  if (element_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::TypeProto>(GetArenaForAllocation());
+    element_type_ = p;
+  }
+  return element_type_;
+}
+inline ::zetasql::TypeProto* RangeTypeProto::mutable_element_type() {
+  ::zetasql::TypeProto* _msg = _internal_mutable_element_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.RangeTypeProto.element_type)
+  return _msg;
+}
+inline void RangeTypeProto::set_allocated_element_type(::zetasql::TypeProto* element_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete element_type_;
+  }
+  if (element_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::TypeProto>::GetOwningArena(element_type);
+    if (message_arena != submessage_arena) {
+      element_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, element_type, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  element_type_ = element_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.RangeTypeProto.element_type)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

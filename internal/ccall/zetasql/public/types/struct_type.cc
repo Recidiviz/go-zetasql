@@ -16,6 +16,7 @@
 
 #include "zetasql/public/types/struct_type.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <limits>
@@ -32,6 +33,7 @@
 #include "zetasql/public/type.pb.h"
 #include "zetasql/public/types/internal_utils.h"
 #include "zetasql/public/types/type.h"
+#include "zetasql/public/types/type_modifiers.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/value_content.h"
 #include "absl/base/optimization.h"
@@ -214,19 +216,27 @@ std::string StructType::TypeName(ProductMode mode) const {
   return TypeNameImpl(std::numeric_limits<int>::max(), field_debug_fn).value();
 }
 
-absl::StatusOr<std::string> StructType::TypeNameWithParameters(
-    const TypeParameters& type_params, ProductMode mode) const {
-  if (type_params.IsEmpty()) {
-    return TypeName(mode);
-  }
-  if (!(type_params.IsStructOrArrayParameters() &&
-        type_params.num_children() == num_fields())) {
+absl::StatusOr<std::string> StructType::TypeNameWithModifiers(
+    const TypeModifiers& type_modifiers, ProductMode mode) const {
+  const TypeParameters& type_params = type_modifiers.type_parameters();
+  if (!type_params.IsEmpty() && (type_params.num_children() != num_fields())) {
     return MakeSqlError()
            << "Input type parameter does not correspond to this StructType";
   }
+  const Collation& collation = type_modifiers.collation();
+  if (!collation.HasCompatibleStructure(this)) {
+    return MakeSqlError() << "Input collation" << collation.DebugString()
+                          << " is not compatible with type " << DebugString();
+  }
+  ZETASQL_RET_CHECK(collation.Empty() || collation.num_children() == num_fields());
   const auto field_debug_fn = [=](const zetasql::Type* type,
                                   int field_index) {
-    return type->TypeNameWithParameters(type_params.child(field_index), mode);
+    return type->TypeNameWithModifiers(
+        TypeModifiers::MakeTypeModifiers(
+            type_params.IsEmpty() ? TypeParameters()
+                                  : type_params.child(field_index),
+            collation.Empty() ? Collation() : collation.child(field_index)),
+        mode);
   };
   return TypeNameImpl(std::numeric_limits<int>::max(), field_debug_fn);
 }
@@ -245,7 +255,6 @@ absl::Status StructType::ValidateResolvedTypeParameters(
   if (type_parameters.IsEmpty()) {
     return absl::OkStatus();
   }
-  ZETASQL_RET_CHECK(type_parameters.IsStructOrArrayParameters());
   ZETASQL_RET_CHECK_EQ(type_parameters.num_children(), num_fields());
   for (int i = 0; i < num_fields(); ++i) {
     ZETASQL_RETURN_IF_ERROR(fields_[i].type->ValidateResolvedTypeParameters(

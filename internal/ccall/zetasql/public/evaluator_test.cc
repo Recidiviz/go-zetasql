@@ -94,7 +94,7 @@ class UDFEvalTest : public ::testing::Test {
   const int kFunctionId = 5000;
 
   void SetUp() override {
-    catalog_ = absl::make_unique<SimpleCatalog>("udf_catalog");
+    catalog_ = std::make_unique<SimpleCatalog>("udf_catalog");
     catalog_->AddZetaSQLFunctions();
     ZETASQL_ASSERT_OK(analyzer_options_.AddQueryParameter(
         "param", types::StringType()));
@@ -756,7 +756,7 @@ TEST(EvaluatorTest, PrepareExecuteAllowUndeclaredQueryParametersResolvedExpr) {
   analyzer_options.set_allow_undeclared_parameters(true);
   ZETASQL_ASSERT_OK(analyzer_options.AddExpressionColumn("col", types::Int64Type()));
 
-  auto catalog = absl::make_unique<SimpleCatalog>("foo");
+  auto catalog = std::make_unique<SimpleCatalog>("foo");
   catalog->AddZetaSQLFunctions();
   TypeFactory type_factory;
 
@@ -833,7 +833,7 @@ TEST(EvaluatorTest,
   analyzer_options.set_parameter_mode(PARAMETER_POSITIONAL);
   ZETASQL_ASSERT_OK(analyzer_options.AddExpressionColumn("col", types::Int64Type()));
 
-  auto catalog = absl::make_unique<SimpleCatalog>("foo");
+  auto catalog = std::make_unique<SimpleCatalog>("foo");
   catalog->AddZetaSQLFunctions();
   TypeFactory type_factory;
 
@@ -983,7 +983,7 @@ TEST(EvaluatorTest, PrepareExecuteSubexpressionsWithPositionalQueryParameters) {
   for (const Value& param : positional_parameters) {
     ZETASQL_ASSERT_OK(analyzer_options.AddPositionalQueryParameter(param.type()));
   }
-  auto catalog = absl::make_unique<SimpleCatalog>("foo");
+  auto catalog = std::make_unique<SimpleCatalog>("foo");
   catalog->AddZetaSQLFunctions();
   TypeFactory type_factory;
 
@@ -1023,7 +1023,7 @@ TEST(EvaluatorTest, PrepareExecuteSubexpressionsWithNamedQueryParameters) {
     ZETASQL_ASSERT_OK(analyzer_options.AddQueryParameter(
         entry.first, entry.second.type()));
   }
-  auto catalog = absl::make_unique<SimpleCatalog>("foo");
+  auto catalog = std::make_unique<SimpleCatalog>("foo");
   catalog->AddZetaSQLFunctions();
   TypeFactory type_factory;
 
@@ -1700,7 +1700,7 @@ PreparedExpressionFromAST ParseToASTAndPrepareOrDie(
     const std::string& sql, const AnalyzerOptions& analyzer_options,
     TypeFactory* type_factory) {
   PreparedExpressionFromAST prepared_from_ast;
-  prepared_from_ast.catalog = absl::make_unique<SimpleCatalog>("foo");
+  prepared_from_ast.catalog = std::make_unique<SimpleCatalog>("foo");
   prepared_from_ast.catalog->AddZetaSQLFunctions();
 
   ZETASQL_CHECK_OK(AnalyzeExpression(sql, analyzer_options,
@@ -1709,7 +1709,7 @@ PreparedExpressionFromAST ParseToASTAndPrepareOrDie(
 
   EvaluatorOptions evaluator_options;
   evaluator_options.type_factory = type_factory;
-  prepared_from_ast.expression = absl::make_unique<PreparedExpression>(
+  prepared_from_ast.expression = std::make_unique<PreparedExpression>(
       prepared_from_ast.analyzer_output->resolved_expr(), evaluator_options);
   ZETASQL_CHECK_OK(prepared_from_ast.expression->Prepare(analyzer_options));
   return prepared_from_ast;
@@ -2426,7 +2426,7 @@ class PreparedModifyTest : public ::testing::Test {
 
  protected:
   void AddNonValueTable() {
-    auto test_table = absl::make_unique<SimpleTable>(
+    auto test_table = std::make_unique<SimpleTable>(
         kTestTable,
         std::vector<SimpleTable::NameAndType>{
             {"int_val", types::Int64Type()}, {"str_val", types::StringType()}});
@@ -2438,7 +2438,7 @@ class PreparedModifyTest : public ::testing::Test {
   }
 
   void AddValueTableInt64RowType() {
-    auto test_value_table = absl::make_unique<SimpleTable>(
+    auto test_value_table = std::make_unique<SimpleTable>(
         kTestValueTable,
         std::vector<SimpleTable::NameAndType>{{"int_val", types::Int64Type()}});
     test_value_table->SetContents({{Int64(1)}, {Int64(2)}, {Int64(4)}});
@@ -2453,8 +2453,6 @@ class PreparedModifyTest : public ::testing::Test {
   // Table names
   static constexpr char kTestTable[] = "test_table";
   static constexpr char kTestValueTable[] = "test_value_table";
-
-  const StructType* test_value_table_struct_row_type_;
 };
 
 TEST_F(PreparedModifyTest, ExecutesInsert) {
@@ -2577,7 +2575,7 @@ TEST_F(PreparedModifyTest, ExecutesUpdate) {
 }
 
 TEST_F(PreparedModifyTest, IteratorStillLiveOnDestruction) {
-  auto query = absl::make_unique<PreparedModify>(
+  auto query = std::make_unique<PreparedModify>(
       "delete from test_table where true", EvaluatorOptions());
   ZETASQL_ASSERT_OK(query->Prepare(analyzer_options(), catalog()));
   ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
@@ -2885,6 +2883,479 @@ TEST_F(PreparedModifyTest, ExplainAfterPrepareWithoutPrepare) {
                        HasSubstr("Prepare must be called first")));
 }
 
+// This test suite runs DML Returning statements using version 2 Execute API,
+// and verify the returning clause results.
+class PreparedDmlReturningTest : public PreparedModifyTest {
+  void SetUp() override {
+    PreparedModifyTest::SetUp();
+
+    analyzer_options_.mutable_language()->EnableLanguageFeature(
+        FEATURE_V_1_3_DML_RETURNING);
+  }
+};
+
+TEST_F(PreparedDmlReturningTest, ExecutesInsert) {
+  PreparedModify modify(
+      "insert test_table(int_val, str_val) values(3, 'three') "
+      "then return str_val, int_val + 1 as new_val",
+      EvaluatorOptions());
+  ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options(), catalog()));
+  ASSERT_EQ(modify.resolved_statement()->node_kind(), RESOLVED_INSERT_STMT);
+
+  std::unique_ptr<EvaluatorTableIterator> returning_iter;
+  ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                       modify.Execute({}, {}, &returning_iter));
+
+  const Table* table;
+  ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+
+  EXPECT_EQ(iter->table(), table);
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(3));
+  EXPECT_EQ(iter->GetColumnValue(1), String("three"));
+  EXPECT_FALSE(iter->GetOriginalKeyValue(0).is_valid());
+  EXPECT_EQ(iter->GetOperation(),
+            EvaluatorTableModifyIterator::Operation::kInsert);
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+
+  // Validate RETURNING results.
+  EXPECT_NE(returning_iter, nullptr);
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetColumnName(0), "str_val");
+  EXPECT_EQ(returning_iter->GetColumnName(1), "new_val");
+  EXPECT_EQ("STRING", returning_iter->GetColumnType(0)->DebugString());
+  EXPECT_EQ("INT64", returning_iter->GetColumnType(1)->DebugString());
+
+  EXPECT_EQ(returning_iter->GetValue(0), String("three"));
+  EXPECT_EQ(returning_iter->GetValue(1), Int64(4));
+
+  EXPECT_FALSE(returning_iter->NextRow());
+  ZETASQL_EXPECT_OK(returning_iter->Status());
+}
+
+TEST_F(PreparedDmlReturningTest, ExecutesDelete) {
+  PreparedModify modify(
+      "delete test_table where int_val in (2, 4) then return *",
+      EvaluatorOptions());
+  ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options(), catalog()));
+  ASSERT_EQ(modify.resolved_statement()->node_kind(), RESOLVED_DELETE_STMT);
+  std::unique_ptr<EvaluatorTableIterator> returning_iter;
+  ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                       modify.Execute({}, {}, &returning_iter));
+
+  const Table* table;
+  ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+
+  EXPECT_EQ(iter->table(), table);
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_FALSE(iter->GetColumnValue(0).is_valid());
+  EXPECT_FALSE(iter->GetColumnValue(1).is_valid());
+  EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(2));
+  EXPECT_EQ(iter->GetOperation(),
+            EvaluatorTableModifyIterator::Operation::kDelete);
+
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_FALSE(iter->GetColumnValue(0).is_valid());
+  EXPECT_FALSE(iter->GetColumnValue(1).is_valid());
+  EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(4));
+  EXPECT_EQ(iter->GetOperation(),
+            EvaluatorTableModifyIterator::Operation::kDelete);
+
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+
+  // Validate RETURNING results.
+  EXPECT_NE(returning_iter, nullptr);
+  EXPECT_EQ(returning_iter->NumColumns(), 2);
+  EXPECT_EQ(returning_iter->GetColumnName(0), "int_val");
+  EXPECT_EQ(returning_iter->GetColumnName(1), "str_val");
+  EXPECT_EQ("INT64", returning_iter->GetColumnType(0)->DebugString());
+  EXPECT_EQ("STRING", returning_iter->GetColumnType(1)->DebugString());
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetValue(0), Int64(2));
+  EXPECT_EQ(returning_iter->GetValue(1), String("two"));
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetValue(0), Int64(4));
+  EXPECT_EQ(returning_iter->GetValue(1), String("four"));
+
+  EXPECT_FALSE(returning_iter->NextRow());
+  ZETASQL_EXPECT_OK(returning_iter->Status());
+}
+
+TEST_F(PreparedDmlReturningTest, ExecutesUpdate) {
+  PreparedModify modify(
+      "update test_table set str_val = 'foo' where int_val > 1 then return *",
+      EvaluatorOptions());
+  ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options(), catalog()));
+  ASSERT_EQ(modify.resolved_statement()->node_kind(), RESOLVED_UPDATE_STMT);
+  std::unique_ptr<EvaluatorTableIterator> returning_iter;
+  ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                       modify.Execute({}, {}, &returning_iter));
+
+  const Table* table;
+  ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+
+  EXPECT_EQ(iter->table(), table);
+
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(2));
+  EXPECT_EQ(iter->GetColumnValue(1), String("foo"));
+  EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(2));
+  EXPECT_EQ(iter->GetOperation(),
+            EvaluatorTableModifyIterator::Operation::kUpdate);
+
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(4));
+  EXPECT_EQ(iter->GetColumnValue(1), String("foo"));
+  EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(4));
+  EXPECT_EQ(iter->GetOperation(),
+            EvaluatorTableModifyIterator::Operation::kUpdate);
+
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+
+  // Validate RETURNING results.
+  EXPECT_NE(returning_iter, nullptr);
+  EXPECT_EQ(returning_iter->GetColumnName(0), "int_val");
+  EXPECT_EQ(returning_iter->GetColumnName(1), "str_val");
+  EXPECT_EQ("INT64", returning_iter->GetColumnType(0)->DebugString());
+  EXPECT_EQ("STRING", returning_iter->GetColumnType(1)->DebugString());
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetValue(0), Int64(2));
+  EXPECT_EQ(returning_iter->GetValue(1), String("foo"));
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetValue(0), Int64(4));
+  EXPECT_EQ(returning_iter->GetValue(1), String("foo"));
+
+  EXPECT_FALSE(returning_iter->NextRow());
+  ZETASQL_EXPECT_OK(returning_iter->Status());
+}
+
+TEST_F(PreparedDmlReturningTest, PositionalParameter) {
+  PreparedModify modify(
+      "insert test_table(int_val, str_val) values(?, ?) "
+      "then return str_val, int_val + 1 AS new_val",
+      EvaluatorOptions());
+
+  AnalyzerOptions analyzer_options = PreparedModifyTest::analyzer_options();
+  analyzer_options.set_parameter_mode(PARAMETER_POSITIONAL);
+  ZETASQL_EXPECT_OK(analyzer_options.AddPositionalQueryParameter(types::Int64Type()));
+  ZETASQL_EXPECT_OK(analyzer_options.AddPositionalQueryParameter(types::StringType()));
+  ZETASQL_EXPECT_OK(analyzer_options.AddPositionalQueryParameter(types::DoubleType()));
+
+  ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options, catalog()));
+
+  EXPECT_THAT(modify.GetReferencedParameters(), IsOkAndHolds(IsEmpty()));
+  EXPECT_THAT(modify.GetPositionalParameterCount(), IsOkAndHolds(2));
+
+  std::unique_ptr<EvaluatorTableIterator> returning_iter;
+  ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                       modify.ExecuteWithPositionalParams(
+                           {Int64(3), String("three")}, {}, &returning_iter));
+
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(3));
+  EXPECT_EQ(iter->GetColumnValue(1), String("three"));
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+  iter.reset();
+
+  // Validate RETURNING results.
+  EXPECT_NE(returning_iter, nullptr);
+  EXPECT_EQ(returning_iter->GetColumnName(0), "str_val");
+  EXPECT_EQ(returning_iter->GetColumnName(1), "new_val");
+  EXPECT_EQ("STRING", returning_iter->GetColumnType(0)->DebugString());
+  EXPECT_EQ("INT64", returning_iter->GetColumnType(1)->DebugString());
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetValue(0), String("three"));
+  EXPECT_EQ(returning_iter->GetValue(1), Int64(4));
+
+  EXPECT_FALSE(returning_iter->NextRow());
+  ZETASQL_EXPECT_OK(returning_iter->Status());
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(
+      iter, modify.ExecuteWithPositionalParams(
+                {Int64(0), NullString(), NullDouble(), NullBytes()}, {},
+                &returning_iter));
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(0));
+  EXPECT_EQ(iter->GetColumnValue(1), NullString());
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+  iter.reset();
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetColumnName(0), "str_val");
+  EXPECT_EQ(returning_iter->GetValue(0), NullString());
+  EXPECT_EQ(returning_iter->GetColumnName(1), "new_val");
+  EXPECT_EQ(returning_iter->GetValue(1), Int64(1));
+
+  EXPECT_THAT(
+      modify.ExecuteWithPositionalParams({Int64(100)}, {}, &returning_iter),
+      StatusIs(absl::StatusCode::kInvalidArgument,
+               HasSubstr("Incorrect number of positional parameters")));
+}
+
+TEST_F(PreparedDmlReturningTest,
+       ExecuteAfterPreparedWithOrderedParamsWithPositionalParameter) {
+  PreparedModify modify(
+      "insert test_table(int_val, str_val) values(?, ?) then return str_val, "
+      "int_val + 1 AS new_val",
+      EvaluatorOptions());
+
+  AnalyzerOptions analyzer_options = PreparedModifyTest::analyzer_options();
+  analyzer_options.set_parameter_mode(PARAMETER_POSITIONAL);
+  ZETASQL_EXPECT_OK(analyzer_options.AddPositionalQueryParameter(types::Int64Type()));
+  ZETASQL_EXPECT_OK(analyzer_options.AddPositionalQueryParameter(types::StringType()));
+  ZETASQL_EXPECT_OK(analyzer_options.AddPositionalQueryParameter(types::DoubleType()));
+
+  ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options, catalog()));
+
+  EXPECT_THAT(modify.GetReferencedParameters(), IsOkAndHolds(IsEmpty()));
+  EXPECT_THAT(modify.GetPositionalParameterCount(), IsOkAndHolds(2));
+
+  std::unique_ptr<EvaluatorTableIterator> returning_iter;
+  ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                       modify.ExecuteWithPositionalParams(
+                           {Int64(3), String("three")}, {}, &returning_iter));
+
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(3));
+  EXPECT_EQ(iter->GetColumnValue(1), String("three"));
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+  iter.reset();
+
+  // Validate RETURNING results.
+  EXPECT_NE(returning_iter, nullptr);
+  EXPECT_EQ(returning_iter->GetColumnName(0), "str_val");
+  EXPECT_EQ(returning_iter->GetColumnName(1), "new_val");
+  EXPECT_EQ("STRING", returning_iter->GetColumnType(0)->DebugString());
+  EXPECT_EQ("INT64", returning_iter->GetColumnType(1)->DebugString());
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetValue(0), String("three"));
+  EXPECT_EQ(returning_iter->GetValue(1), Int64(4));
+
+  EXPECT_FALSE(returning_iter->NextRow());
+  ZETASQL_EXPECT_OK(returning_iter->Status());
+
+  // Calling the ExecuteAfterPrepare variant.
+  ZETASQL_ASSERT_OK_AND_ASSIGN(
+      iter, modify.ExecuteAfterPrepareWithOrderedParams(
+                {Int64(0), NullString(), NullDouble(), NullBytes()}, {},
+                &returning_iter));
+  ASSERT_TRUE(iter->NextRow());
+  EXPECT_EQ(iter->GetColumnValue(0), Int64(0));
+  EXPECT_EQ(iter->GetColumnValue(1), NullString());
+  EXPECT_FALSE(iter->NextRow());
+  ZETASQL_EXPECT_OK(iter->Status());
+  iter.reset();
+
+  ASSERT_TRUE(returning_iter->NextRow());
+  EXPECT_EQ(returning_iter->GetColumnName(0), "str_val");
+  EXPECT_EQ(returning_iter->GetValue(0), NullString());
+  EXPECT_EQ(returning_iter->GetColumnName(1), "new_val");
+  EXPECT_EQ(returning_iter->GetValue(1), Int64(1));
+
+  EXPECT_THAT(
+      modify.ExecuteWithPositionalParams({Int64(100)}, {}, &returning_iter),
+      StatusIs(absl::StatusCode::kInvalidArgument,
+               HasSubstr("Incorrect number of positional parameters")));
+}
+
+TEST_F(PreparedDmlReturningTest, VerifyReturningIteratorNullForRegularDmls) {
+  const Table* table;
+  PreparedQuery query("select * from test_table", EvaluatorOptions());
+  ZETASQL_ASSERT_OK(query.Prepare(AnalyzerOptions(), catalog()));
+
+  {
+    PreparedModify insert_stmt(
+        "insert test_table(int_val, str_val) values(3, 'three')",
+        EvaluatorOptions());
+    ZETASQL_ASSERT_OK(insert_stmt.Prepare(analyzer_options(), catalog()));
+    ASSERT_EQ(insert_stmt.resolved_statement()->node_kind(),
+              RESOLVED_INSERT_STMT);
+
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableIterator> returning_iter,
+                         query.Execute());
+    EXPECT_NE(returning_iter, nullptr);
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                         insert_stmt.Execute({}, {}, &returning_iter));
+    EXPECT_EQ(returning_iter, nullptr);
+    ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+    EXPECT_EQ(iter->table(), table);
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_EQ(iter->GetColumnValue(0), Int64(3));
+    EXPECT_EQ(iter->GetColumnValue(1), String("three"));
+    EXPECT_FALSE(iter->GetOriginalKeyValue(0).is_valid());
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kInsert);
+    EXPECT_FALSE(iter->NextRow());
+    ZETASQL_EXPECT_OK(iter->Status());
+  }
+
+  {
+    PreparedModify update_stmt(
+        "update test_table set str_val = 'foo' where int_val in (2, 4)",
+        EvaluatorOptions());
+    ZETASQL_ASSERT_OK(update_stmt.Prepare(analyzer_options(), catalog()));
+    ASSERT_EQ(update_stmt.resolved_statement()->node_kind(),
+              RESOLVED_UPDATE_STMT);
+
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableIterator> returning_iter,
+                         query.Execute());
+    EXPECT_NE(returning_iter, nullptr);
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                         update_stmt.Execute({}, {}, &returning_iter));
+    EXPECT_EQ(returning_iter, nullptr);
+    ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+    EXPECT_EQ(iter->table(), table);
+
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_EQ(iter->GetColumnValue(0), Int64(2));
+    EXPECT_EQ(iter->GetColumnValue(1), String("foo"));
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(2));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kUpdate);
+
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_EQ(iter->GetColumnValue(0), Int64(4));
+    EXPECT_EQ(iter->GetColumnValue(1), String("foo"));
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(4));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kUpdate);
+    EXPECT_FALSE(iter->NextRow());
+    ZETASQL_EXPECT_OK(iter->Status());
+  }
+
+  {
+    PreparedModify delete_stmt("delete test_table where int_val in (2, 4)",
+                               EvaluatorOptions());
+    ZETASQL_ASSERT_OK(delete_stmt.Prepare(analyzer_options(), catalog()));
+    ASSERT_EQ(delete_stmt.resolved_statement()->node_kind(),
+              RESOLVED_DELETE_STMT);
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableIterator> returning_iter,
+                         query.Execute());
+    EXPECT_NE(returning_iter, nullptr);
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                         delete_stmt.Execute({}, {}, &returning_iter));
+    EXPECT_EQ(returning_iter, nullptr);
+    ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+    EXPECT_EQ(iter->table(), table);
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_FALSE(iter->GetColumnValue(0).is_valid());
+    EXPECT_FALSE(iter->GetColumnValue(1).is_valid());
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(2));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kDelete);
+
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_FALSE(iter->GetColumnValue(0).is_valid());
+    EXPECT_FALSE(iter->GetColumnValue(1).is_valid());
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(4));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kDelete);
+    EXPECT_FALSE(iter->NextRow());
+    ZETASQL_EXPECT_OK(iter->Status());
+  }
+}
+
+TEST_F(PreparedDmlReturningTest, ExecuteWithoutReturningIterator) {
+  {
+    PreparedModify modify(
+        "insert test_table(int_val, str_val) values(3, 'three') "
+        "then return str_val, int_val + 1 as new_val",
+        EvaluatorOptions());
+    ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options(), catalog()));
+    ASSERT_EQ(modify.resolved_statement()->node_kind(), RESOLVED_INSERT_STMT);
+
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                         modify.Execute({}, {}));
+    const Table* table;
+    ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+
+    EXPECT_EQ(iter->table(), table);
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_EQ(iter->GetColumnValue(0), Int64(3));
+    EXPECT_EQ(iter->GetColumnValue(1), String("three"));
+    EXPECT_FALSE(iter->GetOriginalKeyValue(0).is_valid());
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kInsert);
+    EXPECT_FALSE(iter->NextRow());
+    ZETASQL_EXPECT_OK(iter->Status());
+  }
+  {
+    PreparedModify modify(
+        "delete test_table where int_val in (2, 4) then return *",
+        EvaluatorOptions());
+    ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options(), catalog()));
+    ASSERT_EQ(modify.resolved_statement()->node_kind(), RESOLVED_DELETE_STMT);
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                         modify.Execute({}, {}));
+
+    const Table* table;
+    ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+
+    EXPECT_EQ(iter->table(), table);
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_FALSE(iter->GetColumnValue(0).is_valid());
+    EXPECT_FALSE(iter->GetColumnValue(1).is_valid());
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(2));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kDelete);
+
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_FALSE(iter->GetColumnValue(0).is_valid());
+    EXPECT_FALSE(iter->GetColumnValue(1).is_valid());
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(4));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kDelete);
+
+    EXPECT_FALSE(iter->NextRow());
+    ZETASQL_EXPECT_OK(iter->Status());
+  }
+
+  {
+    PreparedModify modify(
+        "update test_table set str_val = 'foo' where int_val in (2, 4) "
+        "then return *",
+        EvaluatorOptions());
+    ZETASQL_ASSERT_OK(modify.Prepare(analyzer_options(), catalog()));
+    ASSERT_EQ(modify.resolved_statement()->node_kind(), RESOLVED_UPDATE_STMT);
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableModifyIterator> iter,
+                         modify.Execute({}, {}));
+
+    const Table* table;
+    ZETASQL_ASSERT_OK(catalog()->FindTable({"test_table"}, &table));
+
+    EXPECT_EQ(iter->table(), table);
+
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_EQ(iter->GetColumnValue(0), Int64(2));
+    EXPECT_EQ(iter->GetColumnValue(1), String("foo"));
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(2));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kUpdate);
+
+    ASSERT_TRUE(iter->NextRow());
+    EXPECT_EQ(iter->GetColumnValue(0), Int64(4));
+    EXPECT_EQ(iter->GetColumnValue(1), String("foo"));
+    EXPECT_EQ(iter->GetOriginalKeyValue(0), Int64(4));
+    EXPECT_EQ(iter->GetOperation(),
+              EvaluatorTableModifyIterator::Operation::kUpdate);
+
+    EXPECT_FALSE(iter->NextRow());
+    ZETASQL_EXPECT_OK(iter->Status());
+  }
+}
+
 TEST(PreparedQuery, FromTableOnlySecondColumn) {
   SimpleTable test_table(
       "TestTable", {{"a", types::Int64Type()}, {"b", types::StringType()}});
@@ -3108,8 +3579,8 @@ TEST(PreparedQueryDeathTest, IteratorStillLiveOnDestruction) {
   SimpleCatalog catalog("TestCatalog");
   catalog.AddTable(test_table.Name(), &test_table);
 
-  auto query = absl::make_unique<PreparedQuery>("select a from TestTable",
-                                                EvaluatorOptions());
+  auto query = std::make_unique<PreparedQuery>("select a from TestTable",
+                                               EvaluatorOptions());
   ZETASQL_ASSERT_OK(query->Prepare(AnalyzerOptions(), &catalog));
   ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<EvaluatorTableIterator> iter,
                        query->Execute());
@@ -3434,7 +3905,7 @@ class PreparedQueryProtoTest : public PreparedQueryTest {
               {GetProtoValue(10), values::Struct(struct_with_just_proto_type_,
                                                  {GetProtoValue(100)})})}});
 
-    catalog_ = absl::make_unique<SimpleCatalog>("TestCatalog");
+    catalog_ = std::make_unique<SimpleCatalog>("TestCatalog");
     catalog_->AddTable(table_->Name(), table_.get());
     catalog_->AddTable(table2_->Name(), table2_.get());
     catalog_->AddZetaSQLFunctions();

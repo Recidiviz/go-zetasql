@@ -1,0 +1,44 @@
+{
+  "go.useLanguageServer": true,
+  "go.buildOnSave": "off",
+  "go.lintOnSave": "off",
+  "go.vetOnSave": "off",
+  "go.toolsEnvVars": {
+    "CGO_ENABLED": "1",
+    "CXX": "clang++",
+    "GOMAXPROCS": "2"
+  },
+  "gopls": {
+    "ui.semanticTokens": false,
+    "completeUnimported": false,
+    "usePlaceholders": false,
+    "diagnosticsTrigger": "Save",
+    "analysisProgressReporting": false,
+    "staticcheck": false,
+    "directoryFilters": [
+      "-internal/cmd/updater/zetasql"
+    ]
+  },
+  "files.watcherExclude": {
+    "**/internal/ccall/absl/**": true,
+    "**/internal/ccall/flex/**": true,
+    "**/internal/ccall/googleapis/**": true,
+    "**/internal/ccall/gtest/**": true,
+    "**/internal/ccall/icu/**": true,
+    "**/internal/ccall/json/**": true,
+    "**/internal/ccall/protobuf/**": true,
+    "**/internal/ccall/re2/**": true,
+    "**/internal/cmd/updater/zetasql/**": true
+  },
+  "search.exclude": {
+    "**/internal/ccall/absl/**": true,
+    "**/internal/ccall/flex/**": true,
+    "**/internal/ccall/googleapis/**": true,
+    "**/internal/ccall/gtest/**": true,
+    "**/internal/ccall/icu/**": true,
+    "**/internal/ccall/json/**": true,
+    "**/internal/ccall/protobuf/**": true,
+    "**/internal/ccall/re2/**": true,
+    "**/internal/cmd/updater/zetasql/**": true
+  }
+}

@@ -23,6 +23,7 @@ constexpr ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto
   , name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , body_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , signature_(nullptr)
+  , extension_(nullptr)
   , is_dynamic_sql_(false){}
 struct ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal {
   constexpr ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal()
@@ -113,10 +114,12 @@ const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2epro
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, argument_name_list_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, body_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, is_dynamic_sql_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, extension_),
   0,
   2,
   ~0u,
   1,
+  4,
   3,
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _internal_metadata_),
@@ -180,11 +183,11 @@ const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2epro
   1,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 11, -1, sizeof(::zetasql::ScriptExecutorStateProto_ProcedureDefinition)},
-  { 16, 24, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters)},
-  { 26, 38, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame)},
-  { 44, 53, -1, sizeof(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage)},
-  { 56, 69, -1, sizeof(::zetasql::ScriptExecutorStateProto)},
+  { 0, 12, -1, sizeof(::zetasql::ScriptExecutorStateProto_ProcedureDefinition)},
+  { 18, 26, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters)},
+  { 28, 40, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame)},
+  { 46, 55, -1, sizeof(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage)},
+  { 58, 71, -1, sizeof(::zetasql::ScriptExecutorStateProto)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -198,52 +201,55 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n-zetasql/scripting/script_executor_stat"
   "e.proto\022\007zetasql\032\031google/protobuf/any.pr"
-  "oto\032\034zetasql/proto/function.proto\032(zetas"
-  "ql/scripting/script_exception.proto\032 zet"
-  "asql/scripting/variable.proto\"\372\t\n\030Script"
-  "ExecutorStateProto\022\?\n\tcallstack\030\001 \003(\0132,."
-  "zetasql.ScriptExecutorStateProto.StackFr"
-  "ame\0224\n\022pending_exceptions\030\002 \003(\0132\030.zetasq"
-  "l.ScriptException\022K\n\022triggered_features\030"
-  "\003 \003(\0162/.zetasql.ScriptExecutorStateProto"
-  ".ScriptFeature\022\020\n\010timezone\030\004 \001(\t\022#\n\033case"
-  "_stmt_true_branch_index\030\005 \001(\003\022&\n\036case_st"
-  "mt_current_branch_index\030\006 \001(\003\022O\n\021sql_fea"
-  "ture_usage\030\007 \001(\01324.zetasql.ScriptExecuto"
-  "rStateProto.ScriptFeatureUsage\032\231\001\n\023Proce"
-  "dureDefinition\022\014\n\004name\030\001 \001(\t\0222\n\tsignatur"
-  "e\030\002 \001(\0132\037.zetasql.FunctionSignatureProto"
-  "\022\032\n\022argument_name_list\030\003 \003(\t\022\014\n\004body\030\004 \001"
-  "(\t\022\026\n\016is_dynamic_sql\030\005 \001(\010\032\210\004\n\nStackFram"
-  "e\022S\n\024procedure_definition\030\001 \001(\01325.zetasq"
-  "l.ScriptExecutorStateProto.ProcedureDefi"
-  "nition\022$\n\tvariables\030\002 \003(\0132\021.zetasql.Vari"
-  "able\022$\n\034current_location_byte_offset\030\003 \001"
-  "(\005\022\036\n\026control_flow_node_kind\030\005 \001(\005\022K\n\npa"
-  "rameters\030\004 \001(\01327.zetasql.ScriptExecutorS"
-  "tateProto.StackFrame.Parameters\022,\n\016for_l"
-  "oop_stack\030\006 \003(\0132\024.google.protobuf.Any\032\275\001"
-  "\n\nParameters\022S\n\004mode\030\004 \001(\0162E.zetasql.Scr"
-  "iptExecutorStateProto.StackFrame.Paramet"
-  "ers.ParameterMode\022$\n\tvariables\030\005 \003(\0132\021.z"
-  "etasql.Variable\"4\n\rParameterMode\022\010\n\004NONE"
-  "\020\000\022\t\n\005NAMED\020\001\022\016\n\nPOSITIONAL\020\002\032Z\n\022ScriptF"
-  "eatureUsage\022\021\n\texception\030\001 \001(\005\022\021\n\tcall_s"
-  "tmt\030\002 \001(\005\022\036\n\026execute_immediate_stmt\030\003 \001("
-  "\005\"g\n\rScriptFeature\022\013\n\007INVALID\020\000\022\024\n\020EXCEP"
-  "TION_CAUGHT\020\001\022\022\n\016CALL_STATEMENT\020\002\022\037\n\033EXE"
-  "CUTE_IMMEDIATE_STATEMENT\020\003"
+  "oto\032\034zetasql/proto/function.proto\032+zetas"
+  "ql/scripting/procedure_extension.proto\032("
+  "zetasql/scripting/script_exception.proto"
+  "\032 zetasql/scripting/variable.proto\"\252\n\n\030S"
+  "criptExecutorStateProto\022\?\n\tcallstack\030\001 \003"
+  "(\0132,.zetasql.ScriptExecutorStateProto.St"
+  "ackFrame\0224\n\022pending_exceptions\030\002 \003(\0132\030.z"
+  "etasql.ScriptException\022K\n\022triggered_feat"
+  "ures\030\003 \003(\0162/.zetasql.ScriptExecutorState"
+  "Proto.ScriptFeature\022\020\n\010timezone\030\004 \001(\t\022#\n"
+  "\033case_stmt_true_branch_index\030\005 \001(\003\022&\n\036ca"
+  "se_stmt_current_branch_index\030\006 \001(\003\022O\n\021sq"
+  "l_feature_usage\030\007 \001(\01324.zetasql.ScriptEx"
+  "ecutorStateProto.ScriptFeatureUsage\032\311\001\n\023"
+  "ProcedureDefinition\022\014\n\004name\030\001 \001(\t\0222\n\tsig"
+  "nature\030\002 \001(\0132\037.zetasql.FunctionSignature"
+  "Proto\022\032\n\022argument_name_list\030\003 \003(\t\022\014\n\004bod"
+  "y\030\004 \001(\t\022\026\n\016is_dynamic_sql\030\005 \001(\010\022.\n\texten"
+  "sion\030\006 \001(\0132\033.zetasql.ProcedureExtension\032"
+  "\210\004\n\nStackFrame\022S\n\024procedure_definition\030\001"
+  " \001(\01325.zetasql.ScriptExecutorStateProto."
+  "ProcedureDefinition\022$\n\tvariables\030\002 \003(\0132\021"
+  ".zetasql.Variable\022$\n\034current_location_by"
+  "te_offset\030\003 \001(\005\022\036\n\026control_flow_node_kin"
+  "d\030\005 \001(\005\022K\n\nparameters\030\004 \001(\01327.zetasql.Sc"
+  "riptExecutorStateProto.StackFrame.Parame"
+  "ters\022,\n\016for_loop_stack\030\006 \003(\0132\024.google.pr"
+  "otobuf.Any\032\275\001\n\nParameters\022S\n\004mode\030\004 \001(\0162"
+  "E.zetasql.ScriptExecutorStateProto.Stack"
+  "Frame.Parameters.ParameterMode\022$\n\tvariab"
+  "les\030\005 \003(\0132\021.zetasql.Variable\"4\n\rParamete"
+  "rMode\022\010\n\004NONE\020\000\022\t\n\005NAMED\020\001\022\016\n\nPOSITIONAL"
+  "\020\002\032Z\n\022ScriptFeatureUsage\022\021\n\texception\030\001 "
+  "\001(\005\022\021\n\tcall_stmt\030\002 \001(\005\022\036\n\026execute_immedi"
+  "ate_stmt\030\003 \001(\005\"g\n\rScriptFeature\022\013\n\007INVAL"
+  "ID\020\000\022\024\n\020EXCEPTION_CAUGHT\020\001\022\022\n\016CALL_STATE"
+  "MENT\020\002\022\037\n\033EXECUTE_IMMEDIATE_STATEMENT\020\003"
   ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps[4] = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps[5] = {
   &::descriptor_table_google_2fprotobuf_2fany_2eproto,
   &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
+  &::descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
   &::descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto,
   &::descriptor_table_zetasql_2fscripting_2fvariable_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = {
-  false, false, 1466, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, "zetasql/scripting/script_executor_state.proto", 
-  &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once, descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps, 4, 5,
+  false, false, 1559, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, "zetasql/scripting/script_executor_state.proto", 
+  &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once, descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps, 5, 5,
   schemas, file_default_instances, TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets,
   file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
 };
@@ -319,6 +325,10 @@ class ScriptExecutorStateProto_ProcedureDefinition::_Internal {
     (*has_bits)[0] |= 2u;
   }
   static void set_has_is_dynamic_sql(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
+  static const ::zetasql::ProcedureExtension& extension(const ScriptExecutorStateProto_ProcedureDefinition* msg);
+  static void set_has_extension(HasBits* has_bits) {
     (*has_bits)[0] |= 8u;
   }
 };
@@ -327,9 +337,17 @@ const ::zetasql::FunctionSignatureProto&
 ScriptExecutorStateProto_ProcedureDefinition::_Internal::signature(const ScriptExecutorStateProto_ProcedureDefinition* msg) {
   return *msg->signature_;
 }
+const ::zetasql::ProcedureExtension&
+ScriptExecutorStateProto_ProcedureDefinition::_Internal::extension(const ScriptExecutorStateProto_ProcedureDefinition* msg) {
+  return *msg->extension_;
+}
 void ScriptExecutorStateProto_ProcedureDefinition::clear_signature() {
   if (signature_ != nullptr) signature_->Clear();
   _has_bits_[0] &= ~0x00000004u;
+}
+void ScriptExecutorStateProto_ProcedureDefinition::clear_extension() {
+  if (extension_ != nullptr) extension_->Clear();
+  _has_bits_[0] &= ~0x00000008u;
 }
 ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_ProcedureDefinition(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -367,6 +385,11 @@ ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_Procedure
   } else {
     signature_ = nullptr;
   }
+  if (from._internal_has_extension()) {
+    extension_ = new ::zetasql::ProcedureExtension(*from.extension_);
+  } else {
+    extension_ = nullptr;
+  }
   is_dynamic_sql_ = from.is_dynamic_sql_;
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
 }
@@ -398,6 +421,7 @@ inline void ScriptExecutorStateProto_ProcedureDefinition::SharedDtor() {
   name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   body_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete signature_;
+  if (this != internal_default_instance()) delete extension_;
 }
 
 void ScriptExecutorStateProto_ProcedureDefinition::ArenaDtor(void* object) {
@@ -418,7 +442,7 @@ void ScriptExecutorStateProto_ProcedureDefinition::Clear() {
 
   argument_name_list_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
       name_.ClearNonDefaultToEmpty();
     }
@@ -428,6 +452,10 @@ void ScriptExecutorStateProto_ProcedureDefinition::Clear() {
     if (cached_has_bits & 0x00000004u) {
       GOOGLE_DCHECK(signature_ != nullptr);
       signature_->Clear();
+    }
+    if (cached_has_bits & 0x00000008u) {
+      GOOGLE_DCHECK(extension_ != nullptr);
+      extension_->Clear();
     }
   }
   is_dynamic_sql_ = false;
@@ -496,6 +524,14 @@ const char* ScriptExecutorStateProto_ProcedureDefinition::_InternalParse(const c
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
           _Internal::set_has_is_dynamic_sql(&has_bits);
           is_dynamic_sql_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional .zetasql.ProcedureExtension extension = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          ptr = ctx->ParseMessage(_internal_mutable_extension(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -570,9 +606,17 @@ uint8_t* ScriptExecutorStateProto_ProcedureDefinition::_InternalSerialize(
   }
 
   // optional bool is_dynamic_sql = 5;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_is_dynamic_sql(), target);
+  }
+
+  // optional .zetasql.ProcedureExtension extension = 6;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        6, _Internal::extension(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -600,7 +644,7 @@ size_t ScriptExecutorStateProto_ProcedureDefinition::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000001fu) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -622,8 +666,15 @@ size_t ScriptExecutorStateProto_ProcedureDefinition::ByteSizeLong() const {
           *signature_);
     }
 
-    // optional bool is_dynamic_sql = 5;
+    // optional .zetasql.ProcedureExtension extension = 6;
     if (cached_has_bits & 0x00000008u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *extension_);
+    }
+
+    // optional bool is_dynamic_sql = 5;
+    if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 1;
     }
 
@@ -652,7 +703,7 @@ void ScriptExecutorStateProto_ProcedureDefinition::MergeFrom(const ScriptExecuto
 
   argument_name_list_.MergeFrom(from.argument_name_list_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_set_name(from._internal_name());
     }
@@ -663,6 +714,9 @@ void ScriptExecutorStateProto_ProcedureDefinition::MergeFrom(const ScriptExecuto
       _internal_mutable_signature()->::zetasql::FunctionSignatureProto::MergeFrom(from._internal_signature());
     }
     if (cached_has_bits & 0x00000008u) {
+      _internal_mutable_extension()->::zetasql::ProcedureExtension::MergeFrom(from._internal_extension());
+    }
+    if (cached_has_bits & 0x00000010u) {
       is_dynamic_sql_ = from.is_dynamic_sql_;
     }
     _has_bits_[0] |= cached_has_bits;
@@ -680,6 +734,9 @@ void ScriptExecutorStateProto_ProcedureDefinition::CopyFrom(const ScriptExecutor
 bool ScriptExecutorStateProto_ProcedureDefinition::IsInitialized() const {
   if (_internal_has_signature()) {
     if (!signature_->IsInitialized()) return false;
+  }
+  if (_internal_has_extension()) {
+    if (!extension_->IsInitialized()) return false;
   }
   return true;
 }

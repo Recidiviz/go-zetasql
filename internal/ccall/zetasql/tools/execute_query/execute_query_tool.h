@@ -24,6 +24,7 @@
 #include <utility>
 
 #include "google/protobuf/descriptor_database.h"
+#include "zetasql/common/options_utils.h"
 #include "zetasql/public/analyzer_options.h"
 #include "zetasql/public/evaluator.h"
 #include "zetasql/public/simple_catalog.h"
@@ -148,6 +149,13 @@ absl::Status AddTablesFromFlags(ExecuteQueryConfig& config);
 absl::StatusOr<std::unique_ptr<ExecuteQueryWriter>> MakeWriterFromFlags(
     const ExecuteQueryConfig& config, std::ostream& output);
 
+// Note: Currently this only sets product_mode
+// TODO: expand this to support setting other language features
+//                  via flag.
+absl::Status SetLanguageOptionsFromFlags(ExecuteQueryConfig& config);
+
+absl::Status SetAnalyzerOptionsFromFlags(ExecuteQueryConfig& config);
+
 absl::Status SetEvaluatorOptionsFromFlags(ExecuteQueryConfig& config);
 
 // Execute the query according to `config`. `config` is logically const, but due
@@ -160,6 +168,9 @@ absl::Status ExecuteQuery(absl::string_view sql, ExecuteQueryConfig& config,
 
 // Exposed for tests only
 ABSL_DECLARE_FLAG(std::string, mode);
+ABSL_DECLARE_FLAG(zetasql::internal::EnabledAstRewrites,
+                  enabled_ast_rewrites);
+ABSL_DECLARE_FLAG(std::string, product_mode);
 ABSL_DECLARE_FLAG(std::string, sql_mode);
 ABSL_DECLARE_FLAG(std::string, table_spec);
 ABSL_DECLARE_FLAG(std::string, descriptor_pool);

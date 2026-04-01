@@ -17,6 +17,8 @@
 
 PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
+namespace storage {
+}  // namespace storage
 }  // namespace zetasql
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto = nullptr;
@@ -25,16 +27,17 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = n
 static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_zetasql_2fpublic_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n$zetasql/public/type_annotation.proto\022\007"
-  "zetasql\032*zetasql/public/proto/type_annot"
-  "ation.protoB\024\n\022com.google.zetasql"
+  "\n$zetasql/public/type_annotation.proto\022\017"
+  "zetasql.storage\032*zetasql/public/proto/ty"
+  "pe_annotation.protoB\036\n\022com.google.zetasq"
+  "l\242\002\007ZETASQL"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_deps[1] = {
   &::descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto = {
-  false, false, 113, descriptor_table_protodef_zetasql_2fpublic_2ftype_5fannotation_2eproto, "zetasql/public/type_annotation.proto", 
+  false, false, 131, descriptor_table_protodef_zetasql_2fpublic_2ftype_5fannotation_2eproto, "zetasql/public/type_annotation.proto", 
   &descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_deps, 1, 0,
   schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ftype_5fannotation_2eproto::offsets,
   nullptr, file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto,
@@ -46,8 +49,10 @@ PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ftype_5fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto);
 namespace zetasql {
+namespace storage {
 
 // @@protoc_insertion_point(namespace_scope)
+}  // namespace storage
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
 PROTOBUF_NAMESPACE_CLOSE

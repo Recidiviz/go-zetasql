@@ -21,6 +21,7 @@
 #include <set>
 #include <stack>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "zetasql/public/cast.h"
@@ -72,7 +73,7 @@ constexpr int GetNullLiteralCoercionCost() {
 SuperTypesMap* CreateBuiltinSuperTypesMap() {
   auto* map = new SuperTypesMap;
 
-  for (const auto [cast_pair, cast_function_property] :
+  for (const auto& [cast_pair, cast_function_property] :
        internal::GetZetaSQLCasts()) {
     const auto [src_type_kind, dst_type_kind] = cast_pair;
 
@@ -232,7 +233,7 @@ class TypeGlobalOrderChecker {
       return absl::OkStatus();
     }
 
-    node = absl::make_unique<Node>();
+    node = std::make_unique<Node>();
 
     ZETASQL_ASSIGN_OR_RETURN(TypeListView supertypes,
                      GetCandidateSuperTypes(type, catalog));

@@ -52,6 +52,7 @@ gen_resolved_ast_files(
     srcs = [
         "resolved_ast.cc.template",
         "resolved_ast.h.template",
+        "resolved_ast_builder.h.template",
         "resolved_ast_deep_copy_visitor.cc.template",
         "resolved_ast_deep_copy_visitor.h.template",
         "resolved_ast_visitor.h.template",
@@ -60,10 +61,14 @@ gen_resolved_ast_files(
     outs = [
         "resolved_ast.cc",
         "resolved_ast.h",
+        "resolved_ast_builder.h",
         "resolved_ast_deep_copy_visitor.cc",
         "resolved_ast_deep_copy_visitor.h",
         "resolved_ast_visitor.h",
         "resolved_node_kind.h",
+    ],
+    data = [
+        "resolved_ast_field.h.template.import",
     ],
 )
 
@@ -145,6 +150,20 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
         "@com_google_protobuf//:protobuf",
+    ],
+)
+
+cc_library(
+    name = "resolved_ast_builder",
+    srcs = [],
+    hdrs = [
+        "resolved_ast_builder.h",
+    ],
+    deps = [
+        ":resolved_ast",
+        "//zetasql/base:logging",
+        "//zetasql/common:status_payload_utils",
+        "@com_google_absl//absl/status:statusor",
     ],
 )
 
@@ -266,6 +285,7 @@ cc_library(
         "//zetasql/public/functions:date_time_util",
         "//zetasql/public/functions:datetime_cc_proto",
         "//zetasql/public/functions:normalize_mode_cc_proto",
+        "//zetasql/public/functions:rounding_mode_cc_proto",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/cleanup",
         "@com_google_absl//absl/container:flat_hash_map",
@@ -275,6 +295,21 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@com_google_protobuf//:protobuf",
+    ],
+)
+
+cc_test(
+    name = "resolved_ast_builder_test",
+    size = "small",
+    srcs = ["resolved_ast_builder_test.cc"],
+    deps = [
+        ":resolved_ast",
+        ":resolved_ast_builder",
+        "//zetasql/base/testing:status_matchers",
+        "//zetasql/base/testing:zetasql_gtest_main",
+        "//zetasql/public:simple_catalog",
+        "//zetasql/public:templated_sql_tvf",
+        "//zetasql/public/types",
     ],
 )
 
@@ -483,10 +518,13 @@ cc_library(
     hdrs = ["rewrite_utils.h"],
     deps = [
         ":resolved_ast",
-        "//zetasql/base",
+        ":resolved_ast_builder",
+        "//zetasql/base:logging",
         "//zetasql/base:status",
         "//zetasql/public:analyzer_options",
         "//zetasql/public:builtin_function_cc_proto",
+        "//zetasql/public:function",
+        "//zetasql/public/types",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/status:statusor",
     ],
@@ -497,11 +535,17 @@ cc_test(
     size = "small",
     srcs = ["rewrite_utils_test.cc"],
     deps = [
+        ":resolved_ast",
         ":rewrite_utils",
         "//zetasql/base/testing:status_matchers",
         "//zetasql/base/testing:zetasql_gtest_main",
+        "//zetasql/public:analyzer",
+        "//zetasql/public:analyzer_options",
+        "//zetasql/public:analyzer_output",
         "//zetasql/public:simple_catalog",
         "//zetasql/public/types",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
     ],
 )
 
@@ -511,6 +555,7 @@ cc_test(
     deps = [
         ":make_node_vector",
         ":resolved_ast",
+        ":resolved_ast_builder",
         ":test_utils",
         ":validator",
         "//zetasql/base/testing:status_matchers",

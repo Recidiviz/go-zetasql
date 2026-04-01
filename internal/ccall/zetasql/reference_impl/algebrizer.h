@@ -91,10 +91,10 @@ struct AlgebrizerOptions {
 };
 
 struct AnonymizationOptions {
-  absl::optional<Value> epsilon;      // double Value
-  absl::optional<Value> delta;        // double Value
-  absl::optional<Value> kappa;        // int64_t Value
-  absl::optional<Value> k_threshold;  // int64_t Value
+  std::optional<Value> epsilon;      // double Value
+  std::optional<Value> delta;        // double Value
+  std::optional<Value> kappa;        // int64_t Value
+  std::optional<Value> k_threshold;  // int64_t Value
 };
 
 class Algebrizer {
@@ -186,6 +186,8 @@ class Algebrizer {
   FRIEND_TEST(AlgebrizerTestGroupingAggregation, GroupByMax);
   FRIEND_TEST(AlgebrizerTestGroupingAggregation, GroupByMin);
   FRIEND_TEST(AlgebrizerTestGroupingAggregation, GroupBySum);
+  FRIEND_TEST(NonDeterministicEvaluationContextTest,
+              ArrayFilterTransformFunctionTest);
 
   Algebrizer(const LanguageOptions& options,
              const AlgebrizerOptions& algebrizer_options,
@@ -236,18 +238,18 @@ class Algebrizer {
   absl::StatusOr<std::unique_ptr<AggregateArg>>
   AlgebrizeAggregateFnWithAlgebrizedArguments(
       const VariableId& variable,
-      absl::optional<AnonymizationOptions> anonymization_options,
+      std::optional<AnonymizationOptions> anonymization_options,
       std::unique_ptr<ValueExpr> filter, const ResolvedExpr* expr,
       std::vector<std::unique_ptr<ValueExpr>> arguments,
       std::unique_ptr<RelationalOp> group_rows_subquery);
   absl::StatusOr<std::unique_ptr<AggregateArg>> AlgebrizeAggregateFn(
       const VariableId& variable,
-      absl::optional<AnonymizationOptions> anonymization_options,
+      std::optional<AnonymizationOptions> anonymization_options,
       std::unique_ptr<ValueExpr> filter, const ResolvedExpr* expr);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeSubqueryExpr(
       const ResolvedSubqueryExpr* subquery_expr);
-  absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeLetExpr(
-      const ResolvedLetExpr* let_expr);
+  absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeWithExpr(
+      const ResolvedWithExpr* with_expr);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeInArray(
       std::unique_ptr<ValueExpr> in_value,
       std::unique_ptr<ValueExpr> array_value,
@@ -624,6 +626,10 @@ class Algebrizer {
 
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeIf(
       const Type* output_type, std::vector<std::unique_ptr<ValueExpr>> args);
+  absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeIfError(
+      std::vector<std::unique_ptr<ValueExpr>> args);
+  absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeIsError(
+      std::vector<std::unique_ptr<ValueExpr>> args);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeIfNull(
       const Type* output_type, std::vector<std::unique_ptr<ValueExpr>> args);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeNullIf(
@@ -733,7 +739,7 @@ class Algebrizer {
     }
 
     std::string DebugString() const {
-      if (absl::holds_alternative<int>(position_or_name_)) {
+      if (std::holds_alternative<int>(position_or_name_)) {
         return absl::StrCat("$", *absl::get_if<int>(&position_or_name_));
       }
       return absl::StrCat("$", *absl::get_if<std::string>(&position_or_name_));
@@ -768,10 +774,10 @@ class Algebrizer {
     }
 
     std::string DebugString() const {
-      if (absl::holds_alternative<ResolvedColumn>(column_or_param_)) {
+      if (std::holds_alternative<ResolvedColumn>(column_or_param_)) {
         return absl::get_if<ResolvedColumn>(&column_or_param_)->DebugString();
       }
-      if (absl::holds_alternative<Parameter>(column_or_param_)) {
+      if (std::holds_alternative<Parameter>(column_or_param_)) {
         return absl::get_if<Parameter>(&column_or_param_)->DebugString();
       }
       return *absl::get_if<std::string>(&column_or_param_);
@@ -852,14 +858,14 @@ class Algebrizer {
   // corresponding pointer. If 'id' is set, also updates
   // 'proto_field_registry_map_'.
   absl::StatusOr<ProtoFieldRegistry*> AddProtoFieldRegistry(
-      const absl::optional<SharedProtoFieldPath>& id);
+      const std::optional<SharedProtoFieldPath>& id);
 
   // Adds a ProtoFieldReader corresponding to 'access_info' and 'registry' to
   // 'get_proto_field_readers_' and returns the corresponding pointer. If 'id'
   // is set and 'access_info' represents a proto-valued field, also updates
   // 'get_proto_field_reader_map_'.
   absl::StatusOr<ProtoFieldReader*> AddProtoFieldReader(
-      const absl::optional<SharedProtoFieldPath>& id,
+      const std::optional<SharedProtoFieldPath>& id,
       const ProtoFieldAccessInfo& access_info, ProtoFieldRegistry* registry);
 
   // Maps each column in <input_columns>, produced by <input>, into the
@@ -915,7 +921,7 @@ class Algebrizer {
   // times (e.g. evaluated up front and stored in an array).
   absl::flat_hash_map<std::string, ExprArg*> with_map_;  // Not owned.
 
-  // Vector of LetOp/LetExpr assignments we need to apply for WITH clauses in
+  // Vector of LetOp/WithExpr assignments we need to apply for WITH clauses in
   // the query.
   std::vector<std::unique_ptr<ExprArg>> with_subquery_let_assignments_;
 
@@ -973,9 +979,6 @@ class Algebrizer {
       get_proto_field_reader_map_;
 
   TypeFactory* type_factory_;  // Not owned.
-
-  // For generating unique column names.
-  int next_column_;
 
   // The top of the stack represents the variable id to use for the recursive
   // variable in the current RecursiveScan node being algebrized.

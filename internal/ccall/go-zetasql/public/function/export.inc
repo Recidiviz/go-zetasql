@@ -841,6 +841,7 @@ namespace zetasql {
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
+#include "go-zetasql/public/function_headers/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
@@ -856,6 +857,7 @@ namespace zetasql {
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/common/errors/export.inc"
+#include "go-zetasql/common/function_utils/export.inc"
 #include "go-zetasql/proto/function_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/serialization_cc_proto/export.inc"
@@ -868,5 +870,6 @@ namespace zetasql {
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
+#include "go-protobuf/protobuf/export.inc"
 
 #endif

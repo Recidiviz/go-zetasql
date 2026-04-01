@@ -15,7 +15,6 @@
 #include "absl/strings/internal/cord_rep_btree.cc"
 #include "absl/strings/internal/cord_rep_btree_navigator.cc"
 #include "absl/strings/internal/cord_rep_btree_reader.cc"
-#include "absl/strings/internal/cord_rep_concat.cc"
 #include "absl/strings/internal/cord_rep_consume.cc"
 #include "absl/strings/internal/cord_rep_crc.cc"
 #include "absl/strings/internal/cord_rep_ring.cc"

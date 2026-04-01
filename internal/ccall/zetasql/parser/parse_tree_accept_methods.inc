@@ -500,6 +500,10 @@ void ASTClampedBetweenModifier::Accept(ParseTreeVisitor* visitor, void* data) co
   visitor->visitASTClampedBetweenModifier(this, data);
 }
 
+void ASTWithReportModifier::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTWithReportModifier(this, data);
+}
+
 void ASTFormatClause::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTFormatClause(this, data);
 }
@@ -972,6 +976,30 @@ void ASTSetCollateClause::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTSetCollateClause(this, data);
 }
 
+void ASTAlterSubEntityAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterSubEntityAction(this, data);
+}
+
+void ASTAddSubEntityAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAddSubEntityAction(this, data);
+}
+
+void ASTDropSubEntityAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTDropSubEntityAction(this, data);
+}
+
+void ASTAddTtlAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAddTtlAction(this, data);
+}
+
+void ASTReplaceTtlAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTReplaceTtlAction(this, data);
+}
+
+void ASTDropTtlAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTDropTtlAction(this, data);
+}
+
 void ASTAlterActionList::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterActionList(this, data);
 }
@@ -1038,6 +1066,14 @@ void ASTSimpleColumnSchema::Accept(ParseTreeVisitor* visitor, void* data) const 
 
 void ASTArrayColumnSchema::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTArrayColumnSchema(this, data);
+}
+
+void ASTPrimaryKeyElement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPrimaryKeyElement(this, data);
+}
+
+void ASTPrimaryKeyElementList::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPrimaryKeyElementList(this, data);
 }
 
 void ASTPrimaryKey::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1188,6 +1224,10 @@ void ASTAlterMaterializedViewStatement::Accept(ParseTreeVisitor* visitor, void* 
   visitor->visitASTAlterMaterializedViewStatement(this, data);
 }
 
+void ASTAlterModelStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterModelStatement(this, data);
+}
+
 void ASTAlterPrivilegeRestrictionStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterPrivilegeRestrictionStatement(this, data);
 }
@@ -1242,6 +1282,38 @@ void ASTAuxLoadDataStatement::Accept(ParseTreeVisitor* visitor, void* data) cons
 
 void ASTLabel::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTLabel(this, data);
+}
+
+void ASTWithExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTWithExpression(this, data);
+}
+
+void ASTTtlClause::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTTtlClause(this, data);
+}
+
+void ASTLocation::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTLocation(this, data);
+}
+
+void ASTSpannerTableOptions::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSpannerTableOptions(this, data);
+}
+
+void ASTSpannerInterleaveClause::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSpannerInterleaveClause(this, data);
+}
+
+void ASTSpannerAlterColumnAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSpannerAlterColumnAction(this, data);
+}
+
+void ASTSpannerSetOnDeleteAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSpannerSetOnDeleteAction(this, data);
+}
+
+void ASTRangeLiteral::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRangeLiteral(this, data);
 }
 
 absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1744,6 +1816,10 @@ absl::StatusOr<VisitResult> ASTClampedBetweenModifier::Accept(NonRecursiveParseT
   return visitor->visitASTClampedBetweenModifier(this);
 }
 
+absl::StatusOr<VisitResult> ASTWithReportModifier::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTWithReportModifier(this);
+}
+
 absl::StatusOr<VisitResult> ASTFormatClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTFormatClause(this);
 }
@@ -2216,6 +2292,30 @@ absl::StatusOr<VisitResult> ASTSetCollateClause::Accept(NonRecursiveParseTreeVis
   return visitor->visitASTSetCollateClause(this);
 }
 
+absl::StatusOr<VisitResult> ASTAlterSubEntityAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterSubEntityAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTAddSubEntityAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAddSubEntityAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTDropSubEntityAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTDropSubEntityAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTAddTtlAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAddTtlAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTReplaceTtlAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTReplaceTtlAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTDropTtlAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTDropTtlAction(this);
+}
+
 absl::StatusOr<VisitResult> ASTAlterActionList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAlterActionList(this);
 }
@@ -2282,6 +2382,14 @@ absl::StatusOr<VisitResult> ASTSimpleColumnSchema::Accept(NonRecursiveParseTreeV
 
 absl::StatusOr<VisitResult> ASTArrayColumnSchema::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTArrayColumnSchema(this);
+}
+
+absl::StatusOr<VisitResult> ASTPrimaryKeyElement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPrimaryKeyElement(this);
+}
+
+absl::StatusOr<VisitResult> ASTPrimaryKeyElementList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPrimaryKeyElementList(this);
 }
 
 absl::StatusOr<VisitResult> ASTPrimaryKey::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2432,6 +2540,10 @@ absl::StatusOr<VisitResult> ASTAlterMaterializedViewStatement::Accept(NonRecursi
   return visitor->visitASTAlterMaterializedViewStatement(this);
 }
 
+absl::StatusOr<VisitResult> ASTAlterModelStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterModelStatement(this);
+}
+
 absl::StatusOr<VisitResult> ASTAlterPrivilegeRestrictionStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAlterPrivilegeRestrictionStatement(this);
 }
@@ -2486,6 +2598,38 @@ absl::StatusOr<VisitResult> ASTAuxLoadDataStatement::Accept(NonRecursiveParseTre
 
 absl::StatusOr<VisitResult> ASTLabel::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTLabel(this);
+}
+
+absl::StatusOr<VisitResult> ASTWithExpression::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTWithExpression(this);
+}
+
+absl::StatusOr<VisitResult> ASTTtlClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTTtlClause(this);
+}
+
+absl::StatusOr<VisitResult> ASTLocation::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTLocation(this);
+}
+
+absl::StatusOr<VisitResult> ASTSpannerTableOptions::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSpannerTableOptions(this);
+}
+
+absl::StatusOr<VisitResult> ASTSpannerInterleaveClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSpannerInterleaveClause(this);
+}
+
+absl::StatusOr<VisitResult> ASTSpannerAlterColumnAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSpannerAlterColumnAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTSpannerSetOnDeleteAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSpannerSetOnDeleteAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTRangeLiteral::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRangeLiteral(this);
 }
 
 }  // namespace zetasql

@@ -361,17 +361,6 @@ static std::unique_ptr<const zetasql::ResolvedExpr> make_unique_expr(void *arg)
     memcpy((void *)ret.get(), (void *)node, sizeof(zetasql::ResolvedSubqueryExpr));
     return ret;
   }
-  case zetasql::RESOLVED_LET_EXPR:{
-#if 0
-    auto expr = (zetasql::ResolvedLetExpr *)node;
-    return zetasql::MakeResolvedLetExpr(
-        expr->type(),
-        expr->assignment_list(),
-        expr->expr()
-    );
-#endif
-    break;
-  }
   case zetasql::RESOLVED_DMLDEFAULT:{
     std::unique_ptr<zetasql::ResolvedDMLDefault> ret = zetasql::MakeResolvedDMLDefault();
     memcpy((void *)ret.get(), (void *)node, sizeof(zetasql::ResolvedDMLDefault));
@@ -2235,31 +2224,6 @@ void GO_EXPORT(ResolvedSubqueryExpr_set_hint_list)(void * arg0,void * arg1){
 void GO_EXPORT(ResolvedSubqueryExpr_add_hint_list)(void * arg0,void * arg1){
   zetasql::ResolvedSubqueryExpr *node = (zetasql::ResolvedSubqueryExpr *)arg0;
   ADD_UNIQUE_PTR_LIST(node->add_hint_list, ResolvedOption, arg1);
-}
-
-void GO_EXPORT(ResolvedLetExpr_assignment_list)(void * arg0,void ** arg1){
-  zetasql::ResolvedLetExpr *node = (zetasql::ResolvedLetExpr *)arg0;
-  GET_UNIQUE_PTR_LIST(node->assignment_list, arg1);
-}
-
-void GO_EXPORT(ResolvedLetExpr_set_assignment_list)(void * arg0,void * arg1){
-  zetasql::ResolvedLetExpr *node = (zetasql::ResolvedLetExpr *)arg0;
-  SET_UNIQUE_PTR_LIST(node->set_assignment_list, ResolvedComputedColumn, arg1);
-}
-
-void GO_EXPORT(ResolvedLetExpr_add_assignment_list)(void * arg0,void * arg1){
-  zetasql::ResolvedLetExpr *node = (zetasql::ResolvedLetExpr *)arg0;
-  ADD_UNIQUE_PTR_LIST(node->add_assignment_list, ResolvedComputedColumn, arg1);
-}
-
-void GO_EXPORT(ResolvedLetExpr_expr)(void * arg0,void ** arg1){
-  zetasql::ResolvedLetExpr *node = (zetasql::ResolvedLetExpr *)arg0;
-  *arg1 = (void *)node->expr();
-}
-
-void GO_EXPORT(ResolvedLetExpr_set_expr)(void * arg0,void * arg1){
-  zetasql::ResolvedLetExpr *node = (zetasql::ResolvedLetExpr *)arg0;
-  node->set_expr(make_unique_expr(arg1));
 }
 
 void GO_EXPORT(ResolvedScan_column_list)(void * arg0,void ** arg1){
@@ -7909,12 +7873,12 @@ void GO_EXPORT(ResolvedColumn_name)(void * arg0,void ** arg1){
 
 void GO_EXPORT(ResolvedColumn_table_name_id)(void * arg0,void ** arg1){
   zetasql::ResolvedColumn *col = (zetasql::ResolvedColumn *)arg0;
-  *arg1 = (void *)((new std::string(col->table_name_id().data()))->c_str());
+  *arg1 = (void *)((new std::string(col->table_name_id().ToStringView()))->c_str());
 }
 
 void GO_EXPORT(ResolvedColumn_name_id)(void * arg0,void ** arg1){
   zetasql::ResolvedColumn *col = (zetasql::ResolvedColumn *)arg0;
-  *arg1 = (void *)((new std::string(col->name_id().data()))->c_str());
+  *arg1 = (void *)((new std::string(col->name_id().ToStringView()))->c_str());
 }
 
 void GO_EXPORT(ResolvedColumn_type)(void * arg0,void ** arg1){

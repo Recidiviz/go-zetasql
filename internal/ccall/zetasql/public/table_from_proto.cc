@@ -16,6 +16,8 @@
 
 #include "zetasql/public/table_from_proto.h"
 
+#include <string>
+
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "zetasql/public/proto/wire_format_annotation.pb.h"
@@ -89,9 +91,10 @@ absl::Status TableFromProto::Init(const google::protobuf::Descriptor* descriptor
     const google::protobuf::FieldDescriptor* proto_field = descriptor->field(i);
     bool is_pseudo_column =
         proto_field->options().GetExtension(zetasql::is_hidden_column);
-    ZETASQL_RETURN_IF_ERROR(AddColumn(
-        new SimpleColumn(FullName(), field.name, field.type, is_pseudo_column),
-        /*is_owned=*/true));
+    ZETASQL_RETURN_IF_ERROR(
+        AddColumn(new SimpleColumn(FullName(), field.name, field.type,
+                                   {.is_pseudo_column = is_pseudo_column}),
+                  /*is_owned=*/true));
   }
 
   return absl::OkStatus();

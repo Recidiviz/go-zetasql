@@ -7,12 +7,14 @@
 #include "zetasql/public/types/enum_type.h"
 #include "zetasql/public/types/extended_type.h"
 #include "zetasql/public/types/proto_type.h"
+#include "zetasql/public/types/range_type.h"
 #include "zetasql/public/types/simple_type.h"
 #include "zetasql/public/types/simple_value.h"
 #include "zetasql/public/types/struct_type.h"
 #include "zetasql/public/types/type.h"
 #include "zetasql/public/types/type_deserializer.h"
 #include "zetasql/public/types/type_factory.h"
+#include "zetasql/public/types/type_modifiers.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/types/value_equality_check_options.h"
 
@@ -33,6 +35,7 @@
 #include "go-zetasql/public/types/types/google_type_pb.inc"
 
 #include "zetasql/public/types/proto_type.cc"
+#include "zetasql/public/types/range_type.cc"
 
 #define TypeKindInfo GO_EXPORT(TypeKindInfo)
 #include "zetasql/public/types/simple_type.cc"
@@ -43,6 +46,7 @@
 #include "zetasql/public/types/type.cc"
 #include "zetasql/public/types/type_deserializer.cc"
 #include "zetasql/public/types/type_factory.cc"
+#include "zetasql/public/types/type_modifiers.cc"
 #include "zetasql/public/types/type_parameters.cc"
 
 #if 0
@@ -1770,10 +1774,12 @@ namespace zetasql {
 #include "go-zetasql/common/proto_helper/export.inc"
 #include "go-zetasql/common/string_util/export.inc"
 #include "go-zetasql/public/annotation_cc_proto/export.inc"
+#include "go-zetasql/public/civil_time/export.inc"
 #include "go-zetasql/public/functions/convert_proto/export.inc"
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
 #include "go-zetasql/public/functions/normalize_mode_cc_proto/export.inc"
+#include "go-zetasql/public/functions/rounding_mode_cc_proto/export.inc"
 #include "go-zetasql/public/interval_value/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
@@ -1782,10 +1788,13 @@ namespace zetasql {
 #include "go-zetasql/public/simple_value_cc_proto/export.inc"
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/type_annotation_cc_proto/export.inc"
+#include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-zetasql/public/type_modifiers_cc_proto/export.inc"
 #include "go-zetasql/public/value_cc_proto/export.inc"
 #include "go-zetasql/public/value_content/export.inc"
 #include "go-zetasql/public/type_parameters_cc_proto/export.inc"
 #include "go-zetasql/public/collation_cc_proto/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"

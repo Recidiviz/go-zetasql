@@ -240,17 +240,6 @@ func parser_ParserOutput_expression(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	C.export_zetasql_parser_parser_ParserOutput_expression(arg0, arg1)
 }
 
-func ASTNode_getId(arg0 unsafe.Pointer, arg1 *int) {
-	parser_ASTNode_getId(
-		arg0,
-		(*C.int)(unsafe.Pointer(arg1)),
-	)
-}
-
-func parser_ASTNode_getId(arg0 unsafe.Pointer, arg1 *C.int) {
-	C.export_zetasql_parser_parser_ASTNode_getId(arg0, arg1)
-}
-
 func ASTNode_node_kind(arg0 unsafe.Pointer, arg1 *int) {
 	parser_ASTNode_node_kind(
 		arg0,
@@ -385,49 +374,6 @@ func ASTNode_DebugString(arg0 unsafe.Pointer, arg1 int, arg2 *unsafe.Pointer) {
 
 func parser_ASTNode_DebugString(arg0 unsafe.Pointer, arg1 C.int, arg2 *unsafe.Pointer) {
 	C.export_zetasql_parser_parser_ASTNode_DebugString(arg0, arg1, arg2)
-}
-
-func ASTNode_MoveStartLocation(arg0 unsafe.Pointer, arg1 int) {
-	parser_ASTNode_MoveStartLocation(
-		arg0,
-		C.int(arg1),
-	)
-}
-
-func parser_ASTNode_MoveStartLocation(arg0 unsafe.Pointer, arg1 C.int) {
-	C.export_zetasql_parser_parser_ASTNode_MoveStartLocation(arg0, arg1)
-}
-
-func ASTNode_MoveStartLocationBack(arg0 unsafe.Pointer, arg1 int) {
-	parser_ASTNode_MoveStartLocationBack(
-		arg0,
-		C.int(arg1),
-	)
-}
-
-func parser_ASTNode_MoveStartLocationBack(arg0 unsafe.Pointer, arg1 C.int) {
-	C.export_zetasql_parser_parser_ASTNode_MoveStartLocationBack(arg0, arg1)
-}
-
-func ASTNode_SetStartLocationToEndLocation(arg0 unsafe.Pointer) {
-	parser_ASTNode_SetStartLocationToEndLocation(
-		arg0,
-	)
-}
-
-func parser_ASTNode_SetStartLocationToEndLocation(arg0 unsafe.Pointer) {
-	C.export_zetasql_parser_parser_ASTNode_SetStartLocationToEndLocation(arg0)
-}
-
-func ASTNode_MoveEndLocationBack(arg0 unsafe.Pointer, arg1 int) {
-	parser_ASTNode_MoveEndLocationBack(
-		arg0,
-		C.int(arg1),
-	)
-}
-
-func parser_ASTNode_MoveEndLocationBack(arg0 unsafe.Pointer, arg1 C.int) {
-	C.export_zetasql_parser_parser_ASTNode_MoveEndLocationBack(arg0, arg1)
 }
 
 func ASTNode_set_start_location(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
@@ -8981,15 +8927,15 @@ func parser_ASTPrimaryKey_enforced(arg0 unsafe.Pointer, arg1 *C.char) {
 	C.export_zetasql_parser_parser_ASTPrimaryKey_enforced(arg0, arg1)
 }
 
-func ASTPrimaryKey_column_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	parser_ASTPrimaryKey_column_list(
+func ASTPrimaryKey_element_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTPrimaryKey_element_list(
 		arg0,
 		arg1,
 	)
 }
 
-func parser_ASTPrimaryKey_column_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_parser_parser_ASTPrimaryKey_column_list(arg0, arg1)
+func parser_ASTPrimaryKey_element_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTPrimaryKey_element_list(arg0, arg1)
 }
 
 func ASTPrimaryKey_options_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {

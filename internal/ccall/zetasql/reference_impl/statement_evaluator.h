@@ -18,6 +18,8 @@
 #define ZETASQL_REFERENCE_IMPL_STATEMENT_EVALUATOR_H_
 
 #include <memory>
+#include <string>
+#include <utility>
 
 #include "zetasql/public/analyzer.h"
 #include "zetasql/public/evaluator.h"
@@ -168,12 +170,6 @@ class StatementEvaluatorImpl : public StatementEvaluator {
     return initial_analyzer_options_;
   }
   const EvaluatorOptions& options() const { return options_; }
-  const ParameterValueMap* named_parameters() const {
-    return absl::get_if<ParameterValueMap>(&parameters_);
-  }
-  const ParameterValueList* positional_parameters() const {
-    return absl::get_if<ParameterValueList>(&parameters_);
-  }
   const absl::variant<ParameterValueList, ParameterValueMap>& parameters()
       const {
     return parameters_;

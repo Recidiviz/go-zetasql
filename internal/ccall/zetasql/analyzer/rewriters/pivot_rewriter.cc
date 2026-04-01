@@ -51,6 +51,7 @@
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
+#include "absl/strings/substitute.h"
 #include "absl/types/span.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
@@ -231,7 +232,20 @@ PivotRewriterVisitor::AddExprColumnsToPivotInput(
     ZETASQL_RETURN_IF_ERROR(VerifyAggregateFunctionIsSupported(call));
     pivot_expr_arg_columns.emplace_back();
 
-    for (const auto& arg : call->argument_list()) {
+    for (int i = 0; i < call->argument_list().size(); i++) {
+      const auto& arg = call->argument_list()[i];
+      if (CollationAnnotation::ExistsIn(arg->type_annotation_map())) {
+        // TODO: support collation for arguments of aggregate
+        // functions inside PIVOT clause.
+        return MakeUnimplementedErrorAtPoint(
+                   call->GetParseLocationOrNULL()->start())
+               << absl::Substitute(
+                      "Collation $0 is not supported on argument $1 of "
+                      "aggregate function in a PIVOT clause",
+                      arg->type_annotation_map()->DebugString(
+                          CollationAnnotation::GetId()),
+                      (i + 1));
+      }
       ZETASQL_ASSIGN_OR_RETURN(bool arg_is_constant_expr,
                        IsConstantExpression(arg.get()));
       if (arg_is_constant_expr) {
@@ -494,6 +508,7 @@ PivotRewriterVisitor::RewriteAnyValuePivotExpr(
   const Function* array_agg_fn;
   ZETASQL_RET_CHECK_OK(catalog_->FindFunction({"array_agg"}, &array_agg_fn,
                                       analyzer_options_.find_options()));
+  ZETASQL_RET_CHECK(array_agg_fn->IsZetaSQLBuiltin());
   const ArrayType* array_type;
   std::vector<std::unique_ptr<const ResolvedExpr>> array_agg_args;
   if (arg->type()->IsArray()) {
@@ -553,6 +568,7 @@ PivotRewriterVisitor::RewriteCountStarPivotExpr(
   const Function* countif_fn;
   ZETASQL_RET_CHECK_OK(catalog_->FindFunction({"countif"}, &countif_fn,
                                       analyzer_options_.find_options()));
+  ZETASQL_RET_CHECK(countif_fn->IsZetaSQLBuiltin());
   FunctionArgumentType int64_arg = FunctionArgumentType(types::Int64Type(), 1);
   FunctionArgumentType bool_arg = FunctionArgumentType(types::BoolType(), 1);
   FunctionSignature countif_sig(int64_arg, {bool_arg}, FN_COUNTIF);

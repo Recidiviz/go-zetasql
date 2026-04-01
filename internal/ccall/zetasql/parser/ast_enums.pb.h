@@ -48,7 +48,7 @@ struct TableStruct_zetasql_2fparser_2fast_5fenums_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[31]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[32]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -131,6 +131,9 @@ extern ASTSelectAsEnumsDefaultTypeInternal _ASTSelectAsEnums_default_instance_;
 class ASTSetOperationEnums;
 struct ASTSetOperationEnumsDefaultTypeInternal;
 extern ASTSetOperationEnumsDefaultTypeInternal _ASTSetOperationEnums_default_instance_;
+class ASTSpannerInterleaveClauseEnums;
+struct ASTSpannerInterleaveClauseEnumsDefaultTypeInternal;
+extern ASTSpannerInterleaveClauseEnumsDefaultTypeInternal _ASTSpannerInterleaveClauseEnums_default_instance_;
 class ASTTemplatedParameterTypeEnums;
 struct ASTTemplatedParameterTypeEnumsDefaultTypeInternal;
 extern ASTTemplatedParameterTypeEnumsDefaultTypeInternal _ASTTemplatedParameterTypeEnums_default_instance_;
@@ -176,6 +179,7 @@ template<> ::zetasql::ASTOrderingExpressionEnums* Arena::CreateMaybeMessage<::ze
 template<> ::zetasql::ASTSampleSizeEnums* Arena::CreateMaybeMessage<::zetasql::ASTSampleSizeEnums>(Arena*);
 template<> ::zetasql::ASTSelectAsEnums* Arena::CreateMaybeMessage<::zetasql::ASTSelectAsEnums>(Arena*);
 template<> ::zetasql::ASTSetOperationEnums* Arena::CreateMaybeMessage<::zetasql::ASTSetOperationEnums>(Arena*);
+template<> ::zetasql::ASTSpannerInterleaveClauseEnums* Arena::CreateMaybeMessage<::zetasql::ASTSpannerInterleaveClauseEnums>(Arena*);
 template<> ::zetasql::ASTTemplatedParameterTypeEnums* Arena::CreateMaybeMessage<::zetasql::ASTTemplatedParameterTypeEnums>(Arena*);
 template<> ::zetasql::ASTTransactionReadWriteModeEnums* Arena::CreateMaybeMessage<::zetasql::ASTTransactionReadWriteModeEnums>(Arena*);
 template<> ::zetasql::ASTUnaryExpressionEnums* Arena::CreateMaybeMessage<::zetasql::ASTUnaryExpressionEnums>(Arena*);
@@ -1043,6 +1047,30 @@ inline bool ASTAuxLoadDataStatementEnums_InsertionMode_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ASTAuxLoadDataStatementEnums_InsertionMode* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTAuxLoadDataStatementEnums_InsertionMode>(
     ASTAuxLoadDataStatementEnums_InsertionMode_descriptor(), name, value);
+}
+enum ASTSpannerInterleaveClauseEnums_Type : int {
+  ASTSpannerInterleaveClauseEnums_Type_NOT_SET = 0,
+  ASTSpannerInterleaveClauseEnums_Type_IN = 1,
+  ASTSpannerInterleaveClauseEnums_Type_IN_PARENT = 2
+};
+bool ASTSpannerInterleaveClauseEnums_Type_IsValid(int value);
+constexpr ASTSpannerInterleaveClauseEnums_Type ASTSpannerInterleaveClauseEnums_Type_Type_MIN = ASTSpannerInterleaveClauseEnums_Type_NOT_SET;
+constexpr ASTSpannerInterleaveClauseEnums_Type ASTSpannerInterleaveClauseEnums_Type_Type_MAX = ASTSpannerInterleaveClauseEnums_Type_IN_PARENT;
+constexpr int ASTSpannerInterleaveClauseEnums_Type_Type_ARRAYSIZE = ASTSpannerInterleaveClauseEnums_Type_Type_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTSpannerInterleaveClauseEnums_Type_descriptor();
+template<typename T>
+inline const std::string& ASTSpannerInterleaveClauseEnums_Type_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ASTSpannerInterleaveClauseEnums_Type>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ASTSpannerInterleaveClauseEnums_Type_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ASTSpannerInterleaveClauseEnums_Type_descriptor(), enum_t_value);
+}
+inline bool ASTSpannerInterleaveClauseEnums_Type_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ASTSpannerInterleaveClauseEnums_Type* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTSpannerInterleaveClauseEnums_Type>(
+    ASTSpannerInterleaveClauseEnums_Type_descriptor(), name, value);
 }
 enum SchemaObjectKind : int {
   __SchemaObjectKind__switch_must_have_a_default__ = -1,
@@ -6130,6 +6158,163 @@ class ASTAuxLoadDataStatementEnums final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
 };
+// -------------------------------------------------------------------
+
+class ASTSpannerInterleaveClauseEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ASTSpannerInterleaveClauseEnums) */ {
+ public:
+  inline ASTSpannerInterleaveClauseEnums() : ASTSpannerInterleaveClauseEnums(nullptr) {}
+  explicit constexpr ASTSpannerInterleaveClauseEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ASTSpannerInterleaveClauseEnums(const ASTSpannerInterleaveClauseEnums& from);
+  ASTSpannerInterleaveClauseEnums(ASTSpannerInterleaveClauseEnums&& from) noexcept
+    : ASTSpannerInterleaveClauseEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ASTSpannerInterleaveClauseEnums& operator=(const ASTSpannerInterleaveClauseEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ASTSpannerInterleaveClauseEnums& operator=(ASTSpannerInterleaveClauseEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ASTSpannerInterleaveClauseEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ASTSpannerInterleaveClauseEnums* internal_default_instance() {
+    return reinterpret_cast<const ASTSpannerInterleaveClauseEnums*>(
+               &_ASTSpannerInterleaveClauseEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    31;
+
+  friend void swap(ASTSpannerInterleaveClauseEnums& a, ASTSpannerInterleaveClauseEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ASTSpannerInterleaveClauseEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ASTSpannerInterleaveClauseEnums* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ASTSpannerInterleaveClauseEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ASTSpannerInterleaveClauseEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ASTSpannerInterleaveClauseEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ASTSpannerInterleaveClauseEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.ASTSpannerInterleaveClauseEnums";
+  }
+  protected:
+  explicit ASTSpannerInterleaveClauseEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef ASTSpannerInterleaveClauseEnums_Type Type;
+  static constexpr Type NOT_SET =
+    ASTSpannerInterleaveClauseEnums_Type_NOT_SET;
+  static constexpr Type IN =
+    ASTSpannerInterleaveClauseEnums_Type_IN;
+  static constexpr Type IN_PARENT =
+    ASTSpannerInterleaveClauseEnums_Type_IN_PARENT;
+  static inline bool Type_IsValid(int value) {
+    return ASTSpannerInterleaveClauseEnums_Type_IsValid(value);
+  }
+  static constexpr Type Type_MIN =
+    ASTSpannerInterleaveClauseEnums_Type_Type_MIN;
+  static constexpr Type Type_MAX =
+    ASTSpannerInterleaveClauseEnums_Type_Type_MAX;
+  static constexpr int Type_ARRAYSIZE =
+    ASTSpannerInterleaveClauseEnums_Type_Type_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Type_descriptor() {
+    return ASTSpannerInterleaveClauseEnums_Type_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Type_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Type>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Type_Name.");
+    return ASTSpannerInterleaveClauseEnums_Type_Name(enum_t_value);
+  }
+  static inline bool Type_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      Type* value) {
+    return ASTSpannerInterleaveClauseEnums_Type_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ASTSpannerInterleaveClauseEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
+};
 // ===================================================================
 
 
@@ -6261,9 +6446,15 @@ class ASTAuxLoadDataStatementEnums final :
 
 // ASTAuxLoadDataStatementEnums
 
+// -------------------------------------------------------------------
+
+// ASTSpannerInterleaveClauseEnums
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -6500,6 +6691,11 @@ template <> struct is_proto_enum< ::zetasql::ASTAuxLoadDataStatementEnums_Insert
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ASTAuxLoadDataStatementEnums_InsertionMode>() {
   return ::zetasql::ASTAuxLoadDataStatementEnums_InsertionMode_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::ASTSpannerInterleaveClauseEnums_Type> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ASTSpannerInterleaveClauseEnums_Type>() {
+  return ::zetasql::ASTSpannerInterleaveClauseEnums_Type_descriptor();
 }
 template <> struct is_proto_enum< ::zetasql::SchemaObjectKind> : ::std::true_type {};
 template <>

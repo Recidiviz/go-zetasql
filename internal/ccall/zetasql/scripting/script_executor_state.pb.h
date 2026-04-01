@@ -34,6 +34,7 @@
 #include <google/protobuf/unknown_field_set.h>
 #include <google/protobuf/any.pb.h>
 #include "zetasql/proto/function.pb.h"
+#include "zetasql/scripting/procedure_extension.pb.h"
 #include "zetasql/scripting/script_exception.pb.h"
 #include "zetasql/scripting/variable.pb.h"
 // @@protoc_insertion_point(includes)
@@ -268,6 +269,7 @@ class ScriptExecutorStateProto_ProcedureDefinition final :
     kNameFieldNumber = 1,
     kBodyFieldNumber = 4,
     kSignatureFieldNumber = 2,
+    kExtensionFieldNumber = 6,
     kIsDynamicSqlFieldNumber = 5,
   };
   // repeated string argument_name_list = 3;
@@ -348,6 +350,24 @@ class ScriptExecutorStateProto_ProcedureDefinition final :
       ::zetasql::FunctionSignatureProto* signature);
   ::zetasql::FunctionSignatureProto* unsafe_arena_release_signature();
 
+  // optional .zetasql.ProcedureExtension extension = 6;
+  bool has_extension() const;
+  private:
+  bool _internal_has_extension() const;
+  public:
+  void clear_extension();
+  const ::zetasql::ProcedureExtension& extension() const;
+  PROTOBUF_NODISCARD ::zetasql::ProcedureExtension* release_extension();
+  ::zetasql::ProcedureExtension* mutable_extension();
+  void set_allocated_extension(::zetasql::ProcedureExtension* extension);
+  private:
+  const ::zetasql::ProcedureExtension& _internal_extension() const;
+  ::zetasql::ProcedureExtension* _internal_mutable_extension();
+  public:
+  void unsafe_arena_set_allocated_extension(
+      ::zetasql::ProcedureExtension* extension);
+  ::zetasql::ProcedureExtension* unsafe_arena_release_extension();
+
   // optional bool is_dynamic_sql = 5;
   bool has_is_dynamic_sql() const;
   private:
@@ -374,6 +394,7 @@ class ScriptExecutorStateProto_ProcedureDefinition final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr body_;
   ::zetasql::FunctionSignatureProto* signature_;
+  ::zetasql::ProcedureExtension* extension_;
   bool is_dynamic_sql_;
   friend struct ::TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto;
 };
@@ -1654,7 +1675,7 @@ inline void ScriptExecutorStateProto_ProcedureDefinition::set_allocated_body(std
 
 // optional bool is_dynamic_sql = 5;
 inline bool ScriptExecutorStateProto_ProcedureDefinition::_internal_has_is_dynamic_sql() const {
-  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
 inline bool ScriptExecutorStateProto_ProcedureDefinition::has_is_dynamic_sql() const {
@@ -1662,7 +1683,7 @@ inline bool ScriptExecutorStateProto_ProcedureDefinition::has_is_dynamic_sql() c
 }
 inline void ScriptExecutorStateProto_ProcedureDefinition::clear_is_dynamic_sql() {
   is_dynamic_sql_ = false;
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline bool ScriptExecutorStateProto_ProcedureDefinition::_internal_is_dynamic_sql() const {
   return is_dynamic_sql_;
@@ -1672,12 +1693,100 @@ inline bool ScriptExecutorStateProto_ProcedureDefinition::is_dynamic_sql() const
   return _internal_is_dynamic_sql();
 }
 inline void ScriptExecutorStateProto_ProcedureDefinition::_internal_set_is_dynamic_sql(bool value) {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
   is_dynamic_sql_ = value;
 }
 inline void ScriptExecutorStateProto_ProcedureDefinition::set_is_dynamic_sql(bool value) {
   _internal_set_is_dynamic_sql(value);
   // @@protoc_insertion_point(field_set:zetasql.ScriptExecutorStateProto.ProcedureDefinition.is_dynamic_sql)
+}
+
+// optional .zetasql.ProcedureExtension extension = 6;
+inline bool ScriptExecutorStateProto_ProcedureDefinition::_internal_has_extension() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  PROTOBUF_ASSUME(!value || extension_ != nullptr);
+  return value;
+}
+inline bool ScriptExecutorStateProto_ProcedureDefinition::has_extension() const {
+  return _internal_has_extension();
+}
+inline const ::zetasql::ProcedureExtension& ScriptExecutorStateProto_ProcedureDefinition::_internal_extension() const {
+  const ::zetasql::ProcedureExtension* p = extension_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ProcedureExtension&>(
+      ::zetasql::_ProcedureExtension_default_instance_);
+}
+inline const ::zetasql::ProcedureExtension& ScriptExecutorStateProto_ProcedureDefinition::extension() const {
+  // @@protoc_insertion_point(field_get:zetasql.ScriptExecutorStateProto.ProcedureDefinition.extension)
+  return _internal_extension();
+}
+inline void ScriptExecutorStateProto_ProcedureDefinition::unsafe_arena_set_allocated_extension(
+    ::zetasql::ProcedureExtension* extension) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(extension_);
+  }
+  extension_ = extension;
+  if (extension) {
+    _has_bits_[0] |= 0x00000008u;
+  } else {
+    _has_bits_[0] &= ~0x00000008u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ScriptExecutorStateProto.ProcedureDefinition.extension)
+}
+inline ::zetasql::ProcedureExtension* ScriptExecutorStateProto_ProcedureDefinition::release_extension() {
+  _has_bits_[0] &= ~0x00000008u;
+  ::zetasql::ProcedureExtension* temp = extension_;
+  extension_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ProcedureExtension* ScriptExecutorStateProto_ProcedureDefinition::unsafe_arena_release_extension() {
+  // @@protoc_insertion_point(field_release:zetasql.ScriptExecutorStateProto.ProcedureDefinition.extension)
+  _has_bits_[0] &= ~0x00000008u;
+  ::zetasql::ProcedureExtension* temp = extension_;
+  extension_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ProcedureExtension* ScriptExecutorStateProto_ProcedureDefinition::_internal_mutable_extension() {
+  _has_bits_[0] |= 0x00000008u;
+  if (extension_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ProcedureExtension>(GetArenaForAllocation());
+    extension_ = p;
+  }
+  return extension_;
+}
+inline ::zetasql::ProcedureExtension* ScriptExecutorStateProto_ProcedureDefinition::mutable_extension() {
+  ::zetasql::ProcedureExtension* _msg = _internal_mutable_extension();
+  // @@protoc_insertion_point(field_mutable:zetasql.ScriptExecutorStateProto.ProcedureDefinition.extension)
+  return _msg;
+}
+inline void ScriptExecutorStateProto_ProcedureDefinition::set_allocated_extension(::zetasql::ProcedureExtension* extension) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(extension_);
+  }
+  if (extension) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(extension));
+    if (message_arena != submessage_arena) {
+      extension = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, extension, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000008u;
+  } else {
+    _has_bits_[0] &= ~0x00000008u;
+  }
+  extension_ = extension;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ScriptExecutorStateProto.ProcedureDefinition.extension)
 }
 
 // -------------------------------------------------------------------

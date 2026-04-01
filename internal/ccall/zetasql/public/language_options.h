@@ -89,9 +89,7 @@ class LanguageOptions {
   }
 
   // Equivalent to SetSupportedStatementKinds({}).
-  void SetSupportsAllStatementKinds() {
-    supported_statement_kinds_.clear();
-  }
+  void SetSupportsAllStatementKinds() { supported_statement_kinds_.clear(); }
 
   // Adds <kind> to the set of supported statement kinds.
   void AddSupportedStatementKind(ResolvedNodeKind kind) {
@@ -125,6 +123,12 @@ class LanguageOptions {
     enabled_language_features_ = features;
   }
 
+  template <class T>
+  void SetEnabledLanguageFeatures(const T& features) {
+    SetEnabledLanguageFeatures(
+        LanguageFeatureSet(features.begin(), features.end()));
+  }
+
   const LanguageFeatureSet& GetEnabledLanguageFeatures() const {
     return enabled_language_features_;
   }
@@ -133,9 +137,7 @@ class LanguageOptions {
   std::string GetEnabledLanguageFeaturesAsString() const;
   static std::string ToString(const LanguageFeatureSet& features);
 
-  void DisableAllLanguageFeatures() {
-    enabled_language_features_.clear();
-  }
+  void DisableAllLanguageFeatures() { enabled_language_features_.clear(); }
 
   // Enable all optional features and reservable keywords that are enabled in
   // the idealized ZetaSQL and are released to users.
@@ -161,12 +163,8 @@ class LanguageOptions {
     return name_resolution_mode_;
   }
 
-  void set_product_mode(ProductMode mode) {
-    product_mode_ = mode;
-  }
-  ProductMode product_mode() const {
-    return product_mode_;
-  }
+  void set_product_mode(ProductMode mode) { product_mode_ = mode; }
+  ProductMode product_mode() const { return product_mode_; }
 
   bool SupportsProtoTypes() const {
     // Protos are unsupported in EXTERNAL mode.
@@ -187,8 +185,19 @@ class LanguageOptions {
     }
   }
 
+  void SetSupportedGenericSubEntityTypes(
+      absl::Span<const std::string> entity_types) {
+    for (const auto& type : entity_types) {
+      supported_generic_sub_entity_types_.insert(type);
+    }
+  }
+
   bool GenericEntityTypeSupported(const std::string& type) const {
     return supported_generic_entity_types_.contains(type);
+  }
+
+  bool GenericSubEntityTypeSupported(const std::string& type) const {
+    return supported_generic_sub_entity_types_.contains(type);
   }
 
   bool operator==(const LanguageOptions& rhs) const {
@@ -199,6 +208,8 @@ class LanguageOptions {
            error_on_deprecated_syntax_ == rhs.error_on_deprecated_syntax_ &&
            supported_generic_entity_types_ ==
                rhs.supported_generic_entity_types_ &&
+           supported_generic_sub_entity_types_ ==
+               rhs.supported_generic_sub_entity_types_ &&
            reserved_keywords_ == rhs.reserved_keywords_;
   }
   template <typename H>
@@ -219,9 +230,9 @@ class LanguageOptions {
                          a case insensitive comparator, which makes it awkward
                          to get into the hash value */
                       value.supported_generic_entity_types_.size(),
+                      value.supported_generic_sub_entity_types_.size(),
                       value.reserved_keywords_.size());
   }
-  bool operator!=(const LanguageOptions& rhs) const { return !(*this == rhs); }
 
   // Returns a set of keywords which can be reserved or unreserved through
   // LanguageOptions.
@@ -308,6 +319,13 @@ class LanguageOptions {
   absl::flat_hash_set<std::string, zetasql_base::StringViewCaseHash,
                       zetasql_base::StringViewCaseEqual>
       supported_generic_entity_types_;
+
+  // For generic DDL nested within other ALTER statements, ALTER <entity_type>
+  // ALTER ADD/DROP/ALTER <sub_entity_type> will be failed by the parser unless
+  // the <sub_entity_type> is added to this set.
+  absl::flat_hash_set<std::string, zetasql_base::StringViewCaseHash,
+                      zetasql_base::StringViewCaseEqual>
+      supported_generic_sub_entity_types_;
 
   // Keywords that the engine has opted into being reserved.
   // All keywords in this set belong to GetReservableKeywords(), are

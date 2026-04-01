@@ -116,6 +116,7 @@ class AnalyzerTestCase;
 //         in Java-based analyzer tests. "list" is the default.
 extern const char* const kAllowInternalError;
 extern const char* const kAllowUndeclaredParameters;
+extern const char* const kDefaultAnonKappaValue;
 extern const char* const kDefaultTimezone;
 extern const char* const kExpectErrorLocation;
 extern const char* const kInScopeExpressionColumnName;
@@ -150,6 +151,7 @@ extern const char* const kErrorMessageMode;
 extern const char* const kDdlPseudoColumnMode;
 extern const char* const kPreserveColumnAliases;
 extern const char* const kSupportedGenericEntityTypes;
+extern const char* const kSupportedGenericSubEntityTypes;
 extern const char* const kEnabledASTRewrites;
 extern const char* const kCreateTableLikeNotScanned;
 extern const char* const kPrivilegeRestrictionTableNotScanned;

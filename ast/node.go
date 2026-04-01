@@ -118,9 +118,11 @@ func (n *BaseNode) getRaw() unsafe.Pointer {
 }
 
 func (n *BaseNode) ID() int {
-	var id int
-	internal.ASTNode_getId(n.getRaw(), &id)
-	return id
+	rng := n.ParseLocationRange()
+	if rng == nil || rng.Start() == nil {
+		return 0
+	}
+	return rng.Start().ByteOffset()
 }
 
 func (n *BaseNode) Kind() Kind {
@@ -184,19 +186,23 @@ func (n *BaseNode) DebugString(maxDepth int) string {
 }
 
 func (n *BaseNode) MoveStartLocation(bytes int) {
-	internal.ASTNode_MoveStartLocation(n.getRaw(), bytes)
+	_ = bytes
 }
 
 func (n *BaseNode) MoveStartLocationBack(bytes int) {
-	internal.ASTNode_MoveStartLocationBack(n.getRaw(), bytes)
+	_ = bytes
 }
 
 func (n *BaseNode) SetStartLocationToEndLocation() {
-	internal.ASTNode_SetStartLocationToEndLocation(n.getRaw())
+	rng := n.ParseLocationRange()
+	if rng == nil || rng.End() == nil {
+		return
+	}
+	n.SetStartLocation(rng.End())
 }
 
 func (n *BaseNode) MoveEndLocationBack(bytes int) {
-	internal.ASTNode_MoveEndLocationBack(n.getRaw(), bytes)
+	_ = bytes
 }
 
 func (n *BaseNode) SetStartLocation(v *types.ParseLocationPoint) {
@@ -7626,13 +7632,17 @@ func (n *PrimaryKeyNode) Enforced() bool {
 	return v
 }
 
-func (n *PrimaryKeyNode) ColumnList() *ColumnListNode {
+func (n *PrimaryKeyNode) ColumnList() Node {
 	var v unsafe.Pointer
-	internal.ASTPrimaryKey_column_list(n.getRaw(), &v)
+	internal.ASTPrimaryKey_element_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
-	return newColumnListNode(v)
+	return newNode(v)
+}
+
+func (n *PrimaryKeyNode) ElementList() Node {
+	return n.ColumnList()
 }
 
 func (n *PrimaryKeyNode) OptionsList() *OptionsListNode {
@@ -11398,632 +11408,636 @@ func newLabelNode(n unsafe.Pointer) *LabelNode {
 	return &LabelNode{BaseNode: newBaseNode(n)}
 }
 
+func nodeKindName(n unsafe.Pointer) string {
+	var v unsafe.Pointer
+	internal.ASTNode_GetNodeKindString(n, &v)
+	return helper.PtrToString(v)
+}
+
 func newNode(n unsafe.Pointer) Node {
 	if n == nil {
 		return nil
 	}
-	var kind int
-	internal.ASTNode_node_kind(n, &kind)
-	switch Kind(kind) {
-	case Unknown:
+	switch nodeKindName(n) {
+	case "Unknown":
 		return nil
-	case Fake:
+	case "Fake":
 		return nil
-	case AbortBatchStatement:
+	case "AbortBatchStatement":
 		return newAbortBatchStatementNode(n)
-	case AddColumnAction:
+	case "AddColumnAction":
 		return newAddColumnActionNode(n)
-	case AddConstraintAction:
+	case "AddConstraintAction":
 		return newAddConstraintActionNode(n)
-	case AddToRestricteeListClause:
+	case "AddToRestricteeListClause":
 		return newAddToRestricteeListClauseNode(n)
-	case FunctionCallWithGroupRows:
+	case "FunctionCallWithGroupRows":
 		return newFunctionCallWithGroupRowsNode(n)
-	case Alias:
+	case "Alias":
 		return newAliasNode(n)
-	case AlterActionList:
+	case "AlterActionList":
 		return newAlterActionListNode(n)
-	case AlterAllRowAccessPoliciesStatement:
+	case "AlterAllRowAccessPoliciesStatement":
 		return newAlterAllRowAccessPoliciesStatementNode(n)
-	case AlterColumnOptionsAction:
+	case "AlterColumnOptionsAction":
 		return newAlterColumnOptionsActionNode(n)
-	case AlterColumnDropNotNullAction:
+	case "AlterColumnDropNotNullAction":
 		return newAlterColumnDropNotNullActionNode(n)
-	case AlterColumnTypeAction:
+	case "AlterColumnTypeAction":
 		return newAlterColumnTypeActionNode(n)
-	case AlterColumnSetDefaultAction:
+	case "AlterColumnSetDefaultAction":
 		return newAlterColumnSetDefaultActionNode(n)
-	case AlterColumnDropDefaultAction:
+	case "AlterColumnDropDefaultAction":
 		return newAlterColumnDropDefaultActionNode(n)
-	case AlterConstraintEnforcementAction:
+	case "AlterConstraintEnforcementAction":
 		return newAlterConstraintEnforcementActionNode(n)
-	case AlterConstraintSetOptionsAction:
+	case "AlterConstraintSetOptionsAction":
 		return newAlterConstraintSetOptionsActionNode(n)
-	case AlterDatabaseStatement:
+	case "AlterDatabaseStatement":
 		return newAlterDatabaseStatementNode(n)
-	case AlterEntityStatement:
+	case "AlterEntityStatement":
 		return newAlterEntityStatementNode(n)
-	case AlterMaterializedViewStatement:
+	case "AlterMaterializedViewStatement":
 		return newAlterMaterializedViewStatementNode(n)
-	case AlterPrivilegeRestrictionStatement:
+	case "AlterPrivilegeRestrictionStatement":
 		return newAlterPrivilegeRestrictionStatementNode(n)
-	case AlterRowAccessPolicyStatement:
+	case "AlterRowAccessPolicyStatement":
 		return newAlterRowAccessPolicyStatementNode(n)
-	case AlterSchemaStatement:
+	case "AlterSchemaStatement":
 		return newAlterSchemaStatementNode(n)
-	case AlterTableStatement:
+	case "AlterTableStatement":
 		return newAlterTableStatementNode(n)
-	case AlterViewStatement:
+	case "AlterViewStatement":
 		return newAlterViewStatementNode(n)
-	case AnalyticFunctionCall:
+	case "AnalyticFunctionCall":
 		return newAnalyticFunctionCallNode(n)
-	case AnalyzeStatement:
+	case "AnalyzeStatement":
 		return newAnalyzeStatementNode(n)
-	case AndExpr:
+	case "AndExpr":
 		return newAndExprNode(n)
-	case AnySomeAllOp:
+	case "AnySomeAllOp":
 		return newAnySomeAllOpNode(n)
-	case ArrayColumnSchema:
+	case "ArrayColumnSchema":
 		return newArrayColumnSchemaNode(n)
-	case ArrayConstructor:
+	case "ArrayConstructor":
 		return newArrayConstructorNode(n)
-	case ArrayElement:
+	case "ArrayElement":
 		return newArrayElementNode(n)
-	case ArrayType:
+	case "ArrayType":
 		return newArrayTypeNode(n)
-	case AssertRowsModified:
+	case "AssertRowsModified":
 		return newAssertRowsModifiedNode(n)
-	case AssertStatement:
+	case "AssertStatement":
 		return newAssertStatementNode(n)
-	case AssignmentFromStruct:
+	case "AssignmentFromStruct":
 		return newAssignmentFromStructNode(n)
-	case BeginStatement:
+	case "BeginStatement":
 		return newBeginStatementNode(n)
-	case BetweenExpression:
+	case "BetweenExpression":
 		return newBetweenExpressionNode(n)
-	case AuxLoadDataFromFilesOptionsList:
+	case "AuxLoadDataFromFilesOptionsList":
 		return newAuxLoadDataFromFilesOptionsListNode(n)
-	case AuxLoadDataStatement:
+	case "AuxLoadDataStatement":
 		return newAuxLoadDataStatementNode(n)
-	case BignumericLiteral:
+	case "BignumericLiteral":
 		return newBigNumericLiteralNode(n)
-	case BinaryExpression:
+	case "BinaryExpression":
 		return newBinaryExpressionNode(n)
-	case BitwiseShiftExpression:
+	case "BitwiseShiftExpression":
 		return newBitwiseShiftExpressionNode(n)
-	case BeginEndBlock:
+	case "BeginEndBlock":
 		return newBeginEndBlockNode(n)
-	case BooleanLiteral:
+	case "BooleanLiteral":
 		return newBooleanLiteralNode(n)
-	case BreakStatement:
+	case "BreakStatement":
 		return newBreakStatementNode(n)
-	case BytesLiteral:
+	case "BytesLiteral":
 		return newBytesLiteralNode(n)
-	case CallStatement:
+	case "CallStatement":
 		return newCallStatementNode(n)
-	case CaseStatement:
+	case "CaseStatement":
 		return newCaseStatementNode(n)
-	case CaseNoValueExpression:
+	case "CaseNoValueExpression":
 		return newCaseNoValueExpressionNode(n)
-	case CaseValueExpression:
+	case "CaseValueExpression":
 		return newCaseValueExpressionNode(n)
-	case CastExpression:
+	case "CastExpression":
 		return newCastExpressionNode(n)
-	case CheckConstraint:
+	case "CheckConstraint":
 		return newCheckConstraintNode(n)
-	case ClampedBetweenModifier:
+	case "ClampedBetweenModifier":
 		return newClampedBetweenModifierNode(n)
-	case CloneDataSource:
+	case "CloneDataSource":
 		return newCloneDataSourceNode(n)
-	case CloneDataSourceList:
+	case "CloneDataSourceList":
 		return newCloneDataSourceListNode(n)
-	case CloneDataStatement:
+	case "CloneDataStatement":
 		return newCloneDataStatementNode(n)
-	case ClusterBy:
+	case "ClusterBy":
 		return newClusterByNode(n)
-	case Collate:
+	case "Collate":
 		return newCollateNode(n)
-	case ColumnAttributeList:
+	case "ColumnAttributeList":
 		return newColumnAttributeListNode(n)
-	case ColumnDefinition:
+	case "ColumnDefinition":
 		return newColumnDefinitionNode(n)
-	case ColumnList:
+	case "ColumnList":
 		return newColumnListNode(n)
-	case ColumnPosition:
+	case "ColumnPosition":
 		return newColumnPositionNode(n)
-	case CommitStatement:
+	case "CommitStatement":
 		return newCommitStatementNode(n)
-	case ConnectionClause:
+	case "ConnectionClause":
 		return newConnectionClauseNode(n)
-	case ContinueStatement:
+	case "ContinueStatement":
 		return newContinueStatementNode(n)
-	case CopyDataSource:
+	case "CopyDataSource":
 		return newCopyDataSourceNode(n)
-	case CreateConstantStatement:
+	case "CreateConstantStatement":
 		return newCreateConstantStatementNode(n)
-	case CreateDatabaseStatement:
+	case "CreateDatabaseStatement":
 		return newCreateDatabaseStatementNode(n)
-	case CreateExternalTableStatement:
+	case "CreateExternalTableStatement":
 		return newCreateExternalTableStatementNode(n)
-	case CreateFunctionStatement:
+	case "CreateFunctionStatement":
 		return newCreateFunctionStatementNode(n)
-	case CreateIndexStatement:
+	case "CreateIndexStatement":
 		return newCreateIndexStatementNode(n)
-	case CreateModelStatement:
+	case "CreateModelStatement":
 		return newCreateModelStatementNode(n)
-	case CreateProcedureStatement:
+	case "CreateProcedureStatement":
 		return newCreateProcedureStatementNode(n)
-	case CreatePrivilegeRestrictionStatement:
+	case "CreatePrivilegeRestrictionStatement":
 		return newCreatePrivilegeRestrictionStatementNode(n)
-	case CreateRowAccessPolicyStatement:
+	case "CreateRowAccessPolicyStatement":
 		return newCreateRowAccessPolicyStatementNode(n)
-	case CreateSchemaStatement:
+	case "CreateSchemaStatement":
 		return newCreateSchemaStatementNode(n)
-	case CreateSnapshotTableStatement:
+	case "CreateSnapshotTableStatement":
 		return newCreateSnapshotTableStatementNode(n)
-	case CreateTableFunctionStatement:
+	case "CreateTableFunctionStatement":
 		return newCreateTableFunctionStatementNode(n)
-	case CreateTableStatement:
+	case "CreateTableStatement":
 		return newCreateTableStatementNode(n)
-	case CreateEntityStatement:
+	case "CreateEntityStatement":
 		return newCreateEntityStatementNode(n)
-	case CreateViewStatement:
+	case "CreateViewStatement":
 		return newCreateViewStatementNode(n)
-	case CreateMaterializedViewStatement:
+	case "CreateMaterializedViewStatement":
 		return newCreateMaterializedViewStatementNode(n)
-	case DateOrTimeLiteral:
+	case "DateOrTimeLiteral":
 		return newDateOrTimeLiteralNode(n)
-	case DefaultLiteral:
+	case "DefaultLiteral":
 		return newDefaultLiteralNode(n)
-	case DefineTableStatement:
+	case "DefineTableStatement":
 		return newDefineTableStatementNode(n)
-	case DeleteStatement:
+	case "DeleteStatement":
 		return newDeleteStatementNode(n)
-	case DescribeStatement:
+	case "DescribeStatement":
 		return newDescribeStatementNode(n)
-	case DescriptorColumn:
+	case "DescriptorColumn":
 		return newDescriptorColumnNode(n)
-	case DescriptorColumnList:
+	case "DescriptorColumnList":
 		return newDescriptorColumnListNode(n)
-	case Descriptor:
+	case "Descriptor":
 		return newDescriptorNode(n)
-	case DotGeneralizedField:
+	case "DotGeneralizedField":
 		return newDotGeneralizedFieldNode(n)
-	case DotIdentifier:
+	case "DotIdentifier":
 		return newDotIdentifierNode(n)
-	case DotStar:
+	case "DotStar":
 		return newDotStarNode(n)
-	case DotStarWithModifiers:
+	case "DotStarWithModifiers":
 		return newDotStarWithModifiersNode(n)
-	case DropAllRowAccessPoliciesStatement:
+	case "DropAllRowAccessPoliciesStatement":
 		return newDropAllRowAccessPoliciesStatementNode(n)
-	case DropColumnAction:
+	case "DropColumnAction":
 		return newDropColumnActionNode(n)
-	case DropConstraintAction:
+	case "DropConstraintAction":
 		return newDropConstraintActionNode(n)
-	case DropEntityStatement:
+	case "DropEntityStatement":
 		return newDropEntityStatementNode(n)
-	case DropFunctionStatement:
+	case "DropFunctionStatement":
 		return newDropFunctionStatementNode(n)
-	case DropPrimaryKeyAction:
+	case "DropPrimaryKeyAction":
 		return newDropPrimaryKeyActionNode(n)
-	case DropPrivilegeRestrictionStatement:
+	case "DropPrivilegeRestrictionStatement":
 		return newDropPrivilegeRestrictionStatementNode(n)
-	case DropRowAccessPolicyStatement:
+	case "DropRowAccessPolicyStatement":
 		return newDropRowAccessPolicyStatementNode(n)
-	case DropSearchIndexStatement:
+	case "DropSearchIndexStatement":
 		return newDropSearchIndexStatementNode(n)
-	case DropStatement:
+	case "DropStatement":
 		return newDropStatementNode(n)
-	case DropTableFunctionStatement:
+	case "DropTableFunctionStatement":
 		return newDropTableFunctionStatementNode(n)
-	case DropMaterializedViewStatement:
+	case "DropMaterializedViewStatement":
 		return newDropMaterializedViewStatementNode(n)
-	case DropSnapshotTableStatement:
+	case "DropSnapshotTableStatement":
 		return newDropSnapshotTableStatementNode(n)
-	case ElseifClause:
+	case "ElseifClause":
 		return newElseifClauseNode(n)
-	case ElseifClauseList:
+	case "ElseifClauseList":
 		return newElseifClauseListNode(n)
-	case ExceptionHandler:
+	case "ExceptionHandler":
 		return newExceptionHandlerNode(n)
-	case ExceptionHandlerList:
+	case "ExceptionHandlerList":
 		return newExceptionHandlerListNode(n)
-	case ExecuteImmediateStatement:
+	case "ExecuteImmediateStatement":
 		return newExecuteImmediateStatementNode(n)
-	case ExecuteIntoClause:
+	case "ExecuteIntoClause":
 		return newExecuteIntoClauseNode(n)
-	case ExecuteUsingArgument:
+	case "ExecuteUsingArgument":
 		return newExecuteUsingArgumentNode(n)
-	case ExecuteUsingClause:
+	case "ExecuteUsingClause":
 		return newExecuteUsingClauseNode(n)
-	case ExplainStatement:
+	case "ExplainStatement":
 		return newExplainStatementNode(n)
-	case ExportDataStatement:
+	case "ExportDataStatement":
 		return newExportDataStatementNode(n)
-	case ExportModelStatement:
+	case "ExportModelStatement":
 		return newExportModelStatementNode(n)
-	case ExpressionSubquery:
+	case "ExpressionSubquery":
 		return newExpressionSubqueryNode(n)
-	case ExtractExpression:
+	case "ExtractExpression":
 		return newExtractExpressionNode(n)
-	case FilterFieldsArg:
+	case "FilterFieldsArg":
 		return newFilterFieldsArgNode(n)
-	case FilterFieldsExpression:
+	case "FilterFieldsExpression":
 		return nil
-	case FilterUsingClause:
+	case "FilterUsingClause":
 		return newFilterUsingClauseNode(n)
-	case FloatLiteral:
+	case "FloatLiteral":
 		return newFloatLiteralNode(n)
-	case ForInStatement:
+	case "ForInStatement":
 		return newForInStatementNode(n)
-	case ForeignKey:
+	case "ForeignKey":
 		return newForeignKeyNode(n)
-	case ForeignKeyActions:
+	case "ForeignKeyActions":
 		return newForeignKeyActionsNode(n)
-	case ForeignKeyColumnAttribute:
+	case "ForeignKeyColumnAttribute":
 		return newForeignKeyColumnAttributeNode(n)
-	case ForeignKeyReference:
+	case "ForeignKeyReference":
 		return newForeignKeyReferenceNode(n)
-	case FormatClause:
+	case "FormatClause":
 		return newFormatClauseNode(n)
-	case ForSystemTime:
+	case "ForSystemTime":
 		return newForSystemTimeNode(n)
-	case FromClause:
+	case "FromClause":
 		return newFromClauseNode(n)
-	case FunctionCall:
+	case "FunctionCall":
 		return newFunctionCallNode(n)
-	case FunctionDeclaration:
+	case "FunctionDeclaration":
 		return newFunctionDeclarationNode(n)
-	case FunctionParameter:
+	case "FunctionParameter":
 		return newFunctionParameterNode(n)
-	case FunctionParameters:
+	case "FunctionParameters":
 		return newFunctionParametersNode(n)
-	case GeneratedColumnInfo:
+	case "GeneratedColumnInfo":
 		return newGeneratedColumnInfoNode(n)
-	case GranteeList:
+	case "GranteeList":
 		return newGranteeListNode(n)
-	case GrantStatement:
+	case "GrantStatement":
 		return newGrantStatementNode(n)
-	case GrantToClause:
+	case "GrantToClause":
 		return newGrantToClauseNode(n)
-	case RestrictToClause:
+	case "RestrictToClause":
 		return newRestrictToClauseNode(n)
-	case GroupBy:
+	case "GroupBy":
 		return newGroupByNode(n)
-	case GroupingItem:
+	case "GroupingItem":
 		return newGroupingItemNode(n)
-	case Having:
+	case "Having":
 		return newHavingNode(n)
-	case HavingModifier:
+	case "HavingModifier":
 		return newHavingModifierNode(n)
-	case HiddenColumnAttribute:
+	case "HiddenColumnAttribute":
 		return newHiddenColumnAttributeNode(n)
-	case Hint:
+	case "Hint":
 		return newHintNode(n)
-	case HintedStatement:
+	case "HintedStatement":
 		return newHintedStatementNode(n)
-	case HintEntry:
+	case "HintEntry":
 		return newHintEntryNode(n)
-	case Identifier:
+	case "Identifier":
 		return newIdentifierNode(n)
-	case IdentifierList:
+	case "IdentifierList":
 		return newIdentifierListNode(n)
-	case IfStatement:
+	case "IfStatement":
 		return newIfStatementNode(n)
-	case ImportStatement:
+	case "ImportStatement":
 		return newImportStatementNode(n)
-	case InExpression:
+	case "InExpression":
 		return newInExpressionNode(n)
-	case InList:
+	case "InList":
 		return newInListNode(n)
-	case IndexAllColumns:
+	case "IndexAllColumns":
 		return newIndexAllColumnsNode(n)
-	case IndexItemList:
+	case "IndexItemList":
 		return newIndexItemListNode(n)
-	case IndexStoringExpressionList:
+	case "IndexStoringExpressionList":
 		return newIndexStoringExpressionListNode(n)
-	case IndexUnnestExpressionList:
+	case "IndexUnnestExpressionList":
 		return newIndexUnnestExpressionListNode(n)
-	case InferredTypeColumnSchema:
+	case "InferredTypeColumnSchema":
 		return newInferredTypeColumnSchemaNode(n)
-	case InsertStatement:
+	case "InsertStatement":
 		return newInsertStatementNode(n)
-	case InsertValuesRow:
+	case "InsertValuesRow":
 		return newInsertValuesRowNode(n)
-	case InsertValuesRowList:
+	case "InsertValuesRowList":
 		return newInsertValuesRowListNode(n)
-	case IntervalExpr:
+	case "IntervalExpr":
 		return newIntervalExprNode(n)
-	case IntoAlias:
+	case "IntoAlias":
 		return newIntoAliasNode(n)
-	case IntLiteral:
+	case "IntLiteral":
 		return newIntLiteralNode(n)
-	case Join:
+	case "Join":
 		return newJoinNode(n)
-	case JoinLiteral:
+	case "JoinLiteral":
 		return nil
-	case Label:
+	case "Label":
 		return newLabelNode(n)
-	case Lambda:
+	case "Lambda":
 		return newLambdaNode(n)
-	case LikeExpression:
+	case "LikeExpression":
 		return newLikeExpressionNode(n)
-	case LimitOffset:
+	case "LimitOffset":
 		return newLimitOffsetNode(n)
-	case MaxLiteral:
+	case "MaxLiteral":
 		return newMaxLiteralNode(n)
-	case MergeAction:
+	case "MergeAction":
 		return newMergeActionNode(n)
-	case MergeStatement:
+	case "MergeStatement":
 		return newMergeStatementNode(n)
-	case MergeWhenClause:
+	case "MergeWhenClause":
 		return newMergeWhenClauseNode(n)
-	case MergeWhenClauseList:
+	case "MergeWhenClauseList":
 		return newMergeWhenClauseListNode(n)
-	case ModelClause:
+	case "ModelClause":
 		return newModelClauseNode(n)
-	case ModuleStatement:
+	case "ModuleStatement":
 		return newModuleStatementNode(n)
-	case NamedArgument:
+	case "NamedArgument":
 		return newNamedArgumentNode(n)
-	case NewConstructor:
+	case "NewConstructor":
 		return newNewConstructorNode(n)
-	case NewConstructorArg:
+	case "NewConstructorArg":
 		return newNewConstructorArgNode(n)
-	case NotNullColumnAttribute:
+	case "NotNullColumnAttribute":
 		return newNotNullColumnAttributeNode(n)
-	case NullLiteral:
+	case "NullLiteral":
 		return newNullLiteralNode(n)
-	case NullOrder:
+	case "NullOrder":
 		return newNullOrderNode(n)
-	case NumericLiteral:
+	case "NumericLiteral":
 		return newNumericLiteralNode(n)
-	case OnClause:
+	case "OnClause":
 		return newOnClauseNode(n)
-	case OnOrUsingClauseList:
+	case "OnOrUsingClauseList":
 		return newOnOrUsingClauseListNode(n)
-	case OptionsEntry:
+	case "OptionsEntry":
 		return newOptionsEntryNode(n)
-	case OptionsList:
+	case "OptionsList":
 		return newOptionsListNode(n)
-	case OrderBy:
+	case "OrderBy":
 		return newOrderByNode(n)
-	case OrderingExpression:
+	case "OrderingExpression":
 		return newOrderingExpressionNode(n)
-	case OrExpr:
+	case "OrExpr":
 		return newOrExprNode(n)
-	case ParameterAssignment:
+	case "ParameterAssignment":
 		return newParameterAssignmentNode(n)
-	case ParameterExpr:
+	case "ParameterExpr":
 		return newParameterExprNode(n)
-	case ParenthesizedJoin:
+	case "ParenthesizedJoin":
 		return newParenthesizedJoinNode(n)
-	case PartitionBy:
+	case "PartitionBy":
 		return newPartitionByNode(n)
-	case PathExpression:
+	case "PathExpression":
 		return newPathExpressionNode(n)
-	case PathExpressionList:
+	case "PathExpressionList":
 		return newPathExpressionListNode(n)
-	case PivotClause:
+	case "PivotClause":
 		return newPivotClauseNode(n)
-	case UnpivotClause:
+	case "UnpivotClause":
 		return newUnpivotClauseNode(n)
-	case UnpivotInItemLabel:
+	case "UnpivotInItemLabel":
 		return newUnpivotInItemLabelNode(n)
-	case UnpivotInItem:
+	case "UnpivotInItem":
 		return newUnpivotInItemNode(n)
-	case UnpivotInItemList:
+	case "UnpivotInItemList":
 		return newUnpivotInItemListNode(n)
-	case PivotExpression:
+	case "PivotExpression":
 		return newPivotExpressionNode(n)
-	case PivotExpressionList:
+	case "PivotExpressionList":
 		return newPivotExpressionListNode(n)
-	case PivotValue:
+	case "PivotValue":
 		return newPivotValueNode(n)
-	case PivotValueList:
+	case "PivotValueList":
 		return newPivotValueListNode(n)
-	case PrimaryKey:
+	case "PrimaryKey":
 		return newPrimaryKeyNode(n)
-	case PrimaryKeyColumnAttribute:
+	case "PrimaryKeyColumnAttribute":
 		return newPrimaryKeyColumnAttributeNode(n)
-	case Privilege:
+	case "Privilege":
 		return newPrivilegeNode(n)
-	case Privileges:
+	case "Privileges":
 		return newPrivilegesNode(n)
-	case Qualify:
+	case "Qualify":
 		return newQualifyNode(n)
-	case Query:
+	case "Query":
 		return newQueryNode(n)
-	case QueryStatement:
+	case "QueryStatement":
 		return newQueryStatementNode(n)
-	case RaiseStatement:
+	case "RaiseStatement":
 		return newRaiseStatementNode(n)
-	case RemoveFromRestricteeListClause:
+	case "RemoveFromRestricteeListClause":
 		return newRemoveFromRestricteeListClauseNode(n)
-	case RenameColumnAction:
+	case "RenameColumnAction":
 		return newRenameColumnActionNode(n)
-	case RenameToClause:
+	case "RenameToClause":
 		return newRenameToClauseNode(n)
-	case RenameStatement:
+	case "RenameStatement":
 		return newRenameStatementNode(n)
-	case RepeatStatement:
+	case "RepeatStatement":
 		return newRepeatStatementNode(n)
-	case RepeatableClause:
+	case "RepeatableClause":
 		return newRepeatableClauseNode(n)
-	case ReplaceFieldsArg:
+	case "ReplaceFieldsArg":
 		return newReplaceFieldsArgNode(n)
-	case ReplaceFieldsExpression:
+	case "ReplaceFieldsExpression":
 		return newReplaceFieldsExpressionNode(n)
-	case ReturnStatement:
+	case "ReturnStatement":
 		return newReturnStatementNode(n)
-	case ReturningClause:
+	case "ReturningClause":
 		return newReturningClauseNode(n)
-	case RevokeFromClause:
+	case "RevokeFromClause":
 		return newRevokeFromClauseNode(n)
-	case RevokeStatement:
+	case "RevokeStatement":
 		return newRevokeStatementNode(n)
-	case RollbackStatement:
+	case "RollbackStatement":
 		return newRollbackStatementNode(n)
-	case Rollup:
+	case "Rollup":
 		return newRollupNode(n)
-	case RunBatchStatement:
+	case "RunBatchStatement":
 		return newRunBatchStatementNode(n)
-	case SampleClause:
+	case "SampleClause":
 		return newSampleClauseNode(n)
-	case SampleSize:
+	case "SampleSize":
 		return newSampleSizeNode(n)
-	case SampleSuffix:
+	case "SampleSuffix":
 		return newSampleSuffixNode(n)
-	case Script:
+	case "Script":
 		return newScriptBaseNode(n)
-	case Select:
+	case "Select":
 		return newSelectNode(n)
-	case SelectAs:
+	case "SelectAs":
 		return newSelectAsNode(n)
-	case SelectColumn:
+	case "SelectColumn":
 		return newSelectColumnNode(n)
-	case SelectList:
+	case "SelectList":
 		return newSelectListNode(n)
-	case SetOperation:
+	case "SetOperation":
 		return newSetOperationNode(n)
-	case SetOptionsAction:
+	case "SetOptionsAction":
 		return newSetOptionsActionNode(n)
-	case SetAsAction:
+	case "SetAsAction":
 		return newSetAsActionNode(n)
-	case SetCollateClause:
+	case "SetCollateClause":
 		return newSetCollateClauseNode(n)
-	case SetTransactionStatement:
+	case "SetTransactionStatement":
 		return newSetTransactionStatementNode(n)
-	case SingleAssignment:
+	case "SingleAssignment":
 		return newSingleAssignmentNode(n)
-	case ShowStatement:
+	case "ShowStatement":
 		return newShowStatementNode(n)
-	case SimpleColumnSchema:
+	case "SimpleColumnSchema":
 		return newSimpleColumnSchemaNode(n)
-	case SimpleType:
+	case "SimpleType":
 		return newSimpleTypeNode(n)
-	case SqlFunctionBody:
+	case "SqlFunctionBody":
 		return newSqlFunctionBodyNode(n)
-	case Star:
+	case "Star":
 		return newStarNode(n)
-	case StarExceptList:
+	case "StarExceptList":
 		return newStarExceptListNode(n)
-	case StarModifiers:
+	case "StarModifiers":
 		return newStarModifiersNode(n)
-	case StarReplaceItem:
+	case "StarReplaceItem":
 		return newStarReplaceItemNode(n)
-	case StarWithModifiers:
+	case "StarWithModifiers":
 		return newStarWithModifiersNode(n)
-	case StarBatchStatement:
+	case "StarBatchStatement":
 		return nil
-	case StatementList:
+	case "StatementList":
 		return newStatementListNode(n)
-	case StringLiteral:
+	case "StringLiteral":
 		return newStringLiteralNode(n)
-	case StructColumnField:
+	case "StructColumnField":
 		return newStructColumnFieldNode(n)
-	case StructColumnSchema:
+	case "StructColumnSchema":
 		return newStructColumnSchemaNode(n)
-	case StructConstructorArg:
+	case "StructConstructorArg":
 		return newStructConstructorArgNode(n)
-	case StructConstructorWithKeyword:
+	case "StructConstructorWithKeyword":
 		return newStructConstructorWithKeywordNode(n)
-	case StructConstructorWithParens:
+	case "StructConstructorWithParens":
 		return newStructConstructorWithParensNode(n)
-	case StructField:
+	case "StructField":
 		return newStructFieldNode(n)
-	case StructType:
+	case "StructType":
 		return newStructTypeNode(n)
-	case SystemVariableAssignment:
+	case "SystemVariableAssignment":
 		return newSystemVariableAssignmentNode(n)
-	case SystemVariableExpr:
+	case "SystemVariableExpr":
 		return newSystemVariableExprNode(n)
-	case TableAndColumnInfo:
+	case "TableAndColumnInfo":
 		return newTableAndColumnInfoNode(n)
-	case TableAndColumnInfoList:
+	case "TableAndColumnInfoList":
 		return newTableAndColumnInfoListNode(n)
-	case TableClause:
+	case "TableClause":
 		return newTableClauseNode(n)
-	case TableElementList:
+	case "TableElementList":
 		return newTableElementListNode(n)
-	case TablePathExpression:
+	case "TablePathExpression":
 		return newTablePathExpressionNode(n)
-	case TableSubquery:
+	case "TableSubquery":
 		return newTableSubqueryNode(n)
-	case TemplatedParameterType:
+	case "TemplatedParameterType":
 		return newTemplatedParameterTypeNode(n)
-	case TransactionIsolationLevel:
+	case "TransactionIsolationLevel":
 		return newTransactionIsolationLevelNode(n)
-	case TransactionModeList:
+	case "TransactionModeList":
 		return newTransactionModeListNode(n)
-	case TransactionReadWriteMode:
+	case "TransactionReadWriteMode":
 		return newTransactionReadWriteModeNode(n)
-	case TransformClause:
+	case "TransformClause":
 		return newTransformClauseNode(n)
-	case TrucateStatement:
+	case "TrucateStatement":
 		return newTrucateStatementNode(n)
-	case Tvf:
+	case "Tvf":
 		return newTVFNode(n)
-	case TvfArgument:
+	case "TvfArgument":
 		return newTVFArgumentNode(n)
-	case TvfSchema:
+	case "TvfSchema":
 		return newTVFSchemaNode(n)
-	case TvfSchemaColumn:
+	case "TvfSchemaColumn":
 		return newTVFSchemaColumnNode(n)
-	case TypeParameterList:
+	case "TypeParameterList":
 		return newTypeParameterListNode(n)
-	case UnaryExpression:
+	case "UnaryExpression":
 		return newUnaryExpressionNode(n)
-	case UnnestExpression:
+	case "UnnestExpression":
 		return newUnnestExpressionNode(n)
-	case UnnestExpressionWithOptAliasAndOffset:
+	case "UnnestExpressionWithOptAliasAndOffset":
 		return newUnnestExpressionWithOptAliasAndOffsetNode(n)
-	case UntilClause:
+	case "UntilClause":
 		return newUntilClauseNode(n)
-	case UpdateItem:
+	case "UpdateItem":
 		return newUpdateItemNode(n)
-	case UpdateItemList:
+	case "UpdateItemList":
 		return newUpdateItemListNode(n)
-	case UpdateSetValue:
+	case "UpdateSetValue":
 		return newUpdateSetValueNode(n)
-	case UpdateStatement:
+	case "UpdateStatement":
 		return newUpdateStatementNode(n)
-	case UsingClause:
+	case "UsingClause":
 		return newUsingClauseNode(n)
-	case VariableDeclaration:
+	case "VariableDeclaration":
 		return newVariableDeclarationNode(n)
-	case WhenThenClause:
+	case "WhenThenClause":
 		return newWhenThenClauseNode(n)
-	case WhenThenClauseList:
+	case "WhenThenClauseList":
 		return newWhenThenClauseListNode(n)
-	case WhereClause:
+	case "WhereClause":
 		return newWhereClauseNode(n)
-	case WhileStatement:
+	case "WhileStatement":
 		return newWhileStatementNode(n)
-	case WindowClause:
+	case "WindowClause":
 		return newWindowClauseNode(n)
-	case WindowDefinition:
+	case "WindowDefinition":
 		return newWindowDefinitionNode(n)
-	case WindowFrame:
+	case "WindowFrame":
 		return newWindowFrameNode(n)
-	case WindowFrameExpr:
+	case "WindowFrameExpr":
 		return newWindowFrameExprNode(n)
-	case WindowSpecification:
+	case "WindowSpecification":
 		return newWindowSpecificationNode(n)
-	case WithClause:
+	case "WithClause":
 		return newWithClauseNode(n)
-	case WithClauseEntry:
+	case "WithClauseEntry":
 		return newWithClauseEntryNode(n)
-	case WithConnectionClause:
+	case "WithConnectionClause":
 		return newWithConnectionClauseNode(n)
-	case WithGroupRows:
+	case "WithGroupRows":
 		return newWithGroupRowsNode(n)
-	case WithOffset:
+	case "WithOffset":
 		return newWithOffsetNode(n)
-	case WithPartitionColumnsClause:
+	case "WithPartitionColumnsClause":
 		return newWithPartitionColumnsClauseNode(n)
-	case WithWeight:
+	case "WithWeight":
 		return newWithWeightNode(n)
 	}
 	return newBaseNode(n)

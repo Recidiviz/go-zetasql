@@ -365,7 +365,9 @@ func (n *SystemVariableNode) AddNamePath(v string) {
 // body are stored in ParameterList.
 //
 // For example, the following query
-//   SELECT ARRAY_FILTER([1,2,3], e -> e = key) FROM KeyValue;
+//
+//	SELECT ARRAY_FILTER([1,2,3], e -> e = key) FROM KeyValue;
+//
 // would have a lambda with ParameterList ['key'] and ArgumentList ['e'].
 //
 // Body is the body expression of the lambda. The expression can only
@@ -446,31 +448,36 @@ func (n *FilterFieldArgNode) SetInclude(v bool) {
 // FilterFieldNode represents a call to the FILTER_FIELDS() function. This function can be
 // used to modify a proto, prune fields and output the resulting proto. The
 // SQL syntax for this function is
-//   FILTER_FIELDS(<expr>, <filter_field_arg_list>).
+//
+//	FILTER_FIELDS(<expr>, <filter_field_arg_list>).
 //
 // <expr> must have proto type. <filter_field_arg> contains a sign ('+' or
 // '-') and a field path starting from the proto.
 //
 // For example:
-//   FILTER_FIELDS(proto, +field1, -field1.field2)
+//
+//	FILTER_FIELDS(proto, +field1, -field1.field2)
+//
 // means the resulting proto only contains field1.* except field1.field2.*.
 //
 // Field paths are evaluated and processed in order,
 // ```
-//   IF filter_field_arg_list[0].include:
-//     CLEAR all fields
-//   FOR filter_field_arg IN filter_field_arg_list:
-//     IF filter_field_arg.include:
-//       UNCLEAR filter_field_arg.field_descriptor_path (and all children)
-//     ELSE:
-//       CLEAR filter_field_arg.field_descriptor_path (and all children)
+//
+//	IF filter_field_arg_list[0].include:
+//	  CLEAR all fields
+//	FOR filter_field_arg IN filter_field_arg_list:
+//	  IF filter_field_arg.include:
+//	    UNCLEAR filter_field_arg.field_descriptor_path (and all children)
+//	  ELSE:
+//	    CLEAR filter_field_arg.field_descriptor_path (and all children)
+//
 // ```
 //
 // The order of field_field args have following constraints:
-// 1. There must be at least one filter_field arg.
-// 2. Args for ancestor fields must precede descendants.
-// 3. Each arg must have opposite `include` compared to the last preceding
-//    ancestor field.
+//  1. There must be at least one filter_field arg.
+//  2. Args for ancestor fields must precede descendants.
+//  3. Each arg must have opposite `include` compared to the last preceding
+//     ancestor field.
 type FilterFieldNode struct {
 	*BaseExprNode
 }
@@ -1008,10 +1015,10 @@ func (n *CastNode) SetTimeZone(v ExprNode) {
 // result, depending on the output type.
 //
 // For example:
-//   CAST("ABC" as STRING(2)) should error out
-//   CAST(1234 as NUMERIC(2)) should error out
-//   CAST(1.234 as NUMERIC(2,1)) should return a NumericValue of 1.2
 //
+//	CAST("ABC" as STRING(2)) should error out
+//	CAST(1234 as NUMERIC(2)) should error out
+//	CAST(1.234 as NUMERIC(2,1)) should return a NumericValue of 1.2
 func (n *CastNode) TypeParameters() *types.TypeParameters {
 	var v unsafe.Pointer
 	internal.ResolvedCast_type_parameters(n.raw, &v)
@@ -1437,42 +1444,43 @@ func (n *ReplaceFieldNode) AddReplaceFieldItem(v *ReplaceFieldItemNode) {
 // TODO Do we want to specify semantics more firmly here?
 //
 // The semantics vary based on SubqueryType:
-//   SCALAR
-//     Usage: ( <subquery> )
-//     If the subquery produces zero rows, the output value is NULL.
-//     If the subquery produces exactly one row, that row is the output value.
-//     If the subquery produces more than one row, raise a runtime error.
 //
-//   ARRAY
-//     Usage: ARRAY( <subquery> )
-//     The subquery produces an array value with zero or more rows, with
-//     one array element per subquery row produced.
+//	 SCALAR
+//	   Usage: ( <subquery> )
+//	   If the subquery produces zero rows, the output value is NULL.
+//	   If the subquery produces exactly one row, that row is the output value.
+//	   If the subquery produces more than one row, raise a runtime error.
 //
-//   EXISTS
-//     Usage: EXISTS( <subquery> )
-//     The output type is always bool.  The result is true if the subquery
-//     produces at least one row, and false otherwise.
+//	 ARRAY
+//	   Usage: ARRAY( <subquery> )
+//	   The subquery produces an array value with zero or more rows, with
+//	   one array element per subquery row produced.
 //
-//   IN
-//     Usage: <in_expr> [NOT] IN ( <subquery> )
-//     The output type is always bool.  The result is true when <in_expr> is
-//     equal to at least one row, and false otherwise.  The <subquery> row
-//     contains only one column, and the types of <in_expr> and the
-//     subquery column must exactly match a built-in signature for the
-//     '$equals' comparison function (they must be the same type or one
-//     must be INT64 and the other UINT64).  NOT will be expressed as a $not
-//     FunctionCall wrapping this SubqueryExpr.
+//	 EXISTS
+//	   Usage: EXISTS( <subquery> )
+//	   The output type is always bool.  The result is true if the subquery
+//	   produces at least one row, and false otherwise.
 //
-//  LIKE
-//     Usage: <in_expr> [NOT] LIKE ANY|SOME|ALL ( <subquery> )
-//     The output type is always bool. The result is true when <in_expr>
-//     matches at least one row for LIKE ANY|SOME or matches all rows for
-//     LIKE ALL, and false otherwise.  The <subquery> row contains only one
-//     column, and the types of <in_expr> and the subquery column must
-//     exactly match a built-in signature for the relevant '$like_any' or
-//     '$like_all' comparison function (both must be the same type of either
-//     STRING or BYTES).  NOT will be expressed as a $not FunctionCall
-//     wrapping this SubqueryExpr.
+//	 IN
+//	   Usage: <in_expr> [NOT] IN ( <subquery> )
+//	   The output type is always bool.  The result is true when <in_expr> is
+//	   equal to at least one row, and false otherwise.  The <subquery> row
+//	   contains only one column, and the types of <in_expr> and the
+//	   subquery column must exactly match a built-in signature for the
+//	   '$equals' comparison function (they must be the same type or one
+//	   must be INT64 and the other UINT64).  NOT will be expressed as a $not
+//	   FunctionCall wrapping this SubqueryExpr.
+//
+//	LIKE
+//	   Usage: <in_expr> [NOT] LIKE ANY|SOME|ALL ( <subquery> )
+//	   The output type is always bool. The result is true when <in_expr>
+//	   matches at least one row for LIKE ANY|SOME or matches all rows for
+//	   LIKE ALL, and false otherwise.  The <subquery> row contains only one
+//	   column, and the types of <in_expr> and the subquery column must
+//	   exactly match a built-in signature for the relevant '$like_any' or
+//	   '$like_all' comparison function (both must be the same type of either
+//	   STRING or BYTES).  NOT will be expressed as a $not FunctionCall
+//	   wrapping this SubqueryExpr.
 //
 // The subquery for a SCALAR, ARRAY, IN or LIKE subquery must have exactly
 // one output column.
@@ -1577,41 +1585,34 @@ func (n *SubqueryExprNode) AddHint(v *OptionNode) {
 // <assignment_list>.
 //
 // <assignment_list> One or more columns that are computed before evaluating
-//                   <expr>, and which may be referenced by <expr>.
+//
+//	<expr>, and which may be referenced by <expr>.
+//
 // <expr> Computes the result of the LetExprNode. May reference columns
-//        from <assignment_list>.
+//
+//	from <assignment_list>.
 type LetExprNode struct {
 	*BaseExprNode
 }
 
 func (n *LetExprNode) AssignmentList() []*ComputedColumnNode {
-	var v unsafe.Pointer
-	internal.ResolvedLetExpr_assignment_list(n.raw, &v)
-	var ret []*ComputedColumnNode
-	helper.PtrToSlice(v, func(p unsafe.Pointer) {
-		ret = append(ret, newComputedColumnNode(p))
-	})
-	return ret
+	return nil
 }
 
 func (n *LetExprNode) SetAssignmentList(v []*ComputedColumnNode) {
-	internal.ResolvedLetExpr_set_assignment_list(n.raw, helper.SliceToPtr(v, func(i int) unsafe.Pointer {
-		return v[i].getRaw()
-	}))
+	_ = v
 }
 
 func (n *LetExprNode) AddAssignment(v *ComputedColumnNode) {
-	internal.ResolvedLetExpr_add_assignment_list(n.raw, v.getRaw())
+	_ = v
 }
 
 func (n *LetExprNode) Expr() ExprNode {
-	var v unsafe.Pointer
-	internal.ResolvedLetExpr_expr(n.raw, &v)
-	return newExprNode(v)
+	return nil
 }
 
 func (n *LetExprNode) SetExpr(v ExprNode) {
-	internal.ResolvedLetExpr_set_expr(n.raw, v.getRaw())
+	_ = v
 }
 
 // ScanNode common interface for all Scans, which are nodes that produce rows
@@ -1731,7 +1732,8 @@ func (n *ConnectionNode) SetConnection(v types.Connection) {
 
 // DescriptorNode represents a descriptor object as a TVF argument.
 // A descriptor is basically a list of unresolved column names, written
-//   DESCRIPTOR(column1, column2)
+//
+//	DESCRIPTOR(column1, column2)
 //
 // <descriptor_column_name_list> contains the column names.
 //
@@ -1934,9 +1936,9 @@ func (n *JoinScanNode) SetJoinExpr(v ExprNode) {
 // may be used inside <join_expr>.
 //
 // If the array is empty (after evaluating <join_expr>), then
-// 1. If <is_outer> is false, the scan produces zero rows.
-// 2. If <is_outer> is true, the scan produces one row with a NULL value for
-//    the <element_column>.
+//  1. If <is_outer> is false, the scan produces zero rows.
+//  2. If <is_outer> is true, the scan produces one row with a NULL value for
+//     the <element_column>.
 //
 // <element_column> is the new column produced by this scan that stores the
 // array element value for each row.
@@ -2241,7 +2243,9 @@ func (n *AggregateScanNode) AddRollupColumn(v *ColumnRefNode) {
 //
 // <k_threshold_expr> when non-null, points to a function call in
 // the <aggregate_list> and adds a filter that acts like:
-//   HAVING <k_threshold_expr> >= <implementation-defined k-threshold>
+//
+//	HAVING <k_threshold_expr> >= <implementation-defined k-threshold>
+//
 // omitting any rows that would not pass this condition.
 // TODO: Update this comment after splitting the rewriter out
 // into a separate stage.
@@ -2330,20 +2334,20 @@ func (n *SetOperationItemNode) AddOutputColumn(v *Column) {
 // matches 1:1 with <column_list> and specifies how the input <scan>'s
 // columns map into the final <column_list>.
 //
-// - Results of {UNION, INTERSECT, EXCEPT} ALL can include duplicate rows.
-//   More precisely, with two input scans, if a given row R appears exactly
-//   m times in first input and n times in second input (m >= 0, n >= 0):
-//   For UNION ALL, R will appear exactly m + n times in the result.
-//   For INTERSECT ALL, R will appear exactly min(m, n) in the result.
-//   For EXCEPT ALL, R will appear exactly max(m - n, 0) in the result.
+//   - Results of {UNION, INTERSECT, EXCEPT} ALL can include duplicate rows.
+//     More precisely, with two input scans, if a given row R appears exactly
+//     m times in first input and n times in second input (m >= 0, n >= 0):
+//     For UNION ALL, R will appear exactly m + n times in the result.
+//     For INTERSECT ALL, R will appear exactly min(m, n) in the result.
+//     For EXCEPT ALL, R will appear exactly max(m - n, 0) in the result.
 //
-// - Results of {UNION, INTERSECT, EXCEPT} DISTINCT cannot contain any
-//   duplicate rows. For UNION and INTERSECT, the DISTINCT is computed
-//   after the result above is computed.  For EXCEPT DISTINCT, row R will
-//   appear once in the output if m > 0 and n = 0.
+//   - Results of {UNION, INTERSECT, EXCEPT} DISTINCT cannot contain any
+//     duplicate rows. For UNION and INTERSECT, the DISTINCT is computed
+//     after the result above is computed.  For EXCEPT DISTINCT, row R will
+//     appear once in the output if m > 0 and n = 0.
 //
-// - For n (>2) input scans, the above operations generalize so the output is
-//   the same as if the inputs were combined incrementally from left to right.
+//   - For n (>2) input scans, the above operations generalize so the output is
+//     the same as if the inputs were combined incrementally from left to right.
 type SetOperationScanNode struct {
 	*BaseScanNode
 }
@@ -2385,17 +2389,19 @@ func (n *SetOperationScanNode) AddInputItem(v *SetOperationItemNode) {
 // a sort column and indicates direction (ascending or descending).
 //
 // Order Preservation:
-//   A ScanNode produces an ordered output if it has <is_ordered>=true.
-//   If <is_ordered>=false, the scan may discard order.  This can happen
-//   even for a OrderByScanNode, if it is the top-level scan in a
-//   subquery (which discards order).
+//
+//	A ScanNode produces an ordered output if it has <is_ordered>=true.
+//	If <is_ordered>=false, the scan may discard order.  This can happen
+//	even for a OrderByScanNode, if it is the top-level scan in a
+//	subquery (which discards order).
 //
 // The following Scan nodes may have <is_ordered>=true, producing or
 // propagating an ordering:
-//   * OrderByScanNode
-//   * LimitOffsetScanNode
-//   * ProjectScanNode
-//   * WithScanNode
+//   - OrderByScanNode
+//   - LimitOffsetScanNode
+//   - ProjectScanNode
+//   - WithScanNode
+//
 // Other Scan nodes will always discard ordering.
 type OrderByScanNode struct {
 	*BaseScanNode
@@ -2689,8 +2695,9 @@ func (n *ComputedColumnNode) SetExpr(v ExprNode) {
 // - a parameter, then <collation> is empty
 // - a non-parameter, then <collation> is set to the same collation
 // An engine which supports both features could read the fields as:
-//   If <collation> is set then use it, otherwise use <collation_name>, which
-//   must be a query parameter if set.
+//
+//	If <collation> is set then use it, otherwise use <collation_name>, which
+//	must be a query parameter if set.
 //
 // <null_order> indicates the ordering of NULL values relative to non-NULL
 // values. NULLS_FIRST indicates that NULLS sort prior to non-NULL values,
@@ -2756,15 +2763,19 @@ func (n *OrderByItemNode) SetCollation(v *Collation) {
 // except that child_list might be truncated.
 //
 // For ARRAY:
-//   If the element or its subfield has annotations, then child_list.size()
-//   is 1, and child_list(0) stores the element annotations.
-//   Otherwise child_list is empty.
+//
+//	If the element or its subfield has annotations, then child_list.size()
+//	is 1, and child_list(0) stores the element annotations.
+//	Otherwise child_list is empty.
+//
 // For STRUCT:
-//   If the i-th field has annotations then child_list(i) stores the
-//   field annotations.
-//   Otherwise either child_list.size() <= i or child_list(i) is trivial.
-//   If none of the fields and none of their subfields has annotations, then
-//   child_list is empty.
+//
+//	If the i-th field has annotations then child_list(i) stores the
+//	field annotations.
+//	Otherwise either child_list.size() <= i or child_list(i) is trivial.
+//	If none of the fields and none of their subfields has annotations, then
+//	child_list is empty.
+//
 // For other types, child_list is empty.
 type ColumnAnnotationsNode struct {
 	*BaseArgumentNode
@@ -2850,17 +2861,17 @@ func (n *ColumnAnnotationsNode) SetTypeParameters(v *types.TypeParameters) {
 // GeneratedColumnInfoNode <expression> indicates the expression that defines the column.
 // The type of the expression will always match the type of the column.
 //   - The <expression> can contain ColumnRefsNode corresponding to
-//   ColumnDefinitionNode.Column for any of the
-//   ColumnDefinitionsNode in the enclosing statement.
+//     ColumnDefinitionNode.Column for any of the
+//     ColumnDefinitionsNode in the enclosing statement.
 //   - The expression can never include a subquery.
 //
 // <stored_mode> is the mode of a generated column: Values are:
 //   - 'NON_STORED': The <expression> must always be evaluated at read time.
 //   - 'STORED': The <expression> should be pre-emptively computed at write
-//        time (to save work at read time) and must not call any volatle
-//        function (e.g. RAND).
+//     time (to save work at read time) and must not call any volatle
+//     function (e.g. RAND).
 //   - 'STORED_VOLATILE': The <expression> must be computed at write time and
-//        may call volatile functions (e.g. RAND).
+//     may call volatile functions (e.g. RAND).
 type GeneratedColumnInfoNode struct {
 	*BaseArgumentNode
 }
@@ -3016,13 +3027,16 @@ type BaseConstraintNode struct {
 
 // PrimaryKeyNode this represents the PRIMARY KEY constraint on a table.
 // <column_offset_list> provides the offsets of the column definitions that
-//                      comprise the primary key. This is empty when a
-//                      0-element primary key is defined or when the altered
-//                      table does not exist.
+//
+//	comprise the primary key. This is empty when a
+//	0-element primary key is defined or when the altered
+//	table does not exist.
+//
 // <unenforced> specifies whether the constraint is unenforced.
 // <constraint_name> specifies the constraint name, if present
 // <column_name_list> provides the column names used in column definitions
-//                    that comprise the primary key.
+//
+//	that comprise the primary key.
 type PrimaryKeyNode struct {
 	*BaseConstraintNode
 }
@@ -3109,14 +3123,14 @@ func (n *PrimaryKeyNode) AddColumnName(v string) {
 
 // ForeignKeyNode this represents the FOREIGN KEY constraint on a table. It is of the form:
 //
-//   CONSTRAINT <constraint_name>
-//   FOREIGN KEY <referencing_column_offset_list>
-//   REFERENCES <referenced_table> <referenced_column_offset_list>
-//   <match_mode>
-//   <update_action>
-//   <delete_action>
-//   <enforced>
-//   <option_list>
+//	CONSTRAINT <constraint_name>
+//	FOREIGN KEY <referencing_column_offset_list>
+//	REFERENCES <referenced_table> <referenced_column_offset_list>
+//	<match_mode>
+//	<update_action>
+//	<delete_action>
+//	<enforced>
+//	<option_list>
 //
 // <constraint_name> uniquely identifies the constraint.
 //
@@ -3290,10 +3304,10 @@ func (n *ForeignKeyNode) AddReferencingColumn(v string) {
 
 // CheckConstraintNode this represents the ZETASQL_CHECK constraint on a table. It is of the form:
 //
-//   CONSTRAINT <constraint_name>
-//   ZETASQL_CHECK <expression>
-//   <enforced>
-//   <option_list>
+//	CONSTRAINT <constraint_name>
+//	ZETASQL_CHECK <expression>
+//	<enforced>
+//	<option_list>
 //
 // <constraint_name> uniquely identifies the constraint.
 //
@@ -3455,20 +3469,25 @@ func (n *ProjectScanNode) SetInputScan(v ScanNode) {
 // <signature>.result_schema().column(<column_index_list>[i]).
 //
 // <tvf> The TableValuedFunction entry that the catalog returned for this TVF
-//       scan. Contains non-concrete function signatures which may include
-//       arguments with templated types.
+//
+//	scan. Contains non-concrete function signatures which may include
+//	arguments with templated types.
+//
 // <signature> The concrete table function signature for this TVF call,
-//             including the types of all scalar arguments and the
-//             number and types of columns of all table-valued
-//             arguments. An engine may also subclass this object to
-//             provide extra custom information and return an instance
-//             of the subclass from the TableValuedFunction::Resolve
-//             method.
+//
+//	including the types of all scalar arguments and the
+//	number and types of columns of all table-valued
+//	arguments. An engine may also subclass this object to
+//	provide extra custom information and return an instance
+//	of the subclass from the TableValuedFunction::Resolve
+//	method.
+//
 // <argument_list> The vector of resolved concrete arguments for this TVF
-//                 call, including the default values or NULLs injected for
-//                 the omitted arguments (Note the NULL injection is a
-//                 temporary solution to handle omitted named arguments. This
-//                 is subject to change by upcoming CLs).
+//
+//	call, including the default values or NULLs injected for
+//	the omitted arguments (Note the NULL injection is a
+//	temporary solution to handle omitted named arguments. This
+//	is subject to change by upcoming CLs).
 //
 // <column_index_list> This list matches 1-1 with the <column_list>, and
 // identifies the index of the corresponding column in the <signature>'s
@@ -3476,21 +3495,22 @@ func (n *ProjectScanNode) SetInputScan(v ScanNode) {
 //
 // <alias> The AS alias for the scan, or empty if none.
 // <function_call_signature> The FunctionSignature object from the
-//                           <tvf->signatures()> list that matched the
-//                           current call. The TVFScan's
-//                           <FunctionSignature::ConcreteArgument> list
-//                           matches 1:1 to <argument_list>, while its
-//                           <FunctionSignature::arguments> list still has
-//                           the full argument list.
-//                           The analyzer only sets this field when
-//                           it could be ambiguous for an engine to figure
-//                           out the actual arguments provided, e.g., when
-//                           there are arguments omitted from the call. When
-//                           it is provided, engines may use this object to
-//                           check for the argument names and omitted
-//                           arguments. SQLBuilder may also need this object
-//                           in cases when the named argument notation is
-//                           required for this call.
+//
+//	<tvf->signatures()> list that matched the
+//	current call. The TVFScan's
+//	<FunctionSignature::ConcreteArgument> list
+//	matches 1:1 to <argument_list>, while its
+//	<FunctionSignature::arguments> list still has
+//	the full argument list.
+//	The analyzer only sets this field when
+//	it could be ambiguous for an engine to figure
+//	out the actual arguments provided, e.g., when
+//	there are arguments omitted from the call. When
+//	it is provided, engines may use this object to
+//	check for the argument names and omitted
+//	arguments. SQLBuilder may also need this object
+//	in cases when the named argument notation is
+//	required for this call.
 type TVFScanNode struct {
 	*BaseScanNode
 }
@@ -3833,7 +3853,9 @@ func (n *QueryStmtNode) SetQuery(v ScanNode) {
 }
 
 // CreateDatabaseStmtNode this statement:
-//   CREATE DATABASE <name> [OPTIONS (...)]
+//
+//	CREATE DATABASE <name> [OPTIONS (...)]
+//
 // <name_path> is a vector giving the identifier path in the database name.
 // <option_list> specifies the options of the database.
 type CreateDatabaseStmtNode struct {
@@ -3881,15 +3903,19 @@ func (n *CreateDatabaseStmtNode) AddOption(v *OptionNode) {
 }
 
 // CreateStatementNode common base node for CREATE statements with standard modifiers like
-//         CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] <object type>
-//         [IF NOT EXISTS] <name> ...
+//
+//	CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] <object type>
+//	[IF NOT EXISTS] <name> ...
 //
 // <name_path> is a vector giving the identifier path in the table name.
 // <create_scope> is the relevant scope, i.e., DEFAULT, TEMP, PUBLIC,
-//                or PRIVATE.  PUBLIC/PRIVATE are only valid in module
-//                resolution context.
+//
+//	or PRIVATE.  PUBLIC/PRIVATE are only valid in module
+//	resolution context.
+//
 // <create_mode> indicates if this was CREATE, CREATE OR REPLACE, or
-//               CREATE IF NOT EXISTS.
+//
+//	CREATE IF NOT EXISTS.
 type CreateStatementNode interface {
 	StatementNode
 	NamePath() []string
@@ -3978,11 +4004,14 @@ func (n *IndexItemNode) SetDescending(v bool) {
 //
 // <array_expr> is the expression of the array field, e.g., t.array_field.
 // <element_column> is the new column produced by this unnest item that
-//                  stores the array element value for each row.
+//
+//	stores the array element value for each row.
+//
 // <array_offset_column> is optional. If present, it defines the column
-//                       produced by this unnest item that stores the array
-//                       offset (0-based) for the corresponding
-//                       <element_column>.
+//
+//	produced by this unnest item that stores the array
+//	offset (0-based) for the corresponding
+//	<element_column>.
 type UnnestItemNode struct {
 	*BaseArgumentNode
 }
@@ -4019,7 +4048,9 @@ func (n *UnnestItemNode) SetArrayOffsetColumn(v *ColumnHolderNode) {
 
 // CreateIndexStmtNode this statement:
 // CREATE [OR REPLACE] [UNIQUE] [SEARCH] INDEX [IF NOT EXISTS]
-//  <index_name_path> ON <table_name_path>
+//
+//	<index_name_path> ON <table_name_path>
+//
 // [STORING (Expression, ...)]
 // [UNNEST(path_expression) [[AS] alias] [WITH OFFSET [[AS] alias]], ...]
 // (path_expression [ASC|DESC], ...) [OPTIONS (name=value, ...)];
@@ -4029,20 +4060,29 @@ func (n *UnnestItemNode) SetArrayOffsetColumn(v *ColumnHolderNode) {
 // <is_unique> specifies if the index has unique entries.
 // <is_search> specifies if the index is for search.
 // <index_all_columns> specifies if indexing all the columns of the table.
-//                     When this field is true, index_item_list must be
-//                     empty and is_search must be true.
+//
+//	When this field is true, index_item_list must be
+//	empty and is_search must be true.
+//
 // <index_item_list> has the columns being indexed, specified as references
-//                   to 'computed_columns_list' entries or the columns of
-//                   'table_scan'.
+//
+//	to 'computed_columns_list' entries or the columns of
+//	'table_scan'.
+//
 // <storing_expression_list> has the expressions in the storing clause.
 // <option_list> has engine-specific directives for how and where to
-//               materialize this index.
+//
+//	materialize this index.
+//
 // <computed_columns_list> has computed columns derived from the columns of
-//                         'table_scan' or 'unnest_expressions_list'. For
-//                         example, the extracted field (e.g., x.y.z).
+//
+//	'table_scan' or 'unnest_expressions_list'. For
+//	example, the extracted field (e.g., x.y.z).
+//
 // <unnest_expressions_list> has unnest expressions derived from
-//                           'table_scan' or previous unnest expressions in
-//                           the list. So the list order is significant.
+//
+//	'table_scan' or previous unnest expressions in
+//	the list. So the list order is significant.
 type CreateIndexStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -4208,21 +4248,23 @@ func (n *CreateIndexStmtNode) AddUnnestExpression(v *UnnestItemNode) {
 }
 
 // CreateSchemaStmtNode this statement:
-//   CREATE [OR REPLACE] SCHEMA [IF NOT EXISTS] <name>
-//   [DEFAULT COLLATE <collation>]
-//   [OPTIONS (name=value, ...)]
+//
+//	CREATE [OR REPLACE] SCHEMA [IF NOT EXISTS] <name>
+//	[DEFAULT COLLATE <collation>]
+//	[OPTIONS (name=value, ...)]
 //
 // <option_list> engine-specific options.
 // <collation_name> specifies the default collation specification for future
-//   tables created in the dataset. If a table is created in this dataset
-//   without specifying table-level default collation, it inherits the
-//   dataset default collation. A change to this field affects only tables
-//   created afterwards, not the existing tables. Only string literals
-//   are allowed for this field.
 //
-//   Note: If a table being created in this schema does not specify table
-//   default collation, the engine should copy the dataset default collation
-//   to the table as the table default collation.
+//	tables created in the dataset. If a table is created in this dataset
+//	without specifying table-level default collation, it inherits the
+//	dataset default collation. A change to this field affects only tables
+//	created afterwards, not the existing tables. Only string literals
+//	are allowed for this field.
+//
+//	Note: If a table being created in this schema does not specify table
+//	default collation, the engine should copy the dataset default collation
+//	to the table as the table default collation.
 type CreateSchemaStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -4258,23 +4300,32 @@ func (n *CreateSchemaStmtNode) AddOption(v *OptionNode) {
 }
 
 // BaseCreateTableStmtNode this statement:
-//   CREATE [TEMP] TABLE <name> [(column type, ...) | LIKE <name_path>]
-//   [DEFAULT COLLATE <collation>] [PARTITION BY expr, ...]
-//   [CLUSTER BY expr, ...] [OPTIONS (...)]
+//
+//	CREATE [TEMP] TABLE <name> [(column type, ...) | LIKE <name_path>]
+//	[DEFAULT COLLATE <collation>] [PARTITION BY expr, ...]
+//	[CLUSTER BY expr, ...] [OPTIONS (...)]
 //
 // <option_list> has engine-specific directives for how and where to
-//               materialize this table.
+//
+//	materialize this table.
+//
 // <column_definition_list> has the names and types of the columns in the
-//                          created table. If <is_value_table> is true, it
-//                          must contain exactly one column, with a generated
-//                          name such as "$struct".
+//
+//	created table. If <is_value_table> is true, it
+//	must contain exactly one column, with a generated
+//	name such as "$struct".
+//
 // <pseudo_column_list> is a list of some pseudo-columns expected to be
-//                      present on the created table (provided by
-//                      AnalyzerOptions::SetDdlPseudoColumns*).  These can be
-//                      referenced in expressions in <partition_by_list> and
-//                      <cluster_by_list>.
+//
+//	present on the created table (provided by
+//	AnalyzerOptions::SetDdlPseudoColumns*).  These can be
+//	referenced in expressions in <partition_by_list> and
+//	<cluster_by_list>.
+//
 // <primary_key> specifies the PRIMARY KEY constraint on the table, it is
-//               nullptr when no PRIMARY KEY is specified.
+//
+//	nullptr when no PRIMARY KEY is specified.
+//
 // <foreign_key_list> specifies the FOREIGN KEY constraints on the table.
 // <check_constraint_list> specifies the ZETASQL_CHECK constraints on the table.
 // <partition_by_list> specifies the partitioning expressions for the table.
@@ -4283,19 +4334,22 @@ func (n *CreateSchemaStmtNode) AddOption(v *OptionNode) {
 // expression resolves to have collation specified.
 // <is_value_table> specifies whether the table is a value table.
 // <like_table> identifies the table in the LIKE <name_path>.
-//              By default, all fields (column names, types, constraints,
-//              keys, clustering etc.) will be inherited from the source
-//              table. But if explicitly set, the explicit settings will
-//              take precedence.
-// <collation_name> specifies the default collation specification to apply to
-//   newly added STRING fields in this table. A change of this field affects
-//   only the STRING columns and the STRING fields in STRUCTs added
-//   afterwards, not existing columns. Only string literals are allowed for
-//   this field.
 //
-//   Note: During table creation or alteration, if a STRING field is added to
-//   this table without explicit collation specified, the engine should copy
-//   the table default collation to the STRING field.
+//	By default, all fields (column names, types, constraints,
+//	keys, clustering etc.) will be inherited from the source
+//	table. But if explicitly set, the explicit settings will
+//	take precedence.
+//
+// <collation_name> specifies the default collation specification to apply to
+//
+//	newly added STRING fields in this table. A change of this field affects
+//	only the STRING columns and the STRING fields in STRUCTs added
+//	afterwards, not existing columns. Only string literals are allowed for
+//	this field.
+//
+//	Note: During table creation or alteration, if a STRING field is added to
+//	this table without explicit collation specified, the engine should copy
+//	the table default collation to the STRING field.
 type BaseCreateTableStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -4441,33 +4495,35 @@ func (n *BaseCreateTableStmtNode) SetCollationName(v ExprNode) {
 }
 
 // CreateTableStmtNode this statement:
-//   CREATE [TEMP] TABLE <name>
-//   [(column schema, ...) | LIKE <name_path> |
-//       {CLONE|COPY} <name_path>
-//           [FOR SYSTEM_TIME AS OF <time_expr>]
-//           [WHERE <where_clause>]]
-//   [DEFAULT COLLATE <collation_name>]
-//   [PARTITION BY expr, ...] [CLUSTER BY expr, ...]
-//   [OPTIONS (...)]
+//
+//	CREATE [TEMP] TABLE <name>
+//	[(column schema, ...) | LIKE <name_path> |
+//	    {CLONE|COPY} <name_path>
+//	        [FOR SYSTEM_TIME AS OF <time_expr>]
+//	        [WHERE <where_clause>]]
+//	[DEFAULT COLLATE <collation_name>]
+//	[PARTITION BY expr, ...] [CLUSTER BY expr, ...]
+//	[OPTIONS (...)]
 //
 // One of <clone_from> or <copy_from> can be present for CLONE or COPY.
-//   <clone_from> specifes the data source to clone from (cheap, typically
-//   O(1) operation); while <copy_from> is intended for a full copy.
 //
-//   TableScanNode will represent the source table, with an optional
-//   for_system_time_expr.
+//	<clone_from> specifes the data source to clone from (cheap, typically
+//	O(1) operation); while <copy_from> is intended for a full copy.
 //
-//   The TableScanNode may be wrapped inside a FilterScanNode if the
-//   source table has a where clause. No other Scan types are allowed here.
+//	TableScanNode will represent the source table, with an optional
+//	for_system_time_expr.
 //
-//   If the OPTIONS clause is explicitly specified, the option values are
-//   intended to be used for the created or replaced table.
-//   If any OPTION is unspecified, the corresponding option from the source
-//   table will be used instead.
+//	The TableScanNode may be wrapped inside a FilterScanNode if the
+//	source table has a where clause. No other Scan types are allowed here.
 //
-//   The 'clone_from.column_list' field may be set, but should be ignored.
+//	If the OPTIONS clause is explicitly specified, the option values are
+//	intended to be used for the created or replaced table.
+//	If any OPTION is unspecified, the corresponding option from the source
+//	table will be used instead.
 //
-//   clone_from and copy_from cannot be value tables.
+//	The 'clone_from.column_list' field may be set, but should be ignored.
+//
+//	clone_from and copy_from cannot be value tables.
 type CreateTableStmtNode struct {
 	*BaseCreateTableStmtNode
 }
@@ -4533,10 +4589,11 @@ func (n *CreateTableStmtNode) AddClusterBy(v ExprNode) {
 }
 
 // CreateTableAsSelectStmt this statement:
-//   CREATE [TEMP] TABLE <name> [(column schema, ...) | LIKE <name_path>]
-//   [DEFAULT COLLATE <collation_name>] [PARTITION BY expr, ...]
-//   [CLUSTER BY expr, ...] [OPTIONS (...)]
-//   AS SELECT ...
+//
+//	CREATE [TEMP] TABLE <name> [(column schema, ...) | LIKE <name_path>]
+//	[DEFAULT COLLATE <collation_name>] [PARTITION BY expr, ...]
+//	[CLUSTER BY expr, ...] [OPTIONS (...)]
+//	AS SELECT ...
 //
 // The <output_column_list> matches 1:1 with the <column_definition_list> in
 // BaseCreateTableStmtNode, and maps ColumnsNode produced by <query>
@@ -4627,46 +4684,56 @@ func (n *CreateTableAsSelectStmtNode) SetQuery(v ScanNode) {
 }
 
 // CreateModelStmtNode this statement:
-//   CREATE [TEMP] MODEL <name> [TRANSFORM(...)] [OPTIONS (...)] AS SELECT ..
+//
+//	CREATE [TEMP] MODEL <name> [TRANSFORM(...)] [OPTIONS (...)] AS SELECT ..
 //
 // <option_list> has engine-specific directives for how to train this model.
 // <output_column_list> matches 1:1 with the <query>'s column_list and the
-//                      <column_definition_list>, and identifies the names
-//                      and types of the columns output from the select
-//                      statement.
+//
+//	<column_definition_list>, and identifies the names
+//	and types of the columns output from the select
+//	statement.
+//
 // <query> is the select statement.
 // <transform_input_column_list> introduces new ColumnsNode that have the
-//   same names and types of the columns in the <output_column_list>. The
-//   transform expressions resolve against these ColumnsNode. It's only
-//   set when <transform_list> is non-empty.
+//
+//	same names and types of the columns in the <output_column_list>. The
+//	transform expressions resolve against these ColumnsNode. It's only
+//	set when <transform_list> is non-empty.
+//
 // <transform_list> is the list of ComputedColumnNode in TRANSFORM
-//   clause.
+//
+//	clause.
+//
 // <transform_output_column_list> matches 1:1 with <transform_list> output.
-//   It records the names of the output columns from TRANSFORM clause.
+//
+//	It records the names of the output columns from TRANSFORM clause.
+//
 // <transform_analytic_function_group_list> is the list of
-//   AnalyticFunctionGroup for analytic functions inside TRANSFORM clause.
-//   It records the input expression of the analytic functions. It can
-//   see all the columns from <transform_input_column_list>. The only valid
-//   group is for the full, unbounded window generated from empty OVER()
-//   clause.
-//   For example, CREATE MODEL statement
-//   "create model Z
-//     transform (max(c) over() as d)
-//     options ()
-//     as select 1 c, 2 b;"
-//   will generate transform_analytic_function_group_list:
-//   +-transform_analytic_function_group_list=
-//     +-AnalyticFunctionGroup
-//       +-analytic_function_list=
-//         +-d#5 :=
-//           +-AnalyticFunctionCall(ZetaSQL:max(INT64) -> INT64)
-//             +-ColumnRef(type=INT64, column=Z.c#3)
-//             +-window_frame=
-//               +-WindowFrame(frame_unit=ROWS)
-//                 +-start_expr=
-//                 | +-WindowFrameExpr(boundary_type=UNBOUNDED PRECEDING)
-//                 +-end_expr=
-//                   +-WindowFrameExpr(boundary_type=UNBOUNDED FOLLOWING)
+//
+//	AnalyticFunctionGroup for analytic functions inside TRANSFORM clause.
+//	It records the input expression of the analytic functions. It can
+//	see all the columns from <transform_input_column_list>. The only valid
+//	group is for the full, unbounded window generated from empty OVER()
+//	clause.
+//	For example, CREATE MODEL statement
+//	"create model Z
+//	  transform (max(c) over() as d)
+//	  options ()
+//	  as select 1 c, 2 b;"
+//	will generate transform_analytic_function_group_list:
+//	+-transform_analytic_function_group_list=
+//	  +-AnalyticFunctionGroup
+//	    +-analytic_function_list=
+//	      +-d#5 :=
+//	        +-AnalyticFunctionCall(ZetaSQL:max(INT64) -> INT64)
+//	          +-ColumnRef(type=INT64, column=Z.c#3)
+//	          +-window_frame=
+//	            +-WindowFrame(frame_unit=ROWS)
+//	              +-start_expr=
+//	              | +-WindowFrameExpr(boundary_type=UNBOUNDED PRECEDING)
+//	              +-end_expr=
+//	                +-WindowFrameExpr(boundary_type=UNBOUNDED FOLLOWING)
 type CreateModelStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -4802,26 +4869,36 @@ func (n *CreateModelStmtNode) AddTransformAnalyticFunctionGroup(v *AnalyticFunct
 }
 
 // BaseCreateView common node for CREATE view/materialized view:
-//   CREATE [TEMP|MATERIALIZED] [RECURSIVE] VIEW <name> [(...)]
-//     [OPTIONS (...)]
-//     AS SELECT ...
+//
+//	CREATE [TEMP|MATERIALIZED] [RECURSIVE] VIEW <name> [(...)]
+//	  [OPTIONS (...)]
+//	  AS SELECT ...
 //
 // <option_list> has engine-specific directives for options attached to
-//               this view.
+//
+//	this view.
+//
 // <output_column_list> has the names and types of the columns in the
-//                      created view, and maps from <query>'s column_list
-//                      to these output columns. If <has_explicit_columns> is
-//                      true, names will be explicitly provided.
+//
+//	created view, and maps from <query>'s column_list
+//	to these output columns. If <has_explicit_columns> is
+//	true, names will be explicitly provided.
+//
 // <has_explicit_columns> If this is set, the statement includes an explicit
-//   column name list. These column names should still be applied even if the
-//   query changes or is re-resolved in the future. The view becomes invalid
-//   if the query produces a different number of columns.
+//
+//	column name list. These column names should still be applied even if the
+//	query changes or is re-resolved in the future. The view becomes invalid
+//	if the query produces a different number of columns.
+//
 // <query> is the query to run.
 // <sql> is the view query text.
 // <sql_security> is the declared security mode for the function. Values
-//    include 'INVOKER', 'DEFINER'.
+//
+//	include 'INVOKER', 'DEFINER'.
+//
 // <recursive> specifies whether or not the view is created with the
-//   RECURSIVE keyword.
+//
+//	RECURSIVE keyword.
 //
 // Note that <query> and <sql> are both marked as IGNORABLE because
 // an engine could look at either one (but might not look at both).
@@ -4972,21 +5049,23 @@ func (n *WithPartitionColumnsNode) AddColumnDefinition(v *ColumnDefinitionNode) 
 }
 
 // CreateSnapshotTableStmtNode this statement:
-//   CREATE SNAPSHOT TABLE [IF NOT EXISTS] <name> [OPTIONS (...)]
-//   CLONE <name>
-//           [FOR SYSTEM_TIME AS OF <time_expr>]
+//
+//	CREATE SNAPSHOT TABLE [IF NOT EXISTS] <name> [OPTIONS (...)]
+//	CLONE <name>
+//	        [FOR SYSTEM_TIME AS OF <time_expr>]
 //
 // <clone_from> the source data to clone data from.
-//              ResolvedTableScan will represent the source table, with an
-//              optional for_system_time_expr.
-//              The TableScanNode may be wrapped inside a
-//              FilterScanNode if the source table has a where clause.
-//              No other Scan types are allowed here.
-//              By default, all fields (column names, types, constraints,
-//              partition, clustering, options etc.) will be inherited from
-//              the source table. If table options are explicitly set, the
-//              explicit options will take precedence.
-//              The 'clone_from.column_list' field may be set, but should be ignored.
+//
+//	ResolvedTableScan will represent the source table, with an
+//	optional for_system_time_expr.
+//	The TableScanNode may be wrapped inside a
+//	FilterScanNode if the source table has a where clause.
+//	No other Scan types are allowed here.
+//	By default, all fields (column names, types, constraints,
+//	partition, clustering, options etc.) will be inherited from
+//	the source table. If table options are explicitly set, the
+//	explicit options will take precedence.
+//	The 'clone_from.column_list' field may be set, but should be ignored.
 type CreateSnapshotTableStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -5052,8 +5131,10 @@ func (n *CreateExternalTableStmtNode) SetConnection(v *ConnectionNode) {
 }
 
 // ExportModelStmtNode this statement:
-//   EXPORT MODEL <model_name_path> [WITH CONNECTION <connection>]
-//   <option_list>
+//
+//	EXPORT MODEL <model_name_path> [WITH CONNECTION <connection>]
+//	<option_list>
+//
 // which is used to export a model to a specific location.
 // <connection> is the connection that the model is written to.
 // <option_list> identifies user specified options to use when exporting the model.
@@ -5112,16 +5193,22 @@ func (n *ExportModelStmtNode) AddOption(v *OptionNode) {
 }
 
 // ExportDataStmtNode this statement:
-//   EXPORT DATA [WITH CONNECTION] <connection> (<option_list>) AS SELECT ...
+//
+//	EXPORT DATA [WITH CONNECTION] <connection> (<option_list>) AS SELECT ...
+//
 // which is used to run a query and export its result somewhere
 // without giving the result a table name.
 // <connection> connection reference for accessing destination source.
 // <option_list> has engine-specific directives for how and where to
-//               materialize the query result.
+//
+//	materialize the query result.
+//
 // <output_column_list> has the names and types of the columns produced by
-//                      the query, and maps from <query>'s column_list
-//                      to these output columns.  The engine may ignore
-//                      the column names depending on the output format.
+//
+//	the query, and maps from <query>'s column_list
+//	to these output columns.  The engine may ignore
+//	the column names depending on the output format.
+//
 // <query> is the query to run.
 //
 // The query must produce named columns with unique names.
@@ -5257,10 +5344,13 @@ func (n *DefineTableStmtNode) AddOption(v *OptionNode) {
 // DESCRIBE [<object_type>] <name> [FROM <from_name_path>];
 //
 // <object_type> is an optional string identifier,
-//               e.g., "INDEX", "FUNCTION", "TYPE", etc.
+//
+//	e.g., "INDEX", "FUNCTION", "TYPE", etc.
+//
 // <name_path> is a vector giving the identifier path for the object to be described.
 // <from_name_path> is an optional vector giving the identifier path of a
-//                    containing object, e.g. a table.
+//
+//	containing object, e.g. a table.
 type DescribeStmtNode struct {
 	*BaseStatementNode
 }
@@ -5319,12 +5409,17 @@ func (n *DescribeStmtNode) AddFromNamePath(v string) {
 // SHOW <identifier> [FROM <name_path>] [LIKE <like_expr>];
 //
 // <identifier> is a string that determines the type of objects to be shown,
-//              e.g., TABLES, COLUMNS, INDEXES, STATUS,
+//
+//	e.g., TABLES, COLUMNS, INDEXES, STATUS,
+//
 // <name_path> is an optional path to an object from which <identifier>
-//             objects will be shown, e.g., if <identifier> = INDEXES and
-//             <name> = table_name, the indexes of "table_name" will be shown.
+//
+//	objects will be shown, e.g., if <identifier> = INDEXES and
+//	<name> = table_name, the indexes of "table_name" will be shown.
+//
 // <like_expr> is an optional LiteralNode of type string that if present
-//             restricts the objects shown to have a name like this string.
+//
+//	restricts the objects shown to have a name like this string.
 type ShowStmtNode struct {
 	*BaseStatementNode
 }
@@ -5373,21 +5468,23 @@ func (n *ShowStmtNode) SetLikeExpr(v *LiteralNode) {
 // BEGIN [TRANSACTION] [ <transaction_mode> [, ...] ]
 //
 // Where transaction_mode is one of:
-//      READ ONLY
-//      READ WRITE
-//      <isolation_level>
+//
+//	READ ONLY
+//	READ WRITE
+//	<isolation_level>
 //
 // <isolation_level> is a string vector storing the identifiers after
-//       ISOLATION LEVEL. The strings inside vector could be one of the
-//       SQL standard isolation levels:
 //
-//                   READ UNCOMMITTED
-//                   READ COMMITTED
-//                   READ REPEATABLE
-//                   SERIALIZABLE
+//	ISOLATION LEVEL. The strings inside vector could be one of the
+//	SQL standard isolation levels:
 //
-//       or could be arbitrary strings. ZetaSQL does not validate that
-//       the string is valid.
+//	            READ UNCOMMITTED
+//	            READ COMMITTED
+//	            READ REPEATABLE
+//	            SERIALIZABLE
+//
+//	or could be arbitrary strings. ZetaSQL does not validate that
+//	the string is valid.
 type BeginStmtNode struct {
 	*BaseStatementNode
 }
@@ -5426,21 +5523,23 @@ func (n *BeginStmtNode) AddIsolationLevel(v string) {
 // SET TRANSACTION <transaction_mode> [, ...]
 //
 // Where transaction_mode is one of:
-//      READ ONLY
-//      READ WRITE
-//      <isolation_level>
+//
+//	READ ONLY
+//	READ WRITE
+//	<isolation_level>
 //
 // <isolation_level> is a string vector storing the identifiers after
-//       ISOLATION LEVEL. The strings inside vector could be one of the
-//       SQL standard isolation levels:
 //
-//                   READ UNCOMMITTED
-//                   READ COMMITTED
-//                   READ REPEATABLE
-//                   SERIALIZABLE
+//	ISOLATION LEVEL. The strings inside vector could be one of the
+//	SQL standard isolation levels:
 //
-//       or could be arbitrary strings. ZetaSQL does not validate that
-//       the string is valid.
+//	            READ UNCOMMITTED
+//	            READ COMMITTED
+//	            READ REPEATABLE
+//	            SERIALIZABLE
+//
+//	or could be arbitrary strings. ZetaSQL does not validate that
+//	the string is valid.
 type SetTransactionStmtNode struct {
 	*BaseStatementNode
 }
@@ -5491,7 +5590,8 @@ type RollbackStmtNode struct {
 // START BATCH [<batch_type>];
 //
 // <batch_type> is an optional string identifier that identifies the type of
-//              the batch. (e.g. "DML" or "DDL)
+//
+//	the batch. (e.g. "DML" or "DDL)
 type StartBatchStmtNode struct {
 	*BaseStatementNode
 }
@@ -5520,7 +5620,9 @@ type AbortBatchStmtNode struct {
 // DROP <object_type> [IF EXISTS] <name_path> [<drop_mode>];
 //
 // <object_type> is an string identifier,
-//               e.g., "TABLE", "VIEW", "INDEX", "FUNCTION", "TYPE", etc.
+//
+//	e.g., "TABLE", "VIEW", "INDEX", "FUNCTION", "TYPE", etc.
+//
 // <name_path> is a vector giving the identifier path for the object to be dropped.
 // <is_if_exists> silently ignore the "name_path does not exist" error.
 // <drop_mode> specifies drop mode RESTRICT/CASCASE, if any.
@@ -5671,7 +5773,8 @@ type RecursiveRefScanNode struct {
 // input scan of a WithEntryNode or BaseCreateViewNode.
 //
 // Recursive queries must satisfy the form:
-//     <non-recursive-query> UNION [ALL|DISTINCT] <recursive-query>
+//
+//	<non-recursive-query> UNION [ALL|DISTINCT] <recursive-query>
 //
 // where self-references to table being defined are allowed only in the
 // <recursive-query> section.
@@ -5684,22 +5787,26 @@ type RecursiveRefScanNode struct {
 // At runtime, a recursive scan is evaluated using an iterative process:
 //
 // Step 1: Evaluate the non-recursive term. If UNION DISTINCT
-//   is specified, discard duplicates.
+//
+//	is specified, discard duplicates.
 //
 // Step 2:
-//   Repeat until step 2 produces an empty result:
-//     Evaluate the recursive term, binding the recursive table to the
-//     new rows produced by previous step. If UNION DISTINCT is specified,
-//     discard duplicate rows, as well as any rows which match any
-//     previously-produced result.
+//
+//	Repeat until step 2 produces an empty result:
+//	  Evaluate the recursive term, binding the recursive table to the
+//	  new rows produced by previous step. If UNION DISTINCT is specified,
+//	  discard duplicate rows, as well as any rows which match any
+//	  previously-produced result.
 //
 // Step 3:
-//   The final content of the recursive table is the UNION ALL of all results
-//   produced (step 1, plus all iterations of step 2).
+//
+//	The final content of the recursive table is the UNION ALL of all results
+//	produced (step 1, plus all iterations of step 2).
 //
 // RecursiveScanNode only supports a recursive WITH entry which
-//   directly references itself; ZetaSQL does not support mutual recursion
-//   between multiple with-clause elements.
+//
+//	directly references itself; ZetaSQL does not support mutual recursion
+//	between multiple with-clause elements.
 type RecursiveScanNode struct {
 	*BaseScanNode
 }
@@ -5735,9 +5842,10 @@ func (n *RecursiveScanNode) SetRecursiveTerm(v *SetOperationItemNode) {
 }
 
 // WithScanNode this represents a SQL WITH query (or subquery) like
-//   WITH [RECURSIVE] <with_query_name1> AS (<with_subquery1>),
-//        <with_query_name2> AS (<with_subquery2>)
-//   <query>;
+//
+//	WITH [RECURSIVE] <with_query_name1> AS (<with_subquery1>),
+//	     <with_query_name2> AS (<with_subquery2>)
+//	<query>;
 //
 // WITH entries are sorted in dependency order so that an entry can only
 // reference entries earlier in <with_entry_list>, plus itself if the
@@ -5872,11 +5980,12 @@ func (n *WithEntryNode) SetWithSubquery(v ScanNode) {
 // Hint semantics are implementation defined.
 //
 // Each hint is resolved as a [<qualifier>.]<name>:=<value> pair.
-//   <qualifier> will be empty if no qualifier was present.
-//   <name> is always non-empty.
-//   <value> can be a LiteralNode or a ParameterNode,
-//           a cast of a ParameterNode (for typed hints only),
-//           or a general expression (on constant inputs).
+//
+//	<qualifier> will be empty if no qualifier was present.
+//	<name> is always non-empty.
+//	<value> can be a LiteralNode or a ParameterNode,
+//	        a cast of a ParameterNode (for typed hints only),
+//	        or a general expression (on constant inputs).
 //
 // If AllowedHintsAndOptions was set in AnalyzerOptions, and this hint or
 // option was included there and had an expected type, the type of <value>
@@ -6179,7 +6288,8 @@ type DMLDefaultNode struct {
 }
 
 // AssertStmtNode represents the ASSERT statement:
-//   ASSERT <expression> [AS <description>];
+//
+//	ASSERT <expression> [AS <description>];
 //
 // <expression> is any expression that returns a bool.
 // <description> is an optional string literal used to give a more
@@ -6432,11 +6542,12 @@ func (n *InsertStmtNode) AddRow(v *InsertRowNode) {
 //
 // For nested DELETEs, there is no <table_scan>.  The <where_expr> can
 // only reference:
-//   (1) the element_column from the UpdateItemNode containing this
-//       statement,
-//   (2) columns from the outer statements, and
-//   (3) (optionally) <array_offset_column>, which represents the 0-based
-//       offset of the array element being modified.
+//
+//	(1) the element_column from the UpdateItemNode containing this
+//	    statement,
+//	(2) columns from the outer statements, and
+//	(3) (optionally) <array_offset_column>, which represents the 0-based
+//	    offset of the array element being modified.
 //
 // <where_expr> is required.
 //
@@ -6504,7 +6615,9 @@ func (n *DeleteStmtNode) SetWhereExpr(v ExprNode) {
 // The entity being updated is specified by <target>.
 //
 // For a regular
-//   SET {target} = {expression} | DEFAULT
+//
+//	SET {target} = {expression} | DEFAULT
+//
 // clause (not including an array element update like SET a[OFFSET(0)] = 5),
 // <target> and <set_value> will be present, and all other fields will be
 // unset.
@@ -6515,16 +6628,18 @@ func (n *DeleteStmtNode) SetWhereExpr(v ExprNode) {
 //     update items to refer to the array element.
 //   - <array_update_list> will have a node corresponding to the offset into
 //     that array and the modification to that array element.
+//
 // For example, for SET a.b[<expr>].c = <value>, we have
-//    UpdateItemNode
-//    +-<target> = a.b
-//    +-<element_column> = <x>
-//    +-<array_update_list>
-//      +-UpdateArrayItemNode
-//        +-<offset> = <expr>
-//        +-<update_item> = UpdateItemNode
-//          +-<target> = <x>.c
-//          +-<set_value> = <value>
+//
+//	UpdateItemNode
+//	+-<target> = a.b
+//	+-<element_column> = <x>
+//	+-<array_update_list>
+//	  +-UpdateArrayItemNode
+//	    +-<offset> = <expr>
+//	    +-<update_item> = UpdateItemNode
+//	      +-<target> = <x>.c
+//	      +-<set_value> = <value>
 //
 // The engine is required to fail the update if there are two elements of
 // <array_update_list> corresponding to offset expressions that evaluate to
@@ -6536,16 +6651,18 @@ func (n *DeleteStmtNode) SetWhereExpr(v ExprNode) {
 // element for modifications to an array-valued subfield of an array element.
 // E.g., for SET a[<expr1>].b[<expr2>] = 5, a[<expr3>].b[<expr4>] = 6, we
 // will have:
-//     UpdateItemNode
-//     +-<target> = a
-//     +-<element_column> = x
-//     +-<array_update_list>
-//       +-UpdateArrayItemNode
-//         +-<offset> = <expr1>
-//         +-UpdateItemNode for <x>.b[<expr2>] = 5
-//       +-UpdateArrayItemNode
-//         +-<offset> = <expr3>
-//         +-UpdateItemNode for <x>.b[<expr4>] = 6
+//
+//	UpdateItemNode
+//	+-<target> = a
+//	+-<element_column> = x
+//	+-<array_update_list>
+//	  +-UpdateArrayItemNode
+//	    +-<offset> = <expr1>
+//	    +-UpdateItemNode for <x>.b[<expr2>] = 5
+//	  +-UpdateArrayItemNode
+//	    +-<offset> = <expr3>
+//	    +-UpdateItemNode for <x>.b[<expr4>] = 6
+//
 // The engine must give a runtime error if <expr1> and <expr3> evaluate to
 // the same thing. Notably, it does not have to understand that the
 // two UpdateItemNodes corresponding to "b" refer to the same array iff
@@ -6799,10 +6916,12 @@ func (n *UpdateArrayItemNode) SetUpdateItem(v *UpdateItemNode) {
 //
 // For nested UPDATEs, there is no <table_scan>.  The <where_expr> can
 // only reference:
-//   (1) the element_column from the UpdateItemNode containing this statement,
-//   (2) columns from the outer statements, and
-//   (3) (optionally) <array_offset_column>, which represents the 0-based
-//       offset of the array element being modified.
+//
+//	(1) the element_column from the UpdateItemNode containing this statement,
+//	(2) columns from the outer statements, and
+//	(3) (optionally) <array_offset_column>, which represents the 0-based
+//	    offset of the array element being modified.
+//
 // The left hand sides of the expressions in <update_item_list> can only
 // reference (1). The right hand sides of those expressions can reference
 // (1), (2), and (3).
@@ -6932,14 +7051,16 @@ func (n *UpdateStmtNode) SetFromScan(v ScanNode) {
 // result of <table_scan> and <from_scan> of the parent MergeStmtNode.
 //
 // Each MergeWhenNode must define exactly one of three operations,
-//   -- INSERT: <action_type> is MergeWhenNode::INSERT.
-//              Both <insert_column_list> and <insert_row> are non-empty.
-//              The size of <insert_column_list> must be the same with the
-//              value_list size of <insert_row>, and, the column data type
-//              must match.
-//   -- UPDATE: <action_type> is MergeWhenNode::UPDATE.
-//              <update_item_list> is non-empty.
-//   -- DELETE: <action_type> is MergeWhenNode::DELETE.
+//
+//	-- INSERT: <action_type> is MergeWhenNode::INSERT.
+//	           Both <insert_column_list> and <insert_row> are non-empty.
+//	           The size of <insert_column_list> must be the same with the
+//	           value_list size of <insert_row>, and, the column data type
+//	           must match.
+//	-- UPDATE: <action_type> is MergeWhenNode::UPDATE.
+//	           <update_item_list> is non-empty.
+//	-- DELETE: <action_type> is MergeWhenNode::DELETE.
+//
 // The INSERT, UPDATE and DELETE operations are mutually exclusive.
 //
 // When <match_type> is MATCHED, <action_type> must be UPDATE or DELETE.
@@ -6949,22 +7070,23 @@ func (n *UpdateStmtNode) SetFromScan(v ScanNode) {
 //
 // The column visibility within a ResolvedMergeWhen clause is defined as
 // following,
-//   -- When <match_type> is MATCHED,
-//      -- All columns from <table_scan> and <from_scan> are allowed in
-//         <match_expr>.
-//      -- If <action_type> is UPDATE, only columns from <table_scan> are
-//         allowed on left side of expressions in <update_item_list>.
-//         All columns from <table_scan> and <from_scan> are allowed on right
-//         side of expressions in <update_item_list>.
-//   -- When <match_type> is NOT_MATCHED_BY_TARGET,
-//      -- Only columns from <from_scan> are allowed in <match_expr>.
-//      -- Only columns from <table_scan> are allowed in
-//         <insert_column_list>.
-//      -- Only columns from <from_scan> are allowed in <insert_row>.
-//   -- When <match_type> is NOT_MATCHED_BY_SOURCE,
-//      -- Only columns from <table_scan> are allowed in <match_expr>.
-//      -- If <action_type> is UPDATE, only columns from <table_scan> are
-//         allowed in <update_item_list>.
+//
+//	-- When <match_type> is MATCHED,
+//	   -- All columns from <table_scan> and <from_scan> are allowed in
+//	      <match_expr>.
+//	   -- If <action_type> is UPDATE, only columns from <table_scan> are
+//	      allowed on left side of expressions in <update_item_list>.
+//	      All columns from <table_scan> and <from_scan> are allowed on right
+//	      side of expressions in <update_item_list>.
+//	-- When <match_type> is NOT_MATCHED_BY_TARGET,
+//	   -- Only columns from <from_scan> are allowed in <match_expr>.
+//	   -- Only columns from <table_scan> are allowed in
+//	      <insert_column_list>.
+//	   -- Only columns from <from_scan> are allowed in <insert_row>.
+//	-- When <match_type> is NOT_MATCHED_BY_SOURCE,
+//	   -- Only columns from <table_scan> are allowed in <match_expr>.
+//	   -- If <action_type> is UPDATE, only columns from <table_scan> are
+//	      allowed in <update_item_list>.
 type MergeWhenNode struct {
 	*BaseArgumentNode
 }
@@ -7146,15 +7268,19 @@ func (n *MergeStmtNode) AddWhenClause(v *MergeWhenNode) {
 // TruncateStmtNode represents a TRUNCATE TABLE statement.
 //
 // Statement:
-//   TRUNCATE TABLE <table_name> [WHERE <boolean_expression>]
+//
+//	TRUNCATE TABLE <table_name> [WHERE <boolean_expression>]
 //
 // <table_scan> is a TableScan for the target table, which is used during
-//              resolving and validation. Consumers can use either the table
-//              object inside it or name_path to reference the table.
+//
+//	resolving and validation. Consumers can use either the table
+//	object inside it or name_path to reference the table.
+//
 // <where_expr> boolean expression that can reference columns in
-//              ResolvedColumns (which the TableScan creates); the
-//              <where_expr> should always correspond to entire partitions,
-//              and is optional.
+//
+//	ResolvedColumns (which the TableScan creates); the
+//	<where_expr> should always correspond to entire partitions,
+//	and is optional.
 type TruncateStmtNode struct {
 	*BaseStatementNode
 }
@@ -7370,11 +7496,14 @@ type RevokeStmtNode struct {
 }
 
 // AlterObjectStmtNode common node for statements:
-//   ALTER <object> [IF EXISTS] <name_path> <alter_action_list>
+//
+//	ALTER <object> [IF EXISTS] <name_path> <alter_action_list>
 //
 // <name_path> is a vector giving the identifier path in the table <name>. It
-//             is optional if
-//             FEATURE_ALLOW_MISSING_PATH_EXPRESSION_IN_ALTER_DDL is enabled.
+//
+//	is optional if
+//	FEATURE_ALLOW_MISSING_PATH_EXPRESSION_IN_ALTER_DDL is enabled.
+//
 // <alter_action_list> is a vector of actions to be done to the object.
 // <is_if_exists> silently ignores the "name_path does not exist" error.
 type AlterObjectStmtNode struct {
@@ -7432,7 +7561,8 @@ func (n *AlterObjectStmtNode) SetIsIfExists(v bool) {
 }
 
 // AlterDatabaseStmtNode this statement:
-//   ALTER DATABASE [IF EXISTS] <name_path> <alter_action_list>
+//
+//	ALTER DATABASE [IF EXISTS] <name_path> <alter_action_list>
 //
 // This statement could be used to change the database level options.
 type AlterDatabaseStmtNode struct {
@@ -7473,7 +7603,8 @@ type BaseAlterActionNode struct {
 }
 
 // AlterColumnActionNode a abstract node for all ALTER COLUMN actions in the ALTER TABLE statement:
-//   ALTER TABLE <table_name> ALTER COLUMN [IF EXISTS] <column>
+//
+//	ALTER TABLE <table_name> ALTER COLUMN [IF EXISTS] <column>
 //
 // <is_if_exists> silently ignores the "column does not exist" error.
 // <column> is the name of the column.
@@ -7513,7 +7644,8 @@ func (n *BaseAlterColumnActionNode) SetColumn(v string) {
 // SET OPTIONS action for ALTER <object> statement
 //
 // <option_list> has engine-specific directives that specify how to
-//               alter the metadata for this object.
+//
+//	alter the metadata for this object.
 type SetOptionsActionNode struct {
 	*BaseAlterActionNode
 }
@@ -7669,7 +7801,8 @@ func (n *AlterColumnOptionsActionNode) AddOption(v *OptionNode) {
 
 // AlterColumnDropNotNullActionNode
 // This ALTER action:
-//   ALTER COLUMN [IF EXISTS] <column> DROP NOT NULL
+//
+//	ALTER COLUMN [IF EXISTS] <column> DROP NOT NULL
 //
 // Removes the NOT NULL constraint from the given column.
 type AlterColumnDropNotNullActionNode struct {
@@ -7723,7 +7856,8 @@ func (n *AlterColumnSetDataTypeActionNode) SetUpdatedAnnotations(v *ColumnAnnota
 }
 
 // AlterColumnSetDefaultActionNode alter column set default action:
-//   ALTER COLUMN [IF EXISTS] <column> SET DEFAULT <default_value>
+//
+//	ALTER COLUMN [IF EXISTS] <column> SET DEFAULT <default_value>
 //
 // <default_value> sets the new default value expression. It only impacts
 // future inserted rows, and has no impact on existing rows with the current
@@ -7747,7 +7881,8 @@ func (n *AlterColumnSetDefaultActionNode) SetDefaultValue(v *ColumnDefaultValueN
 }
 
 // AlterColumnDropDefaultAction this ALTER action:
-//   ALTER COLUMN [IF EXISTS] <column> DROP DEFAULT
+//
+//	ALTER COLUMN [IF EXISTS] <column> DROP DEFAULT
 //
 // Removes the DEFAULT constraint from the given column.
 type AlterColumnDropDefaultActionNode struct {
@@ -7861,10 +7996,11 @@ func (n *SetAsActionNode) SetEntityBodyText(v string) {
 // SET DEFAULT COLLATE clause for generic ALTER <entity_type> statement.
 //
 // <collation_name> specifies the new default collation specification for a
-//   table or schema. Modifying the default collation for a table or schema
-//   does not affect any existing columns or tables - the new default
-//   collation only affects new tables and/or columns if applicable. Only
-//   string literals are allowed for this field.
+//
+//	table or schema. Modifying the default collation for a table or schema
+//	does not affect any existing columns or tables - the new default
+//	collation only affects new tables and/or columns if applicable. Only
+//	string literals are allowed for this field.
 type SetCollateClauseNode struct {
 	*BaseAlterActionNode
 }
@@ -7880,13 +8016,16 @@ func (n *SetCollateClauseNode) SetCollationName(v ExprNode) {
 }
 
 // AlterTableSetOptionsStmtNode this statement:
-//   ALTER TABLE [IF EXISTS] <name> SET OPTIONS (...)
+//
+//	ALTER TABLE [IF EXISTS] <name> SET OPTIONS (...)
 //
 // NOTE: This is deprecated in favor of AlterTableStmtNode.
 //
 // <name_path> is a vector giving the identifier path in the table <name>.
 // <option_list> has engine-specific directives that specify how to
-//               alter the metadata for this table.
+//
+//	alter the metadata for this table.
+//
 // <is_if_exists> silently ignore the "name_path does not exist" error.
 type AlterTableSetOptionsStmtNode struct {
 	*BaseStatementNode
@@ -7946,11 +8085,16 @@ func (n *AlterTableSetOptionsStmtNode) SetIsIfExists(v bool) {
 // RENAME <object_type> <old_name_path> TO <new_name_path>;
 //
 // <object_type> is an string identifier,
-//               e.g., "TABLE", "VIEW", "INDEX", "FUNCTION", "TYPE", etc.
+//
+//	e.g., "TABLE", "VIEW", "INDEX", "FUNCTION", "TYPE", etc.
+//
 // <old_name_path> is a vector giving the identifier path for the object to
-//                 be renamed.
+//
+//	be renamed.
+//
 // <new_name_path> is a vector giving the identifier path for the object to
-//                 be renamed to.
+//
+//	be renamed to.
 type RenameStmtNode struct {
 	*BaseStatementNode
 }
@@ -8006,17 +8150,23 @@ func (n *RenameStmtNode) AddNewName(v string) {
 }
 
 // CreatePrivilegeRestrictionStmtNode this statement:
-//     CREATE [OR REPLACE] PRIVILEGE RESTRICTION [IF NOT EXISTS]
-//     ON <column_privilege_list> ON <object_type> <name_path>
-//     [RESTRICT TO (<restrictee_list>)]
+//
+//	CREATE [OR REPLACE] PRIVILEGE RESTRICTION [IF NOT EXISTS]
+//	ON <column_privilege_list> ON <object_type> <name_path>
+//	[RESTRICT TO (<restrictee_list>)]
 //
 // <column_privilege_list> is the name of the column privileges on which
-//                         to apply the restrictions.
+//
+//	to apply the restrictions.
+//
 // <object_type> is a string identifier, which is currently either TABLE or
-//               VIEW, which tells the engine how to look up the name.
+//
+//	VIEW, which tells the engine how to look up the name.
+//
 // <restrictee_list> is a list of users and groups the privilege restrictions
-//                   should apply to. Each restrictee is either a string
-//                   literal or a parameter.
+//
+//	should apply to. Each restrictee is either a string
+//	literal or a parameter.
 type CreatePrivilegeRestrictionStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -8073,25 +8223,40 @@ func (n *CreatePrivilegeRestrictionStmtNode) AddRestrictee(v ExprNode) {
 
 // CreateRowAccessPolicyStmtNode this statement:
 // CREATE [OR REPLACE] ROW ACCESS POLICY [IF NOT EXISTS]
-//                 [<name>] ON <target_name_path>
-//                 [GRANT TO (<grantee_list>)]
-//                 FILTER USING (<predicate>);
+//
+//	[<name>] ON <target_name_path>
+//	[GRANT TO (<grantee_list>)]
+//	FILTER USING (<predicate>);
 //
 // <create_mode> indicates if this was CREATE, CREATE OR REPLACE, or
-//               CREATE IF NOT EXISTS.
+//
+//	CREATE IF NOT EXISTS.
+//
 // <name> is the name of the row access policy to be created or an empty
-//        string.
+//
+//	string.
+//
 // <target_name_path> is a vector giving the identifier path of the target
-//                    table.
+//
+//	table.
+//
 // <table_scan> is a TableScan for the target table, which is used during
-//              resolving and validation. Consumers can use either the table
-//              object inside it or target_name_path to reference the table.
+//
+//	resolving and validation. Consumers can use either the table
+//	object inside it or target_name_path to reference the table.
+//
 // <grantee_list> (DEPRECATED) is the list of user principals the policy
-//                should apply to.
+//
+//	should apply to.
+//
 // <grantee_expr_list> is the list of user principals the policy should
-//                     apply to, and may include parameters.
+//
+//	apply to, and may include parameters.
+//
 // <predicate> is a boolean expression that selects the rows that are being
-//             made visible.
+//
+//	made visible.
+//
 // <predicate_str> is the string form of the predicate.
 //
 // Only one of <grantee_list> or <grantee_expr_list> will be populated,
@@ -8215,13 +8380,18 @@ func (n *CreateRowAccessPolicyStmtNode) SetPredicateStr(v string) {
 }
 
 // DropPrivilegeRestrictionStmtNode this statement:
-//     DROP PRIVILEGE RESTRICTION [IF EXISTS]
-//     ON <column_privilege_list> ON <object_type> <name_path>
+//
+//	DROP PRIVILEGE RESTRICTION [IF EXISTS]
+//	ON <column_privilege_list> ON <object_type> <name_path>
 //
 // <column_privilege_list> is the name of the column privileges on which
-//                         the restrictions have been applied.
+//
+//	the restrictions have been applied.
+//
 // <object_type> is a string identifier, which is currently either TABLE or
-//               VIEW, which tells the engine how to look up the name.
+//
+//	VIEW, which tells the engine how to look up the name.
+//
 // <name_path> is the name of the table the restrictions are scoped to.
 type DropPrivilegeRestrictionStmtNode struct {
 	*BaseStatementNode
@@ -8288,12 +8458,15 @@ func (n *DropPrivilegeRestrictionStmtNode) AddColumnPrivilege(v *PrivilegeNode) 
 }
 
 // DropRowAccessPolicyStmtNode this statement:
-//     DROP ROW ACCESS POLICY <name> ON <target_name_path>; or
-//     DROP ALL ROW [ACCESS] POLICIES ON <target_name_path>;
+//
+//	DROP ROW ACCESS POLICY <name> ON <target_name_path>; or
+//	DROP ALL ROW [ACCESS] POLICIES ON <target_name_path>;
 //
 // <is_drop_all> indicates that all policies should be dropped.
 // <is_if_exists> silently ignore the "policy <name> does not exist" error.
-//                This is not allowed if is_drop_all is true.
+//
+//	This is not allowed if is_drop_all is true.
+//
 // <name> is the name of the row policy to be dropped or an empty string.
 // <target_name_path> is a vector giving the identifier path of the target table.
 type DropRowAccessPolicyStmtNode struct {
@@ -8428,11 +8601,13 @@ func (n *GrantToActionNode) AddGranteeExpr(v ExprNode) {
 }
 
 // RestrictToActionNode this action for ALTER PRIVILEGE RESTRICTION statement:
-//     RESTRICT TO <restrictee_list>
+//
+//	RESTRICT TO <restrictee_list>
 //
 // <restrictee_list> is a list of users and groups the privilege restrictions
-//                   should apply to. Each restrictee is either a string
-//                   literal or a parameter.
+//
+//	should apply to. Each restrictee is either a string
+//	literal or a parameter.
 type RestrictToActionNode struct {
 	*BaseAlterActionNode
 }
@@ -8458,11 +8633,13 @@ func (n *RestrictToActionNode) AddRestrictee(v ExprNode) {
 }
 
 // AddToRestricteeListActionNode This action for ALTER PRIVILEGE RESTRICTION statement:
-//     ADD [IF NOT EXISTS] <restrictee_list>
+//
+//	ADD [IF NOT EXISTS] <restrictee_list>
 //
 // <restrictee_list> is a list of users and groups the privilege restrictions
-//                   should apply to. Each restrictee is either a string
-//                   literal or a parameter.
+//
+//	should apply to. Each restrictee is either a string
+//	literal or a parameter.
 type AddToRestricteeListActionNode struct {
 	*BaseAlterActionNode
 }
@@ -8498,11 +8675,13 @@ func (n *AddToRestricteeListActionNode) AddRestrictee(v ExprNode) {
 }
 
 // RemoveFromRestricteeListActionNode this action for ALTER PRIVILEGE RESTRICTION statement:
-//     REMOVE [IF EXISTS] <restrictee_list>
+//
+//	REMOVE [IF EXISTS] <restrictee_list>
 //
 // <restrictee_list> is a list of users and groups the privilege restrictions
-//                   should apply to. Each restrictee is either a string
-//                   literal or a parameter.
+//
+//	should apply to. Each restrictee is either a string
+//	literal or a parameter.
 type RemoveFromRestricteeListActionNode struct {
 	*BaseAlterActionNode
 }
@@ -8540,7 +8719,9 @@ func (n *RemoveFromRestricteeListActionNode) AddRestrictee(v ExprNode) {
 // FilterUsingActionNode FILTER USING action for ALTER ROW ACCESS POLICY statement
 //
 // <predicate> is a boolean expression that selects the rows that are being
-//             made visible.
+//
+//	made visible.
+//
 // <predicate_str> is the string form of the predicate.
 type FilterUsingActionNode struct {
 	*BaseAlterActionNode
@@ -8570,7 +8751,8 @@ func (n *FilterUsingActionNode) SetPredicateStr(v string) {
 //
 // <revokee_expr_list> is the list of revokees, and may include parameters.
 // <is_revoke_from_all> is a boolean indicating whether it was a REVOKE FROM
-//                      ALL statement.
+//
+//	ALL statement.
 type RevokeFromActionNode struct {
 	*BaseAlterActionNode
 }
@@ -8606,10 +8788,12 @@ func (n *RevokeFromActionNode) SetIsRevokeFromAll(v bool) {
 }
 
 // RenameToActionNode RENAME TO action for ALTER ROW ACCESS POLICY statement
-//         and ALTER TABLE statement
+//
+//	and ALTER TABLE statement
 //
 // <new_path> is the new name of the row access policy,
-//         or the new path of the table.
+//
+//	or the new path of the table.
 type RenameToActionNode struct {
 	*BaseAlterActionNode
 }
@@ -8635,14 +8819,18 @@ func (n *RenameToActionNode) AddNewPath(v string) {
 }
 
 // AlterPrivilegeRestrictionStmtNode this statement:
-//     ALTER PRIVILEGE RESTRICTION [IF EXISTS]
-//     ON <column_privilege_list> ON <object_type> <name_path>
-//     <alter_action_list>
+//
+//	ALTER PRIVILEGE RESTRICTION [IF EXISTS]
+//	ON <column_privilege_list> ON <object_type> <name_path>
+//	<alter_action_list>
 //
 // <column_privilege_list> is the name of the column privileges on which
-//                         the restrictions have been applied.
+//
+//	the restrictions have been applied.
+//
 // <object_type> is a string identifier, which is currently either TABLE or
-//               VIEW, which tells the engine how to look up the name.
+//
+//	VIEW, which tells the engine how to look up the name.
 type AlterPrivilegeRestrictionStmtNode struct {
 	*AlterObjectStmtNode
 }
@@ -8678,15 +8866,19 @@ func (n *AlterPrivilegeRestrictionStmtNode) SetObjectType(v string) {
 }
 
 // AlterRowAccessPolicyStmtNode this statement:
-//     ALTER ROW ACCESS POLICY [IF EXISTS]
-//     <name> ON <name_path>
-//     <alter_action_list>
+//
+//	ALTER ROW ACCESS POLICY [IF EXISTS]
+//	<name> ON <name_path>
+//	<alter_action_list>
 //
 // <name> is the name of the row access policy to be altered, scoped to the
-//        table in the base <name_path>.
+//
+//	table in the base <name_path>.
+//
 // <table_scan> is a TableScan for the target table, which is used during
-//              resolving and validation. Consumers can use either the table
-//              object inside it or base <name_path> to reference the table.
+//
+//	resolving and validation. Consumers can use either the table
+//	object inside it or base <name_path> to reference the table.
 type AlterRowAccessPolicyStmtNode struct {
 	*AlterObjectStmtNode
 }
@@ -8712,15 +8904,19 @@ func (n *AlterRowAccessPolicyStmtNode) SetTableScan(v *TableScanNode) {
 }
 
 // AlterAllRowAccessPoliciesStmtNode this statement:
-//     ALTER ALL ROW ACCESS POLICIES ON <name_path> <alter_action_list>
+//
+//	ALTER ALL ROW ACCESS POLICIES ON <name_path> <alter_action_list>
 //
 // <name_path> is a vector giving the identifier path in the table name.
 // <alter_action_list> is a vector of actions to be done to the object. It
-//                     must have exactly one REVOKE FROM action with either
-//                     a non-empty grantee list or 'all'.
+//
+//	must have exactly one REVOKE FROM action with either
+//	a non-empty grantee list or 'all'.
+//
 // <table_scan> is a TableScan for the target table, which is used during
-//              resolving and validation. Consumers can use either the table
-//              object inside it or base <name_path> to reference the table.
+//
+//	resolving and validation. Consumers can use either the table
+//	object inside it or base <name_path> to reference the table.
 type AlterAllRowAccessPoliciesStmtNode struct {
 	*AlterObjectStmtNode
 }
@@ -8737,14 +8933,16 @@ func (n *AlterAllRowAccessPoliciesStmtNode) SetTableScan(v *TableScanNode) {
 
 // CreateConstantStmtNode this statement creates a user-defined named constant:
 // CREATE [OR REPLACE] [TEMP | TEMPORARY | PUBLIC | PRIVATE] CONSTANT
-//   [IF NOT EXISTS] <name_path> = <expression>
+//
+//	[IF NOT EXISTS] <name_path> = <expression>
 //
 // <name_path> is the identifier path of the named constants.
 // <expr> is the expression that determines the type and the value of the
-//        named constant. Note that <expr> need not be constant. Its value
-//        is bound to the named constant which is then treated as
-//        immutable. <expr> can be evaluated at the time this statement is
-//        processed or later (lazy evaluation during query execution).
+//
+//	named constant. Note that <expr> need not be constant. Its value
+//	is bound to the named constant which is then treated as
+//	immutable. <expr> can be evaluated at the time this statement is
+//	processed or later (lazy evaluation during query execution).
 type CreateConstantStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -8760,52 +8958,53 @@ func (n *CreateConstantStmtNode) SetExpr(v ExprNode) {
 }
 
 // CreateFunctionStmtNode this statement creates a user-defined function:
-//   CREATE [TEMP] FUNCTION [IF NOT EXISTS] <name_path> (<arg_list>)
-//     [RETURNS <return_type>] [SQL SECURITY <sql_security>]
-//     [<determinism_level>]
-//     [[LANGUAGE <language>] [AS <code> | AS ( <function_expression> )]
-//      | REMOTE [WITH CONNECTION <connection>]]
-//     [OPTIONS (<option_list>)]
 //
-//   <name_path> is the identifier path of the function.
-//   <has_explicit_return_type> is true iff RETURNS clause is present.
-//   <return_type> is the return type for the function, which can be any
-//          valid ZetaSQL type, including ARRAY or STRUCT. It is inferred
-//          from <function_expression> if not explicitly set.
-//          TODO: Deprecate and remove this. The return type is
-//          already specified by the <signature>.
-//   <argument_name_list> The names of the function arguments.
-//   <signature> is the FunctionSignature of the created function, with all
-//          options.  This can be used to create a Function to load into a
-//          Catalog for future queries.
-//   <is_aggregate> is true if this is an aggregate function.  All arguments
-//          are assumed to be aggregate input arguments that may vary for
-//          every row.
-//   <language> is the programming language used by the function. This field
-//          is set to 'SQL' for SQL functions and 'REMOTE' for remote
-//          functions and otherwise to the language name specified in the
-//          LANGUAGE clause. This field is set to 'REMOTE' iff <is_remote> is
-//          set to true.
-//   <code> is a string literal that contains the function definition.  Some
-//          engines may allow this argument to be omitted for certain types
-//          of external functions. This will always be set for SQL functions.
-//   <aggregate_expression_list> is a list of SQL aggregate functions to
-//          compute prior to computing the final <function_expression>.
-//          See below.
-//   <function_expression> is the resolved SQL expression invoked for the
-//          function. This will be unset for external language functions. For
-//          non-template SQL functions, this is a resolved representation of
-//          the expression in <code>.
-//   <option_list> has engine-specific directives for modifying functions.
-//   <sql_security> is the declared security mode for the function. Values
-//          include 'INVOKER', 'DEFINER'.
-//   <determinism_level> is the declared determinism level of the function.
-//          Values are 'DETERMINISTIC', 'NOT DETERMINISTIC', 'IMMUTABLE',
-//          'STABLE', 'VOLATILE'.
-//   <is_remote> is true if this is an remote function. It is true iff its
-//          <language> is set to 'REMOTE'.
-//   <connection> is the identifier path of the connection object. It can be
-//          only set when <is_remote> is true.
+//	CREATE [TEMP] FUNCTION [IF NOT EXISTS] <name_path> (<arg_list>)
+//	  [RETURNS <return_type>] [SQL SECURITY <sql_security>]
+//	  [<determinism_level>]
+//	  [[LANGUAGE <language>] [AS <code> | AS ( <function_expression> )]
+//	   | REMOTE [WITH CONNECTION <connection>]]
+//	  [OPTIONS (<option_list>)]
+//
+//	<name_path> is the identifier path of the function.
+//	<has_explicit_return_type> is true iff RETURNS clause is present.
+//	<return_type> is the return type for the function, which can be any
+//	       valid ZetaSQL type, including ARRAY or STRUCT. It is inferred
+//	       from <function_expression> if not explicitly set.
+//	       TODO: Deprecate and remove this. The return type is
+//	       already specified by the <signature>.
+//	<argument_name_list> The names of the function arguments.
+//	<signature> is the FunctionSignature of the created function, with all
+//	       options.  This can be used to create a Function to load into a
+//	       Catalog for future queries.
+//	<is_aggregate> is true if this is an aggregate function.  All arguments
+//	       are assumed to be aggregate input arguments that may vary for
+//	       every row.
+//	<language> is the programming language used by the function. This field
+//	       is set to 'SQL' for SQL functions and 'REMOTE' for remote
+//	       functions and otherwise to the language name specified in the
+//	       LANGUAGE clause. This field is set to 'REMOTE' iff <is_remote> is
+//	       set to true.
+//	<code> is a string literal that contains the function definition.  Some
+//	       engines may allow this argument to be omitted for certain types
+//	       of external functions. This will always be set for SQL functions.
+//	<aggregate_expression_list> is a list of SQL aggregate functions to
+//	       compute prior to computing the final <function_expression>.
+//	       See below.
+//	<function_expression> is the resolved SQL expression invoked for the
+//	       function. This will be unset for external language functions. For
+//	       non-template SQL functions, this is a resolved representation of
+//	       the expression in <code>.
+//	<option_list> has engine-specific directives for modifying functions.
+//	<sql_security> is the declared security mode for the function. Values
+//	       include 'INVOKER', 'DEFINER'.
+//	<determinism_level> is the declared determinism level of the function.
+//	       Values are 'DETERMINISTIC', 'NOT DETERMINISTIC', 'IMMUTABLE',
+//	       'STABLE', 'VOLATILE'.
+//	<is_remote> is true if this is an remote function. It is true iff its
+//	       <language> is set to 'REMOTE'.
+//	<connection> is the identifier path of the connection object. It can be
+//	       only set when <is_remote> is true.
 //
 // Note that <function_expression> and <code> are both marked as IGNORABLE
 // because an engine could look at either one (but might not look at both).
@@ -8832,20 +9031,30 @@ func (n *CreateConstantStmtNode) SetExpr(v ExprNode) {
 // with <argument_kind>=NOT_AGGREGATE.
 //
 // For example, with
-//   CREATE TEMP FUNCTION my_avg(x) = (SUM(x) / COUNT(x));
+//
+//	CREATE TEMP FUNCTION my_avg(x) = (SUM(x) / COUNT(x));
+//
 // we would have an <aggregate_expression_list> with
-//   agg1#1 := SUM(ArgumentRefNode(x))
-//   agg2#2 := COUNT(ArgumentRefNode(x))
+//
+//	agg1#1 := SUM(ArgumentRefNode(x))
+//	agg2#2 := COUNT(ArgumentRefNode(x))
+//
 // and a <function_expression>
-//   ColumnRefNode(agg1#1) / ColumnRefNode(agg2#2)
+//
+//	ColumnRefNode(agg1#1) / ColumnRefNode(agg2#2)
 //
 // For example, with
-//   CREATE FUNCTION scaled_avg(x,y NOT AGGREGATE) = (SUM(x) / COUNT(x) * y);
+//
+//	CREATE FUNCTION scaled_avg(x,y NOT AGGREGATE) = (SUM(x) / COUNT(x) * y);
+//
 // we would have an <aggregate_expression_list> with
-//   agg1#1 := SUM(ArgumentRefNode(x))
-//   agg2#2 := COUNT(ArgumentRefNode(x))
+//
+//	agg1#1 := SUM(ArgumentRefNode(x))
+//	agg2#2 := COUNT(ArgumentRefNode(x))
+//
 // and a <function_expression>
-//   ColumnRefNode(agg1#1) / ColumnRefNode(agg2#2) * ArgumentRefNode(y)
+//
+//	ColumnRefNode(agg1#1) / ColumnRefNode(agg2#2) * ArgumentRefNode(y)
 //
 // When resolving a query that calls an aggregate UDF, the query will
 // have a AggregateScanNode that invokes the UDF function.  The engine
@@ -9038,9 +9247,10 @@ func (n *CreateFunctionStmtNode) SetConnection(v *ConnectionNode) {
 // <name> is the name of the argument; optional for DROP FUNCTION statements.
 // <type> is the type of the argument.
 // <argument_kind> indicates what kind of argument this is, including scalar
-//         vs aggregate.  NOT_AGGREGATE means this is a non-aggregate
-//         argument in an aggregate function, which can only passed constant
-//         values only.
+//
+//	vs aggregate.  NOT_AGGREGATE means this is a non-aggregate
+//	argument in an aggregate function, which can only passed constant
+//	values only.
 //
 // NOTE: Statements that create functions now include a FunctionSignature
 // directly, and an argument_name_list if applicable.  These completely
@@ -9084,12 +9294,13 @@ func (n *ArgumentDefNode) SetArgumentKind(v ArgumentKind) {
 // ArgumentRefNode this represents an argument reference, e.g. in a function's body.
 // <name> is the name of the argument.
 // <argument_kind> is the ArgumentKind from the ArgumentDefNode.
-//         For scalar functions, this is always SCALAR.
-//         For aggregate functions, it can be AGGREGATE or NOT_AGGREGATE.
-//         If NOT_AGGREGATE, then this is a non-aggregate argument
-//         to an aggregate function, which has one constant value
-//         for the entire function call (over all rows in all groups).
-//         (This is copied from the ArgumentDefNode for convenience.)
+//
+//	For scalar functions, this is always SCALAR.
+//	For aggregate functions, it can be AGGREGATE or NOT_AGGREGATE.
+//	If NOT_AGGREGATE, then this is a non-aggregate argument
+//	to an aggregate function, which has one constant value
+//	for the entire function call (over all rows in all groups).
+//	(This is copied from the ArgumentDefNode for convenience.)
 type ArgumentRefNode struct {
 	*BaseExprNode
 }
@@ -9115,39 +9326,40 @@ func (n *ArgumentRefNode) SetArgumentKind(v ArgumentKind) {
 }
 
 // CreateTableFunctionStmtNode this statement creates a user-defined table-valued function:
-//   CREATE [TEMP] TABLE FUNCTION [IF NOT EXISTS]
-//     <name_path> (<argument_name_list>)
-//     [RETURNS <return_type>]
-//     [OPTIONS (<option_list>)]
-//     [LANGUAGE <language>]
-//     [AS <code> | AS ( <query> )]
 //
-//   <argument_name_list> contains the names of the function arguments.
-//   <signature> is the FunctionSignature of the created function, with all
-//          options.  This can be used to create a Function to load into a
-//          Catalog for future queries.
-//   <option_list> has engine-specific directives for modifying functions.
-//   <language> is the programming language used by the function. This field
-//          is set to 'SQL' for SQL functions, to the language name specified
-//          in the LANGUAGE clause if present, and to 'UNDECLARED' if both
-//          the LANGUAGE clause and query are not present.
-//   <code> is an optional string literal that contains the function
-//          definition.  Some engines may allow this argument to be omitted
-//          for certain types of external functions.  This will always be set
-//          for SQL functions.
-//   <query> is the SQL query invoked for the function.  This will be unset
-//          for external language functions. For non-templated SQL functions,
-//          this is a resolved representation of the query in <code>.
-//   <output_column_list> is the list of resolved output
-//          columns returned by the table-valued function.
-//   <is_value_table> If true, this function returns a value table.
-//          Rather than producing rows with named columns, it produces
-//          rows with a single unnamed value type. <output_column_list> will
-//          have exactly one anonymous column (with no name).
-//          See (broken link).
-//   <sql_security> is the declared security mode for the function. Values
-//          include 'INVOKER', 'DEFINER'.
-//   <has_explicit_return_schema> is true iff RETURNS clause is present.
+//	CREATE [TEMP] TABLE FUNCTION [IF NOT EXISTS]
+//	  <name_path> (<argument_name_list>)
+//	  [RETURNS <return_type>]
+//	  [OPTIONS (<option_list>)]
+//	  [LANGUAGE <language>]
+//	  [AS <code> | AS ( <query> )]
+//
+//	<argument_name_list> contains the names of the function arguments.
+//	<signature> is the FunctionSignature of the created function, with all
+//	       options.  This can be used to create a Function to load into a
+//	       Catalog for future queries.
+//	<option_list> has engine-specific directives for modifying functions.
+//	<language> is the programming language used by the function. This field
+//	       is set to 'SQL' for SQL functions, to the language name specified
+//	       in the LANGUAGE clause if present, and to 'UNDECLARED' if both
+//	       the LANGUAGE clause and query are not present.
+//	<code> is an optional string literal that contains the function
+//	       definition.  Some engines may allow this argument to be omitted
+//	       for certain types of external functions.  This will always be set
+//	       for SQL functions.
+//	<query> is the SQL query invoked for the function.  This will be unset
+//	       for external language functions. For non-templated SQL functions,
+//	       this is a resolved representation of the query in <code>.
+//	<output_column_list> is the list of resolved output
+//	       columns returned by the table-valued function.
+//	<is_value_table> If true, this function returns a value table.
+//	       Rather than producing rows with named columns, it produces
+//	       rows with a single unnamed value type. <output_column_list> will
+//	       have exactly one anonymous column (with no name).
+//	       See (broken link).
+//	<sql_security> is the declared security mode for the function. Values
+//	       include 'INVOKER', 'DEFINER'.
+//	<has_explicit_return_schema> is true iff RETURNS clause is present.
 //
 // ----------------------
 // Table-Valued Functions
@@ -9197,11 +9409,11 @@ func (n *ArgumentRefNode) SetArgumentKind(v ArgumentKind) {
 // type ANY TABLE. This type indicates that any schema is valid for tables
 // passed for this parameter. In this case:
 //
-// * the IsTemplated() method of the <signature> field returns true,
-// * the <output_column_list> field is empty,
-// * the <is_value_table> field is set to a default value of false (since
-//   ZetaSQL cannot analyze the function body in the presence of templated
-//   parameters, it is not possible to detect this property yet),
+//   - the IsTemplated() method of the <signature> field returns true,
+//   - the <output_column_list> field is empty,
+//   - the <is_value_table> field is set to a default value of false (since
+//     ZetaSQL cannot analyze the function body in the presence of templated
+//     parameters, it is not possible to detect this property yet),
 //
 // TODO: Update this description once ZetaSQL supports more types
 // of templated function parameters. Currently only ANY TABLE is supported.
@@ -9414,13 +9626,16 @@ func (n *RelationArgumentScanNode) SetIsValueTable(v bool) {
 // ArgumentListNode this statement: [ (<arg_list>) ];
 //
 // <arg_list> is an optional list of parameters.  If given, each parameter
-//            may consist of a type, or a name and a type.
+//
+//	may consist of a type, or a name and a type.
 //
 // NOTE: This can be considered deprecated in favor of the FunctionSignature
-//       stored directly in the statement.
+//
+//	stored directly in the statement.
 //
 // NOTE: ArgumentListNode is not related to the ArgumentNode,
-//       which just exists to organize node classes.
+//
+//	which just exists to organize node classes.
 type ArgumentListNode struct {
 	*BaseArgumentNode
 }
@@ -9461,20 +9676,24 @@ func (n *FunctionSignatureHolderNode) SetSignature(v *types.FunctionSignature) {
 }
 
 // DropFunctionStmtNode this statement: DROP FUNCTION [IF EXISTS] <name_path>
-//   [ (<arguments>) ];
+//
+//	[ (<arguments>) ];
 //
 // <is_if_exists> silently ignore the "name_path does not exist" error.
 // <name_path> is the identifier path of the function to be dropped.
 // <arguments> is an optional list of parameters.  If given, each parameter
-//            may consist of a type, or a name and a type.  The name is
-//            disregarded, and is allowed to permit copy-paste from CREATE
-//            FUNCTION statements.
+//
+//	may consist of a type, or a name and a type.  The name is
+//	disregarded, and is allowed to permit copy-paste from CREATE
+//	FUNCTION statements.
+//
 // <signature> is the signature of the dropped function.  Argument names and
-//            argument options are ignored because only the types matter
-//            for matching signatures in DROP FUNCTION.  The return type
-//            in this signature will always be <void>, since return type
-//            is ignored when matching signatures for DROP.
-//            TODO <arguments> could be deprecated in favor of this.
+//
+//	argument options are ignored because only the types matter
+//	for matching signatures in DROP FUNCTION.  The return type
+//	in this signature will always be <void>, since return type
+//	is ignored when matching signatures for DROP.
+//	TODO <arguments> could be deprecated in favor of this.
 type DropFunctionStmtNode struct {
 	*BaseStatementNode
 }
@@ -9627,26 +9846,33 @@ func (n *CallStmtNode) AddArgument(v ExprNode) {
 }
 
 // ImportStmtNode this statement: IMPORT <import_kind>
-//                              [<name_path> [AS|INTO <alias_path>]
-//                              |<file_path>]
-//                        [<option_list>];
+//
+//	      [<name_path> [AS|INTO <alias_path>]
+//	      |<file_path>]
+//	[<option_list>];
 //
 // <import_kind> The type of the object, currently supports MODULE and PROTO.
 // <name_path>   The identifier path of the object to import, e.g., foo.bar,
-//               used in IMPORT MODULE statement.
+//
+//	used in IMPORT MODULE statement.
+//
 // <file_path>   The file path of the object to import, e.g., "file.proto",
-//               used in IMPORT PROTO statement.
+//
+//	used in IMPORT PROTO statement.
+//
 // <alias_path>  The AS alias path for the object.
 // <into_alias_path>  The INTO alias path for the object.
 // <option_list> Engine-specific directives for the import.
 //
 // Either <name_path> or <file_path> will be populated but not both.
-//       <name_path> will be populated for IMPORT MODULE.
-//       <file_path> will be populated for IMPORT PROTO.
+//
+//	<name_path> will be populated for IMPORT MODULE.
+//	<file_path> will be populated for IMPORT PROTO.
 //
 // At most one of <alias_path> or <into_alias_path> will be populated.
-//       <alias_path> may be populated for IMPORT MODULE.
-//       <into_alias_path> may be populated for IMPORT PROTO.
+//
+//	<alias_path> may be populated for IMPORT MODULE.
+//	<into_alias_path> may be populated for IMPORT PROTO.
 //
 // IMPORT MODULE and IMPORT PROTO both support options.
 type ImportStmtNode struct {
@@ -9833,8 +10059,9 @@ func (n *AggregateHavingModifierNode) SetHavingExpr(v ExprNode) {
 }
 
 // CreateMaterializedViewStmtNode this statement:
-//   CREATE MATERIALIZED VIEW <name> [(...)] [PARTITION BY expr, ...]
-//   [CLUSTER BY expr, ...] [OPTIONS (...)] AS SELECT ...
+//
+//	CREATE MATERIALIZED VIEW <name> [(...)] [PARTITION BY expr, ...]
+//	[CLUSTER BY expr, ...] [OPTIONS (...)] AS SELECT ...
 //
 // <column_definition_list> matches 1:1 with the <output_column_list> in
 // BaseCreateViewNode and provides explicit definition for each
@@ -9851,9 +10078,12 @@ func (n *AggregateHavingModifierNode) SetHavingExpr(v ExprNode) {
 // <output_column_list> to determine the schema, if possible.
 //
 // <partition_by_list> specifies the partitioning expressions for the
-//                     materialized view.
+//
+//	materialized view.
+//
 // <cluster_by_list> specifies the clustering expressions for the
-//                   materialized view.
+//
+//	materialized view.
 type CreateMaterializedViewStmtNode struct {
 	*BaseCreateViewNode
 }
@@ -9928,22 +10158,25 @@ func (n *CreateMaterializedViewStmtNode) AddClusterBy(v ExprNode) {
 // <name_path> is the identifier path of the procedure.
 // <argument_name_list> The names of the function arguments.
 // <signature> is the FunctionSignature of the created procedure, with all
-//        options.  This can be used to create a procedure to load into a
-//        Catalog for future queries.
+//
+//	options.  This can be used to create a procedure to load into a
+//	Catalog for future queries.
+//
 // <option_list> has engine-specific directives for modifying procedures.
 // <procedure_body> is a string literal that contains the procedure body.
-//        It includes everything from the BEGIN keyword to the END keyword,
-//        inclusive.
 //
-//        The resolver will perform some basic validation on the procedure
-//        body, for example, verifying that DECLARE statements are in the
-//        proper position, and that variables are not declared more than
-//        once, but any validation that requires the catalog (including
-//        generating resolved tree nodes for individual statements) is
-//        deferred until the procedure is actually called.  This deferral
-//        makes it possible to define a procedure which references a table
-//        or routine that does not yet exist, so long as the entity is
-//        created before the procedure is called.
+//	It includes everything from the BEGIN keyword to the END keyword,
+//	inclusive.
+//
+//	The resolver will perform some basic validation on the procedure
+//	body, for example, verifying that DECLARE statements are in the
+//	proper position, and that variables are not declared more than
+//	once, but any validation that requires the catalog (including
+//	generating resolved tree nodes for individual statements) is
+//	deferred until the procedure is actually called.  This deferral
+//	makes it possible to define a procedure which references a table
+//	or routine that does not yet exist, so long as the entity is
+//	created before the procedure is called.
 type CreateProcedureStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -10040,12 +10273,17 @@ func (n *ExecuteImmediateArgumentNode) SetExpression(v ExprNode) {
 // EXECUTE IMMEDIATE <sql> [<into_clause>] [<using_clause>]
 //
 // <sql> a string expression indicating a SQL statement to be dynamically
-//   executed
+//
+//	executed
+//
 // <into_identifier_list> the identifiers whose values should be set.
-//   Identifiers should not be repeated in the list.
+//
+//	Identifiers should not be repeated in the list.
+//
 // <using_argument_list> a list of arguments to supply for dynamic SQL.
-//    The arguments should either be all named or all unnamed, and
-//    arguments should not be repeated in the list.
+//
+//	The arguments should either be all named or all unnamed, and
+//	arguments should not be repeated in the list.
 type ExecuteImmediateStmtNode struct {
 	*BaseStatementNode
 }
@@ -10140,7 +10378,8 @@ func (n *AssignmentStmtNode) SetExpr(v ExprNode) {
 // <entity_body_json> is a JSON literal to be interpreted by engine.
 // <entity_body_text> is a text literal to be interpreted by engine.
 // <option_list> has engine-specific directives for how to
-//               create this entity.
+//
+//	create this entity.
 type CreateEntityStmtNode struct {
 	*BaseCreateStatementNode
 }
@@ -10223,10 +10462,13 @@ func (n *AlterEntityStmtNode) SetEntityType(v string) {
 //
 // In any pivot column, 'c',
 // 'c' is produced by aggregating pivot expression
-//   <pivot_expr_list[c.pivot_expr_index]>
+//
+//	<pivot_expr_list[c.pivot_expr_index]>
+//
 // over input rows such that
-//   <for_expr> IS NOT DISTINCT FROM
-//   <pivot_value_list[c.pivot_value_index]>
+//
+//	<for_expr> IS NOT DISTINCT FROM
+//	<pivot_value_list[c.pivot_value_index]>
 type PivotColumnNode struct {
 	*BaseArgumentNode
 }
@@ -10270,7 +10512,8 @@ func (n *PivotColumnNode) SetPivotValueIndex(v int) {
 }
 
 // PivotScanNode a scan produced by the following SQL fragment:
-//   <input_scan> PIVOT(... FOR ... IN (...))
+//
+//	<input_scan> PIVOT(... FOR ... IN (...))
 //
 // The column list of this scan consists of a subset of columns from
 // <group_by_column_list> and <pivot_column_list>.
@@ -10474,8 +10717,9 @@ func (n *ReturningClauseNode) AddExpr(v *ComputedColumnNode) {
 // UnpivotArgNode a column group in the UNPIVOT IN clause.
 //
 // Example:
-//   'a' in 'UNPIVOT(x FOR z IN (a , b , c))'
-//   or '(a , b)' in 'UNPIVOT((x , y) FOR z IN ((a , b), (c , d))'
+//
+//	'a' in 'UNPIVOT(x FOR z IN (a , b , c))'
+//	or '(a , b)' in 'UNPIVOT((x , y) FOR z IN ((a , b), (c , d))'
 type UnpivotArgNode struct {
 	*BaseArgumentNode
 }
@@ -10505,36 +10749,40 @@ func (n *UnpivotArgNode) AddColumn(v *ColumnRefNode) {
 
 // UnpivotScanNode a scan produced by the following SQL fragment:
 // <input_scan> UNPIVOT(<value_column_list>
-//   FOR <label_column>
-//   IN (<unpivot_arg_list>))
+//
+//	FOR <label_column>
+//	IN (<unpivot_arg_list>))
 //
 // size of (<unpivot_arg_list>[i], i.e. column groups inside
 // <unpivot_arg_list>)
-//   = size of (<value_column_list>)
-//   = Let's say num_value_columns
+//
+//	= size of (<value_column_list>)
+//	= Let's say num_value_columns
 //
 // size of (<unpivot_arg_list>)
-//   = size of (<label_list>)
-//   = Let's say num_args
+//
+//	= size of (<label_list>)
+//	= Let's say num_args
 //
 // Here is how output rows are generated --
 // for each input row :
-//   for arg_index = 0 .. (num_args - 1) :
-//     output a row with the original columns from <input_scan>
 //
-//       plus
-//     arg = <unpivot_arg_list>[arg_index]
-//     for value_column_index = 0 .. (num_value_columns - 1) :
-//       output_value_column = <value_column_list>[value_column_index]
-//       input_arg_column = arg [value_column_index]
-//       output_value_column = input_arg_column
+//	for arg_index = 0 .. (num_args - 1) :
+//	  output a row with the original columns from <input_scan>
 //
-//       plus
-//     <label_column> = <label_list>[arg_index]
+//	    plus
+//	  arg = <unpivot_arg_list>[arg_index]
+//	  for value_column_index = 0 .. (num_value_columns - 1) :
+//	    output_value_column = <value_column_list>[value_column_index]
+//	    input_arg_column = arg [value_column_index]
+//	    output_value_column = input_arg_column
 //
+//	    plus
+//	  <label_column> = <label_list>[arg_index]
 //
 // Hence the total number of rows generated in the output =
-//   input rows * size of <unpivot_arg_list>
+//
+//	input rows * size of <unpivot_arg_list>
 //
 // For all column groups inside <unpivot_arg_list>, datatype of
 // columns at the same position in the vector must be equivalent, and
@@ -10685,20 +10933,21 @@ func (n *UnpivotScanNode) SetIncludeNulls(v bool) {
 //
 // <target_table> the table to clone data into. Cannot be value table.
 // <clone_from> The source table(s) to clone data from.
-//              For a single table, the scan is TableScan, with an optional
-//                  for_system_time_expr;
-//              If WHERE clause is present, the Scan is wrapped inside
-//                  FilterScanNode;
-//              When multiple sources are present, they are UNION'ed together
-//                  in a SetOperationScanNode.
 //
-//              Constraints:
-//                The target_table must not be the same as any source table,
-//                and two sources cannot refer to the same table.
-//                All source tables and target table must have equal number
-//                of columns, with positionally identical column names and
-//                types.
-//                Cannot be value table.
+//	For a single table, the scan is TableScan, with an optional
+//	    for_system_time_expr;
+//	If WHERE clause is present, the Scan is wrapped inside
+//	    FilterScanNode;
+//	When multiple sources are present, they are UNION'ed together
+//	    in a SetOperationScanNode.
+//
+//	Constraints:
+//	  The target_table must not be the same as any source table,
+//	  and two sources cannot refer to the same table.
+//	  All source tables and target table must have equal number
+//	  of columns, with positionally identical column names and
+//	  types.
+//	  Cannot be value table.
 type CloneDataStmtNode struct {
 	*BaseStatementNode
 }
@@ -10815,60 +11064,81 @@ func (n *AnalyzeStmtNode) AddTableAndColumnIndex(v *TableAndColumnInfoNode) {
 
 // AuxLoadDataStmtNode
 // LOAD DATA {OVERWRITE|INTO} <table_name> ... FROM FILES ...
-//   This statement loads an external file to a new or existing table.
-//   See (broken link).
+//
+//	This statement loads an external file to a new or existing table.
+//	See (broken link).
 //
 // <insertion_mode> either OVERWRITE or APPEND (INTO) the destination table.
 // <name_path> the table to load data into.
 // <output_column_list> the list of visible columns of the destination table.
-//   If <column_definition_list> is explicitly specified:
-//     <output_column_list> =
-//         <column_definition_list> + <with_partition_columns>
-//   Or if the table already exists:
-//     <output_column_list> = <name_path>.columns
-//   Last, if the table doesn't exist and <column_definition_list> isn't
-//   explicitly specified:
-//     <output_column_list> = detected-columns + <with_partition_columns>
+//
+//	If <column_definition_list> is explicitly specified:
+//	  <output_column_list> =
+//	      <column_definition_list> + <with_partition_columns>
+//	Or if the table already exists:
+//	  <output_column_list> = <name_path>.columns
+//	Last, if the table doesn't exist and <column_definition_list> isn't
+//	explicitly specified:
+//	  <output_column_list> = detected-columns + <with_partition_columns>
+//
 // <column_definition_list> If not empty, the explicit columns of the
-//     destination table. Must be coerciable from the source file's fields.
 //
-//     When the destination table doesn't already exist, it will be created
-//     with these columns (plus the additional columns from WITH PARTITION
-//     COLUMNS subclause); otherwise, the destination table's schema must
-//     match the explicit columns by both name and type.
+//	destination table. Must be coerciable from the source file's fields.
+//
+//	When the destination table doesn't already exist, it will be created
+//	with these columns (plus the additional columns from WITH PARTITION
+//	COLUMNS subclause); otherwise, the destination table's schema must
+//	match the explicit columns by both name and type.
+//
 // <pseudo_column_list> is a list of pseudo-columns expected to be present on
-//     the created table (provided by AnalyzerOptions::SetDdlPseudoColumns*).
-//     These can be referenced in expressions in <partition_by_list> and
-//     <cluster_by_list>.
-// <primary_key> specifies the PRIMARY KEY constraint on the table. It is
-//     nullptr when no PRIMARY KEY is specified.
-//     If specified, and the table already exists, the primary_key is
-//     required to be the same as that of the existing.
-// <foreign_key_list> specifies the FOREIGN KEY constraints on the table.
-//     If specified, and the table already exists, the foreign keys are
-//     required to be the same as that of the existing.
-// <check_constraint_list> specifies the ZETASQL_CHECK constraints on the table.
-//     If specified, and the table already exists, the constraints are
-//     required to be the same as that of the existing.
-// <partition_by_list> The list of columns to partition the destination
-//     table. Similar to <column_definition_list>, it must match the
-//     destination table's partitioning spec if it already exists.
-// <cluster_by_list> The list of columns to cluster the destination
-//     table. Similar to <column_definition_list>, it must match the
-//     destination table's partitioning spec if it already exists.
-// <option_list> the options list describing the destination table.
-//     If the destination doesn't already exist, it will be created with
-//     these options; otherwise it must match the existing destination
-//     table's options.
-// <with_partition_columns> The columns decoded from partitioned source
-//     files. If the destination table doesn't already exist, these columns
-//     will be implicitly added to the destination table's schema; otherwise
-//     the destination table must already have these columns
-//     (matching by both names and types).
 //
-//     The hive partition columns from the source file do not automatically
-//     partition the destination table. To apply the partition, the
-//     <partition_by_list> must be specified.
+//	the created table (provided by AnalyzerOptions::SetDdlPseudoColumns*).
+//	These can be referenced in expressions in <partition_by_list> and
+//	<cluster_by_list>.
+//
+// <primary_key> specifies the PRIMARY KEY constraint on the table. It is
+//
+//	nullptr when no PRIMARY KEY is specified.
+//	If specified, and the table already exists, the primary_key is
+//	required to be the same as that of the existing.
+//
+// <foreign_key_list> specifies the FOREIGN KEY constraints on the table.
+//
+//	If specified, and the table already exists, the foreign keys are
+//	required to be the same as that of the existing.
+//
+// <check_constraint_list> specifies the ZETASQL_CHECK constraints on the table.
+//
+//	If specified, and the table already exists, the constraints are
+//	required to be the same as that of the existing.
+//
+// <partition_by_list> The list of columns to partition the destination
+//
+//	table. Similar to <column_definition_list>, it must match the
+//	destination table's partitioning spec if it already exists.
+//
+// <cluster_by_list> The list of columns to cluster the destination
+//
+//	table. Similar to <column_definition_list>, it must match the
+//	destination table's partitioning spec if it already exists.
+//
+// <option_list> the options list describing the destination table.
+//
+//	If the destination doesn't already exist, it will be created with
+//	these options; otherwise it must match the existing destination
+//	table's options.
+//
+// <with_partition_columns> The columns decoded from partitioned source
+//
+//	files. If the destination table doesn't already exist, these columns
+//	will be implicitly added to the destination table's schema; otherwise
+//	the destination table must already have these columns
+//	(matching by both names and types).
+//
+//	The hive partition columns from the source file do not automatically
+//	partition the destination table. To apply the partition, the
+//	<partition_by_list> must be specified.
+//
 // <connection> optional connection reference for accessing files.
 // <from_files_option_list> the options list describing the source file(s).
 type AuxLoadDataStmtNode struct {

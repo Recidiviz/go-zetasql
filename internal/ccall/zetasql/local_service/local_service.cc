@@ -20,6 +20,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -36,9 +37,11 @@
 #include "zetasql/proto/simple_catalog.pb.h"
 #include "zetasql/public/builtin_function.h"
 #include "zetasql/public/evaluator.h"
+#include "zetasql/public/formatter_options.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
+#include "zetasql/public/lenient_formatter.h"
 #include "zetasql/public/simple_catalog.h"
 #include "zetasql/public/simple_table.pb.h"
 #include "zetasql/public/sql_formatter.h"
@@ -94,7 +97,7 @@ void PopulateExistingPoolsToFileDescriptorSetMap(
     std::unique_ptr<Type::FileDescriptorEntry>& entry =
         (*file_descriptor_set_map)[pools[i]];
     ZETASQL_CHECK_EQ(entry.get(), nullptr);
-    entry = absl::make_unique<Type::FileDescriptorEntry>();
+    entry = std::make_unique<Type::FileDescriptorEntry>();
     entry->descriptor_set_index = i;
   }
 
@@ -162,7 +165,7 @@ class RegisteredDescriptorPoolState : public GenericState {
 
   static absl::StatusOr<std::unique_ptr<RegisteredDescriptorPoolState>> Create(
       const google::protobuf::FileDescriptorSet& fdset) {
-    auto pool = absl::make_unique<google::protobuf::DescriptorPool>();
+    auto pool = std::make_unique<google::protobuf::DescriptorPool>();
     ZETASQL_RETURN_IF_ERROR(AddFileDescriptorSetToPool(&fdset, pool.get()));
 
     return absl::WrapUnique(new RegisteredDescriptorPoolState(std::move(pool)));
@@ -221,16 +224,16 @@ class InternalPreparedExpressionState : public GenericState {
       const std::vector<const google::protobuf::DescriptorPool*>& pools,
       SimpleCatalog* catalog,
       absl::flat_hash_set<int64_t> owned_descriptor_pool_ids = {},
-      absl::optional<int64_t> owned_catalog_id = absl::nullopt) {
-    auto type_factory = absl::make_unique<TypeFactory>();
-    auto options = absl::make_unique<AnalyzerOptions>();
+      std::optional<int64_t> owned_catalog_id = std::nullopt) {
+    auto type_factory = std::make_unique<TypeFactory>();
+    auto options = std::make_unique<AnalyzerOptions>();
 
     ZETASQL_RETURN_IF_ERROR(AnalyzerOptions::Deserialize(
         options_proto, pools, type_factory.get(), options.get()));
     EvaluatorOptions evaluator_options;
     evaluator_options.type_factory = type_factory.get();
     evaluator_options.default_time_zone = options->default_time_zone();
-    auto exp = absl::make_unique<PreparedExpression>(sql, evaluator_options);
+    auto exp = std::make_unique<PreparedExpression>(sql, evaluator_options);
     ZETASQL_RETURN_IF_ERROR(exp->Prepare(*options, catalog));
     return absl::WrapUnique(new InternalPreparedExpressionState(
         std::move(type_factory), std::move(options), std::move(exp),
@@ -245,7 +248,7 @@ class InternalPreparedExpressionState : public GenericState {
     return owned_descriptor_pool_ids_;
   }
 
-  absl::optional<int64_t> owned_catalog_id() const { return owned_catalog_id_; }
+  std::optional<int64_t> owned_catalog_id() const { return owned_catalog_id_; }
 
  private:
   InternalPreparedExpressionState(
@@ -253,7 +256,7 @@ class InternalPreparedExpressionState : public GenericState {
       std::unique_ptr<const AnalyzerOptions> options,
       std::unique_ptr<const PreparedExpression> expression,
       absl::flat_hash_set<int64_t> owned_descriptor_pool_ids,
-      absl::optional<int64_t> owned_catalog_id)
+      std::optional<int64_t> owned_catalog_id)
       : factory_(std::move(factory)),
         options_(std::move(options)),
         expression_(std::move(expression)),
@@ -266,7 +269,7 @@ class InternalPreparedExpressionState : public GenericState {
   // Descriptor pools that are owned by this PreparedExpression, and should
   // be deleted when this object is deleted.
   const absl::flat_hash_set<int64_t> owned_descriptor_pool_ids_;
-  const absl::optional<int64_t> owned_catalog_id_;
+  const std::optional<int64_t> owned_catalog_id_;
 };
 
 class PreparedExpressionPool
@@ -285,16 +288,16 @@ class InternalPreparedQueryState : public GenericState {
       const std::vector<const google::protobuf::DescriptorPool*>& pools,
       SimpleCatalog* catalog,
       absl::flat_hash_set<int64_t> owned_descriptor_pool_ids = {},
-      absl::optional<int64_t> owned_catalog_id = absl::nullopt) {
-    auto type_factory = absl::make_unique<TypeFactory>();
-    auto options = absl::make_unique<AnalyzerOptions>();
+      std::optional<int64_t> owned_catalog_id = std::nullopt) {
+    auto type_factory = std::make_unique<TypeFactory>();
+    auto options = std::make_unique<AnalyzerOptions>();
 
     ZETASQL_RETURN_IF_ERROR(AnalyzerOptions::Deserialize(
         options_proto, pools, type_factory.get(), options.get()));
     EvaluatorOptions evaluator_options;
     evaluator_options.type_factory = type_factory.get();
     evaluator_options.default_time_zone = options->default_time_zone();
-    auto query = absl::make_unique<PreparedQuery>(sql, evaluator_options);
+    auto query = std::make_unique<PreparedQuery>(sql, evaluator_options);
     ZETASQL_RETURN_IF_ERROR(query->Prepare(*options, catalog));
     return absl::WrapUnique(new InternalPreparedQueryState(
         std::move(type_factory), std::move(options), std::move(query),
@@ -309,7 +312,7 @@ class InternalPreparedQueryState : public GenericState {
     return owned_descriptor_pool_ids_;
   }
 
-  absl::optional<int64_t> owned_catalog_id() const { return owned_catalog_id_; }
+  std::optional<int64_t> owned_catalog_id() const { return owned_catalog_id_; }
 
  private:
   InternalPreparedQueryState(
@@ -317,7 +320,7 @@ class InternalPreparedQueryState : public GenericState {
       std::unique_ptr<const AnalyzerOptions> options,
       std::unique_ptr<const PreparedQuery> query,
       absl::flat_hash_set<int64_t> owned_descriptor_pool_ids,
-      absl::optional<int64_t> owned_catalog_id)
+      std::optional<int64_t> owned_catalog_id)
       : factory_(std::move(factory)),
         options_(std::move(options)),
         query_(std::move(query)),
@@ -330,7 +333,7 @@ class InternalPreparedQueryState : public GenericState {
   // Descriptor pools that are owned by this PreparedQuery, and should
   // be deleted when this object is deleted.
   const absl::flat_hash_set<int64_t> owned_descriptor_pool_ids_;
-  const absl::optional<int64_t> owned_catalog_id_;
+  const std::optional<int64_t> owned_catalog_id_;
 };
 
 class PreparedQueryPool : public SharedStatePool<InternalPreparedQueryState> {};
@@ -348,16 +351,16 @@ class InternalPreparedModifyState : public GenericState {
       const std::vector<const google::protobuf::DescriptorPool*>& pools,
       SimpleCatalog* catalog,
       absl::flat_hash_set<int64_t> owned_descriptor_pool_ids = {},
-      absl::optional<int64_t> owned_catalog_id = absl::nullopt) {
-    auto type_factory = absl::make_unique<TypeFactory>();
-    auto options = absl::make_unique<AnalyzerOptions>();
+      std::optional<int64_t> owned_catalog_id = std::nullopt) {
+    auto type_factory = std::make_unique<TypeFactory>();
+    auto options = std::make_unique<AnalyzerOptions>();
 
     ZETASQL_RETURN_IF_ERROR(AnalyzerOptions::Deserialize(
         options_proto, pools, type_factory.get(), options.get()));
     EvaluatorOptions evaluator_options;
     evaluator_options.type_factory = type_factory.get();
     evaluator_options.default_time_zone = options->default_time_zone();
-    auto modify = absl::make_unique<PreparedModify>(sql, evaluator_options);
+    auto modify = std::make_unique<PreparedModify>(sql, evaluator_options);
     ZETASQL_RETURN_IF_ERROR(modify->Prepare(*options, catalog));
     return absl::WrapUnique(new InternalPreparedModifyState(
         std::move(type_factory), std::move(options), std::move(modify),
@@ -372,7 +375,7 @@ class InternalPreparedModifyState : public GenericState {
     return owned_descriptor_pool_ids_;
   }
 
-  absl::optional<int64_t> owned_catalog_id() const { return owned_catalog_id_; }
+  std::optional<int64_t> owned_catalog_id() const { return owned_catalog_id_; }
 
  private:
   InternalPreparedModifyState(
@@ -380,7 +383,7 @@ class InternalPreparedModifyState : public GenericState {
       std::unique_ptr<const AnalyzerOptions> options,
       std::unique_ptr<PreparedModify> modify,
       absl::flat_hash_set<int64_t> owned_descriptor_pool_ids,
-      absl::optional<int64_t> owned_catalog_id)
+      std::optional<int64_t> owned_catalog_id)
       : factory_(std::move(factory)),
         options_(std::move(options)),
         modify_(std::move(modify)),
@@ -393,7 +396,7 @@ class InternalPreparedModifyState : public GenericState {
   // Descriptor pools that are owned by this PreparedModify, and should
   // be deleted when this object is deleted.
   const absl::flat_hash_set<int64_t> owned_descriptor_pool_ids_;
-  const absl::optional<int64_t> owned_catalog_id_;
+  const std::optional<int64_t> owned_catalog_id_;
 };
 
 class PreparedModifyPool : public SharedStatePool<InternalPreparedModifyState> {
@@ -511,7 +514,7 @@ ZetaSqlLocalServiceImpl::ZetaSqlLocalServiceImpl()
 ZetaSqlLocalServiceImpl::~ZetaSqlLocalServiceImpl() {}
 
 void ZetaSqlLocalServiceImpl::CleanupCatalog(
-    absl::optional<int64_t>* catalog_id) {
+    std::optional<int64_t>* catalog_id) {
   if (catalog_id->has_value()) {
     registered_catalogs_->Delete(**catalog_id);
   }
@@ -875,9 +878,9 @@ absl::Status ZetaSqlLocalServiceImpl::Evaluate(const EvaluateRequest& request,
 
 absl::Status ZetaSqlLocalServiceImpl::EvaluateQuery(
     const EvaluateQueryRequest& request, EvaluateQueryResponse* response) {
-  absl::optional<int64_t> prepared_query_id_opt =
+  std::optional<int64_t> prepared_query_id_opt =
       request.has_prepared_query_id()
-          ? absl::optional<int64_t>(request.prepared_query_id())
+          ? std::optional<int64_t>(request.prepared_query_id())
           : std::nullopt;
   return EvaluateImpl(request, request.table_content(), prepared_query_id_opt,
                       *prepared_queries_, "query", response);
@@ -885,9 +888,9 @@ absl::Status ZetaSqlLocalServiceImpl::EvaluateQuery(
 
 absl::Status ZetaSqlLocalServiceImpl::EvaluateModify(
     const EvaluateModifyRequest& request, EvaluateModifyResponse* response) {
-  absl::optional<int64_t> prepared_modify_id_opt =
+  std::optional<int64_t> prepared_modify_id_opt =
       request.has_prepared_modify_id()
-          ? absl::optional<int64_t>(request.prepared_modify_id())
+          ? std::optional<int64_t>(request.prepared_modify_id())
           : std::nullopt;
   return EvaluateImpl(request, request.table_content(), prepared_modify_id_opt,
                       *prepared_modifies_, "modify", response);
@@ -897,7 +900,7 @@ template <typename RequestT, typename ResponseT, typename InternalStateT>
 absl::Status ZetaSqlLocalServiceImpl::EvaluateImpl(
     const RequestT& request,
     const google::protobuf::Map<std::string, TableContent>& tables_contents,
-    absl::optional<int64_t>& prepared_statement_id_opt,
+    std::optional<int64_t>& prepared_statement_id_opt,
     SharedStatePool<InternalStateT>& prepared_statements_pool,
     absl::string_view statement_type, ResponseT* response) {
   std::shared_ptr<InternalStateT> internal_state;
@@ -1175,18 +1178,6 @@ absl::Status ZetaSqlLocalServiceImpl::GetCatalogState(
   return absl::OkStatus();
 }
 
-absl::StatusOr<std::vector<const google::protobuf::DescriptorPool*>>
-ToDescriptorPoolVector(
-    const std::vector<std::shared_ptr<RegisteredDescriptorPoolState>>& states) {
-  std::vector<const google::protobuf::DescriptorPool*> pools;
-  pools.reserve(states.size());
-  for (const auto& state : states) {
-    pools.push_back(state->pool());
-    ZETASQL_RET_CHECK_NE(state->pool(), nullptr);
-  }
-  return pools;
-}
-
 absl::Status ZetaSqlLocalServiceImpl::Analyze(const AnalyzeRequest& request,
                                                 AnalyzeResponse* response) {
   std::shared_ptr<RegisteredCatalogState> catalog_state;
@@ -1400,6 +1391,22 @@ absl::Status ZetaSqlLocalServiceImpl::FormatSql(
   return ::zetasql::FormatSql(request.sql(), response->mutable_sql());
 }
 
+absl::Status ZetaSqlLocalServiceImpl::LenientFormatSql(
+    const FormatSqlRequest& request, FormatSqlResponse* response) {
+  ::zetasql::FormatterOptions options(request.options());
+  std::vector<FormatterRange> ranges(request.byte_ranges_size());
+  std::transform(request.byte_ranges().begin(), request.byte_ranges().end(),
+                 ranges.begin(), [](FormatterRangeProto f) {
+                   return FormatterRange({.start = f.start(), .end = f.end()});
+                 });
+  absl::StatusOr<std::string> result =
+      ::zetasql::LenientFormatSqlByteRanges(request.sql(), ranges, options);
+  if (result.ok()) {
+    response->set_sql(result.value());
+  }
+  return result.status();
+}
+
 absl::Status ZetaSqlLocalServiceImpl::RegisterCatalog(
     const RegisterCatalogRequest& request, RegisterResponse* response) {
   std::vector<std::shared_ptr<RegisteredDescriptorPoolState>>
@@ -1502,8 +1509,8 @@ absl::Status ZetaSqlLocalServiceImpl::Parse(const ParseRequest& request,
   const std::string& sql = request.sql_statement();
   auto language_options =
       request.has_options()
-          ? absl::make_unique<LanguageOptions>(request.options())
-          : absl::make_unique<LanguageOptions>();
+          ? std::make_unique<LanguageOptions>(request.options())
+          : std::make_unique<LanguageOptions>();
 
   ParserOptions parser_options =
       ParserOptions(/*id_string_pool=*/nullptr,

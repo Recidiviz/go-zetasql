@@ -16,6 +16,8 @@
 
 #include "zetasql/public/procedure.h"
 
+#include <string>
+
 #include "zetasql/proto/function.pb.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/str_cat.h"
@@ -35,7 +37,7 @@ absl::StatusOr<std::unique_ptr<Procedure>> Procedure::Deserialize(
   ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<FunctionSignature> signature,
       FunctionSignature::Deserialize(proto.signature(), type_deserializer));
-  return absl::make_unique<Procedure>(name_path, *signature);
+  return std::make_unique<Procedure>(name_path, *signature);
 }
 
 absl::Status Procedure::Serialize(

@@ -37,9 +37,6 @@
 #include "google/type/date.pb.h"
 #include "google/type/latlng.pb.h"
 #include "google/type/timeofday.pb.h"
-#include "google/protobuf/io/coded_stream.h"
-#include "google/protobuf/io/zero_copy_stream_impl.h"
-#include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
@@ -49,6 +46,8 @@
 #include "zetasql/common/errors.h"
 #include "zetasql/common/initialize_required_fields.h"
 #include "zetasql/common/internal_value.h"
+#include "zetasql/proto/anon_output_with_report.pb.h"
+#include "zetasql/public/anonymization_utils.h"
 #include "zetasql/public/cast.h"
 #include "zetasql/public/civil_time.h"
 #include "zetasql/public/collator.h"
@@ -60,6 +59,10 @@
 #include "zetasql/public/functions/comparison.h"
 #include "zetasql/public/functions/date_time_util.h"
 #include "zetasql/public/functions/datetime.pb.h"
+#include "zetasql/reference_impl/operator.h"
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/io/zero_copy_stream_impl.h"
+#include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "zetasql/public/functions/string_format.h"
 #include "zetasql/public/functions/generate_array.h"
 #include "zetasql/public/functions/json.h"
@@ -99,11 +102,15 @@
 #include "absl/strings/substitute.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/time/time.h"
+#include "absl/types/span.h"
 #include "algorithms/algorithm.h"
 #include "algorithms/bounded-mean.h"
 #include "algorithms/bounded-standard-deviation.h"
 #include "algorithms/bounded-sum.h"
 #include "algorithms/bounded-variance.h"
+#include "proto/confidence-interval.pb.h"
+#include "proto/data.pb.h"
+#include "algorithms/quantiles.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/exactfloat.h"
@@ -157,7 +164,7 @@ bool IsNegativeOrNaN<uint64_t>(const Value& src) {
 template <>
 bool IsNegativeOrNaN<double>(const Value& src) {
   return !src.is_null() &&
-      (std::isnan(src.double_value()) || src.double_value() < 0);
+         (std::isnan(src.double_value()) || src.double_value() < 0);
 }
 
 template <>
@@ -182,7 +189,7 @@ bool IsNaN(const Value& src) {
 
 template <typename OutType, typename InType>
 struct UnaryExecutor {
-  typedef bool(*ptr)(InType, OutType*, absl::Status* error);
+  typedef bool (*ptr)(InType, OutType*, absl::Status* error);
 };
 
 template <typename OutType, typename InType = OutType>
@@ -203,6 +210,12 @@ bool SafeInvokeUnary(typename UnaryExecutor<OutType, InType>::ptr function,
                      absl::Span<const Value> args, Value* result,
                      absl::Status* status) {
   if (!InvokeUnary<OutType, InType>(function, args, result, status)) {
+    if (!ShouldSuppressError(*status,
+                             ResolvedFunctionCallBase::SAFE_ERROR_MODE)) {
+      return false;
+    }
+
+    *status = absl::OkStatus();
     *result = Value::MakeNull<OutType>();
   }
   return true;
@@ -210,7 +223,7 @@ bool SafeInvokeUnary(typename UnaryExecutor<OutType, InType>::ptr function,
 
 template <typename OutType, typename InType1, typename InType2>
 struct BinaryExecutor {
-  typedef bool(*ptr)(InType1, InType2, OutType*, absl::Status* error);
+  typedef bool (*ptr)(InType1, InType2, OutType*, absl::Status* error);
 };
 
 template <typename OutType, typename InType1 = OutType,
@@ -235,8 +248,38 @@ bool SafeInvokeBinary(
     absl::Span<const Value> args, Value* result, absl::Status* status) {
   if (!InvokeBinary<OutType, InType1, InType2>(function, args, result,
                                                status)) {
+    if (!ShouldSuppressError(*status,
+                             ResolvedFunctionCallBase::SAFE_ERROR_MODE)) {
+      return false;
+    }
+
+    *status = absl::OkStatus();
     *result = Value::MakeNull<OutType>();
   }
+  return true;
+}
+
+template <typename OutType, typename InType1, typename InType2,
+          typename InType3>
+struct TernaryRoundExecutor {
+  typedef bool (*ptr)(InType1, InType2, InType3, OutType*, absl::Status* error);
+};
+
+template <typename OutType, typename InType1 = OutType, typename InType2,
+          typename IntType3>
+bool InvokeRoundTernary(typename TernaryRoundExecutor<OutType, InType1, InType2,
+                                                      IntType3>::ptr function,
+                        absl::Span<const Value> args, Value* result,
+                        absl::Status* status) {
+  ZETASQL_CHECK_EQ(3, args.size());  // Crash OK
+  functions::RoundingMode rounding_mode =
+      static_cast<functions::RoundingMode>(args[2].enum_value());
+  OutType out;
+  if (!function(args[0].template Get<InType1>(), args[1].int64_value(),
+                rounding_mode, &out, status)) {
+    return false;
+  }
+  *result = Value::Make<OutType>(out);
   return true;
 }
 
@@ -294,7 +337,6 @@ bool Invoke(FunctionType function, Value* result, absl::Status* status,
   *result = Value::Make<OutType>(out);
   return true;
 }
-
 
 absl::Status MakeMaxArrayValueByteSizeExceededError(
     int64_t max_value_byte_size, const zetasql_base::SourceLocation& source_loc) {
@@ -385,7 +427,7 @@ absl::Status GenerateTimestampArray(absl::Time start, absl::Time end,
 }
 
 template <typename T>
-Value CreateValueFromOptional(absl::optional<T> opt) {
+Value CreateValueFromOptional(std::optional<T> opt) {
   if (opt.has_value()) {
     return Value::Make<T>(opt.value());
   }
@@ -535,8 +577,7 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kJsonType, "json_type", "JsonType");
     RegisterFunction(FunctionKind::kToJsonString, "to_json_string",
                      "ToJsonString");
-    RegisterFunction(FunctionKind::kParseJson, "parse_json",
-                     "ParseJson");
+    RegisterFunction(FunctionKind::kParseJson, "parse_json", "ParseJson");
     RegisterFunction(FunctionKind::kGreatest, "greatest", "Greatest");
   }();
   [this]() {
@@ -550,6 +591,10 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kLike, "$like", "Like");
     RegisterFunction(FunctionKind::kLikeAny, "$like_any", "LikeAny");
     RegisterFunction(FunctionKind::kLikeAll, "$like_all", "LikeAll");
+    RegisterFunction(FunctionKind::kLikeAnyArray, "$like_any_array",
+                     "LikeAnyArray");
+    RegisterFunction(FunctionKind::kLikeAllArray, "$like_all_array",
+                     "LikeAllArray");
     RegisterFunction(FunctionKind::kLogicalAnd, "logical_and", "LogicalAnd");
     RegisterFunction(FunctionKind::kLogicalOr, "logical_or", "LogicalOr");
     RegisterFunction(FunctionKind::kMakeProto, "make_proto", "MakeProto");
@@ -595,6 +640,7 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kIsInf, "is_inf", "IsInf");
     RegisterFunction(FunctionKind::kIeeeDivide, "ieee_divide", "IeeeDivide");
     RegisterFunction(FunctionKind::kSqrt, "sqrt", "Sqrt");
+    RegisterFunction(FunctionKind::kCbrt, "cbrt", "Cbrt");
     RegisterFunction(FunctionKind::kPow, "pow", "Pow");
     RegisterFunction(FunctionKind::kExp, "exp", "Exp");
     RegisterFunction(FunctionKind::kNaturalLogarithm, "ln", "NaturalLogarithm");
@@ -617,6 +663,9 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kCsc, "csc", "Csc");
     RegisterFunction(FunctionKind::kSec, "sec", "Sec");
     RegisterFunction(FunctionKind::kCot, "cot", "Cot");
+    RegisterFunction(FunctionKind::kCsch, "csch", "Csch");
+    RegisterFunction(FunctionKind::kSech, "sech", "Sech");
+    RegisterFunction(FunctionKind::kCoth, "coth", "Coth");
     RegisterFunction(FunctionKind::kCorr, "corr", "Corr");
     RegisterFunction(FunctionKind::kCovarPop, "covar_pop", "Covar_pop");
     RegisterFunction(FunctionKind::kCovarSamp, "covar_samp", "Covar_samp");
@@ -625,10 +674,19 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kVarPop, "var_pop", "Var_pop");
     RegisterFunction(FunctionKind::kVarSamp, "var_samp", "Var_samp");
     RegisterFunction(FunctionKind::kAnonSum, "anon_sum", "Anon_sum");
+    RegisterFunction(FunctionKind::kAnonSumWithReportProto,
+                     "$anon_sum_with_report_proto", "AnonSumWithReportProto");
+    RegisterFunction(FunctionKind::kAnonSumWithReportJson,
+                     "$anon_sum_with_report_json", "AnonSumWithReportJson");
     RegisterFunction(FunctionKind::kAnonAvg, "anon_avg", "Anon_avg");
     RegisterFunction(FunctionKind::kAnonVarPop, "anon_var_pop", "Anon_var_pop");
     RegisterFunction(FunctionKind::kAnonStddevPop, "anon_stddev_pop",
                      "Anon_stddev_pop");
+    RegisterFunction(FunctionKind::kAnonQuantiles, "anon_quantiles",
+                     "Anon_quantiles");
+    RegisterFunction(FunctionKind::kAnonQuantilesWithReportProto,
+                     "$anon_quantiles_with_report_proto",
+                     "AnonQuantilesWithReportProto");
   }();
   [this]() {
     RegisterFunction(FunctionKind::kByteLength, "byte_length", "ByteLength");
@@ -839,6 +897,11 @@ FunctionMap::FunctionMap() {
                      "ArrayIncludes");
     RegisterFunction(FunctionKind::kArrayIncludesAny, "array_includes_any",
                      "ArrayIncludesAny");
+    RegisterFunction(FunctionKind::kArrayIncludesAll, "array_includes_all",
+                     "ArrayIncludesAll");
+    RegisterFunction(FunctionKind::kArrayFirst, "array_first", "ArrayFirst");
+    RegisterFunction(FunctionKind::kArrayLast, "array_last", "ArrayLast");
+    RegisterFunction(FunctionKind::kArraySlice, "array_slice", "ArraySlice");
   }();
 }  // NOLINT(readability/fn_size)
 
@@ -1029,10 +1092,8 @@ static absl::StatusOr<Value> ExtractAll(absl::Span<const Value> x,
   return ValueTraits<type>::ToArray(values);
 }
 
-absl::Status UpdateCovariance(
-    double x, double y,
-    double mean_x, double mean_y,
-    double pair_count, double* covar) {
+absl::Status UpdateCovariance(double x, double y, double mean_x, double mean_y,
+                              double pair_count, double* covar) {
   absl::Status error;
   double old_pair_count, delta_x, delta_y, tmp;
 
@@ -1069,11 +1130,8 @@ absl::Status UpdateCovariance(
   return absl::OkStatus();
 }
 
-absl::Status UpdateMeanAndVariance(
-    double arg,
-    double count,
-    double* mean,
-    double* variance) {
+absl::Status UpdateMeanAndVariance(double arg, double count, double* mean,
+                                   double* variance) {
   absl::Status error;
 
   if (!std::isfinite(*variance)) {
@@ -1296,15 +1354,14 @@ class ProtoMapFunction : public BuiltinScalarFunction {
             {}, element_type->map_value(), FieldFormat::DEFAULT_FORMAT, value,
             &unused_nondeterministic, &coded_output));
       }
-      output_array.push_back(Value::Proto(element_type,
-                                          absl::Cord(std::move(element_str))));
+      output_array.push_back(
+          Value::Proto(element_type, absl::Cord(std::move(element_str))));
     }
     return Value::Array(output_type()->AsArray(), std::move(output_array));
   }
 
   ProductMode product_mode_;
 };
-
 
 absl::Status ConcatError(int64_t max_output_size, zetasql_base::SourceLocation src) {
   return zetasql_base::OutOfRangeErrorBuilder(src)
@@ -1387,12 +1444,12 @@ bool HasFloatingPoint(const Type* type) {
            type->AsArray()->element_type()->IsGeography()));
 }
 
-// Function used to switch on a (function kind, output type) pair.
+// Function used to switch on a (function kind, type) pair.
 static constexpr uint64_t FCT(FunctionKind function_kind, TypeKind type_kind) {
   return (static_cast<uint64_t>(function_kind) << 32) + type_kind;
 }
 
-// Function used to switch on a (function kind, output type, output type)
+// Function used to switch on a (function kind, type, type)
 // triple.
 static constexpr uint64_t FCT2(FunctionKind function_kind, TypeKind type_kind1,
                                TypeKind type_kind2) {
@@ -1400,7 +1457,7 @@ static constexpr uint64_t FCT2(FunctionKind function_kind, TypeKind type_kind1,
          (static_cast<uint64_t>(type_kind1) << 16) + type_kind2;
 }
 
-// Function used to switch on a (function kind, output type, args.size())
+// Function used to switch on a (function kind, type, args.size())
 // triple.
 static constexpr uint64_t FCT_TYPE_ARITY(FunctionKind function_kind,
                                          TypeKind type_kind, size_t arity) {
@@ -1489,9 +1546,9 @@ BuiltinScalarFunction::CreateCast(
   }
 
   return ScalarFunctionCallExpr::Create(
-      absl::make_unique<CastFunction>(output_type,
-                                      std::move(extended_cast_evaluator),
-                                      std::move(type_params)),
+      std::make_unique<CastFunction>(output_type,
+                                     std::move(extended_cast_evaluator),
+                                     std::move(type_params)),
       std::move(args), error_mode);
 }
 
@@ -1503,7 +1560,7 @@ BuiltinScalarFunction::CreateCall(
   std::vector<std::unique_ptr<AlgebraArg>> converted_arguments;
   converted_arguments.reserve(arguments.size());
   for (auto& e : arguments) {
-    converted_arguments.push_back(absl::make_unique<ExprArg>(std::move(e)));
+    converted_arguments.push_back(std::make_unique<ExprArg>(std::move(e)));
   }
 
   return CreateCall(kind, language_options, output_type,
@@ -1561,16 +1618,16 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kLessOrEqual:
     case FunctionKind::kIsDistinct:
     case FunctionKind::kIsNotDistinct:
-      ZETASQL_RETURN_IF_ERROR(ValidateInputTypesSupportEqualityComparison(
-          kind, input_types));
+      ZETASQL_RETURN_IF_ERROR(
+          ValidateInputTypesSupportEqualityComparison(kind, input_types));
       return new ComparisonFunction(kind, output_type);
     case FunctionKind::kLeast:
-      ZETASQL_RETURN_IF_ERROR(ValidateInputTypesSupportOrderComparison(
-          kind, input_types));
+      ZETASQL_RETURN_IF_ERROR(
+          ValidateInputTypesSupportOrderComparison(kind, input_types));
       return new LeastFunction(output_type);
     case FunctionKind::kGreatest:
-      ZETASQL_RETURN_IF_ERROR(ValidateInputTypesSupportOrderComparison(
-          kind, input_types));
+      ZETASQL_RETURN_IF_ERROR(
+          ValidateInputTypesSupportOrderComparison(kind, input_types));
       return new GreatestFunction(output_type);
     case FunctionKind::kAnd:
     case FunctionKind::kNot:
@@ -1590,8 +1647,8 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kBitCastToUint64:
       return new BitCastFunction(kind, output_type);
     case FunctionKind::kLike: {
-      ZETASQL_RETURN_IF_ERROR(ValidateInputTypesSupportEqualityComparison(
-          kind, input_types));
+      ZETASQL_RETURN_IF_ERROR(
+          ValidateInputTypesSupportEqualityComparison(kind, input_types));
       ZETASQL_ASSIGN_OR_RETURN(auto fct,
                        CreateLikeFunction(kind, output_type, arguments));
       return fct.release();
@@ -1608,6 +1665,15 @@ BuiltinScalarFunction::CreateValidatedRaw(
           ValidateInputTypesSupportEqualityComparison(kind, input_types));
       ZETASQL_ASSIGN_OR_RETURN(auto fct,
                        CreateLikeAllFunction(kind, output_type, arguments));
+      return fct.release();
+    }
+    case FunctionKind::kLikeAnyArray:
+    case FunctionKind::kLikeAllArray: {
+      ZETASQL_RET_CHECK_EQ(arguments.size(), 2);
+      ZETASQL_RETURN_IF_ERROR(
+          ValidateInputTypesSupportEqualityComparison(kind, input_types));
+      ZETASQL_ASSIGN_OR_RETURN(auto fct, CreateLikeAnyAllArrayFunction(
+                                     kind, output_type, arguments));
       return fct.release();
     }
     case FunctionKind::kBitwiseNot:
@@ -1643,6 +1709,7 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kIsInf:
     case FunctionKind::kIeeeDivide:
     case FunctionKind::kSqrt:
+    case FunctionKind::kCbrt:
     case FunctionKind::kPow:
     case FunctionKind::kExp:
     case FunctionKind::kNaturalLogarithm:
@@ -1664,6 +1731,9 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kCsc:
     case FunctionKind::kSec:
     case FunctionKind::kCot:
+    case FunctionKind::kCsch:
+    case FunctionKind::kSech:
+    case FunctionKind::kCoth:
       return new MathFunction(kind, output_type);
     case FunctionKind::kConcat:
       return new ConcatFunction(kind, output_type);
@@ -1789,7 +1859,14 @@ BuiltinScalarFunction::CreateValidatedRaw(
             kind, output_type, arguments[1]->mutable_inline_lambda_expr());
       }
     case FunctionKind::kArrayIncludesAny:
-      return new ArrayIncludesAnyFunction();
+      return new ArrayIncludesArrayFunction(/*require_all=*/false);
+    case FunctionKind::kArrayIncludesAll:
+      return new ArrayIncludesArrayFunction(/*require_all=*/true);
+    case FunctionKind::kArrayFirst:
+    case FunctionKind::kArrayLast:
+      return new ArrayFirstLastFunction(kind, output_type);
+    case FunctionKind::kArraySlice:
+      return new ArraySliceFunction(kind, output_type);
     case FunctionKind::kCurrentDate:
     case FunctionKind::kCurrentDatetime:
     case FunctionKind::kCurrentTime:
@@ -1934,7 +2011,8 @@ BuiltinScalarFunction::CreateValidated(
 namespace {
 absl::StatusOr<std::unique_ptr<RE2>> GetLikePatternRegexp(
     const ValueExpr& arg) {
-  if (arg.IsConstant()) {
+  if (arg.IsConstant() &&
+      (arg.output_type()->IsString() || arg.output_type()->IsBytes())) {
     const ConstExpr& pattern_expr = static_cast<const ConstExpr&>(arg);
     if (!pattern_expr.value().is_null()) {
       // Build and precompile the regexp.
@@ -1990,6 +2068,40 @@ BuiltinScalarFunction::CreateLikeAllFunction(
       new LikeAllFunction(kind, output_type, std::move(regexp)));
 }
 
+absl::StatusOr<std::unique_ptr<BuiltinScalarFunction>>
+BuiltinScalarFunction::CreateLikeAnyAllArrayFunction(
+    FunctionKind kind, const Type* output_type,
+    const std::vector<std::unique_ptr<AlgebraArg>>& arguments) {
+  std::vector<std::unique_ptr<RE2>> regexp;
+
+  // The second argument to this function will be an array.
+  // Theses values are unpacked in order to generate the regular expressions
+  // needed for the LIKE expressions when they are evaluated. Non-constant
+  // values will have their regular expressions generated at execution time.
+  const ValueExpr* value_expression = arguments[1]->value_expr();
+  if (value_expression->IsConstant() &&
+      value_expression->output_type()->IsArray()) {
+    const ConstExpr* pattern_list =
+        static_cast<const ConstExpr*>(arguments[1]->value_expr());
+    if (!pattern_list->value().is_null()) {
+      for (int i = 0; i < pattern_list->value().num_elements(); ++i) {
+        ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ConstExpr> pattern,
+                         ConstExpr::Create(pattern_list->value().element(i)));
+        ZETASQL_ASSIGN_OR_RETURN(regexp.emplace_back(),
+                         GetLikePatternRegexp(*pattern.get()));
+      }
+    }
+  }
+
+  if (kind == FunctionKind::kLikeAnyArray) {
+    return absl::WrapUnique(
+        new LikeAnyArrayFunction(kind, output_type, std::move(regexp)));
+  } else {
+    return absl::WrapUnique(
+        new LikeAllArrayFunction(kind, output_type, std::move(regexp)));
+  }
+}
+
 namespace {
 
 absl::StatusOr<std::unique_ptr<const functions::RegExp>> CreateRegexp(
@@ -2033,8 +2145,8 @@ BuiltinScalarFunction::CreateRegexpFunction(
     }
   }
 
-  return absl::make_unique<RegexpFunction>(std::move(const_regexp), kind,
-                                           output_type);
+  return std::make_unique<RegexpFunction>(std::move(const_regexp), kind,
+                                          output_type);
 }
 
 bool BuiltinScalarFunction::HasNulls(absl::Span<const Value> args) {
@@ -2879,7 +2991,7 @@ bool ComparisonFunction::Eval(absl::Span<const TupleData* const> params,
     case FCT2(FunctionKind::kLessOrEqual, TYPE_ARRAY, TYPE_ARRAY): {
       const int shorter_array_size =
           (x.num_elements() < y.num_elements() ? x.num_elements()
-           : y.num_elements());
+                                               : y.num_elements());
       ComparisonFunction compare_less(FunctionKind::kLess, types::BoolType());
       // Compare array elements one by one.  If we find that the first array
       // is less or greater than the second, then ignore the remaining
@@ -3029,6 +3141,13 @@ absl::StatusOr<Value> ArrayFilterFunction::Eval(
   if (args[0].is_null()) {
     return Value::Null(output_type());
   }
+
+  // Explicitly marking evaluation context to be non-deterministic.
+  if (args[0].num_elements() > 1 &&
+      InternalValue::GetOrderKind(args[0]) == InternalValue::kIgnoresOrder) {
+    evaluation_context->SetNonDeterministicOutput();
+  }
+
   std::vector<Value> filtered_values;
   bool two_argument_lambda = lambda_->num_args() == 2;
   for (int i = 0; i < args[0].num_elements(); ++i) {
@@ -3087,6 +3206,13 @@ absl::StatusOr<Value> ArrayTransformFunction::Eval(
   if (args[0].is_null()) {
     return Value::Null(output_type());
   }
+
+  // Explicitly marking evaluation context to be non-deterministic.
+  if (args[0].num_elements() > 1 &&
+      InternalValue::GetOrderKind(args[0]) == InternalValue::kIgnoresOrder) {
+    evaluation_context->SetNonDeterministicOutput();
+  }
+
   std::vector<Value> transformed_values;
   bool two_argument_lambda = lambda_->num_args() == 2;
   for (int i = 0; i < args[0].num_elements(); ++i) {
@@ -3258,7 +3384,7 @@ absl::StatusOr<Value> ArrayIncludesFunction::Eval(
   return Value::Bool(false);
 }
 
-absl::StatusOr<Value> ArrayIncludesAnyFunction::Eval(
+absl::StatusOr<Value> ArrayIncludesArrayFunction::Eval(
     absl::Span<const TupleData* const> params, absl::Span<const Value> args,
     EvaluationContext* context) const {
   ZETASQL_DCHECK_EQ(args.size(), 2);
@@ -3266,8 +3392,10 @@ absl::StatusOr<Value> ArrayIncludesAnyFunction::Eval(
     return Value::Null(output_type());
   }
 
-  for (const Value& element_1 : args[0].elements()) {
-    for (const Value& element_2 : args[1].elements()) {
+  bool require_all = kind() == FunctionKind::kArrayIncludesAll;
+  for (const Value& element_2 : args[1].elements()) {
+    bool found = false;
+    for (const Value& element_1 : args[0].elements()) {
       Value equals = element_1.SqlEquals(element_2);
       ZETASQL_RET_CHECK(equals.is_valid())
           << "Failed to compare element: " << element_1.DebugString()
@@ -3276,11 +3404,85 @@ absl::StatusOr<Value> ArrayIncludesAnyFunction::Eval(
         continue;
       }
       if (equals.bool_value()) {
-        return Value::Bool(true);
+        found = true;
+        break;
       }
     }
+    if (require_all) {
+      if (!found) return Value::Bool(false);
+    } else {
+      if (found) return Value::Bool(true);
+    }
   }
-  return Value::Bool(false);
+  return require_all ? Value::Bool(true) : Value::Bool(false);
+}
+
+absl::StatusOr<Value> ArrayFirstLastFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK_EQ(args.size(), 1);
+  ZETASQL_RET_CHECK(kind() == FunctionKind::kArrayFirst ||
+            kind() == FunctionKind::kArrayLast);
+  if (args[0].is_null()) {
+    return Value::Null(output_type());
+  }
+  if (args[0].is_empty_array()) {
+    absl::string_view msg =
+        kind() == FunctionKind::kArrayFirst
+            ? "ARRAY_FIRST cannot get the first element of an empty array"
+            : "ARRAY_LAST cannot get the last element of an empty array";
+    return MakeEvalError() << msg;
+  }
+  if (args[0].num_elements() > 1 &&
+      InternalValue::GetOrderKind(args[0]) == InternalValue::kIgnoresOrder) {
+    context->SetNonDeterministicOutput();
+  }
+  if (kind() == FunctionKind::kArrayFirst) {
+    const Value& first = args[0].element(0);
+    ZETASQL_RET_CHECK(first.is_valid());
+    return first;
+  }
+  const Value& last = args[0].element(args[0].num_elements() - 1);
+  ZETASQL_RET_CHECK(last.is_valid());
+  return last;
+}
+
+absl::StatusOr<Value> ArraySliceFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK_EQ(args.size(), 3);
+  ZETASQL_RET_CHECK(kind() == FunctionKind::kArraySlice);
+  if (args[0].is_null() || args[1].is_null() || args[2].is_null()) {
+    return Value::Null(output_type());
+  }
+  int array_length = args[0].num_elements();
+  if (array_length > 1 &&
+      InternalValue::GetOrderKind(args[0]) == InternalValue::kIgnoresOrder) {
+    context->SetNonDeterministicOutput();
+  }
+  int64_t start = args[1].int64_value();
+  int64_t end = args[2].int64_value();
+  if (array_length == 0 || (start < -array_length && end < -array_length) ||
+      (start >= array_length && end >= array_length)) {
+    return Value::EmptyArray(output_type()->AsArray());
+  }
+  if (start < 0) {
+    start += array_length;
+  }
+  if (end < 0) {
+    end += array_length;
+  }
+  if (start > end) {
+    return Value::EmptyArray(output_type()->AsArray());
+  }
+  start = std::max(int64_t{0}, start);
+  end = std::min(int64_t{array_length - 1}, end);
+  const std::vector<Value>& elements = args[0].elements();
+  std::vector<Value> result(elements.begin() + start,
+                            elements.begin() + end + 1);
+  Value output = Value::Array(output_type()->AsArray(), result);
+  ZETASQL_RET_CHECK(output.is_valid());
+  return output;
 }
 
 bool IsFunction::Eval(absl::Span<const TupleData* const> params,
@@ -3313,7 +3515,7 @@ absl::StatusOr<Value> CastFunction::Eval(
   const bool return_null_on_error =
       args.size() >= 2 ? args[1].bool_value() : false;
 
-  absl::optional<std::string> format;
+  std::optional<std::string> format;
   if (args.size() >= 3) {
     // Returns NULL if format is null.
     if (args[2].is_null()) {
@@ -3323,7 +3525,7 @@ absl::StatusOr<Value> CastFunction::Eval(
     format = args[2].string_value();
   }
 
-  absl::optional<std::string> time_zone;
+  std::optional<std::string> time_zone;
   if (args.size() >= 4) {
     // Returns NULL if time_zone is null.
     if (args[3].is_null()) {
@@ -3344,8 +3546,7 @@ absl::StatusOr<Value> CastFunction::Eval(
     // whole query.
     return absl::StatusOr<Value>(Value::Null(output_type()));
   }
-  if (HasFloatingPoint(v.type()) &&
-      !HasFloatingPoint(output_type())) {
+  if (HasFloatingPoint(v.type()) && !HasFloatingPoint(output_type())) {
     context->SetNonDeterministicOutput();
   }
   if (!type_params_.IsEmpty() && status_or.ok()) {
@@ -3534,14 +3735,14 @@ class BuiltinAggregateAccumulator : public AggregateAccumulator {
   unsigned __int128 out_uint128_ = 0;  // Sum
   NumericValue out_numeric_;           // Min, Max
   BigNumericValue out_bignumeric_;     // Min, Max
-  NumericValue::SumAggregator numeric_aggregator_;  // Avg, Sum
-  BigNumericValue::SumAggregator bignumeric_aggregator_;  // Avg, Sum
-  IntervalValue::SumAggregator interval_aggregator_;      // Sum
+  NumericValue::SumAggregator numeric_aggregator_;                // Avg, Sum
+  BigNumericValue::SumAggregator bignumeric_aggregator_;          // Avg, Sum
+  IntervalValue::SumAggregator interval_aggregator_;              // Sum
   NumericValue::VarianceAggregator numeric_variance_aggregator_;  // Var, Stddev
   BigNumericValue::VarianceAggregator
-      bignumeric_variance_aggregator_;           // Var, Stddev
-  std::string out_string_ = "";                  // Max, Min, StringAgg
-  std::string delimiter_ = ",";                  // StringAgg
+      bignumeric_variance_aggregator_;  // Var, Stddev
+  std::string out_string_ = "";         // Max, Min, StringAgg
+  std::string delimiter_ = ",";         // StringAgg
   // OrAgg, AndAgg, LogicalOr, LogicalAnd.
   bool has_null_ = false;
   bool has_true_ = false;
@@ -3602,13 +3803,69 @@ static absl::Status InitializeAnonBuilder(const std::vector<Value>& args,
     } else {
       ZETASQL_RET_CHECK(args[0].type()->IsInt64()) << args[0].type()->DebugString();
       ZETASQL_RET_CHECK(args[1].type()->IsInt64()) << args[1].type()->DebugString();
-      builder->SetLower(args[0].int64_value())
-          .SetUpper(args[1].int64_value());
+      builder->SetLower(args[0].int64_value()).SetUpper(args[1].int64_value());
     }
     epsilon_offset = 3;
   }
 
   return SetAnonBuilderEpsilon<T>(args[epsilon_offset], builder);
+}
+
+template <>
+absl::Status
+InitializeAnonBuilder<differential_privacy::Quantiles<double>::Builder>(
+    const std::vector<Value>& args,
+    differential_privacy::Quantiles<double>::Builder* builder) {
+  // The current implementation always expects 5 arguments (until b/205277450 is
+  // fixed and optional clamping bounds is supported):
+  //   * args[0] is the input value to quantiles
+  //   * args[1] is the lower clamped bound
+  //   * args[2] is the upper clamped bound
+  //   * args[3] is delta
+  //   * args[4] is epsilon
+  // TODO: Remove the delta argument.  When delta is set, we
+  // compute k_threshold from delta/epsilon/kappa, and the delta value
+  // is no longer relevant to the function itself.
+
+  ZETASQL_RET_CHECK(args.size() == 5) << args.size();
+
+  // Create a vector of n+1 quantile boundaries, representing the requested n
+  // quantiles.
+  double number_of_quantile_boundaries = args[0].int64_value() + 1;
+  std::vector<double> quantiles;
+  for (double i = 0; i < number_of_quantile_boundaries; ++i) {
+    quantiles.push_back(i / number_of_quantile_boundaries);
+  }
+
+  builder->SetQuantiles(quantiles);
+
+  int epsilon_offset = 2;
+
+  // TODO: Add "if (args.size() == 5)" clause for these four lines
+  //   when optional lower and upper bounds can be supported, since then there
+  //   may only be three args, instead of assuming there will always be five
+  //   args.
+  ZETASQL_RET_CHECK(args[1].type()->IsDouble()) << args[1].type()->DebugString();
+  ZETASQL_RET_CHECK(args[2].type()->IsDouble()) << args[2].type()->DebugString();
+  builder->SetLower(args[1].double_value()).SetUpper(args[2].double_value());
+  epsilon_offset = 4;
+
+  return SetAnonBuilderEpsilon<
+      differential_privacy::Quantiles<double>::Builder>(args[epsilon_offset],
+                                                        builder);
+}
+
+// For functions which return an array of elements from their per-user
+// aggregation, we need to set MaxContributionsPerPartition to the length of the
+// array.
+// TODO: Plumb the value through rather than relying on the
+// constant.
+template <typename T>
+absl::Status InitializeAnonBuilderForArrayFunction(
+    const std::vector<Value>& args, T* builder) {
+  builder->SetMaxContributionsPerPartition(
+      anonymization::kPerUserArrayAggLimit);
+  return InitializeAnonBuilder(args, builder);
 }
 
 absl::Status BuiltinAggregateAccumulator::Reset() {
@@ -3830,12 +4087,16 @@ absl::Status BuiltinAggregateAccumulator::Reset() {
       break;
 
     // Anonymization functions.
+    case FCT(FunctionKind::kAnonSumWithReportProto, TYPE_DOUBLE):
+    case FCT(FunctionKind::kAnonSumWithReportJson, TYPE_DOUBLE):
     case FCT(FunctionKind::kAnonSum, TYPE_DOUBLE): {
       differential_privacy::BoundedSum<double>::Builder builder;
       ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilder<>(args_, &builder));
       ZETASQL_ASSIGN_OR_RETURN(anon_double_, builder.Build());
       break;
     }
+    case FCT(FunctionKind::kAnonSumWithReportProto, TYPE_INT64):
+    case FCT(FunctionKind::kAnonSumWithReportJson, TYPE_INT64):
     case FCT(FunctionKind::kAnonSum, TYPE_INT64): {
       differential_privacy::BoundedSum<int64_t>::Builder builder;
       ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilder<>(args_, &builder));
@@ -3851,14 +4112,21 @@ absl::Status BuiltinAggregateAccumulator::Reset() {
     case FCT(FunctionKind::kAnonVarPop, TYPE_ARRAY): {
       ZETASQL_RET_CHECK(input_type_->AsArray()->element_type()->IsDouble());
       differential_privacy::BoundedVariance<double>::Builder builder;
-      ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilder<>(args_, &builder));
+      ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilderForArrayFunction<>(args_, &builder));
       ZETASQL_ASSIGN_OR_RETURN(anon_double_, builder.Build());
       break;
     }
     case FCT(FunctionKind::kAnonStddevPop, TYPE_ARRAY): {
       ZETASQL_RET_CHECK(input_type_->AsArray()->element_type()->IsDouble());
       differential_privacy::BoundedStandardDeviation<double>::Builder builder;
-      ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilder<>(args_, &builder));
+      ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilderForArrayFunction<>(args_, &builder));
+      ZETASQL_ASSIGN_OR_RETURN(anon_double_, builder.Build());
+      break;
+    }
+    case FCT(FunctionKind::kAnonQuantilesWithReportProto, TYPE_ARRAY):
+    case FCT(FunctionKind::kAnonQuantiles, TYPE_ARRAY): {
+      differential_privacy::Quantiles<double>::Builder builder;
+      ZETASQL_RETURN_IF_ERROR(InitializeAnonBuilderForArrayFunction<>(args_, &builder));
       ZETASQL_ASSIGN_OR_RETURN(anon_double_, builder.Build());
       break;
     }
@@ -4309,12 +4577,18 @@ bool BuiltinAggregateAccumulator::Accumulate(const Value& value,
       percentile_population_.push_back(value);
       break;
     case FCT(FunctionKind::kAnonSum, TYPE_DOUBLE):
+    case FCT(FunctionKind::kAnonSumWithReportProto, TYPE_DOUBLE):
+    case FCT(FunctionKind::kAnonSumWithReportJson, TYPE_DOUBLE):
     case FCT(FunctionKind::kAnonAvg, TYPE_DOUBLE):
       anon_double_->AddEntry(value.double_value());
       break;
     case FCT(FunctionKind::kAnonSum, TYPE_INT64):
+    case FCT(FunctionKind::kAnonSumWithReportProto, TYPE_INT64):
+    case FCT(FunctionKind::kAnonSumWithReportJson, TYPE_INT64):
       anon_int64_->AddEntry(value.int64_value());
       break;
+    case FCT(FunctionKind::kAnonQuantiles, TYPE_ARRAY):
+    case FCT(FunctionKind::kAnonQuantilesWithReportProto, TYPE_ARRAY):
     case FCT(FunctionKind::kAnonVarPop, TYPE_ARRAY):
     case FCT(FunctionKind::kAnonStddevPop, TYPE_ARRAY): {
       for (const Value& value_element : value.elements()) {
@@ -4493,6 +4767,176 @@ absl::StatusOr<Value> ComputePercentileDisc(
       return ::zetasql_base::UnimplementedErrorBuilder()
              << "Unsupported argument type for percentile_disc.";
   }
+}
+
+absl::Status ConvertDifferentPrivacyOutputToAnonOutputProto(
+    const differential_privacy::Output& input,
+    zetasql::AnonOutputWithReport* anon_output_proto) {
+  ZETASQL_RET_CHECK_GT(input.elements_size(), 0);
+  AnonOutputValues anon_output_values;
+  for (const differential_privacy::Output::Element& element :
+       input.elements()) {
+    AnonOutputValue* anon_output_value = anon_output_values.add_values();
+
+    ZETASQL_RET_CHECK(element.has_noise_confidence_interval());
+    anon_output_value->mutable_noise_confidence_interval()
+        ->set_confidence_level(
+            element.noise_confidence_interval().confidence_level());
+    anon_output_value->mutable_noise_confidence_interval()->set_lower_bound(
+        element.noise_confidence_interval().lower_bound());
+    anon_output_value->mutable_noise_confidence_interval()->set_upper_bound(
+        element.noise_confidence_interval().upper_bound());
+
+    ZETASQL_RET_CHECK(element.has_value());
+    switch (element.value().value_case()) {
+      case differential_privacy::ValueType::kIntValue:
+        anon_output_value->set_int_value(element.value().int_value());
+        break;
+      case differential_privacy::ValueType::kFloatValue:
+        anon_output_value->set_float_value(element.value().float_value());
+        break;
+      case differential_privacy::ValueType::kStringValue:
+        anon_output_value->set_string_value(element.value().string_value());
+        break;
+      case differential_privacy::ValueType::VALUE_NOT_SET:
+        break;
+    }
+  }
+
+  if (input.elements_size() == 1) {
+    *anon_output_proto->mutable_value() = anon_output_values.values(0);
+  } else {
+    *anon_output_proto->mutable_values() = anon_output_values;
+  }
+
+  if (input.has_error_report() && input.error_report().has_bounding_report()) {
+    const differential_privacy::BoundingReport& input_bounding_report =
+        input.error_report().bounding_report();
+    BoundingReport anon_bounding_report;
+    anon_bounding_report.set_num_inputs(input_bounding_report.num_inputs());
+    anon_bounding_report.set_num_outside(input_bounding_report.num_outside());
+
+    // Lower bound.
+    ZETASQL_RET_CHECK(input_bounding_report.has_lower_bound());
+    AnonOutputValue anon_output_value_lower_bound;
+
+    switch (input_bounding_report.lower_bound().value_case()) {
+      case differential_privacy::ValueType::kIntValue:
+        anon_bounding_report.mutable_lower_bound()->set_int_value(
+            input_bounding_report.lower_bound().int_value());
+        break;
+      case differential_privacy::ValueType::kFloatValue:
+        anon_bounding_report.mutable_lower_bound()->set_float_value(
+            input_bounding_report.lower_bound().float_value());
+        break;
+      case differential_privacy::ValueType::kStringValue:
+        anon_bounding_report.mutable_lower_bound()->set_string_value(
+            input_bounding_report.lower_bound().string_value());
+        break;
+      case differential_privacy::ValueType::VALUE_NOT_SET:
+        break;
+    }
+
+    // Upper bound.
+    ZETASQL_RET_CHECK(input_bounding_report.has_upper_bound());
+
+    switch (input_bounding_report.upper_bound().value_case()) {
+      case differential_privacy::ValueType::kIntValue:
+        anon_bounding_report.mutable_upper_bound()->set_int_value(
+            input_bounding_report.upper_bound().int_value());
+        break;
+      case differential_privacy::ValueType::kFloatValue:
+        anon_bounding_report.mutable_upper_bound()->set_float_value(
+            input_bounding_report.upper_bound().float_value());
+        break;
+      case differential_privacy::ValueType::kStringValue:
+        anon_bounding_report.mutable_upper_bound()->set_string_value(
+            input_bounding_report.upper_bound().string_value());
+        break;
+      case differential_privacy::ValueType::VALUE_NOT_SET:
+        break;
+    }
+
+    *anon_output_proto->mutable_bounding_report() = anon_bounding_report;
+  }
+
+  return absl::OkStatus();
+}
+
+absl::Status ConvertDifferentPrivacyOutputToAnonOutputJson(
+    const differential_privacy::Output& input, JSONValue* anon_output_json) {
+  ZETASQL_RET_CHECK_GT(input.elements_size(), 0);
+
+  JSONValueRef json_ref = anon_output_json->GetRef();
+  auto insert_value_to_json = [](JSONValueRef ref,
+                                 differential_privacy::ValueType value) {
+    switch (value.value_case()) {
+      case differential_privacy::ValueType::ValueCase::kFloatValue:
+        ref.SetDouble(value.float_value());
+        return absl::OkStatus();
+      case differential_privacy::ValueType::ValueCase::kIntValue:
+        ref.SetInt64(value.int_value());
+        return absl::OkStatus();
+      default:
+        return absl::InternalError(
+            absl::StrCat("Invalid value type for anon output json: ",
+                         static_cast<int>(value.value_case())));
+    }
+  };
+  auto insert_element_into_json =
+      [&insert_value_to_json](
+          JSONValueRef ref,
+          const differential_privacy::Output::Element& element)
+      -> absl::Status {
+    ZETASQL_RETURN_IF_ERROR(
+        insert_value_to_json(ref.GetMember("value"), element.value()));
+    if (element.has_noise_confidence_interval()) {
+      auto noise_confidence_interval_ref =
+          ref.GetMember("noise_confidence_interval");
+      noise_confidence_interval_ref.GetMember("upper_bound")
+          .SetDouble(element.noise_confidence_interval().upper_bound());
+      noise_confidence_interval_ref.GetMember("lower_bound")
+          .SetDouble(element.noise_confidence_interval().lower_bound());
+      noise_confidence_interval_ref.GetMember("confidence_level")
+          .SetDouble(element.noise_confidence_interval().confidence_level());
+    }
+    return absl::OkStatus();
+  };
+
+  if (input.elements_size() == 1) {
+    ZETASQL_RETURN_IF_ERROR(insert_element_into_json(json_ref.GetMember("result"),
+                                             input.elements(0)));
+  } else {
+    for (int i = 0; i < input.elements_size(); ++i) {
+      ZETASQL_RETURN_IF_ERROR(insert_element_into_json(
+          json_ref.GetMember("result").GetArrayElement(i), input.elements(i)));
+    }
+  }
+
+  if (input.has_error_report() && input.error_report().has_bounding_report()) {
+    const auto& bounding_report = input.error_report().bounding_report();
+    auto bounding_report_ref = json_ref.GetMember("bounding_report");
+
+    if (bounding_report.has_lower_bound()) {
+      ZETASQL_RETURN_IF_ERROR(
+          insert_value_to_json(bounding_report_ref.GetMember("lower_bound"),
+                               bounding_report.lower_bound()));
+    }
+    if (bounding_report.has_upper_bound()) {
+      ZETASQL_RETURN_IF_ERROR(
+          insert_value_to_json(bounding_report_ref.GetMember("upper_bound"),
+                               bounding_report.upper_bound()));
+    }
+    if (bounding_report.has_num_inputs()) {
+      bounding_report_ref.GetMember("num_inputs")
+          .SetDouble(bounding_report.num_inputs());
+    }
+    if (bounding_report.has_num_outside()) {
+      bounding_report_ref.GetMember("num_outside")
+          .SetDouble(bounding_report.num_outside());
+    }
+  }
+  return absl::OkStatus();
 }
 
 absl::StatusOr<Value> BuiltinAggregateAccumulator::GetFinalResultInternal(
@@ -4818,6 +5262,40 @@ absl::StatusOr<Value> BuiltinAggregateAccumulator::GetFinalResultInternal(
       } else {
         return Value::NullDouble();
       }
+    case FCT(FunctionKind::kAnonQuantiles, TYPE_ARRAY):
+      if (anon_double_ != nullptr) {
+        auto status_or = anon_double_->PartialResult();
+        if (status_or.ok()) {
+          std::vector<Value> values;
+          for (const differential_privacy::Output::Element& element :
+               status_or.value().elements()) {
+            values.push_back(Value::Double(element.value().float_value()));
+          }
+          return Value::MakeArray(types::DoubleArrayType(),
+                                  absl::Span<const Value>(values));
+        }
+        return status_or.status();
+      } else {
+        return Value::NullDouble();
+      }
+    case FCT(FunctionKind::kAnonQuantilesWithReportProto, TYPE_ARRAY): {
+      zetasql::TypeFactory type_factory;
+      const ProtoType* anon_output_proto_type = nullptr;
+      ZETASQL_RETURN_IF_ERROR(type_factory.MakeProtoType(
+          zetasql::AnonOutputWithReport::descriptor(),
+          &anon_output_proto_type));
+      zetasql::AnonOutputWithReport anon_output_proto;
+      if (anon_double_ != nullptr) {
+        auto status_or = anon_double_->PartialResult();
+        if (!status_or.ok()) {
+          return status_or.status();
+        }
+        ZETASQL_RETURN_IF_ERROR(ConvertDifferentPrivacyOutputToAnonOutputProto(
+            status_or.value(), &anon_output_proto));
+      }
+      return Value::Proto(anon_output_proto_type,
+                          absl::Cord(anon_output_proto.SerializeAsString()));
+    }
     case FCT(FunctionKind::kAnonSum, TYPE_INT64):
       if (anon_int64_ != nullptr) {
         auto status_or = anon_int64_->PartialResult();
@@ -4829,6 +5307,66 @@ absl::StatusOr<Value> BuiltinAggregateAccumulator::GetFinalResultInternal(
       } else {
         return Value::NullInt64();
       }
+    case FCT(FunctionKind::kAnonSumWithReportProto, TYPE_INT64): {
+      zetasql::TypeFactory type_factory;
+      const ProtoType* anon_output_proto_type = nullptr;
+      ZETASQL_RETURN_IF_ERROR(type_factory.MakeProtoType(
+          zetasql::AnonOutputWithReport::descriptor(),
+          &anon_output_proto_type));
+      zetasql::AnonOutputWithReport anon_output_proto;
+      if (anon_int64_ != nullptr) {
+        auto result = anon_int64_->PartialResult();
+        if (!result.ok()) {
+          return result.status();
+        }
+        ZETASQL_RETURN_IF_ERROR(ConvertDifferentPrivacyOutputToAnonOutputProto(
+            result.value(), &anon_output_proto));
+      }
+      return Value::Proto(anon_output_proto_type,
+                          absl::Cord(anon_output_proto.SerializeAsString()));
+    }
+    case FCT(FunctionKind::kAnonSumWithReportProto, TYPE_DOUBLE): {
+      zetasql::TypeFactory type_factory;
+      const ProtoType* anon_output_proto_type = nullptr;
+      ZETASQL_RETURN_IF_ERROR(type_factory.MakeProtoType(
+          zetasql::AnonOutputWithReport::descriptor(),
+          &anon_output_proto_type));
+      zetasql::AnonOutputWithReport anon_output_proto;
+      if (anon_double_ != nullptr) {
+        auto result = anon_double_->PartialResult();
+        if (!result.ok()) {
+          return result.status();
+        }
+        ZETASQL_RETURN_IF_ERROR(ConvertDifferentPrivacyOutputToAnonOutputProto(
+            result.value(), &anon_output_proto));
+      }
+      return Value::Proto(anon_output_proto_type,
+                          absl::Cord(anon_output_proto.SerializeAsString()));
+    }
+    case FCT(FunctionKind::kAnonSumWithReportJson, TYPE_INT64): {
+      JSONValue anon_output_json;
+      if (anon_int64_ != nullptr) {
+        auto result = anon_int64_->PartialResult();
+        if (!result.ok()) {
+          return result.status();
+        }
+        ZETASQL_RETURN_IF_ERROR(ConvertDifferentPrivacyOutputToAnonOutputJson(
+            result.value(), &anon_output_json));
+      }
+      return Value::Json(JSONValue::CopyFrom(anon_output_json.GetConstRef()));
+    }
+    case FCT(FunctionKind::kAnonSumWithReportJson, TYPE_DOUBLE): {
+      JSONValue anon_output_json;
+      if (anon_double_ != nullptr) {
+        auto result = anon_double_->PartialResult();
+        if (!result.ok()) {
+          return result.status();
+        }
+        ZETASQL_RETURN_IF_ERROR(ConvertDifferentPrivacyOutputToAnonOutputJson(
+            result.value(), &anon_output_json));
+      }
+      return Value::Json(JSONValue::CopyFrom(anon_output_json.GetConstRef()));
+    }
   }
   return ::zetasql_base::UnimplementedErrorBuilder()
          << "Unsupported aggregate function: " << function_->debug_name() << "("
@@ -4852,9 +5390,9 @@ class BinaryStatAccumulator : public AggregateAccumulator {
  public:
   static absl::StatusOr<std::unique_ptr<BinaryStatAccumulator>> Create(
       const BinaryStatFunction* function, const Type* input_type,
-      EvaluationContext* context) {
+      absl::Span<const Value> args, EvaluationContext* context) {
     auto accumulator = absl::WrapUnique(
-        new BinaryStatAccumulator(function, input_type, context));
+        new BinaryStatAccumulator(function, input_type, args, context));
     ZETASQL_RETURN_IF_ERROR(accumulator->Reset());
     return accumulator;
   }
@@ -4875,16 +5413,20 @@ class BinaryStatAccumulator : public AggregateAccumulator {
 
  private:
   BinaryStatAccumulator(const BinaryStatFunction* function,
-                        const Type* input_type, EvaluationContext* context)
+                        const Type* input_type, absl::Span<const Value> args,
+                        EvaluationContext* context)
       : function_(function),
         input_type_(input_type),
-        min_required_pair_count_(
-            function_->kind() == FunctionKind::kCovarPop ? 1 : 2),
+        min_required_pair_count_(function_->kind() == FunctionKind::kCovarPop
+                                     ? 1
+                                     : 2),
+        args_(args.begin(), args.end()),
         context_(context) {}
 
   const BinaryStatFunction* function_;
   const Type* input_type_;
   const int64_t min_required_pair_count_;
+  const std::vector<Value> args_;
   EvaluationContext* context_;
 
   int64_t requested_bytes_ = 0;
@@ -4896,7 +5438,7 @@ class BinaryStatAccumulator : public AggregateAccumulator {
   double variance_y_ = 0;
   double covar_ = 0;
   bool input_has_nan_or_inf_ = false;
-  NumericValue::CovarianceAggregator numeric_covariance_aggregator_;  // Covar
+  NumericValue::CovarianceAggregator numeric_covariance_aggregator_;    // Covar
   NumericValue::CorrelationAggregator numeric_correlation_aggregator_;  // Corr
   BigNumericValue::CovarianceAggregator
       bignumeric_covariance_aggregator_;  // Covar
@@ -4947,6 +5489,7 @@ absl::Status BinaryStatAccumulator::Reset() {
       variance_y_ = 0;
       covar_ = 0;
       input_has_nan_or_inf_ = false;
+      break;
   }
 
   return absl::OkStatus();
@@ -4996,7 +5539,7 @@ bool BinaryStatAccumulator::Accumulate(const Value& value,
       break;
     case FCT2(FunctionKind::kCovarPop, TYPE_DOUBLE, TYPE_DOUBLE):
     case FCT2(FunctionKind::kCovarSamp, TYPE_DOUBLE, TYPE_DOUBLE):
-    case FCT2(FunctionKind::kCorr, TYPE_DOUBLE, TYPE_DOUBLE):
+    case FCT2(FunctionKind::kCorr, TYPE_DOUBLE, TYPE_DOUBLE): {
       const double x = arg_x.ToDouble();
       const double y = arg_y.ToDouble();
       if (!std::isfinite(x) || !std::isfinite(y)) {
@@ -5016,6 +5559,8 @@ bool BinaryStatAccumulator::Accumulate(const Value& value,
       if (!status->ok()) return false;
 
       *status = UpdateMeanAndVariance(y, pair_count_, &mean_y_, &variance_y_);
+      break;
+    }
   }
 
   return status->ok();
@@ -5103,7 +5648,7 @@ BinaryStatFunction::CreateAccumulator(absl::Span<const Value> args,
                                       EvaluationContext* context) const {
   // <collator_list> should be empty for bivariate stats functions.
   ZETASQL_RET_CHECK(collator_list.empty());
-  return BinaryStatAccumulator::Create(this, input_type(), context);
+  return BinaryStatAccumulator::Create(this, input_type(), args, context);
 }
 
 namespace {
@@ -5162,7 +5707,9 @@ absl::StatusOr<Value> LikeAnyFunction::Eval(
   for (int i = 1; i < args.size(); ++i) {
     ZETASQL_ASSIGN_OR_RETURN(Value local_result,
                      LikeImpl(args[0], args[i], regexp_[i - 1].get()));
-    if (!IsTrue(result) && !IsFalse(local_result)) {
+    if (IsTrue(local_result)) {
+      return local_result;
+    } else if (!IsTrue(result) && !IsFalse(local_result)) {
       result = local_result;
     }
   }
@@ -5184,6 +5731,80 @@ absl::StatusOr<Value> LikeAllFunction::Eval(
   for (int i = 1; i < args.size(); ++i) {
     ZETASQL_ASSIGN_OR_RETURN(Value local_result,
                      LikeImpl(args[0], args[i], regexp_[i - 1].get()));
+    if (!IsFalse(result) && !IsTrue(local_result)) {
+      result = local_result;
+    }
+  }
+  return result;
+}
+
+absl::StatusOr<Value> LikeAnyArrayFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK_EQ(args.size(), 2)
+      << "LIKE ANY with UNNEST has exactly 2 arguments";
+
+  // Return FALSE if the patterns array is NULL or empty and NULL if the search
+  // input is NULL
+  if (args[1].is_null() || args[1].is_empty_array()) {
+    return Value::Bool(false);
+  }
+  if (args[0].is_null()) {
+    return Value::Null(output_type());
+  }
+
+  // For cases with the rhs is a subquery expression creating an ARRAY, the
+  // number of regexps will be less than the number of elements and the regexp
+  // for each element will be generated during execution
+  ZETASQL_RET_CHECK_LE(regexp_.size(), args[1].num_elements())
+      << "The number of regular expressions should be less than or equal to"
+         "the number of arguments in the pattern list";
+
+  Value result = Value::Bool(false);
+
+  for (int i = 0; i < args[1].num_elements(); ++i) {
+    const RE2* current_regexp = i < regexp_.size() ? regexp_[i].get() : nullptr;
+    ZETASQL_ASSIGN_OR_RETURN(Value local_result,
+                     LikeImpl(args[0], args[1].element(i), current_regexp));
+    if (IsTrue(local_result)) {
+      return local_result;
+    } else if (!IsTrue(result) && !IsFalse(local_result)) {
+      result = local_result;
+    }
+  }
+  return result;
+}
+
+absl::StatusOr<Value> LikeAllArrayFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK_EQ(args.size(), 2)
+      << "LIKE ANY with UNNEST has exactly 2 arguments";
+
+  // Return TRUE if the patterns array is NULL or empty and NULL if the search
+  // input is NULL
+  if (args[1].is_null() || args[1].is_empty_array()) {
+    return Value::Bool(true);
+  }
+  if (args[0].is_null()) {
+    return Value::Null(output_type());
+  }
+
+  // For cases with the rhs is a subquery expression creating an ARRAY, the
+  // number of regexps will be less than the number of elements and the regexp
+  // for each element will be generated during execution
+  ZETASQL_RET_CHECK_LE(regexp_.size(), args[1].num_elements())
+      << "The number of regular expressions should be less than or equal to"
+         "the number of arguments in the pattern list";
+
+  Value result = Value::Bool(true);
+
+  for (int i = 0; i < args[1].num_elements(); ++i) {
+    // If there is not a precomputed regexp for a pattern, then a nullptr can
+    // be passed to LikeImpl() to compute the regexp during execution
+    const RE2* current_regexp = i < regexp_.size() ? regexp_[i].get() : nullptr;
+    ZETASQL_ASSIGN_OR_RETURN(Value local_result,
+                     LikeImpl(args[0], args[1].element(i), current_regexp));
     if (!IsFalse(result) && !IsTrue(local_result)) {
       result = local_result;
     }
@@ -5415,6 +6036,15 @@ bool MathFunction::Eval(absl::Span<const TupleData* const> params,
     case FCT(FunctionKind::kSqrt, TYPE_BIGNUMERIC):
       return InvokeUnary<BigNumericValue>(&functions::Sqrt<BigNumericValue>,
                                           args, result, status);
+    case FCT(FunctionKind::kCbrt, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Cbrt<double>, args, result,
+                                 status);
+    case FCT(FunctionKind::kCbrt, TYPE_NUMERIC):
+      return InvokeUnary<NumericValue>(&functions::Cbrt<NumericValue>, args,
+                                       result, status);
+    case FCT(FunctionKind::kCbrt, TYPE_BIGNUMERIC):
+      return InvokeUnary<BigNumericValue>(&functions::Cbrt<BigNumericValue>,
+                                          args, result, status);
     case FCT(FunctionKind::kPow, TYPE_DOUBLE):
       return InvokeBinary<double>(&functions::Pow<double>, args, result,
                                   status);
@@ -5521,38 +6151,84 @@ bool MathFunction::Eval(absl::Span<const TupleData* const> params,
     case FCT(FunctionKind::kCot, TYPE_DOUBLE):
       return InvokeUnary<double>(&functions::Cot<double>, args, result, status);
 
+    case FCT(FunctionKind::kCsch, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Csch<double>, args, result,
+                                 status);
+
+    case FCT(FunctionKind::kSech, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Sech<double>, args, result,
+                                 status);
+
+    case FCT(FunctionKind::kCoth, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Coth<double>, args, result,
+                                 status);
+
     case FCT(FunctionKind::kRound, TYPE_DOUBLE):
       if (args.size() == 1) {
         return InvokeUnary<double>(&functions::Round<double>, args, result,
                                    status);
-      } else {
+      } else if (args.size() == 2) {
         return InvokeBinary<double, double, int64_t>(
             &functions::RoundDecimal<double>, args, result, status);
+      } else if (args.size() == 3 &&
+                 context->GetLanguageOptions().LanguageFeatureEnabled(
+                     FEATURE_ROUND_WITH_ROUNDING_MODE)) {
+        *status = ::zetasql_base::UnimplementedErrorBuilder()
+                  << "ROUND with a rounding_mode is only allowed for NUMERIC "
+                     "or BIGNUMERIC values: "
+                  << debug_name();
+        return false;
       }
+      break;
     case FCT(FunctionKind::kRound, TYPE_FLOAT):
       if (args.size() == 1) {
         return InvokeUnary<float>(&functions::Round<float>, args, result,
                                   status);
-      } else {
+      } else if (args.size() == 2) {
         return InvokeBinary<float, float, int64_t>(
             &functions::RoundDecimal<float>, args, result, status);
+      } else if (args.size() == 3 &&
+                 context->GetLanguageOptions().LanguageFeatureEnabled(
+                     FEATURE_ROUND_WITH_ROUNDING_MODE)) {
+        *status = ::zetasql_base::UnimplementedErrorBuilder()
+                  << "ROUND with a rounding_mode is only allowed for NUMERIC "
+                     "or BIGNUMERIC values: "
+                  << debug_name();
+        return false;
       }
+      break;
     case FCT(FunctionKind::kRound, TYPE_NUMERIC):
       if (args.size() == 1) {
         return InvokeUnary<NumericValue>(&functions::Round<NumericValue>, args,
                                          result, status);
-      } else {
+      } else if (args.size() == 2) {
         return InvokeBinary<NumericValue, NumericValue, int64_t>(
             &functions::RoundDecimal<NumericValue>, args, result, status);
+      } else if (args.size() == 3 &&
+                 context->GetLanguageOptions().LanguageFeatureEnabled(
+                     FEATURE_ROUND_WITH_ROUNDING_MODE)) {
+        return InvokeRoundTernary<NumericValue, NumericValue, int64_t,
+                                  functions::RoundingMode>(
+            &functions::RoundDecimalWithRoundingMode<NumericValue>, args,
+            result, status);
       }
+      break;
     case FCT(FunctionKind::kRound, TYPE_BIGNUMERIC):
       if (args.size() == 1) {
         return InvokeUnary<BigNumericValue>(&functions::Round<BigNumericValue>,
                                             args, result, status);
-      } else {
+      } else if (args.size() == 2) {
         return InvokeBinary<BigNumericValue, BigNumericValue, int64_t>(
             &functions::RoundDecimal<BigNumericValue>, args, result, status);
+      } else if (args.size() == 3 &&
+                 context->GetLanguageOptions().LanguageFeatureEnabled(
+                     FEATURE_ROUND_WITH_ROUNDING_MODE)) {
+        return InvokeRoundTernary<BigNumericValue, BigNumericValue, int64_t,
+                                  functions::RoundingMode>(
+            &functions::RoundDecimalWithRoundingMode<BigNumericValue>, args,
+            result, status);
       }
+      break;
     case FCT(FunctionKind::kTrunc, TYPE_DOUBLE):
       if (args.size() == 1) {
         return InvokeUnary<double>(&functions::Trunc<double>, args, result,
@@ -5754,8 +6430,8 @@ bool StringFunction::Eval(absl::Span<const TupleData* const> params,
       return Invoke<bool>(&functions::EndsWithBytes, result, status,
                           args[0].bytes_value(), args[1].bytes_value());
     case FCT_TYPE_ARITY(FunctionKind::kChr, TYPE_INT64, 1):
-      return InvokeString<std::string>(
-          &functions::CodePointToString, result, status, args[0].int64_value());
+      return InvokeString<std::string>(&functions::CodePointToString, result,
+                                       status, args[0].int64_value());
     case FCT_TYPE_ARITY(FunctionKind::kSubstr, TYPE_STRING, 2):
       return InvokeString<absl::string_view>(&functions::SubstrUtf8, result,
                                              status, args[0].string_value(),
@@ -5916,7 +6592,7 @@ bool StringFunction::Eval(absl::Span<const TupleData* const> params,
                                       args[0].string_value());
     case FCT_TYPE_ARITY(FunctionKind::kSoundex, TYPE_STRING, 1):
       return InvokeString<std::string>(&functions::Soundex, result, status,
-                                      args[0].string_value());
+                                       args[0].string_value());
     case FCT_TYPE_ARITY(FunctionKind::kTranslate, TYPE_STRING, 3):
       return InvokeString<std::string>(
           &functions::TranslateUtf8, result, status, args[0].string_value(),
@@ -6117,9 +6793,8 @@ absl::StatusOr<Value> MakeProtoFunction::Eval(
   ZETASQL_CHECK_EQ(args.size(), fields_.size());
   absl::Cord proto_cord;
   std::string bytes_str;
+  google::protobuf::io::StringOutputStream cord_output(&bytes_str);
   {
-    google::protobuf::io::StringOutputStream cord_output(&bytes_str);
-
     ProtoUtil::WriteFieldOptions write_field_options{
         .allow_null_map_keys =
             !context->GetLanguageOptions().LanguageFeatureEnabled(
@@ -6136,7 +6811,6 @@ absl::StatusOr<Value> MakeProtoFunction::Eval(
       }
     }
   }
-
   proto_cord = absl::Cord(bytes_str);
   return Value::Proto(output_type()->AsProto(), proto_cord);
 }
@@ -6471,7 +7145,7 @@ absl::StatusOr<Value> DateTimeUnaryFunction::Eval(
       return Value::Date(args[0].int64_value());
     case FCT(FunctionKind::kUnixDate, TYPE_DATE):
       return output_type()->IsInt64() ? Value::Int64(args[0].date_value())
-                                      :  Value::Int32(args[0].date_value());
+                                      : Value::Int32(args[0].date_value());
   }
   return ::zetasql_base::UnimplementedErrorBuilder()
          << "Unsupported function: " << debug_name();
@@ -6532,8 +7206,7 @@ absl::StatusOr<Value> FormatTimeFunction::Eval(
   if (HasNulls(args)) return Value::Null(output_type());
   std::string result_string;
   ZETASQL_RETURN_IF_ERROR(functions::FormatTimeToString(
-      args[0].string_value(), args[1].time_value(),
-      &result_string));
+      args[0].string_value(), args[1].time_value(), &result_string));
   return Value::String(result_string);
 }
 
@@ -6885,9 +7558,9 @@ absl::StatusOr<Value> ParseDateFunction::Eval(
   ZETASQL_DCHECK_EQ(args.size(), 2);
   if (HasNulls(args)) return Value::Null(output_type());
   int32_t date;
-  ZETASQL_RETURN_IF_ERROR(functions::ParseStringToDate(
-      args[0].string_value(), args[1].string_value(), /*parse_version2=*/true,
-      &date));
+  ZETASQL_RETURN_IF_ERROR(functions::ParseStringToDate(args[0].string_value(),
+                                               args[1].string_value(),
+                                               /*parse_version2=*/true, &date));
   return Value::Date(date);
 }
 
@@ -7328,7 +8001,7 @@ absl::StatusOr<Value> DateTimeDiffFunction::Eval(
     case FCT(FunctionKind::kDatetimeAdd, TYPE_DATETIME): {
       DatetimeValue datetime;
       ZETASQL_RETURN_IF_ERROR(functions::AddDatetime(args[0].datetime_value(), part,
-                                         args[1].int64_value(), &datetime));
+                                             args[1].int64_value(), &datetime));
       return Value::Datetime(datetime);
     }
     case FCT(FunctionKind::kDateSub, TYPE_DATETIME):
@@ -7336,7 +8009,7 @@ absl::StatusOr<Value> DateTimeDiffFunction::Eval(
     case FCT(FunctionKind::kDatetimeSub, TYPE_DATETIME): {
       DatetimeValue datetime;
       ZETASQL_RETURN_IF_ERROR(functions::SubDatetime(args[0].datetime_value(), part,
-                                         args[1].int64_value(), &datetime));
+                                             args[1].int64_value(), &datetime));
       return Value::Datetime(datetime);
     }
     case FCT(FunctionKind::kDateDiff, TYPE_DATETIME):
@@ -7434,16 +8107,16 @@ absl::StatusOr<Value> ExtractFromFunction::Eval(
       return output_type()->IsInt64() ? Value::Int64(value32)
                                       : Value::Int32(value32);
     case TYPE_TIME:
-      ZETASQL_RETURN_IF_ERROR(functions::ExtractFromTime(
-          part, args[0].time_value(), &value32));
+      ZETASQL_RETURN_IF_ERROR(
+          functions::ExtractFromTime(part, args[0].time_value(), &value32));
       return output_type()->IsInt64() ? Value::Int64(value32)
                                       : Value::Int32(value32);
     case TYPE_INTERVAL: {
       ZETASQL_ASSIGN_OR_RETURN(int64_t result, args[0].interval_value().Extract(part));
       return Value::Int64(result);
     }
-    default:
-      {}
+    default: {
+    }
   }
   return ::zetasql_base::UnimplementedErrorBuilder()
          << "Unsupported function: " << debug_name();
@@ -7831,7 +8504,7 @@ static bool ApplyToEachPeerTuple(const TupleSchema& schema,
   for (int tuple_id = current_tuple_id + 1;
        tuple_id < analytic_window.start_tuple_id + analytic_window.num_tuples;
        ++tuple_id) {
-    if (comparator(tuples[current_tuple_id], tuples[tuple_id]))  break;
+    if (comparator(tuples[current_tuple_id], tuples[tuple_id])) break;
     if (predicate(tuple_id)) return true;
   }
 
@@ -7901,8 +8574,7 @@ absl::Status NtileFunction::Eval(
   // NTILE returns non-deterministic results if there exists an ordering group
   // where peer tuples (tied in the window ordering) are not in a single
   // bucket and the peers are not equivalent to one another.
-  for (int bucket_id = 1;
-       bucket_id <= num_buckets_with_one_more_tuple;
+  for (int bucket_id = 1; bucket_id <= num_buckets_with_one_more_tuple;
        ++bucket_id) {
     const int64_t first_tuple_id_of_current_bucket =
         (bucket_id - 1) * large_bucket_size;
@@ -7921,8 +8593,7 @@ absl::Status NtileFunction::Eval(
   const int num_tuples_in_large_buckets =
       large_bucket_size * num_buckets_with_one_more_tuple;
   for (int bucket_id = num_buckets_with_one_more_tuple + 1;
-       bucket_id <= num_buckets;
-       ++bucket_id) {
+       bucket_id <= num_buckets; ++bucket_id) {
     const int first_tuple_id_of_current_bucket =
         num_tuples_in_large_buckets +
         (bucket_id - num_buckets_with_one_more_tuple - 1) * small_bucket_size;
@@ -7982,7 +8653,7 @@ absl::Status FirstValueFunction::Eval(
     int offset = 0;
     if (ignore_nulls_) {
       while (offset < window.num_tuples &&
-          values[window.start_tuple_id + offset].is_null()) {
+             values[window.start_tuple_id + offset].is_null()) {
         ++offset;
       }
     }
@@ -8030,8 +8701,7 @@ absl::Status LastValueFunction::Eval(
   for (const AnalyticWindow& window : windows) {
     int offset = window.num_tuples - 1;
     if (ignore_nulls_) {
-      while (offset >= 0 &&
-          values[window.start_tuple_id + offset].is_null()) {
+      while (offset >= 0 && values[window.start_tuple_id + offset].is_null()) {
         --offset;
       }
     }
@@ -8098,8 +8768,8 @@ absl::Status NthValueFunction::Eval(
     if (ignore_nulls_) {
       int num_non_nulls = 0;
       for (offset = 0; offset < window.num_tuples; ++offset) {
-        if (!values[window.start_tuple_id + offset].is_null()
-            && ++num_non_nulls > n_value) {
+        if (!values[window.start_tuple_id + offset].is_null() &&
+            ++num_non_nulls > n_value) {
           break;
         }
       }
@@ -8541,7 +9211,8 @@ absl::StatusOr<Value> DateTimeBucketFunction::Eval(
       }
       ZETASQL_RETURN_IF_ERROR(functions::TimestampBucket(
           args[0].ToTime(), args[1].interval_value(), origin,
-          context->GetDefaultTimeZone(), &timestamp));
+          context->GetDefaultTimeZone(),
+          GetTimestampScale(context->GetLanguageOptions()), &timestamp));
       return Value::Timestamp(timestamp);
     }
     default:

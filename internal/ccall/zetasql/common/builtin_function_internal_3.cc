@@ -31,6 +31,7 @@
 #include "google/protobuf/descriptor.h"
 #include "zetasql/common/builtin_function_internal.h"
 #include "zetasql/common/errors.h"
+#include "zetasql/proto/anon_output_with_report.pb.h"
 #include "zetasql/public/anon_function.h"
 #include "zetasql/public/builtin_function.pb.h"
 #include "zetasql/public/catalog.h"
@@ -39,6 +40,7 @@
 #include "zetasql/public/function.pb.h"
 #include "zetasql/public/function_signature.h"
 #include "zetasql/public/functions/date_time_util.h"
+#include "zetasql/public/input_argument_type.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/proto_util.h"
@@ -101,11 +103,12 @@ void GetStringFunctions(TypeFactory* type_factory,
         FN_CONCAT_STRING},
        {bytes_type, {bytes_type, {bytes_type, REPEATED}}, FN_CONCAT_BYTES}});
 
-  InsertFunction(
-      functions, options, "strpos", SCALAR,
-      {{int64_type, {string_type, string_type}, FN_STRPOS_STRING,
-       FunctionSignatureOptions().set_uses_operation_collation()},
-       {int64_type, {bytes_type, bytes_type}, FN_STRPOS_BYTES}});
+  InsertFunction(functions, options, "strpos", SCALAR,
+                 {{int64_type,
+                   {string_type, string_type},
+                   FN_STRPOS_STRING,
+                   FunctionSignatureOptions().set_uses_operation_collation()},
+                  {int64_type, {bytes_type, bytes_type}, FN_STRPOS_BYTES}});
 
   InsertSimpleFunction(functions, options, "lower", SCALAR,
                        {{string_type, {string_type}, FN_LOWER_STRING},
@@ -128,17 +131,19 @@ void GetStringFunctions(TypeFactory* type_factory,
                        {{int64_type, {string_type}, FN_CHAR_LENGTH_STRING}},
                        FunctionOptions().set_alias_name("character_length"));
 
-  InsertFunction(
-      functions, options, "starts_with", SCALAR,
-      {{bool_type, {string_type, string_type}, FN_STARTS_WITH_STRING,
-       FunctionSignatureOptions().set_uses_operation_collation()},
-       {bool_type, {bytes_type, bytes_type}, FN_STARTS_WITH_BYTES}});
+  InsertFunction(functions, options, "starts_with", SCALAR,
+                 {{bool_type,
+                   {string_type, string_type},
+                   FN_STARTS_WITH_STRING,
+                   FunctionSignatureOptions().set_uses_operation_collation()},
+                  {bool_type, {bytes_type, bytes_type}, FN_STARTS_WITH_BYTES}});
 
-  InsertFunction(
-      functions, options, "ends_with", SCALAR,
-      {{bool_type, {string_type, string_type}, FN_ENDS_WITH_STRING,
-        FunctionSignatureOptions().set_uses_operation_collation()},
-       {bool_type, {bytes_type, bytes_type}, FN_ENDS_WITH_BYTES}});
+  InsertFunction(functions, options, "ends_with", SCALAR,
+                 {{bool_type,
+                   {string_type, string_type},
+                   FN_ENDS_WITH_STRING,
+                   FunctionSignatureOptions().set_uses_operation_collation()},
+                  {bool_type, {bytes_type, bytes_type}, FN_ENDS_WITH_BYTES}});
 
   FunctionOptions substr_options;
   if (options.language_options.LanguageFeatureEnabled(
@@ -312,21 +317,20 @@ void GetStringFunctions(TypeFactory* type_factory,
 
   if (options.language_options.LanguageFeatureEnabled(
           FEATURE_V_1_3_ADDITIONAL_STRING_FUNCTIONS)) {
-    InsertFunction(
-        functions, options, "instr", SCALAR,
-        {{int64_type,
-          {string_type,
-           string_type,
-           {int64_type, OPTIONAL},
-           {int64_type, OPTIONAL}},
-          FN_INSTR_STRING,
-          FunctionSignatureOptions().set_uses_operation_collation()},
-         {int64_type,
-          {bytes_type,
-           bytes_type,
-           {int64_type, OPTIONAL},
-           {int64_type, OPTIONAL}},
-          FN_INSTR_BYTES}});
+    InsertFunction(functions, options, "instr", SCALAR,
+                   {{int64_type,
+                     {string_type,
+                      string_type,
+                      {int64_type, OPTIONAL},
+                      {int64_type, OPTIONAL}},
+                     FN_INSTR_STRING,
+                     FunctionSignatureOptions().set_uses_operation_collation()},
+                    {int64_type,
+                     {bytes_type,
+                      bytes_type,
+                      {int64_type, OPTIONAL},
+                      {int64_type, OPTIONAL}},
+                     FN_INSTR_BYTES}});
     InsertSimpleFunction(functions, options, "soundex", SCALAR,
                          {{string_type, {string_type}, FN_SOUNDEX_STRING}});
     InsertFunction(functions, options, "translate", SCALAR,
@@ -358,8 +362,7 @@ void GetStringFunctions(TypeFactory* type_factory,
             [](const std::vector<InputArgumentType>& args,
                const LanguageOptions&) -> absl::Status {
               // Make sure the second argument is a string literal.
-              ZETASQL_RET_CHECK_EQ(args.size(), 2);
-              if (!ArgumentIsStringLiteral(args[1])) {
+              if (args.size() >= 2 && !ArgumentIsStringLiteral(args[1])) {
                 return MakeSqlError() << "The second argument of COLLATE() "
                                          "must be a string literal";
               }
@@ -599,29 +602,36 @@ void GetProto3ConversionFunctions(
 
 namespace {
 
-// Checks that ARRAY_INCLUDES_ANY arguments supports equality.
-absl::Status CheckArrayIncludesAnyArgumentsSupportEquality(
-    const FunctionSignature& /*signature*/,
+// Checks that the type is an array type and its elements support equality.
+absl::Status CheckArrayTypeElementsSupportsEquality(
+    const Type* type, absl::string_view context_function_name,
+    const LanguageOptions& language_options) {
+  ZETASQL_RET_CHECK(type->IsArray()) << type->DebugString();
+  const ArrayType* array_type = type->AsArray();
+  ZETASQL_RET_CHECK_NE(array_type, nullptr);
+  if (!array_type->element_type()->SupportsEquality(language_options)) {
+    return zetasql_base::InvalidArgumentErrorBuilder()
+           << context_function_name << " cannot be used on argument of type "
+           << array_type->ShortTypeName(language_options.product_mode())
+           << " because the array's element type does not support equality";
+  }
+  return absl::OkStatus();
+}
+
+// Checks whether the elements of the input argument types supports equality.
+absl::Status CheckArrayIncludesElementsSupportEquality(
+    absl::string_view context_function_name, const FunctionSignature& signature,
     const std::vector<InputArgumentType>& arguments,
     const LanguageOptions& language_options) {
   ZETASQL_RET_CHECK_EQ(arguments.size(), 2);
-  for (int i = 0; i < arguments.size(); i++) {
-    const InputArgumentType& arg = arguments[i];
+  for (const InputArgumentType& arg : arguments) {
     if (arg.is_null()) {
       continue;
     }
     ZETASQL_RET_CHECK(arg.type()) << arg.DebugString();
-    ZETASQL_RET_CHECK(arg.type()->IsArray()) << arg.DebugString();
-    const ArrayType* array_type = arg.type()->AsArray();
-    ZETASQL_RET_CHECK_NE(array_type, nullptr);
-    if (!array_type->element_type()->SupportsEquality(language_options)) {
-      return zetasql_base::InvalidArgumentErrorBuilder()
-             << "ARRAY_INCLUDES_ANY cannot be used on argument of type "
-             << array_type->ShortTypeName(language_options.product_mode())
-             << " because the array's element type does not support equality";
-    }
+    ZETASQL_RETURN_IF_ERROR(CheckArrayTypeElementsSupportsEquality(
+        arg.type(), context_function_name, language_options));
   }
-
   return absl::OkStatus();
 }
 
@@ -636,16 +646,8 @@ absl::Status CheckArrayIncludesArgumentsSupportEquality(
   ZETASQL_RET_CHECK_EQ(signature.arguments().size(), 2);
   const FunctionArgumentType& arg = signature.argument(0);
   ZETASQL_RET_CHECK(arg.type()) << arg.DebugString();
-  ZETASQL_RET_CHECK(arg.type()->IsArray()) << arg.DebugString();
-  const ArrayType* array_type = arg.type()->AsArray();
-  const Type* element_type = array_type->element_type();
-  ZETASQL_RET_CHECK(element_type) << array_type->DebugString();
-  if (!element_type->SupportsEquality(language_options)) {
-    return zetasql_base::InvalidArgumentErrorBuilder()
-           << "ARRAY_INCLUDES cannot be used on argument of type "
-           << array_type->ShortTypeName(language_options.product_mode())
-           << " because the array's element type does not support equality";
-  }
+  ZETASQL_RETURN_IF_ERROR(CheckArrayTypeElementsSupportsEquality(
+      arg.type(), "ARRAY_INCLUDES", language_options));
   return absl::OkStatus();
 }
 
@@ -690,6 +692,17 @@ void GetMiscellaneousFunctions(TypeFactory* type_factory,
   InsertSimpleFunction(
       functions, options, "if", SCALAR,
       {{ARG_TYPE_ANY_1, {bool_type, ARG_TYPE_ANY_1, ARG_TYPE_ANY_1}, FN_IF}});
+
+  InsertSimpleFunction(
+      functions, options, "iferror", SCALAR,
+      {{ARG_TYPE_ANY_1, {ARG_TYPE_ANY_1, ARG_TYPE_ANY_1}, FN_IFERROR}});
+
+  InsertSimpleFunction(functions, options, "iserror", SCALAR,
+                       {{bool_type, {ARG_TYPE_ANY_1}, FN_ISERROR}});
+
+  InsertSimpleFunction(functions, options, "nulliferror", SCALAR,
+                       {{ARG_TYPE_ANY_1, {ARG_TYPE_ANY_1}, FN_NULLIFERROR}},
+                       FunctionOptions());
 
   // COALESCE(expr1, ..., exprN): returns the first non-null expression.
   // In particular, COALESCE is used to express the output of FULL JOIN.
@@ -869,8 +882,8 @@ void GetMiscellaneousFunctions(TypeFactory* type_factory,
   //   element type.
   InsertFunction(
       functions, options, "$make_array", SCALAR,
-      {{{ARG_ARRAY_TYPE_ANY_1, FunctionArgumentTypeOptions()
-                                   .set_uses_array_element_for_collation()},
+      {{{ARG_ARRAY_TYPE_ANY_1,
+         FunctionArgumentTypeOptions().set_uses_array_element_for_collation()},
         {{ARG_TYPE_ANY_1, REPEATED}},
         FN_MAKE_ARRAY}},
       FunctionOptions()
@@ -939,9 +952,14 @@ void GetMiscellaneousFunctions(TypeFactory* type_factory,
           &CheckArrayIsDistinctArguments));
 
   // RANGE_BUCKET: returns the bucket of the item in the array.
-  InsertSimpleFunction(
+  InsertFunction(
       functions, options, "range_bucket", SCALAR,
-      {{int64_type, {ARG_TYPE_ANY_1, ARG_ARRAY_TYPE_ANY_1}, FN_RANGE_BUCKET}},
+      {{int64_type,
+        {ARG_TYPE_ANY_1,
+         {ARG_ARRAY_TYPE_ANY_1, FunctionArgumentTypeOptions()
+                                    .set_uses_array_element_for_collation()}},
+        FN_RANGE_BUCKET,
+        FunctionSignatureOptions().set_uses_operation_collation()}},
       FunctionOptions().set_pre_resolution_argument_constraint(
           &CheckRangeBucketArguments));
 
@@ -1140,8 +1158,42 @@ void GetMiscellaneousFunctions(TypeFactory* type_factory,
                    FN_ARRAY_INCLUDES_ANY}},
                  FunctionOptions()
                      .set_supports_safe_error_mode(false)
-                     .set_post_resolution_argument_constraint(
-                         &CheckArrayIncludesAnyArgumentsSupportEquality));
+                     .set_post_resolution_argument_constraint(absl::bind_front(
+                         &CheckArrayIncludesElementsSupportEquality,
+                         "ARRAY_INCLUDES_ANY")));
+
+  InsertFunction(functions, options, "array_includes_all", SCALAR,
+                 /*signatures=*/
+                 {{bool_type,
+                   {ARG_ARRAY_TYPE_ANY_1, ARG_ARRAY_TYPE_ANY_1},
+                   FN_ARRAY_INCLUDES_ALL}},
+                 FunctionOptions()
+                     .set_supports_safe_error_mode(false)
+                     .set_post_resolution_argument_constraint(absl::bind_front(
+                         &CheckArrayIncludesElementsSupportEquality,
+                         "ARRAY_INCLUDES_ALL")));
+
+  InsertFunction(
+      functions, options, "array_first", SCALAR,
+      /*signatures=*/
+      {{ARG_TYPE_ANY_1,
+        {{ARG_ARRAY_TYPE_ANY_1, FunctionArgumentTypeOptions()
+                                    .set_uses_array_element_for_collation()}},
+        FN_ARRAY_FIRST}});
+
+  InsertFunction(
+      functions, options, "array_last", SCALAR,
+      /*signatures=*/
+      {{ARG_TYPE_ANY_1,
+        {{ARG_ARRAY_TYPE_ANY_1, FunctionArgumentTypeOptions()
+                                    .set_uses_array_element_for_collation()}},
+        FN_ARRAY_LAST}});
+
+  InsertFunction(functions, options, "array_slice", SCALAR,
+                 /*signatures=*/
+                 {{ARG_ARRAY_TYPE_ANY_1,
+                   {ARG_ARRAY_TYPE_ANY_1, int64_type, int64_type},
+                   FN_ARRAY_SLICE}});
 
   FunctionOptions function_is_volatile;
   function_is_volatile.set_volatility(FunctionEnums::VOLATILE);
@@ -1174,8 +1226,8 @@ void GetMiscellaneousFunctions(TypeFactory* type_factory,
     // a valid field access and return a ResolvedGetProtoField, but with its
     // <return_default_value_when_unset> field set to true.
     //
-    // This is added to the catalog to prevent collisions if a similar function
-    // is defined by an engine. Also, it allows us to use
+    // This is added to the catalog to handle collisions correctly if a similar
+    // function is defined by an engine. Also, it allows us to use
     // FunctionSignatureOptions to define constraints and deprecation info for
     // this special function.
     InsertSimpleFunction(
@@ -1469,6 +1521,7 @@ void GetNumericFunctions(TypeFactory* type_factory,
   const Type* numeric_type = type_factory->get_numeric();
   const Type* bignumeric_type = type_factory->get_bignumeric();
   const Type* string_type = type_factory->get_string();
+  const Type* rounding_mode_type = types::RoundingModeEnumType();
 
   const Function::Mode SCALAR = Function::SCALAR;
   const FunctionArgumentType::ArgumentCardinality REPEATED =
@@ -1510,28 +1563,63 @@ void GetNumericFunctions(TypeFactory* type_factory,
                    FN_SIGN_BIGNUMERIC,
                    has_bignumeric_type_argument}});
 
-  InsertFunction(
-      functions, options, "round", SCALAR,
-      {{float_type, {float_type}, FN_ROUND_FLOAT},
-       {double_type, {double_type}, FN_ROUND_DOUBLE},
-       {numeric_type,
-        {numeric_type},
-        FN_ROUND_NUMERIC,
-        has_numeric_type_argument},
-       {bignumeric_type,
-        {bignumeric_type},
-        FN_ROUND_BIGNUMERIC,
-        has_bignumeric_type_argument},
-       {float_type, {float_type, int64_type}, FN_ROUND_WITH_DIGITS_FLOAT},
-       {double_type, {double_type, int64_type}, FN_ROUND_WITH_DIGITS_DOUBLE},
-       {numeric_type,
-        {numeric_type, int64_type},
-        FN_ROUND_WITH_DIGITS_NUMERIC,
-        has_numeric_type_argument},
-       {bignumeric_type,
-        {bignumeric_type, int64_type},
-        FN_ROUND_WITH_DIGITS_BIGNUMERIC,
-        has_bignumeric_type_argument}});
+  // Only add in the third argument ROUND functions if the feature is enabled.
+  if (options.language_options.LanguageFeatureEnabled(
+          FEATURE_ROUND_WITH_ROUNDING_MODE)) {
+    InsertFunction(
+        functions, options, "round", SCALAR,
+        {{float_type, {float_type}, FN_ROUND_FLOAT},
+         {double_type, {double_type}, FN_ROUND_DOUBLE},
+         {numeric_type,
+          {numeric_type},
+          FN_ROUND_NUMERIC,
+          has_numeric_type_argument},
+         {bignumeric_type,
+          {bignumeric_type},
+          FN_ROUND_BIGNUMERIC,
+          has_bignumeric_type_argument},
+         {float_type, {float_type, int64_type}, FN_ROUND_WITH_DIGITS_FLOAT},
+         {double_type, {double_type, int64_type}, FN_ROUND_WITH_DIGITS_DOUBLE},
+         {numeric_type,
+          {numeric_type, int64_type},
+          FN_ROUND_WITH_DIGITS_NUMERIC,
+          has_numeric_type_argument},
+         {bignumeric_type,
+          {bignumeric_type, int64_type},
+          FN_ROUND_WITH_DIGITS_BIGNUMERIC,
+          has_bignumeric_type_argument},
+         {numeric_type,
+          {numeric_type, int64_type, rounding_mode_type},
+          FN_ROUND_WITH_ROUNDING_MODE_NUMERIC,
+          has_numeric_type_argument},
+         {bignumeric_type,
+          {bignumeric_type, int64_type, rounding_mode_type},
+          FN_ROUND_WITH_ROUNDING_MODE_BIGNUMERIC,
+          has_bignumeric_type_argument}});
+  } else {
+    InsertFunction(
+        functions, options, "round", SCALAR,
+        {{float_type, {float_type}, FN_ROUND_FLOAT},
+         {double_type, {double_type}, FN_ROUND_DOUBLE},
+         {numeric_type,
+          {numeric_type},
+          FN_ROUND_NUMERIC,
+          has_numeric_type_argument},
+         {bignumeric_type,
+          {bignumeric_type},
+          FN_ROUND_BIGNUMERIC,
+          has_bignumeric_type_argument},
+         {float_type, {float_type, int64_type}, FN_ROUND_WITH_DIGITS_FLOAT},
+         {double_type, {double_type, int64_type}, FN_ROUND_WITH_DIGITS_DOUBLE},
+         {numeric_type,
+          {numeric_type, int64_type},
+          FN_ROUND_WITH_DIGITS_NUMERIC,
+          has_numeric_type_argument},
+         {bignumeric_type,
+          {bignumeric_type, int64_type},
+          FN_ROUND_WITH_DIGITS_BIGNUMERIC,
+          has_bignumeric_type_argument}});
+  }
   InsertFunction(
       functions, options, "trunc", SCALAR,
       {{float_type, {float_type}, FN_TRUNC_FLOAT},
@@ -1729,6 +1817,18 @@ void GetNumericFunctions(TypeFactory* type_factory,
                    {bignumeric_type},
                    FN_SQRT_BIGNUMERIC,
                    has_bignumeric_type_argument}});
+  if (options.language_options.LanguageFeatureEnabled(FEATURE_CBRT_FUNCTIONS)) {
+    InsertFunction(functions, options, "cbrt", SCALAR,
+                   {{double_type, {double_type}, FN_CBRT_DOUBLE},
+                    {numeric_type,
+                     {numeric_type},
+                     FN_CBRT_NUMERIC,
+                     has_numeric_type_argument},
+                    {bignumeric_type,
+                     {bignumeric_type},
+                     FN_CBRT_BIGNUMERIC,
+                     has_bignumeric_type_argument}});
+  }
   InsertFunction(functions, options, "exp", SCALAR,
                  {{double_type, {double_type}, FN_EXP_DOUBLE},
                   {numeric_type,
@@ -1812,12 +1912,19 @@ void GetTrigonometricFunctions(TypeFactory* type_factory,
   InsertSimpleFunction(
       functions, options, "atan2", SCALAR,
       {{double_type, {double_type, double_type}, FN_ATAN2_DOUBLE}});
+
   InsertSimpleFunction(functions, options, "csc", SCALAR,
                        {{double_type, {double_type}, FN_CSC_DOUBLE}});
   InsertSimpleFunction(functions, options, "sec", SCALAR,
                        {{double_type, {double_type}, FN_SEC_DOUBLE}});
   InsertSimpleFunction(functions, options, "cot", SCALAR,
                        {{double_type, {double_type}, FN_COT_DOUBLE}});
+  InsertSimpleFunction(functions, options, "csch", SCALAR,
+                       {{double_type, {double_type}, FN_CSCH_DOUBLE}});
+  InsertSimpleFunction(functions, options, "sech", SCALAR,
+                       {{double_type, {double_type}, FN_SECH_DOUBLE}});
+  InsertSimpleFunction(functions, options, "coth", SCALAR,
+                       {{double_type, {double_type}, FN_COTH_DOUBLE}});
 }
 
 void GetMathFunctions(TypeFactory* type_factory,
@@ -1989,13 +2096,13 @@ void GetD3ACountFunctions(TypeFactory* type_factory,
   FunctionArgumentTypeOptions d3a_weight_arg;
   d3a_weight_arg.set_must_be_non_null();
 
-  // The third argument must be an integer literal between 10 and 24,
+  // The third argument must be an integer literal between 4 and 24,
   // and cannot be NULL.
   FunctionArgumentTypeOptions d3a_precision_arg;
   d3a_precision_arg.set_is_not_aggregate();
   d3a_precision_arg.set_must_be_non_null();
   d3a_precision_arg.set_cardinality(OPTIONAL);
-  d3a_precision_arg.set_min_value(10);
+  d3a_precision_arg.set_min_value(4);
   d3a_precision_arg.set_max_value(24);
 
   InsertSimpleNamespaceFunction(
@@ -2047,7 +2154,7 @@ void GetD3ACountFunctions(TypeFactory* type_factory,
          {int64_type, d3a_weight_arg},
          {int64_type, d3a_precision_arg}},
         FN_D3A_COUNT_INIT_BYTES}},
-      DefaultAggregateFunctionOptions());
+      DefaultAggregateFunctionOptions().set_supports_distinct_modifier(false));
 }
 
 void GetKllQuantilesFunctions(TypeFactory* type_factory,
@@ -2080,10 +2187,9 @@ void GetKllQuantilesFunctions(TypeFactory* type_factory,
   init_inv_eps_arg.set_cardinality(OPTIONAL);
   init_inv_eps_arg.set_min_value(2);
 
-
   // Init functions include a weight parameter only if NAMED_ARGUMENTS enabled.
   if (options.language_options.LanguageFeatureEnabled(
-          zetasql::FEATURE_KLL_WEIGHTS)) {
+          zetasql::FEATURE_V_1_3_KLL_WEIGHTS)) {
     // Explicitly set default value for precision (detailed in (broken link))
     init_inv_eps_arg.set_default(Value::Int64(1000));
 
@@ -2318,7 +2424,7 @@ void GetEncryptionFunctions(TypeFactory* type_factory,
          /*first_level_keyset=*/{bytes_type, const_arg_options},
          /*second_level_keyset=*/bytes_type},
         FN_KEYS_KEYSET_CHAIN_STRING_BYTES_BYTES},
-      {keyset_chain_struct_type,
+       {keyset_chain_struct_type,
         {/*kms_resource_name=*/{string_type, const_arg_options},
          /*first_level_keyset=*/{bytes_type, const_arg_options}},
         FN_KEYS_KEYSET_CHAIN_STRING_BYTES}},
@@ -2369,6 +2475,34 @@ void GetEncryptionFunctions(TypeFactory* type_factory,
       {{bytes_type, {string_type}, FN_KEYS_KEYSET_FROM_JSON}},
       encryption_required);
 
+  InsertSimpleNamespaceFunction(
+      functions, options, "keys", "new_wrapped_keyset", SCALAR,
+      {{bytes_type, {string_type, string_type}, FN_KEYS_NEW_WRAPPED_KEYSET}},
+      FunctionOptions(encryption_required)
+          .set_volatility(FunctionEnums::VOLATILE)
+          .set_pre_resolution_argument_constraint(absl::bind_front(
+              &CheckIsSupportedKeyType, "KEYS.NEW_WRAPPED_KEYSET",
+              GetSupportedKeyTypes(), /*key_type_argument_index=*/1)));
+
+  InsertSimpleNamespaceFunction(
+      functions, options, "keys", "rotate_wrapped_keyset", SCALAR,
+      {{bytes_type,
+        {string_type, bytes_type, string_type},
+        FN_KEYS_ROTATE_WRAPPED_KEYSET}},
+      FunctionOptions(encryption_required)
+          .set_volatility(FunctionEnums::VOLATILE)
+          .set_pre_resolution_argument_constraint(absl::bind_front(
+              &CheckIsSupportedKeyType, "KEYS.ROTATE_WRAPPED_KEYSET",
+              GetSupportedKeyTypes(), /*key_type_argument_index=*/2)));
+
+  InsertSimpleNamespaceFunction(functions, options, "keys", "rewrap_keyset",
+                                SCALAR,
+                                {{bytes_type,
+                                  {string_type, string_type, bytes_type},
+                                  FN_KEYS_REWRAP_KEYSET}},
+                                FunctionOptions(encryption_required)
+                                    .set_volatility(FunctionEnums::VOLATILE));
+
   // AEAD.ENCRYPT is volatile since it generates a random IV (initialization
   // vector) for each invocation so that encrypting the same plaintext results
   // in different ciphertext.
@@ -2383,7 +2517,7 @@ void GetEncryptionFunctions(TypeFactory* type_factory,
        {bytes_type,
         {keyset_chain_struct_type, string_type, string_type},
         FN_AEAD_ENCRYPT_STRUCT_STRING},
-      {bytes_type,
+       {bytes_type,
         {keyset_chain_struct_type, bytes_type, bytes_type},
         FN_AEAD_ENCRYPT_STRUCT_BYTES}},
       FunctionOptions(encryption_required)
@@ -2537,20 +2671,20 @@ void GetGeographyFunctions(TypeFactory* type_factory,
         .set_argument_name(name);
   };
 
-  auto arg_with_mandatory_name_and_default_value =
-      [](const std::string& name, Value default_value) {
-        return FunctionArgumentTypeOptions(FunctionArgumentType::OPTIONAL)
-            .set_argument_name_is_mandatory(true)
-            .set_argument_name(name)
-            .set_default(default_value);
-      };
+  auto arg_with_mandatory_name_and_default_value = [](const std::string& name,
+                                                      Value default_value) {
+    return FunctionArgumentTypeOptions(FunctionArgumentType::OPTIONAL)
+        .set_argument_name_is_mandatory(true)
+        .set_argument_name(name)
+        .set_default(default_value);
+  };
 
-  auto arg_with_optional_name_and_default_value =
-      [](const std::string& name, Value default_value) {
-        return FunctionArgumentTypeOptions(FunctionArgumentType::OPTIONAL)
-            .set_argument_name(name)
-            .set_default(default_value);
-      };
+  auto arg_with_optional_name_and_default_value = [](const std::string& name,
+                                                     Value default_value) {
+    return FunctionArgumentTypeOptions(FunctionArgumentType::OPTIONAL)
+        .set_argument_name(name)
+        .set_default(default_value);
+  };
 
   auto required_arg_with_optional_name = [](const std::string& name) {
     return FunctionArgumentTypeOptions(FunctionArgumentType::REQUIRED)
@@ -2735,6 +2869,9 @@ void GetGeographyFunctions(TypeFactory* type_factory,
   InsertSimpleFunction(functions, options, "st_geometrytype", SCALAR,
                        {{string_type, {geography_type}, FN_ST_GEOMETRY_TYPE}},
                        geography_required);
+  InsertSimpleFunction(functions, options, "st_isclosed", SCALAR,
+                       {{bool_type, {geography_type}, FN_ST_IS_CLOSED}},
+                       geography_required);
 
   // Measures
   InsertSimpleFunction(
@@ -2815,11 +2952,11 @@ void GetGeographyFunctions(TypeFactory* type_factory,
   InsertSimpleFunction(functions, options, "st_geogfromkml", SCALAR,
                        {{geography_type, {string_type}, FN_ST_GEOG_FROM_KML}},
                        geography_required);
-  InsertFunction(functions, options, "st_geogfromgeojson", SCALAR,
+  InsertFunction(
+      functions, options, "st_geogfromgeojson", SCALAR,
       {{geography_type, {string_type}, FN_ST_GEOG_FROM_GEO_JSON},
        {geography_type,
-        {string_type,
-         {bool_type, const_with_mandatory_name("make_valid")}},
+        {string_type, {bool_type, const_with_mandatory_name("make_valid")}},
         FN_ST_GEOG_FROM_GEO_JSON_EXT,
         extended_parser_signatures}},
       geography_required);
@@ -2888,20 +3025,19 @@ void GetGeographyFunctions(TypeFactory* type_factory,
       {{bbox_result_type, {geography_type}, FN_ST_BOUNDING_BOX}},
       geography_required);
 
-  InsertFunction(
-      functions, options, "s2_coveringcellids", SCALAR,
-      {{int64_array_type,
-        {geography_type,
-         {int64_type, arg_with_mandatory_name_and_default_value(
-                          "min_level", Value::Int64(0))},
-         {int64_type, arg_with_mandatory_name_and_default_value(
-                          "max_level", Value::Int64(30))},
-         {int64_type, arg_with_mandatory_name_and_default_value(
-                          "max_cells", Value::Int64(8))},
-         {double_type, arg_with_mandatory_name_and_default_value(
-                           "buffer", Value::Double(0.0))}},
-        FN_S2_COVERINGCELLIDS}},
-      geography_and_named_arg_required);
+  InsertFunction(functions, options, "s2_coveringcellids", SCALAR,
+                 {{int64_array_type,
+                   {geography_type,
+                    {int64_type, arg_with_mandatory_name_and_default_value(
+                                     "min_level", Value::Int64(0))},
+                    {int64_type, arg_with_mandatory_name_and_default_value(
+                                     "max_level", Value::Int64(30))},
+                    {int64_type, arg_with_mandatory_name_and_default_value(
+                                     "max_cells", Value::Int64(8))},
+                    {double_type, arg_with_mandatory_name_and_default_value(
+                                      "buffer", Value::Double(0.0))}},
+                   FN_S2_COVERINGCELLIDS}},
+                 geography_and_named_arg_required);
 
   InsertFunction(functions, options, "s2_cellidfrompoint", SCALAR,
                  {{int64_type,
@@ -2934,6 +3070,11 @@ void GetAnonFunctions(TypeFactory* type_factory,
   const Type* double_type = type_factory->get_double();
   const Type* numeric_type = type_factory->get_numeric();
   const Type* double_array_type = types::DoubleArrayType();
+  const Type* json_type = types::JsonType();
+  const Type* anon_output_with_report_proto_type = nullptr;
+  ZETASQL_CHECK_OK(
+      type_factory->MakeProtoType(zetasql::AnonOutputWithReport::descriptor(),
+                                  &anon_output_with_report_proto_type));
   const FunctionArgumentType::ArgumentCardinality OPTIONAL =
       FunctionArgumentType::OPTIONAL;
 
@@ -2953,12 +3094,24 @@ void GetAnonFunctions(TypeFactory* type_factory,
           .set_must_be_constant()
           .set_must_be_non_null()
           .set_cardinality(OPTIONAL);
+  // TODO: Replace these required CLAMPED BETWEEN arguments with
+  //   optional_const_arg_options once Quantiles can support automatic/implicit
+  //   bounds.
+  const FunctionArgumentTypeOptions required_const_arg_options =
+      FunctionArgumentTypeOptions()
+          .set_must_be_constant()
+          .set_must_be_non_null();
   const FunctionArgumentTypeOptions percentile_arg_options =
       FunctionArgumentTypeOptions()
           .set_must_be_constant()
           .set_must_be_non_null()
           .set_min_value(0)
           .set_max_value(1);
+  const FunctionArgumentTypeOptions quantiles_arg_options =
+      FunctionArgumentTypeOptions()
+          .set_must_be_constant()
+          .set_must_be_non_null()
+          .set_min_value(1);
 
   // TODO: Fix this HACK - the CLAMPED BETWEEN lower and upper bounds
   // are optional, as are the privacy_budget weight and uid.  However,
@@ -3006,6 +3159,7 @@ void GetAnonFunctions(TypeFactory* type_factory,
             FN_ANON_SUM_NUMERIC,
             has_numeric_type_argument}},
           anon_options, "sum"));
+
   InsertCreatedFunction(
       functions, options,
       new AnonFunction(
@@ -3098,6 +3252,198 @@ void GetAnonFunctions(TypeFactory* type_factory,
             FN_ANON_PERCENTILE_CONT_DOUBLE_ARRAY,
             FunctionSignatureOptions().set_is_internal(true)}},
           anon_options, "array_agg"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "anon_quantiles", Function::kZetaSQLFunctionGroupName,
+          {{double_array_type,
+            {/*expr=*/double_type,
+             /*quantiles=*/{int64_type, quantiles_arg_options},
+             /*lower_bound=*/{double_type, required_const_arg_options},
+             /*upper_bound=*/{double_type, required_const_arg_options}},
+            FN_ANON_QUANTILES_DOUBLE},
+           // This is an internal signature that is only used post-anon-rewrite,
+           // and is not available in the external SQL language.
+           {double_array_type,
+            {/*expr=*/double_array_type,
+             /*quantiles=*/{int64_type, quantiles_arg_options},
+             /*lower_bound=*/{double_type, required_const_arg_options},
+             /*upper_bound=*/{double_type, required_const_arg_options}},
+            FN_ANON_QUANTILES_DOUBLE_ARRAY,
+            FunctionSignatureOptions().set_is_internal(true)}},
+          anon_options, "array_agg"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_quantiles_with_report_json",
+          Function::kZetaSQLFunctionGroupName,
+          {{json_type,
+            {/*expr=*/double_type,
+             /*quantiles=*/{int64_type, quantiles_arg_options},
+             /*lower_bound=*/{double_type, required_const_arg_options},
+             /*upper_bound=*/{double_type, required_const_arg_options}},
+            FN_ANON_QUANTILES_DOUBLE_WITH_REPORT_JSON},
+           // This is an internal signature that is only used post-anon-rewrite,
+           // and is not available in the external SQL language.
+           {json_type,
+            {/*expr=*/double_array_type,
+             /*quantiles=*/{int64_type, quantiles_arg_options},
+             /*lower_bound=*/{double_type, required_const_arg_options},
+             /*upper_bound=*/{double_type, required_const_arg_options}},
+            FN_ANON_QUANTILES_DOUBLE_ARRAY_WITH_REPORT_JSON,
+            FunctionSignatureOptions().set_is_internal(true)}},
+          anon_options.Copy()
+              .set_sql_name("anon_quantiles")
+              .set_get_sql_callback(&AnonQuantilesWithReportJsonFunctionSQL)
+              .set_supported_signatures_callback(absl::bind_front(
+                  &SupportedSignaturesForAnonQuantilesWithReportFunction,
+                  /*report_format=*/"JSON")),
+          "array_agg"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_quantiles_with_report_proto",
+          Function::kZetaSQLFunctionGroupName,
+          {{anon_output_with_report_proto_type,
+            {/*expr=*/double_type,
+             /*quantiles=*/{int64_type, quantiles_arg_options},
+             /*lower_bound=*/{double_type, required_const_arg_options},
+             /*upper_bound=*/{double_type, required_const_arg_options}},
+            FN_ANON_QUANTILES_DOUBLE_WITH_REPORT_PROTO},
+           // This is an internal signature that is only used post-anon-rewrite,
+           // and is not available in the external SQL language.
+           {anon_output_with_report_proto_type,
+            {/*expr=*/double_array_type,
+             /*quantiles=*/{int64_type, quantiles_arg_options},
+             /*lower_bound=*/{double_type, required_const_arg_options},
+             /*upper_bound=*/{double_type, required_const_arg_options}},
+            FN_ANON_QUANTILES_DOUBLE_ARRAY_WITH_REPORT_PROTO,
+            FunctionSignatureOptions().set_is_internal(true)}},
+          anon_options.Copy()
+              .set_sql_name("anon_quantiles")
+              .set_get_sql_callback(&AnonQuantilesWithReportProtoFunctionSQL)
+              .set_supported_signatures_callback(absl::bind_front(
+                  &SupportedSignaturesForAnonQuantilesWithReportFunction,
+                  /*report_format=*/"PROTO")),
+          "array_agg"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_count_with_report_json", Function::kZetaSQLFunctionGroupName,
+          {{json_type,
+            {/*expr=*/ARG_TYPE_ANY_2,
+             /*lower_bound=*/{int64_type, optional_const_arg_options},
+             /*upper_bound=*/{int64_type, optional_const_arg_options}},
+            FN_ANON_COUNT_WITH_REPORT_JSON}},
+          anon_options.Copy()
+              .set_sql_name("anon_count")
+              .set_get_sql_callback(&AnonCountWithReportJsonFunctionSQL),
+          "count"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_count_with_report_proto",
+          Function::kZetaSQLFunctionGroupName,
+          {{anon_output_with_report_proto_type,
+            {/*expr=*/ARG_TYPE_ANY_2,
+             /*lower_bound=*/{int64_type, optional_const_arg_options},
+             /*upper_bound=*/{int64_type, optional_const_arg_options}},
+            FN_ANON_COUNT_WITH_REPORT_PROTO}},
+          anon_options.Copy()
+              .set_sql_name("anon_count")
+              .set_get_sql_callback(&AnonCountWithReportProtoFunctionSQL),
+          "count"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_count_star_with_report_json",
+          Function::kZetaSQLFunctionGroupName,
+          {{json_type,
+            {/*lower_bound=*/{int64_type, optional_const_arg_options},
+             /*upper_bound=*/{int64_type, optional_const_arg_options}},
+            FN_ANON_COUNT_STAR_WITH_REPORT_JSON}},
+          anon_options.Copy()
+              .set_sql_name("anon_count(*)")
+              .set_get_sql_callback(&AnonCountStarWithReportJsonFunctionSQL)
+              .set_supported_signatures_callback(absl::bind_front(
+                  &SupportedSignaturesForAnonCountStarWithReportFunction,
+                  /*report_format=*/"JSON"))
+              .set_bad_argument_error_prefix_callback(
+                  &AnonCountStarBadArgumentErrorPrefix),
+          "$count_star"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_count_star_with_report_proto",
+          Function::kZetaSQLFunctionGroupName,
+          {{anon_output_with_report_proto_type,
+            {/*lower_bound=*/{int64_type, optional_const_arg_options},
+             /*upper_bound=*/{int64_type, optional_const_arg_options}},
+            FN_ANON_COUNT_STAR_WITH_REPORT_PROTO}},
+          anon_options.Copy()
+              .set_sql_name("anon_count(*)")
+              .set_get_sql_callback(&AnonCountStarWithReportProtoFunctionSQL)
+              .set_supported_signatures_callback(absl::bind_front(
+                  &SupportedSignaturesForAnonCountStarWithReportFunction,
+                  /*report_format=*/"PROTO"))
+              .set_bad_argument_error_prefix_callback(
+                  &AnonCountStarBadArgumentErrorPrefix),
+          "$count_star"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_sum_with_report_json", Function::kZetaSQLFunctionGroupName,
+          {{json_type,
+            {/*expr=*/int64_type,
+             /*lower_bound=*/{int64_type, optional_const_arg_options},
+             /*upper_bound=*/{int64_type, optional_const_arg_options}},
+            FN_ANON_SUM_WITH_REPORT_JSON_INT64},
+           {json_type,
+            {/*expr=*/uint64_type,
+             /*lower_bound=*/{uint64_type, optional_const_arg_options},
+             /*upper_bound=*/{uint64_type, optional_const_arg_options}},
+            FN_ANON_SUM_WITH_REPORT_JSON_UINT64},
+           {json_type,
+            {/*expr=*/double_type,
+             /*lower_bound=*/{double_type, optional_const_arg_options},
+             /*upper_bound=*/{double_type, optional_const_arg_options}},
+            FN_ANON_SUM_WITH_REPORT_JSON_DOUBLE}},
+          anon_options.Copy()
+              .set_sql_name("anon_sum")
+              .set_get_sql_callback(&AnonSumWithReportJsonFunctionSQL),
+          "sum"));
+
+  InsertCreatedFunction(
+      functions, options,
+      new AnonFunction(
+          "$anon_sum_with_report_proto", Function::kZetaSQLFunctionGroupName,
+          {{anon_output_with_report_proto_type,
+            {/*expr=*/int64_type,
+             /*lower_bound=*/{int64_type, optional_const_arg_options},
+             /*upper_bound=*/{int64_type, optional_const_arg_options}},
+            FN_ANON_SUM_WITH_REPORT_PROTO_INT64},
+           {anon_output_with_report_proto_type,
+            {/*expr=*/uint64_type,
+             /*lower_bound=*/{uint64_type, optional_const_arg_options},
+             /*upper_bound=*/{uint64_type, optional_const_arg_options}},
+            FN_ANON_SUM_WITH_REPORT_PROTO_UINT64},
+           {anon_output_with_report_proto_type,
+            {/*expr=*/double_type,
+             /*lower_bound=*/{double_type, optional_const_arg_options},
+             /*upper_bound=*/{double_type, optional_const_arg_options}},
+            FN_ANON_SUM_WITH_REPORT_PROTO_DOUBLE}},
+          anon_options.Copy()
+              .set_sql_name("anon_sum")
+              .set_get_sql_callback(&AnonSumWithReportProtoFunctionSQL),
+          "sum"));
 }
 
 void GetTypeOfFunction(TypeFactory* type_factory,

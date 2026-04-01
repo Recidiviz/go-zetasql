@@ -336,6 +336,9 @@ void TypeModifiersProto::CopyFrom(const TypeModifiersProto& from) {
 }
 
 bool TypeModifiersProto::IsInitialized() const {
+  if (_internal_has_type_parameters()) {
+    if (!type_parameters_->IsInitialized()) return false;
+  }
   return true;
 }
 

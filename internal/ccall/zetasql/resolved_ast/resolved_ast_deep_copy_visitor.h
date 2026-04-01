@@ -374,8 +374,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node);
 
-  absl::Status CopyVisitResolvedLetExpr(
-      const ResolvedLetExpr* node);
+  absl::Status CopyVisitResolvedWithExpr(
+      const ResolvedWithExpr* node);
 
   absl::Status CopyVisitResolvedModel(
       const ResolvedModel* node);
@@ -653,6 +653,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt* node);
 
+  absl::Status CopyVisitResolvedAlterModelStmt(
+      const ResolvedAlterModelStmt* node);
+
   absl::Status CopyVisitResolvedAlterTableStmt(
       const ResolvedAlterTableStmt* node);
 
@@ -661,6 +664,15 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedSetOptionsAction(
       const ResolvedSetOptionsAction* node);
+
+  absl::Status CopyVisitResolvedAlterSubEntityAction(
+      const ResolvedAlterSubEntityAction* node);
+
+  absl::Status CopyVisitResolvedAddSubEntityAction(
+      const ResolvedAddSubEntityAction* node);
+
+  absl::Status CopyVisitResolvedDropSubEntityAction(
+      const ResolvedDropSubEntityAction* node);
 
   absl::Status CopyVisitResolvedAddColumnAction(
       const ResolvedAddColumnAction* node);
@@ -924,8 +936,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node) override;
 
-  absl::Status VisitResolvedLetExpr(
-      const ResolvedLetExpr* node) override;
+  absl::Status VisitResolvedWithExpr(
+      const ResolvedWithExpr* node) override;
 
   absl::Status VisitResolvedModel(
       const ResolvedModel* node) override;
@@ -1203,6 +1215,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt* node) override;
 
+  absl::Status VisitResolvedAlterModelStmt(
+      const ResolvedAlterModelStmt* node) override;
+
   absl::Status VisitResolvedAlterTableStmt(
       const ResolvedAlterTableStmt* node) override;
 
@@ -1211,6 +1226,15 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedSetOptionsAction(
       const ResolvedSetOptionsAction* node) override;
+
+  absl::Status VisitResolvedAlterSubEntityAction(
+      const ResolvedAlterSubEntityAction* node) override;
+
+  absl::Status VisitResolvedAddSubEntityAction(
+      const ResolvedAddSubEntityAction* node) override;
+
+  absl::Status VisitResolvedDropSubEntityAction(
+      const ResolvedDropSubEntityAction* node) override;
 
   absl::Status VisitResolvedAddColumnAction(
       const ResolvedAddColumnAction* node) override;

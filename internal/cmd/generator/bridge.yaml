@@ -105,11 +105,6 @@
         - struct
       ret:
         - struct
-    - name: ASTNode_getId
-      args:
-        - struct
-      ret:
-        - int
     - name: ASTNode_node_kind
       args:
         - struct
@@ -170,21 +165,6 @@
         - int
       ret:
         - string
-    - name: ASTNode_MoveStartLocation
-      args:
-        - struct
-        - int
-    - name: ASTNode_MoveStartLocationBack
-      args:
-        - struct
-        - int
-    - name: ASTNode_SetStartLocationToEndLocation
-      args:
-        - struct
-    - name: ASTNode_MoveEndLocationBack
-      args:
-        - struct
-        - int
     - name: ASTNode_set_start_location
       args:
         - struct
@@ -4011,7 +3991,7 @@
         - struct
       ret:
         - bool
-    - name: ASTPrimaryKey_column_list
+    - name: ASTPrimaryKey_element_list
       args:
         - struct
       ret:
@@ -7932,28 +7912,6 @@
         - struct
         - struct
     - name: ResolvedSubqueryExpr_add_hint_list
-      args:
-        - struct
-        - struct
-    - name: ResolvedLetExpr_assignment_list
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedLetExpr_set_assignment_list
-      args:
-        - struct
-        - struct
-    - name: ResolvedLetExpr_add_assignment_list
-      args:
-        - struct
-        - struct
-    - name: ResolvedLetExpr_expr
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedLetExpr_set_expr
       args:
         - struct
         - struct

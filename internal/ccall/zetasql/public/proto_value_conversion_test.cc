@@ -26,7 +26,6 @@
 #include "zetasql/base/logging.h"
 #include "zetasql/base/path.h"
 #include "google/protobuf/compiler/parser.h"
-#include "google/protobuf/io/tokenizer.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
@@ -55,6 +54,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
+#include "google/protobuf/io/tokenizer.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
@@ -520,7 +520,7 @@ TEST_F(ProtoValueConversionTest, WideSchemaTest) {
   file_descriptor_proto.set_name("wide_schema");
   SimpleErrorCollector error_collector;
 
-  auto pool = absl::make_unique<google::protobuf::DescriptorPool>(
+  auto pool = std::make_unique<google::protobuf::DescriptorPool>(
       /*underlay=*/google::protobuf::DescriptorPool::generated_pool());
 
   const FileDescriptor* result =

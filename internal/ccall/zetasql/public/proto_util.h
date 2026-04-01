@@ -18,6 +18,7 @@
 #define ZETASQL_PUBLIC_PROTO_UTIL_H_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
@@ -132,7 +133,7 @@ absl::Status ProtoHasField(
 bool IsProtoMap(const Type* type);
 
 // A variant containing all the possible value types of a proto map key.
-using MapKeyVariant = absl::variant<bool, int64_t, uint64_t, std::string>;
+using MapKeyVariant = std::variant<bool, int64_t, uint64_t, std::string>;
 
 // Copies the elements of array_of_map_entry into the vector output. The first
 // element of each pair is the key, the second is the value. Note that

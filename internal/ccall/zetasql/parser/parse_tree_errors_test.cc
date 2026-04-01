@@ -16,6 +16,9 @@
 
 #include "zetasql/parser/parse_tree_errors.h"
 
+#include <functional>
+#include <string>
+
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/common/testing/proto_matchers.h"
 #include "zetasql/base/testing/status_matchers.h"
@@ -53,7 +56,7 @@ static absl::Status RetCheckError() { ZETASQL_RET_CHECK_FAIL() << "ret_check_err
 
 TEST(GetErrorLocationPoint, Basic) {
   FakeASTNode ast_location;
-  ast_location.InitFields();
+  ZETASQL_ASSERT_OK(ast_location.InitFields());
   ParseLocationPoint expected =
       ParseLocationPoint::FromByteOffset("fake_filename", 7);
 
@@ -64,7 +67,7 @@ TEST(GetErrorLocationPoint, Basic) {
 
 TEST(GetErrorLocationPoint, LeftMost_ButNoChildren) {
   FakeASTNode ast_location;
-  ast_location.InitFields();
+  ZETASQL_ASSERT_OK(ast_location.InitFields());
   ParseLocationPoint expected =
       ParseLocationPoint::FromByteOffset("fake_filename", 7);
 
@@ -98,7 +101,7 @@ TEST(Errors, ReturnIf) {
 
   auto ReturnIfTest = [](std::function<absl::Status()> error) -> absl::Status {
     FakeASTNode ast_location;
-    ast_location.InitFields();
+    ZETASQL_RETURN_IF_ERROR(ast_location.InitFields());
     RETURN_SQL_ERROR_AT_IF_ERROR(&ast_location, NoError());
     RETURN_SQL_ERROR_AT_IF_ERROR(&ast_location, error());
     return absl::OkStatus();
@@ -140,7 +143,7 @@ TEST(Errors, LocationOverride) {
   auto ReturnWithLocationOverride =
       [](std::function<absl::Status()> make_error) -> absl::Status {
     FakeASTNode ast_location;
-    ast_location.InitFields();
+    ZETASQL_RETURN_IF_ERROR(ast_location.InitFields());
     ZETASQL_RETURN_IF_ERROR(make_error()).With(LocationOverride(&ast_location));
     return absl::OkStatus();
   };

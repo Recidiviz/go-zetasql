@@ -20,10 +20,12 @@
 
 #include <algorithm>
 #include <map>
+#include <string>
 #include <utility>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/errors.h"
+#include "zetasql/common/function_utils.h"
 #include "zetasql/proto/function.pb.h"
 #include "zetasql/public/function_signature.h"
 #include "zetasql/public/language_options.h"
@@ -52,12 +54,12 @@ absl::Status FunctionOptions::Deserialize(
     std::unique_ptr<FunctionOptions>* result) {
   std::unique_ptr<FunctionOptions> options;
   if (proto.supports_over_clause()) {
-    options = absl::make_unique<FunctionOptions>(
+    options = std::make_unique<FunctionOptions>(
         proto.window_ordering_support(), proto.supports_window_framing());
   } else {
     ZETASQL_RET_CHECK(!proto.supports_window_framing());
     ZETASQL_RET_CHECK_EQ(proto.window_ordering_support(), ORDER_UNSUPPORTED);
-    options = absl::make_unique<FunctionOptions>();
+    options = std::make_unique<FunctionOptions>();
   }
 
   options->set_arguments_are_coercible(proto.arguments_are_coercible());
@@ -229,8 +231,8 @@ absl::StatusOr<std::unique_ptr<Function>> Function::Deserialize(
   std::unique_ptr<FunctionOptions> options;
   ZETASQL_RETURN_IF_ERROR(FunctionOptions::Deserialize(proto.options(), &options));
 
-  return absl::make_unique<Function>(name_path, proto.group(), proto.mode(),
-                                     function_signatures, *options);
+  return std::make_unique<Function>(name_path, proto.group(), proto.mode(),
+                                    function_signatures, *options);
 }
 
 absl::Status Function::Serialize(
@@ -337,8 +339,8 @@ static bool SignaturesWithLambdaCouldMatchOneFunctionCall(
   }
   bool has_lambda = false;
   for (int i = 0; i < current_signature.arguments().size(); i++) {
-    const auto cur_arg = current_signature.argument(i);
-    const auto new_arg = new_signature.argument(i);
+    const auto& cur_arg = current_signature.argument(i);
+    const auto& new_arg = new_signature.argument(i);
     has_lambda = has_lambda || cur_arg.IsLambda() || new_arg.IsLambda();
     if (cur_arg.IsLambda() && new_arg.IsLambda()) {
       if (cur_arg.lambda().argument_types().size() ==
@@ -646,5 +648,7 @@ bool Function::SupportsDistinctModifier() const {
 bool Function::SupportsClampedBetweenModifier() const {
   return function_options_.supports_clamped_between_modifier;
 }
+
+bool Function::is_operator() const { return FunctionIsOperator(*this); }
 
 }  // namespace zetasql

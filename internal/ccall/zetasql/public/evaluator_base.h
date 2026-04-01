@@ -17,6 +17,8 @@
 #ifndef ZETASQL_PUBLIC_EVALUATOR_BASE_H_
 #define ZETASQL_PUBLIC_EVALUATOR_BASE_H_
 
+
+//
 // ZetaSQL in-memory expression or query evaluation using the reference
 // implementation.
 //
@@ -164,8 +166,10 @@
 //   ... Iterate over `result` (which lists deleted rows) ...
 
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -214,7 +218,7 @@ struct EvaluatorOptions {
 
   // The default time zone to use. If not set, the default time zone is
   // "America/Los_Angeles".
-  absl::optional<absl::TimeZone> default_time_zone;
+  std::optional<absl::TimeZone> default_time_zone;
 
   // If true, evaluation will scramble the order of relations whose order is not
   // defined by ZetaSQL. This requires some extra processing, so should only
@@ -359,7 +363,7 @@ class PreparedExpressionBase {
     // storing the Value for that column with its registered name (possibly
     // ""). For the implicit Prepare case, an entry in <columns> with an empty
     // name will be treated as an anonymous in-scope expression column.
-    absl::optional<ParameterValueMap> columns;
+    std::optional<ParameterValueMap> columns;
     // Allows for a more efficient evaluation by requiring for the <columns> and
     // <parameters> values to be passed in a particular order. It is intended
     // for users that want to repeatedly evaluate an expression with different
@@ -371,12 +375,12 @@ class PreparedExpressionBase {
     // are passed in <parameters> in the order returned by
     // GetReferencedParameters.
     // REQUIRES: To be called via ExecuteAfterPrepare().
-    absl::optional<ParameterValueList> ordered_columns;
+    std::optional<ParameterValueList> ordered_columns;
 
     // Parameters for the expression. Represented as a map or unordered list.
     // At most one of these can be specified.
-    absl::optional<ParameterValueMap> parameters;
-    absl::optional<ParameterValueList> ordered_parameters;
+    std::optional<ParameterValueMap> parameters;
+    std::optional<ParameterValueList> ordered_parameters;
 
     // Optional system variables for all variants of Execute.
     SystemVariableValuesMap system_variables;
@@ -520,10 +524,10 @@ class PreparedQueryBase {
   struct QueryOptions {
     // Parameters for the expression. Represented as a map or unordered list.
     // At most one of these can be specified.
-    absl::optional<ParameterValueMap> parameters;
+    std::optional<ParameterValueMap> parameters;
     // Allows for a more efficient evaluation by requiring for the <parameters>
     // to be passed in a particular order.
-    absl::optional<ParameterValueList> ordered_parameters;
+    std::optional<ParameterValueList> ordered_parameters;
 
     // Optional system variables for all variants of Execute.
     SystemVariableValuesMap system_variables;
@@ -672,9 +676,16 @@ class EvaluatorTableModifyIterator {
   virtual absl::Status Status() const = 0;
 };
 
-// Executes an DML statement and returns an EvaluatorTableModifyIterator.
+// Executes a DML statement and returns an EvaluatorTableModifyIterator.
 // Currently, INSERT, DELETE, and UPDATE are supported.
-//
+// To support DML statements with THEN RETURN, an optional `returning_iterator`
+// can be passed to the Execute* methods. This argument will get the THEN RETURN
+// clause result or NULL when THEN RETURN clause is not present.
+// If `returning_iterator` is not provided, these Execute* methods will continue
+// to work, but the THEN RETURN clause results are ignored.
+// Note that results are fully buffered before Execute returns, so the iterators
+// can be consumed in arbitrary order.
+
 // FEATURE_DISALLOW_PRIMARY_KEY_UPDATES is implicitly enabled because primary
 // key updates are currently not supported.
 //
@@ -726,15 +737,25 @@ class PreparedModifyBase {
   //
   // This method is thread safe. Multiple executions can proceed in parallel,
   // each using a different iterator.
+  //
+  // To support DML statements with THEN RETURN, an optional
+  // `returning_iterator` can be passed to the Execute* methods. This argument
+  // will get the THEN RETURN clause result or NULL when THEN RETURN clause is
+  // not present. If `returning_iterator` is not provided, these Execute*
+  // methods will continue to work, but the THEN RETURN clause results are
+  // ignored. Note that results are fully buffered before Execute returns, so
+  // the iterators can be consumed in arbitrary order.
   absl::StatusOr<std::unique_ptr<EvaluatorTableModifyIterator>> Execute(
       const ParameterValueMap& parameters = {},
-      const SystemVariableValuesMap& system_variables = {});
+      const SystemVariableValuesMap& system_variables = {},
+      std::unique_ptr<EvaluatorTableIterator>* returning_iterator = nullptr);
 
-  // Same as above, but uses positional instead of named parameters.
+  // Same as 'Execute', but uses positional instead of named parameters.
   absl::StatusOr<std::unique_ptr<EvaluatorTableModifyIterator>>
   ExecuteWithPositionalParams(
       const ParameterValueList& positional_parameters,
-      const SystemVariableValuesMap& system_variables = {});
+      const SystemVariableValuesMap& system_variables = {},
+      std::unique_ptr<EvaluatorTableIterator>* returning_iterator = nullptr);
 
   // More efficient form of Execute that requires parameter values to be passed
   // in a particular order. If positional parameters are used, they are passed
@@ -745,15 +766,18 @@ class PreparedModifyBase {
   absl::StatusOr<std::unique_ptr<EvaluatorTableModifyIterator>>
   ExecuteAfterPrepareWithOrderedParams(
       const ParameterValueList& parameters,
-      const SystemVariableValuesMap& system_variables = {}) const;
+      const SystemVariableValuesMap& system_variables = {},
+      std::unique_ptr<EvaluatorTableIterator>* returning_iterator =
+          nullptr) const;
 
   // This is the same as Execute, but is a const method, and requires that
   // Prepare has already been called. See the description of Execute for details
   // about the arguments and return value.
   absl::StatusOr<std::unique_ptr<EvaluatorTableModifyIterator>>
-  ExecuteAfterPrepare(
-      const ParameterValueMap& parameters,
-      const SystemVariableValuesMap& system_variables = {}) const;
+  ExecuteAfterPrepare(const ParameterValueMap& parameters,
+                      const SystemVariableValuesMap& system_variables = {},
+                      std::unique_ptr<EvaluatorTableIterator>*
+                          returning_iterator = nullptr) const;
 
   // Returns a human-readable representation of how this statement would
   // actually be executed. Do not try to interpret this string with code, as the

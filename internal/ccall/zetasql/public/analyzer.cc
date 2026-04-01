@@ -32,6 +32,8 @@
 #include "zetasql/analyzer/resolver.h"
 #include "zetasql/analyzer/rewrite_resolved_ast.h"
 #include "zetasql/common/errors.h"
+#include "zetasql/common/internal_analyzer_options.h"
+#include "zetasql/common/status_payload_utils.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parse_tree_errors.h"
 #include "zetasql/parser/parser.h"
@@ -53,8 +55,6 @@
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
-
-ABSL_DECLARE_FLAG(bool, zetasql_validate_resolved_ast);
 
 // This provides a way to extract and look at the zetasql resolved AST
 // from within some other test or tool.  It prints to cout rather than logging
@@ -94,7 +94,7 @@ static absl::Status FinishAnalyzeStatementImpl(
 
   ZETASQL_VLOG(3) << "Resolved AST:\n" << (*resolved_statement)->DebugString();
 
-  if (absl::GetFlag(FLAGS_zetasql_validate_resolved_ast)) {
+  if (InternalAnalyzerOptions::GetValidateResolvedAST(options)) {
     Validator validator(options.language());
     ZETASQL_RETURN_IF_ERROR(
         validator.ValidateResolvedStatement(resolved_statement->get()));
@@ -223,9 +223,14 @@ static absl::Status AnalyzeStatementHelper(
   ZETASQL_RET_CHECK(options.AllArenasAreInitialized());
   std::unique_ptr<const ResolvedStatement> resolved_statement;
   Resolver resolver(catalog, type_factory, &options);
-  const absl::Status status =
+  absl::Status status =
       FinishAnalyzeStatementImpl(sql, ast_statement, &resolver, options,
                                  catalog, type_factory, &resolved_statement);
+
+  const absl::StatusOr<QueryParametersMap>& type_assignments =
+      resolver.AssignTypesToUndeclaredParameters();
+
+  internal::UpdateStatus(&status, type_assignments.status());
   if (!status.ok()) {
     return ConvertInternalErrorLocationAndAdjustErrorString(
         options.error_message_mode(), sql, status);
@@ -236,13 +241,13 @@ static absl::Status AnalyzeStatementHelper(
     owned_parser_output = std::move(*statement_parser_output);
   }
 
-  auto original_output = absl::make_unique<AnalyzerOutput>(
+  auto original_output = std::make_unique<AnalyzerOutput>(
       options.id_string_pool(), options.arena(), std::move(resolved_statement),
       resolver.analyzer_output_properties(), std::move(owned_parser_output),
       ConvertInternalErrorLocationsAndAdjustErrorStrings(
           options.error_message_mode(), sql, resolver.deprecation_warnings()),
-      resolver.undeclared_parameters(),
-      resolver.undeclared_positional_parameters(), resolver.max_column_id());
+      *type_assignments, resolver.undeclared_positional_parameters(),
+      resolver.max_column_id());
   ZETASQL_RETURN_IF_ERROR(RewriteResolvedAst(options, sql, catalog, type_factory,
                                      *original_output));
   *output = std::move(original_output);
@@ -356,7 +361,7 @@ static absl::Status AnalyzeTypeImpl(const std::string& type_name,
                                     const AnalyzerOptions& options,
                                     Catalog* catalog, TypeFactory* type_factory,
                                     const Type** output_type,
-                                    TypeParameters* output_type_params) {
+                                    TypeModifiers* output_type_modifiers) {
   *output_type = nullptr;
 
   ZETASQL_RETURN_IF_ERROR(ValidateAnalyzerOptions(options));
@@ -364,7 +369,7 @@ static absl::Status AnalyzeTypeImpl(const std::string& type_name,
 
   Resolver resolver(catalog, type_factory, &options);
   ZETASQL_RETURN_IF_ERROR(
-      resolver.ResolveTypeName(type_name, output_type, output_type_params));
+      resolver.ResolveTypeName(type_name, output_type, output_type_modifiers));
 
   ZETASQL_VLOG(3) << "Resolved type: " << (*output_type)->DebugString();
   return absl::OkStatus();
@@ -373,20 +378,20 @@ static absl::Status AnalyzeTypeImpl(const std::string& type_name,
 absl::Status AnalyzeType(const std::string& type_name,
                          const AnalyzerOptions& options_in, Catalog* catalog,
                          TypeFactory* type_factory, const Type** output_type) {
-  TypeParameters type_params = TypeParameters();
+  TypeModifiers type_modifiers;
   return AnalyzeType(type_name, options_in, catalog, type_factory, output_type,
-                     &type_params);
+                     &type_modifiers);
 }
 
 absl::Status AnalyzeType(const std::string& type_name,
                          const AnalyzerOptions& options_in, Catalog* catalog,
                          TypeFactory* type_factory, const Type** output_type,
-                         TypeParameters* output_type_params) {
+                         TypeModifiers* output_type_modifiers) {
   std::unique_ptr<AnalyzerOptions> copy;
   const AnalyzerOptions& options = GetOptionsWithArenas(&options_in, &copy);
   const absl::Status status =
       AnalyzeTypeImpl(type_name, options, catalog, type_factory, output_type,
-                      output_type_params);
+                      output_type_modifiers);
   return ConvertInternalErrorLocationAndAdjustErrorString(
       options.error_message_mode(), type_name, status);
 }
@@ -594,7 +599,7 @@ absl::StatusOr<std::unique_ptr<const AnalyzerOutput>> RewriteForAnonymization(
   // rewritten AST.  The new AnalyzerOutput uses the (shared) IdStringPool and
   // Arena from <analyzer_output>, and we also copy the deprecation warnings
   // and parameter info from the <analyzer_output>.
-  return absl::make_unique<AnalyzerOutput>(
+  return std::make_unique<AnalyzerOutput>(
       analyzer_output.id_string_pool(), analyzer_output.arena(),
       absl::WrapUnique(
           anonymized_output.node.release()->GetAs<ResolvedStatement>()),

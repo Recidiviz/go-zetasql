@@ -18,6 +18,8 @@
 
 #include <cctype>
 #include <cmath>
+#include <string>
+#include <type_traits>
 
 #include "zetasql/public/functions/arithmetics.h"
 #include "zetasql/public/functions/datetime.pb.h"
@@ -35,6 +37,10 @@
 namespace zetasql {
 
 namespace {
+
+inline ::zetasql_base::StatusBuilder MakeIntervalParsingError(absl::string_view input) {
+  return MakeEvalError() << "Invalid INTERVAL value '" << input << "'";
+}
 
 std::string ToString(int64_t value) {
   std::string s;
@@ -69,6 +75,24 @@ std::string Int128ToString(absl::int128 value) {
   }
   return ToString(static_cast<int64_t>(value));
 }
+
+template <typename T>
+void UnalignedLoadAndAugmentPtr(T* value, const char** data) {
+  // Note that the whole if-else block can be simplified to the following:
+  // *value = zetasql_base::LittleEndian::Load<T>(*data);
+  // Unfortunately, the opensource version, Zetasql, does not have the generic
+  // Load<T> function. That's why Load32 and Load64 functions are used.
+  if constexpr (std::is_same_v<T, int32_t> || std::is_same_v<T, uint32_t>) {
+    *value = static_cast<T>(zetasql_base::LittleEndian::Load32(*data));
+  } else {
+    static_assert(std::is_same_v<T, int64_t> || std::is_same_v<T, uint64_t>,
+                  "UnalignedLoadAndAugmentPtr supports 32 bit and 64 bit "
+                  "signed or unsigned integer types only.");
+    *value = static_cast<T>(zetasql_base::LittleEndian::Load64(*data));
+  }
+  *data += sizeof(T);
+}
+
 }  // namespace
 
 absl::StatusOr<IntervalValue> IntervalValue::FromYMDHMS(
@@ -280,17 +304,11 @@ absl::StatusOr<IntervalValue> IntervalValue::DeserializeFromBytes(
         "Invalid serialized INTERVAL size, expected ", sizeof(IntervalValue),
         " bytes, but got ", bytes.size(), " bytes."));
   }
-  const char* ptr = reinterpret_cast<const char*>(bytes.data());
-  int64_t micros = zetasql_base::LittleEndian::ToHost64(*absl::bit_cast<int64_t*>(ptr));
-  ptr += sizeof(micros);
-  int32_t days = zetasql_base::LittleEndian::ToHost32(*absl::bit_cast<int32_t*>(ptr));
-  ptr += sizeof(days);
-  uint32_t months_nanos =
-      zetasql_base::LittleEndian::ToHost32(*absl::bit_cast<uint32_t*>(ptr));
+  const char* data = bytes.data();
   IntervalValue interval;
-  interval.micros_ = micros;
-  interval.days_ = days;
-  interval.months_nanos_ = months_nanos;
+  UnalignedLoadAndAugmentPtr(&interval.micros_, &data);
+  UnalignedLoadAndAugmentPtr(&interval.days_, &data);
+  UnalignedLoadAndAugmentPtr(&interval.months_nanos_, &data);
   ZETASQL_RETURN_IF_ERROR(ValidateMonths(interval.get_months()));
   ZETASQL_RETURN_IF_ERROR(ValidateDays(interval.get_days()));
   ZETASQL_RETURN_IF_ERROR(ValidateNanos(interval.get_nanos()));
@@ -394,10 +412,10 @@ absl::StatusOr<int64_t> NanosFromFractionDigits(absl::string_view input,
                                                 absl::string_view digits) {
   int64_t nano_fractions;
   if (!absl::SimpleAtoi(digits, &nano_fractions)) {
-    return MakeEvalError() << "Invalid interval literal '" << input << "'";
+    return MakeIntervalParsingError(input);
   }
   if (digits.size() > 9) {
-    return MakeEvalError() << "Invalid interval literal '" << input << "'";
+    return MakeIntervalParsingError(input);
   }
 
   // Add enough zeros at the end to get nanoseconds. The maximum value is
@@ -419,7 +437,7 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
   // SimpleAtoi ignores leading and trailing spaces, but we reject them.
   if (input.empty() || std::isspace(input.front()) ||
       std::isspace(input.back())) {
-    return MakeEvalError() << "Invalid interval literal '" << input << "'";
+    return MakeIntervalParsingError(input);
   }
 
   // Seconds are special, because they allow fractions
@@ -429,13 +447,13 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
     absl::string_view digits;
     // [+|-][s][.ddddddddd] - capture sign, seconds and digits of fractions.
     if (!RE2::FullMatch(input, *kRESecond, &sign, &seconds_text, &digits)) {
-      return MakeEvalError() << "Invalid interval literal '" << input << "'";
+      return MakeIntervalParsingError(input);
     }
     int64_t seconds = 0;
     if (!seconds_text.empty()) {
       // This SimpleAtoi can fail if there were too many digits for seconds.
       if (!absl::SimpleAtoi(seconds_text, &seconds)) {
-        return MakeEvalError() << "Invalid interval literal '" << input << "'";
+        return MakeIntervalParsingError(input);
       }
     }
     ZETASQL_RET_CHECK(!digits.empty());
@@ -452,7 +470,7 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
 
   int64_t value;
   if (!absl::SimpleAtoi(input, &value)) {
-    return MakeEvalError() << "Invalid interval literal '" << input << "'";
+    return MakeIntervalParsingError(input);
   }
 
   switch (part) {
@@ -679,7 +697,7 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
   }
 
   if (!parsed) {
-    return MakeEvalError() << "Invalid interval literal: '" << input << "'";
+    return MakeIntervalParsingError(input);
   }
 
   absl::Status status;
@@ -779,7 +797,7 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
       return IntervalValue::ParseFromString(input, HOUR, SECOND);
   }
 #undef SCD
-  return MakeEvalError() << "Invalid interval literal: '" << input << "'";
+  return MakeIntervalParsingError(input);
 }
 
 namespace {
@@ -800,11 +818,12 @@ class ISO8601Parser {
     input_ = input;
     char c = GetChar();
     if (c != 'P') {
-      return MakeEvalError() << "Interval must start with 'P'";
+      return MakeIntervalParsingError(input)
+             << ": Interval must start with 'P'";
     }
     if (input_.empty()) {
-      return MakeEvalError()
-             << "At least one datetime part must be defined in the interval";
+      return MakeIntervalParsingError(input)
+             << ": At least one datetime part must be defined in the interval";
     }
     absl::Status status;
 
@@ -821,6 +840,9 @@ class ISO8601Parser {
     for (;;) {
       int64_t sign = false;
       c = PeekChar();
+      if (c == kEof) {
+        break;
+      }
       if (!std::isdigit(c)) {
         GetChar();
         if (c == '-') {
@@ -829,14 +851,14 @@ class ISO8601Parser {
         } else if (c == 'T') {
           // Switching from date to time part
           if (in_time_part) {
-            return MakeEvalError() << "Unexpected duplicate time separator 'T'";
+            return MakeIntervalParsingError(input)
+                   << ": Unexpected duplicate time separator 'T'";
           }
           in_time_part = true;
           continue;
-        } else if (c == kEof) {
-          break;
         } else {
-          return MakeEvalError() << "Unexpected " << PrintChar(c);
+          return MakeIntervalParsingError(input)
+                 << ": Unexpected " << PrintChar(c);
         }
       }
       // We now expect to see positive number (possibly with fractional digits)
@@ -844,8 +866,8 @@ class ISO8601Parser {
       ZETASQL_RETURN_IF_ERROR(ParseNumber());
       int64_t number;
       if (!absl::SimpleAtoi(digits_, &number)) {
-        return MakeEvalError()
-               << "Cannot convert '" << digits_ << "' to integer";
+        return MakeIntervalParsingError(input)
+               << ": Cannot convert '" << digits_ << "' to integer";
       }
       // number couldn't have been negative, so no worries about underflow
       // of int64_t::min
@@ -874,8 +896,9 @@ class ISO8601Parser {
             }
             break;
           default:
-            return MakeEvalError() << "Unexpected " << PrintChar(c)
-                                   << " in the date portion of interval";
+            return MakeIntervalParsingError(input)
+                   << ": Unexpected " << PrintChar(c)
+                   << " in the date portion of interval";
         }
       } else {
         switch (c) {
@@ -901,14 +924,16 @@ class ISO8601Parser {
             }
             break;
           default:
-            return MakeEvalError() << "Unexpected " << PrintChar(c)
-                                   << " in the time portion of interval";
+            return MakeIntervalParsingError(input)
+                   << ": Unexpected " << PrintChar(c)
+                   << " in the time portion of interval";
         }
       }
       if (!decimal_point_.empty() && c != 'S') {
-        return MakeEvalError() << "Fractional values are only allowed for "
-                                  "seconds part 'S', but were used for "
-                               << PrintChar(c);
+        return MakeIntervalParsingError(input)
+               << ": Fractional values are only allowed for "
+                  "seconds part 'S', but were used for "
+               << PrintChar(c);
       }
     }
 
@@ -957,12 +982,15 @@ class ISO8601Parser {
   }
 
   char GetChar() {
-    char c = PeekChar();
+    if (input_.empty()) {
+      return kEof;
+    }
+    char c = input_[0];
     input_.remove_prefix(1);
     return c;
   }
 
-  std::string PrintChar(char c) {
+  std::string PrintChar(char c) const {
     if (c == kEof) return "end of input";
     return absl::StrCat("'", std::string(1, c), "'");
   }

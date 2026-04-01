@@ -249,6 +249,7 @@ namespace absl {
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"
+#include "go-absl/base/strerror/export.inc"
 #include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/debugging/stacktrace/export.inc"
 #include "go-absl/debugging/symbolize/export.inc"

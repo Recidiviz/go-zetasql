@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <set>
+#include <string>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/base/path.h"
@@ -223,6 +224,7 @@ TEST(GetAllKeywords, ReservedMatchesGrammarReserved) {
   // for in GetKeywordInfo().
   expected_reserved_keywords.insert("kw_and_for_between");
   expected_reserved_keywords.insert("kw_except_in_set_op");
+  expected_reserved_keywords.insert("kw_with_starting_with_expression");
 
   EXPECT_THAT(grammar_reserved_keywords,
               ::testing::ContainerEq(expected_reserved_keywords));

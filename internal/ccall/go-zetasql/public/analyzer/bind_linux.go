@@ -2666,61 +2666,6 @@ func analyzer_ResolvedSubqueryExpr_add_hint_list(arg0 unsafe.Pointer, arg1 unsaf
 	C.export_zetasql_public_analyzer_ResolvedSubqueryExpr_add_hint_list(arg0, arg1)
 }
 
-func ResolvedLetExpr_assignment_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedLetExpr_assignment_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedLetExpr_assignment_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_public_analyzer_ResolvedLetExpr_assignment_list(arg0, arg1)
-}
-
-func ResolvedLetExpr_set_assignment_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedLetExpr_set_assignment_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedLetExpr_set_assignment_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_zetasql_public_analyzer_ResolvedLetExpr_set_assignment_list(arg0, arg1)
-}
-
-func ResolvedLetExpr_add_assignment_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedLetExpr_add_assignment_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedLetExpr_add_assignment_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_zetasql_public_analyzer_ResolvedLetExpr_add_assignment_list(arg0, arg1)
-}
-
-func ResolvedLetExpr_expr(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedLetExpr_expr(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedLetExpr_expr(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_public_analyzer_ResolvedLetExpr_expr(arg0, arg1)
-}
-
-func ResolvedLetExpr_set_expr(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedLetExpr_set_expr(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedLetExpr_set_expr(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_zetasql_public_analyzer_ResolvedLetExpr_set_expr(arg0, arg1)
-}
-
 func ResolvedScan_column_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	analyzer_ResolvedScan_column_list(
 		arg0,

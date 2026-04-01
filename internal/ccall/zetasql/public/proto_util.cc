@@ -17,6 +17,7 @@
 #include "zetasql/public/proto_util.h"
 
 #include <cstdint>
+#include <functional>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -24,8 +25,6 @@
 #include <vector>
 
 #include "zetasql/base/logging.h"
-#include "google/protobuf/io/coded_stream.h"
-#include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/wire_format_lite.h"
 #include "zetasql/public/civil_time.h"
@@ -49,6 +48,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/ret_check.h"
@@ -363,7 +364,7 @@ namespace {
 
 // Convenient representation of the intermediate values produced by
 // ReadWireValue.
-using WireValueType = absl::variant<
+using WireValueType = std::variant<
     // TYPE_INT32
     // TYPE_SINT32
     // TYPE_SFIXED32
@@ -606,7 +607,7 @@ struct VisitIntegerWireValueAsInt64 {
 // Same as 'value.ToInt64()', except uint64s are casted to int64_t, and bools and
 // enums are not supported.
 absl::StatusOr<int64_t> IntegerWireValueAsInt64(const WireValueType& value) {
-  return absl::visit(VisitIntegerWireValueAsInt64(), value);
+  return std::visit(VisitIntegerWireValueAsInt64(), value);
 }
 
 }  // namespace
@@ -622,12 +623,12 @@ static absl::StatusOr<Value> TranslateWireValue(
 
   switch (type->kind()) {
     case TYPE_INT32: {
-      const int32_t* const value = absl::get_if<int32_t>(&wire_value);
+      const int32_t* const value = std::get_if<int32_t>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Int32(*value);
     }
     case TYPE_INT64: {
-      const int64_t* const value = absl::get_if<int64_t>(&wire_value);
+      const int64_t* const value = std::get_if<int64_t>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Int64(*value);
     }
@@ -685,32 +686,32 @@ static absl::StatusOr<Value> TranslateWireValue(
       }
     }
     case TYPE_UINT32: {
-      const uint32_t* const value = absl::get_if<uint32_t>(&wire_value);
+      const uint32_t* const value = std::get_if<uint32_t>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Uint32(*value);
     }
     case TYPE_UINT64: {
-      const uint64_t* const value = absl::get_if<uint64_t>(&wire_value);
+      const uint64_t* const value = std::get_if<uint64_t>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Uint64(*value);
     }
     case TYPE_BOOL: {
-      const bool* const value = absl::get_if<bool>(&wire_value);
+      const bool* const value = std::get_if<bool>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Bool(*value);
     }
     case TYPE_FLOAT: {
-      const float* const value = absl::get_if<float>(&wire_value);
+      const float* const value = std::get_if<float>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Float(*value);
     }
     case TYPE_DOUBLE: {
-      const double* const value = absl::get_if<double>(&wire_value);
+      const double* const value = std::get_if<double>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Double(*value);
     }
     case TYPE_ENUM: {
-      const int32_t* const value = absl::get_if<int32_t>(&wire_value);
+      const int32_t* const value = std::get_if<int32_t>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       Value enum_value = Value::Enum(type->AsEnum(), *value);
       if (ABSL_PREDICT_FALSE(!enum_value.is_valid())) {
@@ -720,17 +721,17 @@ static absl::StatusOr<Value> TranslateWireValue(
       return enum_value;
     }
     case TYPE_STRING: {
-      const std::string* const value = absl::get_if<std::string>(&wire_value);
+      const std::string* const value = std::get_if<std::string>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::String(*value);
     }
     case TYPE_BYTES: {
-      const std::string* const value = absl::get_if<std::string>(&wire_value);
+      const std::string* const value = std::get_if<std::string>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
       return Value::Bytes(*value);
     }
     case TYPE_PROTO: {
-      const absl::Cord* const value = absl::get_if<absl::Cord>(&wire_value);
+      const absl::Cord* const value = std::get_if<absl::Cord>(&wire_value);
       ZETASQL_RET_CHECK_NE(value, nullptr);
 
       return Value::Proto(type->AsProto(), *value);
@@ -897,7 +898,7 @@ absl::Status ReadProtoFields(
       absl::GetFlag(FLAGS_zetasql_read_proto_field_optimized_path);
 
   if (use_optimization) {
-    ZETASQL_ASSIGN_OR_RETURN(absl::StatusOr<Value> value,
+    ZETASQL_ASSIGN_OR_RETURN(Value value,
                      ReadSingularProtoField(*field_infos[0], bytes));
     field_value_list->push_back(std::move(value));
     return absl::OkStatus();

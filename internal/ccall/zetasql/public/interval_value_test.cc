@@ -17,6 +17,7 @@
 #include "zetasql/public/interval_value.h"
 
 #include <cstdint>
+#include <string>
 
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/public/functions/datetime.pb.h"
@@ -1731,10 +1732,6 @@ TEST(IntervalValueTest, ParseFromStringYearToSecond) {
   }
 }
 
-std::string ParseToString(absl::string_view input) {
-  return IntervalValue::ParseFromString(input).value().ToString();
-}
-
 void ExpectParseFromString(absl::string_view expected,
                            absl::string_view input) {
   EXPECT_EQ(expected, (*IntervalValue::ParseFromString(input)).ToString());
@@ -1746,6 +1743,14 @@ void ExpectParseError(absl::string_view input) {
               StatusIs(absl::StatusCode::kOutOfRange));
   EXPECT_THAT(IntervalValue::Parse(input),
               StatusIs(absl::StatusCode::kOutOfRange));
+}
+
+void ExpectParseErrorMessage(absl::string_view input,
+                             absl::string_view expected_message) {
+  EXPECT_THAT(IntervalValue::ParseFromString(input),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       testing::HasSubstr(expected_message)))
+      << input;
 }
 
 TEST(IntervalValueTest, ParseFromString) {
@@ -1789,6 +1794,10 @@ TEST(IntervalValueTest, ParseFromString) {
   // Unexpected number of spaces/colons/dashes
   ExpectParseError("1-2 1:2:3");
   ExpectParseError("1-2-3");
+
+  ExpectParseErrorMessage("1:2<3", "Invalid INTERVAL value '1:2<3'");
+  ExpectParseErrorMessage("1 2-3", "Invalid INTERVAL value '1 2-3'");
+  ExpectParseErrorMessage("1-2-3", "Invalid INTERVAL value '1-2-3'");
 }
 
 void ExpectToISO8601(absl::string_view expected, IntervalValue interval) {
@@ -1978,8 +1987,8 @@ TEST(IntervalValueTest, ParseFromISO8601) {
   ExpectFromISO8601Error("PT1D", "Unexpected 'D' in the time portion");
   ExpectFromISO8601Error("P123", "Unexpected end of input in the date portion");
   ExpectFromISO8601Error("P9223372036854775807D1D", "int64 overflow");
-  ExpectFromISO8601Error("PT0.1234567890S", "Invalid interval");
-  ExpectFromISO8601Error("PT1.S", "Invalid interval");
+  ExpectFromISO8601Error("PT0.1234567890S", "Invalid INTERVAL");
+  ExpectFromISO8601Error("PT1.S", "Invalid INTERVAL");
   ExpectFromISO8601Error("P1.Y", "Fractional values are only allowed");
   ExpectFromISO8601Error("PT1.M", "Fractional values are only allowed");
   ExpectFromISO8601Error("P9223372036854775807Y", "int64 overflow");
@@ -1989,6 +1998,8 @@ TEST(IntervalValueTest, ParseFromISO8601) {
   ExpectFromISO8601Error("P-9999999M", "is out of range");
   ExpectFromISO8601Error("P-987654321D", "is out of range");
   ExpectFromISO8601Error("PT-99999999999H", "is out of range");
+  ExpectFromISO8601Error("P1Y2M<3D",
+                         "Invalid INTERVAL value 'P1Y2M<3D': Unexpected '<'");
 }
 
 std::vector<IntervalValue>* kInterestingIntervals =
@@ -2055,6 +2066,67 @@ TEST(IntervalValueTest, ToStringParseRoundtrip) {
     ZETASQL_ASSERT_OK_AND_ASSIGN(IntervalValue roundtrip_value,
                          IntervalValue::ParseFromString(str));
     EXPECT_EQ(value, roundtrip_value);
+  }
+}
+
+TEST(IntervalValueTest, FixedBinaryRepresentation) {
+  std::vector<std::array<unsigned char, 16>> kInterestingIntervalsBinary =
+      std::vector<std::array<unsigned char, 16>>{
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 1, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 128}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 128}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 250, 255, 255, 255, 0, 0, 0, 0}},
+          {{0, 124, 9, 222, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 224, 98, 75, 249, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 191, 47, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 186, 60, 220, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{192, 216, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 229, 72, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{242, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0}},
+          {{255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 216, 3, 0, 0}},
+          {{3, 0, 0, 0, 0, 0, 0, 0, 254, 255, 255, 255, 0, 32, 0, 0}},
+          {{250, 255, 255, 255, 255, 255, 255, 255, 5, 0, 0, 0, 0, 128, 0,
+            128}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 248, 255, 255, 255, 9, 224, 0, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 245, 255, 255, 255, 12, 64, 1, 0}},
+          {{128, 133, 55, 183, 252, 255, 255, 255, 3, 0, 0, 0, 0, 64, 1, 0}},
+          {{0, 182, 36, 59, 8, 0, 0, 0, 247, 255, 255, 255, 0, 128, 9, 128}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 152, 58}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 152, 186}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 224, 216, 55, 0, 0, 0, 0, 0}},
+          {{0, 0, 0, 0, 0, 0, 0, 0, 32, 39, 200, 255, 0, 0, 0, 0}},
+          {{0, 0, 116, 117, 13, 116, 99, 4, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 140, 138, 242, 139, 156, 251, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 116, 117, 13, 116, 99, 4, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 140, 138, 242, 139, 156, 251, 0, 0, 0, 0, 0, 0, 0, 0}},
+          {{0, 0, 116, 117, 13, 116, 99, 4, 224, 216, 55, 0, 0, 0, 152, 58}},
+          {{0, 0, 140, 138, 242, 139, 156, 251, 32, 39, 200, 255, 0, 0, 152,
+            186}},
+          {{0, 0, 116, 117, 13, 116, 99, 4, 224, 216, 55, 0, 0, 0, 152, 58}},
+          {{0, 0, 140, 138, 242, 139, 156, 251, 32, 39, 200, 255, 0, 0, 152,
+            186}}};
+
+  EXPECT_EQ(kInterestingIntervals->size(), kInterestingIntervalsBinary.size());
+  for (int i = 0; i < kInterestingIntervals->size(); i++) {
+    absl::string_view binary_representation =
+        absl::string_view((char const*)kInterestingIntervalsBinary[i].data(),
+                          kInterestingIntervalsBinary[i].size());
+    // Make sure that deserialized binary format results in a correct
+    // IntervalValue.
+    ZETASQL_ASSERT_OK_AND_ASSIGN(
+        IntervalValue deserialized_from_binary,
+        IntervalValue::DeserializeFromBytes(binary_representation));
+    EXPECT_EQ(deserialized_from_binary, kInterestingIntervals->at(i));
+    // Make sure that serialized IntervalValue matches expected binary
+    // representation. Changes to the serialized IntervalValue format constitute
+    // a breaking change, which can impact engines.
+    EXPECT_EQ(kInterestingIntervals->at(i).SerializeAsBytes(),
+              binary_representation);
   }
 }
 

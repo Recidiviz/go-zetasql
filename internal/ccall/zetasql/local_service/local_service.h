@@ -128,6 +128,9 @@ class ZetaSqlLocalServiceImpl {
   absl::Status FormatSql(const FormatSqlRequest& request,
                          FormatSqlResponse* response);
 
+  absl::Status LenientFormatSql(const FormatSqlRequest& request,
+                                FormatSqlResponse* response);
+
   absl::Status RegisterCatalog(const RegisterCatalogRequest& request,
                                RegisterResponse* response);
 
@@ -210,7 +213,7 @@ class ZetaSqlLocalServiceImpl {
   absl::Status EvaluateImpl(
       const RequestT& request,
       const google::protobuf::Map<std::string, TableContent>& tables_contents,
-      absl::optional<int64_t>& prepared_statement_id_opt,
+      std::optional<int64_t>& prepared_statement_id_opt,
       SharedStatePool<InternalStateT>& prepared_statements_pool,
       absl::string_view statement_type, ResponseT* response);
 
@@ -227,7 +230,7 @@ class ZetaSqlLocalServiceImpl {
   void CleanupDescriptorPools(
       absl::flat_hash_set<int64_t>* descriptor_pool_ids);
 
-  void CleanupCatalog(absl::optional<int64_t>* catalog_id);
+  void CleanupCatalog(std::optional<int64_t>* catalog_id);
 
   // For testing.
   size_t NumRegisteredDescriptorPools() const;

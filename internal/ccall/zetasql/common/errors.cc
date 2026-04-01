@@ -16,6 +16,8 @@
 
 #include "zetasql/common/errors.h"
 
+#include <string>
+
 #include "zetasql/base/logging.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/public/error_helpers.h"
@@ -62,7 +64,7 @@ ErrorSource MakeErrorSource(const absl::Status& status, const std::string& text,
 }
 
 // Returns ErrorSources from <status>, if present.
-const absl::optional<::google::protobuf::RepeatedPtrField<ErrorSource>> GetErrorSources(
+const std::optional<::google::protobuf::RepeatedPtrField<ErrorSource>> GetErrorSources(
     const absl::Status& status) {
   if (internal::HasPayloadWithType<ErrorLocation>(status)) {
     // Sanity check that an OK status does not have a payload.

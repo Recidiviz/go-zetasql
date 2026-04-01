@@ -17,6 +17,7 @@
 #include <math.h>
 
 #include <cstdint>
+#include <functional>
 #include <limits>
 #include <map>
 #include <utility>
@@ -29,8 +30,7 @@
 #include "zetasql/public/value.h"
 #include "zetasql/testing/test_function.h"
 #include "zetasql/testing/test_value.h"
-#include "zetasql/testing/using_test_value.cc"
-#include <cstdint>
+#include "zetasql/testing/using_test_value.cc"  // NOLINT
 #include "absl/status/statusor.h"
 #include "zetasql/base/status.h"
 
@@ -1462,45 +1462,45 @@ std::vector<FunctionTestCall> GetFunctionTestsMath() {
 
       // POW and POWER are synonymous.
       {"power", {NullDouble(), NullDouble()}, NullDouble()},
-      {"pow",   {NullDouble(), 0.0}, NullDouble()},
+      {"pow", {NullDouble(), 0.0}, NullDouble()},
       {"power", {0.0, NullDouble()}, NullDouble()},
-      {"pow",   {2.0, 2.0}, 4.0},
+      {"pow", {2.0, 2.0}, 4.0},
       {"power", {64.0, 0.5}, 8.0},
 
-      {"pow",   {-1.0, 2.0}, 1.0},
+      {"pow", {-1.0, 2.0}, 1.0},
       {"power", {-1.0, 1.0}, -1.0},
-      {"pow",   {-1.0, -2.0}, 1.0},
+      {"pow", {-1.0, -2.0}, 1.0},
       {"power", {-1.0, -1.0}, -1.0},
-      {"pow",   {-1.0, 0.5}, NullDouble(), OUT_OF_RANGE},
+      {"pow", {-1.0, 0.5}, NullDouble(), OUT_OF_RANGE},
 
       {"power", {0.0, 0.0}, 1.0},
-      {"pow",   {0.0, -0.1}, NullDouble(), OUT_OF_RANGE},
+      {"pow", {0.0, -0.1}, NullDouble(), OUT_OF_RANGE},
       {"power", {0.0, double_neg_inf}, double_pos_inf},
-      {"pow",   {0.0, 0.1}, 0.0},
+      {"pow", {0.0, 0.1}, 0.0},
 
       {"power", {2.0, -1075.0}, 0.0},
-      {"pow",   {2.0, 1024.0}, NullDouble(), OUT_OF_RANGE},
+      {"pow", {2.0, 1024.0}, NullDouble(), OUT_OF_RANGE},
       {"power", {2.0, 1023.0}, ldexp(1.0, 1023)},
 
-      {"pow",   {1.0, double_nan}, 1.0},
+      {"pow", {1.0, double_nan}, 1.0},
       {"power", {1.0, double_pos_inf}, 1.0},
-      {"pow",   {1.0, 0.0}, 1.0},
+      {"pow", {1.0, 0.0}, 1.0},
       {"power", {double_nan, 0.0}, 1.0},
-      {"pow",   {double_pos_inf, 0.0}, 1.0},
+      {"pow", {double_pos_inf, 0.0}, 1.0},
       {"power", {-1.0, double_pos_inf}, 1.0},
-      {"pow",   {-1.0, double_neg_inf}, 1.0},
+      {"pow", {-1.0, double_neg_inf}, 1.0},
       {"power", {1 - (1e-10), double_neg_inf}, double_pos_inf},
-      {"pow",   {1 + (1e-10), double_neg_inf}, 0.0},
+      {"pow", {1 + (1e-10), double_neg_inf}, 0.0},
       {"power", {1 - (1e-10), double_pos_inf}, 0.0},
-      {"pow",   {1 + (1e-10), double_pos_inf}, double_pos_inf},
+      {"pow", {1 + (1e-10), double_pos_inf}, double_pos_inf},
       {"power", {double_neg_inf, -0.1}, 0.0},
-      {"pow",   {double_neg_inf, 0.1}, double_pos_inf},
+      {"pow", {double_neg_inf, 0.1}, double_pos_inf},
       {"power", {double_neg_inf, 1.0}, double_neg_inf},
-      {"pow",   {double_neg_inf, 2.0}, double_pos_inf},
+      {"pow", {double_neg_inf, 2.0}, double_pos_inf},
       {"power", {double_pos_inf, -0.1}, 0.0},
-      {"pow",   {double_pos_inf, 0.1}, double_pos_inf},
+      {"pow", {double_pos_inf, 0.1}, double_pos_inf},
       {"power", {double_pos_inf, 1.0}, double_pos_inf},
-      {"pow",   {double_pos_inf, 2.0}, double_pos_inf},
+      {"pow", {double_pos_inf, 2.0}, double_pos_inf},
 
       {"exp", {NullDouble()}, NullDouble()},
       {"exp", {0.0}, 1.0},
@@ -1967,334 +1967,263 @@ std::vector<FunctionTestCall> GetFunctionTestsMath() {
   return all_tests;
 }
 
-std::vector<FunctionTestCall> GetFunctionTestsRounding() {
+std::vector<FunctionTestCall> GetFunctionTestsCbrt() {
   std::vector<FunctionTestCall> all_tests = {
-      {"round", {NullDouble()}, NullDouble()},
-      {"round", {0.0f}, 0.0f},
-      {"round", {2.0f}, 2.0f},
-      {"round", {2.3f}, 2.0f},
-      {"round", {2.8f}, 3.0f},
-      {"round", {2.5f}, 3.0f},
-      {"round", {-2.3f}, -2.0f},
-      {"round", {-2.8f}, -3.0f},
-      {"round", {-2.5f}, -3.0f},
-      {"round", {1e-2f}, 0.0f},
-      {"round", {1e38f}, 1e38f},
-
-      {"round", {0.0}, 0.0},
-      {"round", {2.0}, 2.0},
-      {"round", {2.3}, 2.0},
-      {"round", {2.8}, 3.0},
-      {"round", {2.5}, 3.0},
-      {"round", {-2.3}, -2.0},
-      {"round", {-2.8}, -3.0},
-      {"round", {-2.5}, -3.0},
-      {"round", {1e-2}, 0.0},
-      {"round", {1e300}, 1e300},
-
-      // round(x, n)
-      {"round", {NullDouble(), NullInt64()}, NullDouble()},
-      {"round", {NullDouble(), 0ll}, NullDouble()},
-      {"round", {0.0, NullInt64()}, NullDouble()},
-      {"round", {3.1415925f, 2ll}, 3.14f},
-      {"round", {3.1415925f, 3ll}, 3.142f},
-      {"round", {314159.25f, -3ll}, 314000.0f},
-      {"round", {314159.25f, -2ll}, 314200.0f},
-      {"round", {3.4028234e38f, -35ll}, NullFloat(), OUT_OF_RANGE},
-      {"round", {3.4028234e38f, -38ll}, 3.0e38f},
-      {"round", {3.4028234e38f, -39ll}, 0.0f},
-      {"round", {1.4e-45f, 45ll}, 1.4e-45f},
-      {"round", {1.4e-45f, 44ll}, 0.0f},
-      {"round", {1.4e-45f, 43ll}, 0.0f},
-      {"round", {5.88e-39f, 39ll}, 6.0e-39f},
-      {"round", {5.88e-39f, 40ll}, 5.9e-39f},
-      {"round", {1.0f, 400ll}, 1.0f},
-      {"round", {1.0f, -400ll}, 0.0f},
-      {"round", {3.1415925f, int64max}, 3.1415925f},
-      {"round", {3.1415925f, int64min}, 0.0f},
-      {"round", {float_pos_inf, 0ll}, float_pos_inf},
-      {"round", {float_neg_inf, 0ll}, float_neg_inf},
-      {"round", {float_nan, 0ll}, float_nan},
-
-      {"round", {3.1415925, 2ll}, 3.14},
-      {"round", {3.1415925, 3ll}, 3.142},
-      {"round", {314159.25, -3ll}, 314000.0},
-      {"round", {314159.25, -2ll}, 314200.0},
-      {"round", {1.6e308, -308ll}, NullDouble(), OUT_OF_RANGE},
-      {"round", {1.6e308, -309ll}, 0.0},
-      {"round", {1.6e308, 308ll}, 1.6e308},
-      {"round", {4.94e-324, 324ll}, 4.94e-324, kOneUlp},
-      {"round", {4.94e-324, 323ll}, 0.0, kOneUlp},
-      {"round", {1.1125369292536007e-308, 308ll}, 1.0e-308, kOneUlp},
-
-      // On platforms where long double is the same type as double when rounding
-      // subnormal numbers precision is allowed to be worse than one ULP.
-      // Computing exact value is hard there because 10^(-digits) cannot be
-      // represented with the same relative error.
-      {"round", {1.1125369292536007e-308, 311ll}, 1.113e-308, kApproximate},
-
-      {"round", {1.0, 40000ll}, 1.0},
-      {"round", {1.0, -40000ll}, 0.0},
-      {"round", {3.1415925, int64max}, 3.1415925},
-      {"round", {3.1415925, int64min}, 0.0},
-      {"round", {double_pos_inf, 0ll}, double_pos_inf},
-      {"round", {double_neg_inf, 0ll}, double_neg_inf},
-      {"round", {double_nan, 0ll}, double_nan},
-
-      {"trunc", {NullDouble()}, NullDouble()},
-      {"trunc", {0.0f}, 0.0f},
-      {"trunc", {2.0f}, 2.0f},
-      {"trunc", {2.3f}, 2.0f},
-      {"trunc", {2.8f}, 2.0f},
-      {"trunc", {2.5f}, 2.0f},
-      {"trunc", {-2.3f}, -2.0f},
-      {"trunc", {-2.8f}, -2.0f},
-      {"trunc", {-2.5f}, -2.0f},
-      {"trunc", {1e-2f}, 0.0f},
-      {"trunc", {1e38f}, 1e38f},
-
-      {"trunc", {0.0}, 0.0},
-      {"trunc", {2.0}, 2.0},
-      {"trunc", {2.3}, 2.0},
-      {"trunc", {2.8}, 2.0},
-      {"trunc", {2.5}, 2.0},
-      {"trunc", {-2.3}, -2.0},
-      {"trunc", {-2.8}, -2.0},
-      {"trunc", {-2.5}, -2.0},
-      {"trunc", {1e-2}, 0.0},
-      {"trunc", {1e300}, 1e300},
-
-      {"trunc", {3.1415925f, 2ll}, 3.14f},
-      {"trunc", {3.1415925f, 3ll}, 3.141f},
-      {"trunc", {314159.25f, -3ll}, 314000.0f},
-      {"trunc", {314159.25f, -2ll}, 314100.0f},
-      {"trunc", {3.4028234e38f, -35ll}, 3.402e38f},
-      {"trunc", {3.4028234e38f, -38ll}, 3.0e38f},
-      {"trunc", {3.4028234e38f, -39ll}, 0.0f},
-      {"trunc", {1.4e-45f, 45ll}, 1.4e-45f},
-      {"trunc", {1.4e-45f, 44ll}, 0.0f},
-      {"trunc", {5.88e-39f, 39ll}, 5.0e-39f},
-      {"trunc", {5.88e-39f, 40ll}, 5.8e-39f},
-      {"trunc", {1.0f, 400ll}, 1.0f},
-      {"trunc", {1.0f, -400ll}, 0.0f},
-      {"trunc", {3.1415925f, int64max}, 3.1415925f},
-      {"trunc", {3.1415925f, int64min}, 0.0f},
-      {"trunc", {float_pos_inf, 0ll}, float_pos_inf},
-      {"trunc", {float_neg_inf, 0ll}, float_neg_inf},
-      {"trunc", {float_nan, 0ll}, float_nan},
-
-      {"trunc", {3.1415925, 2ll}, 3.14},
-      {"trunc", {3.1415925, 3ll}, 3.141},
-      {"trunc", {314159.25, -3ll}, 314000.0},
-      {"trunc", {314159.25, -2ll}, 314100.0},
-      {"trunc", {1.6e308, -308ll}, 1.0e308},
-      {"trunc", {1.6e308, -309ll}, 0.0},
-      {"trunc", {1.6e308, 308ll}, 1.6e308},
-      {"trunc", {4.94e-324, 324ll}, 4.94e-324},
-      {"trunc", {4.94e-324, 323ll}, 0.0},
-      {"trunc", {1.1125369292536007e-308, 308ll}, 1.0e-308, kOneUlp},
-
-      // On platforms where long double is the same type as double when rounding
-      // subnormal numbers precision is allowed to be worse than one ULP.
-      // Computing exact value is hard there because 10^(-digits) cannot be
-      // represented with the same relative error.
-      {"trunc", {1.1125369292536007e-308, 311ll}, 1.112e-308, kApproximate},
-
-      {"trunc", {1.0, 40000ll}, 1.0},
-      {"trunc", {1.0, -40000ll}, 0.0},
-      {"trunc", {3.1415925, int64max}, 3.1415925},
-      {"trunc", {3.1415925, int64min}, 0.0},
-      {"trunc", {double_pos_inf, 0ll}, double_pos_inf},
-      {"trunc", {double_neg_inf, 0ll}, double_neg_inf},
-      {"trunc", {double_nan, 0ll}, double_nan},
-
-      // CEIL and CEILING are synonymous.
-      {"ceil", {NullDouble()}, NullDouble()},
-      {"ceiling", {0.0f}, 0.0f},
-      {"ceil", {2.0f}, 2.0f},
-      {"ceiling", {2.3f}, 3.0f},
-      {"ceil", {2.8f}, 3.0f},
-      {"ceiling", {2.5f}, 3.0f},
-      {"ceil", {-2.3f}, -2.0f},
-      {"ceiling", {-2.8f}, -2.0f},
-      {"ceil", {-2.5f}, -2.0f},
-      {"ceiling", {1e-2f}, 1.0f},
-      {"ceil", {1e38f}, 1e38f},
-
-      {"ceiling", {0.0}, 0.0},
-      {"ceil", {2.0}, 2.0},
-      {"ceiling", {2.3}, 3.0},
-      {"ceil", {2.8}, 3.0},
-      {"ceiling", {2.5}, 3.0},
-      {"ceil", {-2.3}, -2.0},
-      {"ceiling", {-2.8}, -2.0},
-      {"ceil", {-2.5}, -2.0},
-      {"ceiling", {1e-2}, 1.0},
-      {"ceil", {1e300}, 1e300},
-
-      {"floor", {NullDouble()}, NullDouble()},
-      {"floor", {0.0f}, 0.0f},
-      {"floor", {2.0f}, 2.0f},
-      {"floor", {2.3f}, 2.0f},
-      {"floor", {2.8f}, 2.0f},
-      {"floor", {2.5f}, 2.0f},
-      {"floor", {-2.3f}, -3.0f},
-      {"floor", {-2.8f}, -3.0f},
-      {"floor", {-2.5f}, -3.0f},
-      {"floor", {1e-2f}, 0.0f},
-      {"floor", {1e38f}, 1e38f},
-
-      {"floor", {0.0}, 0.0},
-      {"floor", {2.0}, 2.0},
-      {"floor", {2.3}, 2.0},
-      {"floor", {2.8}, 2.0},
-      {"floor", {2.5}, 2.0},
-      {"floor", {-2.3}, -3.0},
-      {"floor", {-2.8}, -3.0},
-      {"floor", {-2.5}, -3.0},
-      {"floor", {1e-2}, 0.0},
-      {"floor", {1e300}, 1e300},
+      {"cbrt", {NullDouble()}, NullDouble()},
+      {"cbrt", {0.0}, 0.0},
+      {"cbrt", {1.0}, 1.0},
+      {"cbrt", {0.008}, 0.2},
+      {"cbrt", {64.0}, 4.0},
+      {"cbrt", {-1.0}, -1.0},
+      {"cbrt", {-1000.0}, -10.0},
+      {"cbrt", {double_nan}, double_nan},
+      {"cbrt", {double_pos_inf}, double_pos_inf},
+      {"cbrt", {double_neg_inf}, double_neg_inf},
   };
 
   std::vector<FunctionTestCall> numeric_tests = {
-      {"round", {NullNumeric()}, NullNumeric()},
-      {"round", {NumericValue()}, NumericValue()},
-      {"round", {NumericValue(2LL)}, NumericValue(2LL)},
-      {"round",
-       {NumericValue::FromString("2.3").value()},
-       NumericValue::FromString("2.0").value()},
-      {"round",
-       {NumericValue::FromString("2.8").value()},
-       NumericValue::FromString("3.0").value()},
-      {"round",
-       {NumericValue::FromString("2.5").value()},
-       NumericValue::FromString("3.0").value()},
-      {"round",
-       {NumericValue::FromString("-2.3").value()},
-       NumericValue::FromString("-2.0").value()},
-      {"round",
-       {NumericValue::FromString("-2.8").value()},
-       NumericValue::FromString("-3.0").value()},
-      {"round",
-       {NumericValue::FromString("-2.5").value()},
-       NumericValue::FromString("-3.0").value()},
-      {"round", {NumericValue::FromString("1e-2").value()}, NumericValue()},
-      {"round", {NumericValue::MaxValue()}, NullNumeric(), OUT_OF_RANGE},
-      {"round", {NumericValue::MinValue()}, NullNumeric(), OUT_OF_RANGE},
-
-      {"round", {NullNumeric(), NullInt64()}, NullNumeric()},
-      {"round", {NullNumeric(), 0ll}, NullNumeric()},
-      {"round", {NumericValue(), NullInt64()}, NullNumeric()},
-      {"round",
-       {NumericValue::FromString("3.1415925").value(), 2ll},
-       NumericValue::FromString("3.14").value()},
-      {"round",
-       {NumericValue::FromString("3.1415925").value(), 3ll},
-       NumericValue::FromString("3.142").value()},
-      {"round",
-       {NumericValue::FromString("314159.25").value(), -3ll},
-       NumericValue::FromString("314000").value()},
-      {"round",
-       {NumericValue::FromString("314159.25").value(), -2ll},
-       NumericValue::FromString("314200").value()},
-      {"round",
-       {NumericValue::FromString("3.4028234").value(), -39ll},
-       NumericValue()},
-      {"round",
-       {NumericValue::FromString("3.1415925").value(), 10ll},
-       NumericValue::FromString("3.1415925").value()},
-      {"round", {NumericValue::MaxValue(), -1ll}, NullNumeric(), OUT_OF_RANGE},
-      {"round", {NumericValue::MaxValue(), 0ll}, NullNumeric(), OUT_OF_RANGE},
-      {"round", {NumericValue::MaxValue(), 1ll}, NullNumeric(), OUT_OF_RANGE},
-      {"round", {NumericValue::MinValue(), -1ll}, NullNumeric(), OUT_OF_RANGE},
-      {"round", {NumericValue::MinValue(), 0ll}, NullNumeric(), OUT_OF_RANGE},
-      {"round", {NumericValue::MinValue(), 1ll}, NullNumeric(), OUT_OF_RANGE},
-
-      {"trunc", {NullNumeric()}, NullNumeric()},
-      {"trunc", {NumericValue()}, NumericValue()},
-      {"trunc", {NumericValue(2ll)}, NumericValue(2ll)},
-      {"trunc", {NumericValue::FromString("2.3").value()}, NumericValue(2ll)},
-      {"trunc", {NumericValue::FromString("2.8").value()}, NumericValue(2ll)},
-      {"trunc", {NumericValue::FromString("2.5").value()}, NumericValue(2ll)},
-      {"trunc", {NumericValue::FromString("-2.3").value()}, NumericValue(-2ll)},
-      {"trunc", {NumericValue::FromString("-2.8").value()}, NumericValue(-2ll)},
-      {"trunc", {NumericValue::FromString("-2.5").value()}, NumericValue(-2ll)},
-      {"trunc", {NumericValue::FromString("0.001").value()}, NumericValue()},
-      {"trunc",
+      {"cbrt",
+       {NumericValue::FromString("0.125").value()},
+       NumericValue::FromString("0.5").value()},
+      {"cbrt",
+       {NumericValue::FromString("-0.125").value()},
+       NumericValue::FromString("-0.5").value()},
+      {"cbrt", {NumericValue(216)}, NumericValue(6)},
+      {"cbrt", {NumericValue(-216)}, NumericValue(-6)},
+      {"cbrt",
+       {NumericValue::FromString("1e-9").value()},
+       NumericValue::FromString("1e-3").value()},
+      {"cbrt",
+       {NumericValue::FromString("64e27").value()},
+       NumericValue::FromString("4e9").value()},
+      {"cbrt",
        {NumericValue::MaxValue()},
-       NumericValue::FromString("99999999999999999999999999999").value()},
-      {"trunc",
+       NumericValue::FromString("4641588833.612778892").value()},
+      {"cbrt",
        {NumericValue::MinValue()},
-       NumericValue::FromString("-99999999999999999999999999999").value()},
+       NumericValue::FromString("-4641588833.612778892").value()},
+  };
 
-      {"trunc",
-       {NumericValue::FromString("3.1415925").value(), 2ll},
-       NumericValue::FromString("3.14").value()},
-      {"trunc",
-       {NumericValue::FromString("3.1415925").value(), 3ll},
-       NumericValue::FromString("3.141").value()},
-      {"trunc",
-       {NumericValue::FromString("314159.25").value(), -3ll},
-       NumericValue::FromString("314000").value()},
-      {"trunc",
-       {NumericValue::FromString("314159.25").value(), -2ll},
-       NumericValue::FromString("314100").value()},
-      {"trunc",
-       {NumericValue::FromString("3.4028234").value(), -39ll},
-       NumericValue()},
-      {"trunc",
-       {NumericValue::FromString("0.0001").value(), 10ll},
-       NumericValue::FromString("0.0001").value()},
-      {"trunc",
-       {NumericValue::MaxValue(), -1ll},
-       NumericValue::FromString("99999999999999999999999999990").value()},
-      {"trunc",
-       {NumericValue::MaxValue(), 0ll},
-       NumericValue::FromString("99999999999999999999999999999").value()},
-      {"trunc",
-       {NumericValue::MaxValue(), 1ll},
-       NumericValue::FromString("99999999999999999999999999999.9").value()},
-      {"trunc",
-       {NumericValue::MinValue(), -1ll},
-       NumericValue::FromString("-99999999999999999999999999990").value()},
-      {"trunc",
-       {NumericValue::MinValue(), 0ll},
-       NumericValue::FromString("-99999999999999999999999999999").value()},
-      {"trunc",
-       {NumericValue::MinValue(), 1ll},
-       NumericValue::FromString("-99999999999999999999999999999.9").value()},
+  all_tests.reserve(numeric_tests.size());
+  for (const auto& test_case : numeric_tests) {
+    all_tests.emplace_back(test_case);
+  }
 
-      {"ceil", {NullNumeric()}, NullNumeric()},
-      {"ceiling", {NumericValue()}, NumericValue()},
-      {"ceil", {NumericValue(2LL)}, NumericValue(2LL)},
-      {"ceiling", {NumericValue::FromString("2.3").value()}, NumericValue(3LL)},
-      {"ceil", {NumericValue::FromString("2.8").value()}, NumericValue(3LL)},
-      {"ceiling", {NumericValue::FromString("2.5").value()}, NumericValue(3LL)},
-      {"ceil", {NumericValue::FromString("-2.3").value()}, NumericValue(-2LL)},
-      {"ceiling",
-       {NumericValue::FromString("-2.8").value()},
-       NumericValue(-2LL)},
-      {"ceil", {NumericValue::FromString("-2.5").value()}, NumericValue(-2LL)},
-      {"ceiling",
-       {NumericValue::FromString("0.001").value()},
-       NumericValue(1LL)},
-      {"ceiling", {NumericValue::FromString("-0.001").value()}, NumericValue()},
-      {"ceil", {NumericValue::MaxValue()}, NullNumeric(), OUT_OF_RANGE},
-      {"ceiling", {NumericValue::MaxValue()}, NullNumeric(), OUT_OF_RANGE},
+  std::vector<FunctionTestCall> bignumeric_tests = {
+      {"cbrt", {BigNumericValue()}, BigNumericValue()},
+      {"cbrt", {BigNumericValue(0)}, BigNumericValue(0)},
+      {"cbrt", {BigNumericValue(1)}, BigNumericValue(1)},
+      {"cbrt", {BigNumericValue(-1)}, BigNumericValue(-1)},
+      {"cbrt",
+       {BigNumericValue::FromString("0.125").value()},
+       BigNumericValue::FromString("0.5").value()},
+      {"cbrt",
+       {BigNumericValue::FromString("-0.125").value()},
+       BigNumericValue::FromString("-0.5").value()},
+      {"cbrt", {BigNumericValue(216)}, BigNumericValue(6)},
+      {"cbrt", {BigNumericValue(-216)}, BigNumericValue(-6)},
+      {"cbrt",
+       {BigNumericValue::FromString("1e-36").value()},
+       BigNumericValue::FromString("1e-12").value()},
+      {"cbrt",
+       {BigNumericValue::FromString("64e36").value()},
+       BigNumericValue::FromString("4e12").value()},
+      {"cbrt",
+       {BigNumericValue::MaxValue()},
+       BigNumericValue::FromString(
+           "8334565515049.55065578647965760880872812752814461188")
+           .value()},
+      {"cbrt",
+       {BigNumericValue::MinValue()},
+       BigNumericValue::FromString(
+           "-8334565515049.55065578647965760880872812752814461188")
+           .value()},
+  };
 
-      {"floor", {NullNumeric()}, NullNumeric()},
-      {"floor", {NumericValue()}, NumericValue()},
-      {"floor", {NumericValue(2LL)}, NumericValue(2LL)},
-      {"floor", {NumericValue::FromString("2.3").value()}, NumericValue(2LL)},
-      {"floor", {NumericValue::FromString("2.8").value()}, NumericValue(2LL)},
-      {"floor", {NumericValue::FromString("2.5").value()}, NumericValue(2LL)},
-      {"floor", {NumericValue::FromString("-2.3").value()}, NumericValue(-3LL)},
-      {"floor", {NumericValue::FromString("-2.8").value()}, NumericValue(-3LL)},
-      {"floor", {NumericValue::FromString("-2.5").value()}, NumericValue(-3LL)},
-      {"floor", {NumericValue::FromString("0.001").value()}, NumericValue()},
-      {"floor",
-       {NumericValue::FromString("-0.001").value()},
-       NumericValue(-1LL)},
+  all_tests.reserve(bignumeric_tests.size());
+  for (const auto& test_case : bignumeric_tests) {
+    all_tests.emplace_back(test_case);
+  }
+
+  return all_tests;
+}
+
+std::vector<FunctionTestCall> GetFunctionTestsDegreesRadiansPi() {
+  // The tests for RADIANS, and DEGREES (and later CBRT)
+  // NOTE: Some of the Numeric and BigNumeric tests' expected values are
+  // multiples of PI, but shifted by a small amount to account for the numerical
+  // error introduced along the way
+  std::vector<FunctionTestCall> all_tests = {
+      // RADIANS
+      // Exceptional cases
+      {"radians", {NullDouble()}, NullDouble()},
+      {"radians", {double_nan}, double_nan},
+      {"radians", {double_pos_inf}, double_pos_inf},
+      {"radians", {double_neg_inf}, double_neg_inf},
+      // Common cases
+      {"radians", {0.0}, 0.0},
+      {"radians", {45.0}, M_PI_4, kApproximate},
+      {"radians", {90.0}, M_PI_2, kApproximate},
+      {"radians", {135.0}, 3 * M_PI_4, kApproximate},
+      {"radians", {180.0}, M_PI, kApproximate},
+      {"radians", {225.0}, 5 * M_PI_4, kApproximate},
+      {"radians", {270.0}, 3 * M_PI_2, kApproximate},
+      {"radians", {315.0}, 7 * M_PI_4, kApproximate},
+      {"radians", {360.0}, 2 * M_PI, kApproximate},
+      {"radians", {-45.0}, -M_PI_4, kApproximate},
+      {"radians", {-90.0}, -M_PI_2, kApproximate},
+      {"radians", {-135.0}, -3 * M_PI_4, kApproximate},
+      {"radians", {-180.0}, -M_PI, kApproximate},
+      {"radians", {-225.0}, -5 * M_PI_4, kApproximate},
+      {"radians", {-270.0}, -3 * M_PI_2, kApproximate},
+      {"radians", {-315.0}, -7 * M_PI_4, kApproximate},
+      {"radians", {-360.0}, -2 * M_PI, kApproximate},
+
+      // DEGREES
+      // Exceptional cases
+      {"degrees", {NullDouble()}, NullDouble()},
+      {"degrees", {double_nan}, double_nan},
+      {"degrees", {double_pos_inf}, double_pos_inf},
+      {"degrees", {double_neg_inf}, double_neg_inf},
+      // Common cases
+      {"degrees", {0.0}, 0.0},
+      {"degrees", {M_PI_4}, 45.0, kApproximate},
+      {"degrees", {M_PI_2}, 90.0, kApproximate},
+      {"degrees", {3 * M_PI_4}, 135.0, kApproximate},
+      {"degrees", {M_PI}, 180.0, kApproximate},
+      {"degrees", {5 * M_PI_4}, 225.0, kApproximate},
+      {"degrees", {3 * M_PI_2}, 270.0, kApproximate},
+      {"degrees", {7 * M_PI_4}, 315.0, kApproximate},
+      {"degrees", {2 * M_PI}, 360.0, kApproximate},
+      {"degrees", {-M_PI_4}, -45.0, kApproximate},
+      {"degrees", {-M_PI_2}, -90.0, kApproximate},
+      {"degrees", {-3 * M_PI_4}, -135.0, kApproximate},
+      {"degrees", {-M_PI}, -180.0, kApproximate},
+      {"degrees", {-5 * M_PI_4}, -225.0, kApproximate},
+      {"degrees", {-3 * M_PI_2}, -270.0, kApproximate},
+      {"degrees", {-7 * M_PI_4}, -315.0, kApproximate},
+      {"degrees", {-2 * M_PI}, -360.0, kApproximate},
+  };
+
+  std::vector<FunctionTestCall> numeric_tests = {
+      // RADIANS
+      // Exceptional cases
+      {"radians", {NullNumeric()}, NullNumeric()},
+      {"radians",
+       {NumericValue::MinValue()},
+       NumericValue::FromString("-1745329251994329576923690768.488612713")
+           .value()},
+      {"radians",
+       {NumericValue::MaxValue()},
+       NumericValue::FromString("1745329251994329576923690768.488612713")
+           .value()},
+      {"radians",
+       {NumericValue::FromScaledValue(1)},
+       NumericValue::FromString("0.0").value()},
+      {"radians",
+       {NumericValue::FromString("18000000000000000000000000000").value()},
+       NumericValue::FromString("314159265358979323846264338.327950288")
+           .value()},
+
+      // Common cases
+      {"radians",
+       {NumericValue::FromString("0.0").value()},
+       NumericValue::FromString("0.0").value()},
+      {"radians",
+       {NumericValue::FromString("90.0").value()},
+       NumericValue::FromString("1.570796327").value()},
+      {"radians",
+       {NumericValue::FromString("180.0").value()},
+       NumericValue::FromString("3.141592654").value()},
+      {"radians",
+       {NumericValue::FromString("270.0").value()},
+       NumericValue::FromString("4.71238898").value()},
+      {"radians",
+       {NumericValue::FromString("360.0").value()},
+       NumericValue::FromString("6.283185307").value()},
+      {"radians",
+       {NumericValue::FromString("-90.0").value()},
+       NumericValue::FromString("-1.570796327").value()},
+      {"radians",
+       {NumericValue::FromString("-180.0").value()},
+       NumericValue::FromString("-3.141592654").value()},
+      {"radians",
+       {NumericValue::FromString("-270.0").value()},
+       NumericValue::FromString("-4.71238898").value()},
+      {"radians",
+       {NumericValue::FromString("-360.0").value()},
+       NumericValue::FromString("-6.283185307").value()},
+      {"radians",
+       {NumericValue::MaxValue()},
+       NumericValue::FromString("1745329251994329576923690768.488612713")
+           .value()},
+      {"radians",
+       {NumericValue::MinValue()},
+       NumericValue::FromString("-1745329251994329576923690768.488612713")
+           .value()},
+
+      // DEGREES
+      // Exceptional cases
+      {"degrees", {NullNumeric()}, NullNumeric()},
+      {"degrees",
+       {NumericValue::FromString("1745329251994329576923690768.488612713")
+            .value()},
+       NumericValue::FromString("99999999999999999999999999999.999999975")
+           .value()},
+      {"degrees",
+       {NumericValue::FromString("1745329251994329576923690768.488612714")
+            .value()},
+       NullNumeric(),
+       OUT_OF_RANGE},
+      {"degrees",
+       {NumericValue::FromString("-1745329251994329576923690768.488612713")
+            .value()},
+       NumericValue::FromString("-99999999999999999999999999999.999999975")
+           .value()},
+      {"degrees",
+       {NumericValue::FromString("-1745329251994329576923690768.488612714")
+            .value()},
+       NullNumeric(),
+       OUT_OF_RANGE},
+      {"degrees",
+       {NumericValue::FromScaledValue(1)},
+       NumericValue::FromString("0.000000057").value()},
+
+      {"degrees",
+       {NumericValue::FromString("314159265358979323846264338.327950288")
+            .value()},
+       NumericValue::FromString("17999999999999999999999999999.999999976")
+           .value()},
+
+      // Common cases
+      {"degrees",
+       {NumericValue::FromString("0.0").value()},
+       NumericValue::FromString("0.0").value()},
+      {"degrees",
+       {NumericValue::FromDouble(M_PI_2).value()},
+       NumericValue::FromString("90.000000012").value()},
+      {"degrees",
+       {NumericValue::FromDouble(M_PI).value()},
+       NumericValue::FromString("180.000000024").value()},
+      {"degrees",
+       {NumericValue::FromDouble(3 * M_PI_2).value()},
+       NumericValue::FromString("269.999999978").value()},
+      {"degrees",
+       {NumericValue::FromDouble(2 * M_PI).value()},
+       NumericValue::FromString("359.99999999").value()},
+
+      {"degrees",
+       {NumericValue::FromDouble(-M_PI_2).value()},
+       NumericValue::FromString("-90.000000012").value()},
+      {"degrees",
+       {NumericValue::FromDouble(-M_PI).value()},
+       NumericValue::FromString("-180.000000024").value()},
+      {"degrees",
+       {NumericValue::FromDouble(-3 * M_PI_2).value()},
+       NumericValue::FromString("-269.999999978").value()},
+      {"degrees",
+       {NumericValue::FromDouble(-2 * M_PI).value()},
+       NumericValue::FromString("-359.99999999").value()},
   };
 
   for (const auto& test_case : numeric_tests) {
@@ -2304,309 +2233,155 @@ std::vector<FunctionTestCall> GetFunctionTestsRounding() {
   }
 
   std::vector<FunctionTestCall> bignumeric_tests = {
-      {"round", {NullBigNumeric()}, NullBigNumeric()},
-      {"round", {BigNumericValue()}, BigNumericValue()},
-      {"round", {BigNumericValue(2)}, BigNumericValue(2)},
-      {"round",
-       {BigNumericValue::FromString("2.3").value()},
-       BigNumericValue::FromString("2.0").value()},
-      {"round",
-       {BigNumericValue::FromString("2.8").value()},
-       BigNumericValue::FromString("3.0").value()},
-      {"round",
-       {BigNumericValue::FromString("2.5").value()},
-       BigNumericValue::FromString("3.0").value()},
-      {"round",
-       {BigNumericValue::FromString("-2.3").value()},
-       BigNumericValue::FromString("-2.0").value()},
-      {"round",
-       {BigNumericValue::FromString("-2.8").value()},
-       BigNumericValue::FromString("-3.0").value()},
-      {"round",
-       {BigNumericValue::FromString("-2.5").value()},
-       BigNumericValue::FromString("-3.0").value()},
-      {"round",
-       {BigNumericValue::FromString("1e-2").value()},
-       BigNumericValue()},
-      {"round",
-       {BigNumericValue::MaxValue()},
-       BigNumericValue::FromString("578960446186580977117854925043439539266")
-           .value()},
-      {"round",
+      // RADIANS
+      // Exceptional cases
+      {"radians", {NullBigNumeric()}, NullBigNumeric()},
+      {"radians",
        {BigNumericValue::MinValue()},
-       BigNumericValue::FromString("-578960446186580977117854925043439539266")
+       BigNumericValue::FromString("-10104766024771286785562081743825829518."
+                                   "14981603689978972107700419772052484628")
            .value()},
-
-      {"round", {NullBigNumeric(), NullInt64()}, NullBigNumeric()},
-      {"round", {NullBigNumeric(), 0ll}, NullBigNumeric()},
-      {"round", {BigNumericValue(), NullInt64()}, NullBigNumeric()},
-      {"round",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        2ll},
-       BigNumericValue::FromString("1.12").value()},
-      {"round",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        3ll},
-       BigNumericValue::FromString("1.123").value()},
-      {"round",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        18ll},
-       BigNumericValue::FromString("1.123456789012345679").value()},
-      {"round",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        19ll},
-       BigNumericValue::FromString("1.1234567890123456789").value()},
-      {"round",
-       {BigNumericValue::FromString("1123456789.01234567890123456789012345678")
-            .value(),
-        -3ll},
-       BigNumericValue::FromString("1123457000").value()},
-      {"round",
-       {BigNumericValue::FromString("1123456789.01234567890123456789012345678")
-            .value(),
-        -2ll},
-       BigNumericValue::FromString("1123456800").value()},
-      {"round",
-       {BigNumericValue::FromString("1123456789.01234567890123456789012345678")
-            .value(),
-        -39ll},
-       BigNumericValue()},
-      {"round",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        40ll},
-       BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-           .value()},
-      {"round",
-       {BigNumericValue::MaxValue(), -1ll},
-       NullBigNumeric(),
-       OUT_OF_RANGE},
-      {"round",
-       {BigNumericValue::MaxValue(), 0ll},
-       BigNumericValue::FromString("578960446186580977117854925043439539266")
-           .value()},
-      {"round",
-       {BigNumericValue::MaxValue(), 1ll},
-       BigNumericValue::FromString("578960446186580977117854925043439539266.3")
-           .value()},
-      {"round",
-       {BigNumericValue::MinValue(), -1ll},
-       NullBigNumeric(),
-       OUT_OF_RANGE},
-      {"round",
-       {BigNumericValue::MinValue(), 0ll},
-       BigNumericValue::FromString("-578960446186580977117854925043439539266")
-           .value()},
-      {"round",
-       {BigNumericValue::MinValue(), 1ll},
-       BigNumericValue::FromString("-578960446186580977117854925043439539266.3")
-           .value()},
-
-      {"trunc", {NullBigNumeric()}, NullBigNumeric()},
-      {"trunc", {BigNumericValue()}, BigNumericValue()},
-      {"trunc", {BigNumericValue(2)}, BigNumericValue(2)},
-      {"trunc",
-       {BigNumericValue::FromString("2.3").value()},
-       BigNumericValue(2)},
-      {"trunc",
-       {BigNumericValue::FromString("2.8").value()},
-       BigNumericValue(2)},
-      {"trunc",
-       {BigNumericValue::FromString("2.5").value()},
-       BigNumericValue(2)},
-      {"trunc",
-       {BigNumericValue::FromString("-2.3").value()},
-       BigNumericValue(-2)},
-      {"trunc",
-       {BigNumericValue::FromString("-2.8").value()},
-       BigNumericValue(-2)},
-      {"trunc",
-       {BigNumericValue::FromString("-2.5").value()},
-       BigNumericValue(-2)},
-      {"trunc",
-       {BigNumericValue::FromString("0.001").value()},
-       BigNumericValue()},
-      {"trunc",
+      {"radians",
        {BigNumericValue::MaxValue()},
-       BigNumericValue::FromString("578960446186580977117854925043439539266")
+       BigNumericValue::FromString("10104766024771286785562081743825829518."
+                                   "14981603689978972107700419772052484628")
            .value()},
-      {"trunc",
-       {BigNumericValue::MinValue()},
-       BigNumericValue::FromString("-578960446186580977117854925043439539266")
+      {"radians",
+       {BigNumericValue::FromScaledValue(1)},
+       BigNumericValue::FromString("0.0").value()},
+      {"radians",
+       {BigNumericValue::FromString("180000000000000000000000000000000000000")
+            .value()},
+       BigNumericValue::FromString("3141592653589793238462643383279502884."
+                                   "19716939937510582097494459230781640629")
            .value()},
 
-      {"trunc",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        2ll},
-       BigNumericValue::FromString("1.12").value()},
-      {"trunc",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        3ll},
-       BigNumericValue::FromString("1.123").value()},
-      {"trunc",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        18ll},
-       BigNumericValue::FromString("1.123456789012345678").value()},
-      {"trunc",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        19ll},
-       BigNumericValue::FromString("1.1234567890123456789").value()},
-      {"trunc",
-       {BigNumericValue::FromString("1123456789.01234567890123456789012345678")
-            .value(),
-        -3ll},
-       BigNumericValue::FromString("1123456000").value()},
-      {"trunc",
-       {BigNumericValue::FromString("1123456789.01234567890123456789012345678")
-            .value(),
-        -2ll},
-       BigNumericValue::FromString("1123456700").value()},
-      {"trunc",
-       {BigNumericValue::FromString("1123456789.01234567890123456789012345678")
-            .value(),
-        -39ll},
-       BigNumericValue()},
-      {"trunc",
-       {BigNumericValue::FromString("1.12345678901234567890123456789012345678")
-            .value(),
-        40ll},
-       BigNumericValue::FromString("1.12345678901234567890123456789012345678")
+      // Common cases
+      {"radians",
+       {BigNumericValue::FromString("0.0").value()},
+       BigNumericValue::FromString("0.0").value()},
+      {"radians",
+       {BigNumericValue::FromString("90.0").value()},
+       BigNumericValue::FromString("1.5707963267948966192313216916397514421")
            .value()},
-      {"trunc",
-       {BigNumericValue::FromString("0.0001").value(), 10ll},
-       BigNumericValue::FromString("0.0001").value()},
-      {"trunc",
-       {BigNumericValue::MaxValue(), -1ll},
-       BigNumericValue::FromString("578960446186580977117854925043439539260")
+      {"radians",
+       {BigNumericValue::FromString("180.0").value()},
+       BigNumericValue::FromString("3.1415926535897932384626433832795028842")
            .value()},
-      {"trunc",
-       {BigNumericValue::MaxValue(), 0ll},
-       BigNumericValue::FromString("578960446186580977117854925043439539266")
+      {"radians",
+       {BigNumericValue::FromString("270.0").value()},
+       BigNumericValue::FromString("4.7123889803846898576939650749192543263")
            .value()},
-      {"trunc",
-       {BigNumericValue::MaxValue(), 1ll},
-       BigNumericValue::FromString("578960446186580977117854925043439539266.3")
+      {"radians",
+       {BigNumericValue::FromString("360.0").value()},
+       BigNumericValue::FromString("6.28318530717958647692528676655900576839")
            .value()},
-      {"trunc",
-       {BigNumericValue::MinValue(), -1ll},
-       BigNumericValue::FromString("-578960446186580977117854925043439539260")
+      {"radians",
+       {BigNumericValue::FromString("-90.0").value()},
+       BigNumericValue::FromString("-1.5707963267948966192313216916397514421")
            .value()},
-      {"trunc",
-       {BigNumericValue::MinValue(), 0ll},
-       BigNumericValue::FromString("-578960446186580977117854925043439539266")
+      {"radians",
+       {BigNumericValue::FromString("-180.0").value()},
+       BigNumericValue::FromString("-3.1415926535897932384626433832795028842")
            .value()},
-      {"trunc",
-       {BigNumericValue::MinValue(), 1ll},
-       BigNumericValue::FromString("-578960446186580977117854925043439539266.3")
+      {"radians",
+       {BigNumericValue::FromString("-270.0").value()},
+       BigNumericValue::FromString("-4.7123889803846898576939650749192543263")
+           .value()},
+      {"radians",
+       {BigNumericValue::FromString("-360.0").value()},
+       BigNumericValue::FromString("-6.28318530717958647692528676655900576839")
            .value()},
 
-      {"ceil", {NullBigNumeric()}, NullBigNumeric()},
-      {"ceiling", {BigNumericValue()}, BigNumericValue()},
-      {"ceil", {BigNumericValue(2)}, BigNumericValue(2)},
-      {"ceiling",
-       {BigNumericValue::FromString("2.3").value()},
-       BigNumericValue(3)},
-      {"ceil",
-       {BigNumericValue::FromString("2.8").value()},
-       BigNumericValue(3)},
-      {"ceiling",
-       {BigNumericValue::FromString("2.5").value()},
-       BigNumericValue(3)},
-      {"ceil",
-       {BigNumericValue::FromString("-2.3").value()},
-       BigNumericValue(-2)},
-      {"ceiling",
-       {BigNumericValue::FromString("-2.8").value()},
-       BigNumericValue(-2)},
-      {"ceil",
-       {BigNumericValue::FromString("-2.5").value()},
-       BigNumericValue(-2)},
-      {"ceiling",
-       {BigNumericValue::FromString("0.001").value()},
-       BigNumericValue(1)},
-      {"ceiling",
-       {BigNumericValue::FromString("1e-38").value()},
-       BigNumericValue(1)},
-      {"ceiling",
-       {BigNumericValue::FromString("-0.001").value()},
-       BigNumericValue()},
-      {"ceiling",
-       {BigNumericValue::FromString("-1e-38").value()},
-       BigNumericValue()},
-      {"ceil",
-       {BigNumericValue::FromString("578960446186580977117854925043439539266.1")
+      // DEGREES
+      // Exceptional cases
+      {"degrees", {NullBigNumeric()}, NullBigNumeric()},
+      {"degrees",
+       {BigNumericValue::FromString("10104766024771286785562081743825829518."
+                                    "14981603689978972107700419772052484628")
+            .value()},
+       BigNumericValue::FromString("578960446186580977117854925043439539266."
+                                   "34992332820282019728792003956564819952")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("10104766024771286785562081743825829518."
+                                    "14981603689978972107700419772052484629")
             .value()},
        NullBigNumeric(),
        OUT_OF_RANGE},
-      {"ceiling",
-       {BigNumericValue::FromString("578960446186580977117854925043439539266."
-                                    "00000000000000000000000000000000000001")
+      {"degrees",
+       {BigNumericValue::FromString("-10104766024771286785562081743825829518."
+                                    "14981603689978972107700419772052484628")
+            .value()},
+       BigNumericValue::FromString("-578960446186580977117854925043439539266."
+                                   "34992332820282019728792003956564819952")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("-10104766024771286785562081743825829518."
+                                    "14981603689978972107700419772052484629")
             .value()},
        NullBigNumeric(),
        OUT_OF_RANGE},
-      {"ceil", {BigNumericValue::MaxValue()}, NullBigNumeric(), OUT_OF_RANGE},
-      {"ceiling",
-       {BigNumericValue::MaxValue()},
-       NullBigNumeric(),
-       OUT_OF_RANGE},
+      {"degrees",
+       {BigNumericValue::FromScaledValue(1)},
+       BigNumericValue::FromString("0.00000000000000000000000000000000000057")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("3141592653589793238462643383279502884."
+                                    "19716939937510582097494459230781640629")
+            .value()},
+       BigNumericValue::FromString("180000000000000000000000000000000000000."
+                                   "00000000000000000000000000000000000022")
+           .value()},
 
-      {"floor", {NullBigNumeric()}, NullBigNumeric()},
-      {"floor", {BigNumericValue()}, BigNumericValue()},
-      {"floor", {BigNumericValue(2)}, BigNumericValue(2)},
-      {"floor",
-       {BigNumericValue::FromString("2.3").value()},
-       BigNumericValue(2)},
-      {"floor",
-       {BigNumericValue::FromString("2.8").value()},
-       BigNumericValue(2)},
-      {"floor",
-       {BigNumericValue::FromString("2.5").value()},
-       BigNumericValue(2)},
-      {"floor",
-       {BigNumericValue::FromString("-2.3").value()},
-       BigNumericValue(-3)},
-      {"floor",
-       {BigNumericValue::FromString("-2.8").value()},
-       BigNumericValue(-3)},
-      {"floor",
-       {BigNumericValue::FromString("-2.5").value()},
-       BigNumericValue(-3)},
-      {"floor",
-       {BigNumericValue::FromString("0.001").value()},
-       BigNumericValue()},
-      {"floor",
-       {BigNumericValue::FromString("1e-38").value()},
-       BigNumericValue()},
-      {"floor",
-       {BigNumericValue::FromString("2e-38").value()},
-       BigNumericValue()},
-      {"floor",
-       {BigNumericValue::FromString("-0.001").value()},
-       BigNumericValue(-1)},
-      {"floor",
-       {BigNumericValue::FromString("-1e-38").value()},
-       BigNumericValue(-1)},
-      {"floor",
-       {BigNumericValue::FromString(
-            "-578960446186580977117854925043439539266.1")
+      // Common cases
+      {"degrees",
+       {BigNumericValue::FromString("0.0").value()},
+       BigNumericValue::FromString("0.0").value()},
+      {"degrees",
+       {BigNumericValue::FromString("1.5707963267948966192313216916397514417")
             .value()},
-       NullBigNumeric(),
-       OUT_OF_RANGE},
-      {"floor",
-       {BigNumericValue::FromString("-578960446186580977117854925043439539266."
-                                    "00000000000000000000000000000000000001")
+       BigNumericValue::FromString("89.99999999999999999999999999999999997716")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("3.1415926535897932384626433832795028834")
             .value()},
-       NullBigNumeric(),
-       OUT_OF_RANGE},
-      {"floor", {BigNumericValue::MinValue()}, NullBigNumeric(), OUT_OF_RANGE},
+       BigNumericValue::FromString("179.99999999999999999999999999999999995433")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("4.7123889803846898576939650749192543251")
+            .value()},
+       BigNumericValue::FromString("269.99999999999999999999999999999999993149")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("6.2831853071795864769252867665590057668")
+            .value()},
+       BigNumericValue::FromString("359.99999999999999999999999999999999990865")
+           .value()},
+
+      {"degrees",
+       {BigNumericValue::FromString("-1.5707963267948966192313216916397514417")
+            .value()},
+       BigNumericValue::FromString("-89.99999999999999999999999999999999997716")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("-3.1415926535897932384626433832795028834")
+            .value()},
+       BigNumericValue::FromString(
+           "-179.99999999999999999999999999999999995433")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("-4.7123889803846898576939650749192543251")
+            .value()},
+       BigNumericValue::FromString(
+           "-269.99999999999999999999999999999999993149")
+           .value()},
+      {"degrees",
+       {BigNumericValue::FromString("-6.2831853071795864769252867665590057668")
+            .value()},
+       BigNumericValue::FromString(
+           "-359.99999999999999999999999999999999990865")
+           .value()},
   };
 
   for (const auto& test_case : bignumeric_tests) {
@@ -2618,313 +2393,4 @@ std::vector<FunctionTestCall> GetFunctionTestsRounding() {
   return all_tests;
 }
 
-std::vector<FunctionTestCall> GetFunctionTestsTrigonometric() {
-  double epsilon = std::numeric_limits<double>::epsilon();
-  return {
-      {"cos", {NullDouble()}, NullDouble()},
-      {"cos", {0.0}, 1.0},
-      {"cos", {M_PI}, -1.0},
-      {"cos", {-M_PI}, -1.0},
-      {"cos", {M_PI_2}, 0.0, kApproximate},
-      {"cos", {-M_PI_2}, 0.0, kApproximate},
-      // cos(pi / 2 + x) is asymptotically close to -x near x=0.
-      // Due to proximity to zero, the ULP error is significant.
-      {"cos", {M_PI_2 - 1.0e-10}, 1.0e-10, FloatMargin::UlpMargin(33)},
-      {"cos", {-M_PI_2 + 1.0e-10}, 1.0e-10, FloatMargin::UlpMargin(33)},
-
-      {"cos", {double_pos_inf}, double_nan},
-      {"cos", {double_neg_inf}, double_nan},
-      {"cos", {double_nan}, double_nan},
-
-      {"acos", {NullDouble()}, NullDouble()},
-      {"acos", {0.0}, M_PI_2},
-      {"acos", {1.0}, 0.0},
-      {"acos", {-1.0}, M_PI},
-      // acos is only defined in [-1.0, 1.0]
-      {"acos", {1.0 + epsilon}, NullDouble(), OUT_OF_RANGE},
-      {"acos", {-1.0 - epsilon}, NullDouble(), OUT_OF_RANGE},
-      {"acos", {1.0e-10}, M_PI_2 - 1.0e-10},
-
-      {"acos", {double_pos_inf}, double_nan},
-      {"acos", {double_neg_inf}, double_nan},
-      {"acos", {double_nan}, double_nan},
-
-      // cosh is defined as (exp(x)+exp(-x)) / 2
-      {"cosh", {NullDouble()}, NullDouble()},
-      {"cosh", {0.0}, 1.0},
-      {"cosh", {1.0e-10}, 1.0},
-      {"cosh", {1.0}, (M_E + 1 / M_E) / 2},
-      {"cosh", {-1.0}, (M_E + 1 / M_E) / 2},
-      {"cosh", {710.0}, 1.1169973830808557e+308, kApproximate},
-      // Overflow.
-      {"cosh", {711.0}, NullDouble(), OUT_OF_RANGE},
-
-      {"cosh", {double_pos_inf}, double_pos_inf},
-      {"cosh", {double_neg_inf}, double_pos_inf},
-      {"cosh", {double_nan}, double_nan},
-
-      // acosh(x) = ln(x + sqrt(x^2 - 1))
-      {"acosh", {NullDouble()}, NullDouble()},
-      {"acosh", {1.0}, 0.0},
-      // acosh only defined for x >= 1
-      {"acosh", {1 - epsilon}, NullDouble(), OUT_OF_RANGE},
-      {"acosh", {0.0}, NullDouble(), OUT_OF_RANGE},
-      {"acosh", {(M_E + 1 / M_E) / 2}, 1.0},
-      {"acosh", {1.1169973830808557e+308}, 710.0, kApproximate},
-
-      {"acosh", {double_pos_inf}, double_pos_inf},
-      {"acosh", {double_neg_inf}, double_nan},
-      {"acosh", {double_nan}, double_nan},
-
-      {"sin", {NullDouble()}, NullDouble()},
-      {"sin", {0.0}, 0.0},
-      {"sin", {M_PI}, 0.0, kApproximate},
-      {"sin", {-M_PI}, 0.0, kApproximate},
-      {"sin", {M_PI_2}, 1.0},
-      {"sin", {-M_PI_2}, -1.0},
-      // sin(x) is asymptotically close to x near x=0
-      {"sin", {1.0e-10}, 1.0e-10, kApproximate},
-      {"sin", {-1.0e-10}, -1.0e-10, kApproximate},
-
-      {"sin", {double_pos_inf}, double_nan},
-      {"sin", {double_neg_inf}, double_nan},
-      {"sin", {double_nan}, double_nan},
-
-      {"asin", {NullDouble()}, NullDouble()},
-      {"asin", {0.0}, 0.0},
-      {"asin", {1.0}, M_PI_2},
-      {"asin", {-1.0}, -M_PI_2},
-      // asin is only defined in [-1.0, 1.0]
-      {"asin", {1.0 + epsilon}, NullDouble(), OUT_OF_RANGE},
-      {"asin", {-1.0 - epsilon}, NullDouble(), OUT_OF_RANGE},
-      // asin(x) is asymptotically close to x near x=0
-      {"asin", {1.0e-10}, 1.0e-10, kApproximate},
-      {"asin", {-1.0e-10}, -1.0e-10, kApproximate},
-
-      {"asin", {double_pos_inf}, double_nan},
-      {"asin", {double_neg_inf}, double_nan},
-      {"asin", {double_nan}, double_nan},
-
-      // sinh is defined as (exp(x)-exp(-x)) / 2
-      {"sinh", {NullDouble()}, NullDouble()},
-      {"sinh", {0.0}, 0.0},
-      {"sinh", {1.0e-10}, 1.0e-10, kApproximate},
-      {"sinh", {-1.0e-10}, -1.0e-10, kApproximate},
-      {"sinh", {1.0}, (M_E - 1 / M_E) / 2},
-      {"sinh", {-1.0}, (-M_E + 1 / M_E) / 2},
-      {"sinh", {710.0}, 1.1169973830808557e+308, kApproximate},
-      // Overflow.
-      {"sinh", {711.0}, NullDouble(), OUT_OF_RANGE},
-      {"sinh", {-710.0}, -1.1169973830808557e+308, kApproximate},
-      // Overflow.
-      {"sinh", {-711.0}, NullDouble(), OUT_OF_RANGE},
-
-      {"sinh", {double_pos_inf}, double_pos_inf},
-      {"sinh", {double_neg_inf}, double_neg_inf},
-      {"sinh", {double_nan}, double_nan},
-
-      // asinh(x) = ln(x + sqrt(x^2 + 1))
-      {"asinh", {NullDouble()}, NullDouble()},
-      {"asinh", {0.0}, 0.0},
-      {"asinh", {1.0e-10}, 1.0e-10, kApproximate},
-      {"asinh", {-1.0e-10}, -1.0e-10, kApproximate},
-      {"asinh", {(M_E - 1 / M_E) / 2}, 1.0},
-      {"asinh", {(-M_E + 1 / M_E) / 2}, -1.0},
-      {"asinh", {doublemax}, 710.47586007394386, kApproximate},
-      {"asinh", {doublemin}, -710.47586007394386, kApproximate},
-
-      {"asinh", {double_pos_inf}, double_pos_inf},
-      {"asinh", {double_neg_inf}, double_neg_inf},
-      {"asinh", {double_nan}, double_nan},
-
-      {"tan", {NullDouble()}, NullDouble()},
-      {"tan", {0.0}, 0.0},
-      {"tan", {M_PI}, 0.0, kApproximate},
-      {"tan", {-M_PI}, 0.0, kApproximate},
-      {"tan", {M_PI_4}, 1.0, kApproximate},
-      {"tan", {-M_PI_4}, -1.0, kApproximate},
-      {"tan", {M_PI_2 + M_PI_4}, -1.0, kApproximate},
-      {"tan", {-M_PI_2 - M_PI_4}, 1.0, kApproximate},
-      // tan(x) is asymptotically close to x near x=0
-      {"tan", {1.0e-10}, 1.0e-10, kApproximate},
-      {"tan", {-1.0e-10}, -1.0e-10, kApproximate},
-
-      {"tan", {double_pos_inf}, double_nan},
-      {"tan", {double_neg_inf}, double_nan},
-      {"tan", {double_nan}, double_nan},
-
-      {"atan", {NullDouble()}, NullDouble()},
-      {"atan", {0.0}, 0.0},
-      {"atan", {1.0}, M_PI_4},
-      {"atan", {-1.0}, -M_PI_4},
-      // atan(x) is asymptotically close to x near x=0
-      {"atan", {1.0e-10}, 1.0e-10, kApproximate},
-      {"atan", {-1.0e-10}, -1.0e-10, kApproximate},
-
-      {"atan", {double_pos_inf}, M_PI_2},
-      {"atan", {double_neg_inf}, -M_PI_2},
-      {"atan", {double_nan}, double_nan},
-
-      // tanh is defined as (exp(x)-exp(-x)) / (exp(x)+exp(-x))
-      {"tanh", {NullDouble()}, NullDouble()},
-      {"tanh", {0.0}, 0.0},
-      {"tanh", {1.0}, (M_E - 1 / M_E) / (M_E + 1 / M_E)},
-      {"tanh", {-1.0}, -(M_E - 1 / M_E) / (M_E + 1 / M_E)},
-      // tanh(x) is asymptotically close to x near 0.
-      {"tanh", {1.0e-10}, 1.0e-10, kApproximate},
-      {"tanh", {-1.0e-10}, -1.0e-10, kApproximate},
-
-      {"tanh", {double_pos_inf}, 1.0},
-      {"tanh", {double_neg_inf}, -1.0},
-      {"tanh", {double_nan}, double_nan},
-
-      // atanh = 1/2 * ln((1+x)/(1-x))
-      {"atanh", {NullDouble()}, NullDouble()},
-      {"atanh", {0.0}, 0.0},
-      {"atanh", {(M_E - 1 / M_E) / (M_E + 1 / M_E)}, 1.0, kApproximate},
-      {"atanh", {-(M_E - 1 / M_E) / (M_E + 1 / M_E)}, -1.0, kApproximate},
-      // atanh(x) is asymptotically close to x near 0.
-      {"atanh", {1.0e-10}, 1.0e-10, kApproximate},
-      {"atanh", {-1.0e-10}, -1.0e-10, kApproximate},
-      // atanh is only defined in (-1.0, 1.0)
-      {"atanh", {1.0}, NullDouble(), OUT_OF_RANGE},
-      {"atanh", {-1.0}, NullDouble(), OUT_OF_RANGE},
-
-      {"atanh", {double_pos_inf}, double_nan},
-      {"atanh", {double_neg_inf}, double_nan},
-      {"atanh", {double_nan}, double_nan},
-
-      // atan2(y, x) = atan(y/x) with return value in range [-pi, pi]
-      // Signs of x and y are used to determine the quadrant of the result.
-      {"atan2", {NullDouble(), NullDouble()}, NullDouble()},
-      {"atan2", {0.0, 0.0}, 0.0},
-      {"atan2", {0.0, 1.0}, 0.0},
-      {"atan2", {1.0, 1.0}, M_PI_4},
-      {"atan2", {1.0, 0.0}, M_PI_2},
-      {"atan2", {1.0, -1.0}, M_PI_2 + M_PI_4},
-      {"atan2", {doubleminpositive, -1.0}, M_PI},
-      {"atan2", {-1.0, 1.0}, -M_PI_4},
-      {"atan2", {-1.0, 0.0}, -M_PI_2},
-      {"atan2", {-1.0, -1.0}, -M_PI_2 - M_PI_4},
-      {"atan2", {-doubleminpositive, -1.0}, -M_PI},
-
-      {"atan2", {1.0, double_neg_inf}, M_PI},
-      {"atan2", {1.0, double_pos_inf}, 0.0},
-      {"atan2", {double_pos_inf, 1.0}, M_PI_2},
-      {"atan2", {double_neg_inf, 1.0}, -M_PI_2},
-      {"atan2", {double_pos_inf, double_pos_inf}, M_PI_4},
-      {"atan2", {double_pos_inf, double_neg_inf}, M_PI_2 + M_PI_4},
-      {"atan2", {double_neg_inf, double_pos_inf}, -M_PI_4},
-      {"atan2", {double_neg_inf, double_neg_inf}, -M_PI_2 - M_PI_4},
-      {"atan2", {double_nan, 0.0}, double_nan},
-      {"atan2", {0.0, double_nan}, double_nan},
-
-      // CSC(x) = 1 / SIN(x)
-      // Exceptional cases
-      {"csc", {NullDouble()}, NullDouble()},
-      {"csc", {double_pos_inf}, double_nan},
-      {"csc", {double_neg_inf}, double_nan},
-      {"csc", {double_nan}, double_nan},
-
-      // Special values
-      {"csc", {0.0}, NullDouble(), OUT_OF_RANGE},
-      {"csc", {M_PI_2}, 1.0},
-      {"csc", {-M_PI_2}, -1.0},
-      // sin(x) is asymptotically close to x near x=0
-      // csc(x) is asymptotically close to 1/x near x=0
-      {"csc", {1.0e-10}, 1.0e+10, kApproximate},
-      {"csc", {-1.0e-10}, -1.0e+10, kApproximate},
-
-      // SEC(x) = 1 / COS(x)
-      // Exceptional cases
-      {"sec", {NullDouble()}, NullDouble()},
-      {"sec", {double_pos_inf}, double_nan},
-      {"sec", {double_neg_inf}, double_nan},
-      {"sec", {double_nan}, double_nan},
-
-      // Special values
-      {"sec", {0.0}, 1.0, kApproximate},
-      {"sec", {M_PI}, -1.0, kApproximate},
-      {"sec", {-M_PI}, -1.0, kApproximate},
-
-      // cot(x) = 1 / tan(x)
-      // Exceptional cases
-      {"cot", {NullDouble()}, NullDouble()},
-      {"cot", {double_pos_inf}, double_nan},
-      {"cot", {double_neg_inf}, double_nan},
-      {"cot", {0.0}, NullDouble(), OUT_OF_RANGE},
-      {"cot", {double_nan}, double_nan},
-
-      // Special values
-      {"cot", {M_PI_4}, 1.0, kApproximate},
-      {"cot", {-M_PI_4}, -1.0, kApproximate},
-      {"cot", {M_PI_2}, 0.0, kApproximate},
-      {"cot", {-M_PI_2}, 0.0, kApproximate},
-      {"cot", {M_PI_2 + M_PI_4}, -1.0, kApproximate},
-      {"cot", {-M_PI_2 - M_PI_4}, 1.0, kApproximate},
-  };
-}
-
-std::vector<FunctionTestCall> GetFunctionTestsCoth() {
-  return {
-      // tanh is defined as (exp(x)-exp(-x)) / (exp(x)+exp(-x))
-      // coth(x) = 1 / tanh(x)
-      {"coth", {NullDouble()}, NullDouble()},
-      {"coth", {double_pos_inf}, 1.0},
-      {"coth", {double_neg_inf}, -1.0},
-      {"coth", {double_nan}, double_nan},
-      {"coth", {0.0}, NullDouble(), OUT_OF_RANGE},
-
-      {"coth", {1.0}, (M_E + 1 / M_E) / (M_E - 1 / M_E), kApproximate},
-      {"coth", {-1.0}, -(M_E + 1 / M_E) / (M_E - 1 / M_E), kApproximate},
-
-      // tanh(x) is asymptotically close to x near 0.
-      // so coth(x) is asymptotically close to 1/x near 0.
-      {"coth", {1.0e-10}, 1.0e10, kApproximate},
-      {"coth", {-1.0e-10}, -1.0e10, kApproximate},
-  };
-}
-
-std::vector<FunctionTestCall> GetFunctionTestsCsch() {
-  return {
-      // sinh(x) = (exp(x)-exp(-x)) / 2
-      // csch(x) = 1 / sinh(x)
-      // Exceptional cases
-      {"csch", {0.0}, NullDouble(), OUT_OF_RANGE},
-      {"csch", {double_pos_inf}, 0.0},
-      {"csch", {double_neg_inf}, 0.0},
-      {"csch", {double_nan}, double_nan},
-      {"csch", {NullDouble()}, NullDouble()},
-
-      {"csch", {1.0e-10}, 1.0e10, kApproximate},
-      {"csch", {-1.0e-10}, -1.0e10, kApproximate},
-
-      {"csch", {1.0}, 2 / (M_E - 1 / M_E)},
-      {"csch", {-1.0}, 2 / (-M_E + 1 / M_E)},
-
-      {"csch", {710.0}, 0.0, kApproximate},
-      {"csch", {711.0}, 0.0, kApproximate},
-      {"csch", {-710.0}, 0.0, kApproximate},
-      {"csch", {-711.0}, 0.0, kApproximate},
-  };
-}
-
-std::vector<FunctionTestCall> GetFunctionTestsSech() {
-  return {
-      // cosh(x) = (exp(x)+exp(-x)) / 2
-      // sech(x) = 1 / cosh(x)
-      // Exceptional cases
-      {"sech", {NullDouble()}, NullDouble()},
-      {"sech", {double_pos_inf}, 0.0},
-      {"sech", {double_neg_inf}, 0.0},
-      {"sech", {double_nan}, double_nan},
-
-      {"sech", {0.0}, 1.0},
-      {"sech", {1.0e-10}, 1.0},
-      {"sech", {1.0}, 2 / (M_E + 1 / M_E)},
-      {"sech", {-1.0}, 2 / (M_E + 1 / M_E)},
-      {"sech", {710.0}, 0.0, kApproximate},
-      {"sech", {711.0}, 0.0, kApproximate},
-  };
-}
 }  // namespace zetasql

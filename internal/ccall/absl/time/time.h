@@ -120,7 +120,7 @@ using EnableIfFloat =
 
 // Duration
 //
-// The `absl::Duration` class represents a signed, fixed-length span of time.
+// The `absl::Duration` class represents a signed, fixed-length amount of time.
 // A `Duration` is generated using a unit-specific factory function, or is
 // the result of subtracting one `absl::Time` from another. Durations behave
 // like unit-safe integers and they support all the natural integer-like
@@ -579,7 +579,7 @@ bool ParseDuration(absl::string_view dur_string, Duration* d);
 
 // AbslParseFlag()
 //
-// Parses a command-line flag string representation `text` into a a Duration
+// Parses a command-line flag string representation `text` into a Duration
 // value. Duration flags must be specified in a format that is valid input for
 // `absl::ParseDuration()`.
 bool AbslParseFlag(absl::string_view text, Duration* dst, std::string* error);

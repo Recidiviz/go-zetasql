@@ -20,6 +20,7 @@
 #include <stdio.h>
 
 #include <cstddef>
+#include <functional>
 #include <memory>
 #include <stack>
 #include <string>
@@ -98,6 +99,9 @@ class ValidJSONPathIterator {
   inline bool NoSuffixToken() {
     return text_.empty() && depth_ == tokens_.size();
   }
+
+  // Must call `Scan` or iterate before this contains valid number.
+  inline size_t Size() { return tokens_.size(); }
 
  private:
   ValidJSONPathIterator(absl::string_view input, bool sql_standard_mode);
@@ -502,7 +506,7 @@ class JSONPathArrayExtractor final : public JSONPathExtractor {
 // matching the JSONPath. If it is not an array, returns null. Otherwise it
 // will iterate over all the elements of the array and append them to
 // 'result_array_' as strings and finally return the array.
-// An absl::nullopt value in 'result_array_' represents the SQL NULL value.
+// An std::nullopt value in 'result_array_' represents the SQL NULL value.
 class JSONPathStringArrayExtractor final : public JSONPathExtractor {
  public:
   // `iter` and the object underlying `json` must outlive this object.
@@ -510,7 +514,7 @@ class JSONPathStringArrayExtractor final : public JSONPathExtractor {
                                ValidJSONPathIterator* iter)
       : JSONPathExtractor(json, iter) {}
 
-  bool ExtractStringArray(std::vector<absl::optional<std::string>>* result,
+  bool ExtractStringArray(std::vector<std::optional<std::string>>* result,
                           bool* is_null) {
     bool parse_success = zetasql::JSONParser::Parse() || stop_on_first_match_;
 
@@ -555,9 +559,10 @@ class JSONPathStringArrayExtractor final : public JSONPathExtractor {
       stack_.top()++;
     }
     if (accept_array_elements_) {
-      if (result_json_.empty()) {
+      if (parsed_null_element_) {
         // This means the array element is the JSON null.
-        result_array_.push_back(absl::nullopt);
+        result_array_.push_back(std::nullopt);
+        parsed_null_element_ = false;
       } else {
         result_array_.push_back(result_json_);
       }
@@ -577,13 +582,16 @@ class JSONPathStringArrayExtractor final : public JSONPathExtractor {
   bool ParsedNull() override {
     if (AcceptableLeaf()) {
       parsed_null_result_ = stop_on_first_match_;
+      parsed_null_element_ = true;
     }
     return !stop_on_first_match_;
   }
 
   // Whether the JSONPath points to an array with scalar elements.
   bool scalar_array_accepted_ = false;
-  std::vector<absl::optional<std::string>> result_array_;
+  // Whether the element that will be part of the result array is null.
+  bool parsed_null_element_ = false;
+  std::vector<std::optional<std::string>> result_array_;
 };
 
 }  // namespace json_internal

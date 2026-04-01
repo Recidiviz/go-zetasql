@@ -121,6 +121,17 @@ func (p *BuildFileParser) getTexts(list *build.ListExpr) []string {
 	return texts
 }
 
+func (p *BuildFileParser) exprTexts(expr build.Expr) []string {
+	switch e := expr.(type) {
+	case *build.ListExpr:
+		return p.getTexts(e)
+	case *build.BinaryExpr:
+		texts := p.exprTexts(e.X)
+		return append(texts, p.exprTexts(e.Y)...)
+	}
+	return nil
+}
+
 func (p *BuildFileParser) pkgPath(path string) (string, error) {
 	splitted := strings.Split(filepath.Dir(path), "ccall")
 	if len(splitted) != 2 {
@@ -211,11 +222,11 @@ func (p *BuildFileParser) cclibs(path string, tree *build.File) ([]*Lib, error) 
 			case "name":
 				cclib.Name = p.getText(rhs)
 			case "hdrs":
-				cclib.Headers = p.getTexts(rhs.(*build.ListExpr))
+				cclib.Headers = p.exprTexts(rhs)
 			case "srcs":
-				cclib.Sources = p.filterSource(p.getTexts(rhs.(*build.ListExpr)))
+				cclib.Sources = p.filterSource(p.exprTexts(rhs))
 			case "deps":
-				deps, err := p.toDependencies(path, p.getTexts(rhs.(*build.ListExpr)))
+				deps, err := p.toDependencies(path, p.exprTexts(rhs))
 				if err != nil {
 					return nil, err
 				}

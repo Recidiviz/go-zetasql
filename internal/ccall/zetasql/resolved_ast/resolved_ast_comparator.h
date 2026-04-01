@@ -95,8 +95,8 @@ class ResolvedASTComparator {
                                                    const ResolvedReplaceField* node2);
   static absl::StatusOr<bool> CompareResolvedSubqueryExpr(const ResolvedSubqueryExpr* node1,
                                                    const ResolvedSubqueryExpr* node2);
-  static absl::StatusOr<bool> CompareResolvedLetExpr(const ResolvedLetExpr* node1,
-                                                   const ResolvedLetExpr* node2);
+  static absl::StatusOr<bool> CompareResolvedWithExpr(const ResolvedWithExpr* node1,
+                                                   const ResolvedWithExpr* node2);
   static absl::StatusOr<bool> CompareResolvedModel(const ResolvedModel* node1,
                                                    const ResolvedModel* node2);
   static absl::StatusOr<bool> CompareResolvedConnection(const ResolvedConnection* node1,
@@ -281,12 +281,20 @@ class ResolvedASTComparator {
                                                    const ResolvedAlterMaterializedViewStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterSchemaStmt(const ResolvedAlterSchemaStmt* node1,
                                                    const ResolvedAlterSchemaStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterModelStmt(const ResolvedAlterModelStmt* node1,
+                                                   const ResolvedAlterModelStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterTableStmt(const ResolvedAlterTableStmt* node1,
                                                    const ResolvedAlterTableStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterViewStmt(const ResolvedAlterViewStmt* node1,
                                                    const ResolvedAlterViewStmt* node2);
   static absl::StatusOr<bool> CompareResolvedSetOptionsAction(const ResolvedSetOptionsAction* node1,
                                                    const ResolvedSetOptionsAction* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterSubEntityAction(const ResolvedAlterSubEntityAction* node1,
+                                                   const ResolvedAlterSubEntityAction* node2);
+  static absl::StatusOr<bool> CompareResolvedAddSubEntityAction(const ResolvedAddSubEntityAction* node1,
+                                                   const ResolvedAddSubEntityAction* node2);
+  static absl::StatusOr<bool> CompareResolvedDropSubEntityAction(const ResolvedDropSubEntityAction* node1,
+                                                   const ResolvedDropSubEntityAction* node2);
   static absl::StatusOr<bool> CompareResolvedAddColumnAction(const ResolvedAddColumnAction* node1,
                                                    const ResolvedAddColumnAction* node2);
   static absl::StatusOr<bool> CompareResolvedAddConstraintAction(const ResolvedAddConstraintAction* node1,

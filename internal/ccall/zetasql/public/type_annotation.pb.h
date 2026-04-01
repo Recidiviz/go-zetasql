@@ -55,6 +55,7 @@ extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table
 PROTOBUF_NAMESPACE_OPEN
 PROTOBUF_NAMESPACE_CLOSE
 namespace zetasql {
+namespace storage {
 
 // ===================================================================
 
@@ -74,6 +75,7 @@ namespace zetasql {
 
 // @@protoc_insertion_point(namespace_scope)
 
+}  // namespace storage
 }  // namespace zetasql
 
 // @@protoc_insertion_point(global_scope)

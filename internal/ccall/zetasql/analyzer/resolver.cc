@@ -64,6 +64,7 @@
 #include "zetasql/public/types/array_type.h"
 #include "zetasql/public/types/simple_value.h"
 #include "zetasql/public/types/struct_type.h"
+#include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/value.h"
 #include "zetasql/resolved_ast/make_node_vector.h"
@@ -72,11 +73,9 @@
 #include "zetasql/resolved_ast/resolved_column.h"
 #include "zetasql/resolved_ast/resolved_node.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/testdata/sample_annotation.h"
 #include "zetasql/base/case.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/ascii.h"
@@ -108,7 +107,7 @@ Resolver::Resolver(Catalog* catalog, TypeFactory* type_factory,
       empty_name_scope_(new NameScope(*empty_name_list_)),
       id_string_pool_(analyzer_options_.id_string_pool().get()) {
   function_resolver_ =
-      absl::make_unique<FunctionResolver>(catalog, type_factory, this);
+      std::make_unique<FunctionResolver>(catalog, type_factory, this);
   InitializeAnnotationSpecs(analyzer_options_.get_annotation_specs());
   ZETASQL_DCHECK(analyzer_options_.AllArenasAreInitialized());
 }
@@ -139,7 +138,7 @@ void Resolver::Reset(absl::string_view sql) {
   if (analyzer_options_.column_id_sequence_number() != nullptr) {
     next_column_id_sequence_ = analyzer_options_.column_id_sequence_number();
   } else {
-    owned_column_id_sequence_ = absl::make_unique<zetasql_base::SequenceNumber>();
+    owned_column_id_sequence_ = std::make_unique<zetasql_base::SequenceNumber>();
     next_column_id_sequence_ = owned_column_id_sequence_.get();
   }
 }
@@ -310,7 +309,7 @@ absl::Status Resolver::ResolveExprWithFunctionArguments(
     ExprResolutionInfo* expr_resolution_info,
     std::unique_ptr<const ResolvedExpr>* output) {
   Reset(sql);
-  auto arg_info = absl::make_unique<FunctionArgumentInfo>();
+  auto arg_info = std::make_unique<FunctionArgumentInfo>();
   for (auto& [arg_name, resolved_arg] : *function_arguments) {
     ZETASQL_RETURN_IF_ERROR(
         arg_info->AddScalarArg(arg_name, resolved_arg->argument_kind(),
@@ -328,7 +327,7 @@ absl::Status Resolver::ResolveExprWithFunctionArguments(
 
 absl::Status Resolver::ResolveQueryStatementWithFunctionArguments(
     absl::string_view sql, const ASTQueryStatement* query_stmt,
-    const absl::optional<TVFRelation>& specified_output_schema,
+    const std::optional<TVFRelation>& specified_output_schema,
     bool allow_query_parameters,
     IdStringHashMapCase<std::unique_ptr<ResolvedArgumentRef>>*
         function_arguments,
@@ -336,7 +335,7 @@ absl::Status Resolver::ResolveQueryStatementWithFunctionArguments(
     std::unique_ptr<const ResolvedStatement>* output_stmt,
     std::shared_ptr<const NameList>* output_name_list) {
   Reset(sql);
-  auto arg_info = absl::make_unique<FunctionArgumentInfo>();
+  auto arg_info = std::make_unique<FunctionArgumentInfo>();
   for (auto& [arg_name, resolved_arg] : *function_arguments) {
     ZETASQL_RETURN_IF_ERROR(
         arg_info->AddScalarArg(arg_name, resolved_arg->argument_kind(),
@@ -391,28 +390,35 @@ absl::Status Resolver::ResolveQueryStatementWithFunctionArguments(
 
 absl::Status Resolver::ResolveTypeName(const std::string& type_name,
                                        const Type** type) {
-  TypeParameters type_params = TypeParameters();
-  return ResolveTypeName(type_name, type, &type_params);
+  TypeModifiers type_modifiers;
+  return ResolveTypeName(type_name, type, &type_modifiers);
 }
 
 absl::Status Resolver::ResolveTypeNameInternal(const std::string& type_name,
                                                const Type** type,
-                                               TypeParameters* type_params) {
+                                               TypeModifiers* type_modifiers) {
   std::unique_ptr<ParserOutput> parser_output;
   ZETASQL_RETURN_IF_ERROR(ParseType(type_name, analyzer_options_.GetParserOptions(),
                             &parser_output));
+  TypeParameters type_params;
   ZETASQL_RETURN_IF_ERROR(ResolveType(parser_output->type(),
                               /*type_parameter_context=*/{}, type,
-                              type_params));
+                              &type_params));
+  // TODO: Put the logic to resolve collation into ResolveType
+  // function.
+  ZETASQL_ASSIGN_OR_RETURN(Collation collation,
+                   ResolveTypeCollation(*parser_output->type()));
+  *type_modifiers = TypeModifiers::MakeTypeModifiers(std::move(type_params),
+                                                     std::move(collation));
   return absl::OkStatus();
 }
 
 absl::Status Resolver::ResolveTypeName(const std::string& type_name,
                                        const Type** type,
-                                       TypeParameters* type_params) {
+                                       TypeModifiers* type_modifiers) {
   // Reset state because ResolveTypeName is a public entry-point.
   Reset(type_name);
-  return ResolveTypeNameInternal(type_name, type, type_params);
+  return ResolveTypeNameInternal(type_name, type, type_modifiers);
 }
 
 ResolvedColumnList Resolver::ConcatColumnLists(
@@ -459,6 +465,36 @@ absl::StatusOr<bool> Resolver::MaybeAssignTypeToUndeclaredParameter(
   return true;
 }
 
+absl::StatusOr<QueryParametersMap> Resolver::AssignTypesToUndeclaredParameters()
+    const {
+  QueryParametersMap resolved_undeclared_parameters;
+  for (const auto& [name, locations_and_types] : undeclared_parameters_) {
+    for (const auto& [location, type] : locations_and_types) {
+      auto [it, _] = resolved_undeclared_parameters.insert({name, type});
+      if (!it->second->Equals(type)) {
+        // Currently, we require the types to agree exactly, even for different
+        // version of protos. This can be relaxed in the future, incl. using
+        // common supertypes.
+        const Type* previous_type = it->second;
+        if (previous_type->Equivalent(type)) {
+          return MakeSqlErrorAtPoint(location)
+                 << "Undeclared parameter '" << name
+                 << "' is used assuming different versions of the same type ("
+                 << type->ShortTypeName(product_mode()) << ")";
+        } else {
+          return MakeSqlErrorAtPoint(location)
+                 << "Undeclared parameter '" << name
+                 << "' is used assuming different types ("
+                 << previous_type->ShortTypeName(product_mode()) << " vs "
+                 << type->ShortTypeName(product_mode()) << ")";
+        }
+      }
+    }
+  }
+
+  return resolved_undeclared_parameters;
+}
+
 absl::Status Resolver::AssignTypeToUndeclaredParameter(
     const ParseLocationPoint& location, const Type* type) {
   const auto it = untyped_undeclared_parameters_.find(location);
@@ -466,17 +502,11 @@ absl::Status Resolver::AssignTypeToUndeclaredParameter(
   const absl::variant<std::string, int> name_or_position = it->second;
   untyped_undeclared_parameters_.erase(it);
 
-  const Type* previous_type = nullptr;
-
-  if (absl::holds_alternative<std::string>(name_or_position)) {
-    const std::string& name = absl::get<std::string>(name_or_position);
-    const zetasql::Type*& stored_type = undeclared_parameters_[name];
-    previous_type = stored_type;
-    if (stored_type == nullptr) {
-      stored_type = type;
-    }
+  if (std::holds_alternative<std::string>(name_or_position)) {
+    const std::string& name = std::get<std::string>(name_or_position);
+    undeclared_parameters_[name].emplace_back(location, type);
   } else {
-    const int position = absl::get<int>(name_or_position);
+    const int position = std::get<int>(name_or_position);
     if (position - 1 >= undeclared_positional_parameters_.size()) {
       // The resolver has not visited this undeclared positional parameter
       // before. The resolver may visit an undeclared parameter multiple times
@@ -485,30 +515,8 @@ absl::Status Resolver::AssignTypeToUndeclaredParameter(
       undeclared_positional_parameters_.resize(position);
     }
     undeclared_positional_parameters_[position - 1] = type;
-
-    return absl::OkStatus();
   }
 
-  ZETASQL_RET_CHECK(absl::holds_alternative<std::string>(name_or_position));
-  if (previous_type != nullptr && !previous_type->Equals(type)) {
-    // Currently, we require the types to agree exactly, even for different
-    // version of protos. This can be relaxed in the future, incl. using
-    // common supertypes.
-    if (previous_type->Equivalent(type)) {
-      return MakeSqlErrorAtPoint(location)
-             << "Undeclared parameter '"
-             << absl::get<std::string>(name_or_position)
-             << "' is used assuming different versions of the same type ("
-             << type->ShortTypeName(product_mode()) << ")";
-    } else {
-      return MakeSqlErrorAtPoint(location)
-             << "Undeclared parameter '"
-             << absl::get<std::string>(name_or_position)
-             << "' is used assuming different types ("
-             << previous_type->ShortTypeName(product_mode()) << " vs "
-             << type->ShortTypeName(product_mode()) << ")";
-    }
-  }
   return absl::OkStatus();
 }
 
@@ -995,11 +1003,65 @@ absl::Status Resolver::ResolveAnonymizationOptionsList(
   return absl::OkStatus();
 }
 
+absl::Status Resolver::ResolveAnonWithReportOptionsList(
+    const ASTOptionsList* options_list, absl::string_view default_format,
+    std::vector<std::unique_ptr<const ResolvedOption>>* resolved_options,
+    std::string* format) {
+  *format = default_format;
+  if (options_list == nullptr) {
+    return absl::OkStatus();
+  }
+  // The options_list can currently only contain one
+  // option, which is the format of the return value.
+  if (options_list != nullptr && options_list->options_entries().size() != 1) {
+    return MakeSqlErrorAt(options_list)
+           << "WITH REPORT expects exactly 1 option but found "
+           << options_list->options_entries().size() << " options";
+  }
+
+  static constexpr char kReportFormat[] = "format";
+  static const auto* supported_report_formats =
+      new std::unordered_set<std::string>{"json", "proto"};
+
+  // ZetaSQL defines an allowlist of valid option names for anonymization
+  // report format.
+  AllowedHintsAndOptions allowed_report_options(/*qualifier=*/"");
+  allowed_report_options.AddOption(kReportFormat, types::StringType());
+  const ASTOptionsEntry* options_entry = options_list->options_entries(0);
+  ZETASQL_RETURN_IF_ERROR(ResolveHintOrOptionAndAppend(
+      options_entry->value(), /*ast_qualifier=*/nullptr, options_entry->name(),
+      /*is_hint=*/false, allowed_report_options, resolved_options));
+
+  ZETASQL_RET_CHECK_EQ(resolved_options->size(), 1);
+  ZETASQL_RET_CHECK(
+      zetasql_base::CaseEqual(resolved_options->at(0)->name(), kReportFormat));
+  const ResolvedExpr* value = resolved_options->at(0)->value();
+  if (!value->Is<ResolvedLiteral>() ||
+      !value->GetAs<ResolvedLiteral>()->value().type()->IsString()) {
+    return MakeSqlErrorAt(options_list)
+           << "WITH REPORT expects a string literal as the format";
+  }
+  absl::string_view format_string_view =
+      value->GetAs<ResolvedLiteral>()->value().string_value();
+  std::string format_in_lower_case = absl::AsciiStrToLower(format_string_view);
+  if (supported_report_formats->find(format_in_lower_case) ==
+      supported_report_formats->end()) {
+    return MakeSqlErrorAt(options_list)
+           << "The given REPORT format " << format_string_view
+           << " is not supported";
+  }
+  *format = format_in_lower_case;
+
+  return absl::OkStatus();
+}
+
 absl::Status Resolver::ResolveType(
     const ASTType* type,
-    const absl::optional<absl::string_view> type_parameter_context,
+    const std::optional<absl::string_view> type_parameter_context,
     const Type** resolved_type, TypeParameters* resolved_type_params) {
-  if (type->collate() != nullptr) {
+  if (type->collate() != nullptr &&
+      (!language().LanguageFeatureEnabled(FEATURE_V_1_3_COLLATION_SUPPORT) ||
+       !language().LanguageFeatureEnabled(FEATURE_V_1_4_COLLATION_IN_TYPE))) {
     return MakeSqlErrorAt(type->collate())
            << "Type with collation name is not supported";
   }
@@ -1038,7 +1100,7 @@ absl::Status Resolver::ResolveType(
 
 absl::Status Resolver::ResolveSimpleType(
     const ASTSimpleType* type,
-    const absl::optional<absl::string_view> type_parameter_context,
+    const std::optional<absl::string_view> type_parameter_context,
     const Type** resolved_type, TypeParameters* resolved_type_params) {
   ZETASQL_RETURN_IF_ERROR(ResolvePathExpressionAsType(type->type_name(),
                                               /*is_single_identifier=*/false,
@@ -1063,7 +1125,7 @@ absl::Status Resolver::ResolveSimpleType(
 
 absl::Status Resolver::ResolveArrayType(
     const ASTArrayType* array_type,
-    const absl::optional<absl::string_view> type_parameter_context,
+    const std::optional<absl::string_view> type_parameter_context,
     const ArrayType** resolved_type, TypeParameters* resolved_type_params) {
   const Type* resolved_element_type;
   ZETASQL_RETURN_IF_ERROR(ResolveType(array_type->element_type(),
@@ -1102,7 +1164,7 @@ absl::Status Resolver::ResolveArrayType(
 
 absl::Status Resolver::ResolveStructType(
     const ASTStructType* struct_type,
-    const absl::optional<absl::string_view> type_parameter_context,
+    const std::optional<absl::string_view> type_parameter_context,
     const StructType** resolved_type, TypeParameters* resolved_type_params) {
   std::vector<StructType::StructField> struct_fields;
   bool has_children = false;
@@ -1222,14 +1284,21 @@ absl::Status Resolver::MaybeResolveCollationForFunctionCallBase(
   if (!language().LanguageFeatureEnabled(FEATURE_V_1_3_COLLATION_SUPPORT)) {
     return absl::OkStatus();
   }
-  // Aggregate function call with is_distinct should resolve the collation for
-  // the 'distinct' operation. When the input argument has non-string type, the
-  // collation resolution still produces empty collation correctly.
+  // Aggregate and analytic function calls with is_distinct should resolve the
+  // collation for the 'distinct' operation. When the input argument has
+  // non-string type, the collation resolution still produces empty collation
+  // list correctly.
   const bool is_aggregate_function_with_distinct =
       function_call->node_kind() == RESOLVED_AGGREGATE_FUNCTION_CALL &&
       function_call->GetAs<ResolvedAggregateFunctionCall>()->distinct();
+
+  const bool is_analytic_function_with_distinct =
+      function_call->node_kind() == RESOLVED_ANALYTIC_FUNCTION_CALL &&
+      function_call->GetAs<ResolvedAnalyticFunctionCall>()->distinct();
+
   if (function_call->signature().options().uses_operation_collation() ||
-      is_aggregate_function_with_distinct) {
+      is_aggregate_function_with_distinct ||
+      is_analytic_function_with_distinct) {
     ZETASQL_ASSIGN_OR_RETURN(
         const AnnotationMap* annotation_map,
         CollationAnnotation::GetCollationFromFunctionArguments(
@@ -1373,18 +1442,36 @@ absl::Status Resolver::SetColumnAccessList(ResolvedStatement* statement) {
   const ResolvedTableScan* scan = nullptr;
 
   // Currently, we are only setting column access info on nodes that support it,
-  // including Update and Merge.
+  // including Update, Merge, Insert, and Delete.
   std::vector<ResolvedStatement::ObjectAccess>* mutable_access_list = nullptr;
-  if (statement->node_kind() == zetasql::RESOLVED_UPDATE_STMT) {
-    auto update_stmt = static_cast<ResolvedUpdateStmt*>(statement);
-    scan = update_stmt->table_scan();
-    mutable_access_list = update_stmt->mutable_column_access_list();
-  } else if (statement->node_kind() == zetasql::RESOLVED_MERGE_STMT) {
-    auto merge_stmt = static_cast<ResolvedMergeStmt*>(statement);
-    scan = merge_stmt->table_scan();
-    mutable_access_list = merge_stmt->mutable_column_access_list();
-  } else {
-    return absl::OkStatus();
+  switch (statement->node_kind()) {
+    case RESOLVED_UPDATE_STMT: {
+      auto update_stmt = static_cast<ResolvedUpdateStmt*>(statement);
+      scan = update_stmt->table_scan();
+      mutable_access_list = update_stmt->mutable_column_access_list();
+      break;
+    }
+    case RESOLVED_MERGE_STMT: {
+      auto merge_stmt = static_cast<ResolvedMergeStmt*>(statement);
+      scan = merge_stmt->table_scan();
+      mutable_access_list = merge_stmt->mutable_column_access_list();
+      break;
+    }
+    case RESOLVED_INSERT_STMT: {
+      auto insert_stmt = static_cast<ResolvedInsertStmt*>(statement);
+      scan = insert_stmt->table_scan();
+      mutable_access_list = insert_stmt->mutable_column_access_list();
+      break;
+    }
+    case RESOLVED_DELETE_STMT: {
+      auto delete_stmt = static_cast<ResolvedDeleteStmt*>(statement);
+      scan = delete_stmt->table_scan();
+      mutable_access_list = delete_stmt->mutable_column_access_list();
+      break;
+    }
+    default: {
+      return absl::OkStatus();
+    }
   }
 
   ZETASQL_RET_CHECK(scan != nullptr);
@@ -1418,6 +1505,14 @@ absl::Status Resolver::PruneColumnLists(const ResolvedNode* node) const {
 
   ZETASQL_RET_CHECK(node->node_kind() != zetasql::RESOLVED_MERGE_STMT ||
           node->GetAs<ResolvedMergeStmt>()->column_access_list_size() == 0)
+      << "SetColumnAccessList was called before PruneColumnList";
+
+  ZETASQL_RET_CHECK(node->node_kind() != zetasql::RESOLVED_INSERT_STMT ||
+            node->GetAs<ResolvedInsertStmt>()->column_access_list_size() == 0)
+      << "SetColumnAccessList was called before PruneColumnList";
+
+  ZETASQL_RET_CHECK(node->node_kind() != zetasql::RESOLVED_DELETE_STMT ||
+            node->GetAs<ResolvedDeleteStmt>()->column_access_list_size() == 0)
       << "SetColumnAccessList was called before PruneColumnList";
 
   std::vector<const ResolvedNode*> scan_nodes;
@@ -1849,7 +1944,7 @@ absl::Status FunctionArgumentInfo::AddArgCommon(ArgumentDetails details) {
   if (details.arg_type.IsTemplated()) {
     contains_templated_arguments_ = true;
   }
-  details_.emplace_back(absl::make_unique<ArgumentDetails>(details));
+  details_.emplace_back(std::make_unique<ArgumentDetails>(details));
   return absl::OkStatus();
 }
 

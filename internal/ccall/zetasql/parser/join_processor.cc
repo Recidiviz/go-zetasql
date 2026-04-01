@@ -17,6 +17,7 @@
 #include "zetasql/parser/join_processor.h"
 
 #include <deque>
+#include <string>
 
 #include "zetasql/common/errors.h"
 #include "zetasql/parser/ast_node_kind.h"
@@ -480,7 +481,7 @@ ASTNode* JoinRuleAction(
     } else {
       // Does not throw the error to maintain the backward compatibility. Saves
       // the error instead.
-      join->set_parse_error(absl::make_unique<ASTJoin::ParseError>(
+      join->set_parse_error(std::make_unique<ASTJoin::ParseError>(
           ASTJoin::ParseError{error_node, message}));
     }
   }

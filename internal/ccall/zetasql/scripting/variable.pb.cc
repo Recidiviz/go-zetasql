@@ -447,6 +447,9 @@ bool Variable::IsInitialized() const {
   if (_internal_has_type()) {
     if (!type_->IsInitialized()) return false;
   }
+  if (_internal_has_type_params()) {
+    if (!type_params_->IsInitialized()) return false;
+  }
   return true;
 }
 

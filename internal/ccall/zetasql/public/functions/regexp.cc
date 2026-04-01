@@ -20,6 +20,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <string>
+#include <utility>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/utf_util.h"
@@ -57,7 +59,7 @@ bool RegExp::InitializePatternBytes(absl::string_view pattern,
 bool RegExp::InitializeWithOptions(absl::string_view pattern,
                                    const RE2::Options& options,
                                    absl::Status* error) {
-  re_ = absl::make_unique<RE2>(pattern, options);
+  re_ = std::make_unique<RE2>(pattern, options);
   if (!re_->ok()) {
     return internal::UpdateError(
         error, absl::StrCat("Cannot parse regular expression: ", re_->error()));
@@ -101,7 +103,7 @@ bool RegExp::Extract(absl::string_view str, PositionUnit position_unit,
   int64_t offset = 0;
   if (position_unit == kUtf8Chars) {
     auto string_offset = ForwardN(str, str_length32, position - 1);
-    if (string_offset == absl::nullopt) {
+    if (string_offset == std::nullopt) {
       return true;
     }
     offset = string_offset.value();
@@ -230,7 +232,7 @@ bool RegExp::Instr(const InstrParams& options, absl::Status* error) const {
   int64_t offset = 0;
   if (options.position_unit == kUtf8Chars) {
     auto string_offset = ForwardN(str, str_length32, options.position - 1);
-    if (string_offset == absl::nullopt) {
+    if (string_offset == std::nullopt) {
       return true;  // input str is an invalid utf-8 string
     }
     offset = string_offset.value();
@@ -416,7 +418,7 @@ absl::StatusOr<std::unique_ptr<const RegExp>> MakeRegExpBytes(
 
 absl::StatusOr<std::unique_ptr<const RegExp>> MakeRegExpWithOptions(
     absl::string_view pattern, const RE2::Options& options) {
-  auto re = absl::make_unique<const RE2>(pattern, options);
+  auto re = std::make_unique<const RE2>(pattern, options);
   if (!re->ok()) {
     return internal::CreateFunctionError(
         absl::StrCat("Cannot parse regular expression: ", re->error()));
