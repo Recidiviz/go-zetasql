@@ -175,6 +175,14 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
+  - file:   googleapis/google/type/date.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googleapis/google/type/timeofday.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
 add_sources:
   - file:   zetasql/parser/flex_tokenizer.flex.cc
     source: flex_tokenizer_base.inc

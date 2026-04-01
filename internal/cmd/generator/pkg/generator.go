@@ -28,7 +28,7 @@ type Generator struct {
 	libMap                        map[string]*Lib
 	pkgMap                        map[string]Package
 	importSymbolPackageMap        map[string]Package
-	containsConflictSymbolFileMap map[string]ConflictSymbol
+	containsConflictSymbolFileMap map[string][]string
 	containsAddSourceFileMap      map[string]SourceConfig
 	pkgToAllDeps                  map[string][]string
 	internalExportNames           []string
@@ -36,10 +36,14 @@ type Generator struct {
 }
 
 func NewGenerator(cfg *Config, bridge *Bridge, importSymbol *ImportSymbol, templates embed.FS) *Generator {
-	containsConflictSymbolFileMap := map[string]ConflictSymbol{}
+	containsConflictSymbolFileMap := map[string][]string{}
 	for _, sym := range cfg.ConflictSymbols {
 		sym := sym
-		containsConflictSymbolFileMap[sym.File] = sym
+		symbols := append([]string{}, sym.Symbols...)
+		if sym.Symbol != "" {
+			symbols = append(symbols, sym.Symbol)
+		}
+		containsConflictSymbolFileMap[sym.File] = append(containsConflictSymbolFileMap[sym.File], symbols...)
 	}
 	containsAddSourceFileMap := map[string]SourceConfig{}
 	for _, src := range cfg.AddSources {
@@ -206,12 +210,19 @@ func (g *Generator) resolveDeps(pkgMap map[string]struct{}, lib *Lib) error {
 
 func (g *Generator) protobufInternalExportNames(parsedFiles []*ParsedFile) ([]string, error) {
 	internalExportNames := []string{}
+	appendInternalExportNames := func(name string) {
+		internalExportNames = append(internalExportNames,
+			name,
+			descriptorTableName(name),
+			tableStructName(name),
+		)
+	}
 	for _, path := range g.cfg.ProtobufInternalExportNameFiles {
 		internalExportName, err := g.headerPathToInternalExportName(filepath.Join(ccallDir(), path))
 		if err != nil {
 			return nil, err
 		}
-		internalExportNames = append(internalExportNames, internalExportName)
+		appendInternalExportNames(internalExportName)
 	}
 	for _, parsedFile := range parsedFiles {
 		for _, ccproto := range parsedFile.ccprotos {
@@ -221,11 +232,19 @@ func (g *Generator) protobufInternalExportNames(parsedFiles []*ParsedFile) ([]st
 				if err != nil {
 					return nil, err
 				}
-				internalExportNames = append(internalExportNames, internalExportName)
+				appendInternalExportNames(internalExportName)
 			}
 		}
 	}
 	return internalExportNames, nil
+}
+
+func descriptorTableName(internalExportName string) string {
+	return "descriptor_table_" + internalExportName
+}
+
+func tableStructName(internalExportName string) string {
+	return "TableStruct_" + internalExportName
 }
 
 func (g *Generator) headerPathToInternalExportName(path string) (string, error) {
@@ -251,6 +270,9 @@ func (g *Generator) headerPathToInternalExportName(path string) (string, error) 
 func (g *Generator) generate(f *ParsedFile) error {
 	for _, lib := range f.cclibs {
 		outputDir := filepath.Join(ccallDir(), goPkgPath(lib.BasePkg, lib.Name))
+		if err := os.MkdirAll(outputDir, 0o755); err != nil {
+			return err
+		}
 		if err := g.generateBindCC(outputDir, lib); err != nil {
 			return err
 		}
@@ -272,6 +294,9 @@ func (g *Generator) generate(f *ParsedFile) error {
 	}
 	for _, lib := range f.ccprotos {
 		outputDir := filepath.Join(ccallDir(), goPkgPath(lib.BasePkg, lib.Name))
+		if err := os.MkdirAll(outputDir, 0o755); err != nil {
+			return err
+		}
 		if err := g.generateBindCC(outputDir, lib); err != nil {
 			return err
 		}
@@ -288,13 +313,17 @@ func (g *Generator) generate(f *ParsedFile) error {
 			return err
 		}
 	}
-	if err := g.generateRootBindCC(filepath.Join(ccallDir(), "go-zetasql")); err != nil {
+	rootOutputDir := filepath.Join(ccallDir(), "go-zetasql")
+	if err := os.MkdirAll(rootOutputDir, 0o755); err != nil {
 		return err
 	}
-	if err := g.generateRootBridgeH(filepath.Join(ccallDir(), "go-zetasql")); err != nil {
+	if err := g.generateRootBindCC(rootOutputDir); err != nil {
 		return err
 	}
-	if err := g.generateRootBindGO(filepath.Join(ccallDir(), "go-zetasql")); err != nil {
+	if err := g.generateRootBridgeH(rootOutputDir); err != nil {
+		return err
+	}
+	if err := g.generateRootBindGO(rootOutputDir); err != nil {
 		return err
 	}
 	return nil
@@ -535,8 +564,8 @@ type SourceParam struct {
 func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param := &BindCCParam{}
 
-	prefix := strings.ReplaceAll(lib.BasePkg, "/", "_")
-	param.FQDN = fmt.Sprintf("%s_%s", prefix, lib.Name)
+	basePrefix := strings.ReplaceAll(lib.BasePkg, "/", "_")
+	param.FQDN = fmt.Sprintf("%s_%s", basePrefix, lib.Name)
 	param.PkgPath = lib.BasePkg
 	param.ReplaceNames = append(
 		append(
@@ -549,9 +578,14 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	sources := make([]SourceParam, 0, len(lib.Sources))
 	for _, src := range lib.SourcePaths() {
 		sourceParam := SourceParam{Value: src}
-		if sym, exists := g.containsConflictSymbolFileMap[src]; exists {
-			sourceParam.BeforeIncludeHook = fmt.Sprintf("\n\n#define %s %s%s", sym.Symbol, prefix, sym.Symbol)
-			sourceParam.AfterIncludeHook = fmt.Sprintf("\n#undef %s\n", sym.Symbol)
+		if symbols, exists := g.containsConflictSymbolFileMap[src]; exists {
+			for _, symbol := range symbols {
+				sourceParam.BeforeIncludeHook += fmt.Sprintf("\n#define %s %s_%s", symbol, param.FQDN, symbol)
+			}
+			sourceParam.AfterIncludeHook = "\n"
+			for i := len(symbols) - 1; i >= 0; i-- {
+				sourceParam.AfterIncludeHook += fmt.Sprintf("#undef %s\n", symbols[i])
+			}
 		}
 		if addSource, exists := g.containsAddSourceFileMap[src]; exists {
 			sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", addSource.Source)

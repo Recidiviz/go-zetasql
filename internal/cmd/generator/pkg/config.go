@@ -28,8 +28,9 @@ type DependencyConfig struct {
 }
 
 type ConflictSymbol struct {
-	File   string `yaml:"file"`
-	Symbol string `yaml:"symbol"`
+	File    string   `yaml:"file"`
+	Symbol  string   `yaml:"symbol"`
+	Symbols []string `yaml:"symbols"`
 }
 
 type SourceConfig struct {
