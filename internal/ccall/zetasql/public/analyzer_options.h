@@ -30,6 +30,7 @@
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/type.h"
+#include "zetasql/public/types/annotation.h"
 #include "zetasql/base/case.h"
 #include "absl/base/attributes.h"
 #include "absl/container/btree_set.h"
@@ -482,6 +483,14 @@ class AnalyzerOptions {
     return allowed_hints_and_options_;
   }
 
+  // If false (default), the analyzer will avoid adding a ResolvedCast node for
+  // a CAST operation in the query when the source and target types are the
+  // same. Otherwise, the ResolvedCast will be generated.
+  void set_preserve_unnecessary_cast(bool value) {
+    preserve_unnecessary_cast_ = value;
+  }
+  bool preserve_unnecessary_cast() const { return preserve_unnecessary_cast_; }
+
   // Controls whether to preserve aliases of aggregate columns and analytic
   // function columns. This option has no effect on query semantics and just
   // changes what names are used inside ResolvedColumns.
@@ -525,6 +534,14 @@ class AnalyzerOptions {
   }
   absl::Span<const Type* const> get_target_column_types() const {
     return target_column_types_;
+  }
+
+  void set_annotation_specs(std::vector<AnnotationSpec*> annotation_specs) {
+    annotation_specs_ = annotation_specs;
+  }
+
+  const std::vector<AnnotationSpec*>& get_annotation_specs() const {
+    return annotation_specs_;
   }
 
  private:
@@ -660,6 +677,15 @@ class AnalyzerOptions {
   // rewrites are applied consistent, and thus prevent instability in the
   // analyzer test column ids.
   absl::btree_set<ResolvedASTRewrite> enabled_rewrites_ = DefaultRewrites();
+
+  // Controls whether the analyzer will add a ResolvedCAST node for a CAST
+  // operation in the query even when the source and target types are the
+  // same.
+  bool preserve_unnecessary_cast_ = false;
+
+  // The annotations specs that are passed in and should be handled by
+  // the annotation framework.
+  std::vector<AnnotationSpec*> annotation_specs_;  // Not owned.
 
   // Copyable
 };

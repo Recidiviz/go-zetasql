@@ -78,6 +78,8 @@ const char* const kEnabledASTRewrites = "enabled_ast_rewrites";
 const char* const kCreateTableLikeNotScanned = "create_table_like_not_scanned";
 const char* const kPrivilegeRestrictionTableNotScanned =
     "privilege_restriction_table_not_scanned";
+const char* const kPreserveUnnecessaryCast = "preserve_unnecessary_cast";
+const char* const kEnableSampleAnnotation = "enable_sample_annotation";
 
 void RegisterAnalyzerTestOptions(
     file_based_test_driver::TestCaseOptions* test_case_options) {
@@ -96,6 +98,7 @@ void RegisterAnalyzerTestOptions(
   test_case_options->RegisterString(kParseLocationRecordType, "");
   test_case_options->RegisterBool(kCreateNewColumnForEachProjectedOutput,
                                   false);
+  test_case_options->RegisterBool(kEnableSampleAnnotation, false);
   test_case_options->RegisterBool(kParseMultiple, false);
   test_case_options->RegisterString(kDefaultTimezone, "");
   test_case_options->RegisterBool(kRunUnparser, true);
@@ -123,6 +126,7 @@ void RegisterAnalyzerTestOptions(
   test_case_options->RegisterString(kEnabledASTRewrites, "");
   test_case_options->RegisterBool(kCreateTableLikeNotScanned, false);
   test_case_options->RegisterBool(kPrivilegeRestrictionTableNotScanned, false);
+  test_case_options->RegisterBool(kPreserveUnnecessaryCast, false);
 }
 
 std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(

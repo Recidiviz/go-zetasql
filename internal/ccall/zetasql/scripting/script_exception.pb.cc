@@ -5,219 +5,185 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
 
-namespace protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ScriptException_StackTraceFrame;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ScriptException_Internal;
-}  // namespace protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto
+PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
-class ScriptException_StackTraceFrameDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ScriptException_StackTraceFrame>
-      _instance;
-} _ScriptException_StackTraceFrame_default_instance_;
-class ScriptException_InternalDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ScriptException_Internal>
-      _instance;
-} _ScriptException_Internal_default_instance_;
-class ScriptExceptionDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ScriptException>
-      _instance;
-} _ScriptException_default_instance_;
+constexpr ScriptException_StackTraceFrame::ScriptException_StackTraceFrame(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : filename_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , location_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , line_(int64_t{0})
+  , column_(int64_t{0}){}
+struct ScriptException_StackTraceFrameDefaultTypeInternal {
+  constexpr ScriptException_StackTraceFrameDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ScriptException_StackTraceFrameDefaultTypeInternal() {}
+  union {
+    ScriptException_StackTraceFrame _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptException_StackTraceFrameDefaultTypeInternal _ScriptException_StackTraceFrame_default_instance_;
+constexpr ScriptException_Internal::ScriptException_Internal(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : stack_trace_()
+  , statement_text_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct ScriptException_InternalDefaultTypeInternal {
+  constexpr ScriptException_InternalDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ScriptException_InternalDefaultTypeInternal() {}
+  union {
+    ScriptException_Internal _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptException_InternalDefaultTypeInternal _ScriptException_Internal_default_instance_;
+constexpr ScriptException::ScriptException(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : message_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , internal_(nullptr){}
+struct ScriptExceptionDefaultTypeInternal {
+  constexpr ScriptExceptionDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ScriptExceptionDefaultTypeInternal() {}
+  union {
+    ScriptException _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptExceptionDefaultTypeInternal _ScriptException_default_instance_;
 }  // namespace zetasql
-namespace protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto {
-static void InitDefaultsScriptException_StackTraceFrame() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fscripting_2fscript_5fexception_2eproto[3];
+static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexception_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexception_2eproto = nullptr;
 
-  {
-    void* ptr = &::zetasql::_ScriptException_StackTraceFrame_default_instance_;
-    new (ptr) ::zetasql::ScriptException_StackTraceFrame();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::ScriptException_StackTraceFrame::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_ScriptException_StackTraceFrame =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsScriptException_StackTraceFrame}, {}};
-
-static void InitDefaultsScriptException_Internal() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::zetasql::_ScriptException_Internal_default_instance_;
-    new (ptr) ::zetasql::ScriptException_Internal();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::ScriptException_Internal::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<1> scc_info_ScriptException_Internal =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsScriptException_Internal}, {
-      &protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException_StackTraceFrame.base,}};
-
-static void InitDefaultsScriptException() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::zetasql::_ScriptException_default_instance_;
-    new (ptr) ::zetasql::ScriptException();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::ScriptException::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<1> scc_info_ScriptException =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsScriptException}, {
-      &protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException_Internal.base,}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_ScriptException_StackTraceFrame.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_ScriptException_Internal.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_ScriptException.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[3];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, _internal_metadata_),
+const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexception_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, line_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, column_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, filename_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, location_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, line_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, column_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, filename_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_StackTraceFrame, location_),
   2,
   3,
   0,
   1,
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_Internal, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_Internal, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_Internal, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_Internal, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_Internal, statement_text_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException_Internal, stack_trace_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_Internal, statement_text_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException_Internal, stack_trace_),
   0,
   ~0u,
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException, message_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ScriptException, internal_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, message_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, internal_),
   0,
   1,
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 9, sizeof(::zetasql::ScriptException_StackTraceFrame)},
-  { 13, 20, sizeof(::zetasql::ScriptException_Internal)},
-  { 22, 29, sizeof(::zetasql::ScriptException)},
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 10, -1, sizeof(::zetasql::ScriptException_StackTraceFrame)},
+  { 14, 22, -1, sizeof(::zetasql::ScriptException_Internal)},
+  { 24, 32, -1, sizeof(::zetasql::ScriptException)},
 };
 
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_ScriptException_StackTraceFrame_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_ScriptException_Internal_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_ScriptException_default_instance_),
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptException_StackTraceFrame_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptException_Internal_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptException_default_instance_),
 };
 
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "zetasql/scripting/script_exception.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, NULL, NULL);
+const char descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexception_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n(zetasql/scripting/script_exception.pro"
+  "to\022\007zetasql\"\217\002\n\017ScriptException\022\017\n\007messa"
+  "ge\030\001 \001(\t\0223\n\010internal\030\002 \001(\0132!.zetasql.Scr"
+  "iptException.Internal\032S\n\017StackTraceFrame"
+  "\022\014\n\004line\030\001 \001(\003\022\016\n\006column\030\002 \001(\003\022\020\n\010filena"
+  "me\030\003 \001(\t\022\020\n\010location\030\004 \001(\t\032a\n\010Internal\022\026"
+  "\n\016statement_text\030\001 \001(\t\022=\n\013stack_trace\030\002 "
+  "\003(\0132(.zetasql.ScriptException.StackTrace"
+  "Frame"
+  ;
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto = {
+  false, false, 325, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexception_2eproto, "zetasql/scripting/script_exception.proto", 
+  &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once, nullptr, 0, 3,
+  schemas, file_default_instances, TableStruct_zetasql_2fscripting_2fscript_5fexception_2eproto::offsets,
+  file_level_metadata_zetasql_2fscripting_2fscript_5fexception_2eproto, file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexception_2eproto, file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexception_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_getter() {
+  return &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto;
 }
 
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 3);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n(zetasql/scripting/script_exception.pro"
-      "to\022\007zetasql\"\217\002\n\017ScriptException\022\017\n\007messa"
-      "ge\030\001 \001(\t\0223\n\010internal\030\002 \001(\0132!.zetasql.Scr"
-      "iptException.Internal\032S\n\017StackTraceFrame"
-      "\022\014\n\004line\030\001 \001(\003\022\016\n\006column\030\002 \001(\003\022\020\n\010filena"
-      "me\030\003 \001(\t\022\020\n\010location\030\004 \001(\t\032a\n\010Internal\022\026"
-      "\n\016statement_text\030\001 \001(\t\022=\n\013stack_trace\030\002 "
-      "\003(\0132(.zetasql.ScriptException.StackTrace"
-      "Frame"
-  };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 325);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "zetasql/scripting/script_exception.proto", &protobuf_RegisterTypes);
-}
-
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fscripting_2fscript_5fexception_2eproto(&descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto);
 namespace zetasql {
 
 // ===================================================================
 
-void ScriptException_StackTraceFrame::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ScriptException_StackTraceFrame::kLineFieldNumber;
-const int ScriptException_StackTraceFrame::kColumnFieldNumber;
-const int ScriptException_StackTraceFrame::kFilenameFieldNumber;
-const int ScriptException_StackTraceFrame::kLocationFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class ScriptException_StackTraceFrame::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ScriptException_StackTraceFrame>()._has_bits_);
+  static void set_has_line(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_column(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static void set_has_filename(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_location(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
 
-ScriptException_StackTraceFrame::ScriptException_StackTraceFrame()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException_StackTraceFrame.base);
+ScriptException_StackTraceFrame::ScriptException_StackTraceFrame(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.ScriptException.StackTraceFrame)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ScriptException.StackTraceFrame)
 }
 ScriptException_StackTraceFrame::ScriptException_StackTraceFrame(const ScriptException_StackTraceFrame& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_filename()) {
-    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_filename()) {
+    filename_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_filename(), 
+      GetArenaForAllocation());
   }
-  location_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_location()) {
-    location_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.location_);
+  location_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    location_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_location()) {
+    location_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_location(), 
+      GetArenaForAllocation());
   }
   ::memcpy(&line_, &from.line_,
     static_cast<size_t>(reinterpret_cast<char*>(&column_) -
@@ -225,239 +191,183 @@ ScriptException_StackTraceFrame::ScriptException_StackTraceFrame(const ScriptExc
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptException.StackTraceFrame)
 }
 
-void ScriptException_StackTraceFrame::SharedCtor() {
-  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  location_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&line_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&column_) -
-      reinterpret_cast<char*>(&line_)) + sizeof(column_));
+inline void ScriptException_StackTraceFrame::SharedCtor() {
+filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+location_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  location_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&line_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&column_) -
+    reinterpret_cast<char*>(&line_)) + sizeof(column_));
 }
 
 ScriptException_StackTraceFrame::~ScriptException_StackTraceFrame() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptException.StackTraceFrame)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void ScriptException_StackTraceFrame::SharedDtor() {
-  filename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  location_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ScriptException_StackTraceFrame::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  filename_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  location_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
+void ScriptException_StackTraceFrame::ArenaDtor(void* object) {
+  ScriptException_StackTraceFrame* _this = reinterpret_cast< ScriptException_StackTraceFrame* >(object);
+  (void)_this;
+}
+void ScriptException_StackTraceFrame::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ScriptException_StackTraceFrame::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* ScriptException_StackTraceFrame::descriptor() {
-  ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const ScriptException_StackTraceFrame& ScriptException_StackTraceFrame::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException_StackTraceFrame.base);
-  return *internal_default_instance();
-}
-
 
 void ScriptException_StackTraceFrame::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptException.StackTraceFrame)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      filename_.ClearNonDefaultToEmptyNoArena();
+      filename_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      location_.ClearNonDefaultToEmptyNoArena();
+      location_.ClearNonDefaultToEmpty();
     }
   }
-  if (cached_has_bits & 12u) {
+  if (cached_has_bits & 0x0000000cu) {
     ::memset(&line_, 0, static_cast<size_t>(
         reinterpret_cast<char*>(&column_) -
         reinterpret_cast<char*>(&line_)) + sizeof(column_));
   }
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool ScriptException_StackTraceFrame::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.ScriptException.StackTraceFrame)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* ScriptException_StackTraceFrame::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional int64 line = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          set_has_line();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &line_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_line(&has_bits);
+          line_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional int64 column = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-          set_has_column();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &column_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_column(&has_bits);
+          column_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional string filename = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_filename()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->filename().data(), static_cast<int>(this->filename().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ScriptException.StackTraceFrame.filename");
-        } else {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_filename();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptException.StackTraceFrame.filename");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional string location = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_location()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->location().data(), static_cast<int>(this->location().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ScriptException.StackTraceFrame.location");
-        } else {
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_location();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptException.StackTraceFrame.location");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.ScriptException.StackTraceFrame)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.ScriptException.StackTraceFrame)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void ScriptException_StackTraceFrame::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.ScriptException.StackTraceFrame)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional int64 line = 1;
-  if (cached_has_bits & 0x00000004u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->line(), output);
-  }
-
-  // optional int64 column = 2;
-  if (cached_has_bits & 0x00000008u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->column(), output);
-  }
-
-  // optional string filename = 3;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->filename().data(), static_cast<int>(this->filename().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptException.StackTraceFrame.filename");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->filename(), output);
-  }
-
-  // optional string location = 4;
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->location().data(), static_cast<int>(this->location().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptException.StackTraceFrame.location");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->location(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.ScriptException.StackTraceFrame)
-}
-
-::google::protobuf::uint8* ScriptException_StackTraceFrame::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* ScriptException_StackTraceFrame::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptException.StackTraceFrame)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional int64 line = 1;
   if (cached_has_bits & 0x00000004u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->line(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_line(), target);
   }
 
   // optional int64 column = 2;
   if (cached_has_bits & 0x00000008u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->column(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(2, this->_internal_column(), target);
   }
 
   // optional string filename = 3;
   if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->filename().data(), static_cast<int>(this->filename().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_filename().data(), static_cast<int>(this->_internal_filename().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ScriptException.StackTraceFrame.filename");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->filename(), target);
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_filename(), target);
   }
 
   // optional string location = 4;
   if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->location().data(), static_cast<int>(this->location().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_location().data(), static_cast<int>(this->_internal_location().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ScriptException.StackTraceFrame.location");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->location(), target);
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_location(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptException.StackTraceFrame)
   return target;
@@ -467,77 +377,66 @@ size_t ScriptException_StackTraceFrame::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptException.StackTraceFrame)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 15u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
     // optional string filename = 3;
-    if (has_filename()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->filename());
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_filename());
     }
 
     // optional string location = 4;
-    if (has_location()) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->location());
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_location());
     }
 
     // optional int64 line = 1;
-    if (has_line()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->line());
+    if (cached_has_bits & 0x00000004u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_line());
     }
 
     // optional int64 column = 2;
-    if (has_column()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->column());
+    if (cached_has_bits & 0x00000008u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_column());
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void ScriptException_StackTraceFrame::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.ScriptException.StackTraceFrame)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ScriptException_StackTraceFrame* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ScriptException_StackTraceFrame>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.ScriptException.StackTraceFrame)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.ScriptException.StackTraceFrame)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptException_StackTraceFrame::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ScriptException_StackTraceFrame::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptException_StackTraceFrame::GetClassData() const { return &_class_data_; }
+
+void ScriptException_StackTraceFrame::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ScriptException_StackTraceFrame *>(to)->MergeFrom(
+      static_cast<const ScriptException_StackTraceFrame &>(from));
 }
+
 
 void ScriptException_StackTraceFrame::MergeFrom(const ScriptException_StackTraceFrame& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptException.StackTraceFrame)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 15u) {
+  if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      set_has_filename();
-      filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+      _internal_set_filename(from._internal_filename());
     }
     if (cached_has_bits & 0x00000002u) {
-      set_has_location();
-      location_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.location_);
+      _internal_set_location(from._internal_location());
     }
     if (cached_has_bits & 0x00000004u) {
       line_ = from.line_;
@@ -547,13 +446,7 @@ void ScriptException_StackTraceFrame::MergeFrom(const ScriptException_StackTrace
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void ScriptException_StackTraceFrame::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.ScriptException.StackTraceFrame)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptException_StackTraceFrame::CopyFrom(const ScriptException_StackTraceFrame& from) {
@@ -567,220 +460,200 @@ bool ScriptException_StackTraceFrame::IsInitialized() const {
   return true;
 }
 
-void ScriptException_StackTraceFrame::Swap(ScriptException_StackTraceFrame* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void ScriptException_StackTraceFrame::InternalSwap(ScriptException_StackTraceFrame* other) {
   using std::swap;
-  filename_.Swap(&other->filename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  location_.Swap(&other->location_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(line_, other->line_);
-  swap(column_, other->column_);
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &filename_, lhs_arena,
+      &other->filename_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &location_, lhs_arena,
+      &other->location_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ScriptException_StackTraceFrame, column_)
+      + sizeof(ScriptException_StackTraceFrame::column_)
+      - PROTOBUF_FIELD_OFFSET(ScriptException_StackTraceFrame, line_)>(
+          reinterpret_cast<char*>(&line_),
+          reinterpret_cast<char*>(&other->line_));
 }
 
-::google::protobuf::Metadata ScriptException_StackTraceFrame::GetMetadata() const {
-  protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata ScriptException_StackTraceFrame::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once,
+      file_level_metadata_zetasql_2fscripting_2fscript_5fexception_2eproto[0]);
 }
-
 
 // ===================================================================
 
-void ScriptException_Internal::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ScriptException_Internal::kStatementTextFieldNumber;
-const int ScriptException_Internal::kStackTraceFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class ScriptException_Internal::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ScriptException_Internal>()._has_bits_);
+  static void set_has_statement_text(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
 
-ScriptException_Internal::ScriptException_Internal()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException_Internal.base);
+ScriptException_Internal::ScriptException_Internal(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  stack_trace_(arena) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.ScriptException.Internal)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ScriptException.Internal)
 }
 ScriptException_Internal::ScriptException_Internal(const ScriptException_Internal& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_),
       stack_trace_(from.stack_trace_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  statement_text_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_statement_text()) {
-    statement_text_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.statement_text_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  statement_text_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    statement_text_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_statement_text()) {
+    statement_text_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_statement_text(), 
+      GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptException.Internal)
 }
 
-void ScriptException_Internal::SharedCtor() {
-  statement_text_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ScriptException_Internal::SharedCtor() {
+statement_text_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  statement_text_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ScriptException_Internal::~ScriptException_Internal() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptException.Internal)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void ScriptException_Internal::SharedDtor() {
-  statement_text_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ScriptException_Internal::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  statement_text_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
+void ScriptException_Internal::ArenaDtor(void* object) {
+  ScriptException_Internal* _this = reinterpret_cast< ScriptException_Internal* >(object);
+  (void)_this;
+}
+void ScriptException_Internal::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ScriptException_Internal::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* ScriptException_Internal::descriptor() {
-  ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const ScriptException_Internal& ScriptException_Internal::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException_Internal.base);
-  return *internal_default_instance();
-}
-
 
 void ScriptException_Internal::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptException.Internal)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   stack_trace_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    statement_text_.ClearNonDefaultToEmptyNoArena();
+    statement_text_.ClearNonDefaultToEmpty();
   }
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool ScriptException_Internal::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.ScriptException.Internal)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* ScriptException_Internal::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional string statement_text = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_statement_text()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->statement_text().data(), static_cast<int>(this->statement_text().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ScriptException.Internal.statement_text");
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_statement_text();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptException.Internal.statement_text");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // repeated .zetasql.ScriptException.StackTraceFrame stack_trace = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_stack_trace()));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_stack_trace(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.ScriptException.Internal)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.ScriptException.Internal)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void ScriptException_Internal::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.ScriptException.Internal)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional string statement_text = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->statement_text().data(), static_cast<int>(this->statement_text().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptException.Internal.statement_text");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->statement_text(), output);
-  }
-
-  // repeated .zetasql.ScriptException.StackTraceFrame stack_trace = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->stack_trace_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2,
-      this->stack_trace(static_cast<int>(i)),
-      output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.ScriptException.Internal)
-}
-
-::google::protobuf::uint8* ScriptException_Internal::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* ScriptException_Internal::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptException.Internal)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional string statement_text = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->statement_text().data(), static_cast<int>(this->statement_text().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_statement_text().data(), static_cast<int>(this->_internal_statement_text().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ScriptException.Internal.statement_text");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->statement_text(), target);
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_statement_text(), target);
   }
 
   // repeated .zetasql.ScriptException.StackTraceFrame stack_trace = 2;
   for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->stack_trace_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        2, this->stack_trace(static_cast<int>(i)), deterministic, target);
+      n = static_cast<unsigned int>(this->_internal_stack_trace_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, this->_internal_stack_trace(i), target, stream);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptException.Internal)
   return target;
@@ -790,68 +663,52 @@ size_t ScriptException_Internal::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptException.Internal)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
   // repeated .zetasql.ScriptException.StackTraceFrame stack_trace = 2;
-  {
-    unsigned int count = static_cast<unsigned int>(this->stack_trace_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->stack_trace(static_cast<int>(i)));
-    }
+  total_size += 1UL * this->_internal_stack_trace_size();
+  for (const auto& msg : this->stack_trace_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // optional string statement_text = 1;
-  if (has_statement_text()) {
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->statement_text());
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_statement_text());
   }
 
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void ScriptException_Internal::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.ScriptException.Internal)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ScriptException_Internal* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ScriptException_Internal>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.ScriptException.Internal)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.ScriptException.Internal)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptException_Internal::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ScriptException_Internal::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptException_Internal::GetClassData() const { return &_class_data_; }
+
+void ScriptException_Internal::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ScriptException_Internal *>(to)->MergeFrom(
+      static_cast<const ScriptException_Internal &>(from));
 }
+
 
 void ScriptException_Internal::MergeFrom(const ScriptException_Internal& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptException.Internal)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   stack_trace_.MergeFrom(from.stack_trace_);
-  if (from.has_statement_text()) {
-    set_has_statement_text();
-    statement_text_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.statement_text_);
+  if (from._internal_has_statement_text()) {
+    _internal_set_statement_text(from._internal_statement_text());
   }
-}
-
-void ScriptException_Internal::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.ScriptException.Internal)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptException_Internal::CopyFrom(const ScriptException_Internal& from) {
@@ -865,226 +722,203 @@ bool ScriptException_Internal::IsInitialized() const {
   return true;
 }
 
-void ScriptException_Internal::Swap(ScriptException_Internal* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void ScriptException_Internal::InternalSwap(ScriptException_Internal* other) {
   using std::swap;
-  CastToBase(&stack_trace_)->InternalSwap(CastToBase(&other->stack_trace_));
-  statement_text_.Swap(&other->statement_text_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  stack_trace_.InternalSwap(&other->stack_trace_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &statement_text_, lhs_arena,
+      &other->statement_text_, rhs_arena
+  );
 }
 
-::google::protobuf::Metadata ScriptException_Internal::GetMetadata() const {
-  protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata ScriptException_Internal::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once,
+      file_level_metadata_zetasql_2fscripting_2fscript_5fexception_2eproto[1]);
 }
-
 
 // ===================================================================
 
-void ScriptException::InitAsDefaultInstance() {
-  ::zetasql::_ScriptException_default_instance_._instance.get_mutable()->internal_ = const_cast< ::zetasql::ScriptException_Internal*>(
-      ::zetasql::ScriptException_Internal::internal_default_instance());
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ScriptException::kMessageFieldNumber;
-const int ScriptException::kInternalFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class ScriptException::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ScriptException>()._has_bits_);
+  static void set_has_message(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static const ::zetasql::ScriptException_Internal& internal(const ScriptException* msg);
+  static void set_has_internal(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
 
-ScriptException::ScriptException()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException.base);
+const ::zetasql::ScriptException_Internal&
+ScriptException::_Internal::internal(const ScriptException* msg) {
+  return *msg->internal_;
+}
+ScriptException::ScriptException(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.ScriptException)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ScriptException)
 }
 ScriptException::ScriptException(const ScriptException& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  message_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_message()) {
-    message_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.message_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_message()) {
+    message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_message(), 
+      GetArenaForAllocation());
   }
-  if (from.has_internal()) {
+  if (from._internal_has_internal()) {
     internal_ = new ::zetasql::ScriptException_Internal(*from.internal_);
   } else {
-    internal_ = NULL;
+    internal_ = nullptr;
   }
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptException)
 }
 
-void ScriptException::SharedCtor() {
-  message_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  internal_ = NULL;
+inline void ScriptException::SharedCtor() {
+message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+internal_ = nullptr;
 }
 
 ScriptException::~ScriptException() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptException)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void ScriptException::SharedDtor() {
-  message_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ScriptException::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  message_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete internal_;
 }
 
+void ScriptException::ArenaDtor(void* object) {
+  ScriptException* _this = reinterpret_cast< ScriptException* >(object);
+  (void)_this;
+}
+void ScriptException::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ScriptException::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* ScriptException::descriptor() {
-  ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const ScriptException& ScriptException::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::scc_info_ScriptException.base);
-  return *internal_default_instance();
-}
-
 
 void ScriptException::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptException)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      message_.ClearNonDefaultToEmptyNoArena();
+      message_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(internal_ != NULL);
+      GOOGLE_DCHECK(internal_ != nullptr);
       internal_->Clear();
     }
   }
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool ScriptException::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.ScriptException)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* ScriptException::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional string message = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_message()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->message().data(), static_cast<int>(this->message().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ScriptException.message");
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_message();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptException.message");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional .zetasql.ScriptException.Internal internal = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_internal()));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_internal(), ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.ScriptException)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.ScriptException)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void ScriptException::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.ScriptException)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional string message = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->message().data(), static_cast<int>(this->message().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptException.message");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->message(), output);
-  }
-
-  // optional .zetasql.ScriptException.Internal internal = 2;
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->_internal_internal(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.ScriptException)
-}
-
-::google::protobuf::uint8* ScriptException::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* ScriptException::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptException)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional string message = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->message().data(), static_cast<int>(this->message().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ScriptException.message");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->message(), target);
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_message(), target);
   }
 
   // optional .zetasql.ScriptException.Internal internal = 2;
   if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        2, this->_internal_internal(), deterministic, target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::internal(this), target, stream);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptException)
   return target;
@@ -1094,71 +928,59 @@ size_t ScriptException::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptException)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 3u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
     // optional string message = 1;
-    if (has_message()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->message());
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_message());
     }
 
     // optional .zetasql.ScriptException.Internal internal = 2;
-    if (has_internal()) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *internal_);
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void ScriptException::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.ScriptException)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ScriptException* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ScriptException>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.ScriptException)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.ScriptException)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptException::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ScriptException::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptException::GetClassData() const { return &_class_data_; }
+
+void ScriptException::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ScriptException *>(to)->MergeFrom(
+      static_cast<const ScriptException &>(from));
 }
+
 
 void ScriptException::MergeFrom(const ScriptException& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptException)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      set_has_message();
-      message_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.message_);
+      _internal_set_message(from._internal_message());
     }
     if (cached_has_bits & 0x00000002u) {
-      mutable_internal()->::zetasql::ScriptException_Internal::MergeFrom(from.internal());
+      _internal_mutable_internal()->::zetasql::ScriptException_Internal::MergeFrom(from._internal_internal());
     }
   }
-}
-
-void ScriptException::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.ScriptException)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptException::CopyFrom(const ScriptException& from) {
@@ -1172,39 +994,39 @@ bool ScriptException::IsInitialized() const {
   return true;
 }
 
-void ScriptException::Swap(ScriptException* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void ScriptException::InternalSwap(ScriptException* other) {
   using std::swap;
-  message_.Swap(&other->message_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(internal_, other->internal_);
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &message_, lhs_arena,
+      &other->message_, rhs_arena
+  );
+  swap(internal_, other->internal_);
 }
 
-::google::protobuf::Metadata ScriptException::GetMetadata() const {
-  protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fscripting_2fscript_5fexception_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata ScriptException::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once,
+      file_level_metadata_zetasql_2fscripting_2fscript_5fexception_2eproto[2]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::ScriptException_StackTraceFrame* Arena::CreateMaybeMessage< ::zetasql::ScriptException_StackTraceFrame >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::ScriptException_StackTraceFrame >(arena);
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptException_StackTraceFrame* Arena::CreateMaybeMessage< ::zetasql::ScriptException_StackTraceFrame >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ScriptException_StackTraceFrame >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::ScriptException_Internal* Arena::CreateMaybeMessage< ::zetasql::ScriptException_Internal >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::ScriptException_Internal >(arena);
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptException_Internal* Arena::CreateMaybeMessage< ::zetasql::ScriptException_Internal >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ScriptException_Internal >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::ScriptException* Arena::CreateMaybeMessage< ::zetasql::ScriptException >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::ScriptException >(arena);
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptException* Arena::CreateMaybeMessage< ::zetasql::ScriptException >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ScriptException >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>

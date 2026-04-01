@@ -544,6 +544,22 @@ void ASTNewConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTNewConstructor(this, data);
 }
 
+void ASTBracedConstructorFieldValue::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTBracedConstructorFieldValue(this, data);
+}
+
+void ASTBracedConstructorField::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTBracedConstructorField(this, data);
+}
+
+void ASTBracedConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTBracedConstructor(this, data);
+}
+
+void ASTBracedNewConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTBracedNewConstructor(this, data);
+}
+
 void ASTOptionsList::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTOptionsList(this, data);
 }
@@ -1770,6 +1786,22 @@ absl::StatusOr<VisitResult> ASTNewConstructorArg::Accept(NonRecursiveParseTreeVi
 
 absl::StatusOr<VisitResult> ASTNewConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTNewConstructor(this);
+}
+
+absl::StatusOr<VisitResult> ASTBracedConstructorFieldValue::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTBracedConstructorFieldValue(this);
+}
+
+absl::StatusOr<VisitResult> ASTBracedConstructorField::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTBracedConstructorField(this);
+}
+
+absl::StatusOr<VisitResult> ASTBracedConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTBracedConstructor(this);
+}
+
+absl::StatusOr<VisitResult> ASTBracedNewConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTBracedNewConstructor(this);
 }
 
 absl::StatusOr<VisitResult> ASTOptionsList::Accept(NonRecursiveParseTreeVisitor* visitor) const {

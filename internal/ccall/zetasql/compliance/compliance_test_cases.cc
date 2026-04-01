@@ -2055,6 +2055,10 @@ SHARDED_TEST_F(ComplianceCodebasedTests,
   RunFunctionCalls(Shard(GetFunctionTestsConvertTimestampToDatetime()));
 }
 
+SHARDED_TEST_F(ComplianceCodebasedTests, TestTimestampBucketFunctions, 1) {
+  RunFunctionCalls(Shard(GetFunctionTestsTimestampBucket()));
+}
+
 SHARDED_TEST_F(ComplianceCodebasedTests, TestOctetLengthFunctions, 1) {
   RunFunctionCalls(Shard(GetFunctionTestsOctetLength()));
 }

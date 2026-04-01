@@ -24,21 +24,15 @@ cc_library(
     name = "rewriter_relevance_checker",
     srcs = ["rewriter_relevance_checker.cc"],
     hdrs = ["rewriter_relevance_checker.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/public:builtin_function_cc_proto",
         "//zetasql/public:options_cc_proto",
         "//zetasql/public:sql_function",
+        "//zetasql/public:sql_tvf",
         "//zetasql/public:templated_sql_function",
         "//zetasql/resolved_ast",
         "@com_google_absl//absl/container:btree",
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
     ],
 )
@@ -47,14 +41,6 @@ cc_library(
     name = "flatten_rewriter",
     srcs = ["flatten_rewriter.cc"],
     hdrs = ["flatten_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/base:ret_check",
@@ -79,14 +65,6 @@ cc_library(
     name = "let_expr_rewriter",
     srcs = ["let_expr_rewriter.cc"],
     hdrs = ["let_expr_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/base:ret_check",
@@ -107,14 +85,6 @@ cc_library(
     name = "sql_function_inliner",
     srcs = ["sql_function_inliner.cc"],
     hdrs = ["sql_function_inliner.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/base:ret_check",
@@ -127,6 +97,7 @@ cc_library(
         "//zetasql/public:function",
         "//zetasql/public:options_cc_proto",
         "//zetasql/public:sql_function",
+        "//zetasql/public:sql_tvf",
         "//zetasql/public:templated_sql_function",
         "//zetasql/public/types",
         "//zetasql/resolved_ast",
@@ -143,14 +114,6 @@ cc_library(
     name = "map_function_rewriter",
     srcs = ["map_function_rewriter.cc"],
     hdrs = ["map_function_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/analyzer:substitute",
@@ -178,14 +141,6 @@ cc_library(
     name = "array_functions_rewriter",
     srcs = ["array_functions_rewriter.cc"],
     hdrs = ["array_functions_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/analyzer:substitute",
@@ -211,14 +166,6 @@ cc_library(
     name = "typeof_function_rewriter",
     srcs = ["typeof_function_rewriter.cc"],
     hdrs = ["typeof_function_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/base:ret_check",
@@ -245,14 +192,6 @@ cc_library(
     name = "unpivot_rewriter",
     srcs = ["unpivot_rewriter.cc"],
     hdrs = ["unpivot_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/base",
@@ -279,14 +218,6 @@ cc_library(
 cc_library(
     name = "rewriter_interface",
     hdrs = ["rewriter_interface.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = ["@com_google_absl//absl/status:statusor"],
 )
 
@@ -294,14 +225,6 @@ cc_library(
     name = "pivot_rewriter",
     srcs = ["pivot_rewriter.cc"],
     hdrs = ["pivot_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":rewriter_interface",
         "//zetasql/analyzer:resolver",
@@ -339,14 +262,6 @@ cc_library(
     name = "registration",
     srcs = ["registration.cc"],
     hdrs = ["registration.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base:logging",
         "//zetasql/public:options_cc_proto",
@@ -361,15 +276,6 @@ cc_library(
 cc_test(
     name = "registration_test",
     srcs = ["registration_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":registration",
         ":rewriter_interface",

@@ -5,147 +5,131 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
 
+PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
-class ParseResumeLocationProtoDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ParseResumeLocationProto>
-      _instance;
-} _ParseResumeLocationProto_default_instance_;
+constexpr ParseResumeLocationProto::ParseResumeLocationProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : input_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , filename_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , byte_position_(0)
+  , allow_resume_(false){}
+struct ParseResumeLocationProtoDefaultTypeInternal {
+  constexpr ParseResumeLocationProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ParseResumeLocationProtoDefaultTypeInternal() {}
+  union {
+    ParseResumeLocationProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ParseResumeLocationProtoDefaultTypeInternal _ParseResumeLocationProto_default_instance_;
 }  // namespace zetasql
-namespace protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto {
-static void InitDefaultsParseResumeLocationProto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto[1];
+static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto = nullptr;
 
-  {
-    void* ptr = &::zetasql::_ParseResumeLocationProto_default_instance_;
-    new (ptr) ::zetasql::ParseResumeLocationProto();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::ParseResumeLocationProto::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_ParseResumeLocationProto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsParseResumeLocationProto}, {}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_ParseResumeLocationProto.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[1];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, _internal_metadata_),
+const uint32_t TableStruct_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, filename_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, input_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, byte_position_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, allow_resume_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, filename_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, input_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, byte_position_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseResumeLocationProto, allow_resume_),
   1,
   0,
   2,
   3,
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 9, sizeof(::zetasql::ParseResumeLocationProto)},
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 10, -1, sizeof(::zetasql::ParseResumeLocationProto)},
 };
 
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_ParseResumeLocationProto_default_instance_),
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ParseResumeLocationProto_default_instance_),
 };
 
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "zetasql/public/parse_resume_location.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, NULL, NULL);
+const char descriptor_table_protodef_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n*zetasql/public/parse_resume_location.p"
+  "roto\022\007zetasql\"h\n\030ParseResumeLocationProt"
+  "o\022\020\n\010filename\030\004 \001(\t\022\r\n\005input\030\001 \001(\t\022\025\n\rby"
+  "te_position\030\002 \001(\005\022\024\n\014allow_resume\030\003 \001(\010B"
+  "#\n\022com.google.zetasqlB\rZetaSQLParser"
+  ;
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto = {
+  false, false, 196, descriptor_table_protodef_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto, "zetasql/public/parse_resume_location.proto", 
+  &descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto_once, nullptr, 0, 1,
+  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::offsets,
+  file_level_metadata_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto_getter() {
+  return &descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto;
 }
 
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 1);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n*zetasql/public/parse_resume_location.p"
-      "roto\022\007zetasql\"h\n\030ParseResumeLocationProt"
-      "o\022\020\n\010filename\030\004 \001(\t\022\r\n\005input\030\001 \001(\t\022\025\n\rby"
-      "te_position\030\002 \001(\005\022\024\n\014allow_resume\030\003 \001(\010B"
-      "#\n\022com.google.zetasqlB\rZetaSQLParser"
-  };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 196);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "zetasql/public/parse_resume_location.proto", &protobuf_RegisterTypes);
-}
-
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto(&descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto);
 namespace zetasql {
 
 // ===================================================================
 
-void ParseResumeLocationProto::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ParseResumeLocationProto::kFilenameFieldNumber;
-const int ParseResumeLocationProto::kInputFieldNumber;
-const int ParseResumeLocationProto::kBytePositionFieldNumber;
-const int ParseResumeLocationProto::kAllowResumeFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class ParseResumeLocationProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ParseResumeLocationProto>()._has_bits_);
+  static void set_has_filename(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_input(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_byte_position(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_allow_resume(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+};
 
-ParseResumeLocationProto::ParseResumeLocationProto()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::scc_info_ParseResumeLocationProto.base);
+ParseResumeLocationProto::ParseResumeLocationProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.ParseResumeLocationProto)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ParseResumeLocationProto)
 }
 ParseResumeLocationProto::ParseResumeLocationProto(const ParseResumeLocationProto& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_input()) {
-    input_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.input_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  input_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    input_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_input()) {
+    input_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_input(), 
+      GetArenaForAllocation());
   }
-  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_filename()) {
-    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+  filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_filename()) {
+    filename_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_filename(), 
+      GetArenaForAllocation());
   }
   ::memcpy(&byte_position_, &from.byte_position_,
     static_cast<size_t>(reinterpret_cast<char*>(&allow_resume_) -
@@ -153,239 +137,183 @@ ParseResumeLocationProto::ParseResumeLocationProto(const ParseResumeLocationProt
   // @@protoc_insertion_point(copy_constructor:zetasql.ParseResumeLocationProto)
 }
 
-void ParseResumeLocationProto::SharedCtor() {
-  input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&byte_position_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&allow_resume_) -
-      reinterpret_cast<char*>(&byte_position_)) + sizeof(allow_resume_));
+inline void ParseResumeLocationProto::SharedCtor() {
+input_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  input_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&byte_position_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&allow_resume_) -
+    reinterpret_cast<char*>(&byte_position_)) + sizeof(allow_resume_));
 }
 
 ParseResumeLocationProto::~ParseResumeLocationProto() {
   // @@protoc_insertion_point(destructor:zetasql.ParseResumeLocationProto)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void ParseResumeLocationProto::SharedDtor() {
-  input_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  filename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ParseResumeLocationProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  input_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  filename_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
+void ParseResumeLocationProto::ArenaDtor(void* object) {
+  ParseResumeLocationProto* _this = reinterpret_cast< ParseResumeLocationProto* >(object);
+  (void)_this;
+}
+void ParseResumeLocationProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ParseResumeLocationProto::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* ParseResumeLocationProto::descriptor() {
-  ::protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const ParseResumeLocationProto& ParseResumeLocationProto::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::scc_info_ParseResumeLocationProto.base);
-  return *internal_default_instance();
-}
-
 
 void ParseResumeLocationProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ParseResumeLocationProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      input_.ClearNonDefaultToEmptyNoArena();
+      input_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      filename_.ClearNonDefaultToEmptyNoArena();
+      filename_.ClearNonDefaultToEmpty();
     }
   }
-  if (cached_has_bits & 12u) {
+  if (cached_has_bits & 0x0000000cu) {
     ::memset(&byte_position_, 0, static_cast<size_t>(
         reinterpret_cast<char*>(&allow_resume_) -
         reinterpret_cast<char*>(&byte_position_)) + sizeof(allow_resume_));
   }
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool ParseResumeLocationProto::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.ParseResumeLocationProto)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* ParseResumeLocationProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional string input = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_input()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->input().data(), static_cast<int>(this->input().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ParseResumeLocationProto.input");
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_input();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ParseResumeLocationProto.input");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional int32 byte_position = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-          set_has_byte_position();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &byte_position_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_byte_position(&has_bits);
+          byte_position_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional bool allow_resume = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-          set_has_allow_resume();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &allow_resume_)));
-        } else {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _Internal::set_has_allow_resume(&has_bits);
+          allow_resume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional string filename = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_filename()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->filename().data(), static_cast<int>(this->filename().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ParseResumeLocationProto.filename");
-        } else {
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_filename();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ParseResumeLocationProto.filename");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.ParseResumeLocationProto)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.ParseResumeLocationProto)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void ParseResumeLocationProto::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.ParseResumeLocationProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional string input = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->input().data(), static_cast<int>(this->input().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ParseResumeLocationProto.input");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->input(), output);
-  }
-
-  // optional int32 byte_position = 2;
-  if (cached_has_bits & 0x00000004u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->byte_position(), output);
-  }
-
-  // optional bool allow_resume = 3;
-  if (cached_has_bits & 0x00000008u) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->allow_resume(), output);
-  }
-
-  // optional string filename = 4;
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->filename().data(), static_cast<int>(this->filename().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ParseResumeLocationProto.filename");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->filename(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.ParseResumeLocationProto)
-}
-
-::google::protobuf::uint8* ParseResumeLocationProto::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* ParseResumeLocationProto::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ParseResumeLocationProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional string input = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->input().data(), static_cast<int>(this->input().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_input().data(), static_cast<int>(this->_internal_input().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ParseResumeLocationProto.input");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->input(), target);
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_input(), target);
   }
 
   // optional int32 byte_position = 2;
   if (cached_has_bits & 0x00000004u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->byte_position(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_byte_position(), target);
   }
 
   // optional bool allow_resume = 3;
   if (cached_has_bits & 0x00000008u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->allow_resume(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(3, this->_internal_allow_resume(), target);
   }
 
   // optional string filename = 4;
   if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->filename().data(), static_cast<int>(this->filename().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_filename().data(), static_cast<int>(this->_internal_filename().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ParseResumeLocationProto.filename");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->filename(), target);
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_filename(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ParseResumeLocationProto)
   return target;
@@ -395,75 +323,66 @@ size_t ParseResumeLocationProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ParseResumeLocationProto)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 15u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
     // optional string input = 1;
-    if (has_input()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->input());
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_input());
     }
 
     // optional string filename = 4;
-    if (has_filename()) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->filename());
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_filename());
     }
 
     // optional int32 byte_position = 2;
-    if (has_byte_position()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->byte_position());
+    if (cached_has_bits & 0x00000004u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_byte_position());
     }
 
     // optional bool allow_resume = 3;
-    if (has_allow_resume()) {
+    if (cached_has_bits & 0x00000008u) {
       total_size += 1 + 1;
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void ParseResumeLocationProto::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.ParseResumeLocationProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ParseResumeLocationProto* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ParseResumeLocationProto>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.ParseResumeLocationProto)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.ParseResumeLocationProto)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ParseResumeLocationProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ParseResumeLocationProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ParseResumeLocationProto::GetClassData() const { return &_class_data_; }
+
+void ParseResumeLocationProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ParseResumeLocationProto *>(to)->MergeFrom(
+      static_cast<const ParseResumeLocationProto &>(from));
 }
+
 
 void ParseResumeLocationProto::MergeFrom(const ParseResumeLocationProto& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ParseResumeLocationProto)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 15u) {
+  if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      set_has_input();
-      input_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.input_);
+      _internal_set_input(from._internal_input());
     }
     if (cached_has_bits & 0x00000002u) {
-      set_has_filename();
-      filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+      _internal_set_filename(from._internal_filename());
     }
     if (cached_has_bits & 0x00000004u) {
       byte_position_ = from.byte_position_;
@@ -473,13 +392,7 @@ void ParseResumeLocationProto::MergeFrom(const ParseResumeLocationProto& from) {
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void ParseResumeLocationProto::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.ParseResumeLocationProto)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ParseResumeLocationProto::CopyFrom(const ParseResumeLocationProto& from) {
@@ -493,36 +406,43 @@ bool ParseResumeLocationProto::IsInitialized() const {
   return true;
 }
 
-void ParseResumeLocationProto::Swap(ParseResumeLocationProto* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void ParseResumeLocationProto::InternalSwap(ParseResumeLocationProto* other) {
   using std::swap;
-  input_.Swap(&other->input_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  filename_.Swap(&other->filename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(byte_position_, other->byte_position_);
-  swap(allow_resume_, other->allow_resume_);
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &input_, lhs_arena,
+      &other->input_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &filename_, lhs_arena,
+      &other->filename_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ParseResumeLocationProto, allow_resume_)
+      + sizeof(ParseResumeLocationProto::allow_resume_)
+      - PROTOBUF_FIELD_OFFSET(ParseResumeLocationProto, byte_position_)>(
+          reinterpret_cast<char*>(&byte_position_),
+          reinterpret_cast<char*>(&other->byte_position_));
 }
 
-::google::protobuf::Metadata ParseResumeLocationProto::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata ParseResumeLocationProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fparse_5fresume_5flocation_2eproto[0]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::ParseResumeLocationProto* Arena::CreateMaybeMessage< ::zetasql::ParseResumeLocationProto >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::ParseResumeLocationProto >(arena);
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::ParseResumeLocationProto* Arena::CreateMaybeMessage< ::zetasql::ParseResumeLocationProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ParseResumeLocationProto >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>

@@ -32,7 +32,7 @@
 
 
 /**
- ** \file bazel-out/darwin-fastbuild/bin/zetasql/parser/bison_parser.bison.h
+ ** \file bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h
  ** Define the zetasql_bison_parser::parser class.
  */
 
@@ -42,8 +42,8 @@
 // especially those whose name start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
-#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_DARWIN_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
-# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_DARWIN_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
 // "%code requires" blocks.
 #line 17 "zetasql/parser/bison_parser.y"
 
@@ -206,7 +206,7 @@ class SeparatedIdentifierTmpNode final : public zetasql::ASTNode {
 };
 
 
-#line 210 "bazel-out/darwin-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
+#line 210 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
 
 
 # include <cstdlib> // std::abort
@@ -335,7 +335,7 @@ class SeparatedIdentifierTmpNode final : public zetasql::ASTNode {
 #endif
 
 namespace zetasql_bison_parser {
-#line 339 "bazel-out/darwin-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
+#line 339 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
 
 
 
@@ -426,7 +426,7 @@ namespace zetasql_bison_parser {
     zetasql::ASTWithConnectionClause* with_connection_clause;
   } language_or_remote_with_connection;
 
-#line 430 "bazel-out/darwin-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
+#line 430 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
 
     };
 #else
@@ -1460,165 +1460,172 @@ namespace zetasql_bison_parser {
         S_new_constructor_arg = 685,             // new_constructor_arg
         S_new_constructor_prefix = 686,          // new_constructor_prefix
         S_new_constructor = 687,                 // new_constructor
-        S_case_no_value_expression_prefix = 688, // case_no_value_expression_prefix
-        S_case_value_expression_prefix = 689,    // case_value_expression_prefix
-        S_case_expression_prefix = 690,          // case_expression_prefix
-        S_case_expression = 691,                 // case_expression
-        S_opt_at_time_zone = 692,                // opt_at_time_zone
-        S_opt_format = 693,                      // opt_format
-        S_cast_expression = 694,                 // cast_expression
-        S_extract_expression_base = 695,         // extract_expression_base
-        S_extract_expression = 696,              // extract_expression
-        S_replace_fields_arg = 697,              // replace_fields_arg
-        S_replace_fields_prefix = 698,           // replace_fields_prefix
-        S_replace_fields_expression = 699,       // replace_fields_expression
-        S_function_name_from_keyword = 700,      // function_name_from_keyword
-        S_function_call_expression_base = 701,   // function_call_expression_base
-        S_function_call_argument = 702,          // function_call_argument
-        S_named_argument = 703,                  // named_argument
-        S_lambda_argument = 704,                 // lambda_argument
-        S_lambda_argument_list = 705,            // lambda_argument_list
-        S_function_call_expression_with_args_prefix = 706, // function_call_expression_with_args_prefix
-        S_function_call_expression = 707,        // function_call_expression
-        S_opt_identifier = 708,                  // opt_identifier
-        S_partition_by_clause_prefix = 709,      // partition_by_clause_prefix
-        S_opt_partition_by_clause = 710,         // opt_partition_by_clause
-        S_partition_by_clause_prefix_no_hint = 711, // partition_by_clause_prefix_no_hint
-        S_opt_partition_by_clause_no_hint = 712, // opt_partition_by_clause_no_hint
-        S_cluster_by_clause_prefix_no_hint = 713, // cluster_by_clause_prefix_no_hint
-        S_opt_cluster_by_clause_no_hint = 714,   // opt_cluster_by_clause_no_hint
-        S_preceding_or_following = 715,          // preceding_or_following
-        S_window_frame_bound = 716,              // window_frame_bound
-        S_frame_unit = 717,                      // frame_unit
-        S_opt_window_frame_clause = 718,         // opt_window_frame_clause
-        S_window_specification = 719,            // window_specification
-        S_function_call_expression_with_clauses = 720, // function_call_expression_with_clauses
-        S_opt_with_group_rows = 721,             // opt_with_group_rows
-        S_opt_over_clause = 722,                 // opt_over_clause
-        S_parenthesized_expression = 723,        // parenthesized_expression
-        S_struct_constructor_prefix_with_keyword_no_arg = 724, // struct_constructor_prefix_with_keyword_no_arg
-        S_struct_constructor_prefix_with_keyword = 725, // struct_constructor_prefix_with_keyword
-        S_struct_constructor_arg = 726,          // struct_constructor_arg
-        S_struct_constructor_prefix_without_keyword = 727, // struct_constructor_prefix_without_keyword
-        S_struct_constructor = 728,              // struct_constructor
-        S_expression_subquery = 729,             // expression_subquery
-        S_bare_expression_subquery = 730,        // bare_expression_subquery
-        S_null_literal = 731,                    // null_literal
-        S_boolean_literal = 732,                 // boolean_literal
-        S_string_literal = 733,                  // string_literal
-        S_bytes_literal = 734,                   // bytes_literal
-        S_integer_literal = 735,                 // integer_literal
-        S_numeric_literal_prefix = 736,          // numeric_literal_prefix
-        S_numeric_literal = 737,                 // numeric_literal
-        S_bignumeric_literal_prefix = 738,       // bignumeric_literal_prefix
-        S_bignumeric_literal = 739,              // bignumeric_literal
-        S_json_literal = 740,                    // json_literal
-        S_floating_point_literal = 741,          // floating_point_literal
-        S_identifier = 742,                      // identifier
-        S_label = 743,                           // label
-        S_system_variable_expression = 744,      // system_variable_expression
-        S_reserved_keyword_rule = 745,           // reserved_keyword_rule
-        S_keyword_as_identifier = 746,           // keyword_as_identifier
-        S_opt_or_replace = 747,                  // opt_or_replace
-        S_opt_create_scope = 748,                // opt_create_scope
-        S_opt_unique = 749,                      // opt_unique
-        S_opt_search = 750,                      // opt_search
-        S_describe_keyword = 751,                // describe_keyword
-        S_opt_hint = 752,                        // opt_hint
-        S_options_entry = 753,                   // options_entry
-        S_options_list_prefix = 754,             // options_list_prefix
-        S_options_list = 755,                    // options_list
-        S_opt_options_list = 756,                // opt_options_list
-        S_define_table_statement = 757,          // define_table_statement
-        S_dml_statement = 758,                   // dml_statement
-        S_opt_from_keyword = 759,                // opt_from_keyword
-        S_opt_where_expression = 760,            // opt_where_expression
-        S_opt_assert_rows_modified = 761,        // opt_assert_rows_modified
-        S_opt_returning_clause = 762,            // opt_returning_clause
-        S_unambiguous_or_ignore_replace_update = 763, // unambiguous_or_ignore_replace_update
-        S_insert_statement_prefix = 764,         // insert_statement_prefix
-        S_insert_statement = 765,                // insert_statement
-        S_copy_data_source = 766,                // copy_data_source
-        S_clone_data_source = 767,               // clone_data_source
-        S_clone_data_source_list = 768,          // clone_data_source_list
-        S_clone_data_statement = 769,            // clone_data_statement
-        S_expression_or_default = 770,           // expression_or_default
-        S_insert_values_row_prefix = 771,        // insert_values_row_prefix
-        S_insert_values_row = 772,               // insert_values_row
-        S_insert_values_list = 773,              // insert_values_list
-        S_delete_statement = 774,                // delete_statement
-        S_opt_with_offset_and_alias = 775,       // opt_with_offset_and_alias
-        S_update_statement = 776,                // update_statement
-        S_truncate_statement = 777,              // truncate_statement
-        S_nested_dml_statement = 778,            // nested_dml_statement
-        S_generalized_path_expression = 779,     // generalized_path_expression
-        S_maybe_dashed_generalized_path_expression = 780, // maybe_dashed_generalized_path_expression
-        S_generalized_extension_path = 781,      // generalized_extension_path
-        S_update_set_value = 782,                // update_set_value
-        S_update_item = 783,                     // update_item
-        S_update_item_list = 784,                // update_item_list
-        S_opt_into = 785,                        // opt_into
-        S_opt_by_target = 786,                   // opt_by_target
-        S_opt_and_expression = 787,              // opt_and_expression
-        S_merge_insert_value_list_or_source_row = 788, // merge_insert_value_list_or_source_row
-        S_merge_action = 789,                    // merge_action
-        S_merge_when_clause = 790,               // merge_when_clause
-        S_merge_when_clause_list = 791,          // merge_when_clause_list
-        S_merge_source = 792,                    // merge_source
-        S_merge_statement_prefix = 793,          // merge_statement_prefix
-        S_merge_statement = 794,                 // merge_statement
-        S_call_statement_with_args_prefix = 795, // call_statement_with_args_prefix
-        S_call_statement = 796,                  // call_statement
-        S_opt_function_parameters = 797,         // opt_function_parameters
-        S_opt_if_exists = 798,                   // opt_if_exists
-        S_opt_access = 799,                      // opt_access
-        S_drop_all_row_access_policies_statement = 800, // drop_all_row_access_policies_statement
-        S_on_path_expression = 801,              // on_path_expression
-        S_opt_on_path_expression = 802,          // opt_on_path_expression
-        S_opt_drop_mode = 803,                   // opt_drop_mode
-        S_drop_statement = 804,                  // drop_statement
-        S_non_empty_statement_list = 805,        // non_empty_statement_list
-        S_unterminated_non_empty_statement_list = 806, // unterminated_non_empty_statement_list
-        S_opt_execute_into_clause = 807,         // opt_execute_into_clause
-        S_execute_using_argument = 808,          // execute_using_argument
-        S_execute_using_argument_list = 809,     // execute_using_argument_list
-        S_opt_execute_using_clause = 810,        // opt_execute_using_clause
-        S_execute_immediate = 811,               // execute_immediate
-        S_script = 812,                          // script
-        S_statement_list = 813,                  // statement_list
-        S_opt_else = 814,                        // opt_else
-        S_elseif_clauses = 815,                  // elseif_clauses
-        S_opt_elseif_clauses = 816,              // opt_elseif_clauses
-        S_if_statement_unclosed = 817,           // if_statement_unclosed
-        S_if_statement = 818,                    // if_statement
-        S_when_then_clauses = 819,               // when_then_clauses
-        S_opt_expression = 820,                  // opt_expression
-        S_case_statement = 821,                  // case_statement
-        S_unlabeled_begin_end_block = 822,       // unlabeled_begin_end_block
-        S_begin_end_block = 823,                 // begin_end_block
-        S_opt_exception_handler = 824,           // opt_exception_handler
-        S_opt_default_expression = 825,          // opt_default_expression
-        S_identifier_list = 826,                 // identifier_list
-        S_variable_declaration = 827,            // variable_declaration
-        S_unlabeled_loop_statement = 828,        // unlabeled_loop_statement
-        S_loop_statement = 829,                  // loop_statement
-        S_unlabeled_while_statement = 830,       // unlabeled_while_statement
-        S_while_statement = 831,                 // while_statement
-        S_until_clause = 832,                    // until_clause
-        S_unlabeled_repeat_statement = 833,      // unlabeled_repeat_statement
-        S_repeat_statement = 834,                // repeat_statement
-        S_unlabeled_for_in_statement = 835,      // unlabeled_for_in_statement
-        S_for_in_statement = 836,                // for_in_statement
-        S_break_statement = 837,                 // break_statement
-        S_continue_statement = 838,              // continue_statement
-        S_return_statement = 839,                // return_statement
-        S_raise_statement = 840,                 // raise_statement
-        S_next_statement_kind = 841,             // next_statement_kind
-        S_next_statement_kind_parenthesized_select = 842, // next_statement_kind_parenthesized_select
-        S_next_statement_kind_table = 843,       // next_statement_kind_table
-        S_next_statement_kind_create_table_opt_as_or_semicolon = 844, // next_statement_kind_create_table_opt_as_or_semicolon
-        S_next_statement_kind_create_modifiers = 845, // next_statement_kind_create_modifiers
-        S_next_statement_kind_without_hint = 846 // next_statement_kind_without_hint
+        S_braced_constructor_field_value = 688,  // braced_constructor_field_value
+        S_braced_constructor_extension = 689,    // braced_constructor_extension
+        S_braced_constructor_field = 690,        // braced_constructor_field
+        S_braced_constructor_start = 691,        // braced_constructor_start
+        S_braced_constructor_prefix = 692,       // braced_constructor_prefix
+        S_braced_constructor = 693,              // braced_constructor
+        S_braced_new_constructor = 694,          // braced_new_constructor
+        S_case_no_value_expression_prefix = 695, // case_no_value_expression_prefix
+        S_case_value_expression_prefix = 696,    // case_value_expression_prefix
+        S_case_expression_prefix = 697,          // case_expression_prefix
+        S_case_expression = 698,                 // case_expression
+        S_opt_at_time_zone = 699,                // opt_at_time_zone
+        S_opt_format = 700,                      // opt_format
+        S_cast_expression = 701,                 // cast_expression
+        S_extract_expression_base = 702,         // extract_expression_base
+        S_extract_expression = 703,              // extract_expression
+        S_replace_fields_arg = 704,              // replace_fields_arg
+        S_replace_fields_prefix = 705,           // replace_fields_prefix
+        S_replace_fields_expression = 706,       // replace_fields_expression
+        S_function_name_from_keyword = 707,      // function_name_from_keyword
+        S_function_call_expression_base = 708,   // function_call_expression_base
+        S_function_call_argument = 709,          // function_call_argument
+        S_named_argument = 710,                  // named_argument
+        S_lambda_argument = 711,                 // lambda_argument
+        S_lambda_argument_list = 712,            // lambda_argument_list
+        S_function_call_expression_with_args_prefix = 713, // function_call_expression_with_args_prefix
+        S_function_call_expression = 714,        // function_call_expression
+        S_opt_identifier = 715,                  // opt_identifier
+        S_partition_by_clause_prefix = 716,      // partition_by_clause_prefix
+        S_opt_partition_by_clause = 717,         // opt_partition_by_clause
+        S_partition_by_clause_prefix_no_hint = 718, // partition_by_clause_prefix_no_hint
+        S_opt_partition_by_clause_no_hint = 719, // opt_partition_by_clause_no_hint
+        S_cluster_by_clause_prefix_no_hint = 720, // cluster_by_clause_prefix_no_hint
+        S_opt_cluster_by_clause_no_hint = 721,   // opt_cluster_by_clause_no_hint
+        S_preceding_or_following = 722,          // preceding_or_following
+        S_window_frame_bound = 723,              // window_frame_bound
+        S_frame_unit = 724,                      // frame_unit
+        S_opt_window_frame_clause = 725,         // opt_window_frame_clause
+        S_window_specification = 726,            // window_specification
+        S_function_call_expression_with_clauses = 727, // function_call_expression_with_clauses
+        S_opt_with_group_rows = 728,             // opt_with_group_rows
+        S_opt_over_clause = 729,                 // opt_over_clause
+        S_parenthesized_expression = 730,        // parenthesized_expression
+        S_struct_constructor_prefix_with_keyword_no_arg = 731, // struct_constructor_prefix_with_keyword_no_arg
+        S_struct_constructor_prefix_with_keyword = 732, // struct_constructor_prefix_with_keyword
+        S_struct_constructor_arg = 733,          // struct_constructor_arg
+        S_struct_constructor_prefix_without_keyword = 734, // struct_constructor_prefix_without_keyword
+        S_struct_constructor = 735,              // struct_constructor
+        S_expression_subquery = 736,             // expression_subquery
+        S_bare_expression_subquery = 737,        // bare_expression_subquery
+        S_null_literal = 738,                    // null_literal
+        S_boolean_literal = 739,                 // boolean_literal
+        S_string_literal = 740,                  // string_literal
+        S_bytes_literal = 741,                   // bytes_literal
+        S_integer_literal = 742,                 // integer_literal
+        S_numeric_literal_prefix = 743,          // numeric_literal_prefix
+        S_numeric_literal = 744,                 // numeric_literal
+        S_bignumeric_literal_prefix = 745,       // bignumeric_literal_prefix
+        S_bignumeric_literal = 746,              // bignumeric_literal
+        S_json_literal = 747,                    // json_literal
+        S_floating_point_literal = 748,          // floating_point_literal
+        S_identifier = 749,                      // identifier
+        S_label = 750,                           // label
+        S_system_variable_expression = 751,      // system_variable_expression
+        S_reserved_keyword_rule = 752,           // reserved_keyword_rule
+        S_keyword_as_identifier = 753,           // keyword_as_identifier
+        S_opt_or_replace = 754,                  // opt_or_replace
+        S_opt_create_scope = 755,                // opt_create_scope
+        S_opt_unique = 756,                      // opt_unique
+        S_opt_search = 757,                      // opt_search
+        S_describe_keyword = 758,                // describe_keyword
+        S_opt_hint = 759,                        // opt_hint
+        S_options_entry = 760,                   // options_entry
+        S_options_list_prefix = 761,             // options_list_prefix
+        S_options_list = 762,                    // options_list
+        S_opt_options_list = 763,                // opt_options_list
+        S_define_table_statement = 764,          // define_table_statement
+        S_dml_statement = 765,                   // dml_statement
+        S_opt_from_keyword = 766,                // opt_from_keyword
+        S_opt_where_expression = 767,            // opt_where_expression
+        S_opt_assert_rows_modified = 768,        // opt_assert_rows_modified
+        S_opt_returning_clause = 769,            // opt_returning_clause
+        S_unambiguous_or_ignore_replace_update = 770, // unambiguous_or_ignore_replace_update
+        S_insert_statement_prefix = 771,         // insert_statement_prefix
+        S_insert_statement = 772,                // insert_statement
+        S_copy_data_source = 773,                // copy_data_source
+        S_clone_data_source = 774,               // clone_data_source
+        S_clone_data_source_list = 775,          // clone_data_source_list
+        S_clone_data_statement = 776,            // clone_data_statement
+        S_expression_or_default = 777,           // expression_or_default
+        S_insert_values_row_prefix = 778,        // insert_values_row_prefix
+        S_insert_values_row = 779,               // insert_values_row
+        S_insert_values_list = 780,              // insert_values_list
+        S_delete_statement = 781,                // delete_statement
+        S_opt_with_offset_and_alias = 782,       // opt_with_offset_and_alias
+        S_update_statement = 783,                // update_statement
+        S_truncate_statement = 784,              // truncate_statement
+        S_nested_dml_statement = 785,            // nested_dml_statement
+        S_generalized_path_expression = 786,     // generalized_path_expression
+        S_maybe_dashed_generalized_path_expression = 787, // maybe_dashed_generalized_path_expression
+        S_generalized_extension_path = 788,      // generalized_extension_path
+        S_update_set_value = 789,                // update_set_value
+        S_update_item = 790,                     // update_item
+        S_update_item_list = 791,                // update_item_list
+        S_opt_into = 792,                        // opt_into
+        S_opt_by_target = 793,                   // opt_by_target
+        S_opt_and_expression = 794,              // opt_and_expression
+        S_merge_insert_value_list_or_source_row = 795, // merge_insert_value_list_or_source_row
+        S_merge_action = 796,                    // merge_action
+        S_merge_when_clause = 797,               // merge_when_clause
+        S_merge_when_clause_list = 798,          // merge_when_clause_list
+        S_merge_source = 799,                    // merge_source
+        S_merge_statement_prefix = 800,          // merge_statement_prefix
+        S_merge_statement = 801,                 // merge_statement
+        S_call_statement_with_args_prefix = 802, // call_statement_with_args_prefix
+        S_call_statement = 803,                  // call_statement
+        S_opt_function_parameters = 804,         // opt_function_parameters
+        S_opt_if_exists = 805,                   // opt_if_exists
+        S_opt_access = 806,                      // opt_access
+        S_drop_all_row_access_policies_statement = 807, // drop_all_row_access_policies_statement
+        S_on_path_expression = 808,              // on_path_expression
+        S_opt_on_path_expression = 809,          // opt_on_path_expression
+        S_opt_drop_mode = 810,                   // opt_drop_mode
+        S_drop_statement = 811,                  // drop_statement
+        S_non_empty_statement_list = 812,        // non_empty_statement_list
+        S_unterminated_non_empty_statement_list = 813, // unterminated_non_empty_statement_list
+        S_opt_execute_into_clause = 814,         // opt_execute_into_clause
+        S_execute_using_argument = 815,          // execute_using_argument
+        S_execute_using_argument_list = 816,     // execute_using_argument_list
+        S_opt_execute_using_clause = 817,        // opt_execute_using_clause
+        S_execute_immediate = 818,               // execute_immediate
+        S_script = 819,                          // script
+        S_statement_list = 820,                  // statement_list
+        S_opt_else = 821,                        // opt_else
+        S_elseif_clauses = 822,                  // elseif_clauses
+        S_opt_elseif_clauses = 823,              // opt_elseif_clauses
+        S_if_statement_unclosed = 824,           // if_statement_unclosed
+        S_if_statement = 825,                    // if_statement
+        S_when_then_clauses = 826,               // when_then_clauses
+        S_opt_expression = 827,                  // opt_expression
+        S_case_statement = 828,                  // case_statement
+        S_unlabeled_begin_end_block = 829,       // unlabeled_begin_end_block
+        S_begin_end_block = 830,                 // begin_end_block
+        S_opt_exception_handler = 831,           // opt_exception_handler
+        S_opt_default_expression = 832,          // opt_default_expression
+        S_identifier_list = 833,                 // identifier_list
+        S_variable_declaration = 834,            // variable_declaration
+        S_unlabeled_loop_statement = 835,        // unlabeled_loop_statement
+        S_loop_statement = 836,                  // loop_statement
+        S_unlabeled_while_statement = 837,       // unlabeled_while_statement
+        S_while_statement = 838,                 // while_statement
+        S_until_clause = 839,                    // until_clause
+        S_unlabeled_repeat_statement = 840,      // unlabeled_repeat_statement
+        S_repeat_statement = 841,                // repeat_statement
+        S_unlabeled_for_in_statement = 842,      // unlabeled_for_in_statement
+        S_for_in_statement = 843,                // for_in_statement
+        S_break_statement = 844,                 // break_statement
+        S_continue_statement = 845,              // continue_statement
+        S_return_statement = 846,                // return_statement
+        S_raise_statement = 847,                 // raise_statement
+        S_next_statement_kind = 848,             // next_statement_kind
+        S_next_statement_kind_parenthesized_select = 849, // next_statement_kind_parenthesized_select
+        S_next_statement_kind_table = 850,       // next_statement_kind_table
+        S_next_statement_kind_create_table_opt_as_or_semicolon = 851, // next_statement_kind_create_table_opt_as_or_semicolon
+        S_next_statement_kind_create_modifiers = 852, // next_statement_kind_create_modifiers
+        S_next_statement_kind_without_hint = 853 // next_statement_kind_without_hint
       };
     };
 
@@ -2127,9 +2134,9 @@ namespace zetasql_bison_parser {
     /// Constants.
     enum
     {
-      yylast_ = 29682,     ///< Last index in yytable_.
-      yynnts_ = 529,  ///< Number of nonterminal symbols.
-      yyfinal_ = 426 ///< Termination state number.
+      yylast_ = 30479,     ///< Last index in yytable_.
+      yynnts_ = 536,  ///< Number of nonterminal symbols.
+      yyfinal_ = 431 ///< Termination state number.
     };
 
 
@@ -2148,10 +2155,10 @@ namespace zetasql_bison_parser {
 
 
 } // zetasql_bison_parser
-#line 2152 "bazel-out/darwin-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
+#line 2159 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h"
 
 
 
 
 
-#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_DARWIN_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED

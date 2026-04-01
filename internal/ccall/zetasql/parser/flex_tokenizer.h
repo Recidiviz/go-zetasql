@@ -35,7 +35,7 @@
 // Some contortions to avoid duplicate inclusion of FlexLexer.h in the
 // generated flex_tokenizer.flex.cc.
 #undef yyFlexLexer
-#define yyFlexLexer  ZetaSqlFlexTokenizerBase
+#define yyFlexLexer ZetaSqlFlexTokenizerBase
 #include <FlexLexer.h>
 
 #include "zetasql/common/errors.h"

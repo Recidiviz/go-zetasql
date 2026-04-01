@@ -614,6 +614,9 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kAtan, "atan", "Atan");
     RegisterFunction(FunctionKind::kAtanh, "atanh", "Atanh");
     RegisterFunction(FunctionKind::kAtan2, "atan2", "Atan2");
+    RegisterFunction(FunctionKind::kCsc, "csc", "Csc");
+    RegisterFunction(FunctionKind::kSec, "sec", "Sec");
+    RegisterFunction(FunctionKind::kCot, "cot", "Cot");
     RegisterFunction(FunctionKind::kCorr, "corr", "Corr");
     RegisterFunction(FunctionKind::kCovarPop, "covar_pop", "Covar_pop");
     RegisterFunction(FunctionKind::kCovarSamp, "covar_samp", "Covar_samp");
@@ -771,6 +774,11 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kTimestamp, "timestamp", "Timestamp");
     RegisterFunction(FunctionKind::kTime, "time", "Time");
     RegisterFunction(FunctionKind::kDatetime, "datetime", "Datetime");
+    RegisterFunction(FunctionKind::kDateBucket, "date_bucket", "Date_bucket");
+    RegisterFunction(FunctionKind::kDateTimeBucket, "datetime_bucket",
+                     "Datetime_bucket");
+    RegisterFunction(FunctionKind::kTimestampBucket, "timestamp_bucket",
+                     "Timestamp_bucket");
   }();
   [this]() {
     RegisterFunction(FunctionKind::kNetFormatIP, "net.format_ip",
@@ -1401,7 +1409,7 @@ static constexpr uint64_t FCT_TYPE_ARITY(FunctionKind function_kind,
 }
 
 absl::StatusOr<FunctionKind> BuiltinFunctionCatalog::GetKindByName(
-    const absl::string_view& name) {
+    const absl::string_view name) {
   const FunctionKind* kind = zetasql_base::FindOrNull(
       GetFunctionMap().function_kind_by_name(), std::string(name));
   if (kind == nullptr) {
@@ -1653,6 +1661,9 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kAtan:
     case FunctionKind::kAtanh:
     case FunctionKind::kAtan2:
+    case FunctionKind::kCsc:
+    case FunctionKind::kSec:
+    case FunctionKind::kCot:
       return new MathFunction(kind, output_type);
     case FunctionKind::kConcat:
       return new ConcatFunction(kind, output_type);
@@ -1663,12 +1674,12 @@ BuiltinScalarFunction::CreateValidatedRaw(
       ZETASQL_RET_CHECK_EQ(2, arguments.size());
       ZETASQL_RET_CHECK(arguments[1]->inline_lambda_expr() != nullptr);
       return new ArrayFilterFunction(
-          kind, output_type, {arguments[1]->mutable_inline_lambda_expr()});
+          kind, output_type, arguments[1]->mutable_inline_lambda_expr());
     case FunctionKind::kArrayTransform:
       ZETASQL_RET_CHECK_EQ(2, arguments.size());
       ZETASQL_RET_CHECK(arguments[1]->inline_lambda_expr() != nullptr);
       return new ArrayTransformFunction(
-          kind, output_type, {arguments[1]->mutable_inline_lambda_expr()});
+          kind, output_type, arguments[1]->mutable_inline_lambda_expr());
     case FunctionKind::kLength:
     case FunctionKind::kByteLength:
     case FunctionKind::kCharLength:
@@ -1775,7 +1786,7 @@ BuiltinScalarFunction::CreateValidatedRaw(
       } else {
         ZETASQL_RET_CHECK(arguments[1]->inline_lambda_expr() != nullptr);
         return new ArrayIncludesFunctionWithLambda(
-            kind, output_type, {arguments[1]->mutable_inline_lambda_expr()});
+            kind, output_type, arguments[1]->mutable_inline_lambda_expr());
       }
     case FunctionKind::kArrayIncludesAny:
       return new ArrayIncludesAnyFunction();
@@ -1842,6 +1853,10 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kMillisFromTimestamp:
     case FunctionKind::kMicrosFromTimestamp:
       return new IntFromTimestampFunction(kind, output_type);
+    case FunctionKind::kDateBucket:
+    case FunctionKind::kDateTimeBucket:
+    case FunctionKind::kTimestampBucket:
+      return new DateTimeBucketFunction(kind, output_type);
     case FunctionKind::kString:
       return new StringConversionFunction(kind, output_type);
     case FunctionKind::kFromProto:
@@ -2990,23 +3005,8 @@ bool ArrayLengthFunction::Eval(absl::Span<const TupleData* const> params,
   return true;
 }
 
-bool FunctionWithLambdaBase::Eval(absl::Span<const TupleData* const> params,
-                                  absl::Span<const Value> args,
-                                  EvaluationContext* context, Value* result,
-                                  absl::Status* status) const {
-  LambdaEvaluationContext lambda_context(params, context);
-  absl::StatusOr<Value> status_or_result = EvalInternal(args, lambda_context);
-  if (status_or_result.ok()) {
-    *result = status_or_result.value();
-    return true;
-  } else {
-    *status = status_or_result.status();
-    return false;
-  }
-}
-
 absl::StatusOr<Value> LambdaEvaluationContext::EvaluateLambda(
-    InlineLambdaExpr* lambda, absl::Span<const Value> args) {
+    const InlineLambdaExpr* lambda, absl::Span<const Value> args) {
   Value result;
   VirtualTupleSlot lambda_body_slot(&result, &shared_proto_state_);
   absl::Status status;
@@ -3017,19 +3017,20 @@ absl::StatusOr<Value> LambdaEvaluationContext::EvaluateLambda(
   return result;
 }
 
-absl::StatusOr<Value> ArrayFilterFunction::EvalInternal(
-    absl::Span<const Value> args, LambdaEvaluationContext& context) const {
+absl::StatusOr<Value> ArrayFilterFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* evaluation_context) const {
+  LambdaEvaluationContext context(params, evaluation_context);
+
   ZETASQL_RET_CHECK_EQ(args.size(), 1);
   ZETASQL_RET_CHECK(args[0].type()->IsArray());
-  ZETASQL_RET_CHECK_EQ(lambdas().size(), 1);
-  InlineLambdaExpr* lambda = lambdas().at(0);
-  ZETASQL_RET_CHECK_GE(lambda->num_args(), 1);
-  ZETASQL_RET_CHECK_LE(lambda->num_args(), 2);
+  ZETASQL_RET_CHECK_GE(lambda_->num_args(), 1);
+  ZETASQL_RET_CHECK_LE(lambda_->num_args(), 2);
   if (args[0].is_null()) {
     return Value::Null(output_type());
   }
   std::vector<Value> filtered_values;
-  bool two_argument_lambda = lambda->num_args() == 2;
+  bool two_argument_lambda = lambda_->num_args() == 2;
   for (int i = 0; i < args[0].num_elements(); ++i) {
     const Value& array_element = args[0].element(i);
     std::vector<Value> lambda_args = {array_element};
@@ -3040,7 +3041,7 @@ absl::StatusOr<Value> ArrayFilterFunction::EvalInternal(
       lambda_args.push_back(Value::Int64(i));
     }
     ZETASQL_ASSIGN_OR_RETURN(Value lambda_result,
-                     context.EvaluateLambda(lambda, lambda_args));
+                     context.EvaluateLambda(lambda_, lambda_args));
     ZETASQL_RET_CHECK(lambda_result.type()->IsBool());
     if (!lambda_result.is_null() && lambda_result.bool_value()) {
       filtered_values.push_back(std::move(array_element));
@@ -3050,10 +3051,10 @@ absl::StatusOr<Value> ArrayFilterFunction::EvalInternal(
   return Value::MakeArray(args[0].type()->AsArray(), filtered_values);
 }
 
-absl::StatusOr<Value> ArrayIncludesFunctionWithLambda::EvalInternal(
-    absl::Span<const Value> args, LambdaEvaluationContext& context) const {
-  ZETASQL_RET_CHECK_EQ(lambdas().size(), 1);
-  InlineLambdaExpr* lambda = lambdas().at(0);
+absl::StatusOr<Value> ArrayIncludesFunctionWithLambda::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* evaluation_context) const {
+  LambdaEvaluationContext context(params, evaluation_context);
   ZETASQL_RET_CHECK_EQ(args.size(), 1);
   ZETASQL_RET_CHECK(args[0].type()->IsArray());
   if (args[0].is_null()) {
@@ -3064,7 +3065,7 @@ absl::StatusOr<Value> ArrayIncludesFunctionWithLambda::EvalInternal(
   for (int i = 0; i < args[0].num_elements(); ++i) {
     const Value& array_element = args[0].element(i);
     ZETASQL_ASSIGN_OR_RETURN(Value lambda_result,
-                     context.EvaluateLambda(lambda, {array_element}));
+                     context.EvaluateLambda(lambda_, {array_element}));
     ZETASQL_RET_CHECK(lambda_result.type()->IsBool());
     if (!lambda_result.is_null() && lambda_result.bool_value()) {
       found = true;
@@ -3075,19 +3076,19 @@ absl::StatusOr<Value> ArrayIncludesFunctionWithLambda::EvalInternal(
   return Value::Bool(found);
 }
 
-absl::StatusOr<Value> ArrayTransformFunction::EvalInternal(
-    absl::Span<const Value> args, LambdaEvaluationContext& context) const {
-  ZETASQL_RET_CHECK_EQ(lambdas().size(), 1);
-  InlineLambdaExpr* lambda = lambdas().at(0);
+absl::StatusOr<Value> ArrayTransformFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* evaluation_context) const {
+  LambdaEvaluationContext context(params, evaluation_context);
   ZETASQL_RET_CHECK_EQ(args.size(), 1);
   ZETASQL_RET_CHECK(args[0].type()->IsArray());
-  ZETASQL_RET_CHECK_GE(lambda->num_args(), 1);
-  ZETASQL_RET_CHECK_LE(lambda->num_args(), 2);
+  ZETASQL_RET_CHECK_GE(lambda_->num_args(), 1);
+  ZETASQL_RET_CHECK_LE(lambda_->num_args(), 2);
   if (args[0].is_null()) {
     return Value::Null(output_type());
   }
   std::vector<Value> transformed_values;
-  bool two_argument_lambda = lambda->num_args() == 2;
+  bool two_argument_lambda = lambda_->num_args() == 2;
   for (int i = 0; i < args[0].num_elements(); ++i) {
     const Value& array_element = args[0].element(i);
     Value lambda_body_value;
@@ -3099,7 +3100,7 @@ absl::StatusOr<Value> ArrayTransformFunction::EvalInternal(
       lambda_args.push_back(Value::Int64(i));
     }
     ZETASQL_ASSIGN_OR_RETURN(lambda_body_value,
-                     context.EvaluateLambda(lambda, lambda_args));
+                     context.EvaluateLambda(lambda_, lambda_args));
     transformed_values.push_back(std::move(lambda_body_value));
   }
 
@@ -5511,6 +5512,14 @@ bool MathFunction::Eval(absl::Span<const TupleData* const> params,
     case FCT(FunctionKind::kAtan2, TYPE_DOUBLE):
       return InvokeBinary<double>(&functions::Atan2<double>, args, result,
                                   status);
+    case FCT(FunctionKind::kCsc, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Csc<double>, args, result, status);
+
+    case FCT(FunctionKind::kSec, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Sec<double>, args, result, status);
+
+    case FCT(FunctionKind::kCot, TYPE_DOUBLE):
+      return InvokeUnary<double>(&functions::Cot<double>, args, result, status);
 
     case FCT(FunctionKind::kRound, TYPE_DOUBLE):
       if (args.size() == 1) {
@@ -7944,9 +7953,9 @@ static bool CurrentTupleHasPeerWithDifferentRespectedValues(
     absl::Span<const TupleData* const> tuples, absl::Span<const Value> values,
     const AnalyticWindow& analytic_window, const TupleComparator& comparator,
     bool ignore_nulls) {
-  const auto has_different_value =
-      [&tuples, &values, current_tuple_id, excluded_tuple_id, ignore_nulls](
-          int peer_tuple_id) {
+  const auto has_different_value = [&values, current_tuple_id,
+                                    excluded_tuple_id,
+                                    ignore_nulls](int peer_tuple_id) {
     return excluded_tuple_id != peer_tuple_id &&
            !values[peer_tuple_id].Equals(values[current_tuple_id]) &&
            (!ignore_nulls || !values[peer_tuple_id].is_null());
@@ -8163,7 +8172,7 @@ static bool LeadLagOutputIsNonDeterministic(
   // at 'alternative_tuple_id' instead of 'current_tuple_id'.
   const auto changing_current_position_changes_output =
       [current_tuple_id, offset, &tuples, &arg_values, &default_value,
-       &comparator, &current_output, &partition](int alternative_tuple_id) {
+       &current_output](int alternative_tuple_id) {
         // Switch the current tuple and the tuple at 'alternative_tuple_id',
         // and then check if the output remains the same.
 
@@ -8510,4 +8519,36 @@ absl::StatusOr<Value> ConvertJsonFunction::Eval(
       return ::zetasql_base::InvalidArgumentErrorBuilder() << "Unsupported function";
   }
 }
+
+absl::StatusOr<Value> DateTimeBucketFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK(args.size() == 2 || args.size() == 3);
+  if (args[0].is_null() || args[1].is_null() ||
+      (args.size() == 3 && args[2].is_null())) {
+    return Value::Null(output_type());
+  }
+
+  constexpr absl::CivilSecond kDefaultOrigin(1950, 1, 1, 0, 0, 0);
+  switch (args[0].type_kind()) {
+    case TYPE_TIMESTAMP: {
+      absl::Time timestamp;
+      absl::Time origin;
+      if (args.size() == 3) {
+        origin = args[2].ToTime();
+      } else {
+        origin = absl::FromCivil(kDefaultOrigin, context->GetDefaultTimeZone());
+      }
+      ZETASQL_RETURN_IF_ERROR(functions::TimestampBucket(
+          args[0].ToTime(), args[1].interval_value(), origin,
+          context->GetDefaultTimeZone(), &timestamp));
+      return Value::Timestamp(timestamp);
+    }
+    default:
+      return ::zetasql_base::InvalidArgumentErrorBuilder()
+             << "Unsupported type " << args[0].type()->DebugString()
+             << " for datetime BUCKET function";
+  }
+}
+
 }  // namespace zetasql

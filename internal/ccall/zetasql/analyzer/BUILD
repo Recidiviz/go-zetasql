@@ -29,14 +29,6 @@ filegroup(
 cc_library(
     name = "container_hash_equals",
     hdrs = ["container_hash_equals.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "@com_google_absl//absl/hash",
         "@com_google_absl//absl/types:span",
@@ -46,15 +38,6 @@ cc_library(
 cc_test(
     name = "container_hash_equals_test",
     srcs = ["container_hash_equals_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":container_hash_equals",
         "//zetasql/base:map_util",
@@ -70,14 +53,6 @@ cc_library(
     name = "function_signature_matcher",
     srcs = ["function_signature_matcher.cc"],
     hdrs = ["function_signature_matcher.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":lambda_util",
         "//zetasql/base",
@@ -108,14 +83,6 @@ cc_library(
     name = "expr_matching_helpers",
     srcs = ["expr_matching_helpers.cc"],
     hdrs = ["expr_matching_helpers.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base:logging",
         "//zetasql/base:status",
@@ -138,14 +105,6 @@ cc_library(
     hdrs = [
         "lambda_util.h",
     ],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base:logging",
         "//zetasql/base:status",
@@ -162,14 +121,6 @@ cc_library(
     name = "name_scope",
     srcs = ["name_scope.cc"],
     hdrs = ["name_scope.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base",
         "//zetasql/base:map_util",
@@ -216,14 +167,6 @@ cc_library(
         "query_resolver_helper.h",
         "resolver.h",
     ],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":container_hash_equals",
         ":expr_matching_helpers",
@@ -268,6 +211,7 @@ cc_library(
         "//zetasql/public:signature_match_result",
         "//zetasql/public:simple_catalog",
         "//zetasql/public:sql_function",
+        "//zetasql/public:sql_tvf",
         "//zetasql/public:strings",
         "//zetasql/public:templated_sql_function",
         "//zetasql/public:type",
@@ -315,14 +259,6 @@ cc_library(
     hdrs = [
         "input_argument_type_resolver_helper.h",
     ],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base",
         "//zetasql/parser",
@@ -345,14 +281,6 @@ cc_library(
     name = "all_rewriters",
     srcs = ["all_rewriters.cc"],
     hdrs = ["all_rewriters.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":anonymization_rewriter",
         "//zetasql/analyzer/rewriters:array_functions_rewriter",
@@ -373,14 +301,6 @@ cc_library(
     name = "analyzer_impl",
     srcs = ["analyzer_impl.cc"],
     hdrs = ["analyzer_impl.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":resolver",
         ":rewrite_resolved_ast",
@@ -408,14 +328,6 @@ cc_library(
     name = "anonymization_rewriter",
     srcs = ["anonymization_rewriter.cc"],
     hdrs = ["anonymization_rewriter.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":expr_matching_helpers",
         ":name_scope",
@@ -462,14 +374,6 @@ cc_library(
     name = "filter_fields_path_validator",
     srcs = ["filter_fields_path_validator.cc"],
     hdrs = ["filter_fields_path_validator.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base:logging",
         "//zetasql/base:map_util",
@@ -487,15 +391,6 @@ cc_test(
     name = "resolver_test",
     size = "small",
     srcs = ["resolver_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":name_scope",
         ":resolver",
@@ -535,15 +430,6 @@ cc_test(
     name = "analyzer_test",
     size = "small",
     srcs = ["analyzer_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     data = [
         "//zetasql/testdata:external_extension.proto",
         "//zetasql/testdata:test_schema_proto",
@@ -598,15 +484,6 @@ cc_test(
     name = "filter_fields_path_validator_test",
     size = "small",
     srcs = ["filter_fields_path_validator_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":filter_fields_path_validator",
         "//zetasql/base/testing:status_matchers",
@@ -621,14 +498,6 @@ cc_library(
     name = "substitute",
     srcs = ["substitute.cc"],
     hdrs = ["substitute.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":analyzer_impl",
         "//zetasql/base:logging",
@@ -659,15 +528,6 @@ cc_library(
 cc_test(
     name = "substitute_test",
     srcs = ["substitute_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":all_rewriters",
         ":substitute",
@@ -697,15 +557,6 @@ cc_test(
 cc_test(
     name = "input_argument_type_resolver_helper_test",
     srcs = ["input_argument_type_resolver_helper_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":input_argument_type_resolver_helper",
         "//zetasql/base/testing:zetasql_gtest_main",
@@ -720,14 +571,6 @@ cc_library(
     name = "rewrite_resolved_ast",
     srcs = ["rewrite_resolved_ast.cc"],
     hdrs = ["rewrite_resolved_ast.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/analyzer/rewriters:registration",
         "//zetasql/analyzer/rewriters:rewriter_interface",
@@ -760,14 +603,6 @@ cc_library(
     testonly = 1,
     srcs = ["analyzer_test_options.cc"],
     hdrs = ["analyzer_test_options.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         "//zetasql/base",
         "//zetasql/base:status",
@@ -784,15 +619,6 @@ cc_library(
 cc_test(
     name = "analyzer_test_options_test",
     srcs = ["analyzer_test_options_test.cc"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-return-type",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":analyzer_test_options",
         "//zetasql/base/testing:status_matchers",
@@ -805,14 +631,6 @@ cc_library(
     testonly = 1,
     srcs = ["run_analyzer_test.cc"],
     hdrs = ["run_analyzer_test.h"],
-    copts = [
-        "-Wno-char-subscripts",
-        "-Wno-sign-compare",
-        "-Wno-switch",
-        "-Wno-unused-but-set-parameter",
-        "-Wno-unused-function",
-        "-Wnonnull-compare",
-    ],
     deps = [
         ":analyzer_test_options",
         "//zetasql/base",
@@ -851,6 +669,7 @@ cc_library(
         "//zetasql/resolved_ast:sql_builder",
         "//zetasql/resolved_ast:validator",
         "//zetasql/testdata:bad_test_schema_cc_proto",
+        "//zetasql/testdata:sample_annotation",
         "//zetasql/testdata:sample_catalog",
         "//zetasql/testdata:sample_system_variables",
         "//zetasql/testdata:special_catalog",

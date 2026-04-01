@@ -66,6 +66,7 @@
 #include "zetasql/public/parse_location.h"
 #include "zetasql/public/proto_util.h"
 #include "zetasql/public/signature_match_result.h"
+#include "zetasql/public/sql_tvf.h"
 #include "zetasql/public/strings.h"
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/type.h"
@@ -3638,10 +3639,10 @@ absl::Status Resolver::SetOperationResolver::Resolve(
     set_op_scan->set_hint_list(std::move(hint_list));
   }
 
-  *output = std::move(set_op_scan);
   ZETASQL_ASSIGN_OR_RETURN(*output_name_list,
                    BuildFinalNameList(*resolved_inputs.front().name_list,
-                                      final_column_list));
+                                      set_op_scan->column_list()));
+  *output = std::move(set_op_scan);
   return absl::OkStatus();
 }
 
@@ -4070,6 +4071,8 @@ absl::Status Resolver::SetOperationResolver::ResolveRecursive(
         resolver_->ResolveHintAndAppend(set_operation_->hint(), &hint_list));
     recursive_scan->set_hint_list(std::move(hint_list));
   }
+  ZETASQL_RETURN_IF_ERROR(resolver_->CheckAndPropagateAnnotations(
+      set_operation_, recursive_scan.get()));
   *output = std::move(recursive_scan);
   *output_name_list = final_name_list;
   return absl::OkStatus();
@@ -6772,6 +6775,11 @@ absl::Status Resolver::ResolveTVF(
   // Fill column_index_list with 0, 1, 2, ..., column_list.size()-1.
   std::iota(column_index_list.begin(), column_index_list.end(), 0);
 
+  if (tvf_catalog_entry->Is<SQLTableValuedFunction>()) {
+    analyzer_output_properties_.MarkRelevant(
+        ResolvedASTRewrite::REWRITE_INLINE_SQL_TVFS);
+  }
+
   auto tvf_scan = MakeResolvedTVFScan(
       column_list, tvf_catalog_entry, tvf_signature,
       std::move(final_resolved_tvf_args), column_index_list, alias,
@@ -7089,6 +7097,14 @@ absl::StatusOr<ResolvedTVFArg> Resolver::ResolveTVFArg(
     if (function_argument &&
         (function_argument->IsRelation() || function_argument->IsModel() ||
          function_argument->IsConnection())) {
+      auto gen_arg_id = [function_argument](int arg_num) {
+        std::string arg_id = absl::StrCat(arg_num + 1);
+        if (function_argument->has_argument_name()) {
+          absl::StrAppend(&arg_id, " ('", function_argument->argument_name(),
+                          "')");
+        }
+        return arg_id;
+      };
       if (function_argument->IsRelation()) {
         // Resolve the TVF argument as a relation. The argument should be
         // written in the TVF call as a table subquery. We parsed all
@@ -7098,10 +7114,10 @@ absl::StatusOr<ResolvedTVFArg> Resolver::ResolveTVFArg(
         if (ast_expr->node_kind() != AST_EXPRESSION_SUBQUERY ||
             ast_expr->GetAsOrDie<ASTExpressionSubquery>()->modifier() !=
                 ASTExpressionSubquery::NONE) {
-          std::string error =
-              absl::StrCat("Table-valued function ",
-                           tvf_catalog_entry->FullName(), " argument ", arg_num,
-                           " must be a relation (i.e. table subquery)");
+          std::string error = absl::StrCat(
+              "Table-valued function ", tvf_catalog_entry->FullName(),
+              " argument ", gen_arg_id(arg_num),
+              " must be a relation (i.e. table subquery)");
           if (ast_expr->node_kind() == AST_PATH_EXPRESSION) {
             const std::string table_name =
                 ast_expr->GetAsOrDie<ASTPathExpression>()
@@ -7133,13 +7149,13 @@ absl::StatusOr<ResolvedTVFArg> Resolver::ResolveTVFArg(
         // This argument has to be a connection. Return an error.
         return MakeSqlErrorAt(ast_expr)
                << "Table-valued function " << tvf_catalog_entry->FullName()
-               << " argument " << arg_num
+               << " argument " << gen_arg_id(arg_num)
                << " must be a connection specified with the CONNECTION keyword";
       } else {
         // This argument has to be a model. Return an error.
         return MakeSqlErrorAt(ast_expr)
                << "Table-valued function " << tvf_catalog_entry->FullName()
-               << " argument " << arg_num
+               << " argument " << gen_arg_id(arg_num)
                << " must be a model specified with the MODEL keyword";
       }
     } else {

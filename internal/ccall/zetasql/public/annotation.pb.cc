@@ -5,233 +5,177 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
 
-namespace protobuf_zetasql_2fpublic_2fannotation_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fpublic_2fannotation_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_AnnotationMapProto;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fpublic_2fannotation_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_AnnotationProto;
-}  // namespace protobuf_zetasql_2fpublic_2fannotation_2eproto
-namespace protobuf_zetasql_2fpublic_2fsimple_5fvalue_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fpublic_2fsimple_5fvalue_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_SimpleValueProto;
-}  // namespace protobuf_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
-class AnnotationProtoDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<AnnotationProto>
-      _instance;
-} _AnnotationProto_default_instance_;
-class AnnotationMapProtoDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<AnnotationMapProto>
-      _instance;
-} _AnnotationMapProto_default_instance_;
-}  // namespace zetasql
-namespace protobuf_zetasql_2fpublic_2fannotation_2eproto {
-static void InitDefaultsAnnotationProto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::zetasql::_AnnotationProto_default_instance_;
-    new (ptr) ::zetasql::AnnotationProto();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::AnnotationProto::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<1> scc_info_AnnotationProto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsAnnotationProto}, {
-      &protobuf_zetasql_2fpublic_2fsimple_5fvalue_2eproto::scc_info_SimpleValueProto.base,}};
-
-static void InitDefaultsAnnotationMapProto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::zetasql::_AnnotationMapProto_default_instance_;
-    new (ptr) ::zetasql::AnnotationMapProto();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::AnnotationMapProto::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<1> scc_info_AnnotationMapProto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsAnnotationMapProto}, {
-      &protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationProto.base,}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_AnnotationProto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_AnnotationMapProto.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[2];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationProto, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationProto, id_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationProto, value_),
-  1,
-  0,
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationMapProto, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationMapProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationMapProto, is_null_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationMapProto, annotations_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationMapProto, array_element_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::AnnotationMapProto, struct_fields_),
-  1,
-  ~0u,
-  0,
-  ~0u,
-};
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 7, sizeof(::zetasql::AnnotationProto)},
-  { 9, 18, sizeof(::zetasql::AnnotationMapProto)},
-};
-
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_AnnotationProto_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_AnnotationMapProto_default_instance_),
-};
-
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "zetasql/public/annotation.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, NULL, NULL);
-}
-
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 2);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\037zetasql/public/annotation.proto\022\007zetas"
-      "ql\032!zetasql/public/simple_value.proto\"G\n"
-      "\017AnnotationProto\022\n\n\002id\030\001 \001(\003\022(\n\005value\030\002 "
-      "\001(\0132\031.zetasql.SimpleValueProto\"\274\001\n\022Annot"
-      "ationMapProto\022\017\n\007is_null\030\004 \001(\010\022-\n\013annota"
-      "tions\030\001 \003(\0132\030.zetasql.AnnotationProto\0222\n"
-      "\rarray_element\030\002 \001(\0132\033.zetasql.Annotatio"
-      "nMapProto\0222\n\rstruct_fields\030\003 \003(\0132\033.zetas"
-      "ql.AnnotationMapProtoB*\n\022com.google.zeta"
-      "sqlB\021ZetaSQLAnnotation\370\001\001"
+constexpr AnnotationProto::AnnotationProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : value_(nullptr)
+  , id_(int64_t{0}){}
+struct AnnotationProtoDefaultTypeInternal {
+  constexpr AnnotationProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~AnnotationProtoDefaultTypeInternal() {}
+  union {
+    AnnotationProto _instance;
   };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 385);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "zetasql/public/annotation.proto", &protobuf_RegisterTypes);
-  ::protobuf_zetasql_2fpublic_2fsimple_5fvalue_2eproto::AddDescriptors();
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AnnotationProtoDefaultTypeInternal _AnnotationProto_default_instance_;
+constexpr AnnotationMapProto::AnnotationMapProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : annotations_()
+  , struct_fields_()
+  , array_element_(nullptr)
+  , is_null_(false){}
+struct AnnotationMapProtoDefaultTypeInternal {
+  constexpr AnnotationMapProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~AnnotationMapProtoDefaultTypeInternal() {}
+  union {
+    AnnotationMapProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AnnotationMapProtoDefaultTypeInternal _AnnotationMapProto_default_instance_;
+}  // namespace zetasql
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fannotation_2eproto[2];
+static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2fannotation_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fannotation_2eproto = nullptr;
+
+const uint32_t TableStruct_zetasql_2fpublic_2fannotation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationProto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationProto, id_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationProto, value_),
+  1,
+  0,
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationMapProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationMapProto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationMapProto, is_null_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationMapProto, annotations_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationMapProto, array_element_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::AnnotationMapProto, struct_fields_),
+  1,
+  ~0u,
+  0,
+  ~0u,
+};
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 8, -1, sizeof(::zetasql::AnnotationProto)},
+  { 10, 20, -1, sizeof(::zetasql::AnnotationMapProto)},
+};
+
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnnotationProto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnnotationMapProto_default_instance_),
+};
+
+const char descriptor_table_protodef_zetasql_2fpublic_2fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n\037zetasql/public/annotation.proto\022\007zetas"
+  "ql\032!zetasql/public/simple_value.proto\"G\n"
+  "\017AnnotationProto\022\n\n\002id\030\001 \001(\003\022(\n\005value\030\002 "
+  "\001(\0132\031.zetasql.SimpleValueProto\"\274\001\n\022Annot"
+  "ationMapProto\022\017\n\007is_null\030\004 \001(\010\022-\n\013annota"
+  "tions\030\001 \003(\0132\030.zetasql.AnnotationProto\0222\n"
+  "\rarray_element\030\002 \001(\0132\033.zetasql.Annotatio"
+  "nMapProto\0222\n\rstruct_fields\030\003 \003(\0132\033.zetas"
+  "ql.AnnotationMapProtoB*\n\022com.google.zeta"
+  "sqlB\021ZetaSQLAnnotation\370\001\001"
+  ;
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fannotation_2eproto_deps[1] = {
+  &::descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto,
+};
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fannotation_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fannotation_2eproto = {
+  false, false, 385, descriptor_table_protodef_zetasql_2fpublic_2fannotation_2eproto, "zetasql/public/annotation.proto", 
+  &descriptor_table_zetasql_2fpublic_2fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2fannotation_2eproto_deps, 1, 2,
+  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fannotation_2eproto::offsets,
+  file_level_metadata_zetasql_2fpublic_2fannotation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fannotation_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fannotation_2eproto_getter() {
+  return &descriptor_table_zetasql_2fpublic_2fannotation_2eproto;
 }
 
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_zetasql_2fpublic_2fannotation_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2fannotation_2eproto);
 namespace zetasql {
 
 // ===================================================================
 
-void AnnotationProto::InitAsDefaultInstance() {
-  ::zetasql::_AnnotationProto_default_instance_._instance.get_mutable()->value_ = const_cast< ::zetasql::SimpleValueProto*>(
-      ::zetasql::SimpleValueProto::internal_default_instance());
-}
-void AnnotationProto::unsafe_arena_set_allocated_value(
-    ::zetasql::SimpleValueProto* value) {
-  if (GetArenaNoVirtual() == NULL) {
-    delete value_;
+class AnnotationProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<AnnotationProto>()._has_bits_);
+  static void set_has_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
   }
-  value_ = value;
-  if (value) {
-    set_has_value();
-  } else {
-    clear_has_value();
+  static const ::zetasql::SimpleValueProto& value(const AnnotationProto* msg);
+  static void set_has_value(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnnotationProto.value)
+};
+
+const ::zetasql::SimpleValueProto&
+AnnotationProto::_Internal::value(const AnnotationProto* msg) {
+  return *msg->value_;
 }
 void AnnotationProto::clear_value() {
-  if (value_ != NULL) value_->Clear();
-  clear_has_value();
+  if (value_ != nullptr) value_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
 }
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int AnnotationProto::kIdFieldNumber;
-const int AnnotationProto::kValueFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-AnnotationProto::AnnotationProto()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationProto.base);
+AnnotationProto::AnnotationProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.AnnotationProto)
-}
-AnnotationProto::AnnotationProto(::google::protobuf::Arena* arena)
-  : ::google::protobuf::Message(),
-  _internal_metadata_(arena) {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationProto.base);
-  SharedCtor();
-  RegisterArenaDtor(arena);
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
   // @@protoc_insertion_point(arena_constructor:zetasql.AnnotationProto)
 }
 AnnotationProto::AnnotationProto(const AnnotationProto& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.has_value()) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_value()) {
     value_ = new ::zetasql::SimpleValueProto(*from.value_);
   } else {
-    value_ = NULL;
+    value_ = nullptr;
   }
   id_ = from.id_;
   // @@protoc_insertion_point(copy_constructor:zetasql.AnnotationProto)
 }
 
-void AnnotationProto::SharedCtor() {
-  ::memset(&value_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&id_) -
-      reinterpret_cast<char*>(&value_)) + sizeof(id_));
+inline void AnnotationProto::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&value_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&id_) -
+    reinterpret_cast<char*>(&value_)) + sizeof(id_));
 }
 
 AnnotationProto::~AnnotationProto() {
   // @@protoc_insertion_point(destructor:zetasql.AnnotationProto)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void AnnotationProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaNoVirtual() == NULL);
+inline void AnnotationProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete value_;
 }
 
@@ -239,142 +183,100 @@ void AnnotationProto::ArenaDtor(void* object) {
   AnnotationProto* _this = reinterpret_cast< AnnotationProto* >(object);
   (void)_this;
 }
-void AnnotationProto::RegisterArenaDtor(::google::protobuf::Arena* arena) {
+void AnnotationProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
 void AnnotationProto::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* AnnotationProto::descriptor() {
-  ::protobuf_zetasql_2fpublic_2fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fannotation_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const AnnotationProto& AnnotationProto::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationProto.base);
-  return *internal_default_instance();
-}
-
 
 void AnnotationProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.AnnotationProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(value_ != NULL);
+    GOOGLE_DCHECK(value_ != nullptr);
     value_->Clear();
   }
-  id_ = GOOGLE_LONGLONG(0);
+  id_ = int64_t{0};
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool AnnotationProto::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.AnnotationProto)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* AnnotationProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional int64 id = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          set_has_id();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &id_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_id(&has_bits);
+          id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional .zetasql.SimpleValueProto value = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_value()));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_value(), ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.AnnotationProto)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.AnnotationProto)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void AnnotationProto::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.AnnotationProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional int64 id = 1;
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->id(), output);
-  }
-
-  // optional .zetasql.SimpleValueProto value = 2;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->_internal_value(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.AnnotationProto)
-}
-
-::google::protobuf::uint8* AnnotationProto::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* AnnotationProto::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.AnnotationProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional int64 id = 1;
   if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->id(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_id(), target);
   }
 
   // optional .zetasql.SimpleValueProto value = 2;
   if (cached_has_bits & 0x00000001u) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        2, this->_internal_value(), deterministic, target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::value(this), target, stream);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.AnnotationProto)
   return target;
@@ -384,71 +286,58 @@ size_t AnnotationProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.AnnotationProto)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 3u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
     // optional .zetasql.SimpleValueProto value = 2;
-    if (has_value()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *value_);
     }
 
     // optional int64 id = 1;
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->id());
+    if (cached_has_bits & 0x00000002u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_id());
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void AnnotationProto::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.AnnotationProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  const AnnotationProto* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const AnnotationProto>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.AnnotationProto)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.AnnotationProto)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData AnnotationProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    AnnotationProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AnnotationProto::GetClassData() const { return &_class_data_; }
+
+void AnnotationProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<AnnotationProto *>(to)->MergeFrom(
+      static_cast<const AnnotationProto &>(from));
 }
+
 
 void AnnotationProto::MergeFrom(const AnnotationProto& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnnotationProto)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      mutable_value()->::zetasql::SimpleValueProto::MergeFrom(from.value());
+      _internal_mutable_value()->::zetasql::SimpleValueProto::MergeFrom(from._internal_value());
     }
     if (cached_has_bits & 0x00000002u) {
       id_ = from.id_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void AnnotationProto::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.AnnotationProto)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void AnnotationProto::CopyFrom(const AnnotationProto& from) {
@@ -462,111 +351,84 @@ bool AnnotationProto::IsInitialized() const {
   return true;
 }
 
-void AnnotationProto::Swap(AnnotationProto* other) {
-  if (other == this) return;
-  if (GetArenaNoVirtual() == other->GetArenaNoVirtual()) {
-    InternalSwap(other);
-  } else {
-    AnnotationProto* temp = New(GetArenaNoVirtual());
-    temp->MergeFrom(*other);
-    other->CopyFrom(*this);
-    InternalSwap(temp);
-    if (GetArenaNoVirtual() == NULL) {
-      delete temp;
-    }
-  }
-}
-void AnnotationProto::UnsafeArenaSwap(AnnotationProto* other) {
-  if (other == this) return;
-  GOOGLE_DCHECK(GetArenaNoVirtual() == other->GetArenaNoVirtual());
-  InternalSwap(other);
-}
 void AnnotationProto::InternalSwap(AnnotationProto* other) {
   using std::swap;
-  swap(value_, other->value_);
-  swap(id_, other->id_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(AnnotationProto, id_)
+      + sizeof(AnnotationProto::id_)
+      - PROTOBUF_FIELD_OFFSET(AnnotationProto, value_)>(
+          reinterpret_cast<char*>(&value_),
+          reinterpret_cast<char*>(&other->value_));
 }
 
-::google::protobuf::Metadata AnnotationProto::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fannotation_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata AnnotationProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fannotation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fannotation_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fannotation_2eproto[0]);
 }
-
 
 // ===================================================================
 
-void AnnotationMapProto::InitAsDefaultInstance() {
-  ::zetasql::_AnnotationMapProto_default_instance_._instance.get_mutable()->array_element_ = const_cast< ::zetasql::AnnotationMapProto*>(
-      ::zetasql::AnnotationMapProto::internal_default_instance());
-}
-void AnnotationMapProto::unsafe_arena_set_allocated_array_element(
-    ::zetasql::AnnotationMapProto* array_element) {
-  if (GetArenaNoVirtual() == NULL) {
-    delete array_element_;
+class AnnotationMapProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<AnnotationMapProto>()._has_bits_);
+  static void set_has_is_null(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
   }
-  array_element_ = array_element;
-  if (array_element) {
-    set_has_array_element();
-  } else {
-    clear_has_array_element();
+  static const ::zetasql::AnnotationMapProto& array_element(const AnnotationMapProto* msg);
+  static void set_has_array_element(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnnotationMapProto.array_element)
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int AnnotationMapProto::kIsNullFieldNumber;
-const int AnnotationMapProto::kAnnotationsFieldNumber;
-const int AnnotationMapProto::kArrayElementFieldNumber;
-const int AnnotationMapProto::kStructFieldsFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+};
 
-AnnotationMapProto::AnnotationMapProto()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationMapProto.base);
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.AnnotationMapProto)
+const ::zetasql::AnnotationMapProto&
+AnnotationMapProto::_Internal::array_element(const AnnotationMapProto* msg) {
+  return *msg->array_element_;
 }
-AnnotationMapProto::AnnotationMapProto(::google::protobuf::Arena* arena)
-  : ::google::protobuf::Message(),
-  _internal_metadata_(arena),
+AnnotationMapProto::AnnotationMapProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
   annotations_(arena),
   struct_fields_(arena) {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationMapProto.base);
   SharedCtor();
-  RegisterArenaDtor(arena);
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
   // @@protoc_insertion_point(arena_constructor:zetasql.AnnotationMapProto)
 }
 AnnotationMapProto::AnnotationMapProto(const AnnotationMapProto& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_),
       annotations_(from.annotations_),
       struct_fields_(from.struct_fields_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.has_array_element()) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_array_element()) {
     array_element_ = new ::zetasql::AnnotationMapProto(*from.array_element_);
   } else {
-    array_element_ = NULL;
+    array_element_ = nullptr;
   }
   is_null_ = from.is_null_;
   // @@protoc_insertion_point(copy_constructor:zetasql.AnnotationMapProto)
 }
 
-void AnnotationMapProto::SharedCtor() {
-  ::memset(&array_element_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&is_null_) -
-      reinterpret_cast<char*>(&array_element_)) + sizeof(is_null_));
+inline void AnnotationMapProto::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&array_element_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&is_null_) -
+    reinterpret_cast<char*>(&array_element_)) + sizeof(is_null_));
 }
 
 AnnotationMapProto::~AnnotationMapProto() {
   // @@protoc_insertion_point(destructor:zetasql.AnnotationMapProto)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void AnnotationMapProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaNoVirtual() == NULL);
+inline void AnnotationMapProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   if (this != internal_default_instance()) delete array_element_;
 }
 
@@ -574,25 +436,15 @@ void AnnotationMapProto::ArenaDtor(void* object) {
   AnnotationMapProto* _this = reinterpret_cast< AnnotationMapProto* >(object);
   (void)_this;
 }
-void AnnotationMapProto::RegisterArenaDtor(::google::protobuf::Arena* arena) {
+void AnnotationMapProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
 void AnnotationMapProto::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* AnnotationMapProto::descriptor() {
-  ::protobuf_zetasql_2fpublic_2fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fannotation_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const AnnotationMapProto& AnnotationMapProto::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fannotation_2eproto::scc_info_AnnotationMapProto.base);
-  return *internal_default_instance();
-}
-
 
 void AnnotationMapProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.AnnotationMapProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
@@ -600,176 +452,128 @@ void AnnotationMapProto::Clear() {
   struct_fields_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(array_element_ != NULL);
+    GOOGLE_DCHECK(array_element_ != nullptr);
     array_element_->Clear();
   }
   is_null_ = false;
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool AnnotationMapProto::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.AnnotationMapProto)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* AnnotationMapProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // repeated .zetasql.AnnotationProto annotations = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_annotations()));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_annotations(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional .zetasql.AnnotationMapProto array_element = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_array_element()));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_array_element(), ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // repeated .zetasql.AnnotationMapProto struct_fields = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_struct_fields()));
-        } else {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_struct_fields(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional bool is_null = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
-          set_has_is_null();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &is_null_)));
-        } else {
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _Internal::set_has_is_null(&has_bits);
+          is_null_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.AnnotationMapProto)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.AnnotationMapProto)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void AnnotationMapProto::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.AnnotationMapProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // repeated .zetasql.AnnotationProto annotations = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->annotations_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1,
-      this->annotations(static_cast<int>(i)),
-      output);
-  }
-
-  cached_has_bits = _has_bits_[0];
-  // optional .zetasql.AnnotationMapProto array_element = 2;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->_internal_array_element(), output);
-  }
-
-  // repeated .zetasql.AnnotationMapProto struct_fields = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->struct_fields_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3,
-      this->struct_fields(static_cast<int>(i)),
-      output);
-  }
-
-  // optional bool is_null = 4;
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->is_null(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.AnnotationMapProto)
-}
-
-::google::protobuf::uint8* AnnotationMapProto::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* AnnotationMapProto::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.AnnotationMapProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .zetasql.AnnotationProto annotations = 1;
   for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->annotations_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        1, this->annotations(static_cast<int>(i)), deterministic, target);
+      n = static_cast<unsigned int>(this->_internal_annotations_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, this->_internal_annotations(i), target, stream);
   }
 
   cached_has_bits = _has_bits_[0];
   // optional .zetasql.AnnotationMapProto array_element = 2;
   if (cached_has_bits & 0x00000001u) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        2, this->_internal_array_element(), deterministic, target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::array_element(this), target, stream);
   }
 
   // repeated .zetasql.AnnotationMapProto struct_fields = 3;
   for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->struct_fields_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        3, this->struct_fields(static_cast<int>(i)), deterministic, target);
+      n = static_cast<unsigned int>(this->_internal_struct_fields_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, this->_internal_struct_fields(i), target, stream);
   }
 
   // optional bool is_null = 4;
   if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->is_null(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(4, this->_internal_is_null(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.AnnotationMapProto)
   return target;
@@ -779,93 +583,74 @@ size_t AnnotationMapProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.AnnotationMapProto)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
   // repeated .zetasql.AnnotationProto annotations = 1;
-  {
-    unsigned int count = static_cast<unsigned int>(this->annotations_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->annotations(static_cast<int>(i)));
-    }
+  total_size += 1UL * this->_internal_annotations_size();
+  for (const auto& msg : this->annotations_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.AnnotationMapProto struct_fields = 3;
-  {
-    unsigned int count = static_cast<unsigned int>(this->struct_fields_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->struct_fields(static_cast<int>(i)));
-    }
+  total_size += 1UL * this->_internal_struct_fields_size();
+  for (const auto& msg : this->struct_fields_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  if (_has_bits_[0 / 32] & 3u) {
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
     // optional .zetasql.AnnotationMapProto array_element = 2;
-    if (has_array_element()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *array_element_);
     }
 
     // optional bool is_null = 4;
-    if (has_is_null()) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 + 1;
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void AnnotationMapProto::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.AnnotationMapProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  const AnnotationMapProto* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const AnnotationMapProto>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.AnnotationMapProto)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.AnnotationMapProto)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData AnnotationMapProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    AnnotationMapProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AnnotationMapProto::GetClassData() const { return &_class_data_; }
+
+void AnnotationMapProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<AnnotationMapProto *>(to)->MergeFrom(
+      static_cast<const AnnotationMapProto &>(from));
 }
+
 
 void AnnotationMapProto::MergeFrom(const AnnotationMapProto& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnnotationMapProto)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   annotations_.MergeFrom(from.annotations_);
   struct_fields_.MergeFrom(from.struct_fields_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      mutable_array_element()->::zetasql::AnnotationMapProto::MergeFrom(from.array_element());
+      _internal_mutable_array_element()->::zetasql::AnnotationMapProto::MergeFrom(from._internal_array_element());
     }
     if (cached_has_bits & 0x00000002u) {
       is_null_ = from.is_null_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void AnnotationMapProto::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.AnnotationMapProto)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void AnnotationMapProto::CopyFrom(const AnnotationMapProto& from) {
@@ -879,52 +664,36 @@ bool AnnotationMapProto::IsInitialized() const {
   return true;
 }
 
-void AnnotationMapProto::Swap(AnnotationMapProto* other) {
-  if (other == this) return;
-  if (GetArenaNoVirtual() == other->GetArenaNoVirtual()) {
-    InternalSwap(other);
-  } else {
-    AnnotationMapProto* temp = New(GetArenaNoVirtual());
-    temp->MergeFrom(*other);
-    other->CopyFrom(*this);
-    InternalSwap(temp);
-    if (GetArenaNoVirtual() == NULL) {
-      delete temp;
-    }
-  }
-}
-void AnnotationMapProto::UnsafeArenaSwap(AnnotationMapProto* other) {
-  if (other == this) return;
-  GOOGLE_DCHECK(GetArenaNoVirtual() == other->GetArenaNoVirtual());
-  InternalSwap(other);
-}
 void AnnotationMapProto::InternalSwap(AnnotationMapProto* other) {
   using std::swap;
-  CastToBase(&annotations_)->InternalSwap(CastToBase(&other->annotations_));
-  CastToBase(&struct_fields_)->InternalSwap(CastToBase(&other->struct_fields_));
-  swap(array_element_, other->array_element_);
-  swap(is_null_, other->is_null_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  annotations_.InternalSwap(&other->annotations_);
+  struct_fields_.InternalSwap(&other->struct_fields_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(AnnotationMapProto, is_null_)
+      + sizeof(AnnotationMapProto::is_null_)
+      - PROTOBUF_FIELD_OFFSET(AnnotationMapProto, array_element_)>(
+          reinterpret_cast<char*>(&array_element_),
+          reinterpret_cast<char*>(&other->array_element_));
 }
 
-::google::protobuf::Metadata AnnotationMapProto::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fannotation_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata AnnotationMapProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fannotation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fannotation_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fannotation_2eproto[1]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::AnnotationProto* Arena::CreateMaybeMessage< ::zetasql::AnnotationProto >(Arena* arena) {
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::AnnotationProto* Arena::CreateMaybeMessage< ::zetasql::AnnotationProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::AnnotationProto >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::AnnotationMapProto* Arena::CreateMaybeMessage< ::zetasql::AnnotationMapProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::AnnotationMapProto* Arena::CreateMaybeMessage< ::zetasql::AnnotationMapProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::AnnotationMapProto >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>

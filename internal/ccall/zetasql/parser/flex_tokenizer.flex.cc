@@ -1,6 +1,6 @@
-#line 1 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 1 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 
-#line 3 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -3150,7 +3150,7 @@ using zetasql_bison_parser::BisonParserImpl;
 
 constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
 
-#line 3153 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3153 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 /* These are some basic regex definitions that are used in the lexer rules
    below.
 */
@@ -3216,7 +3216,7 @@ constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
 */
 /* Dash comments using -- */
 /* # comment ignores anything from # to the end of the line. */
-#line 3219 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3219 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 
 #define INITIAL 0
 #define DOT_IDENTIFIER 1
@@ -3408,7 +3408,7 @@ YY_DECL
  /* IMPORTANT: This rule must come before keywords, since it conditionally
   *   force-emits the IDENTIFIER token, even if a keyword is present.
  */
-#line 3411 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3411 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -5439,7 +5439,7 @@ YY_RULE_SETUP
 #line 1022 "zetasql/parser/flex_tokenizer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 5442 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 5442 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 
 	case YY_END_OF_BUFFER:
 		{

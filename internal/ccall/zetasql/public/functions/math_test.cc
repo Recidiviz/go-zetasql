@@ -179,6 +179,29 @@ void TestBinaryFunction(const QueryParamsWithResult& param,
   return CompareResult(param, status, out);
 }
 
+typedef testing::TestWithParam<FunctionTestCall> CschTemplateTest;
+TEST_P(CschTemplateTest, Testlib) {
+  const FunctionTestCall& param = GetParam();
+  return TestUnaryFunction(param.params, &Csch<double>);
+}
+INSTANTIATE_TEST_SUITE_P(Csch, CschTemplateTest,
+                         testing::ValuesIn(GetFunctionTestsCsch()));
+
+typedef testing::TestWithParam<FunctionTestCall> SechTemplateTest;
+TEST_P(SechTemplateTest, Testlib) {
+  const FunctionTestCall& param = GetParam();
+  return TestUnaryFunction(param.params, &Sech<double>);
+}
+INSTANTIATE_TEST_SUITE_P(Sech, SechTemplateTest,
+                         testing::ValuesIn(GetFunctionTestsSech()));
+
+typedef testing::TestWithParam<FunctionTestCall> CothTemplateTest;
+TEST_P(CothTemplateTest, Testlib) {
+  const FunctionTestCall& param = GetParam();
+  return TestUnaryFunction(param.params, &Coth<double>);
+}
+INSTANTIATE_TEST_SUITE_P(Coth, CothTemplateTest,
+                         testing::ValuesIn(GetFunctionTestsCoth()));
 
 typedef testing::TestWithParam<FunctionTestCall> MathTemplateTest;
 TEST_P(MathTemplateTest, Testlib) {
@@ -362,6 +385,12 @@ TEST_P(MathTemplateTest, Testlib) {
     return TestUnaryFunction(param.params, &Atanh<double>);
   } else if (function == "atan2") {
     return TestBinaryFunction(param.params, &Atan2<double>);
+  } else if (function == "csc") {
+    return TestUnaryFunction(param.params, &Csc<double>);
+  } else if (function == "sec") {
+    return TestUnaryFunction(param.params, &Sec<double>);
+  } else if (function == "cot") {
+    return TestUnaryFunction(param.params, &Cot<double>);
   } else if (function == "round") {
     switch (param.params.param(0).type_kind()) {
       case TYPE_FLOAT:

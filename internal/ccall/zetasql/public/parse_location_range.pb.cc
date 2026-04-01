@@ -5,140 +5,117 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
 
+PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
-class ParseLocationRangeProtoDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ParseLocationRangeProto>
-      _instance;
-} _ParseLocationRangeProto_default_instance_;
+constexpr ParseLocationRangeProto::ParseLocationRangeProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : filename_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , start_(0)
+  , end_(0){}
+struct ParseLocationRangeProtoDefaultTypeInternal {
+  constexpr ParseLocationRangeProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ParseLocationRangeProtoDefaultTypeInternal() {}
+  union {
+    ParseLocationRangeProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ParseLocationRangeProtoDefaultTypeInternal _ParseLocationRangeProto_default_instance_;
 }  // namespace zetasql
-namespace protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto {
-static void InitDefaultsParseLocationRangeProto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto[1];
+static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto = nullptr;
 
-  {
-    void* ptr = &::zetasql::_ParseLocationRangeProto_default_instance_;
-    new (ptr) ::zetasql::ParseLocationRangeProto();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::ParseLocationRangeProto::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_ParseLocationRangeProto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsParseLocationRangeProto}, {}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_ParseLocationRangeProto.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[1];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, _internal_metadata_),
+const uint32_t TableStruct_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, filename_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, start_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, end_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, filename_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, start_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ParseLocationRangeProto, end_),
   0,
   1,
   2,
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 8, sizeof(::zetasql::ParseLocationRangeProto)},
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 9, -1, sizeof(::zetasql::ParseLocationRangeProto)},
 };
 
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_ParseLocationRangeProto_default_instance_),
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ParseLocationRangeProto_default_instance_),
 };
 
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "zetasql/public/parse_location_range.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, NULL, NULL);
+const char descriptor_table_protodef_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n)zetasql/public/parse_location_range.pr"
+  "oto\022\007zetasql\"G\n\027ParseLocationRangeProto\022"
+  "\020\n\010filename\030\001 \001(\t\022\r\n\005start\030\002 \001(\005\022\013\n\003end\030"
+  "\003 \001(\005B2\n\022com.google.zetasqlB\032ZetaSqlPars"
+  "eLocationProtosP\001"
+  ;
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto = {
+  false, false, 177, descriptor_table_protodef_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto, "zetasql/public/parse_location_range.proto", 
+  &descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto_once, nullptr, 0, 1,
+  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::offsets,
+  file_level_metadata_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto_getter() {
+  return &descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto;
 }
 
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 1);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n)zetasql/public/parse_location_range.pr"
-      "oto\022\007zetasql\"G\n\027ParseLocationRangeProto\022"
-      "\020\n\010filename\030\001 \001(\t\022\r\n\005start\030\002 \001(\005\022\013\n\003end\030"
-      "\003 \001(\005B2\n\022com.google.zetasqlB\032ZetaSqlPars"
-      "eLocationProtosP\001"
-  };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 177);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "zetasql/public/parse_location_range.proto", &protobuf_RegisterTypes);
-}
-
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto(&descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto);
 namespace zetasql {
 
 // ===================================================================
 
-void ParseLocationRangeProto::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ParseLocationRangeProto::kFilenameFieldNumber;
-const int ParseLocationRangeProto::kStartFieldNumber;
-const int ParseLocationRangeProto::kEndFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class ParseLocationRangeProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ParseLocationRangeProto>()._has_bits_);
+  static void set_has_filename(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_start(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_end(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+};
 
-ParseLocationRangeProto::ParseLocationRangeProto()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::scc_info_ParseLocationRangeProto.base);
+ParseLocationRangeProto::ParseLocationRangeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.ParseLocationRangeProto)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ParseLocationRangeProto)
 }
 ParseLocationRangeProto::ParseLocationRangeProto(const ParseLocationRangeProto& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_filename()) {
-    filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_filename()) {
+    filename_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_filename(), 
+      GetArenaForAllocation());
   }
   ::memcpy(&start_, &from.start_,
     static_cast<size_t>(reinterpret_cast<char*>(&end_) -
@@ -146,195 +123,151 @@ ParseLocationRangeProto::ParseLocationRangeProto(const ParseLocationRangeProto& 
   // @@protoc_insertion_point(copy_constructor:zetasql.ParseLocationRangeProto)
 }
 
-void ParseLocationRangeProto::SharedCtor() {
-  filename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&start_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&end_) -
-      reinterpret_cast<char*>(&start_)) + sizeof(end_));
+inline void ParseLocationRangeProto::SharedCtor() {
+filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&start_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&end_) -
+    reinterpret_cast<char*>(&start_)) + sizeof(end_));
 }
 
 ParseLocationRangeProto::~ParseLocationRangeProto() {
   // @@protoc_insertion_point(destructor:zetasql.ParseLocationRangeProto)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void ParseLocationRangeProto::SharedDtor() {
-  filename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ParseLocationRangeProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  filename_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
+void ParseLocationRangeProto::ArenaDtor(void* object) {
+  ParseLocationRangeProto* _this = reinterpret_cast< ParseLocationRangeProto* >(object);
+  (void)_this;
+}
+void ParseLocationRangeProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ParseLocationRangeProto::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* ParseLocationRangeProto::descriptor() {
-  ::protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const ParseLocationRangeProto& ParseLocationRangeProto::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::scc_info_ParseLocationRangeProto.base);
-  return *internal_default_instance();
-}
-
 
 void ParseLocationRangeProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ParseLocationRangeProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    filename_.ClearNonDefaultToEmptyNoArena();
+    filename_.ClearNonDefaultToEmpty();
   }
-  if (cached_has_bits & 6u) {
+  if (cached_has_bits & 0x00000006u) {
     ::memset(&start_, 0, static_cast<size_t>(
         reinterpret_cast<char*>(&end_) -
         reinterpret_cast<char*>(&start_)) + sizeof(end_));
   }
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool ParseLocationRangeProto::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.ParseLocationRangeProto)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* ParseLocationRangeProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional string filename = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_filename()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->filename().data(), static_cast<int>(this->filename().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "zetasql.ParseLocationRangeProto.filename");
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_filename();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ParseLocationRangeProto.filename");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional int32 start = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-          set_has_start();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &start_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_start(&has_bits);
+          start_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional int32 end = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-          set_has_end();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &end_)));
-        } else {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _Internal::set_has_end(&has_bits);
+          end_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.ParseLocationRangeProto)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.ParseLocationRangeProto)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void ParseLocationRangeProto::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.ParseLocationRangeProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional string filename = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->filename().data(), static_cast<int>(this->filename().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "zetasql.ParseLocationRangeProto.filename");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->filename(), output);
-  }
-
-  // optional int32 start = 2;
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->start(), output);
-  }
-
-  // optional int32 end = 3;
-  if (cached_has_bits & 0x00000004u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->end(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.ParseLocationRangeProto)
-}
-
-::google::protobuf::uint8* ParseLocationRangeProto::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* ParseLocationRangeProto::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ParseLocationRangeProto)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional string filename = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->filename().data(), static_cast<int>(this->filename().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_filename().data(), static_cast<int>(this->_internal_filename().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
       "zetasql.ParseLocationRangeProto.filename");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->filename(), target);
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_filename(), target);
   }
 
   // optional int32 start = 2;
   if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->start(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_start(), target);
   }
 
   // optional int32 end = 3;
   if (cached_has_bits & 0x00000004u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->end(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_end(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ParseLocationRangeProto)
   return target;
@@ -344,66 +277,56 @@ size_t ParseLocationRangeProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ParseLocationRangeProto)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 7u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000007u) {
     // optional string filename = 1;
-    if (has_filename()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->filename());
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_filename());
     }
 
     // optional int32 start = 2;
-    if (has_start()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->start());
+    if (cached_has_bits & 0x00000002u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_start());
     }
 
     // optional int32 end = 3;
-    if (has_end()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->end());
+    if (cached_has_bits & 0x00000004u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_end());
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void ParseLocationRangeProto::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.ParseLocationRangeProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ParseLocationRangeProto* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ParseLocationRangeProto>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.ParseLocationRangeProto)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.ParseLocationRangeProto)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ParseLocationRangeProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ParseLocationRangeProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ParseLocationRangeProto::GetClassData() const { return &_class_data_; }
+
+void ParseLocationRangeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ParseLocationRangeProto *>(to)->MergeFrom(
+      static_cast<const ParseLocationRangeProto &>(from));
 }
+
 
 void ParseLocationRangeProto::MergeFrom(const ParseLocationRangeProto& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ParseLocationRangeProto)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 7u) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      set_has_filename();
-      filename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filename_);
+      _internal_set_filename(from._internal_filename());
     }
     if (cached_has_bits & 0x00000002u) {
       start_ = from.start_;
@@ -413,13 +336,7 @@ void ParseLocationRangeProto::MergeFrom(const ParseLocationRangeProto& from) {
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void ParseLocationRangeProto::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.ParseLocationRangeProto)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ParseLocationRangeProto::CopyFrom(const ParseLocationRangeProto& from) {
@@ -433,34 +350,38 @@ bool ParseLocationRangeProto::IsInitialized() const {
   return true;
 }
 
-void ParseLocationRangeProto::Swap(ParseLocationRangeProto* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void ParseLocationRangeProto::InternalSwap(ParseLocationRangeProto* other) {
   using std::swap;
-  filename_.Swap(&other->filename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(start_, other->start_);
-  swap(end_, other->end_);
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &filename_, lhs_arena,
+      &other->filename_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ParseLocationRangeProto, end_)
+      + sizeof(ParseLocationRangeProto::end_)
+      - PROTOBUF_FIELD_OFFSET(ParseLocationRangeProto, start_)>(
+          reinterpret_cast<char*>(&start_),
+          reinterpret_cast<char*>(&other->start_));
 }
 
-::google::protobuf::Metadata ParseLocationRangeProto::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata ParseLocationRangeProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fparse_5flocation_5frange_2eproto[0]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::ParseLocationRangeProto* Arena::CreateMaybeMessage< ::zetasql::ParseLocationRangeProto >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::ParseLocationRangeProto >(arena);
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::ParseLocationRangeProto* Arena::CreateMaybeMessage< ::zetasql::ParseLocationRangeProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ParseLocationRangeProto >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>

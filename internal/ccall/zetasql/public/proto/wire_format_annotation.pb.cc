@@ -5,124 +5,88 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
 
+PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
-class WireFormatAnnotationEmptyMessageDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<WireFormatAnnotationEmptyMessage>
-      _instance;
-} _WireFormatAnnotationEmptyMessage_default_instance_;
+constexpr WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct WireFormatAnnotationEmptyMessageDefaultTypeInternal {
+  constexpr WireFormatAnnotationEmptyMessageDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~WireFormatAnnotationEmptyMessageDefaultTypeInternal() {}
+  union {
+    WireFormatAnnotationEmptyMessage _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT WireFormatAnnotationEmptyMessageDefaultTypeInternal _WireFormatAnnotationEmptyMessage_default_instance_;
 }  // namespace zetasql
-namespace protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto {
-static void InitDefaultsWireFormatAnnotationEmptyMessage() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[1];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[1];
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto = nullptr;
 
-  {
-    void* ptr = &::zetasql::_WireFormatAnnotationEmptyMessage_default_instance_;
-    new (ptr) ::zetasql::WireFormatAnnotationEmptyMessage();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::WireFormatAnnotationEmptyMessage::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_WireFormatAnnotationEmptyMessage =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsWireFormatAnnotationEmptyMessage}, {}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_WireFormatAnnotationEmptyMessage.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[1];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::WireFormatAnnotationEmptyMessage, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::WireFormatAnnotationEmptyMessage, _internal_metadata_),
+const uint32_t TableStruct_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::zetasql::WireFormatAnnotationEmptyMessage, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 5, sizeof(::zetasql::WireFormatAnnotationEmptyMessage)},
-};
-
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_WireFormatAnnotationEmptyMessage_default_instance_),
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, -1, -1, sizeof(::zetasql::WireFormatAnnotationEmptyMessage)},
 };
 
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "zetasql/public/proto/wire_format_annotation.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, file_level_enum_descriptors, NULL);
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_WireFormatAnnotationEmptyMessage_default_instance_),
+};
+
+const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n1zetasql/public/proto/wire_format_annot"
+  "ation.proto\022\007zetasql\032 google/protobuf/de"
+  "scriptor.proto\"\"\n WireFormatAnnotationEm"
+  "ptyMessage*C\n\tTableType\022\026\n\022DEFAULT_TABLE"
+  "_TYPE\020\000\022\r\n\tSQL_TABLE\020\001\022\017\n\013VALUE_TABLE\020\002:"
+  ";\n\021struct_field_name\022\035.google.protobuf.F"
+  "ieldOptions\030\325\346\233! \001(\t:6\n\014is_raw_proto\022\035.g"
+  "oogle.protobuf.FieldOptions\030\212\220\213N \001(\010:;\n\020"
+  "is_hidden_column\022\035.google.protobuf.Field"
+  "Options\030\347\301\223\241\001 \001(\010:6\n\nis_wrapper\022\037.google"
+  ".protobuf.MessageOptions\030\342\243\333\027 \001(\010:5\n\tis_"
+  "struct\022\037.google.protobuf.MessageOptions\030"
+  "\302\222\333\027 \001(\010:J\n\ntable_type\022\037.google.protobuf"
+  ".MessageOptions\030\204\337\263) \001(\0162\022.zetasql.Table"
+  "TypeB/\n\022com.google.zetasqlB\031WireFormatAn"
+  "notationProto"
+  ;
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_deps[1] = {
+  &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+};
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto = {
+  false, false, 613, descriptor_table_protodef_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto, "zetasql/public/proto/wire_format_annotation.proto", 
+  &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_deps, 1, 1,
+  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::offsets,
+  file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_getter() {
+  return &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto;
 }
 
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 1);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n1zetasql/public/proto/wire_format_annot"
-      "ation.proto\022\007zetasql\032 google/protobuf/de"
-      "scriptor.proto\"\"\n WireFormatAnnotationEm"
-      "ptyMessage*C\n\tTableType\022\026\n\022DEFAULT_TABLE"
-      "_TYPE\020\000\022\r\n\tSQL_TABLE\020\001\022\017\n\013VALUE_TABLE\020\002:"
-      ";\n\021struct_field_name\022\035.google.protobuf.F"
-      "ieldOptions\030\325\346\233! \001(\t:6\n\014is_raw_proto\022\035.g"
-      "oogle.protobuf.FieldOptions\030\212\220\213N \001(\010:;\n\020"
-      "is_hidden_column\022\035.google.protobuf.Field"
-      "Options\030\347\301\223\241\001 \001(\010:6\n\nis_wrapper\022\037.google"
-      ".protobuf.MessageOptions\030\342\243\333\027 \001(\010:5\n\tis_"
-      "struct\022\037.google.protobuf.MessageOptions\030"
-      "\302\222\333\027 \001(\010:J\n\ntable_type\022\037.google.protobuf"
-      ".MessageOptions\030\204\337\263) \001(\0162\022.zetasql.Table"
-      "TypeB/\n\022com.google.zetasqlB\031WireFormatAn"
-      "notationProto"
-  };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 613);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "zetasql/public/proto/wire_format_annotation.proto", &protobuf_RegisterTypes);
-  ::protobuf_google_2fprotobuf_2fdescriptor_2eproto::AddDescriptors();
-}
-
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto);
 namespace zetasql {
-const ::google::protobuf::EnumDescriptor* TableType_descriptor() {
-  protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::file_level_enum_descriptors[0];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TableType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[0];
 }
 bool TableType_IsValid(int value) {
   switch (value) {
@@ -138,213 +102,69 @@ bool TableType_IsValid(int value) {
 
 // ===================================================================
 
-void WireFormatAnnotationEmptyMessage::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class WireFormatAnnotationEmptyMessage::_Internal {
+ public:
+};
 
-WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::scc_info_WireFormatAnnotationEmptyMessage.base);
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.WireFormatAnnotationEmptyMessage)
+WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.WireFormatAnnotationEmptyMessage)
 }
 WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(const WireFormatAnnotationEmptyMessage& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.WireFormatAnnotationEmptyMessage)
 }
 
-void WireFormatAnnotationEmptyMessage::SharedCtor() {
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData WireFormatAnnotationEmptyMessage::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*WireFormatAnnotationEmptyMessage::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata WireFormatAnnotationEmptyMessage::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[0]);
 }
-
-WireFormatAnnotationEmptyMessage::~WireFormatAnnotationEmptyMessage() {
-  // @@protoc_insertion_point(destructor:zetasql.WireFormatAnnotationEmptyMessage)
-  SharedDtor();
-}
-
-void WireFormatAnnotationEmptyMessage::SharedDtor() {
-}
-
-void WireFormatAnnotationEmptyMessage::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const ::google::protobuf::Descriptor* WireFormatAnnotationEmptyMessage::descriptor() {
-  ::protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const WireFormatAnnotationEmptyMessage& WireFormatAnnotationEmptyMessage::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::scc_info_WireFormatAnnotationEmptyMessage.base);
-  return *internal_default_instance();
-}
-
-
-void WireFormatAnnotationEmptyMessage::Clear() {
-// @@protoc_insertion_point(message_clear_start:zetasql.WireFormatAnnotationEmptyMessage)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _has_bits_.Clear();
-  _internal_metadata_.Clear();
-}
-
-bool WireFormatAnnotationEmptyMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.WireFormatAnnotationEmptyMessage)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-  handle_unusual:
-    if (tag == 0) {
-      goto success;
-    }
-    DO_(::google::protobuf::internal::WireFormat::SkipField(
-          input, tag, _internal_metadata_.mutable_unknown_fields()));
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.WireFormatAnnotationEmptyMessage)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.WireFormatAnnotationEmptyMessage)
-  return false;
-#undef DO_
-}
-
-void WireFormatAnnotationEmptyMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.WireFormatAnnotationEmptyMessage)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.WireFormatAnnotationEmptyMessage)
-}
-
-::google::protobuf::uint8* WireFormatAnnotationEmptyMessage::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:zetasql.WireFormatAnnotationEmptyMessage)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:zetasql.WireFormatAnnotationEmptyMessage)
-  return target;
-}
-
-size_t WireFormatAnnotationEmptyMessage::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:zetasql.WireFormatAnnotationEmptyMessage)
-  size_t total_size = 0;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void WireFormatAnnotationEmptyMessage::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.WireFormatAnnotationEmptyMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  const WireFormatAnnotationEmptyMessage* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const WireFormatAnnotationEmptyMessage>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.WireFormatAnnotationEmptyMessage)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.WireFormatAnnotationEmptyMessage)
-    MergeFrom(*source);
-  }
-}
-
-void WireFormatAnnotationEmptyMessage::MergeFrom(const WireFormatAnnotationEmptyMessage& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.WireFormatAnnotationEmptyMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-}
-
-void WireFormatAnnotationEmptyMessage::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.WireFormatAnnotationEmptyMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void WireFormatAnnotationEmptyMessage::CopyFrom(const WireFormatAnnotationEmptyMessage& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.WireFormatAnnotationEmptyMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool WireFormatAnnotationEmptyMessage::IsInitialized() const {
-  return true;
-}
-
-void WireFormatAnnotationEmptyMessage::Swap(WireFormatAnnotationEmptyMessage* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void WireFormatAnnotationEmptyMessage::InternalSwap(WireFormatAnnotationEmptyMessage* other) {
-  using std::swap;
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-}
-
-::google::protobuf::Metadata WireFormatAnnotationEmptyMessage::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::file_level_metadata[kIndexInFileMessages];
-}
-
-const ::std::string struct_field_name_default("");
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
-    ::google::protobuf::internal::StringTypeTraits, 9, false >
+const std::string struct_field_name_default("");
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::StringTypeTraits, 9, false >
   struct_field_name(kStructFieldNameFieldNumber, struct_field_name_default);
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
-    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   is_raw_proto(kIsRawProtoFieldNumber, false);
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::FieldOptions,
-    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   is_hidden_column(kIsHiddenColumnFieldNumber, false);
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
-    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   is_wrapper(kIsWrapperFieldNumber, false);
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
-    ::google::protobuf::internal::PrimitiveTypeTraits< bool >, 8, false >
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   is_struct(kIsStructFieldNumber, false);
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
-    ::google::protobuf::internal::EnumTypeTraits< ::zetasql::TableType, ::zetasql::TableType_IsValid>, 14, false >
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::TableType, ::zetasql::TableType_IsValid>, 14, false >
   table_type(kTableTypeFieldNumber, static_cast< ::zetasql::TableType >(0));
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::WireFormatAnnotationEmptyMessage* Arena::CreateMaybeMessage< ::zetasql::WireFormatAnnotationEmptyMessage >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::WireFormatAnnotationEmptyMessage >(arena);
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::WireFormatAnnotationEmptyMessage* Arena::CreateMaybeMessage< ::zetasql::WireFormatAnnotationEmptyMessage >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::WireFormatAnnotationEmptyMessage >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>

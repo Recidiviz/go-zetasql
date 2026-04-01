@@ -22,7 +22,9 @@
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
+#include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "google/protobuf/dynamic_message.h"
@@ -602,18 +604,6 @@ class Value {
   }
 
   // Creates an array of the given 'array_type' initialized with 'values'.
-  // The type of each value must be the same as array_type->element_type().
-  // otherwise this will crash with a ZETASQL_CHECK failure.
-  // 'array_type' must outlive the returned object.
-  ABSL_DEPRECATED("Inline me!")
-  static Value ArraySafe(const ArrayType* array_type,
-                         std::vector<Value>&& values) {
-    absl::StatusOr<Value> value = MakeArray(array_type, std::move(values));
-    ZETASQL_CHECK_OK(value);
-    return std::move(value).value();
-  }
-
-  // Creates an array of the given 'array_type' initialized with 'values'.
   // The type of each value must be the same as array_type->element_type(),
   // however, this is only ZETASQL_CHECK'd in debug mode.
   // 'array_type' must outlive the returned object.
@@ -917,7 +907,7 @@ class Value {
    private:
     // We use different field layouts depending on system bitness.
     template <const int byteness>
-    struct ContentLayout;
+    class ContentLayout;
 
     typedef ContentLayout<sizeof(Type*)> Content;
 

@@ -5,326 +5,286 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
 
-namespace protobuf_zetasql_2fpublic_2foptions_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fpublic_2foptions_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_LanguageFeatureOptions;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_zetasql_2fpublic_2foptions_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ResolvedASTRewriteOptions;
-}  // namespace protobuf_zetasql_2fpublic_2foptions_2eproto
+PROTOBUF_PRAGMA_INIT_SEG
 namespace zetasql {
-class LanguageFeatureOptionsDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<LanguageFeatureOptions>
-      _instance;
-} _LanguageFeatureOptions_default_instance_;
-class ResolvedASTRewriteOptionsDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ResolvedASTRewriteOptions>
-      _instance;
-} _ResolvedASTRewriteOptions_default_instance_;
-}  // namespace zetasql
-namespace protobuf_zetasql_2fpublic_2foptions_2eproto {
-static void InitDefaultsLanguageFeatureOptions() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::zetasql::_LanguageFeatureOptions_default_instance_;
-    new (ptr) ::zetasql::LanguageFeatureOptions();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::LanguageFeatureOptions::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_LanguageFeatureOptions =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsLanguageFeatureOptions}, {}};
-
-static void InitDefaultsResolvedASTRewriteOptions() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::zetasql::_ResolvedASTRewriteOptions_default_instance_;
-    new (ptr) ::zetasql::ResolvedASTRewriteOptions();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::zetasql::ResolvedASTRewriteOptions::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_ResolvedASTRewriteOptions =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsResolvedASTRewriteOptions}, {}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_LanguageFeatureOptions.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_ResolvedASTRewriteOptions.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[2];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[9];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, ideally_enabled_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, in_development_),
-  1,
-  0,
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, default_enabled_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, in_development_),
-  0,
-  1,
-};
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 7, sizeof(::zetasql::LanguageFeatureOptions)},
-  { 9, 16, sizeof(::zetasql::ResolvedASTRewriteOptions)},
-};
-
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_LanguageFeatureOptions_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::zetasql::_ResolvedASTRewriteOptions_default_instance_),
-};
-
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "zetasql/public/options.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, file_level_enum_descriptors, NULL);
-}
-
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 2);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\034zetasql/public/options.proto\022\007zetasql\032"
-      " google/protobuf/descriptor.proto\"V\n\026Lan"
-      "guageFeatureOptions\022\035\n\017ideally_enabled\030\001"
-      " \001(\010:\004true\022\035\n\016in_development\030\002 \001(\010:\005fals"
-      "e\"S\n\031ResolvedASTRewriteOptions\022\027\n\017defaul"
-      "t_enabled\030\001 \001(\010\022\035\n\016in_development\030\002 \001(\010:"
-      "\005false*\254\001\n\017LanguageVersion\022\023\n\017VERSION_CU"
-      "RRENT\020\001\022\020\n\013VERSION_1_0\020\220N\022\020\n\013VERSION_1_1"
-      "\020\370U\022\020\n\013VERSION_1_2\020\340]\022\020\n\013VERSION_1_3\020\310e\022"
-      "<\n/__LanguageVersion__switch_must_have_a"
-      "_default__\020\377\377\377\377\377\377\377\377\377\001*\216+\n\017LanguageFeatur"
-      "e\022\036\n\032FEATURE_ANALYTIC_FUNCTIONS\020\001\022\027\n\023FEA"
-      "TURE_TABLESAMPLE\020\002\022-\n\037FEATURE_DISALLOW_G"
-      "ROUP_BY_FLOAT\020\003\032\010\332\361\252\211\005\002\010\000\022\033\n\027FEATURE_TIM"
-      "ESTAMP_NANOS\020\005\022 \n\034FEATURE_DML_UPDATE_WIT"
-      "H_JOIN\020\006\022\"\n\036FEATURE_TABLE_VALUED_FUNCTIO"
-      "NS\020\010\022%\n!FEATURE_CREATE_AGGREGATE_FUNCTIO"
-      "N\020\t\022!\n\035FEATURE_CREATE_TABLE_FUNCTION\020\n\022\033"
-      "\n\027FEATURE_GROUP_BY_ROLLUP\020\014\022\036\n\032FEATURE_T"
-      "EMPLATE_FUNCTIONS\020\r\022%\n!FEATURE_CREATE_TA"
-      "BLE_PARTITION_BY\020\016\022#\n\037FEATURE_CREATE_TAB"
-      "LE_CLUSTER_BY\020\017\022\030\n\024FEATURE_NUMERIC_TYPE\020"
-      "\020\022!\n\035FEATURE_CREATE_TABLE_NOT_NULL\020\021\022*\n&"
-      "FEATURE_CREATE_TABLE_FIELD_ANNOTATIONS\020\022"
-      "\022.\n*FEATURE_CREATE_TABLE_AS_SELECT_COLUM"
-      "N_LIST\020\023\0220\n\"FEATURE_DISALLOW_NULL_PRIMAR"
-      "Y_KEYS\020\024\032\010\332\361\252\211\005\002\010\000\0222\n$FEATURE_DISALLOW_P"
-      "RIMARY_KEY_UPDATES\020\025\032\010\332\361\252\211\005\002\010\000\0223\n/FEATUR"
-      "E_TABLESAMPLE_FROM_TABLE_VALUED_FUNCTION"
-      "S\020\026\022\026\n\022FEATURE_ENCRYPTION\020\027\022#\n\025FEATURE_A"
-      "NONYMIZATION\020\030\032\010\332\361\252\211\005\002\020\001\022\025\n\021FEATURE_GEOG"
-      "RAPHY\020\031\022,\n(FEATURE_STRATIFIED_RESERVOIR_"
-      "TABLESAMPLE\020\032\022\030\n\024FEATURE_FOREIGN_KEYS\020\033\022"
-      "*\n\034FEATURE_BETWEEN_UINT64_INT64\020\034\032\010\332\361\252\211\005"
-      "\002\020\001\022\034\n\030FEATURE_CHECK_CONSTRAINT\020\035\022&\n\"FEA"
-      "TURE_PARAMETERS_IN_GRANTEE_LIST\020\036\022\033\n\027FEA"
-      "TURE_NAMED_ARGUMENTS\020\037\0221\n-FEATURE_ALLOW_"
-      "LEGACY_ROW_ACCESS_POLICY_SYNTAX\020 \0221\n-FEA"
-      "TURE_CREATE_MATERIALIZED_VIEW_PARTITION_"
-      "BY\020!\022/\n+FEATURE_CREATE_MATERIALIZED_VIEW"
-      "_CLUSTER_BY\020\"\0229\n5FEATURE_CREATE_EXTERNAL"
-      "_TABLE_WITH_TABLE_ELEMENT_LIST\020#\022#\n\037FEAT"
-      "URE_UNENFORCED_PRIMARY_KEYS\020(\022\033\n\027FEATURE"
-      "_BIGNUMERIC_TYPE\020)\022$\n\026FEATURE_EXTENDED_T"
-      "YPES\020*\032\010\332\361\252\211\005\002\020\001\022\037\n\021FEATURE_JSON_TYPE\020+\032"
-      "\010\332\361\252\211\005\002\020\001\0220\n\032FEATURE_JSON_NO_VALIDATION\020"
-      ",\032\020\332\361\252\211\005\002\010\000\332\361\252\211\005\002\020\001\022/\n\031FEATURE_JSON_LEGA"
-      "CY_PARSE\020.\032\020\332\361\252\211\005\002\010\000\332\361\252\211\005\002\020\001\022B\n4FEATURE_"
-      "CREATE_EXTERNAL_TABLE_WITH_PARTITION_COL"
-      "UMNS\020/\032\010\332\361\252\211\005\002\020\001\022#\n\025FEATURE_INTERVAL_TYP"
-      "E\0201\032\010\332\361\252\211\005\002\020\001\0228\n\"FEATURE_JSON_STRICT_NUM"
-      "BER_PARSING\0204\032\020\332\361\252\211\005\002\010\000\332\361\252\211\005\002\020\001\0224\n0FEATU"
-      "RE_FUNCTION_ARGUMENT_NAMES_HIDE_LOCAL_NA"
-      "MES\0207\022)\n\033FEATURE_PARAMETERIZED_TYPES\0208\032\010"
-      "\332\361\252\211\005\002\020\001\022\'\n\031FEATURE_CREATE_TABLE_LIKE\0209\032"
-      "\010\332\361\252\211\005\002\020\001\022*\n\034FEATURE_JSON_ARRAY_FUNCTION"
-      "S\020:\032\010\332\361\252\211\005\002\020\001\0222\n$FEATURE_CREATE_VIEW_WIT"
-      "H_COLUMN_LIST\020;\032\010\332\361\252\211\005\002\020\001\022(\n\032FEATURE_CRE"
-      "ATE_TABLE_CLONE\020<\032\010\332\361\252\211\005\002\020\001\022 \n\022FEATURE_C"
-      "LONE_DATA\020=\032\010\332\361\252\211\005\002\020\001\0220\n\"FEATURE_ALTER_C"
-      "OLUMN_SET_DATA_TYPE\020>\032\010\332\361\252\211\005\002\020\001\022+\n\035FEATU"
-      "RE_CREATE_SNAPSHOT_TABLE\020\?\032\010\332\361\252\211\005\002\020\001\022,\n("
-      "FEATURE_FUNCTION_ARGUMENTS_WITH_DEFAULTS"
-      "\020@\022;\n-FEATURE_CREATE_EXTERNAL_TABLE_WITH"
-      "_CONNECTION\020A\032\010\332\361\252\211\005\002\020\001\022\'\n\031FEATURE_CREAT"
-      "E_TABLE_COPY\020B\032\010\332\361\252\211\005\002\020\001\022%\n!FEATURE_ALTE"
-      "R_TABLE_RENAME_COLUMN\020C\0225\n\'FEATURE_JSON_"
-      "VALUE_EXTRACTION_FUNCTIONS\020D\032\010\332\361\252\211\005\002\020\001\022\?"
-      "\n)FEATURE_DISALLOW_LEGACY_UNICODE_COLLAT"
-      "ION\020E\032\020\332\361\252\211\005\002\020\001\332\361\252\211\005\002\010\000\0226\n2FEATURE_ALLOW"
-      "_MISSING_PATH_EXPRESSION_IN_ALTER_DDL\020F\022"
-      "#\n\036FEATURE_V_1_1_ORDER_BY_COLLATE\020\371U\022#\n\036"
-      "FEATURE_V_1_1_WITH_ON_SUBQUERY\020\372U\022-\n(FEA"
-      "TURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE\020\373U"
-      "\022(\n#FEATURE_V_1_1_ORDER_BY_IN_AGGREGATE\020"
-      "\374U\022-\n(FEATURE_V_1_1_CAST_DIFFERENT_ARRAY"
-      "_TYPES\020\375U\022!\n\034FEATURE_V_1_1_ARRAY_EQUALIT"
-      "Y\020\376U\022%\n FEATURE_V_1_1_LIMIT_IN_AGGREGATE"
-      "\020\377U\022&\n!FEATURE_V_1_1_HAVING_IN_AGGREGATE"
-      "\020\200V\0225\n0FEATURE_V_1_1_NULL_HANDLING_MODIF"
-      "IER_IN_ANALYTIC\020\201V\0226\n1FEATURE_V_1_1_NULL"
-      "_HANDLING_MODIFIER_IN_AGGREGATE\020\202V\022(\n#FE"
-      "ATURE_V_1_1_FOR_SYSTEM_TIME_AS_OF\020\203V\022\035\n\030"
-      "FEATURE_V_1_2_CIVIL_TIME\020\341]\022%\n FEATURE_V"
-      "_1_2_SAFE_FUNCTION_CALL\020\342]\022\"\n\035FEATURE_V_"
-      "1_2_GROUP_BY_STRUCT\020\343]\022,\n\'FEATURE_V_1_2_"
-      "PROTO_EXTENSIONS_WITH_NEW\020\344]\022!\n\034FEATURE_"
-      "V_1_2_GROUP_BY_ARRAY\020\345]\022,\n\'FEATURE_V_1_2"
-      "_PROTO_EXTENSIONS_WITH_SET\020\346]\0220\n+FEATURE"
-      "_V_1_2_CORRELATED_REFS_IN_NESTED_DML\020\347]\022"
-      "$\n\037FEATURE_V_1_2_WEEK_WITH_WEEKDAY\020\350]\022*\n"
-      "%FEATURE_V_1_2_ARRAY_ELEMENTS_WITH_SET\020\351"
-      "]\0223\n.FEATURE_V_1_2_NESTED_UPDATE_DELETE_"
-      "WITH_OFFSET\020\352]\022$\n\037FEATURE_V_1_2_GENERATE"
-      "D_COLUMNS\020\353]\022(\n#FEATURE_V_1_3_PROTO_DEFA"
-      "ULT_IF_NULL\020\311e\022%\n FEATURE_V_1_3_EXTRACT_"
-      "FROM_PROTO\020\312e\022B\n3FEATURE_DEPRECATED_DISA"
-      "LLOW_PROTO3_HAS_SCALAR_FIELD\020\313e\032\010\332\361\252\211\005\002\010"
-      "\000\022!\n\034FEATURE_V_1_3_ARRAY_ORDERING\020\314e\022*\n%"
-      "FEATURE_V_1_3_OMIT_INSERT_COLUMN_LIST\020\315e"
-      "\022-\n(FEATURE_V_1_3_IGNORE_PROTO3_USE_DEFA"
-      "ULTS\020\316e\022+\n\034FEATURE_V_1_3_REPLACE_FIELDS\020"
-      "\317e\032\010\332\361\252\211\005\002\020\001\022/\n*FEATURE_V_1_3_NULLS_FIRS"
-      "T_LAST_IN_ORDER_BY\020\320e\022-\n(FEATURE_V_1_3_A"
-      "LLOW_DASHES_IN_TABLE_NAME\020\321e\022%\n FEATURE_"
-      "V_1_3_CONCAT_MIXED_TYPES\020\322e\022+\n\034FEATURE_V"
-      "_1_3_WITH_RECURSIVE\020\323e\032\010\332\361\252\211\005\002\020\001\022\'\n\030FEAT"
-      "URE_V_1_3_PROTO_MAPS\020\324e\032\010\332\361\252\211\005\002\020\000\022.\n)FEA"
-      "TURE_V_1_3_ENUM_VALUE_DESCRIPTOR_PROTO\020\325"
-      "e\022 \n\033FEATURE_V_1_3_DECIMAL_ALIAS\020\326e\022,\n\'F"
-      "EATURE_V_1_3_UNNEST_AND_FLATTEN_ARRAYS\020\327"
-      "e\022\'\n\"FEATURE_V_1_3_ALLOW_CONSECUTIVE_ON\020"
-      "\330e\022;\n,FEATURE_V_1_3_ALLOW_REGEXP_EXTRACT"
-      "_OPTIONALS\020\331e\032\010\332\361\252\211\005\002\020\001\022)\n$FEATURE_V_1_3"
-      "_DATE_TIME_CONSTRUCTORS\020\332e\022#\n\036FEATURE_V_"
-      "1_3_DATE_ARITHMETICS\020\333e\022.\n)FEATURE_V_1_3"
-      "_ADDITIONAL_STRING_FUNCTIONS\020\334e\022\"\n\035FEATU"
-      "RE_V_1_3_WITH_GROUP_ROWS\020\335e\0220\n+FEATURE_V"
-      "_1_3_EXTENDED_DATE_TIME_SIGNATURES\020\336e\022-\n"
-      "(FEATURE_V_1_3_EXTENDED_GEOGRAPHY_PARSER"
-      "S\020\337e\022)\n$FEATURE_V_1_3_INLINE_LAMBDA_ARGU"
-      "MENT\020\340e\022\030\n\023FEATURE_V_1_3_PIVOT\020\341e\022\'\n\"FEA"
-      "TURE_V_1_3_ANNOTATION_FRAMEWORK\020\342e\022.\n\037FE"
-      "ATURE_V_1_3_COLLATION_SUPPORT\020\343e\032\010\332\361\252\211\005\002"
-      "\020\001\022\036\n\031FEATURE_V_1_3_IS_DISTINCT\020\344e\022+\n\034FE"
-      "ATURE_V_1_3_FORMAT_IN_CAST\020\345e\032\010\332\361\252\211\005\002\020\001\022"
-      "\032\n\025FEATURE_V_1_3_UNPIVOT\020\346e\022*\n\033FEATURE_V"
-      "_1_3_DML_RETURNING\020\347e\032\010\332\361\252\211\005\002\020\001\022*\n\033FEATU"
-      "RE_V_1_3_FILTER_FIELDS\020\350e\032\010\332\361\252\211\005\002\020\001\022$\n\025F"
-      "EATURE_V_1_3_QUALIFY\020\351e\032\010\332\361\252\211\005\002\020\001\022#\n\024FEA"
-      "TURE_V_1_3_REPEAT\020\352e\032\010\332\361\252\211\005\002\020\001\0221\n\"FEATUR"
-      "E_V_1_3_COLUMN_DEFAULT_VALUE\020\353e\032\010\332\361\252\211\005\002\020"
-      "\001\022#\n\024FEATURE_V_1_3_FOR_IN\020\354e\032\010\332\361\252\211\005\002\020\001\022\030"
-      "\n\023FEATURE_KLL_WEIGHTS\020\355e\022.\n\037FEATURE_V_1_"
-      "3_LIKE_ANY_SOME_ALL\020\356e\032\010\332\361\252\211\005\002\020\001\022&\n\027FEAT"
-      "URE_V_1_3_CASE_STMT\020\357e\032\010\332\361\252\211\005\002\020\001\022$\n\037FEAT"
-      "URE_V_1_3_ALLOW_SLASH_PATHS\020\360e\022\"\n\035FEATUR"
-      "E_V_1_3_TYPEOF_FUNCTION\020\361e\022)\n\032FEATURE_V_"
-      "1_3_SCRIPT_LABEL\020\362e\032\010\332\361\252\211\005\002\020\001\022,\n\035FEATURE"
-      "_V_1_3_REMOTE_FUNCTION\020\363e\032\010\332\361\252\211\005\002\020\001\022\'\n\"F"
-      "EATURE_V_1_3_ARRAY_GREATEST_LEAST\020\364e\022,\n\034"
-      "FEATURE_EXPERIMENTAL_MODULES\020\332\374<\032\010\332\361\252\211\005\002"
-      "\020\001\022\?\n/FEATURE_TEST_IDEALLY_ENABLED_BUT_I"
-      "N_DEVELOPMENT\020\267\204=\032\010\332\361\252\211\005\002\020\001\022-\n\035FEATURE_T"
-      "EST_IDEALLY_DISABLED\020\270\204=\032\010\332\361\252\211\005\002\010\000\022B\n0FE"
-      "ATURE_TEST_IDEALLY_DISABLED_AND_IN_DEVEL"
-      "OPMENT\020\271\204=\032\n\332\361\252\211\005\004\010\000\020\001\022<\n/__LanguageFeat"
-      "ure__switch_must_have_a_default__\020\377\377\377\377\377\377"
-      "\377\377\377\001\"\004\010$\020\'\"\004\010-\020-\"\004\0100\0200*\250\003\n\022ResolvedASTRe"
-      "write\022\036\n\032REWRITE_INVALID_DO_NOT_USE\020\000\022\035\n"
-      "\017REWRITE_FLATTEN\020\001\032\010\202\207\335\204\n\002\010\001\022#\n\025REWRITE_"
-      "ANONYMIZATION\020\002\032\010\202\207\335\204\n\002\010\000\022#\n\025REWRITE_PRO"
-      "TO_MAP_FNS\020\003\032\010\202\207\335\204\n\002\010\001\022,\n\036REWRITE_ARRAY_"
-      "FILTER_TRANSFORM\020\004\032\010\202\207\335\204\n\002\010\001\022\035\n\017REWRITE_"
-      "UNPIVOT\020\005\032\010\202\207\335\204\n\002\010\001\022\033\n\rREWRITE_PIVOT\020\006\032\010"
-      "\202\207\335\204\n\002\010\001\022$\n\026REWRITE_ARRAY_INCLUDES\020\007\032\010\202\207"
-      "\335\204\n\002\010\001\022%\n\027REWRITE_TYPEOF_FUNCTION\020\010\032\010\202\207\335"
-      "\204\n\002\010\001\022\036\n\020REWRITE_LET_EXPR\020\t\032\010\202\207\335\204\n\002\010\001\0222\n"
-      "\034REWRITE_INLINE_SQL_FUNCTIONS\020\n\032\020\202\207\335\204\n\002\010"
-      "\000\202\207\335\204\n\002\020\001*M\n\022NameResolutionMode\022\033\n\027NAME_"
-      "RESOLUTION_DEFAULT\020\000\022\032\n\026NAME_RESOLUTION_"
-      "STRICT\020\001*9\n\013ProductMode\022\024\n\020PRODUCT_INTER"
-      "NAL\020\000\022\024\n\020PRODUCT_EXTERNAL\020\001*;\n\020Statement"
-      "Context\022\023\n\017CONTEXT_DEFAULT\020\000\022\022\n\016CONTEXT_"
-      "MODULE\020\001*w\n\020ErrorMessageMode\022\036\n\032ERROR_ME"
-      "SSAGE_WITH_PAYLOAD\020\000\022\032\n\026ERROR_MESSAGE_ON"
-      "E_LINE\020\001\022\'\n#ERROR_MESSAGE_MULTI_LINE_WIT"
-      "H_CARET\020\002*R\n\rParameterMode\022\023\n\017PARAMETER_"
-      "NAMED\020\000\022\030\n\024PARAMETER_POSITIONAL\020\001\022\022\n\016PAR"
-      "AMETER_NONE\020\002*\213\001\n\027ParseLocationRecordTyp"
-      "e\022\036\n\032PARSE_LOCATION_RECORD_NONE\020\000\022)\n%PAR"
-      "SE_LOCATION_RECORD_FULL_NODE_SCOPE\020\001\022%\n!"
-      "PARSE_LOCATION_RECORD_CODE_SEARCH\020\002:g\n\030l"
-      "anguage_feature_options\022!.google.protobu"
-      "f.EnumValueOptions\030\233\256\225Q \001(\0132\037.zetasql.La"
-      "nguageFeatureOptions:b\n\017rewrite_options\022"
-      "!.google.protobuf.EnumValueOptions\030\360\320\313\240\001"
-      " \001(\0132\".zetasql.ResolvedASTRewriteOptions"
-      "B$\n\022com.google.zetasqlB\016ZetaSQLOptions"
+constexpr LanguageFeatureOptions::LanguageFeatureOptions(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : in_development_(false)
+  , ideally_enabled_(true){}
+struct LanguageFeatureOptionsDefaultTypeInternal {
+  constexpr LanguageFeatureOptionsDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~LanguageFeatureOptionsDefaultTypeInternal() {}
+  union {
+    LanguageFeatureOptions _instance;
   };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 7158);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "zetasql/public/options.proto", &protobuf_RegisterTypes);
-  ::protobuf_google_2fprotobuf_2fdescriptor_2eproto::AddDescriptors();
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT LanguageFeatureOptionsDefaultTypeInternal _LanguageFeatureOptions_default_instance_;
+constexpr ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : default_enabled_(false)
+  , in_development_(false){}
+struct ResolvedASTRewriteOptionsDefaultTypeInternal {
+  constexpr ResolvedASTRewriteOptionsDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ResolvedASTRewriteOptionsDefaultTypeInternal() {}
+  union {
+    ResolvedASTRewriteOptions _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedASTRewriteOptionsDefaultTypeInternal _ResolvedASTRewriteOptions_default_instance_;
+}  // namespace zetasql
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2foptions_2eproto[2];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[9];
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2foptions_2eproto = nullptr;
+
+const uint32_t TableStruct_zetasql_2fpublic_2foptions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, ideally_enabled_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, in_development_),
+  1,
+  0,
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, default_enabled_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, in_development_),
+  0,
+  1,
+};
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 8, -1, sizeof(::zetasql::LanguageFeatureOptions)},
+  { 10, 18, -1, sizeof(::zetasql::ResolvedASTRewriteOptions)},
+};
+
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_LanguageFeatureOptions_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedASTRewriteOptions_default_instance_),
+};
+
+const char descriptor_table_protodef_zetasql_2fpublic_2foptions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n\034zetasql/public/options.proto\022\007zetasql\032"
+  " google/protobuf/descriptor.proto\"V\n\026Lan"
+  "guageFeatureOptions\022\035\n\017ideally_enabled\030\001"
+  " \001(\010:\004true\022\035\n\016in_development\030\002 \001(\010:\005fals"
+  "e\"S\n\031ResolvedASTRewriteOptions\022\027\n\017defaul"
+  "t_enabled\030\001 \001(\010\022\035\n\016in_development\030\002 \001(\010:"
+  "\005false*\254\001\n\017LanguageVersion\022\023\n\017VERSION_CU"
+  "RRENT\020\001\022\020\n\013VERSION_1_0\020\220N\022\020\n\013VERSION_1_1"
+  "\020\370U\022\020\n\013VERSION_1_2\020\340]\022\020\n\013VERSION_1_3\020\310e\022"
+  "<\n/__LanguageVersion__switch_must_have_a"
+  "_default__\020\377\377\377\377\377\377\377\377\377\001*\351+\n\017LanguageFeatur"
+  "e\022\036\n\032FEATURE_ANALYTIC_FUNCTIONS\020\001\022\027\n\023FEA"
+  "TURE_TABLESAMPLE\020\002\022-\n\037FEATURE_DISALLOW_G"
+  "ROUP_BY_FLOAT\020\003\032\010\332\361\252\211\005\002\010\000\022\033\n\027FEATURE_TIM"
+  "ESTAMP_NANOS\020\005\022 \n\034FEATURE_DML_UPDATE_WIT"
+  "H_JOIN\020\006\022\"\n\036FEATURE_TABLE_VALUED_FUNCTIO"
+  "NS\020\010\022%\n!FEATURE_CREATE_AGGREGATE_FUNCTIO"
+  "N\020\t\022!\n\035FEATURE_CREATE_TABLE_FUNCTION\020\n\022\033"
+  "\n\027FEATURE_GROUP_BY_ROLLUP\020\014\022\036\n\032FEATURE_T"
+  "EMPLATE_FUNCTIONS\020\r\022%\n!FEATURE_CREATE_TA"
+  "BLE_PARTITION_BY\020\016\022#\n\037FEATURE_CREATE_TAB"
+  "LE_CLUSTER_BY\020\017\022\030\n\024FEATURE_NUMERIC_TYPE\020"
+  "\020\022!\n\035FEATURE_CREATE_TABLE_NOT_NULL\020\021\022*\n&"
+  "FEATURE_CREATE_TABLE_FIELD_ANNOTATIONS\020\022"
+  "\022.\n*FEATURE_CREATE_TABLE_AS_SELECT_COLUM"
+  "N_LIST\020\023\0220\n\"FEATURE_DISALLOW_NULL_PRIMAR"
+  "Y_KEYS\020\024\032\010\332\361\252\211\005\002\010\000\0222\n$FEATURE_DISALLOW_P"
+  "RIMARY_KEY_UPDATES\020\025\032\010\332\361\252\211\005\002\010\000\0223\n/FEATUR"
+  "E_TABLESAMPLE_FROM_TABLE_VALUED_FUNCTION"
+  "S\020\026\022\026\n\022FEATURE_ENCRYPTION\020\027\022#\n\025FEATURE_A"
+  "NONYMIZATION\020\030\032\010\332\361\252\211\005\002\020\001\022\025\n\021FEATURE_GEOG"
+  "RAPHY\020\031\022,\n(FEATURE_STRATIFIED_RESERVOIR_"
+  "TABLESAMPLE\020\032\022\030\n\024FEATURE_FOREIGN_KEYS\020\033\022"
+  "*\n\034FEATURE_BETWEEN_UINT64_INT64\020\034\032\010\332\361\252\211\005"
+  "\002\020\001\022\034\n\030FEATURE_CHECK_CONSTRAINT\020\035\022&\n\"FEA"
+  "TURE_PARAMETERS_IN_GRANTEE_LIST\020\036\022\033\n\027FEA"
+  "TURE_NAMED_ARGUMENTS\020\037\0221\n-FEATURE_ALLOW_"
+  "LEGACY_ROW_ACCESS_POLICY_SYNTAX\020 \0221\n-FEA"
+  "TURE_CREATE_MATERIALIZED_VIEW_PARTITION_"
+  "BY\020!\022/\n+FEATURE_CREATE_MATERIALIZED_VIEW"
+  "_CLUSTER_BY\020\"\0229\n5FEATURE_CREATE_EXTERNAL"
+  "_TABLE_WITH_TABLE_ELEMENT_LIST\020#\022#\n\037FEAT"
+  "URE_UNENFORCED_PRIMARY_KEYS\020(\022\033\n\027FEATURE"
+  "_BIGNUMERIC_TYPE\020)\022$\n\026FEATURE_EXTENDED_T"
+  "YPES\020*\032\010\332\361\252\211\005\002\020\001\022\037\n\021FEATURE_JSON_TYPE\020+\032"
+  "\010\332\361\252\211\005\002\020\001\0220\n\032FEATURE_JSON_NO_VALIDATION\020"
+  ",\032\020\332\361\252\211\005\002\010\000\332\361\252\211\005\002\020\001\022/\n\031FEATURE_JSON_LEGA"
+  "CY_PARSE\020.\032\020\332\361\252\211\005\002\010\000\332\361\252\211\005\002\020\001\022B\n4FEATURE_"
+  "CREATE_EXTERNAL_TABLE_WITH_PARTITION_COL"
+  "UMNS\020/\032\010\332\361\252\211\005\002\020\001\022#\n\025FEATURE_INTERVAL_TYP"
+  "E\0201\032\010\332\361\252\211\005\002\020\001\0228\n\"FEATURE_JSON_STRICT_NUM"
+  "BER_PARSING\0204\032\020\332\361\252\211\005\002\010\000\332\361\252\211\005\002\020\001\0224\n0FEATU"
+  "RE_FUNCTION_ARGUMENT_NAMES_HIDE_LOCAL_NA"
+  "MES\0207\022)\n\033FEATURE_PARAMETERIZED_TYPES\0208\032\010"
+  "\332\361\252\211\005\002\020\001\022\'\n\031FEATURE_CREATE_TABLE_LIKE\0209\032"
+  "\010\332\361\252\211\005\002\020\001\022*\n\034FEATURE_JSON_ARRAY_FUNCTION"
+  "S\020:\032\010\332\361\252\211\005\002\020\001\0222\n$FEATURE_CREATE_VIEW_WIT"
+  "H_COLUMN_LIST\020;\032\010\332\361\252\211\005\002\020\001\022(\n\032FEATURE_CRE"
+  "ATE_TABLE_CLONE\020<\032\010\332\361\252\211\005\002\020\001\022 \n\022FEATURE_C"
+  "LONE_DATA\020=\032\010\332\361\252\211\005\002\020\001\0220\n\"FEATURE_ALTER_C"
+  "OLUMN_SET_DATA_TYPE\020>\032\010\332\361\252\211\005\002\020\001\022+\n\035FEATU"
+  "RE_CREATE_SNAPSHOT_TABLE\020\?\032\010\332\361\252\211\005\002\020\001\022,\n("
+  "FEATURE_FUNCTION_ARGUMENTS_WITH_DEFAULTS"
+  "\020@\022;\n-FEATURE_CREATE_EXTERNAL_TABLE_WITH"
+  "_CONNECTION\020A\032\010\332\361\252\211\005\002\020\001\022\'\n\031FEATURE_CREAT"
+  "E_TABLE_COPY\020B\032\010\332\361\252\211\005\002\020\001\022%\n!FEATURE_ALTE"
+  "R_TABLE_RENAME_COLUMN\020C\0225\n\'FEATURE_JSON_"
+  "VALUE_EXTRACTION_FUNCTIONS\020D\032\010\332\361\252\211\005\002\020\001\022\?"
+  "\n)FEATURE_DISALLOW_LEGACY_UNICODE_COLLAT"
+  "ION\020E\032\020\332\361\252\211\005\002\020\001\332\361\252\211\005\002\010\000\0226\n2FEATURE_ALLOW"
+  "_MISSING_PATH_EXPRESSION_IN_ALTER_DDL\020F\022"
+  "+\n\035FEATURE_TIME_BUCKET_FUNCTIONS\020G\032\010\332\361\252\211"
+  "\005\002\020\001\022#\n\036FEATURE_V_1_1_ORDER_BY_COLLATE\020\371"
+  "U\022#\n\036FEATURE_V_1_1_WITH_ON_SUBQUERY\020\372U\022-"
+  "\n(FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLA"
+  "CE\020\373U\022(\n#FEATURE_V_1_1_ORDER_BY_IN_AGGRE"
+  "GATE\020\374U\022-\n(FEATURE_V_1_1_CAST_DIFFERENT_"
+  "ARRAY_TYPES\020\375U\022!\n\034FEATURE_V_1_1_ARRAY_EQ"
+  "UALITY\020\376U\022%\n FEATURE_V_1_1_LIMIT_IN_AGGR"
+  "EGATE\020\377U\022&\n!FEATURE_V_1_1_HAVING_IN_AGGR"
+  "EGATE\020\200V\0225\n0FEATURE_V_1_1_NULL_HANDLING_"
+  "MODIFIER_IN_ANALYTIC\020\201V\0226\n1FEATURE_V_1_1"
+  "_NULL_HANDLING_MODIFIER_IN_AGGREGATE\020\202V\022"
+  "(\n#FEATURE_V_1_1_FOR_SYSTEM_TIME_AS_OF\020\203"
+  "V\022\035\n\030FEATURE_V_1_2_CIVIL_TIME\020\341]\022%\n FEAT"
+  "URE_V_1_2_SAFE_FUNCTION_CALL\020\342]\022\"\n\035FEATU"
+  "RE_V_1_2_GROUP_BY_STRUCT\020\343]\022,\n\'FEATURE_V"
+  "_1_2_PROTO_EXTENSIONS_WITH_NEW\020\344]\022!\n\034FEA"
+  "TURE_V_1_2_GROUP_BY_ARRAY\020\345]\022,\n\'FEATURE_"
+  "V_1_2_PROTO_EXTENSIONS_WITH_SET\020\346]\0220\n+FE"
+  "ATURE_V_1_2_CORRELATED_REFS_IN_NESTED_DM"
+  "L\020\347]\022$\n\037FEATURE_V_1_2_WEEK_WITH_WEEKDAY\020"
+  "\350]\022*\n%FEATURE_V_1_2_ARRAY_ELEMENTS_WITH_"
+  "SET\020\351]\0223\n.FEATURE_V_1_2_NESTED_UPDATE_DE"
+  "LETE_WITH_OFFSET\020\352]\022$\n\037FEATURE_V_1_2_GEN"
+  "ERATED_COLUMNS\020\353]\022(\n#FEATURE_V_1_3_PROTO"
+  "_DEFAULT_IF_NULL\020\311e\022%\n FEATURE_V_1_3_EXT"
+  "RACT_FROM_PROTO\020\312e\022B\n3FEATURE_DEPRECATED"
+  "_DISALLOW_PROTO3_HAS_SCALAR_FIELD\020\313e\032\010\332\361"
+  "\252\211\005\002\010\000\022!\n\034FEATURE_V_1_3_ARRAY_ORDERING\020\314"
+  "e\022*\n%FEATURE_V_1_3_OMIT_INSERT_COLUMN_LI"
+  "ST\020\315e\022-\n(FEATURE_V_1_3_IGNORE_PROTO3_USE"
+  "_DEFAULTS\020\316e\022+\n\034FEATURE_V_1_3_REPLACE_FI"
+  "ELDS\020\317e\032\010\332\361\252\211\005\002\020\001\022/\n*FEATURE_V_1_3_NULLS"
+  "_FIRST_LAST_IN_ORDER_BY\020\320e\022-\n(FEATURE_V_"
+  "1_3_ALLOW_DASHES_IN_TABLE_NAME\020\321e\022%\n FEA"
+  "TURE_V_1_3_CONCAT_MIXED_TYPES\020\322e\022+\n\034FEAT"
+  "URE_V_1_3_WITH_RECURSIVE\020\323e\032\010\332\361\252\211\005\002\020\001\022\'\n"
+  "\030FEATURE_V_1_3_PROTO_MAPS\020\324e\032\010\332\361\252\211\005\002\020\000\022."
+  "\n)FEATURE_V_1_3_ENUM_VALUE_DESCRIPTOR_PR"
+  "OTO\020\325e\022 \n\033FEATURE_V_1_3_DECIMAL_ALIAS\020\326e"
+  "\022,\n\'FEATURE_V_1_3_UNNEST_AND_FLATTEN_ARR"
+  "AYS\020\327e\022\'\n\"FEATURE_V_1_3_ALLOW_CONSECUTIV"
+  "E_ON\020\330e\022;\n,FEATURE_V_1_3_ALLOW_REGEXP_EX"
+  "TRACT_OPTIONALS\020\331e\032\010\332\361\252\211\005\002\020\001\022)\n$FEATURE_"
+  "V_1_3_DATE_TIME_CONSTRUCTORS\020\332e\022#\n\036FEATU"
+  "RE_V_1_3_DATE_ARITHMETICS\020\333e\022.\n)FEATURE_"
+  "V_1_3_ADDITIONAL_STRING_FUNCTIONS\020\334e\022\"\n\035"
+  "FEATURE_V_1_3_WITH_GROUP_ROWS\020\335e\0220\n+FEAT"
+  "URE_V_1_3_EXTENDED_DATE_TIME_SIGNATURES\020"
+  "\336e\022-\n(FEATURE_V_1_3_EXTENDED_GEOGRAPHY_P"
+  "ARSERS\020\337e\022)\n$FEATURE_V_1_3_INLINE_LAMBDA"
+  "_ARGUMENT\020\340e\022\030\n\023FEATURE_V_1_3_PIVOT\020\341e\022\'"
+  "\n\"FEATURE_V_1_3_ANNOTATION_FRAMEWORK\020\342e\022"
+  ".\n\037FEATURE_V_1_3_COLLATION_SUPPORT\020\343e\032\010\332"
+  "\361\252\211\005\002\020\001\022\036\n\031FEATURE_V_1_3_IS_DISTINCT\020\344e\022"
+  "+\n\034FEATURE_V_1_3_FORMAT_IN_CAST\020\345e\032\010\332\361\252\211"
+  "\005\002\020\001\022\032\n\025FEATURE_V_1_3_UNPIVOT\020\346e\022*\n\033FEAT"
+  "URE_V_1_3_DML_RETURNING\020\347e\032\010\332\361\252\211\005\002\020\001\022*\n\033"
+  "FEATURE_V_1_3_FILTER_FIELDS\020\350e\032\010\332\361\252\211\005\002\020\001"
+  "\022$\n\025FEATURE_V_1_3_QUALIFY\020\351e\032\010\332\361\252\211\005\002\020\001\022#"
+  "\n\024FEATURE_V_1_3_REPEAT\020\352e\032\010\332\361\252\211\005\002\020\001\0221\n\"F"
+  "EATURE_V_1_3_COLUMN_DEFAULT_VALUE\020\353e\032\010\332\361"
+  "\252\211\005\002\020\001\022#\n\024FEATURE_V_1_3_FOR_IN\020\354e\032\010\332\361\252\211\005"
+  "\002\020\001\022\030\n\023FEATURE_KLL_WEIGHTS\020\355e\022.\n\037FEATURE"
+  "_V_1_3_LIKE_ANY_SOME_ALL\020\356e\032\010\332\361\252\211\005\002\020\001\022&\n"
+  "\027FEATURE_V_1_3_CASE_STMT\020\357e\032\010\332\361\252\211\005\002\020\001\022$\n"
+  "\037FEATURE_V_1_3_ALLOW_SLASH_PATHS\020\360e\022\"\n\035F"
+  "EATURE_V_1_3_TYPEOF_FUNCTION\020\361e\022)\n\032FEATU"
+  "RE_V_1_3_SCRIPT_LABEL\020\362e\032\010\332\361\252\211\005\002\020\001\022,\n\035FE"
+  "ATURE_V_1_3_REMOTE_FUNCTION\020\363e\032\010\332\361\252\211\005\002\020\001"
+  "\022\'\n\"FEATURE_V_1_3_ARRAY_GREATEST_LEAST\020\364"
+  "e\022,\n\'FEATURE_V_1_3_BRACED_PROTO_CONSTRUC"
+  "TORS\020\365e\022,\n\034FEATURE_EXPERIMENTAL_MODULES\020"
+  "\332\374<\032\010\332\361\252\211\005\002\020\001\022\?\n/FEATURE_TEST_IDEALLY_EN"
+  "ABLED_BUT_IN_DEVELOPMENT\020\267\204=\032\010\332\361\252\211\005\002\020\001\022-"
+  "\n\035FEATURE_TEST_IDEALLY_DISABLED\020\270\204=\032\010\332\361\252"
+  "\211\005\002\010\000\022B\n0FEATURE_TEST_IDEALLY_DISABLED_A"
+  "ND_IN_DEVELOPMENT\020\271\204=\032\n\332\361\252\211\005\004\010\000\020\001\022<\n/__L"
+  "anguageFeature__switch_must_have_a_defau"
+  "lt__\020\377\377\377\377\377\377\377\377\377\001\"\004\010$\020\'\"\004\010-\020-\"\004\0100\0200*\327\003\n\022Re"
+  "solvedASTRewrite\022\036\n\032REWRITE_INVALID_DO_N"
+  "OT_USE\020\000\022\035\n\017REWRITE_FLATTEN\020\001\032\010\202\207\335\204\n\002\010\001\022"
+  "#\n\025REWRITE_ANONYMIZATION\020\002\032\010\202\207\335\204\n\002\010\000\022#\n\025"
+  "REWRITE_PROTO_MAP_FNS\020\003\032\010\202\207\335\204\n\002\010\001\022,\n\036REW"
+  "RITE_ARRAY_FILTER_TRANSFORM\020\004\032\010\202\207\335\204\n\002\010\001\022"
+  "\035\n\017REWRITE_UNPIVOT\020\005\032\010\202\207\335\204\n\002\010\001\022\033\n\rREWRIT"
+  "E_PIVOT\020\006\032\010\202\207\335\204\n\002\010\001\022$\n\026REWRITE_ARRAY_INC"
+  "LUDES\020\007\032\010\202\207\335\204\n\002\010\001\022%\n\027REWRITE_TYPEOF_FUNC"
+  "TION\020\010\032\010\202\207\335\204\n\002\010\001\022\036\n\020REWRITE_LET_EXPR\020\t\032\010"
+  "\202\207\335\204\n\002\010\001\0222\n\034REWRITE_INLINE_SQL_FUNCTIONS"
+  "\020\n\032\020\202\207\335\204\n\002\010\000\202\207\335\204\n\002\020\001\022-\n\027REWRITE_INLINE_S"
+  "QL_TVFS\020\013\032\020\202\207\335\204\n\002\010\000\202\207\335\204\n\002\020\001*M\n\022NameResol"
+  "utionMode\022\033\n\027NAME_RESOLUTION_DEFAULT\020\000\022\032"
+  "\n\026NAME_RESOLUTION_STRICT\020\001*9\n\013ProductMod"
+  "e\022\024\n\020PRODUCT_INTERNAL\020\000\022\024\n\020PRODUCT_EXTER"
+  "NAL\020\001*;\n\020StatementContext\022\023\n\017CONTEXT_DEF"
+  "AULT\020\000\022\022\n\016CONTEXT_MODULE\020\001*w\n\020ErrorMessa"
+  "geMode\022\036\n\032ERROR_MESSAGE_WITH_PAYLOAD\020\000\022\032"
+  "\n\026ERROR_MESSAGE_ONE_LINE\020\001\022\'\n#ERROR_MESS"
+  "AGE_MULTI_LINE_WITH_CARET\020\002*R\n\rParameter"
+  "Mode\022\023\n\017PARAMETER_NAMED\020\000\022\030\n\024PARAMETER_P"
+  "OSITIONAL\020\001\022\022\n\016PARAMETER_NONE\020\002*\213\001\n\027Pars"
+  "eLocationRecordType\022\036\n\032PARSE_LOCATION_RE"
+  "CORD_NONE\020\000\022)\n%PARSE_LOCATION_RECORD_FUL"
+  "L_NODE_SCOPE\020\001\022%\n!PARSE_LOCATION_RECORD_"
+  "CODE_SEARCH\020\002:g\n\030language_feature_option"
+  "s\022!.google.protobuf.EnumValueOptions\030\233\256\225"
+  "Q \001(\0132\037.zetasql.LanguageFeatureOptions:b"
+  "\n\017rewrite_options\022!.google.protobuf.Enum"
+  "ValueOptions\030\360\320\313\240\001 \001(\0132\".zetasql.Resolve"
+  "dASTRewriteOptionsB$\n\022com.google.zetasql"
+  "B\016ZetaSQLOptions"
+  ;
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2foptions_2eproto_deps[1] = {
+  &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+};
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2foptions_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2foptions_2eproto = {
+  false, false, 7296, descriptor_table_protodef_zetasql_2fpublic_2foptions_2eproto, "zetasql/public/options.proto", 
+  &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once, descriptor_table_zetasql_2fpublic_2foptions_2eproto_deps, 1, 2,
+  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2foptions_2eproto::offsets,
+  file_level_metadata_zetasql_2fpublic_2foptions_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto, file_level_service_descriptors_zetasql_2fpublic_2foptions_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter() {
+  return &descriptor_table_zetasql_2fpublic_2foptions_2eproto;
 }
 
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_zetasql_2fpublic_2foptions_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2foptions_2eproto(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
 namespace zetasql {
-const ::google::protobuf::EnumDescriptor* LanguageVersion_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[0];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LanguageVersion_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[0];
 }
 bool LanguageVersion_IsValid(int value) {
   switch (value) {
@@ -340,9 +300,9 @@ bool LanguageVersion_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* LanguageFeature_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[1];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LanguageFeature_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[1];
 }
 bool LanguageFeature_IsValid(int value) {
   switch (value) {
@@ -404,6 +364,7 @@ bool LanguageFeature_IsValid(int value) {
     case 68:
     case 69:
     case 70:
+    case 71:
     case 11001:
     case 11002:
     case 11003:
@@ -470,6 +431,7 @@ bool LanguageFeature_IsValid(int value) {
     case 13042:
     case 13043:
     case 13044:
+    case 13045:
     case 999002:
     case 999991:
     case 999992:
@@ -480,9 +442,9 @@ bool LanguageFeature_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ResolvedASTRewrite_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[2];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedASTRewrite_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[2];
 }
 bool ResolvedASTRewrite_IsValid(int value) {
   switch (value) {
@@ -497,15 +459,16 @@ bool ResolvedASTRewrite_IsValid(int value) {
     case 8:
     case 9:
     case 10:
+    case 11:
       return true;
     default:
       return false;
   }
 }
 
-const ::google::protobuf::EnumDescriptor* NameResolutionMode_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[3];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NameResolutionMode_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[3];
 }
 bool NameResolutionMode_IsValid(int value) {
   switch (value) {
@@ -517,9 +480,9 @@ bool NameResolutionMode_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ProductMode_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[4];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ProductMode_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[4];
 }
 bool ProductMode_IsValid(int value) {
   switch (value) {
@@ -531,9 +494,9 @@ bool ProductMode_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* StatementContext_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[5];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* StatementContext_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[5];
 }
 bool StatementContext_IsValid(int value) {
   switch (value) {
@@ -545,9 +508,9 @@ bool StatementContext_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ErrorMessageMode_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[6];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ErrorMessageMode_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[6];
 }
 bool ErrorMessageMode_IsValid(int value) {
   switch (value) {
@@ -560,9 +523,9 @@ bool ErrorMessageMode_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ParameterMode_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[7];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ParameterMode_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[7];
 }
 bool ParameterMode_IsValid(int value) {
   switch (value) {
@@ -575,9 +538,9 @@ bool ParameterMode_IsValid(int value) {
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ParseLocationRecordType_descriptor() {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_enum_descriptors[8];
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ParseLocationRecordType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[8];
 }
 bool ParseLocationRecordType_IsValid(int value) {
   switch (value) {
@@ -593,176 +556,148 @@ bool ParseLocationRecordType_IsValid(int value) {
 
 // ===================================================================
 
-void LanguageFeatureOptions::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int LanguageFeatureOptions::kIdeallyEnabledFieldNumber;
-const int LanguageFeatureOptions::kInDevelopmentFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class LanguageFeatureOptions::_Internal {
+ public:
+  using HasBits = decltype(std::declval<LanguageFeatureOptions>()._has_bits_);
+  static void set_has_ideally_enabled(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_in_development(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
 
-LanguageFeatureOptions::LanguageFeatureOptions()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2foptions_2eproto::scc_info_LanguageFeatureOptions.base);
+LanguageFeatureOptions::LanguageFeatureOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.LanguageFeatureOptions)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.LanguageFeatureOptions)
 }
 LanguageFeatureOptions::LanguageFeatureOptions(const LanguageFeatureOptions& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&in_development_, &from.in_development_,
     static_cast<size_t>(reinterpret_cast<char*>(&ideally_enabled_) -
     reinterpret_cast<char*>(&in_development_)) + sizeof(ideally_enabled_));
   // @@protoc_insertion_point(copy_constructor:zetasql.LanguageFeatureOptions)
 }
 
-void LanguageFeatureOptions::SharedCtor() {
-  in_development_ = false;
-  ideally_enabled_ = true;
+inline void LanguageFeatureOptions::SharedCtor() {
+in_development_ = false;
+ideally_enabled_ = true;
 }
 
 LanguageFeatureOptions::~LanguageFeatureOptions() {
   // @@protoc_insertion_point(destructor:zetasql.LanguageFeatureOptions)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void LanguageFeatureOptions::SharedDtor() {
+inline void LanguageFeatureOptions::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
+void LanguageFeatureOptions::ArenaDtor(void* object) {
+  LanguageFeatureOptions* _this = reinterpret_cast< LanguageFeatureOptions* >(object);
+  (void)_this;
+}
+void LanguageFeatureOptions::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void LanguageFeatureOptions::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* LanguageFeatureOptions::descriptor() {
-  ::protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const LanguageFeatureOptions& LanguageFeatureOptions::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2foptions_2eproto::scc_info_LanguageFeatureOptions.base);
-  return *internal_default_instance();
-}
-
 
 void LanguageFeatureOptions::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.LanguageFeatureOptions)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     in_development_ = false;
     ideally_enabled_ = true;
   }
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool LanguageFeatureOptions::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.LanguageFeatureOptions)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* LanguageFeatureOptions::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional bool ideally_enabled = 1 [default = true];
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          set_has_ideally_enabled();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &ideally_enabled_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_ideally_enabled(&has_bits);
+          ideally_enabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional bool in_development = 2 [default = false];
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-          set_has_in_development();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &in_development_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_in_development(&has_bits);
+          in_development_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.LanguageFeatureOptions)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.LanguageFeatureOptions)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void LanguageFeatureOptions::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.LanguageFeatureOptions)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional bool ideally_enabled = 1 [default = true];
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->ideally_enabled(), output);
-  }
-
-  // optional bool in_development = 2 [default = false];
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->in_development(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.LanguageFeatureOptions)
-}
-
-::google::protobuf::uint8* LanguageFeatureOptions::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* LanguageFeatureOptions::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.LanguageFeatureOptions)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional bool ideally_enabled = 1 [default = true];
   if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->ideally_enabled(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_ideally_enabled(), target);
   }
 
   // optional bool in_development = 2 [default = false];
   if (cached_has_bits & 0x00000001u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->in_development(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_in_development(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.LanguageFeatureOptions)
   return target;
@@ -772,52 +707,47 @@ size_t LanguageFeatureOptions::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.LanguageFeatureOptions)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 3u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
     // optional bool in_development = 2 [default = false];
-    if (has_in_development()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 1;
     }
 
     // optional bool ideally_enabled = 1 [default = true];
-    if (has_ideally_enabled()) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 + 1;
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void LanguageFeatureOptions::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.LanguageFeatureOptions)
-  GOOGLE_DCHECK_NE(&from, this);
-  const LanguageFeatureOptions* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const LanguageFeatureOptions>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.LanguageFeatureOptions)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.LanguageFeatureOptions)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LanguageFeatureOptions::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    LanguageFeatureOptions::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LanguageFeatureOptions::GetClassData() const { return &_class_data_; }
+
+void LanguageFeatureOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<LanguageFeatureOptions *>(to)->MergeFrom(
+      static_cast<const LanguageFeatureOptions &>(from));
 }
+
 
 void LanguageFeatureOptions::MergeFrom(const LanguageFeatureOptions& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.LanguageFeatureOptions)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
       in_development_ = from.in_development_;
     }
@@ -826,13 +756,7 @@ void LanguageFeatureOptions::MergeFrom(const LanguageFeatureOptions& from) {
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void LanguageFeatureOptions::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.LanguageFeatureOptions)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void LanguageFeatureOptions::CopyFrom(const LanguageFeatureOptions& from) {
@@ -846,82 +770,83 @@ bool LanguageFeatureOptions::IsInitialized() const {
   return true;
 }
 
-void LanguageFeatureOptions::Swap(LanguageFeatureOptions* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void LanguageFeatureOptions::InternalSwap(LanguageFeatureOptions* other) {
   using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
   swap(in_development_, other->in_development_);
   swap(ideally_enabled_, other->ideally_enabled_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
-::google::protobuf::Metadata LanguageFeatureOptions::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata LanguageFeatureOptions::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2foptions_2eproto[0]);
 }
-
 
 // ===================================================================
 
-void ResolvedASTRewriteOptions::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ResolvedASTRewriteOptions::kDefaultEnabledFieldNumber;
-const int ResolvedASTRewriteOptions::kInDevelopmentFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class ResolvedASTRewriteOptions::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ResolvedASTRewriteOptions>()._has_bits_);
+  static void set_has_default_enabled(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_in_development(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
 
-ResolvedASTRewriteOptions::ResolvedASTRewriteOptions()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_zetasql_2fpublic_2foptions_2eproto::scc_info_ResolvedASTRewriteOptions.base);
+ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:zetasql.ResolvedASTRewriteOptions)
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedASTRewriteOptions)
 }
 ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(const ResolvedASTRewriteOptions& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&default_enabled_, &from.default_enabled_,
     static_cast<size_t>(reinterpret_cast<char*>(&in_development_) -
     reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedASTRewriteOptions)
 }
 
-void ResolvedASTRewriteOptions::SharedCtor() {
-  ::memset(&default_enabled_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&in_development_) -
-      reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
+inline void ResolvedASTRewriteOptions::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&default_enabled_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&in_development_) -
+    reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
 }
 
 ResolvedASTRewriteOptions::~ResolvedASTRewriteOptions() {
   // @@protoc_insertion_point(destructor:zetasql.ResolvedASTRewriteOptions)
+  if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void ResolvedASTRewriteOptions::SharedDtor() {
+inline void ResolvedASTRewriteOptions::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
+void ResolvedASTRewriteOptions::ArenaDtor(void* object) {
+  ResolvedASTRewriteOptions* _this = reinterpret_cast< ResolvedASTRewriteOptions* >(object);
+  (void)_this;
+}
+void ResolvedASTRewriteOptions::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ResolvedASTRewriteOptions::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* ResolvedASTRewriteOptions::descriptor() {
-  ::protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const ResolvedASTRewriteOptions& ResolvedASTRewriteOptions::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_zetasql_2fpublic_2foptions_2eproto::scc_info_ResolvedASTRewriteOptions.base);
-  return *internal_default_instance();
-}
-
 
 void ResolvedASTRewriteOptions::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ResolvedASTRewriteOptions)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
@@ -929,112 +854,80 @@ void ResolvedASTRewriteOptions::Clear() {
       reinterpret_cast<char*>(&in_development_) -
       reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
   _has_bits_.Clear();
-  _internal_metadata_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool ResolvedASTRewriteOptions::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:zetasql.ResolvedASTRewriteOptions)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* ResolvedASTRewriteOptions::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // optional bool default_enabled = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          set_has_default_enabled();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &default_enabled_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_default_enabled(&has_bits);
+          default_enabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // optional bool in_development = 2 [default = false];
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-          set_has_in_development();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &in_development_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_in_development(&has_bits);
+          in_development_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:zetasql.ResolvedASTRewriteOptions)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:zetasql.ResolvedASTRewriteOptions)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void ResolvedASTRewriteOptions::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:zetasql.ResolvedASTRewriteOptions)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional bool default_enabled = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->default_enabled(), output);
-  }
-
-  // optional bool in_development = 2 [default = false];
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->in_development(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:zetasql.ResolvedASTRewriteOptions)
-}
-
-::google::protobuf::uint8* ResolvedASTRewriteOptions::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* ResolvedASTRewriteOptions::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ResolvedASTRewriteOptions)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
   // optional bool default_enabled = 1;
   if (cached_has_bits & 0x00000001u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->default_enabled(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_default_enabled(), target);
   }
 
   // optional bool in_development = 2 [default = false];
   if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->in_development(), target);
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_in_development(), target);
   }
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ResolvedASTRewriteOptions)
   return target;
@@ -1044,52 +937,47 @@ size_t ResolvedASTRewriteOptions::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ResolvedASTRewriteOptions)
   size_t total_size = 0;
 
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 3u) {
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
     // optional bool default_enabled = 1;
-    if (has_default_enabled()) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 1;
     }
 
     // optional bool in_development = 2 [default = false];
-    if (has_in_development()) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 + 1;
     }
 
   }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
-void ResolvedASTRewriteOptions::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:zetasql.ResolvedASTRewriteOptions)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ResolvedASTRewriteOptions* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const ResolvedASTRewriteOptions>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:zetasql.ResolvedASTRewriteOptions)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:zetasql.ResolvedASTRewriteOptions)
-    MergeFrom(*source);
-  }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ResolvedASTRewriteOptions::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ResolvedASTRewriteOptions::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedASTRewriteOptions::GetClassData() const { return &_class_data_; }
+
+void ResolvedASTRewriteOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ResolvedASTRewriteOptions *>(to)->MergeFrom(
+      static_cast<const ResolvedASTRewriteOptions &>(from));
 }
+
 
 void ResolvedASTRewriteOptions::MergeFrom(const ResolvedASTRewriteOptions& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ResolvedASTRewriteOptions)
   GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 3u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
       default_enabled_ = from.default_enabled_;
     }
@@ -1098,13 +986,7 @@ void ResolvedASTRewriteOptions::MergeFrom(const ResolvedASTRewriteOptions& from)
     }
     _has_bits_[0] |= cached_has_bits;
   }
-}
-
-void ResolvedASTRewriteOptions::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:zetasql.ResolvedASTRewriteOptions)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ResolvedASTRewriteOptions::CopyFrom(const ResolvedASTRewriteOptions& from) {
@@ -1118,41 +1000,40 @@ bool ResolvedASTRewriteOptions::IsInitialized() const {
   return true;
 }
 
-void ResolvedASTRewriteOptions::Swap(ResolvedASTRewriteOptions* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void ResolvedASTRewriteOptions::InternalSwap(ResolvedASTRewriteOptions* other) {
   using std::swap;
-  swap(default_enabled_, other->default_enabled_);
-  swap(in_development_, other->in_development_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, in_development_)
+      + sizeof(ResolvedASTRewriteOptions::in_development_)
+      - PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, default_enabled_)>(
+          reinterpret_cast<char*>(&default_enabled_),
+          reinterpret_cast<char*>(&other->default_enabled_));
 }
 
-::google::protobuf::Metadata ResolvedASTRewriteOptions::GetMetadata() const {
-  protobuf_zetasql_2fpublic_2foptions_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_zetasql_2fpublic_2foptions_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata ResolvedASTRewriteOptions::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2foptions_2eproto[1]);
 }
-
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::EnumValueOptions,
-    ::google::protobuf::internal::MessageTypeTraits< ::zetasql::LanguageFeatureOptions >, 11, false >
-  language_feature_options(kLanguageFeatureOptionsFieldNumber, *::zetasql::LanguageFeatureOptions::internal_default_instance());
-::google::protobuf::internal::ExtensionIdentifier< ::google::protobuf::EnumValueOptions,
-    ::google::protobuf::internal::MessageTypeTraits< ::zetasql::ResolvedASTRewriteOptions >, 11, false >
-  rewrite_options(kRewriteOptionsFieldNumber, *::zetasql::ResolvedASTRewriteOptions::internal_default_instance());
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::LanguageFeatureOptions >, 11, false >
+  language_feature_options(kLanguageFeatureOptionsFieldNumber, ::zetasql::LanguageFeatureOptions::default_instance());
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::ResolvedASTRewriteOptions >, 11, false >
+  rewrite_options(kRewriteOptionsFieldNumber, ::zetasql::ResolvedASTRewriteOptions::default_instance());
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::LanguageFeatureOptions* Arena::CreateMaybeMessage< ::zetasql::LanguageFeatureOptions >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::LanguageFeatureOptions >(arena);
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::LanguageFeatureOptions* Arena::CreateMaybeMessage< ::zetasql::LanguageFeatureOptions >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::LanguageFeatureOptions >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::zetasql::ResolvedASTRewriteOptions* Arena::CreateMaybeMessage< ::zetasql::ResolvedASTRewriteOptions >(Arena* arena) {
-  return Arena::CreateInternal< ::zetasql::ResolvedASTRewriteOptions >(arena);
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedASTRewriteOptions* Arena::CreateMaybeMessage< ::zetasql::ResolvedASTRewriteOptions >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ResolvedASTRewriteOptions >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>

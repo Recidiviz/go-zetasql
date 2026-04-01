@@ -31,12 +31,12 @@
 // version 2.2 of Bison.
 
 /**
- ** \file bazel-out/darwin-fastbuild/bin/zetasql/parser/location.hh
+ ** \file bazel-out/k8-fastbuild/bin/zetasql/parser/location.hh
  ** Define the zetasql_bison_parser::location class.
  */
 
-#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_DARWIN_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
-# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_DARWIN_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
+#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
+# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
 
 # include <iostream>
 # include <string>
@@ -54,7 +54,7 @@
 # endif
 
 namespace zetasql_bison_parser {
-#line 58 "bazel-out/darwin-fastbuild/bin/zetasql/parser/location.hh"
+#line 58 "bazel-out/k8-fastbuild/bin/zetasql/parser/location.hh"
 
   /// A point in a source file.
   class position
@@ -327,6 +327,6 @@ namespace zetasql_bison_parser {
   }
 
 } // zetasql_bison_parser
-#line 331 "bazel-out/darwin-fastbuild/bin/zetasql/parser/location.hh"
+#line 331 "bazel-out/k8-fastbuild/bin/zetasql/parser/location.hh"
 
-#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_DARWIN_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
+#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED

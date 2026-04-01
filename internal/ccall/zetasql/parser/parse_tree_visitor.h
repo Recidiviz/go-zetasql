@@ -280,6 +280,14 @@ class ParseTreeVisitor {
 
   virtual void visitASTNewConstructor(const ASTNewConstructor* node, void* data) = 0;
 
+  virtual void visitASTBracedConstructorFieldValue(const ASTBracedConstructorFieldValue* node, void* data) = 0;
+
+  virtual void visitASTBracedConstructorField(const ASTBracedConstructorField* node, void* data) = 0;
+
+  virtual void visitASTBracedConstructor(const ASTBracedConstructor* node, void* data) = 0;
+
+  virtual void visitASTBracedNewConstructor(const ASTBracedNewConstructor* node, void* data) = 0;
+
   virtual void visitASTOptionsList(const ASTOptionsList* node, void* data) = 0;
 
   virtual void visitASTOptionsEntry(const ASTOptionsEntry* node, void* data) = 0;
@@ -1171,6 +1179,22 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTNewConstructor(const ASTNewConstructor* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTBracedConstructorFieldValue(const ASTBracedConstructorFieldValue* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTBracedConstructorField(const ASTBracedConstructorField* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTBracedConstructor(const ASTBracedConstructor* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTBracedNewConstructor(const ASTBracedNewConstructor* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2138,6 +2162,14 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTNewConstructorArg(const ASTNewConstructorArg* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTNewConstructor(const ASTNewConstructor* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTBracedConstructorFieldValue(const ASTBracedConstructorFieldValue* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTBracedConstructorField(const ASTBracedConstructorField* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTBracedConstructor(const ASTBracedConstructor* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTBracedNewConstructor(const ASTBracedNewConstructor* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTOptionsList(const ASTOptionsList* node) {return defaultVisit(node);};
 

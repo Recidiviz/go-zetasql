@@ -4341,6 +4341,8 @@ class ASTClusterBy final : public ASTNode {
   absl::Span<const ASTExpression* const> clustering_expressions_;
 };
 
+// At most one of 'optional_identifier' and 'optional_path_expression' are
+// set.
 class ASTNewConstructorArg final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_NEW_CONSTRUCTOR_ARG;
@@ -4351,11 +4353,7 @@ class ASTNewConstructorArg final : public ASTNode {
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTExpression* expression() const { return expression_; }
-
-  // At most one of 'optional_identifier' and 'optional_path_expression' are
-  // set.
   const ASTIdentifier* optional_identifier() const { return optional_identifier_; }
-
   const ASTPathExpression* optional_path_expression() const { return optional_path_expression_; }
 
   friend class ParseTreeSerializer;
@@ -4402,6 +4400,108 @@ class ASTNewConstructor final : public ASTExpression {
 
   const ASTSimpleType* type_name_ = nullptr;
   absl::Span<const ASTNewConstructorArg* const> arguments_;
+};
+
+class ASTBracedConstructorFieldValue final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD_VALUE;
+
+  ASTBracedConstructorFieldValue() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* expression() const { return expression_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  void InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRequired(&expression_);
+  }
+
+  const ASTExpression* expression_ = nullptr;
+};
+
+// Exactly one of 'identifier' and 'parenthesized_path' is
+// set.
+class ASTBracedConstructorField final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD;
+
+  ASTBracedConstructorField() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* identifier() const { return identifier_; }
+  const ASTPathExpression* parenthesized_path() const { return parenthesized_path_; }
+  const ASTBracedConstructorFieldValue* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  void InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&identifier_, AST_IDENTIFIER);
+    fl.AddOptional(&parenthesized_path_, AST_PATH_EXPRESSION);
+    fl.AddRequired(&value_);
+  }
+
+  const ASTIdentifier* identifier_ = nullptr;
+  const ASTPathExpression* parenthesized_path_ = nullptr;
+  const ASTBracedConstructorFieldValue* value_ = nullptr;
+};
+
+class ASTBracedConstructor final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR;
+
+  ASTBracedConstructor() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTBracedConstructorField* const>& fields() const {
+    return fields_;
+  }
+  const ASTBracedConstructorField* fields(int i) const { return fields_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  void InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&fields_);
+  }
+
+  absl::Span<const ASTBracedConstructorField* const> fields_;
+};
+
+class ASTBracedNewConstructor final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_NEW_CONSTRUCTOR;
+
+  ASTBracedNewConstructor() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSimpleType* type_name() const { return type_name_; }
+  const ASTBracedConstructor* braced_constructor() const { return braced_constructor_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  void InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRequired(&type_name_);
+    fl.AddRequired(&braced_constructor_);
+  }
+
+  const ASTSimpleType* type_name_ = nullptr;
+  const ASTBracedConstructor* braced_constructor_ = nullptr;
 };
 
 class ASTOptionsList final : public ASTNode {
