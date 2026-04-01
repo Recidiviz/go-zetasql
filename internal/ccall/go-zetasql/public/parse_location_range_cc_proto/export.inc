@@ -2,7 +2,11 @@
 #define ZETASQL_PUBLIC_PARSE_LOCATION_RANGE_CC_PROTO_EXPORT_H
 
 #include "zetasql/public/parse_location_range.pb.h"
+#define schemas go_zetasql_public_parse_location_range_cc_proto_parse_location_range_schemas
+#define file_default_instances go_zetasql_public_parse_location_range_cc_proto_parse_location_range_file_default_instances
 #include "zetasql/public/parse_location_range.pb.cc"
+#undef file_default_instances
+#undef schemas
 
 #include "go-protobuf/protobuf/export.inc"
 

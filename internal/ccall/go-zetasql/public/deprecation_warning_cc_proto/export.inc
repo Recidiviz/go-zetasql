@@ -2,7 +2,11 @@
 #define ZETASQL_PUBLIC_DEPRECATION_WARNING_CC_PROTO_EXPORT_H
 
 #include "zetasql/public/deprecation_warning.pb.h"
+#define schemas go_zetasql_public_deprecation_warning_cc_proto_deprecation_warning_schemas
+#define file_default_instances go_zetasql_public_deprecation_warning_cc_proto_deprecation_warning_file_default_instances
 #include "zetasql/public/deprecation_warning.pb.cc"
+#undef file_default_instances
+#undef schemas
 
 #include "go-zetasql/public/error_location_cc_proto/export.inc"
 #include "go-protobuf/protobuf/export.inc"

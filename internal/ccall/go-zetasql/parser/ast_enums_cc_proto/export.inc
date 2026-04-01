@@ -2,7 +2,11 @@
 #define ZETASQL_PARSER_AST_ENUMS_CC_PROTO_EXPORT_H
 
 #include "zetasql/parser/ast_enums.pb.h"
+#define schemas go_zetasql_parser_ast_enums_cc_proto_ast_enums_schemas
+#define file_default_instances go_zetasql_parser_ast_enums_cc_proto_ast_enums_file_default_instances
 #include "zetasql/parser/ast_enums.pb.cc"
+#undef file_default_instances
+#undef schemas
 
 #include "go-protobuf/protobuf/export.inc"
 

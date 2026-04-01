@@ -2,7 +2,11 @@
 #define ZETASQL_REFERENCE_IMPL_EVALUATOR_TABLE_ITERATOR_CC_PROTO_EXPORT_H
 
 #include "zetasql/reference_impl/evaluator_table_iterator.pb.h"
+#define schemas go_zetasql_reference_impl_evaluator_table_iterator_cc_proto_evaluator_table_iterator_schemas
+#define file_default_instances go_zetasql_reference_impl_evaluator_table_iterator_cc_proto_evaluator_table_iterator_file_default_instances
 #include "zetasql/reference_impl/evaluator_table_iterator.pb.cc"
+#undef file_default_instances
+#undef schemas
 
 #include "go-protobuf/protobuf/export.inc"
 

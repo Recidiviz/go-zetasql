@@ -2,7 +2,11 @@
 #define ZETASQL_PUBLIC_PARSE_RESUME_LOCATION_CC_PROTO_EXPORT_H
 
 #include "zetasql/public/parse_resume_location.pb.h"
+#define schemas go_zetasql_public_parse_resume_location_cc_proto_parse_resume_location_schemas
+#define file_default_instances go_zetasql_public_parse_resume_location_cc_proto_parse_resume_location_file_default_instances
 #include "zetasql/public/parse_resume_location.pb.cc"
+#undef file_default_instances
+#undef schemas
 
 #include "go-protobuf/protobuf/export.inc"
 

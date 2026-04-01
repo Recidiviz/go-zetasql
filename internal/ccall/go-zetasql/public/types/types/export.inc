@@ -23,6 +23,15 @@
 #include "zetasql/public/types/extended_type.cc"
 #include "zetasql/public/types/internal_utils.cc"
 #include "zetasql/public/types/internal_utils.h"
+
+#ifndef ZETASQL_GOOGLE_TYPE_DATE_SYM_PREFIX
+#define ZETASQL_GOOGLE_TYPE_DATE_SYM_PREFIX zetasql_public_types_types_google_type_date
+#endif
+#ifndef ZETASQL_GOOGLE_TYPE_TIMEOFDAY_SYM_PREFIX
+#define ZETASQL_GOOGLE_TYPE_TIMEOFDAY_SYM_PREFIX zetasql_public_types_types_google_type_timeofday
+#endif
+#include "go-zetasql/public/types/types/google_type_pb.inc"
+
 #include "zetasql/public/types/proto_type.cc"
 
 #define TypeKindInfo GO_EXPORT(TypeKindInfo)

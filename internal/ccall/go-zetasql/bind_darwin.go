@@ -32,12 +32,9 @@ package zetasql
 */
 import "C"
 import (
-	"unsafe"
-
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
+	"unsafe"
 )
-
-var _ int
 
 func cctz_FixedOffsetFromName(arg0 unsafe.Pointer, arg1 unsafe.Pointer, arg2 *bool) {
 	zetasql_cctz_FixedOffsetFromName(

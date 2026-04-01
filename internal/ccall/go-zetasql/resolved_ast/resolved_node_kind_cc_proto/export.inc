@@ -2,7 +2,11 @@
 #define ZETASQL_RESOLVED_AST_RESOLVED_NODE_KIND_CC_PROTO_EXPORT_H
 
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#define schemas go_zetasql_resolved_ast_resolved_node_kind_cc_proto_resolved_node_kind_schemas
+#define file_default_instances go_zetasql_resolved_ast_resolved_node_kind_cc_proto_resolved_node_kind_file_default_instances
 #include "zetasql/resolved_ast/resolved_node_kind.pb.cc"
+#undef file_default_instances
+#undef schemas
 
 #include "go-protobuf/protobuf/export.inc"
 

@@ -120,6 +120,8 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/functions/json/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
+#define ZETASQL_GOOGLE_TYPE_DATE_SYM_PREFIX zetasql_reference_impl_algebrizer_google_type_date
+#define ZETASQL_GOOGLE_TYPE_TIMEOFDAY_SYM_PREFIX zetasql_reference_impl_algebrizer_google_type_timeofday
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
