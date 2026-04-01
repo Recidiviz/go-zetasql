@@ -87,7 +87,94 @@ conflict_symbols:
     symbol: ExtraDebug
   - file:   re2/prefilter_tree.cc
     symbol: ExtraDebug
-
+  - file:   zetasql/parser/ast_enums.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/proto/internal_error_location.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/proto/options.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/annotation.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/builtin_function.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/collation.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/deprecation_warning.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/error_location.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/options.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/parse_location_range.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/parse_resume_location.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/simple_value.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/type.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/type_annotation.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/type_parameters.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/type_modifiers.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/value.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/functions/datetime.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/functions/normalize_mode.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/proto/type_annotation.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/proto/wire_format_annotation.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/resolved_ast/resolved_node_kind.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
 add_sources:
   - file:   zetasql/parser/flex_tokenizer.flex.cc
     source: flex_tokenizer_base.inc
