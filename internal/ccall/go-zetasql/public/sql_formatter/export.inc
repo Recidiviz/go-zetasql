@@ -1,20 +1,10 @@
-#ifndef ZETASQL_PUBLIC_SQL_FORMATTER_EXPORT_H
-#define ZETASQL_PUBLIC_SQL_FORMATTER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SQL_FORMATTER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SQL_FORMATTER_EXPORT_H
 
 #include "zetasql/public/sql_formatter.h"
+// include sources
 #include "zetasql/public/sql_formatter.cc"
-
-#if 0
-namespace zetasql {
-
-  absl::Status FormatSql(absl::string_view sql, std::string* formatted_sql) {
-    absl::Status v;
-    return v;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_helpers/export.inc"

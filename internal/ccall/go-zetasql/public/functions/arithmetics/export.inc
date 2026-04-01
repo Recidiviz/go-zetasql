@@ -1,6 +1,9 @@
-#ifndef ZETASQL_PUBLIC_FUNCTIONS_ARITHMETICS_EXPORT_H
-#define ZETASQL_PUBLIC_FUNCTIONS_ARITHMETICS_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_ARITHMETICS_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_ARITHMETICS_EXPORT_H
 
+#include "zetasql/public/functions/arithmetics.h"
+// include sources
+// include dependencies
 #include "go-zetasql/public/functions/arithmetics_internal/export.inc"
 #include "go-zetasql/public/functions/convert/export.inc"
 #include "go-zetasql/public/functions/util/export.inc"

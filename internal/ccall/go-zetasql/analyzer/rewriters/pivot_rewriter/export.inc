@@ -1,19 +1,10 @@
-#ifndef ZETASQL_ANALYZER_REWRITERS_PIVOT_REWRITER_EXPORT_H
-#define ZETASQL_ANALYZER_REWRITERS_PIVOT_REWRITER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PIVOT_REWRITER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PIVOT_REWRITER_EXPORT_H
 
 #include "zetasql/analyzer/rewriters/pivot_rewriter.h"
+// include sources
 #include "zetasql/analyzer/rewriters/pivot_rewriter.cc"
-
-#if 0
-namespace zetasql {
-
-  const Rewriter* GetPivotRewriter() {
-    return nullptr;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/analyzer/substitute/export.inc"
@@ -42,6 +33,7 @@ namespace zetasql {
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #endif

@@ -1,6 +1,9 @@
-#ifndef ZETASQL_PUBLIC_FUNCTIONS_CONVERT_INTERNAL_EXPORT_H
-#define ZETASQL_PUBLIC_FUNCTIONS_CONVERT_INTERNAL_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_CONVERT_INTERNAL_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_CONVERT_INTERNAL_EXPORT_H
 
+#include "zetasql/public/functions/convert_internal.h"
+// include sources
+// include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 

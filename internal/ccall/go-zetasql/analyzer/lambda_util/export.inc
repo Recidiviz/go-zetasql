@@ -1,25 +1,10 @@
-#ifndef ZETASQL_ANALYZER_LAMBDA_UTIL_EXPORT_H
-#define ZETASQL_ANALYZER_LAMBDA_UTIL_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_LAMBDA_UTIL_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_LAMBDA_UTIL_EXPORT_H
 
 #include "zetasql/analyzer/lambda_util.h"
+// include sources
 #include "zetasql/analyzer/lambda_util.cc"
-
-#if 0
-namespace zetasql {
-
-  absl::StatusOr<std::vector<IdString>> ExtractLambdaArgumentNames(const ASTLambda* ast_lambda) {
-    std::vector<IdString> v;
-    return v;
-  }
-
-  absl::Status ValidateLambdaArgumentListIsIdentifierList(const ASTLambda* ast_lambda) {
-    absl::Status v;
-    return v;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/parser/parser/export.inc"

@@ -1,45 +1,10 @@
-#ifndef ZETASQL_ANALYZER_FUNCTION_SIGNATURE_MATCHER_EXPORT_H
-#define ZETASQL_ANALYZER_FUNCTION_SIGNATURE_MATCHER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_FUNCTION_SIGNATURE_MATCHER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_FUNCTION_SIGNATURE_MATCHER_EXPORT_H
 
 #include "zetasql/analyzer/function_signature_matcher.h"
+// include sources
 #include "zetasql/analyzer/function_signature_matcher.cc"
-
-#if 0
-namespace zetasql {
-
-  bool SignatureArgumentCountMatches(const FunctionSignature& signature,
-                                     int input_arguments_size,
-                                     int* repetitions, int* optionals) {
-    return false;
-  }
-
-  bool FunctionSignatureMatches(const LanguageOptions& language_options, const Coercer& coercer,
-                                const std::vector<const ASTNode*>& arg_ast_nodes,
-                                const std::vector<InputArgumentType>& input_arguments,
-                                const FunctionSignature& signature, bool allow_argument_coercion,
-                                TypeFactory* type_factory,
-                                const ResolveLambdaCallback* resolve_lambda_callback,
-                                std::unique_ptr<FunctionSignature>* result_signature,
-                                SignatureMatchResult* signature_match_result,
-                                std::vector<FunctionArgumentOverride>* arg_overrides) {
-    return false;
-  }
-
-  absl::StatusOr<bool> FunctionSignatureMatchesWithStatus(const LanguageOptions& language_options, const Coercer& coercer,
-                                                          const std::vector<const ASTNode*>& arg_ast_nodes,
-                                                          const std::vector<InputArgumentType>& input_arguments,
-                                                          const FunctionSignature& signature, bool allow_argument_coercion,
-                                                          TypeFactory* type_factory,
-                                                          const ResolveLambdaCallback* resolve_lambda_callback,
-                                                          std::unique_ptr<FunctionSignature>* result_signature,
-                                                          SignatureMatchResult* signature_match_result,
-                                                          std::vector<FunctionArgumentOverride>* arg_overrides) {
-    return false;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/analyzer/lambda_util/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/map_util/export.inc"

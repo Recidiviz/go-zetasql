@@ -1,13 +1,10 @@
-#ifndef ZETASQL_PROTO_SIMPLE_CATALOG_CC_PROTO_EXPORT_H
-#define ZETASQL_PROTO_SIMPLE_CATALOG_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PROTO_SIMPLE_CATALOG_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PROTO_SIMPLE_CATALOG_CC_PROTO_EXPORT_H
 
 #include "zetasql/proto/simple_catalog.pb.h"
-#define schemas go_zetasql_proto_simple_catalog_cc_proto_simple_catalog_schemas
-#define file_default_instances go_zetasql_proto_simple_catalog_cc_proto_simple_catalog_file_default_instances
+// include sources
 #include "zetasql/proto/simple_catalog.pb.cc"
-#undef file_default_instances
-#undef schemas
-
+// include dependencies
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"

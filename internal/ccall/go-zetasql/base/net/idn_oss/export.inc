@@ -1,19 +1,10 @@
-#ifndef ZETASQL_BASE_NET_IDN_OSS_EXPORT_H
-#define ZETASQL_BASE_NET_IDN_OSS_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_NET_IDN_OSS_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_BASE_NET_IDN_OSS_EXPORT_H
 
 #include "zetasql/base/net/idn_oss.h"
+// include sources
 #include "zetasql/base/net/idn_oss.cc"
-
-#if 0
-namespace zetasql::internal {
-
-  bool ToASCII(absl::string_view utf8_host, std::string* ascii_host) {
-    return false;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"

@@ -1,32 +1,10 @@
-#ifndef ABSL_RANDOM_INTERNAL_POOL_URBG_EXPORT_H
-#define ABSL_RANDOM_INTERNAL_POOL_URBG_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ABSL_RANDOM_GO_INTERNAL_POOL_URBG_EXPORT_H
+#define INTERNAL_CCALL_GO_ABSL_RANDOM_GO_INTERNAL_POOL_URBG_EXPORT_H
 
 #include "absl/random/internal/pool_urbg.h"
+// include sources
 #include "absl/random/internal/pool_urbg.cc"
-
-#if 0
-namespace absl {
-  namespace random_internal {
-
-    template <typename T>
-    typename RandenPool<T>::result_type RandenPool<T>::Generate() {
-      RandenPool<T>::result_type v;
-      return v;
-    }
-
-    template <typename T>
-    void RandenPool<T>::Fill(absl::Span<result_type> data) {
-    }
-
-    template class RandenPool<uint8_t>;
-    template class RandenPool<uint16_t>;
-    template class RandenPool<uint32_t>;
-    template class RandenPool<uint64_t>;
-
-  }
-}
-#endif
-
+// include dependencies
 #include "go-absl/random/go_internal/randen/export.inc"
 #include "go-absl/random/go_internal/seed_material/export.inc"
 #include "go-absl/random/go_internal/traits/export.inc"

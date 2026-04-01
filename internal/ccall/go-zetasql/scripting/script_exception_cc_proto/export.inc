@@ -1,13 +1,10 @@
-#ifndef ZETASQL_SCRIPTING_SCRIPT_EXCEPTION_CC_PROTO_EXPORT_H
-#define ZETASQL_SCRIPTING_SCRIPT_EXCEPTION_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_SCRIPT_EXCEPTION_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_SCRIPT_EXCEPTION_CC_PROTO_EXPORT_H
 
 #include "zetasql/scripting/script_exception.pb.h"
-#define schemas go_zetasql_scripting_script_exception_cc_proto_script_exception_schemas
-#define file_default_instances go_zetasql_scripting_script_exception_cc_proto_script_exception_file_default_instances
+// include sources
 #include "zetasql/scripting/script_exception.pb.cc"
-#undef file_default_instances
-#undef schemas
-
+// include dependencies
 #include "go-protobuf/protobuf/export.inc"
 
 #endif

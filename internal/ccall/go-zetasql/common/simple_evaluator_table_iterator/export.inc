@@ -1,23 +1,10 @@
-#ifndef ZETASQL_COMMON_SIMPLE_EVALUATOR_TABLE_ITERATOR_EXPORT_H
-#define ZETASQL_COMMON_SIMPLE_EVALUATOR_TABLE_ITERATOR_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_SIMPLE_EVALUATOR_TABLE_ITERATOR_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_COMMON_SIMPLE_EVALUATOR_TABLE_ITERATOR_EXPORT_H
 
 #include "zetasql/common/simple_evaluator_table_iterator.h"
+// include sources
 #include "zetasql/common/simple_evaluator_table_iterator.cc"
-
-#if 0
-namespace zetasql {
-
-  absl::Status SimpleEvaluatorTableIterator::SetColumnFilterMap(absl::flat_hash_map<int, std::unique_ptr<ColumnFilter>> filter_map) {
-    return absl::OkStatus();
-  }
-
-  bool SimpleEvaluatorTableIterator::NextRow() {
-    return false;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/clock/export.inc"
 #include "go-zetasql/base/source_location/export.inc"

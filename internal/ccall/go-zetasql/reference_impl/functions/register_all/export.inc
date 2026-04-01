@@ -1,17 +1,13 @@
-#ifndef ZETASQL_REFERENCE_IMPL_FUNCTIONS_REGISTER_ALL_EXPORT_H
-#define ZETASQL_REFERENCE_IMPL_FUNCTIONS_REGISTER_ALL_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_REGISTER_ALL_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_REGISTER_ALL_EXPORT_H
 
 #include "zetasql/reference_impl/functions/register_all.h"
-
-namespace zetasql {
-
-  void RegisterAllOptionalBuiltinFunctions() {
-  }
-
-}
-
+// include sources
+#include "zetasql/reference_impl/functions/register_all.cc"
+// include dependencies
 #include "go-zetasql/reference_impl/functions/hash/export.inc"
 #include "go-zetasql/reference_impl/functions/json/export.inc"
+#include "go-zetasql/reference_impl/functions/range/export.inc"
 #include "go-zetasql/reference_impl/functions/string_with_collation/export.inc"
 #include "go-zetasql/reference_impl/functions/uuid/export.inc"
 

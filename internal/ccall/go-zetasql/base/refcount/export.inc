@@ -1,4 +1,8 @@
-#ifndef ZETASQL_BASE_REFCOUNT_EXPORT_H
-#define ZETASQL_BASE_REFCOUNT_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_REFCOUNT_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_BASE_REFCOUNT_EXPORT_H
+
+#include "zetasql/base/simple_reference_counted.h"
+// include sources
+// include dependencies
 
 #endif

@@ -1,25 +1,10 @@
-#ifndef ZETASQL_PUBLIC_FUNCTIONS_NUMERIC_EXPORT_H
-#define ZETASQL_PUBLIC_FUNCTIONS_NUMERIC_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_NUMERIC_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_NUMERIC_EXPORT_H
 
 #include "zetasql/public/functions/numeric.h"
+// include sources
 #include "zetasql/public/functions/numeric.cc"
-
-#if 0
-namespace zetasql {
-  namespace functions {
-
-    bool ParseNumeric(absl::string_view str, NumericValue* out, absl::Status* error) {
-      return false;
-    }
-
-    bool ParseBigNumeric(absl::string_view str, BigNumericValue* out, absl::Status* error) {
-      return false;
-    }
-
-  }
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/public/functions/util/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"

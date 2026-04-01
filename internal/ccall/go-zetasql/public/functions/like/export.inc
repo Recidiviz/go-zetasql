@@ -1,36 +1,10 @@
-#ifndef ZETASQL_PUBLIC_FUNCTIONS_LIKE_EXPORT_H
-#define ZETASQL_PUBLIC_FUNCTIONS_LIKE_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_LIKE_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_LIKE_EXPORT_H
 
 #include "zetasql/public/functions/like.h"
+// include sources
 #include "zetasql/public/functions/like.cc"
-
-#if 0
-namespace zetasql {
-  namespace functions {
-
-    bool IsRegexSpecialChar(char c) {
-      return false;
-    }
-
-    absl::StatusOr<std::string> GetRePatternFromLikePattern(absl::string_view pattern) {
-      return "";
-    }
-
-    absl::Status CreateLikeRegexpWithOptions(absl::string_view pattern,
-                                             const RE2::Options& options,
-                                             std::unique_ptr<RE2>* regexp) {
-      return absl::OkStatus();
-    }
-
-    absl::Status CreateLikeRegexp(absl::string_view pattern, TypeKind type,
-                                  std::unique_ptr<RE2>* regexp) {
-      return absl::OkStatus();
-    }
-
-  }
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"

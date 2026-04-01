@@ -1,25 +1,10 @@
-#ifndef ZETASQL_ANALYZER_INPUT_ARGUMENT_TYPE_RESOLVER_HELPER_EXPORT_H
-#define ZETASQL_ANALYZER_INPUT_ARGUMENT_TYPE_RESOLVER_HELPER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_INPUT_ARGUMENT_TYPE_RESOLVER_HELPER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_INPUT_ARGUMENT_TYPE_RESOLVER_HELPER_EXPORT_H
 
 #include "zetasql/analyzer/input_argument_type_resolver_helper.h"
+// include sources
 #include "zetasql/analyzer/input_argument_type_resolver_helper.cc"
-
-#if 0
-namespace zetasql {
-
-  InputArgumentType GetInputArgumentTypeForExpr(const ResolvedExpr* expr) {
-    InputArgumentType v;
-    return v;
-  }
-
-  void GetInputArgumentTypesForGenericArgumentList(const std::vector<const ASTNode*>& argument_ast_nodes,
-                                                   const std::vector<std::unique_ptr<const ResolvedExpr>>& arguments,
-                                                   std::vector<InputArgumentType>* input_arguments) {
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/public/function/export.inc"

@@ -1,9 +1,10 @@
-#ifndef ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_EXPORT_H
-#define ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_EXPORT_H
 
 #include "zetasql/analyzer/rewriters/unary_function_rewriter.h"
+// include sources
 #include "zetasql/analyzer/rewriters/unary_function_rewriter.cc"
-
+// include dependencies
 #include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/analyzer/substitute/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

@@ -1,50 +1,10 @@
-#ifndef ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_EXPORT_H
-#define ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_EXPORT_H
 
 #include "zetasql/public/templated_sql_tvf.h"
+// include sources
 #include "zetasql/public/templated_sql_tvf.cc"
-
-#if 0
-namespace zetasql {
-
-  absl::Status TemplatedSQLTVF::Serialize(FileDescriptorSetMap* file_descriptor_set_map,
-                                          TableValuedFunctionProto* proto) const {
-    return absl::OkStatus();
-  }
-
-  absl::Status TemplatedSQLTVF::Deserialize(const TableValuedFunctionProto& proto,
-                                            const std::vector<const google::protobuf::DescriptorPool*>& pools,
-                                            TypeFactory* factory, std::unique_ptr<TableValuedFunction>* result) {
-    return absl::OkStatus();
-  }
-
-  absl::Status TemplatedSQLTVF::Resolve(const AnalyzerOptions* analyzer_options,
-                                        const std::vector<TVFInputArgumentType>& input_arguments,
-                                        const FunctionSignature& concrete_signature, Catalog* catalog,
-                                        TypeFactory* type_factory,
-                                        std::shared_ptr<TVFSignature>* tvf_signature) const {
-    return absl::OkStatus();
-  }
-
-  absl::Status TemplatedSQLTVF::CheckIsValid() const {
-    return absl::OkStatus();
-  }
-
-  absl::Status TemplatedSQLTVF::ForwardNestedResolutionAnalysisError(const absl::Status& status, ErrorMessageMode mode) const {
-    return absl::OkStatus();
-  }
-
-  absl::Status TemplatedSQLTVF::MakeTVFQueryAnalysisError(const std::string& message) const {
-    return absl::OkStatus();
-  }
-
-  TemplatedSQLTVFSignature::~TemplatedSQLTVFSignature() {
-  }
-
-}
-#endif
-
-#include "go-zetasql/public/analyzer/export.inc"
+// include dependencies
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/cycle_detector/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
@@ -73,7 +33,6 @@ namespace zetasql {
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
-#include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-protobuf/protobuf/export.inc"

@@ -1,9 +1,10 @@
-#ifndef ZETASQL_ANALYZER_REWRITERS_NULLIFERROR_FUNCTION_REWRITER_EXPORT_H
-#define ZETASQL_ANALYZER_REWRITERS_NULLIFERROR_FUNCTION_REWRITER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_NULLIFERROR_FUNCTION_REWRITER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_NULLIFERROR_FUNCTION_REWRITER_EXPORT_H
 
 #include "zetasql/analyzer/rewriters/nulliferror_function_rewriter.h"
+// include sources
 #include "zetasql/analyzer/rewriters/nulliferror_function_rewriter.cc"
-
+// include dependencies
 #include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -19,6 +20,7 @@
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
+#include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/types/span/export.inc"
 

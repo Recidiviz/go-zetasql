@@ -1,25 +1,11 @@
-#ifndef ABSL_PROFILING_PERIODIC_SAMPLER_EXPORT_H
-#define ABSL_PROFILING_PERIODIC_SAMPLER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ABSL_PROFILING_PERIODIC_SAMPLER_EXPORT_H
+#define INTERNAL_CCALL_GO_ABSL_PROFILING_PERIODIC_SAMPLER_EXPORT_H
 
 #include "absl/profiling/internal/periodic_sampler.h"
+// include sources
 #include "absl/profiling/internal/periodic_sampler.cc"
-
-#if 0
-namespace absl {
-  namespace profiling_internal {
-
-    int64_t PeriodicSamplerBase::GetExponentialBiased(int period) noexcept {
-      return 0;
-    }
-
-    bool PeriodicSamplerBase::SubtleConfirmSample() noexcept {
-      return false;
-    }
-  }
-}
-#endif
-
-#include "go-absl/base/core_headers/export.inc"
+// include dependencies
 #include "go-absl/profiling/exponential_biased/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 
 #endif

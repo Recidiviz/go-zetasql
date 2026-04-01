@@ -1,28 +1,10 @@
-#ifndef ZETASQL_ANALYZER_ANONIMIZATION_REWRITER_EXPORT_H
-#define ZETASQL_ANALYZER_ANONIMIZATION_REWRITER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_ANONYMIZATION_REWRITER_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_ANONYMIZATION_REWRITER_EXPORT_H
 
 #include "zetasql/analyzer/anonymization_rewriter.h"
+// include sources
 #include "zetasql/analyzer/anonymization_rewriter.cc"
-
-#if 0
-namespace zetasql {
-
-  absl::StatusOr<RewriteForAnonymizationOutput>
-  RewriteForAnonymization(const ResolvedNode& query, Catalog* catalog,
-                          TypeFactory* type_factory,
-                          const AnalyzerOptions& analyzer_options,
-                          ColumnFactory& column_factory) {
-    RewriteForAnonymizationOutput v;
-    return v;
-  }
-
-  const Rewriter* GetAnonymizationRewriter() {
-    return nullptr;
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/name_scope/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
@@ -33,17 +15,19 @@ namespace zetasql {
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
+#include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
-#include "go-zetasql/public/analyzer_output/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/anon_function/export.inc"
+#include "go-zetasql/public/anonymization_utils/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
+#include "go-zetasql/public/select_with_mode/export.inc"
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/value/export.inc"

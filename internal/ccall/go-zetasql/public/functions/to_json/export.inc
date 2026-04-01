@@ -1,26 +1,16 @@
-#ifndef ZETASQL_PUBLIC_FUNCTIONS_TO_JSON_EXPORT_H
-#define ZETASQL_PUBLIC_FUNCTIONS_TO_JSON_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_TO_JSON_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_TO_JSON_EXPORT_H
 
 #include "zetasql/public/functions/to_json.h"
+// include sources
 #include "zetasql/public/functions/to_json.cc"
-
-#if 0
-namespace zetasql {
-  namespace functions {
-
-    absl::StatusOr<JSONValue> ToJson(const Value& value, bool stringify_wide_numbers, const LanguageOptions& language_options) {
-      JSONValue v;
-      return v;
-    }
-
-  }
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/public/functions/json_format/export.inc"
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/common/canonicalize_signed_zero_to_string/export.inc"
 #include "go-zetasql/common/errors/export.inc"
+#include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/public/interval_value/export.inc"
 #include "go-zetasql/public/json_value/export.inc"
 #include "go-zetasql/public/language_options/export.inc"

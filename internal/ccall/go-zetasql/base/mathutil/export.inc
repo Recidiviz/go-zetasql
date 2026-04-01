@@ -1,27 +1,10 @@
-#ifndef ZETASQL_BASE_MATHUTIL_EXPORT_H
-#define ZETASQL_BASE_MATHUTIL_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_MATHUTIL_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_BASE_MATHUTIL_EXPORT_H
 
 #include "zetasql/base/mathutil.h"
+// include sources
 #include "zetasql/base/mathutil.cc"
-
-#if 0
-
-namespace zetasql_base {
-
-  MathUtil::FloatParts MathUtil::Decompose(float value) {
-    MathUtil::FloatParts v;
-    return v;
-  }
-
-  MathUtil::DoubleParts MathUtil::Decompose(double value) {
-    MathUtil::DoubleParts v;
-    return v;
-  }
-
-}
-
-#endif
-
+// include dependencies
 #include "go-zetasql/base/bits/export.inc"
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/mathlimits/export.inc"

@@ -1,17 +1,10 @@
-#ifndef ABSL_FLAGS_COMMANDLINEFLAG_INTERNAL_EXPORT_H
-#define ABSL_FLAGS_COMMANDLINEFLAG_INTERNAL_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ABSL_FLAGS_COMMANDLINEFLAG_INTERNAL_EXPORT_H
+#define INTERNAL_CCALL_GO_ABSL_FLAGS_COMMANDLINEFLAG_INTERNAL_EXPORT_H
 
 #include "absl/flags/internal/commandlineflag.h"
+// include sources
 #include "absl/flags/internal/commandlineflag.cc"
-
-#if 0
-namespace absl {
-  namespace flags_internal {
-    FlagStateInterface::~FlagStateInterface() {}
-  }
-}
-#endif
-
+// include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/fast_type_id/export.inc"
 

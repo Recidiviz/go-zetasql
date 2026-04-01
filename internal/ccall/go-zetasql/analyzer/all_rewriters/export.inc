@@ -1,20 +1,13 @@
-#ifndef ZETASQL_ANALYZER_ALL_REWRITERS_EXPORT_H
-#define ZETASQL_ANALYZER_ALL_REWRITERS_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_ALL_REWRITERS_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_ALL_REWRITERS_EXPORT_H
 
 #include "zetasql/analyzer/all_rewriters.h"
+// include sources
 #include "zetasql/analyzer/all_rewriters.cc"
-
-#if 0
-namespace zetasql {
-
-  void RegisterBuiltinRewriters() {
-  }
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/analyzer/anonymization_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/array_functions_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/builtin_function_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/flatten_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/like_any_all_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/map_function_rewriter/export.inc"
@@ -23,11 +16,11 @@ namespace zetasql {
 #include "go-zetasql/analyzer/rewriters/registration/export.inc"
 #include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/analyzer/rewriters/sql_function_inliner/export.inc"
-#include "go-zetasql/analyzer/rewriters/ternary_function_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/sql_view_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/typeof_function_rewriter/export.inc"
-#include "go-zetasql/analyzer/rewriters/unary_function_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/unpivot_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/with_expr_rewriter/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-absl/base/base/export.inc"
 
 #endif

@@ -1,63 +1,25 @@
-#ifndef ZETASQL_PUBLIC_ANALYZER_OUTPUT_EXPORT_H
-#define ZETASQL_PUBLIC_ANALYZER_OUTPUT_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANALYZER_OUTPUT_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANALYZER_OUTPUT_EXPORT_H
 
 #include "zetasql/public/analyzer_output.h"
+// include sources
 #include "zetasql/public/analyzer_output.cc"
-
-#if 0
-
-namespace zetasql {
-
-  AnalyzerOutput::AnalyzerOutput(std::shared_ptr<IdStringPool> id_string_pool,
-                                 std::shared_ptr<zetasql_base::UnsafeArena> arena,
-                                 std::unique_ptr<const ResolvedStatement> statement,
-                                 const AnalyzerOutputProperties& analyzer_output_properties,
-                                 std::unique_ptr<ParserOutput> parser_output,
-                                 const std::vector<absl::Status>& deprecation_warnings,
-                                 const QueryParametersMap& undeclared_parameters,
-                                 const std::vector<const Type*>& undeclared_positional_parameters,
-                                 int max_column_id)
-  : id_string_pool_(std::move(id_string_pool)),
-    arena_(std::move(arena)),
-    statement_(std::move(statement)),
-    analyzer_output_properties_(analyzer_output_properties),
-    parser_output_(std::move(parser_output)),
-    deprecation_warnings_(deprecation_warnings),
-    undeclared_parameters_(undeclared_parameters),
-    undeclared_positional_parameters_(undeclared_positional_parameters),
-    max_column_id_(max_column_id) {}
-
-  AnalyzerOutput::AnalyzerOutput(std::shared_ptr<IdStringPool> id_string_pool,
-                                 std::shared_ptr<zetasql_base::UnsafeArena> arena,
-                                 std::unique_ptr<const ResolvedExpr> expr,
-                                 const AnalyzerOutputProperties& analyzer_output_properties,
-                                 std::unique_ptr<ParserOutput> parser_output,
-                                 const std::vector<absl::Status>& deprecation_warnings,
-                                 const QueryParametersMap& undeclared_parameters,
-                                 const std::vector<const Type*>& undeclared_positional_parameters,
-                                 int max_column_id)
-  : id_string_pool_(std::move(id_string_pool)),
-    arena_(std::move(arena)),
-    expr_(std::move(expr)),
-    analyzer_output_properties_(analyzer_output_properties),
-    parser_output_(std::move(parser_output)),
-    deprecation_warnings_(deprecation_warnings),
-    undeclared_parameters_(undeclared_parameters),
-    undeclared_positional_parameters_(undeclared_positional_parameters),
-    max_column_id_(max_column_id) {}
-
-  AnalyzerOutput::~AnalyzerOutput() {}
-
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/base/arena/export.inc"
+#include "go-zetasql/base/enum_utils/export.inc"
+#include "go-zetasql/base/map_util/export.inc"
+#include "go-zetasql/common/timer_util/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
+#include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
+#include "go-absl/strings/str_format/export.inc"
+#include "go-absl/time/time/export.inc"
 
 #endif

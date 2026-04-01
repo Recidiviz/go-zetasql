@@ -1,26 +1,10 @@
-#ifndef ZETASQL_PUBLIC_FUNCTIONS_CONVERT_EXPORT_H
-#define ZETASQL_PUBLIC_FUNCTIONS_CONVERT_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_CONVERT_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_CONVERT_EXPORT_H
 
 #include "zetasql/public/functions/convert.h"
+// include sources
 #include "zetasql/public/functions/convert.cc"
-
-#if 0
-namespace zetasql {
-  namespace functions {
-    namespace internal {
-
-      const char* const kConvertOverflowInt32 = "int32 out of range: ";
-      const char* const kConvertOverflowInt64 = "int64 out of range: ";
-      const char* const kConvertOverflowUint32 = "uint32 out of range: ";
-      const char* const kConvertOverflowUint64 = "uint64 out of range: ";
-      const char* const kConvertOverflowFloat = "float out of range: ";
-      const char* const kConvertNonFinite = "Illegal conversion of non-finite floating point number to an integer: ";
-
-    }
-  }
-}
-#endif
-
+// include dependencies
 #include "go-zetasql/public/functions/convert_internal/export.inc"
 #include "go-zetasql/public/functions/util/export.inc"
 #include "go-zetasql/base/base/export.inc"

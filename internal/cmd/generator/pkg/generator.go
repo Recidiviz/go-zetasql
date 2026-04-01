@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"go/format"
 	"io/fs"
@@ -13,6 +14,8 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+
+	"github.com/goccy/go-zetasql/internal/exportinc"
 )
 
 var (
@@ -362,7 +365,23 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 	if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), output, 0o600); err != nil {
 		return err
 	}
-	return nil
+	return g.syncExportInc(outputDir, output)
+}
+
+func (g *Generator) syncExportInc(outputDir string, bindCC []byte) error {
+	packageDir, err := exportinc.PackageDirForGuard(outputDir, repoRootDir())
+	if err != nil {
+		return err
+	}
+	exportPath := filepath.Join(outputDir, "export.inc")
+	out, err := exportinc.BuildFromBindCC(packageDir, bindCC)
+	if err != nil {
+		if errors.Is(err, exportinc.ErrNoPrelude) {
+			return nil
+		}
+		return fmt.Errorf("export.inc %s: %w", outputDir, err)
+	}
+	return os.WriteFile(exportPath, out, 0o600)
 }
 
 func (g *Generator) pkgs() []*Package {
@@ -649,7 +668,7 @@ func (t *Type) GoToC(index int) string {
 }
 
 var reservedKeywords = []string{
-	"case", "type",
+	"case", "range", "type",
 }
 
 func (g *Generator) goReservedKeyword(keyword string) bool {
@@ -662,10 +681,7 @@ func (g *Generator) goReservedKeyword(keyword string) bool {
 }
 
 func (g *Generator) cgoCompiler(lib *Lib) string {
-	if strings.Contains(lib.BasePkg, "absl") {
-		return "c++11"
-	}
-	return "c++1z"
+	return "c++17"
 }
 
 func (g *Generator) goPkgName(lib *Lib) string {
@@ -726,7 +742,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 	param := &BindGoParam{DebugMode: false}
 	param.Pkg = "zetasql"
 	param.FQDN = "zetasql"
-	param.Compiler = "c++1z"
+	param.Compiler = "c++17"
 	param.CXXFlags = cxxflags
 	param.LDFlags = ldflags
 
