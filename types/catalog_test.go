@@ -16,7 +16,7 @@ func TestCatalog(t *testing.T) {
 			types.NewSimpleColumn(tableName, "col2", types.StringType()),
 		}),
 	)
-	catalog.AddZetaSQLBuiltinFunctions()
+	catalog.AddZetaSQLBuiltinFunctions(nil)
 	tables, err := catalog.Tables()
 	if err != nil {
 		t.Fatal(err)
