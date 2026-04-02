@@ -267,14 +267,10 @@
 
 #include "bridge_cc.inc"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+// catalog.h forward-declares Conversion; bridge.inc assigns one (needs cast.h).
+#include "zetasql/public/cast.h"
 
+// bridge.inc is C++ (GoCatalog, etc.); do not wrap in extern "C".
 #include "bridge.inc"
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* zetasql_public_catalog_bind_cc */
