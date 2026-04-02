@@ -3,7 +3,11 @@
 
 #include "zetasql/proto/anon_output_with_report.pb.h"
 // include sources
+#define schemas zetasql_proto_anon_output_with_report_cc_proto_schemas
+#define file_default_instances zetasql_proto_anon_output_with_report_cc_proto_file_default_instances
 #include "zetasql/proto/anon_output_with_report.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 #include "go-protobuf/protobuf/export.inc"
 

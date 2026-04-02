@@ -74,6 +74,17 @@ bool SplitENotationParts(absl::string_view str, ENotationParts* parts) {
   return true;
 }
 
+// PowersAsc<Word, first_value, base, size>() returns a std::array<Word, size>
+// {first_value, first_value * base, ..., first_value * pow(base, size - 1)}.
+template <typename Word, Word first_value, Word base, int size, typename... T>
+constexpr std::array<Word, size> PowersAsc(T... v) {
+  if constexpr (sizeof...(T) < size) {
+    return PowersAsc<Word, first_value, base, size>(first_value, v * base...);
+  } else {
+    return std::array<Word, size>{v...};
+  }
+}
+
 // Scale the output value by pow(10, extra_exp - decimal_places + type_scale).
 // Both exp and decimal_places can come from user inputs, and this
 // method detects overflows in the computation.

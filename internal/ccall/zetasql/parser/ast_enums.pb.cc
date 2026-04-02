@@ -568,7 +568,7 @@ const uint32_t TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets[] PRO
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fparser_2fast_5fenums_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::ASTBinaryExpressionEnums)},
   { 6, -1, -1, sizeof(::zetasql::ASTOrderingExpressionEnums)},
   { 12, -1, -1, sizeof(::zetasql::ASTJoinEnums)},
@@ -603,7 +603,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_
   { 186, -1, -1, sizeof(::zetasql::ASTSpannerInterleaveClauseEnums)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fparser_2fast_5fenums_2eproto[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ASTBinaryExpressionEnums_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ASTOrderingExpressionEnums_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ASTJoinEnums_default_instance_),
@@ -748,7 +748,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fp
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto = {
   false, false, 4145, descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto, "zetasql/parser/ast_enums.proto", 
   &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once, nullptr, 0, 32,
-  schemas_zetasql_2fparser_2fast_5fenums_2eproto, file_default_instances_zetasql_2fparser_2fast_5fenums_2eproto, TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets,
+  schemas, file_default_instances, TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets,
   file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto, file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto, file_level_service_descriptors_zetasql_2fparser_2fast_5fenums_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_getter() {

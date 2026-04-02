@@ -177,7 +177,7 @@ STATIC_IDSTRING(kFullJoinId, "$full_join");
 STATIC_IDSTRING(kGroupById, "$groupby");
 STATIC_IDSTRING(kMakeProtoId, "$make_proto");
 STATIC_IDSTRING(kMakeStructId, "$make_struct");
-STATIC_IDSTRING(kResolverQueryOrderById, "$orderby");
+STATIC_IDSTRING(kOrderById, "$orderby");
 STATIC_IDSTRING(kPreGroupById, "$pre_groupby");
 STATIC_IDSTRING(kPreProjectId, "$preproject");
 STATIC_IDSTRING(kProtoId, "$proto");
@@ -994,7 +994,7 @@ absl::Status Resolver::ResolveOrderByAfterSetOperations(
   }
 
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> computed_columns;
-  AddColumnsForOrderByExprs(/*query_alias=*/kResolverQueryOrderById,
+  AddColumnsForOrderByExprs(/*query_alias=*/kOrderById,
                             query_resolution_info->mutable_order_by_item_info(),
                             &computed_columns);
 
@@ -2035,7 +2035,7 @@ absl::Status Resolver::ResolveOrderByExprs(
           ->mutable_order_by_item_info()));
 
   AddColumnsForOrderByExprs(
-      /*query_alias=*/kResolverQueryOrderById,
+      /*query_alias=*/kOrderById,
       query_resolution_info->mutable_order_by_item_info(),
       query_resolution_info->order_by_columns_to_compute());
 

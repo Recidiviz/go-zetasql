@@ -6437,7 +6437,7 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::of
   3,
   ~0u,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::AnyResolvedNodeProto)},
   { 11, -1, -1, sizeof(::zetasql::AnyResolvedArgumentProto)},
   { 69, 76, -1, sizeof(::zetasql::ResolvedArgumentProto)},
@@ -6662,7 +6662,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_
   { 3092, 3115, -1, sizeof(::zetasql::ResolvedAuxLoadDataStmtProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnyResolvedNodeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnyResolvedArgumentProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedArgumentProto_default_instance_),
@@ -8445,7 +8445,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fr
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto = {
   false, false, 61675, descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, "zetasql/resolved_ast/resolved_ast.proto", 
   &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once, descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_deps, 8, 222,
-  schemas_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, file_default_instances_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::offsets,
+  schemas, file_default_instances, TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::offsets,
   file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter() {

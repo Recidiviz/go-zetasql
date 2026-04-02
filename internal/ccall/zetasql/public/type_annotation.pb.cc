@@ -23,8 +23,8 @@ namespace storage {
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto = nullptr;
 const uint32_t TableStruct_zetasql_2fpublic_2ftype_5fannotation_2eproto::offsets[1] = {};
-static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas_zetasql_2fpublic_2ftype_5fannotation_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances_zetasql_2fpublic_2ftype_5fannotation_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_zetasql_2fpublic_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n$zetasql/public/type_annotation.proto\022\017"
@@ -39,7 +39,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fp
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto = {
   false, false, 131, descriptor_table_protodef_zetasql_2fpublic_2ftype_5fannotation_2eproto, "zetasql/public/type_annotation.proto", 
   &descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_deps, 1, 0,
-  schemas_zetasql_2fpublic_2ftype_5fannotation_2eproto, file_default_instances_zetasql_2fpublic_2ftype_5fannotation_2eproto, TableStruct_zetasql_2fpublic_2ftype_5fannotation_2eproto::offsets,
+  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ftype_5fannotation_2eproto::offsets,
   nullptr, file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ftype_5fannotation_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ftype_5fannotation_2eproto_getter() {

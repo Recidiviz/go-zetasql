@@ -644,7 +644,7 @@ absl::Status ForwardInputSchemaToOutputSchemaWithAppendedColumnTVF::
 }
 
 namespace {
-static bool table_valued_function_module_init = []() {
+static bool module_initialization_complete = []() {
   TableValuedFunction::RegisterDeserializer(
       FunctionEnums::FIXED_OUTPUT_SCHEMA_TVF,
       FixedOutputSchemaTVF::Deserialize);

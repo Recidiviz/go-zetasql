@@ -21,8 +21,8 @@ namespace zetasql {
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto = nullptr;
 const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto::offsets[1] = {};
-static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n-zetasql/resolved_ast/resolved_node_kin"
@@ -189,7 +189,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fr
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto = {
   false, false, 6334, descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto, "zetasql/resolved_ast/resolved_node_kind.proto", 
   &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto_once, nullptr, 0, 0,
-  schemas_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto, file_default_instances_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto, TableStruct_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto::offsets,
+  schemas, file_default_instances, TableStruct_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto::offsets,
   nullptr, file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto, file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto_getter() {

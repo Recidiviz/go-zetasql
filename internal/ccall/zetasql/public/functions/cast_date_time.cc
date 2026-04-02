@@ -79,16 +79,13 @@ using CategoryToElementsMap =
 using TypeToElementMap =
     absl::flat_hash_map<FormatElementType, const DateTimeFormatElement*>;
 
-static const int64_t kCastDateTimePowersOfTen[] = {
+static const int64_t powers_of_ten[] = {
     1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 
-constexpr int64_t kCastDateTimeNaiveSecondsPerMinute = 60;
-constexpr int64_t kCastDateTimeNaiveSecondsPerHour =
-    60 * kCastDateTimeNaiveSecondsPerMinute;
-constexpr int64_t kCastDateTimeNaiveSecondsPerDay =
-    24 * kCastDateTimeNaiveSecondsPerHour;
-constexpr int64_t kCastDateTimeNaiveMicrosPerDay =
-    kCastDateTimeNaiveSecondsPerDay * 1000 * 1000;
+constexpr int64_t kNaiveNumSecondsPerMinute = 60;
+constexpr int64_t kNaiveNumSecondsPerHour = 60 * kNaiveNumSecondsPerMinute;
+constexpr int64_t kNaiveNumSecondsPerDay = 24 * kNaiveNumSecondsPerHour;
+constexpr int64_t kNaiveNumMicrosPerDay = kNaiveNumSecondsPerDay * 1000 * 1000;
 
 // Matches <target_str> with string <input_str> in a char-by-char manner. The
 // matching is case-insensitive if <ignore_case> is true and case-sensitive
@@ -842,9 +839,9 @@ absl::Status ParseTimeWithFormatElements(
       case FormatElementType::kY: {
         int element_length = format_element.len_in_format_str;
         ZETASQL_RET_CHECK(element_length >= 0 &&
-                  element_length < ABSL_ARRAYSIZE(kCastDateTimePowersOfTen));
+                  element_length < ABSL_ARRAYSIZE(powers_of_ten));
         int element_length_power_of_ten =
-            static_cast<int>(kCastDateTimePowersOfTen[element_length]);
+            static_cast<int>(powers_of_ten[element_length]);
         int parsed_year_part;
         parsed_length = ParseInt(
             timestamp_str_to_parse, /*min_width=*/digit_count_range.min,
@@ -965,12 +962,12 @@ absl::Status ParseTimeWithFormatElements(
             ParseInt(timestamp_str_to_parse,
                      /*min_width=*/digit_count_range.min,
                      /*max_width=*/digit_count_range.max, /*min=*/0,
-                     /*max=*/kCastDateTimeNaiveSecondsPerDay - 1, &sec_of_day);
+                     /*max=*/kNaiveNumSecondsPerDay - 1, &sec_of_day);
         if (parsed_length != absl::string_view::npos) {
-          hour = sec_of_day / kCastDateTimeNaiveSecondsPerHour;
-          min = (sec_of_day % kCastDateTimeNaiveSecondsPerHour) /
-                kCastDateTimeNaiveSecondsPerMinute;
-          sec = sec_of_day % kCastDateTimeNaiveSecondsPerMinute;
+          hour = sec_of_day / kNaiveNumSecondsPerHour;
+          min = (sec_of_day % kNaiveNumSecondsPerHour) /
+                kNaiveNumSecondsPerMinute;
+          sec = sec_of_day % kNaiveNumSecondsPerMinute;
         }
         break;
       }
@@ -1756,7 +1753,7 @@ absl::StatusOr<std::string> FromDateTimeFormatElementToFormatString(
       // the year.
       // FormatTime does not support the year with the last 3 digits.
       int trunc_year =
-          static_cast<int>(info.cs.year()) % kCastDateTimePowersOfTen[element_length];
+          static_cast<int>(info.cs.year()) % powers_of_ten[element_length];
       return absl::StrFormat(
           "%0*d", format_element.len_in_format_str,
           (element_length == 4 ? info.cs.year() : trunc_year));
@@ -1790,8 +1787,8 @@ absl::StatusOr<std::string> FromDateTimeFormatElementToFormatString(
       return "%S";
     case FormatElementType::kSSSSS: {
       // FormatTime does not support having 5 digit second of the day.
-      int second_of_day = info.cs.hour() * kCastDateTimeNaiveSecondsPerHour +
-                          info.cs.minute() * kCastDateTimeNaiveSecondsPerMinute +
+      int second_of_day = info.cs.hour() * kNaiveNumSecondsPerHour +
+                          info.cs.minute() * kNaiveNumSecondsPerMinute +
                           info.cs.second();
       return absl::StrFormat("%05d", second_of_day);
     }
@@ -2166,7 +2163,7 @@ absl::Status DateToStringCaster::Cast(int32_t date, std::string* out) const {
 
   // Treats it as a timestamp at midnight on that date and invokes the
   // format_timestamp function.
-  int64_t date_timestamp = static_cast<int64_t>(date) * kCastDateTimeNaiveMicrosPerDay;
+  int64_t date_timestamp = static_cast<int64_t>(date) * kNaiveNumMicrosPerDay;
   ZETASQL_ASSIGN_OR_RETURN(
       *out, cast_date_time_internal::FromCastFormatTimestampToStringInternal(
                 format_elements_, MakeTime(date_timestamp, kMicroseconds),

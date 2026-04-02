@@ -3,7 +3,9 @@
 
 #include "zetasql/public/numeric_parser.h"
 // include sources
+#define PowersAsc zetasql_public_numeric_parser_PowersAsc
 #include "zetasql/public/numeric_parser.cc"
+#undef PowersAsc
 // include dependencies
 #include "go-zetasql/public/numeric_constants/export.inc"
 #include "go-zetasql/base/status/export.inc"

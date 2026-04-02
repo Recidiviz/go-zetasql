@@ -3,7 +3,9 @@
 
 #include "zetasql/public/templated_sql_tvf.h"
 // include sources
+#define module_initialization_complete zetasql_public_templated_sql_tvf_module_initialization_complete
 #include "zetasql/public/templated_sql_tvf.cc"
+#undef module_initialization_complete
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/cycle_detector/export.inc"

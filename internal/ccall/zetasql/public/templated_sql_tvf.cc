@@ -303,7 +303,7 @@ absl::Status TemplatedSQLTVF::MakeTVFQueryAnalysisError(
 }
 
 namespace {
-static bool templated_sql_tvf_module_init = []() {
+static bool module_initialization_complete = []() {
   TableValuedFunction::RegisterDeserializer(
       FunctionEnums::TEMPLATED_SQL_TVF,
       TemplatedSQLTVF::Deserialize);

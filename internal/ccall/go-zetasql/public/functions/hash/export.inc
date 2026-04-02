@@ -7,7 +7,7 @@
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/endian/export.inc"
-#include "go-boringssl/boringssl/export.inc"
+#include "go-boringssl/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"

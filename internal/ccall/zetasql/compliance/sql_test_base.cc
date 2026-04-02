@@ -2689,7 +2689,7 @@ std::ostream& operator<<(std::ostream& os, const ScriptResult& result) {
 }
 
 namespace {
-static bool sql_test_base_module_init = []() {
+static bool module_initialization_complete = []() {
   ::testing::AddGlobalTestEnvironment(new SQLTestEnvironment);
   return true;
 } ();

@@ -10,7 +10,9 @@
 #include "zetasql/reference_impl/aggregate_op.cc"
 #include "zetasql/reference_impl/analytic_op.cc"
 #include "zetasql/reference_impl/evaluation.cc"
+#define FCT zetasql_reference_impl_evaluation_FCT
 #include "zetasql/reference_impl/function.cc"
+#undef FCT
 #include "zetasql/reference_impl/operator.cc"
 #include "zetasql/reference_impl/relational_op.cc"
 #include "zetasql/reference_impl/tuple.cc"

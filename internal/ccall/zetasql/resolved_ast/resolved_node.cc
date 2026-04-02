@@ -464,6 +464,11 @@ void ResolvedExtendedCastElement::CollectDebugStringFields(
   ZETASQL_DCHECK_LE(fields->size(), 1);  // function
 }
 
+void ResolvedCast::set_type_parameters(const TypeParameters& v) {
+  type_modifiers_ =
+      TypeModifiers::MakeTypeModifiers(v, type_modifiers_.release_collation());
+}
+
 std::string ResolvedExtendedCastElement::GetNameForDebugString() const {
   return absl::StrCat(
       "ResolvedExtendedCastElement(", from_type_->DebugString(), " -> ",

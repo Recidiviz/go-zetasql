@@ -10,5 +10,6 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-algorithms/partition-selection/export.inc"
 
 #endif

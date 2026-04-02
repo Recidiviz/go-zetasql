@@ -28,6 +28,10 @@ dependencies:
     fqdn: @json
   - name: benchmark
     fqdn: @com_github_google_benchmark
+  - name: cc_differential_privacy
+    fqdn: @com_google_cc_differential_privacy
+  - name: differential_privacy
+    fqdn: @com_google_differential_privacy
 
 global_symbols:
   - AbslInternalSleepFor
@@ -58,12 +62,17 @@ global_symbols:
   - FLAGS_nozetasql_format_max_output_width
   - FLAGS_nozetasql_min_length_required_for_edit_distance
   - FLAGS_nozetasql_simple_iterator_call_time_now_rows_period
+  - FLAGS_zetasql_enough_stack_bytes
+  - FLAGS_nozetasql_enough_stack_bytes
+  - FLAGS_zetasql_canonicalize_signed_zero_to_string
+  - FLAGS_nozetasql_canonicalize_signed_zero_to_string
   - ZetaSqlFlexTokenizerBase
   - ZetaSqlFlexLexer
   - UCaseMap
 
 top_level_namespaces:
   - absl
+  - differential_privacy
   - google
   - zetasql
   - zetasql_base
@@ -159,6 +168,14 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
+  - file:   zetasql/public/functions/array_find_mode.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/functions/differential_privacy.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
   - file:   zetasql/public/functions/normalize_mode.pb.cc
     symbols:
       - schemas
@@ -179,6 +196,10 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
+  - file:   zetasql/proto/anon_output_with_report.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
   - file:   zetasql/resolved_ast/resolved_node_kind.pb.cc
     symbols:
       - schemas
@@ -191,6 +212,79 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
+  - file:   zetasql/public/numeric_parser.cc
+    symbol: PowersAsc
+  - file:   zetasql/reference_impl/function.cc
+    symbol: FCT
+  - file:   zetasql/analyzer/resolver_expr.cc
+    symbols:
+      - kOrderById
+      - kIsNullFnName
+  - file:   zetasql/analyzer/resolver_query.cc
+    symbol: kOrderById
+  - file:   zetasql/public/functions/cast_date_time.cc
+    symbols:
+      - powers_of_ten
+      - kNaiveNumSecondsPerMinute
+      - kNaiveNumSecondsPerHour
+      - kNaiveNumSecondsPerDay
+      - kNaiveNumMicrosPerDay
+  - file:   proto/confidence-interval.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   proto/data.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   proto/numerical-mechanism.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   proto/summary.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/resolved_ast/resolved_ast.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/resolved_ast/resolved_ast_enums.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/resolved_ast/serialization.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/proto/function.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/function.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/simple_table.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/simple_constant.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/proto/simple_catalog.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/scripting/script_exception.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/templated_sql_function.cc
+    symbol: module_initialization_complete
+  - file:   zetasql/public/templated_sql_tvf.cc
+    symbol: module_initialization_complete
 add_sources:
   - file:   zetasql/parser/flex_tokenizer.flex.cc
     source: flex_tokenizer_base.inc
@@ -204,6 +298,8 @@ exclude_zetasql_dirs:
   - local_service
   - jdk
   - benchmark
+  - proto/accounting
+  - proto/testing
 
 protobuf_internal_export_name_files:
   - protobuf/google/protobuf/descriptor.pb.h
@@ -333,6 +429,13 @@ protoc:
   - name: zetasql/public/builtin_function_cc_proto
   - name: zetasql/public/functions/datetime_cc_proto
   - name: zetasql/public/functions/normalize_mode_cc_proto
+  - name: zetasql/public/functions/array_find_mode_cc_proto
+    deps:
+      - zetasql/public/type_cc_proto
+  - name: zetasql/public/functions/differential_privacy_cc_proto
+    deps:
+      - zetasql/proto/anon_output_with_report_cc_proto
+      - zetasql/public/type_cc_proto
   - name: zetasql/public/value_cc_proto
   - name: zetasql/public/annotation_cc_proto
     deps:
@@ -342,3 +445,11 @@ protoc:
       - zetasql/public/error_location_cc_proto
   - name: zetasql/public/type_cc_proto
   - name: zetasql/public/collation_cc_proto
+  - name: proto/confidence_interval_cc_proto
+  - name: proto/data_cc_proto
+    deps:
+      - proto/confidence_interval_cc_proto
+  - name: proto/numerical_mechanism_cc_proto
+  - name: proto/summary_cc_proto
+    deps:
+      - proto/data_cc_proto

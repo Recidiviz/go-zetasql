@@ -1,6 +1,8 @@
 #ifndef BORINGSSL_EXPORT_H
 #define BORINGSSL_EXPORT_H
 
+#include <cstring>
+
 #include "openssl/md5.h"
 
 int MD5_Init(MD5_CTX *md5) {
@@ -135,6 +137,16 @@ int SHA512_256_Final(uint8_t out[SHA512_256_DIGEST_LENGTH], SHA512_CTX *sha) {
 
 uint8_t *SHA512_256(const uint8_t *data, size_t len, uint8_t out[SHA512_256_DIGEST_LENGTH]) {
   return nullptr;
+}
+
+#include "openssl/rand.h"
+
+int RAND_bytes(uint8_t *buf, size_t len) {
+  if (buf == nullptr) {
+    return 0;
+  }
+  memset(buf, 0, len);
+  return 1;
 }
 
 #endif

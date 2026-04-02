@@ -3,7 +3,11 @@
 
 #include "zetasql/resolved_ast/serialization.pb.h"
 // include sources
+#define schemas zetasql_resolved_ast_serialization_cc_proto_schemas
+#define file_default_instances zetasql_resolved_ast_serialization_cc_proto_file_default_instances
 #include "zetasql/resolved_ast/serialization.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value_cc_proto/export.inc"

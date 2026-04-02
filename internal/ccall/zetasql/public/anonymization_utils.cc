@@ -23,7 +23,7 @@
 #include "zetasql/public/type.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/public/differential_privacy_partition_selection.h"
+#include "algorithms/partition-selection.h"
 
 namespace zetasql {
 namespace anonymization {

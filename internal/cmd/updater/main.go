@@ -59,10 +59,15 @@ var copyExternalLibMap = map[string]string{
 	"com_google_absl/absl":      "absl",
 	"com_google_protobuf/src":   "protobuf",
 	"com_googlesource_code_re2": "re2",
+	"com_google_cc_differential_privacy/algorithms": "algorithms",
+	"com_google_cc_differential_privacy/base":       "base",
+	"com_google_cc_differential_privacy/proto":      "proto",
+	"com_google_differential_privacy/proto":         "proto",
 }
 
 var copyOutExternalLibMap = map[string]string{
-	"com_google_googleapis": "googleapis",
+	"com_google_googleapis":                 "googleapis",
+	"com_google_differential_privacy/proto": "proto",
 }
 
 func main() {
@@ -126,6 +131,9 @@ func main() {
 					return err
 				}
 				defer src.Close()
+				if err := os.Remove(dstFile); err != nil && !os.IsNotExist(err) {
+					return err
+				}
 				dst, err := os.Create(dstFile)
 				if err != nil {
 					return err

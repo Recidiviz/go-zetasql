@@ -190,6 +190,29 @@ size_t AddDecimalPointAndAdjustZeros(size_t first_digit_index, size_t scale,
   return decimal_point_index;
 }
 
+// PowersAsc<Word, first_value, base, size>() returns a std::array<Word, size>
+// {first_value, first_value * base, ..., first_value * pow(base, size - 1)}.
+template <typename Word, Word first_value, Word base, int size, typename... T>
+constexpr std::array<Word, size> PowersAsc(T... v) {
+  if constexpr (sizeof...(T) < size) {
+    return PowersAsc<Word, first_value, base, size>(first_value, v * base...);
+  } else {
+    return std::array<Word, size>{v...};
+  }
+}
+
+// PowersDesc<Word, last_value, base, size>() returns a std::array<Word, size>
+// {last_value * pow(base, size - 1), last_value * pow(base, size - 2), ...,
+//  last_value}.
+template <typename Word, Word last_value, Word base, int size, typename... T>
+constexpr std::array<Word, size> PowersDesc(T... v) {
+  if constexpr (sizeof...(T) < size) {
+    return PowersDesc<Word, last_value, base, size>(v * base..., last_value);
+  } else {
+    return std::array<Word, size>{v...};
+  }
+}
+
 FixedUint<64, 4> UnsignedFloor(FixedUint<64, 4> value) {
   // Remove the decimal portion of the value by dividing by the
   // ScalingFactor(10^38) then multiplying correspondingly.

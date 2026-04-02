@@ -3,7 +3,9 @@
 
 #include "zetasql/public/templated_sql_function.h"
 // include sources
+#define module_initialization_complete zetasql_public_templated_sql_function_module_initialization_complete
 #include "zetasql/public/templated_sql_function.cc"
+#undef module_initialization_complete
 // include dependencies
 #include "go-zetasql/public/error_location_cc_proto/export.inc"
 #include "go-zetasql/public/function/export.inc"

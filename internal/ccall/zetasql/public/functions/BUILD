@@ -885,10 +885,7 @@ java_proto_library(
 
 cc_proto_library(
     name = "differential_privacy_cc_proto",
-    deps = [
-        ":differential_privacy_proto",
-        "//zetasql/proto:anon_output_with_report_cc_proto",
-    ],
+    deps = [":differential_privacy_proto"],
 )
 
 cc_library(

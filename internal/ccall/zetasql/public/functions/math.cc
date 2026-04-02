@@ -101,7 +101,7 @@ void InitExponents() {
 }
 
 namespace {
-static bool functions_math_module_init = []() {
+static bool module_initialization_complete = []() {
   InitExponents();
   return true;
 } ();

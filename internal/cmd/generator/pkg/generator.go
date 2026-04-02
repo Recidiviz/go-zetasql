@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	bazelSupportedLibs = []string{"zetasql", "absl"}
-	includeDirs        = []string{"protobuf", "gtest", "icu", "re2", "json", "googleapis", "flex/src"}
+	bazelSupportedLibs = []string{"zetasql", "absl", "algorithms", "base", "proto"}
+	includeDirs        = []string{"protobuf", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
 )
 
 type Generator struct {
@@ -102,7 +102,7 @@ func (g *Generator) Generate() error {
 	if err != nil {
 		return err
 	}
-	for _, dir := range append(includeDirs, "zetasql", "absl") {
+	for _, dir := range append(includeDirs, "zetasql", "absl", "algorithms", "base", "proto") {
 		if err := filepath.Walk(filepath.Join(ccallDir(), dir), func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
 				return err
@@ -583,8 +583,8 @@ type SourceParam struct {
 func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param := &BindCCParam{}
 
-	basePrefix := strings.ReplaceAll(lib.BasePkg, "/", "_")
-	param.FQDN = fmt.Sprintf("%s_%s", basePrefix, lib.Name)
+	basePrefix := sanitizeIdentifier(strings.ReplaceAll(lib.BasePkg, "/", "_"))
+	param.FQDN = fmt.Sprintf("%s_%s", basePrefix, sanitizeIdentifier(lib.Name))
 	param.PkgPath = lib.BasePkg
 	param.ReplaceNames = append(
 		append(
@@ -671,6 +671,11 @@ var reservedKeywords = []string{
 	"case", "range", "type",
 }
 
+func sanitizeIdentifier(v string) string {
+	v = strings.ReplaceAll(v, "-", "_")
+	return strings.ReplaceAll(v, ".", "_")
+}
+
 func (g *Generator) goReservedKeyword(keyword string) bool {
 	for _, k := range reservedKeywords {
 		if keyword == k {
@@ -685,10 +690,11 @@ func (g *Generator) cgoCompiler(lib *Lib) string {
 }
 
 func (g *Generator) goPkgName(lib *Lib) string {
-	if g.goReservedKeyword(lib.Name) {
-		return "go_" + lib.Name
+	name := sanitizeIdentifier(lib.Name)
+	if g.goReservedKeyword(name) {
+		return "go_" + name
 	}
-	return lib.Name
+	return name
 }
 
 func (g *Generator) extendLibs(lib *Lib) []string {
@@ -766,7 +772,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 			goPkgPath := normalizeGoPkgPath(dep)
 			libName := fmt.Sprintf("github.com/goccy/go-zetasql/internal/ccall/%s", goPkgPath)
 			param.ImportGoLibs = append(param.ImportGoLibs, libName)
-			basePkg := filepath.Base(goPkgPath)
+			basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
 			bridgeHeader := filepath.Join(ccallDir, goPkgPath, "bridge.h")
 			if _, exists := bridgeHeaderMap[bridgeHeader]; exists {
 				continue
@@ -800,8 +806,8 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 	param.Compiler = g.cgoCompiler(lib)
 	param.CXXFlags = cxxflags
 	param.LDFlags = ldflags
-	prefix := strings.ReplaceAll(lib.BasePkg, "/", "_")
-	param.FQDN = fmt.Sprintf("%s_%s", prefix, lib.Name)
+	prefix := sanitizeIdentifier(strings.ReplaceAll(lib.BasePkg, "/", "_"))
+	param.FQDN = fmt.Sprintf("%s_%s", prefix, sanitizeIdentifier(lib.Name))
 	ccallDir := strings.Repeat("../", len(strings.Split(lib.BasePkg, "/"))+1)
 	includePaths := []string{ccallDir}
 	for _, includeDir := range includeDirs {
@@ -823,7 +829,7 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 		goPkgPath := normalizeGoPkgPath(dep)
 		libName := fmt.Sprintf("github.com/goccy/go-zetasql/internal/ccall/%s", goPkgPath)
 		importGoLibs = append(importGoLibs, libName)
-		basePkg := filepath.Base(goPkgPath)
+		basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
 		bridgeHeaders = append(bridgeHeaders, filepath.Join(ccallDir, goPkgPath, "bridge.h"))
 		for _, method := range pkg.Methods {
 			method := method
@@ -842,7 +848,7 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 	param.ExportFuncs = exportFuncs
 	if pkg, exists := g.pkgMap[pkgName]; exists {
 		pkg := pkg
-		funcs, needsImportUnsafePkg := g.pkgToFuncs(lib.Name, &pkg)
+		funcs, needsImportUnsafePkg := g.pkgToFuncs(sanitizeIdentifier(lib.Name), &pkg)
 		param.Funcs = funcs
 		if needsImportUnsafePkg {
 			param.ImportUnsafePkg = true

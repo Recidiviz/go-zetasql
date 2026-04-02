@@ -144,7 +144,7 @@ namespace zetasql {
 // or copy these strings again.
 STATIC_IDSTRING(kAggregateId, "$aggregate");
 STATIC_IDSTRING(kExprSubqueryId, "$expr_subquery");
-STATIC_IDSTRING(kResolverExprOrderById, "$orderby");
+STATIC_IDSTRING(kOrderById, "$orderby");
 STATIC_IDSTRING(kInSubqueryCastId, "$in_subquery_cast");
 STATIC_IDSTRING(kKey, "KEY");
 STATIC_IDSTRING(kOffset, "OFFSET");
@@ -3056,18 +3056,16 @@ absl::Status Resolver::ResolveUnaryExpr(
   return absl::OkStatus();
 }
 
-namespace {
-const std::string* const kInvalidOperatorTypeStr =
+static const std::string* const kInvalidOperatorTypeStr =
     new std::string("$invalid_is_operator_type");
-const std::string* const kIsFalseFnName = new std::string("$is_false");
-const std::string* const kIsNullOpFnName = new std::string("$is_null");
-const std::string* const kIsTrueFnName = new std::string("$is_true");
-}  // namespace
+static const std::string* const kIsFalseFnName = new std::string("$is_false");
+static const std::string* const kIsNullFnName = new std::string("$is_null");
+static const std::string* const kIsTrueFnName = new std::string("$is_true");
 
 static const std::string& IsOperatorToFunctionName(const ASTExpression* expr) {
   switch (expr->node_kind()) {
     case AST_NULL_LITERAL:
-      return *kIsNullOpFnName;
+      return *kIsNullFnName;
     case AST_BOOLEAN_LITERAL:
       if (expr->GetAsOrDie<ASTBooleanLiteral>()->value()) {
         return *kIsTrueFnName;
@@ -6869,7 +6867,7 @@ absl::Status Resolver::FinishResolvingAggregateFunction(
     }
 
     AddColumnsForOrderByExprs(
-        kResolverExprOrderById, &order_by_info,
+        kOrderById, &order_by_info,
         query_resolution_info
             ->select_list_columns_to_compute_before_aggregation());
 

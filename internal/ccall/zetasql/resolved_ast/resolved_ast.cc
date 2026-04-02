@@ -25,7 +25,6 @@
 #include "zetasql/public/constant.h"
 #include "zetasql/public/strings.h"
 #include "zetasql/public/type.h"
-#include "zetasql/public/types/type_modifiers.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/resolved_ast/resolved_ast_visitor.h"
 #include "zetasql/common/thread_stack.h"
@@ -4428,11 +4427,6 @@ void ResolvedExtendedCast::MarkFieldsAccessed() const {
 const ResolvedNodeKind ResolvedCast::TYPE;
 
 ResolvedCast::~ResolvedCast() {
-}
-
-void ResolvedCast::set_type_parameters(const TypeParameters& v) {
-  type_modifiers_ =
-      TypeModifiers::MakeTypeModifiers(v, type_modifiers_.collation());
 }
 
 absl::Status ResolvedCast::SaveTo(

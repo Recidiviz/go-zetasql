@@ -3,7 +3,17 @@
 
 #include "zetasql/public/functions/cast_date_time.h"
 // include sources
+#define powers_of_ten zetasql_public_functions_cast_date_time_powers_of_ten
+#define kNaiveNumSecondsPerMinute zetasql_public_functions_cast_date_time_kNaiveNumSecondsPerMinute
+#define kNaiveNumSecondsPerHour zetasql_public_functions_cast_date_time_kNaiveNumSecondsPerHour
+#define kNaiveNumSecondsPerDay zetasql_public_functions_cast_date_time_kNaiveNumSecondsPerDay
+#define kNaiveNumMicrosPerDay zetasql_public_functions_cast_date_time_kNaiveNumMicrosPerDay
 #include "zetasql/public/functions/cast_date_time.cc"
+#undef kNaiveNumMicrosPerDay
+#undef kNaiveNumSecondsPerDay
+#undef kNaiveNumSecondsPerHour
+#undef kNaiveNumSecondsPerMinute
+#undef powers_of_ten
 // include dependencies
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"

@@ -149,9 +149,9 @@ class TimeOfDay final :
   void CopyFrom(const TimeOfDay& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
   void MergeFrom(const TimeOfDay& from);
- private:
+  private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
- public:
+  public:
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -172,13 +172,13 @@ class TimeOfDay final :
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
     return "google.type.TimeOfDay";
   }
- protected:
+  protected:
   explicit TimeOfDay(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
- public:
+  public:
 
   static const ClassData _class_data_;
   const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
@@ -199,37 +199,37 @@ class TimeOfDay final :
   void clear_hours();
   int32_t hours() const;
   void set_hours(int32_t value);
- private:
+  private:
   int32_t _internal_hours() const;
   void _internal_set_hours(int32_t value);
- public:
+  public:
 
   // int32 minutes = 2;
   void clear_minutes();
   int32_t minutes() const;
   void set_minutes(int32_t value);
- private:
+  private:
   int32_t _internal_minutes() const;
   void _internal_set_minutes(int32_t value);
- public:
+  public:
 
   // int32 seconds = 3;
   void clear_seconds();
   int32_t seconds() const;
   void set_seconds(int32_t value);
- private:
+  private:
   int32_t _internal_seconds() const;
   void _internal_set_seconds(int32_t value);
- public:
+  public:
 
   // int32 nanos = 4;
   void clear_nanos();
   int32_t nanos() const;
   void set_nanos(int32_t value);
- private:
+  private:
   int32_t _internal_nanos() const;
   void _internal_set_nanos(int32_t value);
- public:
+  public:
 
   // @@protoc_insertion_point(class_scope:google.type.TimeOfDay)
  private:

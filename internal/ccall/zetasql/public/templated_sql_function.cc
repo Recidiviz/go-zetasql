@@ -124,7 +124,7 @@ std::string TemplatedSQLFunctionCall::DebugString() const {
 }
 
 namespace {
-static bool templated_sql_function_module_init = []() {
+static bool module_initialization_complete = []() {
   Function::RegisterDeserializer(
       TemplatedSQLFunction::kTemplatedSQLFunctionGroup,
       TemplatedSQLFunction::Deserialize);

@@ -94,6 +94,7 @@ cc_library(
         "//zetasql/public/functions:differential_privacy_cc_proto",
         "//zetasql/public/functions:normalize_mode_cc_proto",
         "//zetasql/public/functions:rounding_mode_cc_proto",
+        "//zetasql/public/proto:wire_format_annotation_cc_proto",
         "//zetasql/public/proto:type_annotation_cc_proto",
         "@com_google_absl//absl/algorithm:container",
         "@com_google_absl//absl/base:core_headers",

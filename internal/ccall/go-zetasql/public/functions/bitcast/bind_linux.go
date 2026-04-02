@@ -9,6 +9,7 @@ package bitcast
 #cgo CXXFLAGS: -I../../../../re2
 #cgo CXXFLAGS: -I../../../../json
 #cgo CXXFLAGS: -I../../../../googleapis
+#cgo CXXFLAGS: -I../../../../boringssl
 #cgo CXXFLAGS: -I../../../../flex/src
 #cgo CXXFLAGS: -Wno-final-dtor-non-final-class
 #cgo CXXFLAGS: -Wno-implicit-const-int-float-conversion

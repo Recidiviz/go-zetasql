@@ -17,7 +17,6 @@
 #ifndef ZETASQL_PUBLIC_NUMERIC_PARSER_H_
 #define ZETASQL_PUBLIC_NUMERIC_PARSER_H_
 
-#include <array>
 #include <cstdint>
 
 #include "zetasql/common/multiprecision_int.h"
@@ -38,29 +37,6 @@ struct FixedPointRepresentation {
   bool is_negative;
   FixedUint<64, word_count> output;
 };
-
-// PowersAsc<Word, first_value, base, size>() returns a std::array<Word, size>
-// {first_value, first_value * base, ..., first_value * pow(base, size - 1)}.
-template <typename Word, Word first_value, Word base, int size, typename... T>
-constexpr std::array<Word, size> PowersAsc(T... v) {
-  if constexpr (sizeof...(T) < size) {
-    return PowersAsc<Word, first_value, base, size>(first_value, v * base...);
-  } else {
-    return std::array<Word, size>{v...};
-  }
-}
-
-// PowersDesc<Word, last_value, base, size>() returns a std::array<Word, size>
-// {last_value * pow(base, size - 1), last_value * pow(base, size - 2), ...,
-//  last_value}.
-template <typename Word, Word last_value, Word base, int size, typename... T>
-constexpr std::array<Word, size> PowersDesc(T... v) {
-  if constexpr (sizeof...(T) < size) {
-    return PowersDesc<Word, last_value, base, size>(v * base..., last_value);
-  } else {
-    return std::array<Word, size>{v...};
-  }
-}
 
 // The following methods parse an input string representing a number value. The
 // input string is expected to be in either an ASCII decimal format or an ASCII

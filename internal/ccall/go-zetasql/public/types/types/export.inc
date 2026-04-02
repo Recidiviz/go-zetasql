@@ -76,6 +76,7 @@
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
 #include "go-zetasql/public/functions/normalize_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/rounding_mode_cc_proto/export.inc"
+#include "go-zetasql/public/proto/wire_format_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"

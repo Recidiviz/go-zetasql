@@ -622,27 +622,27 @@ static absl::Status ConvertTimestampInterval(int64_t interval,
     return absl::OkStatus();
   }
 
-#define ZETASQL_INTERVAL_SCALE_KEY(scale1, scale2) ((scale1) * 10 + (scale2))
+#define FCT(scale1, scale2) (scale1 * 10 + scale2)
 
-  switch (ZETASQL_INTERVAL_SCALE_KEY(interval_scale, output_scale)) {
-    case ZETASQL_INTERVAL_SCALE_KEY(kSeconds, kMilliseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kSeconds, kMicroseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kSeconds, kNanoseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kMilliseconds, kMicroseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kMilliseconds, kNanoseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kMicroseconds, kNanoseconds):
+  switch (FCT(interval_scale, output_scale)) {
+    case FCT(kSeconds, kMilliseconds):
+    case FCT(kSeconds, kMicroseconds):
+    case FCT(kSeconds, kNanoseconds):
+    case FCT(kMilliseconds, kMicroseconds):
+    case FCT(kMilliseconds, kNanoseconds):
+    case FCT(kMicroseconds, kNanoseconds):
       if (Multiply<int64_t>(interval,
                             powers_of_ten[output_scale - interval_scale],
                             output, kNoError)) {
         return absl::OkStatus();
       }
       break;
-    case ZETASQL_INTERVAL_SCALE_KEY(kNanoseconds, kMicroseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kNanoseconds, kMilliseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kNanoseconds, kSeconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kMicroseconds, kMilliseconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kMicroseconds, kSeconds):
-    case ZETASQL_INTERVAL_SCALE_KEY(kMilliseconds, kSeconds):
+    case FCT(kNanoseconds, kMicroseconds):
+    case FCT(kNanoseconds, kMilliseconds):
+    case FCT(kNanoseconds, kSeconds):
+    case FCT(kMicroseconds, kMilliseconds):
+    case FCT(kMicroseconds, kSeconds):
+    case FCT(kMilliseconds, kSeconds):
       *output = interval / powers_of_ten[interval_scale - output_scale];
       return absl::OkStatus();
     default:
@@ -652,8 +652,8 @@ static absl::Status ConvertTimestampInterval(int64_t interval,
                          << " at " << TimestampScale_Name(interval_scale)
                          << " scale to " << TimestampScale_Name(output_scale)
                          << " scale causes overflow";
-#undef ZETASQL_INTERVAL_SCALE_KEY
 }
+#undef FCT
 
 // Adjust Year/Month/Day for overflow/underflow value.
 // Roll year value forward if month is overflow, or backward if month is

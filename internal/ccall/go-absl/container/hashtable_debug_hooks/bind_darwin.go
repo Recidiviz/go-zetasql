@@ -9,6 +9,7 @@ package hashtable_debug_hooks
 #cgo CXXFLAGS: -I../../../re2
 #cgo CXXFLAGS: -I../../../json
 #cgo CXXFLAGS: -I../../../googleapis
+#cgo CXXFLAGS: -I../../../boringssl
 #cgo CXXFLAGS: -I../../../flex/src
 #cgo CXXFLAGS: -Wno-char-subscripts
 #cgo CXXFLAGS: -Wno-sign-compare

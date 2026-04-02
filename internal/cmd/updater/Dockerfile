@@ -21,6 +21,7 @@ RUN bazelisk build \
   --cxxopt=-std=c++17 \
   --host_cxxopt=-std=c++17 \
   '//zetasql/public:sql_formatter' \
+  '//zetasql/public:anonymization_utils' \
   '//zetasql/resolved_ast:serialization_cc_proto' \
   '//zetasql/resolved_ast:resolved_ast_enums_cc_proto' \
   '//zetasql/resolved_ast:resolved_node_kind_cc_proto' \
@@ -58,6 +59,7 @@ RUN bazelisk build \
   '//zetasql/public:collation_cc_proto' \
   '//zetasql/public:formatter_options_cc_proto' \
   '//zetasql/public:type_modifiers_cc_proto' \
+  '//zetasql/reference_impl:evaluation' \
   '//zetasql/scripting:procedure_extension_cc_proto'
 
 COPY export.sh export.sh

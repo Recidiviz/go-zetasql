@@ -344,7 +344,7 @@ const uint32_t TableStruct_zetasql_2fproto_2foptions_2eproto::offsets[] PROTOBUF
   1,
   14,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fproto_2foptions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 10, -1, sizeof(::zetasql::ZetaSQLBuiltinFunctionOptionsProto)},
   { 14, 22, -1, sizeof(::zetasql::EnabledRewriteProto)},
   { 24, 38, -1, sizeof(::zetasql::LanguageOptionsProto)},
@@ -356,7 +356,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_
   { 110, 138, -1, sizeof(::zetasql::AnalyzerOptionsProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fproto_2foptions_2eproto[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ZetaSQLBuiltinFunctionOptionsProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_EnabledRewriteProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_LanguageOptionsProto_default_instance_),
@@ -459,7 +459,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fp
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fproto_2foptions_2eproto = {
   false, false, 3152, descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto, "zetasql/proto/options.proto", 
   &descriptor_table_zetasql_2fproto_2foptions_2eproto_once, descriptor_table_zetasql_2fproto_2foptions_2eproto_deps, 4, 9,
-  schemas_zetasql_2fproto_2foptions_2eproto, file_default_instances_zetasql_2fproto_2foptions_2eproto, TableStruct_zetasql_2fproto_2foptions_2eproto::offsets,
+  schemas, file_default_instances, TableStruct_zetasql_2fproto_2foptions_2eproto::offsets,
   file_level_metadata_zetasql_2fproto_2foptions_2eproto, file_level_enum_descriptors_zetasql_2fproto_2foptions_2eproto, file_level_service_descriptors_zetasql_2fproto_2foptions_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fproto_2foptions_2eproto_getter() {

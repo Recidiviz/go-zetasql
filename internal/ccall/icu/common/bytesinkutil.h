@@ -9,6 +9,9 @@
 #ifndef ICU_COMMON_BYTESINKUTIL_H_
 #define ICU_COMMON_BYTESINKUTIL_H_
 
+#ifndef GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+#define GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+
 #include "unicode/utypes.h"
 #include "unicode/bytestream.h"
 #include "unicode/edits.h"
@@ -87,4 +90,5 @@ private:
 
 U_NAMESPACE_END
 
+#endif  // GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
 #endif  // ICU_COMMON_BYTESINKUTIL_H_

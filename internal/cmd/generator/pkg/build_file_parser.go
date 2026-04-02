@@ -382,6 +382,34 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 		c := c
 		protocMap[c.Name] = c
 	}
+	protoSourceMap := map[string]string{}
+	for _, stmt := range tree.Stmt {
+		callExpr, ok := stmt.(*build.CallExpr)
+		if !ok {
+			continue
+		}
+		if p.getText(callExpr.X) != "proto_library" {
+			continue
+		}
+		var name string
+		var srcs []string
+		for _, item := range callExpr.List {
+			assignExpr, ok := item.(*build.AssignExpr)
+			if !ok {
+				continue
+			}
+			switch p.getText(assignExpr.LHS) {
+			case "name":
+				name = p.getText(assignExpr.RHS)
+			case "srcs":
+				srcs = p.exprTexts(assignExpr.RHS)
+			}
+		}
+		if name == "" || len(srcs) == 0 {
+			continue
+		}
+		protoSourceMap[name] = strings.TrimSuffix(srcs[0], ".proto")
+	}
 	ccprotos := make([]*Lib, 0, len(tree.Stmt))
 	for _, stmt := range tree.Stmt {
 		callExpr, ok := stmt.(*build.CallExpr)
@@ -407,6 +435,21 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 			}
 		}
 		libName := ccproto.Name[:len(ccproto.Name)-len("_cc_proto")]
+		for _, item := range callExpr.List {
+			assignExpr, ok := item.(*build.AssignExpr)
+			if !ok || p.getText(assignExpr.LHS) != "deps" {
+				continue
+			}
+			for _, dep := range p.exprTexts(assignExpr.RHS) {
+				if !strings.HasPrefix(dep, ":") {
+					continue
+				}
+				if protoLibName := dep[1:]; protoSourceMap[protoLibName] != "" {
+					libName = protoSourceMap[protoLibName]
+					break
+				}
+			}
+		}
 		if p.isExcludedLib(libName) {
 			continue
 		}

@@ -20,8 +20,14 @@
 #include "zetasql/analyzer/resolver_alter_stmt.cc"
 #include "zetasql/analyzer/resolver_common_inl.h"
 #include "zetasql/analyzer/resolver_dml.cc"
+#define kOrderById zetasql_analyzer_resolver_expr_kOrderById
+#define kIsNullFnName zetasql_analyzer_resolver_kIsNullFnName
 #include "zetasql/analyzer/resolver_expr.cc"
+#undef kIsNullFnName
+#undef kOrderById
+#define kOrderById zetasql_analyzer_resolver_query_kOrderById
 #include "zetasql/analyzer/resolver_query.cc"
+#undef kOrderById
 #include "zetasql/analyzer/resolver_stmt.cc"
 // include dependencies
 #include "go-zetasql/analyzer/container_hash_equals/export.inc"
