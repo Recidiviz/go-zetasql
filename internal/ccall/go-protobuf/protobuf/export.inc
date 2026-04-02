@@ -2,6 +2,16 @@
 #define PROTOBUF_EXPORT_H
 
 #define InsertIfNotPresent protobuf_InsertIfNotPresent
+#define GO_EXPORT(x) export_protobuf_##x
+
+// Single port_def / port_undef for this translation unit (see port_def.inc).
+#include "google/protobuf/port_def.inc"
+#define GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#define GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+
+// Headers like bytestream.h use GOOGLE_DISALLOW_EVIL_CONSTRUCTORS before
+// logging.cc would pull in stubs/macros.h; define it once for the TU.
+#include "google/protobuf/stubs/macros.h"
 
 // protobuf lite sources
 #include "google/protobuf/stubs/bytestream.cc"
@@ -10,8 +20,6 @@
 #include "google/protobuf/stubs/hash.h"
 #include "google/protobuf/stubs/int128.cc"
 #include "google/protobuf/stubs/int128.h"
-#include "google/protobuf/stubs/io_win32.cc"
-#include "google/protobuf/stubs/io_win32.h"
 #include "google/protobuf/stubs/map_util.h"
 #include "google/protobuf/stubs/mathutil.h"
 #include "google/protobuf/stubs/status.cc"
@@ -73,8 +81,6 @@
 #undef file_default_instances
 #undef schemas
 
-#include "google/protobuf/stubs/mathlimits.cc"
-#include "google/protobuf/stubs/mathlimits.h"
 #include "google/protobuf/any.cc"
 #include "google/protobuf/any_lite.cc"
 #include "google/protobuf/descriptor.cc"
@@ -156,8 +162,11 @@
 #include "google/protobuf/compiler/parser.cc"
 #include "google/protobuf/util/message_differencer.cc"
 #include "google/protobuf/util/field_comparator.cc"
+
+#undef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 #include "google/protobuf/port_undef.inc"
 
 #undef InsertIfNotPresent
+#undef GO_EXPORT
 
 #endif
