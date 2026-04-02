@@ -48,9 +48,6 @@
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/wire_format_lite.h>
 
-// Must be included last
-#include <google/protobuf/port_def.inc>
-
 PROTOBUF_PRAGMA_INIT_SEG
 
 

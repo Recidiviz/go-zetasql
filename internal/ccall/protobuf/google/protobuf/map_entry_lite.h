@@ -546,6 +546,79 @@ struct DeconstructMapEntry<MapEntryLite<T, K, V, key, value> > {
   static const WireFormatLite::FieldType kValueFieldType = value;
 };
 
+// Table-driven map serialization: view of a map iterator pair as a synthetic
+// MapEntry message layout (see MapFieldSerializer in generated_message_table_driven.h).
+template <typename MapEntryType>
+struct MapEntryHelper;
+
+template <WireFormatLite::FieldType FieldType>
+struct MapEntryFromHelper {
+  template <typename T>
+  static const T& From(const T& x) {
+    return x;
+  }
+};
+
+template <>
+struct MapEntryFromHelper<WireFormatLite::TYPE_STRING> {
+  static ArenaStringPtr From(const std::string& x) {
+    ArenaStringPtr res;
+    res.InitExternal(&x);
+    return res;
+  }
+};
+
+template <>
+struct MapEntryFromHelper<WireFormatLite::TYPE_BYTES> {
+  static ArenaStringPtr From(const std::string& x) {
+    ArenaStringPtr res;
+    res.InitExternal(&x);
+    return res;
+  }
+};
+
+template <>
+struct MapEntryFromHelper<WireFormatLite::TYPE_MESSAGE> {
+  template <typename T>
+  static T* From(T* x) {
+    return x;
+  }
+  template <typename T>
+  static T* From(const T& x) {
+    return const_cast<T*>(&x);
+  }
+};
+
+template <>
+struct MapEntryFromHelper<WireFormatLite::TYPE_ENUM> {
+  template <typename T>
+  static int From(const T& x) {
+    return static_cast<int>(x);
+  }
+};
+
+template <typename T, typename Key, typename Value,
+          WireFormatLite::FieldType kKeyFieldType,
+          WireFormatLite::FieldType kValueFieldType>
+struct MapEntryHelper<MapEntryLite<T, Key, Value, kKeyFieldType, kValueFieldType>> {
+  typedef MapTypeHandler<kKeyFieldType, Key> KeyTypeHandler;
+  typedef MapTypeHandler<kValueFieldType, Value> ValueTypeHandler;
+  typedef typename KeyTypeHandler::TypeOnMemory KeyOnMemory;
+  typedef typename ValueTypeHandler::TypeOnMemory ValueOnMemory;
+
+  explicit MapEntryHelper(const MapPair<Key, Value>& map_pair)
+      : _has_bits_(3),
+        _cached_size_(MapEntryFuncs<Key, Value, kKeyFieldType, kValueFieldType>::GetCachedSize(
+            map_pair.first, map_pair.second)),
+        key_(MapEntryFromHelper<kKeyFieldType>::From(map_pair.first)),
+        value_(MapEntryFromHelper<kValueFieldType>::From(map_pair.second)) {}
+
+  uint32 _has_bits_;     // NOLINT
+  uint32 _cached_size_;  // NOLINT
+  KeyOnMemory key_;      // NOLINT
+  ValueOnMemory value_;  // NOLINT
+};
+
 // Helpers for deterministic serialization =============================
 
 // This struct can be used with any generic sorting algorithm.  If the Key

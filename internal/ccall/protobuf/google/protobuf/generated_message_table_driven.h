@@ -309,7 +309,7 @@ struct CompareMapKey {
 template <typename MapFieldType, const SerializationTable* table>
 void MapFieldSerializer(const uint8_t* base, uint32_t offset, uint32_t tag,
                         uint32_t has_offset, io::CodedOutputStream* output) {
-  typedef MapEntryHelper<typename MapFieldType::EntryTypeTrait> Entry;
+  typedef MapEntryHelper<typename MapFieldType::EntryType> Entry;
   typedef typename MapFieldType::MapType::const_iterator Iter;
 
   const MapFieldType& map_field =
