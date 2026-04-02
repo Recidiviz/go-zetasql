@@ -50,6 +50,29 @@ go get github.com/goccy/go-zetasql
 
 The first time you run it, it takes time to build all the ZetaSQL code used by go-zetasql.
 
+## Development
+
+**Sequential tests (multi-repo):** If you work in `go-zetasql`, `go-zetasqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.
+
+**Reuse local compile cache:** Point the same Go caches at all three checkouts so `go-zetasql` objects are not rebuilt for every downstream test:
+
+```console
+export GOCACHE=$HOME/.cache/go-zetasql-stack
+export GOMODCACHE=$HOME/.cache/go-mod
+mkdir -p "$GOCACHE" "$GOMODCACHE"
+```
+
+Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
+
+**Docker-based tests:** `make test/linux` in this repo builds a local **`go-zetasql:dev`** image and runs `go test` with a **mounted tree** and **named Docker volumes** (`go-zetasql-gocache`, `go-zetasql-gomodcache`) so repeated runs reuse the CGO build cache. Use `make docker/build-dev` to build only the image.
+
+**Downstream Docker images:** `bigquery-emulator` accepts `GO_ZETASQL_BASE` (default: the Recidiviz base image). After building `go-zetasql:dev`, you can point the emulator at it, for example:
+
+```console
+# in bigquery-emulator/
+make docker/build GO_ZETASQL_BASE=go-zetasql:dev
+```
+
 # Editor Tips
 
 Opening this repository in VS Code or Cursor can be expensive because the Go extension loads a large CGO-backed package graph.
