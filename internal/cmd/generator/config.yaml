@@ -289,9 +289,6 @@ conflict_symbols:
     symbol: module_initialization_complete
   - file:   zetasql/public/templated_sql_tvf.cc
     symbol: module_initialization_complete
-add_sources:
-  - file:   zetasql/parser/flex_tokenizer.flex.cc
-    source: flex_tokenizer_base.inc
 
 exclude_zetasql_dirs:
   - testing
