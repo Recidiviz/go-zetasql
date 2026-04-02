@@ -185,6 +185,18 @@ go run .
 
 After any **`com_google_protobuf` full copy**, re-apply at minimum: **`port_def.inc` / `port_undef.inc` amalgamation guards**, **`export.inc`**, and the rows in the table above if upstream still omits them.
 
+**Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later zetasql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** Also **`#undef GO_EXPORT`** at the end stripped the host `bind.cc` rename macro and broke ICU; wrap protobuf’s `GO_EXPORT` in **`#pragma push_macro("GO_EXPORT")` / `pop_macro`.**
+
+### Regenerating `parse_tree` (protoc vs vendored runtime)
+
+Vendored C++ protobuf is **4.23.3** (`GOOGLE_PROTOBUF_VERSION` **4023003**). Use **protoc 23.3** (e.g. [releases](https://github.com/protocolbuffers/protobuf/releases/tag/v23.3)) — not `protoc` 25+ / 30+, which emit incompatible `*.pb.{h,cc}` for this tree. From **`internal/ccall`**:
+
+```bash
+protoc -I. -Iprotobuf --cpp_out=. zetasql/parser/parse_tree.proto
+```
+
+Use **`--cpp_out=.`** so outputs land in `zetasql/parser/`. Passing **`--cpp_out=zetasql/parser`** with `zetasql/parser/parse_tree.proto` nests files under `zetasql/parser/zetasql/parser/`.
+
 ### Verification (three repositories)
 
 1. **go-zetasql** — `CGO_ENABLED=1 go test ./...` once parser/proto/flex amalgamation issues are resolved (see below).
@@ -196,8 +208,8 @@ After any **`com_google_protobuf` full copy**, re-apply at minimum: **`port_def.
 These are **not** fixed by protobuf amalgamation alone; treat them as separate upgrade checklist items:
 
 - **`utf8_validity.h`**: newer `parse_context.cc` / `wire_format_lite.cc` include it; vendor **`utf8_range`** (or equivalent) into [`internal/ccall/`](../internal/ccall/) and expose include paths in the relevant `bind_*.go` packages, or extend the updater **`copyExternalLibMap`** when the Bazel tree is available.
-- **Generated `.pb.cc` / macros**: errors such as unknown **`PROTOBUF_PRAGMA_INIT_SEG`** usually mean `.pb.*` were generated with a **different protoc** than the vendored runtime — regenerate or re-copy from the ZetaSQL build that matches the pinned tag.
-- **Parser / flex amalgamation**: including **`flex_tokenizer.flex.cc`** from mixed **`darwin-fastbuild`** vs **`k8-fastbuild`** paths can break generated tables (`yy_ec`, `yy_base`, …); use a **single** Bazel output tree in `export.inc` / vendored sources.
+- **Generated `.pb.cc` / macros**: unknown **`PROTOBUF_PRAGMA_INIT_SEG`** / **`PROTOBUF_NAMESPACE_ID`** in a zetasql `*.pb.cc` after **`go-protobuf/export.inc`** usually means **amalgamation left `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` on** after the final `port_undef` — see **`export.inc`** notes above. If macros are present but still wrong, `.pb.*` may be from the **wrong protoc** vs **4023003** headers — regenerate with **protoc 23.3** or copy from the matching Bazel output.
+- **Parser / flex amalgamation**: do not splice **`flex_tokenizer_base.inc`** on top of a full **`flex_tokenizer.flex.cc`** (generator **`add_sources`** for that pair was removed). Older failures from mixed **`darwin-fastbuild`** vs **`k8-fastbuild`** layouts used the same symptom (`yy_ec`, `yy_base`, …); keep a **single** generated lexer tree.
 - **`parse_tree` skew**: serializer C++ referencing **`ASTWithClauseEntry`** / **`anonymization_options`** when **`parse_tree.pb.h`** does not match — rerun updater + generator against the same ZetaSQL revision until C++ and `.pb.h` agree.
 
 ### Optional cleanup
