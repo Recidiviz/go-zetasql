@@ -6,6 +6,7 @@
 // include dependencies
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/base/logging/export.inc"
+#include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-absl/status/statusor/export.inc"
 

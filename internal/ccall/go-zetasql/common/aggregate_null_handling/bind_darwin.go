@@ -4,6 +4,7 @@ package aggregate_null_handling
 #cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
+#cgo CXXFLAGS: -I../../../utf8_range
 #cgo CXXFLAGS: -I../../../gtest
 #cgo CXXFLAGS: -I../../../icu
 #cgo CXXFLAGS: -I../../../re2

@@ -5,13 +5,13 @@
 // include sources
 #include "zetasql/analyzer/rewriters/sql_view_inliner.cc"
 // include dependencies
-#include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/rewriter_interface/export.inc"
 #include "go-zetasql/public/sql_view/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"

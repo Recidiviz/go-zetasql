@@ -16,7 +16,9 @@
 #include "zetasql/analyzer/query_resolver_helper.cc"
 #include "zetasql/analyzer/recursive_queries.cc"
 #include "zetasql/analyzer/recursive_queries.h"
+#define CheckAndPropagateAnnotationsImpl zetasql_analyzer_resolver_resolver_cc_CheckAndPropagateAnnotationsImpl
 #include "zetasql/analyzer/resolver.cc"
+#undef CheckAndPropagateAnnotationsImpl
 #include "zetasql/analyzer/resolver_alter_stmt.cc"
 #include "zetasql/analyzer/resolver_common_inl.h"
 #include "zetasql/analyzer/resolver_dml.cc"
@@ -30,6 +32,7 @@
 #undef kOrderById
 #include "zetasql/analyzer/resolver_stmt.cc"
 // include dependencies
+#include "go-zetasql/analyzer/annotation_propagator/export.inc"
 #include "go-zetasql/analyzer/container_hash_equals/export.inc"
 #include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/filter_fields_path_validator/export.inc"
@@ -97,6 +100,7 @@
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/comparator/export.inc"
 #include "go-zetasql/resolved_ast/make_node_vector/export.inc"
+#include "go-zetasql/resolved_ast/node_sources/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
@@ -104,10 +108,12 @@
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
+#include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/node_hash_map/export.inc"
 #include "go-absl/flags/flag/export.inc"
+#include "go-absl/functional/any_invocable/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 #include "go-absl/status/status/export.inc"

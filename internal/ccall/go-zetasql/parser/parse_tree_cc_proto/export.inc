@@ -3,7 +3,11 @@
 
 #include "zetasql/parser/parse_tree.pb.h"
 // include sources
+#define schemas zetasql_parser_parse_tree_cc_proto_schemas
+#define file_default_instances zetasql_parser_parse_tree_cc_proto_file_default_instances
 #include "zetasql/parser/parse_tree.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 #include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location_range_cc_proto/export.inc"

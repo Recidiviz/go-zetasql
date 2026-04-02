@@ -3,10 +3,14 @@
 
 #include "zetasql/common/builtin_function_internal.h"
 // include sources
+#define SetDefinitionForInlining zetasql_common_builtin_function_internal_array_SetDefinitionForInlining
 #include "zetasql/common/builtin_function_array.cc"
+#undef SetDefinitionForInlining
 #include "zetasql/common/builtin_function_internal_1.cc"
 #include "zetasql/common/builtin_function_internal_2.cc"
+#define SetDefinitionForInlining zetasql_common_builtin_function_internal_internal3_SetDefinitionForInlining
 #include "zetasql/common/builtin_function_internal_3.cc"
+#undef SetDefinitionForInlining
 #include "zetasql/common/builtin_function_range.cc"
 // include dependencies
 #include "go-zetasql/common/errors/export.inc"

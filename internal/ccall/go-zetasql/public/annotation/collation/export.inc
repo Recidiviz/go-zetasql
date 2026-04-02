@@ -7,6 +7,7 @@
 // include dependencies
 #include "go-zetasql/public/annotation/default_annotation/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
+#include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"

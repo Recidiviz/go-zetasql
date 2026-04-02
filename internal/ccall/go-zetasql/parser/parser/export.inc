@@ -48,6 +48,7 @@
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

@@ -39,6 +39,7 @@
 #include "go-zetasql/resolved_ast/serialization_cc_proto/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

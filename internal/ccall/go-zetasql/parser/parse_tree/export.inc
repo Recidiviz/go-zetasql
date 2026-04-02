@@ -13,6 +13,7 @@
 #include "zetasql/parser/ast_node_internal.h"
 #include "zetasql/parser/parse_tree.cc"
 #include "zetasql/parser/parse_tree_errors.cc"
+#include "zetasql/parser/parse_tree_generated.cc"
 // include dependencies
 #include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
 #include "go-zetasql/base/base/export.inc"

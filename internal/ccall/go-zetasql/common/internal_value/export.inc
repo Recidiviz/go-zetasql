@@ -3,6 +3,7 @@
 
 #include "zetasql/common/internal_value.h"
 // include sources
+#include "zetasql/common/internal_value.cc"
 // include dependencies
 #include "go-zetasql/common/float_margin/export.inc"
 #include "go-zetasql/public/type/export.inc"

@@ -3,7 +3,11 @@
 
 #include "zetasql/reference_impl/evaluator_table_iterator.pb.h"
 // include sources
+#define schemas zetasql_reference_impl_evaluator_table_iterator_cc_proto_schemas
+#define file_default_instances zetasql_reference_impl_evaluator_table_iterator_cc_proto_file_default_instances
 #include "zetasql/reference_impl/evaluator_table_iterator.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 #include "go-protobuf/protobuf/export.inc"
 

@@ -5,6 +5,7 @@
 // include sources
 // include dependencies
 #include "go-zetasql/common/thread_stack/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/time/time/export.inc"

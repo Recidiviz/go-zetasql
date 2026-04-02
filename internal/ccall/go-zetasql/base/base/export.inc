@@ -9,5 +9,7 @@
 #include "go-zetasql/base/logging/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
+#include "go-absl/log/absl_check/export.inc"
+#include "go-absl/log/absl_log/export.inc"
 
 #endif

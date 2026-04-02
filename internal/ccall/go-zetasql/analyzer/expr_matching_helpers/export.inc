@@ -5,7 +5,6 @@
 // include sources
 #include "zetasql/analyzer/expr_matching_helpers.cc"
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
@@ -13,6 +12,7 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/hash/hash/export.inc"
 #include "go-absl/status/statusor/export.inc"
 

@@ -14,6 +14,7 @@ package ast_enums_cc_proto
 #cgo CXXFLAGS: -Wno-deprecated-declarations
 #cgo CXXFLAGS: -Wno-inconsistent-missing-override
 #cgo CXXFLAGS: -Wno-unknown-attributes
+#cgo CXXFLAGS: -Wno-macro-redefined
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 */
 import "C"

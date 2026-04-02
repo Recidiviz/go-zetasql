@@ -30,6 +30,7 @@
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/validator/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/node_hash_map/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

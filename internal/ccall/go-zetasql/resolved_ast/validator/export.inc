@@ -5,6 +5,7 @@
 // include sources
 #include "zetasql/resolved_ast/validator.cc"
 // include dependencies
+#include "go-zetasql/resolved_ast/node_sources/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
@@ -21,6 +22,7 @@
 #include "go-zetasql/base/varsetter/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
+#include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/aggregation_threshold_utils/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/catalog/export.inc"

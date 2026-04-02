@@ -5,7 +5,6 @@
 // include sources
 #include "zetasql/analyzer/rewriters/typeof_function_rewriter.cc"
 // include dependencies
-#include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
@@ -16,6 +15,7 @@
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/rewriter_interface/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
