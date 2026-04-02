@@ -3,12 +3,15 @@ FROM golang:1.24-bookworm AS base
 
 ARG VERSION
 
-RUN apt-get update && apt-get install -y --no-install-recommends clang \
+RUN apt-get update && apt-get install -y --no-install-recommends clang ccache \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV CGO_ENABLED=1
 ENV CC=clang
 ENV CXX=clang++
+# ccache wraps clang/clang++ (same CC/CXX); persist CCACHE_DIR from the Makefile via volume.
+ENV PATH="/usr/lib/ccache:${PATH}"
+ENV CCACHE_COMPRESS=1
 
 WORKDIR /go-zetasql
 
