@@ -3,9 +3,9 @@ DOCKER_DEV_IMAGE ?= go-zetasql:dev
 # Persist GOCACHE/GOMODCACHE (and ccache for CGO) across `docker run`. Use the same paths in
 # go-zetasqlite / bigquery-emulator so one warm cache serves the stack.
 DOCKER_GO_CACHE_ROOT ?= $(HOME)/.cache/go-zetasql-docker
-# Host-only build/test: persist Go + ccache under this tree (default ~/.cache/go-zetasql).
-# Use this when you want the same CGO + clang + ccache setup as Docker without a container.
-LOCAL_GO_CACHE_ROOT ?= $(HOME)/.cache/go-zetasql
+# Host-only build/test: same default tree as Docker (DOCKER_GO_CACHE_ROOT) so local/build shares
+# gocache, gomodcache, and ccache with make test/linux and sibling repos (go-zetasqlite, bigquery-emulator).
+LOCAL_GO_CACHE_ROOT ?= $(DOCKER_GO_CACHE_ROOT)
 # Default matches .github/workflows/go.yml (root package only). Set TESTPKG=./... to test all packages.
 TESTPKG ?= ./
 # For local/build: package pattern passed to go build (default all modules under repo root).
