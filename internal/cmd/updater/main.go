@@ -11,6 +11,23 @@ import (
 	cp "github.com/otiai10/copy"
 )
 
+// When GO_ZETASQL_SKIP_PROTOBUF_COPY=1, do not copy com_google_protobuf from the
+// Bazel external tree into internal/ccall/protobuf. Use this when upgrading
+// ZetaSQL sources while keeping the existing protobuf vendoring + export.inc in sync.
+func copyExternalLibMapForRun() map[string]string {
+	if os.Getenv("GO_ZETASQL_SKIP_PROTOBUF_COPY") == "1" {
+		m := make(map[string]string, len(copyExternalLibMap))
+		for k, v := range copyExternalLibMap {
+			if k == "com_google_protobuf/src" {
+				continue
+			}
+			m[k] = v
+		}
+		return m
+	}
+	return copyExternalLibMap
+}
+
 func pkgDir() string {
 	_, file, _, _ := runtime.Caller(0)
 	return filepath.Dir(file)
@@ -175,7 +192,7 @@ func main() {
 			return true, nil
 		},
 	}
-	for src, dst := range copyExternalLibMap {
+	for src, dst := range copyExternalLibMapForRun() {
 		cp.Copy(
 			filepath.Join(externalDir(), src),
 			filepath.Join(ccallDir(), dst),
