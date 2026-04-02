@@ -8,12 +8,17 @@ TESTPKG ?= ./
 # For local/build: package pattern passed to go build (default all modules under repo root).
 BUILDPKG ?= ./...
 
-# Parallel go build/test workers (-p). CGO compiles are memory-heavy; default caps jobs from
-# ~80% of MemAvailable (Linux /proc/meminfo) divided by GO_BUILD_MEM_PER_JOB_KB (~2GiB per job).
-# Override: make local/build GO_BUILD_P=4  OR  GO_BUILD_MEM_PER_JOB_KB=1572864 (1.5GiB).
-GO_BUILD_MEM_PER_JOB_KB ?= 2097152
+# Parallel go build/test workers (-p). CGO + ZetaSQL C++ amalgamation is very memory-heavy; each
+# concurrent job can peak at multiple GiB. Default: estimate jobs from ~80% MemAvailable /
+# GO_BUILD_MEM_PER_JOB_KB, cap by CPU, then cap again by GO_BUILD_P_MAX (default 2) so IDEs do not OOM.
+# Override examples: make local/build GO_BUILD_P=6
+#   make local/build GO_BUILD_P_MAX=4
+#   make local/build GO_BUILD_MEM_PER_JOB_KB=3145728   (assume ~3GiB per job → fewer workers)
+GO_BUILD_MEM_PER_JOB_KB ?= 4194304
+GO_BUILD_P_MAX ?= 2
 GO_BUILD_P ?= $(shell \
 	CPU=$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4); \
+	MAX="$(GO_BUILD_P_MAX)"; \
 	if [ -r /proc/meminfo ]; then \
 		P=$$(awk -v per="$(GO_BUILD_MEM_PER_JOB_KB)" '/^MemAvailable:/ {print int($$2 * 0.8 / per)}' /proc/meminfo); \
 	else \
@@ -21,6 +26,7 @@ GO_BUILD_P ?= $(shell \
 	fi; \
 	if [ -z "$$P" ] || [ "$$P" -lt 1 ] 2>/dev/null; then P=1; fi; \
 	if [ "$$P" -gt "$$CPU" ] 2>/dev/null; then P=$$CPU; fi; \
+	if [ "$$P" -gt "$$MAX" ] 2>/dev/null; then P=$$MAX; fi; \
 	echo "$$P")
 
 DOCKER_DEV_ENV := \
