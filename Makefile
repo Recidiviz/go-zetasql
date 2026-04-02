@@ -8,6 +8,21 @@ TESTPKG ?= ./
 # For local/build: package pattern passed to go build (default all modules under repo root).
 BUILDPKG ?= ./...
 
+# Parallel go build/test workers (-p). CGO compiles are memory-heavy; default caps jobs from
+# ~80% of MemAvailable (Linux /proc/meminfo) divided by GO_BUILD_MEM_PER_JOB_KB (~2GiB per job).
+# Override: make local/build GO_BUILD_P=4  OR  GO_BUILD_MEM_PER_JOB_KB=1572864 (1.5GiB).
+GO_BUILD_MEM_PER_JOB_KB ?= 2097152
+GO_BUILD_P ?= $(shell \
+	CPU=$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4); \
+	if [ -r /proc/meminfo ]; then \
+		P=$$(awk -v per="$(GO_BUILD_MEM_PER_JOB_KB)" '/^MemAvailable:/ {print int($$2 * 0.8 / per)}' /proc/meminfo); \
+	else \
+		P=$$((CPU / 2)); \
+	fi; \
+	if [ -z "$$P" ] || [ "$$P" -lt 1 ] 2>/dev/null; then P=1; fi; \
+	if [ "$$P" -gt "$$CPU" ] 2>/dev/null; then P=$$CPU; fi; \
+	echo "$$P")
+
 DOCKER_DEV_ENV := \
 	-e CGO_ENABLED=1 \
 	-e CC=clang \
@@ -49,7 +64,7 @@ local/build: cache-dirs
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go build -tags zetasql $(BUILDPKG)
+	go build -p "$(GO_BUILD_P)" -tags zetasql $(BUILDPKG)
 
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
 local/test: cache-dirs
@@ -60,7 +75,7 @@ local/test: cache-dirs
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -tags zetasql -v $(TESTPKG) -count=1
+	go test -p "$(GO_BUILD_P)" -tags zetasql -v $(TESTPKG) -count=1
 
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
 # populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.
