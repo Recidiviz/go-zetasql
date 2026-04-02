@@ -49,6 +49,8 @@ class ResolvedASTComparator {
                                                    const ResolvedParameter* node2);
   static absl::StatusOr<bool> CompareResolvedExpressionColumn(const ResolvedExpressionColumn* node1,
                                                    const ResolvedExpressionColumn* node2);
+  static absl::StatusOr<bool> CompareResolvedCatalogColumnRef(const ResolvedCatalogColumnRef* node1,
+                                                   const ResolvedCatalogColumnRef* node2);
   static absl::StatusOr<bool> CompareResolvedColumnRef(const ResolvedColumnRef* node1,
                                                    const ResolvedColumnRef* node2);
   static absl::StatusOr<bool> CompareResolvedConstant(const ResolvedConstant* node1,
@@ -97,6 +99,8 @@ class ResolvedASTComparator {
                                                    const ResolvedSubqueryExpr* node2);
   static absl::StatusOr<bool> CompareResolvedWithExpr(const ResolvedWithExpr* node1,
                                                    const ResolvedWithExpr* node2);
+  static absl::StatusOr<bool> CompareResolvedExecuteAsRoleScan(const ResolvedExecuteAsRoleScan* node1,
+                                                   const ResolvedExecuteAsRoleScan* node2);
   static absl::StatusOr<bool> CompareResolvedModel(const ResolvedModel* node1,
                                                    const ResolvedModel* node2);
   static absl::StatusOr<bool> CompareResolvedConnection(const ResolvedConnection* node1,
@@ -121,6 +125,10 @@ class ResolvedASTComparator {
                                                    const ResolvedAggregateScan* node2);
   static absl::StatusOr<bool> CompareResolvedAnonymizedAggregateScan(const ResolvedAnonymizedAggregateScan* node1,
                                                    const ResolvedAnonymizedAggregateScan* node2);
+  static absl::StatusOr<bool> CompareResolvedDifferentialPrivacyAggregateScan(const ResolvedDifferentialPrivacyAggregateScan* node1,
+                                                   const ResolvedDifferentialPrivacyAggregateScan* node2);
+  static absl::StatusOr<bool> CompareResolvedAggregationThresholdAggregateScan(const ResolvedAggregationThresholdAggregateScan* node1,
+                                                   const ResolvedAggregationThresholdAggregateScan* node2);
   static absl::StatusOr<bool> CompareResolvedSetOperationItem(const ResolvedSetOperationItem* node1,
                                                    const ResolvedSetOperationItem* node2);
   static absl::StatusOr<bool> CompareResolvedSetOperationScan(const ResolvedSetOperationScan* node1,
@@ -181,6 +189,8 @@ class ResolvedASTComparator {
                                                    const ResolvedCreateTableStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateTableAsSelectStmt(const ResolvedCreateTableAsSelectStmt* node1,
                                                    const ResolvedCreateTableAsSelectStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedCreateModelAliasedQuery(const ResolvedCreateModelAliasedQuery* node1,
+                                                   const ResolvedCreateModelAliasedQuery* node2);
   static absl::StatusOr<bool> CompareResolvedCreateModelStmt(const ResolvedCreateModelStmt* node1,
                                                    const ResolvedCreateModelStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateViewStmt(const ResolvedCreateViewStmt* node1,
@@ -413,8 +423,12 @@ class ResolvedASTComparator {
                                                    const ResolvedTableAndColumnInfo* node2);
   static absl::StatusOr<bool> CompareResolvedAnalyzeStmt(const ResolvedAnalyzeStmt* node1,
                                                    const ResolvedAnalyzeStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAuxLoadDataPartitionFilter(const ResolvedAuxLoadDataPartitionFilter* node1,
+                                                   const ResolvedAuxLoadDataPartitionFilter* node2);
   static absl::StatusOr<bool> CompareResolvedAuxLoadDataStmt(const ResolvedAuxLoadDataStmt* node1,
                                                    const ResolvedAuxLoadDataStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedUndropStmt(const ResolvedUndropStmt* node1,
+                                                   const ResolvedUndropStmt* node2);
 };
 
 }  // namespace zetasql

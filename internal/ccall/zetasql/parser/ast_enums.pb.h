@@ -477,14 +477,14 @@ inline bool ASTSetOperationEnums_ColumnMatchMode_Parse(
     ASTSetOperationEnums_ColumnMatchMode_descriptor(), name, value);
 }
 enum ASTSetOperationEnums_ColumnPropagationMode : int {
-  ASTSetOperationEnums_ColumnPropagationMode_INNER = 1,
-  ASTSetOperationEnums_ColumnPropagationMode_LEFT = 2,
-  ASTSetOperationEnums_ColumnPropagationMode_FULL = 3,
-  ASTSetOperationEnums_ColumnPropagationMode_STRICT = 4
+  ASTSetOperationEnums_ColumnPropagationMode_STRICT = 1,
+  ASTSetOperationEnums_ColumnPropagationMode_INNER = 2,
+  ASTSetOperationEnums_ColumnPropagationMode_LEFT = 3,
+  ASTSetOperationEnums_ColumnPropagationMode_FULL = 4
 };
 bool ASTSetOperationEnums_ColumnPropagationMode_IsValid(int value);
-constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MIN = ASTSetOperationEnums_ColumnPropagationMode_INNER;
-constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MAX = ASTSetOperationEnums_ColumnPropagationMode_STRICT;
+constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MIN = ASTSetOperationEnums_ColumnPropagationMode_STRICT;
+constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MAX = ASTSetOperationEnums_ColumnPropagationMode_FULL;
 constexpr int ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_ARRAYSIZE = ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTSetOperationEnums_ColumnPropagationMode_descriptor();
@@ -1149,6 +1149,7 @@ enum SchemaObjectKind : int {
   __SchemaObjectKind__switch_must_have_a_default__ = -1,
   kInvalidSchemaObjectKind = 1,
   kAggregateFunction = 2,
+  kApproxView = 17,
   kConstant = 3,
   kDatabase = 4,
   kExternalTable = 5,
@@ -1165,7 +1166,7 @@ enum SchemaObjectKind : int {
 };
 bool SchemaObjectKind_IsValid(int value);
 constexpr SchemaObjectKind SchemaObjectKind_MIN = __SchemaObjectKind__switch_must_have_a_default__;
-constexpr SchemaObjectKind SchemaObjectKind_MAX = kSnapshotTable;
+constexpr SchemaObjectKind SchemaObjectKind_MAX = kApproxView;
 constexpr int SchemaObjectKind_ARRAYSIZE = SchemaObjectKind_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SchemaObjectKind_descriptor();
@@ -2569,14 +2570,14 @@ class ASTSetOperationEnums final :
   }
 
   typedef ASTSetOperationEnums_ColumnPropagationMode ColumnPropagationMode;
+  static constexpr ColumnPropagationMode STRICT =
+    ASTSetOperationEnums_ColumnPropagationMode_STRICT;
   static constexpr ColumnPropagationMode INNER =
     ASTSetOperationEnums_ColumnPropagationMode_INNER;
   static constexpr ColumnPropagationMode LEFT =
     ASTSetOperationEnums_ColumnPropagationMode_LEFT;
   static constexpr ColumnPropagationMode FULL =
     ASTSetOperationEnums_ColumnPropagationMode_FULL;
-  static constexpr ColumnPropagationMode STRICT =
-    ASTSetOperationEnums_ColumnPropagationMode_STRICT;
   static inline bool ColumnPropagationMode_IsValid(int value) {
     return ASTSetOperationEnums_ColumnPropagationMode_IsValid(value);
   }

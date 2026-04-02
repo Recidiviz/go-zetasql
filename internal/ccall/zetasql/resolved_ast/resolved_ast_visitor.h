@@ -187,6 +187,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedDifferentialPrivacyAggregateScan(const ResolvedDifferentialPrivacyAggregateScan* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedAggregationThresholdAggregateScan(const ResolvedAggregationThresholdAggregateScan* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedSetOperationItem(const ResolvedSetOperationItem* node) {
     return DefaultVisit(node);
   }
@@ -659,6 +662,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAuxLoadDataStmt(const ResolvedAuxLoadDataStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUndropStmt(const ResolvedUndropStmt* node) {
     return DefaultVisit(node);
   }
 };

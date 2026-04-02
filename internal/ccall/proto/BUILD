@@ -14,63 +14,24 @@
 # limitations under the License.
 #
 
-# Differential Privacy related proto definitions.
+# Differential Privacy related proto utilities.
 
 package(default_visibility = ["//visibility:public"])
 
-proto_library(
-    name = "confidence-interval_proto",
-    srcs = ["confidence-interval.proto"],
-)
-
-cc_proto_library(
-    name = "confidence_interval_cc_proto",
-    deps = [":confidence-interval_proto"],
-)
-
-proto_library(
-    name = "data-proto",
-    srcs = ["data.proto"],
+cc_library(
+    name = "util-lib",
+    hdrs = ["util.h"],
     deps = [
-        ":confidence-interval_proto",
+        "@com_google_differential_privacy//proto:confidence_interval_cc_proto",
+        "@com_google_differential_privacy//proto:data_cc_proto",
     ],
 )
 
-cc_proto_library(
-    name = "data_cc_proto",
-    deps = [":data-proto"],
-)
-
-java_proto_library(
-    name = "data_java_proto",
-    deps = [":data-proto"],
-)
-
-proto_library(
-    name = "numerical_mechanism_proto",
-    srcs = ["numerical-mechanism.proto"],
-)
-
-cc_proto_library(
-    name = "numerical_mechanism_cc_proto",
-    deps = [":numerical_mechanism_proto"],
-)
-
-proto_library(
-    name = "summary-proto",
-    srcs = ["summary.proto"],
+cc_test(
+    name = "util_test",
+    srcs = ["util_test.cc"],
     deps = [
-        ":data-proto",
-        "@com_google_protobuf//:any_proto",
+        ":util-lib",
+        "@com_google_googletest//:gtest_main",
     ],
-)
-
-cc_proto_library(
-    name = "summary_cc_proto",
-    deps = [":summary-proto"],
-)
-
-java_proto_library(
-    name = "summary_java_proto",
-    deps = [":summary-proto"],
 )

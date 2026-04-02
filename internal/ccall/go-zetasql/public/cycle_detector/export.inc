@@ -9,6 +9,7 @@
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/common/thread_stack/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

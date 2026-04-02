@@ -189,8 +189,24 @@ struct ApproxBoundsSummaryDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ApproxBoundsSummaryDefaultTypeInternal _ApproxBoundsSummary_default_instance_;
+constexpr PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : ids_count_(int64_t{0})
+  , epsilon_(0)
+  , delta_(0)
+  , max_partitions_contributed_(0)
+  , pre_threshold_(0){}
+struct PreAggSelectPartitionSummaryDefaultTypeInternal {
+  constexpr PreAggSelectPartitionSummaryDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~PreAggSelectPartitionSummaryDefaultTypeInternal() {}
+  union {
+    PreAggSelectPartitionSummary _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PreAggSelectPartitionSummaryDefaultTypeInternal _PreAggSelectPartitionSummary_default_instance_;
 }  // namespace differential_privacy
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_proto_2fsummary_2eproto[11];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_proto_2fsummary_2eproto[12];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_proto_2fsummary_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_proto_2fsummary_2eproto = nullptr;
 
@@ -356,6 +372,22 @@ const uint32_t TableStruct_proto_2fsummary_2eproto::offsets[] PROTOBUF_SECTION_V
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, pos_bin_count_),
   PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, neg_bin_count_),
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, ids_count_),
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, epsilon_),
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, delta_),
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, max_partitions_contributed_),
+  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, pre_threshold_),
+  0,
+  1,
+  2,
+  3,
+  4,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 7, -1, sizeof(::differential_privacy::Summary)},
@@ -369,6 +401,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 139, -1, -1, sizeof(::differential_privacy::HistogramSummary)},
   { 146, -1, -1, sizeof(::differential_privacy::BinarySearchSummary)},
   { 153, -1, -1, sizeof(::differential_privacy::ApproxBoundsSummary)},
+  { 161, 172, -1, sizeof(::differential_privacy::PreAggSelectPartitionSummary)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -383,6 +416,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_HistogramSummary_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BinarySearchSummary_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_ApproxBoundsSummary_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_PreAggSelectPartitionSummary_default_instance_),
 };
 
 const char descriptor_table_protodef_proto_2fsummary_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -440,10 +474,15 @@ const char descriptor_table_protodef_proto_2fsummary_2eproto[] PROTOBUF_SECTION_
   "unt\030\001 \003(\003\"K\n\023BinarySearchSummary\022.\n\005inpu"
   "t\030\002 \003(\0132\037.differential_privacy.ValueType"
   "J\004\010\001\020\002\"C\n\023ApproxBoundsSummary\022\025\n\rpos_bin"
-  "_count\030\001 \003(\003\022\025\n\rneg_bin_count\030\002 \003(\003*K\n\rM"
-  "echanismType\022\t\n\005EMPTY\020\000\022\013\n\007LAPLACE\020\001\022\014\n\010"
-  "GAUSSIAN\020\002\022\024\n\020DISCRETE_LAPLACE\020\003B.\n,com."
-  "google.privacy.differentialprivacy.proto"
+  "_count\030\001 \003(\003\022\025\n\rneg_bin_count\030\002 \003(\003\"\214\001\n\034"
+  "PreAggSelectPartitionSummary\022\021\n\tids_coun"
+  "t\030\001 \001(\003\022\017\n\007epsilon\030\002 \001(\001\022\r\n\005delta\030\003 \001(\001\022"
+  "\"\n\032max_partitions_contributed\030\004 \001(\005\022\025\n\rp"
+  "re_threshold\030\005 \001(\005*e\n\rMechanismType\022\t\n\005E"
+  "MPTY\020\000\022\013\n\007LAPLACE\020\001\022\014\n\010GAUSSIAN\020\002\022\024\n\020DIS"
+  "CRETE_LAPLACE\020\003\022\022\n\016MECHANISM_NONE\020\005\"\004\010\004\020"
+  "\004B.\n,com.google.privacy.differentialpriv"
+  "acy.proto"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_proto_2fsummary_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2fany_2eproto,
@@ -451,8 +490,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_proto_2fsummary_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_proto_2fsummary_2eproto = {
-  false, false, 2320, descriptor_table_protodef_proto_2fsummary_2eproto, "proto/summary.proto", 
-  &descriptor_table_proto_2fsummary_2eproto_once, descriptor_table_proto_2fsummary_2eproto_deps, 2, 11,
+  false, false, 2489, descriptor_table_protodef_proto_2fsummary_2eproto, "proto/summary.proto", 
+  &descriptor_table_proto_2fsummary_2eproto_once, descriptor_table_proto_2fsummary_2eproto_deps, 2, 12,
   schemas, file_default_instances, TableStruct_proto_2fsummary_2eproto::offsets,
   file_level_metadata_proto_2fsummary_2eproto, file_level_enum_descriptors_proto_2fsummary_2eproto, file_level_service_descriptors_proto_2fsummary_2eproto,
 };
@@ -473,6 +512,7 @@ bool MechanismType_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 5:
       return true;
     default:
       return false;
@@ -3810,6 +3850,321 @@ void ApproxBoundsSummary::InternalSwap(ApproxBoundsSummary* other) {
       file_level_metadata_proto_2fsummary_2eproto[10]);
 }
 
+// ===================================================================
+
+class PreAggSelectPartitionSummary::_Internal {
+ public:
+  using HasBits = decltype(std::declval<PreAggSelectPartitionSummary>()._has_bits_);
+  static void set_has_ids_count(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_epsilon(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_delta(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_max_partitions_contributed(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static void set_has_pre_threshold(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
+};
+
+PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:differential_privacy.PreAggSelectPartitionSummary)
+}
+PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(const PreAggSelectPartitionSummary& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&ids_count_, &from.ids_count_,
+    static_cast<size_t>(reinterpret_cast<char*>(&pre_threshold_) -
+    reinterpret_cast<char*>(&ids_count_)) + sizeof(pre_threshold_));
+  // @@protoc_insertion_point(copy_constructor:differential_privacy.PreAggSelectPartitionSummary)
+}
+
+inline void PreAggSelectPartitionSummary::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&ids_count_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&pre_threshold_) -
+    reinterpret_cast<char*>(&ids_count_)) + sizeof(pre_threshold_));
+}
+
+PreAggSelectPartitionSummary::~PreAggSelectPartitionSummary() {
+  // @@protoc_insertion_point(destructor:differential_privacy.PreAggSelectPartitionSummary)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void PreAggSelectPartitionSummary::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void PreAggSelectPartitionSummary::ArenaDtor(void* object) {
+  PreAggSelectPartitionSummary* _this = reinterpret_cast< PreAggSelectPartitionSummary* >(object);
+  (void)_this;
+}
+void PreAggSelectPartitionSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void PreAggSelectPartitionSummary::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void PreAggSelectPartitionSummary::Clear() {
+// @@protoc_insertion_point(message_clear_start:differential_privacy.PreAggSelectPartitionSummary)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000001fu) {
+    ::memset(&ids_count_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&pre_threshold_) -
+        reinterpret_cast<char*>(&ids_count_)) + sizeof(pre_threshold_));
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* PreAggSelectPartitionSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional int64 ids_count = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_ids_count(&has_bits);
+          ids_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional double epsilon = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+          _Internal::set_has_epsilon(&has_bits);
+          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional double delta = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+          _Internal::set_has_delta(&has_bits);
+          delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional int32 max_partitions_contributed = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _Internal::set_has_max_partitions_contributed(&has_bits);
+          max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional int32 pre_threshold = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _Internal::set_has_pre_threshold(&has_bits);
+          pre_threshold_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* PreAggSelectPartitionSummary::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.PreAggSelectPartitionSummary)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // optional int64 ids_count = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_ids_count(), target);
+  }
+
+  // optional double epsilon = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_epsilon(), target);
+  }
+
+  // optional double delta = 3;
+  if (cached_has_bits & 0x00000004u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_delta(), target);
+  }
+
+  // optional int32 max_partitions_contributed = 4;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_max_partitions_contributed(), target);
+  }
+
+  // optional int32 pre_threshold = 5;
+  if (cached_has_bits & 0x00000010u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_pre_threshold(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.PreAggSelectPartitionSummary)
+  return target;
+}
+
+size_t PreAggSelectPartitionSummary::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:differential_privacy.PreAggSelectPartitionSummary)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x0000001fu) {
+    // optional int64 ids_count = 1;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_ids_count());
+    }
+
+    // optional double epsilon = 2;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 + 8;
+    }
+
+    // optional double delta = 3;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 1 + 8;
+    }
+
+    // optional int32 max_partitions_contributed = 4;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_partitions_contributed());
+    }
+
+    // optional int32 pre_threshold = 5;
+    if (cached_has_bits & 0x00000010u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_pre_threshold());
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PreAggSelectPartitionSummary::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    PreAggSelectPartitionSummary::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PreAggSelectPartitionSummary::GetClassData() const { return &_class_data_; }
+
+void PreAggSelectPartitionSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<PreAggSelectPartitionSummary *>(to)->MergeFrom(
+      static_cast<const PreAggSelectPartitionSummary &>(from));
+}
+
+
+void PreAggSelectPartitionSummary::MergeFrom(const PreAggSelectPartitionSummary& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.PreAggSelectPartitionSummary)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x0000001fu) {
+    if (cached_has_bits & 0x00000001u) {
+      ids_count_ = from.ids_count_;
+    }
+    if (cached_has_bits & 0x00000002u) {
+      epsilon_ = from.epsilon_;
+    }
+    if (cached_has_bits & 0x00000004u) {
+      delta_ = from.delta_;
+    }
+    if (cached_has_bits & 0x00000008u) {
+      max_partitions_contributed_ = from.max_partitions_contributed_;
+    }
+    if (cached_has_bits & 0x00000010u) {
+      pre_threshold_ = from.pre_threshold_;
+    }
+    _has_bits_[0] |= cached_has_bits;
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void PreAggSelectPartitionSummary::CopyFrom(const PreAggSelectPartitionSummary& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:differential_privacy.PreAggSelectPartitionSummary)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PreAggSelectPartitionSummary::IsInitialized() const {
+  return true;
+}
+
+void PreAggSelectPartitionSummary::InternalSwap(PreAggSelectPartitionSummary* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, pre_threshold_)
+      + sizeof(PreAggSelectPartitionSummary::pre_threshold_)
+      - PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, ids_count_)>(
+          reinterpret_cast<char*>(&ids_count_),
+          reinterpret_cast<char*>(&other->ids_count_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata PreAggSelectPartitionSummary::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
+      file_level_metadata_proto_2fsummary_2eproto[11]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace differential_privacy
 PROTOBUF_NAMESPACE_OPEN
@@ -3845,6 +4200,9 @@ template<> PROTOBUF_NOINLINE ::differential_privacy::BinarySearchSummary* Arena:
 }
 template<> PROTOBUF_NOINLINE ::differential_privacy::ApproxBoundsSummary* Arena::CreateMaybeMessage< ::differential_privacy::ApproxBoundsSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::ApproxBoundsSummary >(arena);
+}
+template<> PROTOBUF_NOINLINE ::differential_privacy::PreAggSelectPartitionSummary* Arena::CreateMaybeMessage< ::differential_privacy::PreAggSelectPartitionSummary >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::differential_privacy::PreAggSelectPartitionSummary >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

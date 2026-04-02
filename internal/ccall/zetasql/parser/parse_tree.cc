@@ -80,6 +80,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_ALTER_ACTION_LIST] = "AlterActionList";
   map[AST_ALTER_ALL_ROW_ACCESS_POLICIES_STATEMENT] =
       "AlterAllRowAccessPoliciesStatement";
+  map[AST_ALTER_APPROX_VIEW_STATEMENT] = "AlterApproxViewStatement";
   map[AST_ALTER_COLUMN_DROP_DEFAULT_ACTION] = "AlterColumnDropDefaultAction";
   map[AST_ALTER_COLUMN_DROP_NOT_NULL_ACTION] = "AlterColumnDropNotNullAction";
   map[AST_ALTER_COLUMN_OPTIONS_ACTION] = "AlterColumnOptionsAction";
@@ -150,6 +151,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_CONNECTION_CLAUSE] = "ConnectionClause";
   map[AST_CONTINUE_STATEMENT] = "Continue";
   map[AST_COPY_DATA_SOURCE] = "CopyDataSource";
+  map[AST_CREATE_APPROX_VIEW_STATEMENT] = "CreateApproxViewStatement";
   map[AST_CREATE_CONSTANT_STATEMENT] = "CreateConstantStatement";
   map[AST_CREATE_DATABASE_STATEMENT] = "CreateDatabaseStatement";
   map[AST_CREATE_ENTITY_STATEMENT] = "CreateEntityStatement";
@@ -162,6 +164,8 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_CREATE_PRIVILEGE_RESTRICTION_STATEMENT] =
       "CreatePrivilegeRestrictionStatement";
   map[AST_CREATE_PROCEDURE_STATEMENT] = "CreateProcedureStatement";
+  map[AST_CREATE_REPLICA_MATERIALIZED_VIEW_STATEMENT] =
+      "CreateReplicaMaterializedViewStatement";
   map[AST_CREATE_ROW_ACCESS_POLICY_STATEMENT] =
       "CreateRowAccessPolicyStatement";
   map[AST_CREATE_SCHEMA_STATEMENT] = "CreateSchemaStatement";
@@ -211,6 +215,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_EXPORT_DATA_STATEMENT] = "ExportDataStatement";
   map[AST_EXPORT_MODEL_STATEMENT] = "ExportModelStatement";
   map[AST_EXPRESSION_SUBQUERY] = "ExpressionSubquery";
+  map[AST_EXPRESSION_WITH_ALIAS] = "ExpressionWithAlias";
   map[AST_EXTRACT_EXPRESSION] = "ExtractExpression";
   map[AST_FAKE] = "Fake";  // For testing purposes only.
   map[AST_FILTER_FIELDS_ARG] = "FilterFieldsArg";
@@ -323,6 +328,8 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_REPLACE_FIELDS_ARG] = "ReplaceFieldsArg";
   map[AST_REPLACE_FIELDS_EXPRESSION] = "ReplaceFieldsExpression";
   map[AST_REPLACE_TTL_ACTION] = "ReplaceTtlAction";
+  map[AST_REPLICA_MATERIALIZED_VIEW_DATA_SOURCE] =
+      "ReplicaMaterializedViewDataSource";
   map[AST_RESTRICT_TO_CLAUSE] = "RestrictToClause";
   map[AST_RETURNING_CLAUSE] = "ReturningClause";
   map[AST_RETURN_STATEMENT] = "ReturnStatement";
@@ -340,6 +347,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_SELECT_COLUMN] = "SelectColumn";
   map[AST_SELECT_LIST] = "SelectList";
   map[AST_SELECT_WITH] = "SelectWith";
+  map[AST_SEQUENCE_ARG] = "SequenceArg";
   map[AST_SET_AS_ACTION] = "SetAsOperation";
   map[AST_SET_COLLATE_CLAUSE] = "SetCollateClause";
   map[AST_SET_OPERATION] = "SetOperation";
@@ -1941,6 +1949,8 @@ absl::string_view SchemaObjectKindToName(SchemaObjectKind schema_object_kind) {
   switch (schema_object_kind) {
     case SchemaObjectKind::kAggregateFunction:
       return "AGGREGATE FUNCTION";
+    case SchemaObjectKind::kApproxView:
+      return "APPROX VIEW";
     case SchemaObjectKind::kConstant:
       return "CONSTANT";
     case SchemaObjectKind::kDatabase:

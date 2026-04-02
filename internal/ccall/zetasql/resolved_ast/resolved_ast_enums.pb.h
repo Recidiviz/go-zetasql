@@ -228,6 +228,55 @@ inline bool ResolvedSetOperationScanEnums_SetOperationType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedSetOperationScanEnums_SetOperationType>(
     ResolvedSetOperationScanEnums_SetOperationType_descriptor(), name, value);
 }
+enum ResolvedSetOperationScanEnums_SetOperationColumnMatchMode : int {
+  ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_BY_POSITION = 0,
+  ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_CORRESPONDING = 1,
+  ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_CORRESPONDING_BY = 2
+};
+bool ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_IsValid(int value);
+constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_MIN = ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_BY_POSITION;
+constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_MAX = ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_CORRESPONDING_BY;
+constexpr int ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_ARRAYSIZE = ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_descriptor();
+template<typename T>
+inline const std::string& ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ResolvedSetOperationScanEnums_SetOperationColumnMatchMode>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_descriptor(), enum_t_value);
+}
+inline bool ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ResolvedSetOperationScanEnums_SetOperationColumnMatchMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedSetOperationScanEnums_SetOperationColumnMatchMode>(
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_descriptor(), name, value);
+}
+enum ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode : int {
+  ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_STRICT = 0,
+  ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_INNER = 1,
+  ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_LEFT = 2,
+  ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_FULL = 3
+};
+bool ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_IsValid(int value);
+constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_MIN = ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_STRICT;
+constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_MAX = ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_FULL;
+constexpr int ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_ARRAYSIZE = ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_descriptor();
+template<typename T>
+inline const std::string& ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_descriptor(), enum_t_value);
+}
+inline bool ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode>(
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_descriptor(), name, value);
+}
 enum ResolvedRecursiveScanEnums_RecursiveSetOperationType : int {
   ResolvedRecursiveScanEnums_RecursiveSetOperationType_UNION_ALL = 0,
   ResolvedRecursiveScanEnums_RecursiveSetOperationType_UNION_DISTINCT = 1
@@ -1280,6 +1329,72 @@ class ResolvedSetOperationScanEnums final :
   static inline bool SetOperationType_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       SetOperationType* value) {
     return ResolvedSetOperationScanEnums_SetOperationType_Parse(name, value);
+  }
+
+  typedef ResolvedSetOperationScanEnums_SetOperationColumnMatchMode SetOperationColumnMatchMode;
+  static constexpr SetOperationColumnMatchMode BY_POSITION =
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_BY_POSITION;
+  static constexpr SetOperationColumnMatchMode CORRESPONDING =
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_CORRESPONDING;
+  static constexpr SetOperationColumnMatchMode CORRESPONDING_BY =
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_CORRESPONDING_BY;
+  static inline bool SetOperationColumnMatchMode_IsValid(int value) {
+    return ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_IsValid(value);
+  }
+  static constexpr SetOperationColumnMatchMode SetOperationColumnMatchMode_MIN =
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_MIN;
+  static constexpr SetOperationColumnMatchMode SetOperationColumnMatchMode_MAX =
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_MAX;
+  static constexpr int SetOperationColumnMatchMode_ARRAYSIZE =
+    ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_SetOperationColumnMatchMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  SetOperationColumnMatchMode_descriptor() {
+    return ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& SetOperationColumnMatchMode_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, SetOperationColumnMatchMode>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function SetOperationColumnMatchMode_Name.");
+    return ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_Name(enum_t_value);
+  }
+  static inline bool SetOperationColumnMatchMode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      SetOperationColumnMatchMode* value) {
+    return ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_Parse(name, value);
+  }
+
+  typedef ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode SetOperationColumnPropagationMode;
+  static constexpr SetOperationColumnPropagationMode STRICT =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_STRICT;
+  static constexpr SetOperationColumnPropagationMode INNER =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_INNER;
+  static constexpr SetOperationColumnPropagationMode LEFT =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_LEFT;
+  static constexpr SetOperationColumnPropagationMode FULL =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_FULL;
+  static inline bool SetOperationColumnPropagationMode_IsValid(int value) {
+    return ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_IsValid(value);
+  }
+  static constexpr SetOperationColumnPropagationMode SetOperationColumnPropagationMode_MIN =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_MIN;
+  static constexpr SetOperationColumnPropagationMode SetOperationColumnPropagationMode_MAX =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_MAX;
+  static constexpr int SetOperationColumnPropagationMode_ARRAYSIZE =
+    ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_SetOperationColumnPropagationMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  SetOperationColumnPropagationMode_descriptor() {
+    return ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& SetOperationColumnPropagationMode_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, SetOperationColumnPropagationMode>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function SetOperationColumnPropagationMode_Name.");
+    return ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_Name(enum_t_value);
+  }
+  static inline bool SetOperationColumnPropagationMode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      SetOperationColumnPropagationMode* value) {
+    return ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -4608,6 +4723,16 @@ template <> struct is_proto_enum< ::zetasql::ResolvedSetOperationScanEnums_SetOp
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ResolvedSetOperationScanEnums_SetOperationType>() {
   return ::zetasql::ResolvedSetOperationScanEnums_SetOperationType_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::ResolvedSetOperationScanEnums_SetOperationColumnMatchMode> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ResolvedSetOperationScanEnums_SetOperationColumnMatchMode>() {
+  return ::zetasql::ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode>() {
+  return ::zetasql::ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_descriptor();
 }
 template <> struct is_proto_enum< ::zetasql::ResolvedRecursiveScanEnums_RecursiveSetOperationType> : ::std::true_type {};
 template <>

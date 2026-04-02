@@ -245,6 +245,11 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedDifferentialPrivacyAggrega
   return CopyVisitResolvedDifferentialPrivacyAggregateScan(node);
 }
 
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAggregationThresholdAggregateScan(
+    const ResolvedAggregationThresholdAggregateScan* node) {
+  return CopyVisitResolvedAggregationThresholdAggregateScan(node);
+}
+
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSetOperationItem(
     const ResolvedSetOperationItem* node) {
   return CopyVisitResolvedSetOperationItem(node);
@@ -988,6 +993,11 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAuxLoadDataPartitionFilter
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAuxLoadDataStmt(
     const ResolvedAuxLoadDataStmt* node) {
   return CopyVisitResolvedAuxLoadDataStmt(node);
+}
+
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUndropStmt(
+    const ResolvedUndropStmt* node) {
+  return CopyVisitResolvedUndropStmt(node);
 }
 
 absl::Status
@@ -2659,6 +2669,73 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDifferentialPrivacyAggregateScan(
 }
 
 absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregationThresholdAggregateScan(
+    const ResolvedAggregationThresholdAggregateScan* node) {
+  // Get a deep copy of option_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> option_list,
+      ProcessNodeList(node->option_list()));
+
+  std::vector<ResolvedColumn> column_list;
+  for (int i = 0; i < node->column_list().size(); ++i) {
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+                     CopyResolvedColumn(node->column_list()[i]));
+    column_list.push_back(elem);
+  }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Get deep copy of input_scan field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> input_scan,
+      ProcessNode(node->input_scan()));
+
+  // Get a deep copy of group_by_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
+      ProcessNodeList(node->group_by_list()));
+
+  // Get a deep copy of aggregate_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> aggregate_list,
+      ProcessNodeList(node->aggregate_list()));
+
+  // Create a mutable instance of ResolvedAggregationThresholdAggregateScan.
+  auto copy = MakeResolvedAggregationThresholdAggregateScan(
+    column_list,
+    std::move(input_scan),
+    std::move(group_by_list),
+    std::move(aggregate_list),
+    std::move(option_list)
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregationThresholdAggregateScan>(node, copy.get()));
+
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
+
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationItem(
     const ResolvedSetOperationItem* node) {
   // Get deep copy of scan field.
@@ -2725,6 +2802,14 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationScan(
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
+
+  // Copy the `column_match_mode` field explicitly because it is not
+  // a constructor arg.
+  copy.get()->set_column_match_mode(node->column_match_mode());
+
+  // Copy the `column_match_mode` field explicitly because it is not
+  // a constructor arg.
+  copy.get()->set_column_propagation_mode(node->column_propagation_mode());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8508,6 +8593,44 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAuxLoadDataStmt(
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
   ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAuxLoadDataStmt>(node, copy.get()));
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedUndropStmt(
+    const ResolvedUndropStmt* node) {
+  // Get deep copy of for_system_time_expr field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> for_system_time_expr,
+      ProcessNode(node->for_system_time_expr()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Create a mutable instance of ResolvedUndropStmt.
+  auto copy = MakeResolvedUndropStmt(
+    node->schema_object_kind(),
+    node->is_if_not_exists(),
+    node->name_path(),
+    std::move(for_system_time_expr)
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUndropStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.

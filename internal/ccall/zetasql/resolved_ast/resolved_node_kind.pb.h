@@ -99,6 +99,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_AGGREGATE_SCAN = 25,
   RESOLVED_ANONYMIZED_AGGREGATE_SCAN = 112,
   RESOLVED_DIFFERENTIAL_PRIVACY_AGGREGATE_SCAN = 221,
+  RESOLVED_AGGREGATION_THRESHOLD_AGGREGATE_SCAN = 228,
   RESOLVED_SET_OPERATION_ITEM = 94,
   RESOLVED_SET_OPERATION_SCAN = 26,
   RESOLVED_ORDER_BY_SCAN = 27,
@@ -248,11 +249,12 @@ enum ResolvedNodeKind : int {
   RESOLVED_ANALYZE_STMT = 180,
   RESOLVED_AUX_LOAD_DATA_PARTITION_FILTER = 222,
   RESOLVED_AUX_LOAD_DATA_STMT = 186,
+  RESOLVED_UNDROP_STMT = 227,
   __ResolvedNodeKind__switch_must_have_default__ = -1
 };
 bool ResolvedNodeKind_IsValid(int value);
 constexpr ResolvedNodeKind ResolvedNodeKind_MIN = __ResolvedNodeKind__switch_must_have_default__;
-constexpr ResolvedNodeKind ResolvedNodeKind_MAX = RESOLVED_CREATE_MODEL_ALIASED_QUERY;
+constexpr ResolvedNodeKind ResolvedNodeKind_MAX = RESOLVED_AGGREGATION_THRESHOLD_AGGREGATE_SCAN;
 constexpr int ResolvedNodeKind_ARRAYSIZE = ResolvedNodeKind_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedNodeKind_descriptor();

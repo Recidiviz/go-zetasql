@@ -73,6 +73,7 @@ class ResolvedGroupingSetBuilder;
 class ResolvedAggregateScanBuilder;
 class ResolvedAnonymizedAggregateScanBuilder;
 class ResolvedDifferentialPrivacyAggregateScanBuilder;
+class ResolvedAggregationThresholdAggregateScanBuilder;
 class ResolvedSetOperationItemBuilder;
 class ResolvedSetOperationScanBuilder;
 class ResolvedOrderByScanBuilder;
@@ -222,6 +223,7 @@ class ResolvedTableAndColumnInfoBuilder;
 class ResolvedAnalyzeStmtBuilder;
 class ResolvedAuxLoadDataPartitionFilterBuilder;
 class ResolvedAuxLoadDataStmtBuilder;
+class ResolvedUndropStmtBuilder;
 
 class ResolvedLiteralBuilder final {
  public:
@@ -11252,6 +11254,509 @@ inline ResolvedDifferentialPrivacyAggregateScanBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedAggregationThresholdAggregateScanBuilder final {
+ public:
+  ResolvedAggregationThresholdAggregateScanBuilder() : ResolvedAggregationThresholdAggregateScanBuilder(absl::WrapUnique(new ResolvedAggregationThresholdAggregateScan)) {}
+
+  ResolvedAggregationThresholdAggregateScanBuilder(const ResolvedAggregationThresholdAggregateScanBuilder&) = delete;
+  ResolvedAggregationThresholdAggregateScanBuilder& operator=(const ResolvedAggregationThresholdAggregateScanBuilder&) = delete;
+  ResolvedAggregationThresholdAggregateScanBuilder(ResolvedAggregationThresholdAggregateScanBuilder&& other)
+      : ResolvedAggregationThresholdAggregateScanBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& operator=(ResolvedAggregationThresholdAggregateScanBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedAggregationThresholdAggregateScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(3)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedAggregationThresholdAggregateScan::input_scan was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<ResolvedColumn>& column_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list();
+  }
+
+  int column_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list_size();
+  }
+
+  const ResolvedColumn& column_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list(i);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_column_list(ResolvedColumn v) && {
+    node_->add_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& add_column_list(ResolvedColumn v) & {
+    node_->add_column_list(v);
+
+    return *this;
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_column_list(const std::vector<ResolvedColumn>& v) && {
+    node_->set_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& set_column_list(const std::vector<ResolvedColumn>& v) & {
+    node_->set_column_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_ordered() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_ordered();
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_is_ordered(bool v) && {
+    node_->set_is_ordered(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& set_is_ordered(bool v) & {
+    node_->set_is_ordered(v);
+
+    return *this;
+  }
+
+  const ResolvedScan* input_scan() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->input_scan();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return node_->release_input_scan();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_input_scan(T v) && {
+    node_->set_input_scan(std::move(v));
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_input_scan(T v) & {
+    node_->set_input_scan(std::move(v));
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_input_scan(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_input_scan(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_by_list();
+  }
+
+  int group_by_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_by_list_size();
+  }
+
+  const ResolvedComputedColumn* group_by_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_by_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_group_by_list(T v) && {
+    node_->add_group_by_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_group_by_list(T v) & {
+    node_->add_group_by_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_group_by_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_group_by_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_group_by_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_group_by_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_group_by_list() {
+    return node_->release_group_by_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_group_by_list(T v) && {
+    node_->set_group_by_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_group_by_list(T v) & {
+    node_->set_group_by_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<ResolvedCollation>& collation_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->collation_list();
+  }
+
+  int collation_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->collation_list_size();
+  }
+
+  const ResolvedCollation& collation_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->collation_list(i);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_collation_list(ResolvedCollation v) && {
+    node_->add_collation_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& add_collation_list(ResolvedCollation v) & {
+    node_->add_collation_list(v);
+
+    return *this;
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_collation_list(const std::vector<ResolvedCollation>& v) && {
+    node_->set_collation_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& set_collation_list(const std::vector<ResolvedCollation>& v) & {
+    node_->set_collation_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aggregate_list();
+  }
+
+  int aggregate_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aggregate_list_size();
+  }
+
+  const ResolvedComputedColumn* aggregate_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aggregate_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_aggregate_list(T v) && {
+    node_->add_aggregate_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_aggregate_list(T v) & {
+    node_->add_aggregate_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_aggregate_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_aggregate_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_aggregate_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_aggregate_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_aggregate_list() {
+    return node_->release_aggregate_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_aggregate_list(T v) && {
+    node_->set_aggregate_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_aggregate_list(T v) & {
+    node_->set_aggregate_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAggregationThresholdAggregateScan> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<8> field_is_set_ = {0};
+  friend ResolvedAggregationThresholdAggregateScanBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAggregationThresholdAggregateScan> node);
+
+  ResolvedAggregationThresholdAggregateScanBuilder(std::unique_ptr<ResolvedAggregationThresholdAggregateScan> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAggregationThresholdAggregateScanBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAggregationThresholdAggregateScan> node) {
+  ResolvedAggregationThresholdAggregateScanBuilder builder(absl::WrapUnique<ResolvedAggregationThresholdAggregateScan>(
+      const_cast<ResolvedAggregationThresholdAggregateScan*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(3, true);
+  return builder;
+}
+
 class ResolvedSetOperationItemBuilder final {
  public:
   ResolvedSetOperationItemBuilder() : ResolvedSetOperationItemBuilder(absl::WrapUnique(new ResolvedSetOperationItem)) {}
@@ -11410,12 +11915,21 @@ inline ResolvedSetOperationItemBuilder ToBuilder(
 class ResolvedSetOperationScanBuilder final {
  public:
     typedef ResolvedSetOperationScanEnums::SetOperationType SetOperationType;
+  typedef ResolvedSetOperationScanEnums::SetOperationColumnMatchMode SetOperationColumnMatchMode;
+  typedef ResolvedSetOperationScanEnums::SetOperationColumnPropagationMode SetOperationColumnPropagationMode;
   static const SetOperationType UNION_ALL = ResolvedSetOperationScanEnums::UNION_ALL;
   static const SetOperationType UNION_DISTINCT = ResolvedSetOperationScanEnums::UNION_DISTINCT;
   static const SetOperationType INTERSECT_ALL = ResolvedSetOperationScanEnums::INTERSECT_ALL;
   static const SetOperationType INTERSECT_DISTINCT = ResolvedSetOperationScanEnums::INTERSECT_DISTINCT;
   static const SetOperationType EXCEPT_ALL = ResolvedSetOperationScanEnums::EXCEPT_ALL;
   static const SetOperationType EXCEPT_DISTINCT = ResolvedSetOperationScanEnums::EXCEPT_DISTINCT;
+  static const SetOperationColumnMatchMode BY_POSITION = ResolvedSetOperationScanEnums::BY_POSITION;
+  static const SetOperationColumnMatchMode CORRESPONDING = ResolvedSetOperationScanEnums::CORRESPONDING;
+  static const SetOperationColumnMatchMode CORRESPONDING_BY = ResolvedSetOperationScanEnums::CORRESPONDING_BY;
+  static const SetOperationColumnPropagationMode STRICT = ResolvedSetOperationScanEnums::STRICT;
+  static const SetOperationColumnPropagationMode INNER = ResolvedSetOperationScanEnums::INNER;
+  static const SetOperationColumnPropagationMode LEFT = ResolvedSetOperationScanEnums::LEFT;
+  static const SetOperationColumnPropagationMode FULL = ResolvedSetOperationScanEnums::FULL;
 
   ResolvedSetOperationScanBuilder() : ResolvedSetOperationScanBuilder(absl::WrapUnique(new ResolvedSetOperationScan)) {}
 
@@ -11543,6 +12057,40 @@ class ResolvedSetOperationScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedSetOperationItem>>>::value>>
   ResolvedSetOperationScanBuilder& set_input_item_list(T v) & {
     node_->set_input_item_list(std::move(v));
+
+    return *this;
+  }
+
+  ResolvedSetOperationScan::SetOperationColumnMatchMode column_match_mode() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_match_mode();
+  }
+
+  ResolvedSetOperationScanBuilder&& set_column_match_mode(ResolvedSetOperationScan::SetOperationColumnMatchMode v) && {
+    node_->set_column_match_mode(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedSetOperationScanBuilder& set_column_match_mode(ResolvedSetOperationScan::SetOperationColumnMatchMode v) & {
+    node_->set_column_match_mode(v);
+
+    return *this;
+  }
+
+  ResolvedSetOperationScan::SetOperationColumnPropagationMode column_propagation_mode() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_propagation_mode();
+  }
+
+  ResolvedSetOperationScanBuilder&& set_column_propagation_mode(ResolvedSetOperationScan::SetOperationColumnPropagationMode v) && {
+    node_->set_column_propagation_mode(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedSetOperationScanBuilder& set_column_propagation_mode(ResolvedSetOperationScan::SetOperationColumnPropagationMode v) & {
+    node_->set_column_propagation_mode(v);
 
     return *this;
   }
@@ -11680,7 +12228,7 @@ class ResolvedSetOperationScanBuilder final {
   std::unique_ptr<ResolvedSetOperationScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<7> field_is_set_ = {0};
   friend ResolvedSetOperationScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedSetOperationScan> node);
 
@@ -51997,6 +52545,266 @@ inline ResolvedAuxLoadDataStmtBuilder ToBuilder(
   // All required nodes are evidently already set
   builder.field_is_set_.set(1, true);
   builder.field_is_set_.set(2, true);
+  return builder;
+}
+
+class ResolvedUndropStmtBuilder final {
+ public:
+  ResolvedUndropStmtBuilder() : ResolvedUndropStmtBuilder(absl::WrapUnique(new ResolvedUndropStmt)) {}
+
+  ResolvedUndropStmtBuilder(const ResolvedUndropStmtBuilder&) = delete;
+  ResolvedUndropStmtBuilder& operator=(const ResolvedUndropStmtBuilder&) = delete;
+  ResolvedUndropStmtBuilder(ResolvedUndropStmtBuilder&& other)
+      : ResolvedUndropStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedUndropStmtBuilder& operator=(ResolvedUndropStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedUndropStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedUndropStmt::schema_object_kind was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::string& schema_object_kind() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->schema_object_kind();
+  }
+
+  ResolvedUndropStmtBuilder&& set_schema_object_kind(const std::string& v) && {
+    node_->set_schema_object_kind(v);
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedUndropStmtBuilder& set_schema_object_kind(const std::string& v) & {
+    node_->set_schema_object_kind(v);
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  bool is_if_not_exists() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_if_not_exists();
+  }
+
+  ResolvedUndropStmtBuilder&& set_is_if_not_exists(bool v) && {
+    node_->set_is_if_not_exists(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedUndropStmtBuilder& set_is_if_not_exists(bool v) & {
+    node_->set_is_if_not_exists(v);
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedUndropStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedUndropStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedUndropStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedUndropStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  const ResolvedExpr* for_system_time_expr() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->for_system_time_expr();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_for_system_time_expr() {
+    return node_->release_for_system_time_expr();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUndropStmtBuilder&& set_for_system_time_expr(T v) && {
+    node_->set_for_system_time_expr(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUndropStmtBuilder& set_for_system_time_expr(T v) & {
+    node_->set_for_system_time_expr(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUndropStmtBuilder&& set_for_system_time_expr(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_for_system_time_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUndropStmtBuilder& set_for_system_time_expr(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_for_system_time_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedUndropStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedUndropStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedUndropStmt> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<5> field_is_set_ = {0};
+  friend ResolvedUndropStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedUndropStmt> node);
+
+  ResolvedUndropStmtBuilder(std::unique_ptr<ResolvedUndropStmt> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedUndropStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedUndropStmt> node) {
+  ResolvedUndropStmtBuilder builder(absl::WrapUnique<ResolvedUndropStmt>(
+      const_cast<ResolvedUndropStmt*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(1, true);
   return builder;
 }
 

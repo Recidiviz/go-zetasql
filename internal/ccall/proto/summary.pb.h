@@ -52,7 +52,7 @@ struct TableStruct_proto_2fsummary_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -90,6 +90,9 @@ extern ElementsDefaultTypeInternal _Elements_default_instance_;
 class HistogramSummary;
 struct HistogramSummaryDefaultTypeInternal;
 extern HistogramSummaryDefaultTypeInternal _HistogramSummary_default_instance_;
+class PreAggSelectPartitionSummary;
+struct PreAggSelectPartitionSummaryDefaultTypeInternal;
+extern PreAggSelectPartitionSummaryDefaultTypeInternal _PreAggSelectPartitionSummary_default_instance_;
 class Summary;
 struct SummaryDefaultTypeInternal;
 extern SummaryDefaultTypeInternal _Summary_default_instance_;
@@ -105,6 +108,7 @@ template<> ::differential_privacy::BoundedVarianceSummary* Arena::CreateMaybeMes
 template<> ::differential_privacy::CountSummary* Arena::CreateMaybeMessage<::differential_privacy::CountSummary>(Arena*);
 template<> ::differential_privacy::Elements* Arena::CreateMaybeMessage<::differential_privacy::Elements>(Arena*);
 template<> ::differential_privacy::HistogramSummary* Arena::CreateMaybeMessage<::differential_privacy::HistogramSummary>(Arena*);
+template<> ::differential_privacy::PreAggSelectPartitionSummary* Arena::CreateMaybeMessage<::differential_privacy::PreAggSelectPartitionSummary>(Arena*);
 template<> ::differential_privacy::Summary* Arena::CreateMaybeMessage<::differential_privacy::Summary>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace differential_privacy {
@@ -113,11 +117,12 @@ enum MechanismType : int {
   EMPTY = 0,
   LAPLACE = 1,
   GAUSSIAN = 2,
-  DISCRETE_LAPLACE = 3
+  DISCRETE_LAPLACE = 3,
+  MECHANISM_NONE = 5
 };
 bool MechanismType_IsValid(int value);
 constexpr MechanismType MechanismType_MIN = EMPTY;
-constexpr MechanismType MechanismType_MAX = DISCRETE_LAPLACE;
+constexpr MechanismType MechanismType_MAX = MECHANISM_NONE;
 constexpr int MechanismType_ARRAYSIZE = MechanismType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MechanismType_descriptor();
@@ -2453,6 +2458,224 @@ class ApproxBoundsSummary final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_proto_2fsummary_2eproto;
 };
+// -------------------------------------------------------------------
+
+class PreAggSelectPartitionSummary final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:differential_privacy.PreAggSelectPartitionSummary) */ {
+ public:
+  inline PreAggSelectPartitionSummary() : PreAggSelectPartitionSummary(nullptr) {}
+  ~PreAggSelectPartitionSummary() override;
+  explicit constexpr PreAggSelectPartitionSummary(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PreAggSelectPartitionSummary(const PreAggSelectPartitionSummary& from);
+  PreAggSelectPartitionSummary(PreAggSelectPartitionSummary&& from) noexcept
+    : PreAggSelectPartitionSummary() {
+    *this = ::std::move(from);
+  }
+
+  inline PreAggSelectPartitionSummary& operator=(const PreAggSelectPartitionSummary& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PreAggSelectPartitionSummary& operator=(PreAggSelectPartitionSummary&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PreAggSelectPartitionSummary& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PreAggSelectPartitionSummary* internal_default_instance() {
+    return reinterpret_cast<const PreAggSelectPartitionSummary*>(
+               &_PreAggSelectPartitionSummary_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(PreAggSelectPartitionSummary& a, PreAggSelectPartitionSummary& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PreAggSelectPartitionSummary* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PreAggSelectPartitionSummary* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  PreAggSelectPartitionSummary* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<PreAggSelectPartitionSummary>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const PreAggSelectPartitionSummary& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const PreAggSelectPartitionSummary& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(PreAggSelectPartitionSummary* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "differential_privacy.PreAggSelectPartitionSummary";
+  }
+  protected:
+  explicit PreAggSelectPartitionSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdsCountFieldNumber = 1,
+    kEpsilonFieldNumber = 2,
+    kDeltaFieldNumber = 3,
+    kMaxPartitionsContributedFieldNumber = 4,
+    kPreThresholdFieldNumber = 5,
+  };
+  // optional int64 ids_count = 1;
+  bool has_ids_count() const;
+  private:
+  bool _internal_has_ids_count() const;
+  public:
+  void clear_ids_count();
+  int64_t ids_count() const;
+  void set_ids_count(int64_t value);
+  private:
+  int64_t _internal_ids_count() const;
+  void _internal_set_ids_count(int64_t value);
+  public:
+
+  // optional double epsilon = 2;
+  bool has_epsilon() const;
+  private:
+  bool _internal_has_epsilon() const;
+  public:
+  void clear_epsilon();
+  double epsilon() const;
+  void set_epsilon(double value);
+  private:
+  double _internal_epsilon() const;
+  void _internal_set_epsilon(double value);
+  public:
+
+  // optional double delta = 3;
+  bool has_delta() const;
+  private:
+  bool _internal_has_delta() const;
+  public:
+  void clear_delta();
+  double delta() const;
+  void set_delta(double value);
+  private:
+  double _internal_delta() const;
+  void _internal_set_delta(double value);
+  public:
+
+  // optional int32 max_partitions_contributed = 4;
+  bool has_max_partitions_contributed() const;
+  private:
+  bool _internal_has_max_partitions_contributed() const;
+  public:
+  void clear_max_partitions_contributed();
+  int32_t max_partitions_contributed() const;
+  void set_max_partitions_contributed(int32_t value);
+  private:
+  int32_t _internal_max_partitions_contributed() const;
+  void _internal_set_max_partitions_contributed(int32_t value);
+  public:
+
+  // optional int32 pre_threshold = 5;
+  bool has_pre_threshold() const;
+  private:
+  bool _internal_has_pre_threshold() const;
+  public:
+  void clear_pre_threshold();
+  int32_t pre_threshold() const;
+  void set_pre_threshold(int32_t value);
+  private:
+  int32_t _internal_pre_threshold() const;
+  void _internal_set_pre_threshold(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:differential_privacy.PreAggSelectPartitionSummary)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  int64_t ids_count_;
+  double epsilon_;
+  double delta_;
+  int32_t max_partitions_contributed_;
+  int32_t pre_threshold_;
+  friend struct ::TableStruct_proto_2fsummary_2eproto;
+};
 // ===================================================================
 
 
@@ -4671,9 +4894,155 @@ ApproxBoundsSummary::mutable_neg_bin_count() {
   return _internal_mutable_neg_bin_count();
 }
 
+// -------------------------------------------------------------------
+
+// PreAggSelectPartitionSummary
+
+// optional int64 ids_count = 1;
+inline bool PreAggSelectPartitionSummary::_internal_has_ids_count() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool PreAggSelectPartitionSummary::has_ids_count() const {
+  return _internal_has_ids_count();
+}
+inline void PreAggSelectPartitionSummary::clear_ids_count() {
+  ids_count_ = int64_t{0};
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline int64_t PreAggSelectPartitionSummary::_internal_ids_count() const {
+  return ids_count_;
+}
+inline int64_t PreAggSelectPartitionSummary::ids_count() const {
+  // @@protoc_insertion_point(field_get:differential_privacy.PreAggSelectPartitionSummary.ids_count)
+  return _internal_ids_count();
+}
+inline void PreAggSelectPartitionSummary::_internal_set_ids_count(int64_t value) {
+  _has_bits_[0] |= 0x00000001u;
+  ids_count_ = value;
+}
+inline void PreAggSelectPartitionSummary::set_ids_count(int64_t value) {
+  _internal_set_ids_count(value);
+  // @@protoc_insertion_point(field_set:differential_privacy.PreAggSelectPartitionSummary.ids_count)
+}
+
+// optional double epsilon = 2;
+inline bool PreAggSelectPartitionSummary::_internal_has_epsilon() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool PreAggSelectPartitionSummary::has_epsilon() const {
+  return _internal_has_epsilon();
+}
+inline void PreAggSelectPartitionSummary::clear_epsilon() {
+  epsilon_ = 0;
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline double PreAggSelectPartitionSummary::_internal_epsilon() const {
+  return epsilon_;
+}
+inline double PreAggSelectPartitionSummary::epsilon() const {
+  // @@protoc_insertion_point(field_get:differential_privacy.PreAggSelectPartitionSummary.epsilon)
+  return _internal_epsilon();
+}
+inline void PreAggSelectPartitionSummary::_internal_set_epsilon(double value) {
+  _has_bits_[0] |= 0x00000002u;
+  epsilon_ = value;
+}
+inline void PreAggSelectPartitionSummary::set_epsilon(double value) {
+  _internal_set_epsilon(value);
+  // @@protoc_insertion_point(field_set:differential_privacy.PreAggSelectPartitionSummary.epsilon)
+}
+
+// optional double delta = 3;
+inline bool PreAggSelectPartitionSummary::_internal_has_delta() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool PreAggSelectPartitionSummary::has_delta() const {
+  return _internal_has_delta();
+}
+inline void PreAggSelectPartitionSummary::clear_delta() {
+  delta_ = 0;
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline double PreAggSelectPartitionSummary::_internal_delta() const {
+  return delta_;
+}
+inline double PreAggSelectPartitionSummary::delta() const {
+  // @@protoc_insertion_point(field_get:differential_privacy.PreAggSelectPartitionSummary.delta)
+  return _internal_delta();
+}
+inline void PreAggSelectPartitionSummary::_internal_set_delta(double value) {
+  _has_bits_[0] |= 0x00000004u;
+  delta_ = value;
+}
+inline void PreAggSelectPartitionSummary::set_delta(double value) {
+  _internal_set_delta(value);
+  // @@protoc_insertion_point(field_set:differential_privacy.PreAggSelectPartitionSummary.delta)
+}
+
+// optional int32 max_partitions_contributed = 4;
+inline bool PreAggSelectPartitionSummary::_internal_has_max_partitions_contributed() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool PreAggSelectPartitionSummary::has_max_partitions_contributed() const {
+  return _internal_has_max_partitions_contributed();
+}
+inline void PreAggSelectPartitionSummary::clear_max_partitions_contributed() {
+  max_partitions_contributed_ = 0;
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline int32_t PreAggSelectPartitionSummary::_internal_max_partitions_contributed() const {
+  return max_partitions_contributed_;
+}
+inline int32_t PreAggSelectPartitionSummary::max_partitions_contributed() const {
+  // @@protoc_insertion_point(field_get:differential_privacy.PreAggSelectPartitionSummary.max_partitions_contributed)
+  return _internal_max_partitions_contributed();
+}
+inline void PreAggSelectPartitionSummary::_internal_set_max_partitions_contributed(int32_t value) {
+  _has_bits_[0] |= 0x00000008u;
+  max_partitions_contributed_ = value;
+}
+inline void PreAggSelectPartitionSummary::set_max_partitions_contributed(int32_t value) {
+  _internal_set_max_partitions_contributed(value);
+  // @@protoc_insertion_point(field_set:differential_privacy.PreAggSelectPartitionSummary.max_partitions_contributed)
+}
+
+// optional int32 pre_threshold = 5;
+inline bool PreAggSelectPartitionSummary::_internal_has_pre_threshold() const {
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline bool PreAggSelectPartitionSummary::has_pre_threshold() const {
+  return _internal_has_pre_threshold();
+}
+inline void PreAggSelectPartitionSummary::clear_pre_threshold() {
+  pre_threshold_ = 0;
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline int32_t PreAggSelectPartitionSummary::_internal_pre_threshold() const {
+  return pre_threshold_;
+}
+inline int32_t PreAggSelectPartitionSummary::pre_threshold() const {
+  // @@protoc_insertion_point(field_get:differential_privacy.PreAggSelectPartitionSummary.pre_threshold)
+  return _internal_pre_threshold();
+}
+inline void PreAggSelectPartitionSummary::_internal_set_pre_threshold(int32_t value) {
+  _has_bits_[0] |= 0x00000010u;
+  pre_threshold_ = value;
+}
+inline void PreAggSelectPartitionSummary::set_pre_threshold(int32_t value) {
+  _internal_set_pre_threshold(value);
+  // @@protoc_insertion_point(field_set:differential_privacy.PreAggSelectPartitionSummary.pre_threshold)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

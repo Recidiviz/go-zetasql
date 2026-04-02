@@ -802,6 +802,19 @@ struct ResolvedDifferentialPrivacyAggregateScanProtoDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedDifferentialPrivacyAggregateScanProtoDefaultTypeInternal _ResolvedDifferentialPrivacyAggregateScanProto_default_instance_;
+constexpr ResolvedAggregationThresholdAggregateScanProto::ResolvedAggregationThresholdAggregateScanProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : option_list_()
+  , parent_(nullptr){}
+struct ResolvedAggregationThresholdAggregateScanProtoDefaultTypeInternal {
+  constexpr ResolvedAggregationThresholdAggregateScanProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ResolvedAggregationThresholdAggregateScanProtoDefaultTypeInternal() {}
+  union {
+    ResolvedAggregationThresholdAggregateScanProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedAggregationThresholdAggregateScanProtoDefaultTypeInternal _ResolvedAggregationThresholdAggregateScanProto_default_instance_;
 constexpr ResolvedSetOperationItemProto::ResolvedSetOperationItemProto(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : output_column_list_()
@@ -821,6 +834,10 @@ constexpr ResolvedSetOperationScanProto::ResolvedSetOperationScanProto(
   : input_item_list_()
   , parent_(nullptr)
   , op_type_(0)
+
+  , column_match_mode_(0)
+
+  , column_propagation_mode_(0)
 {}
 struct ResolvedSetOperationScanProtoDefaultTypeInternal {
   constexpr ResolvedSetOperationScanProtoDefaultTypeInternal()
@@ -3298,8 +3315,24 @@ struct ResolvedAuxLoadDataStmtProtoDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedAuxLoadDataStmtProtoDefaultTypeInternal _ResolvedAuxLoadDataStmtProto_default_instance_;
+constexpr ResolvedUndropStmtProto::ResolvedUndropStmtProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : name_path_()
+  , schema_object_kind_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , parent_(nullptr)
+  , for_system_time_expr_(nullptr)
+  , is_if_not_exists_(false){}
+struct ResolvedUndropStmtProtoDefaultTypeInternal {
+  constexpr ResolvedUndropStmtProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ResolvedUndropStmtProtoDefaultTypeInternal() {}
+  union {
+    ResolvedUndropStmtProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedUndropStmtProtoDefaultTypeInternal _ResolvedUndropStmtProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[222];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[224];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto = nullptr;
 
@@ -4028,6 +4061,7 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::of
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::zetasql::AnyResolvedAggregateScanBaseProto, node_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregateScanBaseProto, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregateScanBaseProto, _internal_metadata_),
@@ -4081,6 +4115,16 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::of
   0,
   1,
   ~0u,
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregationThresholdAggregateScanProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregationThresholdAggregateScanProto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregationThresholdAggregateScanProto, parent_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregationThresholdAggregateScanProto, option_list_),
+  0,
+  ~0u,
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationItemProto, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationItemProto, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -4102,9 +4146,13 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::of
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanProto, parent_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanProto, op_type_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanProto, input_item_list_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanProto, column_match_mode_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanProto, column_propagation_mode_),
   0,
   1,
   ~0u,
+  2,
+  3,
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedOrderByScanProto, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedOrderByScanProto, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -4433,6 +4481,7 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::of
   PROTOBUF_FIELD_OFFSET(::zetasql::AnyResolvedStatementProto, _oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
@@ -6436,6 +6485,22 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::of
   2,
   3,
   ~0u,
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, parent_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, schema_object_kind_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, is_if_not_exists_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, name_path_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedUndropStmtProto, for_system_time_expr_),
+  1,
+  0,
+  3,
+  ~0u,
+  2,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::AnyResolvedNodeProto)},
@@ -6489,177 +6554,179 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 693, 702, -1, sizeof(::zetasql::ResolvedFilterScanProto)},
   { 705, 713, -1, sizeof(::zetasql::ResolvedGroupingSetProto)},
   { 715, -1, -1, sizeof(::zetasql::AnyResolvedAggregateScanBaseProto)},
-  { 725, 736, -1, sizeof(::zetasql::ResolvedAggregateScanBaseProto)},
-  { 741, 750, -1, sizeof(::zetasql::ResolvedAggregateScanProto)},
-  { 753, 762, -1, sizeof(::zetasql::ResolvedAnonymizedAggregateScanProto)},
-  { 765, 774, -1, sizeof(::zetasql::ResolvedDifferentialPrivacyAggregateScanProto)},
-  { 777, 786, -1, sizeof(::zetasql::ResolvedSetOperationItemProto)},
-  { 789, 798, -1, sizeof(::zetasql::ResolvedSetOperationScanProto)},
-  { 801, 810, -1, sizeof(::zetasql::ResolvedOrderByScanProto)},
-  { 813, 823, -1, sizeof(::zetasql::ResolvedLimitOffsetScanProto)},
-  { 827, 835, -1, sizeof(::zetasql::ResolvedWithRefScanProto)},
-  { 837, 846, -1, sizeof(::zetasql::ResolvedAnalyticScanProto)},
-  { 849, 863, -1, sizeof(::zetasql::ResolvedSampleScanProto)},
-  { 871, 880, -1, sizeof(::zetasql::ResolvedComputedColumnProto)},
-  { 883, 895, -1, sizeof(::zetasql::ResolvedOrderByItemProto)},
-  { 901, 913, -1, sizeof(::zetasql::ResolvedColumnAnnotationsProto)},
-  { 919, 928, -1, sizeof(::zetasql::ResolvedGeneratedColumnInfoProto)},
-  { 931, 940, -1, sizeof(::zetasql::ResolvedColumnDefaultValueProto)},
-  { 943, 957, -1, sizeof(::zetasql::ResolvedColumnDefinitionProto)},
-  { 965, -1, -1, sizeof(::zetasql::AnyResolvedConstraintProto)},
-  { 975, 982, -1, sizeof(::zetasql::ResolvedConstraintProto)},
-  { 983, 995, -1, sizeof(::zetasql::ResolvedPrimaryKeyProto)},
-  { 1001, 1018, -1, sizeof(::zetasql::ResolvedForeignKeyProto)},
-  { 1029, 1040, -1, sizeof(::zetasql::ResolvedCheckConstraintProto)},
-  { 1045, 1054, -1, sizeof(::zetasql::ResolvedOutputColumnProto)},
-  { 1057, 1066, -1, sizeof(::zetasql::ResolvedProjectScanProto)},
-  { 1069, 1082, -1, sizeof(::zetasql::ResolvedTVFScanProto)},
-  { 1089, 1098, -1, sizeof(::zetasql::ResolvedGroupRowsScanProto)},
-  { 1101, 1115, -1, sizeof(::zetasql::ResolvedFunctionArgumentProto)},
-  { 1123, -1, -1, sizeof(::zetasql::AnyResolvedStatementProto)},
-  { 1173, 1181, -1, sizeof(::zetasql::ResolvedStatementProto)},
-  { 1183, 1191, -1, sizeof(::zetasql::ResolvedExplainStmtProto)},
-  { 1193, 1203, -1, sizeof(::zetasql::ResolvedQueryStmtProto)},
-  { 1207, 1216, -1, sizeof(::zetasql::ResolvedCreateDatabaseStmtProto)},
-  { 1219, -1, -1, sizeof(::zetasql::AnyResolvedCreateStatementProto)},
-  { 1238, 1248, -1, sizeof(::zetasql::ResolvedCreateStatementProto)},
-  { 1252, 1261, -1, sizeof(::zetasql::ResolvedIndexItemProto)},
-  { 1264, 1274, -1, sizeof(::zetasql::ResolvedUnnestItemProto)},
-  { 1278, 1295, -1, sizeof(::zetasql::ResolvedCreateIndexStmtProto)},
-  { 1306, 1315, -1, sizeof(::zetasql::ResolvedCreateSchemaStmtProto)},
-  { 1318, -1, -1, sizeof(::zetasql::AnyResolvedCreateTableStmtBaseProto)},
-  { 1328, 1345, -1, sizeof(::zetasql::ResolvedCreateTableStmtBaseProto)},
-  { 1356, 1367, -1, sizeof(::zetasql::ResolvedCreateTableStmtProto)},
-  { 1372, 1383, -1, sizeof(::zetasql::ResolvedCreateTableAsSelectStmtProto)},
-  { 1388, 1398, -1, sizeof(::zetasql::ResolvedCreateModelAliasedQueryProto)},
-  { 1402, 1421, -1, sizeof(::zetasql::ResolvedCreateModelStmtProto)},
-  { 1434, -1, -1, sizeof(::zetasql::AnyResolvedCreateViewBaseProto)},
-  { 1443, 1459, -1, sizeof(::zetasql::ResolvedCreateViewBaseProto)},
-  { 1469, 1476, -1, sizeof(::zetasql::ResolvedCreateViewStmtProto)},
-  { 1477, 1485, -1, sizeof(::zetasql::ResolvedWithPartitionColumnsProto)},
-  { 1487, 1496, -1, sizeof(::zetasql::ResolvedCreateSnapshotTableStmtProto)},
-  { 1499, 1507, -1, sizeof(::zetasql::ResolvedCreateExternalTableStmtProto)},
-  { 1509, 1519, -1, sizeof(::zetasql::ResolvedExportModelStmtProto)},
-  { 1523, 1535, -1, sizeof(::zetasql::ResolvedExportDataStmtProto)},
-  { 1541, 1550, -1, sizeof(::zetasql::ResolvedDefineTableStmtProto)},
-  { 1553, 1563, -1, sizeof(::zetasql::ResolvedDescribeStmtProto)},
-  { 1567, 1577, -1, sizeof(::zetasql::ResolvedShowStmtProto)},
-  { 1581, 1590, -1, sizeof(::zetasql::ResolvedBeginStmtProto)},
-  { 1593, 1602, -1, sizeof(::zetasql::ResolvedSetTransactionStmtProto)},
-  { 1605, 1612, -1, sizeof(::zetasql::ResolvedCommitStmtProto)},
-  { 1613, 1620, -1, sizeof(::zetasql::ResolvedRollbackStmtProto)},
-  { 1621, 1629, -1, sizeof(::zetasql::ResolvedStartBatchStmtProto)},
-  { 1631, 1638, -1, sizeof(::zetasql::ResolvedRunBatchStmtProto)},
-  { 1639, 1646, -1, sizeof(::zetasql::ResolvedAbortBatchStmtProto)},
-  { 1647, 1658, -1, sizeof(::zetasql::ResolvedDropStmtProto)},
-  { 1663, 1672, -1, sizeof(::zetasql::ResolvedDropMaterializedViewStmtProto)},
-  { 1675, 1684, -1, sizeof(::zetasql::ResolvedDropSnapshotTableStmtProto)},
-  { 1687, 1694, -1, sizeof(::zetasql::ResolvedRecursiveRefScanProto)},
-  { 1695, 1705, -1, sizeof(::zetasql::ResolvedRecursiveScanProto)},
-  { 1709, 1719, -1, sizeof(::zetasql::ResolvedWithScanProto)},
-  { 1723, 1732, -1, sizeof(::zetasql::ResolvedWithEntryProto)},
-  { 1735, 1745, -1, sizeof(::zetasql::ResolvedOptionProto)},
-  { 1749, 1758, -1, sizeof(::zetasql::ResolvedWindowPartitioningProto)},
-  { 1761, 1770, -1, sizeof(::zetasql::ResolvedWindowOrderingProto)},
-  { 1773, 1783, -1, sizeof(::zetasql::ResolvedWindowFrameProto)},
-  { 1787, 1797, -1, sizeof(::zetasql::ResolvedAnalyticFunctionGroupProto)},
-  { 1801, 1810, -1, sizeof(::zetasql::ResolvedWindowFrameExprProto)},
-  { 1813, 1821, -1, sizeof(::zetasql::ResolvedDMLValueProto)},
-  { 1823, 1830, -1, sizeof(::zetasql::ResolvedDMLDefaultProto)},
-  { 1831, 1840, -1, sizeof(::zetasql::ResolvedAssertStmtProto)},
-  { 1843, 1851, -1, sizeof(::zetasql::ResolvedAssertRowsModifiedProto)},
-  { 1853, 1861, -1, sizeof(::zetasql::ResolvedInsertRowProto)},
-  { 1863, 1880, -1, sizeof(::zetasql::ResolvedInsertStmtProto)},
-  { 1891, 1904, -1, sizeof(::zetasql::ResolvedDeleteStmtProto)},
-  { 1911, 1925, -1, sizeof(::zetasql::ResolvedUpdateItemProto)},
-  { 1933, 1942, -1, sizeof(::zetasql::ResolvedUpdateArrayItemProto)},
-  { 1945, 1960, -1, sizeof(::zetasql::ResolvedUpdateStmtProto)},
-  { 1969, 1982, -1, sizeof(::zetasql::ResolvedMergeWhenProto)},
-  { 1989, 2001, -1, sizeof(::zetasql::ResolvedMergeStmtProto)},
-  { 2007, 2016, -1, sizeof(::zetasql::ResolvedTruncateStmtProto)},
-  { 2019, 2027, -1, sizeof(::zetasql::ResolvedObjectUnitProto)},
-  { 2029, 2038, -1, sizeof(::zetasql::ResolvedPrivilegeProto)},
-  { 2041, -1, -1, sizeof(::zetasql::AnyResolvedGrantOrRevokeStmtProto)},
-  { 2050, 2062, -1, sizeof(::zetasql::ResolvedGrantOrRevokeStmtProto)},
-  { 2068, 2075, -1, sizeof(::zetasql::ResolvedGrantStmtProto)},
-  { 2076, 2083, -1, sizeof(::zetasql::ResolvedRevokeStmtProto)},
-  { 2084, -1, -1, sizeof(::zetasql::AnyResolvedAlterObjectStmtProto)},
-  { 2101, 2111, -1, sizeof(::zetasql::ResolvedAlterObjectStmtProto)},
-  { 2115, 2122, -1, sizeof(::zetasql::ResolvedAlterDatabaseStmtProto)},
-  { 2123, 2130, -1, sizeof(::zetasql::ResolvedAlterMaterializedViewStmtProto)},
-  { 2131, 2138, -1, sizeof(::zetasql::ResolvedAlterSchemaStmtProto)},
-  { 2139, 2146, -1, sizeof(::zetasql::ResolvedAlterModelStmtProto)},
-  { 2147, 2154, -1, sizeof(::zetasql::ResolvedAlterTableStmtProto)},
-  { 2155, 2162, -1, sizeof(::zetasql::ResolvedAlterViewStmtProto)},
-  { 2163, -1, -1, sizeof(::zetasql::AnyResolvedAlterActionProto)},
-  { 2190, 2197, -1, sizeof(::zetasql::ResolvedAlterActionProto)},
-  { 2198, -1, -1, sizeof(::zetasql::AnyResolvedAlterColumnActionProto)},
-  { 2210, 2219, -1, sizeof(::zetasql::ResolvedAlterColumnActionProto)},
-  { 2222, 2230, -1, sizeof(::zetasql::ResolvedSetOptionsActionProto)},
-  { 2232, 2243, -1, sizeof(::zetasql::ResolvedAlterSubEntityActionProto)},
-  { 2248, 2259, -1, sizeof(::zetasql::ResolvedAddSubEntityActionProto)},
-  { 2264, 2274, -1, sizeof(::zetasql::ResolvedDropSubEntityActionProto)},
-  { 2278, 2287, -1, sizeof(::zetasql::ResolvedAddColumnActionProto)},
-  { 2290, 2300, -1, sizeof(::zetasql::ResolvedAddConstraintActionProto)},
-  { 2304, 2313, -1, sizeof(::zetasql::ResolvedDropConstraintActionProto)},
-  { 2316, 2324, -1, sizeof(::zetasql::ResolvedDropPrimaryKeyActionProto)},
-  { 2326, 2334, -1, sizeof(::zetasql::ResolvedAlterColumnOptionsActionProto)},
-  { 2336, 2343, -1, sizeof(::zetasql::ResolvedAlterColumnDropNotNullActionProto)},
-  { 2344, 2354, -1, sizeof(::zetasql::ResolvedAlterColumnSetDataTypeActionProto)},
-  { 2358, 2366, -1, sizeof(::zetasql::ResolvedAlterColumnSetDefaultActionProto)},
-  { 2368, 2375, -1, sizeof(::zetasql::ResolvedAlterColumnDropDefaultActionProto)},
-  { 2376, 2385, -1, sizeof(::zetasql::ResolvedDropColumnActionProto)},
-  { 2388, 2398, -1, sizeof(::zetasql::ResolvedRenameColumnActionProto)},
-  { 2402, 2411, -1, sizeof(::zetasql::ResolvedSetAsActionProto)},
-  { 2414, 2422, -1, sizeof(::zetasql::ResolvedSetCollateClauseProto)},
-  { 2424, 2434, -1, sizeof(::zetasql::ResolvedAlterTableSetOptionsStmtProto)},
-  { 2438, 2448, -1, sizeof(::zetasql::ResolvedRenameStmtProto)},
-  { 2452, 2462, -1, sizeof(::zetasql::ResolvedCreatePrivilegeRestrictionStmtProto)},
-  { 2466, 2481, -1, sizeof(::zetasql::ResolvedCreateRowAccessPolicyStmtProto)},
-  { 2490, 2501, -1, sizeof(::zetasql::ResolvedDropPrivilegeRestrictionStmtProto)},
-  { 2506, 2517, -1, sizeof(::zetasql::ResolvedDropRowAccessPolicyStmtProto)},
-  { 2522, 2532, -1, sizeof(::zetasql::ResolvedDropSearchIndexStmtProto)},
-  { 2536, 2544, -1, sizeof(::zetasql::ResolvedGrantToActionProto)},
-  { 2546, 2554, -1, sizeof(::zetasql::ResolvedRestrictToActionProto)},
-  { 2556, 2565, -1, sizeof(::zetasql::ResolvedAddToRestricteeListActionProto)},
-  { 2568, 2577, -1, sizeof(::zetasql::ResolvedRemoveFromRestricteeListActionProto)},
-  { 2580, 2589, -1, sizeof(::zetasql::ResolvedFilterUsingActionProto)},
-  { 2592, 2601, -1, sizeof(::zetasql::ResolvedRevokeFromActionProto)},
-  { 2604, 2612, -1, sizeof(::zetasql::ResolvedRenameToActionProto)},
-  { 2614, 2623, -1, sizeof(::zetasql::ResolvedAlterPrivilegeRestrictionStmtProto)},
-  { 2626, 2635, -1, sizeof(::zetasql::ResolvedAlterRowAccessPolicyStmtProto)},
-  { 2638, 2646, -1, sizeof(::zetasql::ResolvedAlterAllRowAccessPoliciesStmtProto)},
-  { 2648, 2656, -1, sizeof(::zetasql::ResolvedCreateConstantStmtProto)},
-  { 2658, 2679, -1, sizeof(::zetasql::ResolvedCreateFunctionStmtProto)},
-  { 2694, 2704, -1, sizeof(::zetasql::ResolvedArgumentDefProto)},
-  { 2708, 2717, -1, sizeof(::zetasql::ResolvedArgumentRefProto)},
-  { 2720, 2737, -1, sizeof(::zetasql::ResolvedCreateTableFunctionStmtProto)},
-  { 2748, 2757, -1, sizeof(::zetasql::ResolvedRelationArgumentScanProto)},
-  { 2760, 2768, -1, sizeof(::zetasql::ResolvedArgumentListProto)},
-  { 2770, 2778, -1, sizeof(::zetasql::ResolvedFunctionSignatureHolderProto)},
-  { 2780, 2791, -1, sizeof(::zetasql::ResolvedDropFunctionStmtProto)},
-  { 2796, 2805, -1, sizeof(::zetasql::ResolvedDropTableFunctionStmtProto)},
-  { 2808, 2818, -1, sizeof(::zetasql::ResolvedCallStmtProto)},
-  { 2822, 2835, -1, sizeof(::zetasql::ResolvedImportStmtProto)},
-  { 2842, 2851, -1, sizeof(::zetasql::ResolvedModuleStmtProto)},
-  { 2854, 2863, -1, sizeof(::zetasql::ResolvedAggregateHavingModifierProto)},
-  { 2866, 2875, -1, sizeof(::zetasql::ResolvedCreateMaterializedViewStmtProto)},
-  { 2878, 2892, -1, sizeof(::zetasql::ResolvedCreateProcedureStmtProto)},
-  { 2900, 2909, -1, sizeof(::zetasql::ResolvedExecuteImmediateArgumentProto)},
-  { 2912, 2922, -1, sizeof(::zetasql::ResolvedExecuteImmediateStmtProto)},
-  { 2926, 2935, -1, sizeof(::zetasql::ResolvedAssignmentStmtProto)},
-  { 2938, 2949, -1, sizeof(::zetasql::ResolvedCreateEntityStmtProto)},
-  { 2954, 2962, -1, sizeof(::zetasql::ResolvedAlterEntityStmtProto)},
-  { 2964, 2974, -1, sizeof(::zetasql::ResolvedPivotColumnProto)},
-  { 2978, 2991, -1, sizeof(::zetasql::ResolvedPivotScanProto)},
-  { 2998, 3008, -1, sizeof(::zetasql::ResolvedReturningClauseProto)},
-  { 3012, 3020, -1, sizeof(::zetasql::ResolvedUnpivotArgProto)},
-  { 3022, 3036, -1, sizeof(::zetasql::ResolvedUnpivotScanProto)},
-  { 3044, 3053, -1, sizeof(::zetasql::ResolvedCloneDataStmtProto)},
-  { 3056, 3065, -1, sizeof(::zetasql::ResolvedTableAndColumnInfoProto)},
-  { 3068, 3077, -1, sizeof(::zetasql::ResolvedAnalyzeStmtProto)},
-  { 3080, 3089, -1, sizeof(::zetasql::ResolvedAuxLoadDataPartitionFilterProto)},
-  { 3092, 3115, -1, sizeof(::zetasql::ResolvedAuxLoadDataStmtProto)},
+  { 726, 737, -1, sizeof(::zetasql::ResolvedAggregateScanBaseProto)},
+  { 742, 751, -1, sizeof(::zetasql::ResolvedAggregateScanProto)},
+  { 754, 763, -1, sizeof(::zetasql::ResolvedAnonymizedAggregateScanProto)},
+  { 766, 775, -1, sizeof(::zetasql::ResolvedDifferentialPrivacyAggregateScanProto)},
+  { 778, 786, -1, sizeof(::zetasql::ResolvedAggregationThresholdAggregateScanProto)},
+  { 788, 797, -1, sizeof(::zetasql::ResolvedSetOperationItemProto)},
+  { 800, 811, -1, sizeof(::zetasql::ResolvedSetOperationScanProto)},
+  { 816, 825, -1, sizeof(::zetasql::ResolvedOrderByScanProto)},
+  { 828, 838, -1, sizeof(::zetasql::ResolvedLimitOffsetScanProto)},
+  { 842, 850, -1, sizeof(::zetasql::ResolvedWithRefScanProto)},
+  { 852, 861, -1, sizeof(::zetasql::ResolvedAnalyticScanProto)},
+  { 864, 878, -1, sizeof(::zetasql::ResolvedSampleScanProto)},
+  { 886, 895, -1, sizeof(::zetasql::ResolvedComputedColumnProto)},
+  { 898, 910, -1, sizeof(::zetasql::ResolvedOrderByItemProto)},
+  { 916, 928, -1, sizeof(::zetasql::ResolvedColumnAnnotationsProto)},
+  { 934, 943, -1, sizeof(::zetasql::ResolvedGeneratedColumnInfoProto)},
+  { 946, 955, -1, sizeof(::zetasql::ResolvedColumnDefaultValueProto)},
+  { 958, 972, -1, sizeof(::zetasql::ResolvedColumnDefinitionProto)},
+  { 980, -1, -1, sizeof(::zetasql::AnyResolvedConstraintProto)},
+  { 990, 997, -1, sizeof(::zetasql::ResolvedConstraintProto)},
+  { 998, 1010, -1, sizeof(::zetasql::ResolvedPrimaryKeyProto)},
+  { 1016, 1033, -1, sizeof(::zetasql::ResolvedForeignKeyProto)},
+  { 1044, 1055, -1, sizeof(::zetasql::ResolvedCheckConstraintProto)},
+  { 1060, 1069, -1, sizeof(::zetasql::ResolvedOutputColumnProto)},
+  { 1072, 1081, -1, sizeof(::zetasql::ResolvedProjectScanProto)},
+  { 1084, 1097, -1, sizeof(::zetasql::ResolvedTVFScanProto)},
+  { 1104, 1113, -1, sizeof(::zetasql::ResolvedGroupRowsScanProto)},
+  { 1116, 1130, -1, sizeof(::zetasql::ResolvedFunctionArgumentProto)},
+  { 1138, -1, -1, sizeof(::zetasql::AnyResolvedStatementProto)},
+  { 1189, 1197, -1, sizeof(::zetasql::ResolvedStatementProto)},
+  { 1199, 1207, -1, sizeof(::zetasql::ResolvedExplainStmtProto)},
+  { 1209, 1219, -1, sizeof(::zetasql::ResolvedQueryStmtProto)},
+  { 1223, 1232, -1, sizeof(::zetasql::ResolvedCreateDatabaseStmtProto)},
+  { 1235, -1, -1, sizeof(::zetasql::AnyResolvedCreateStatementProto)},
+  { 1254, 1264, -1, sizeof(::zetasql::ResolvedCreateStatementProto)},
+  { 1268, 1277, -1, sizeof(::zetasql::ResolvedIndexItemProto)},
+  { 1280, 1290, -1, sizeof(::zetasql::ResolvedUnnestItemProto)},
+  { 1294, 1311, -1, sizeof(::zetasql::ResolvedCreateIndexStmtProto)},
+  { 1322, 1331, -1, sizeof(::zetasql::ResolvedCreateSchemaStmtProto)},
+  { 1334, -1, -1, sizeof(::zetasql::AnyResolvedCreateTableStmtBaseProto)},
+  { 1344, 1361, -1, sizeof(::zetasql::ResolvedCreateTableStmtBaseProto)},
+  { 1372, 1383, -1, sizeof(::zetasql::ResolvedCreateTableStmtProto)},
+  { 1388, 1399, -1, sizeof(::zetasql::ResolvedCreateTableAsSelectStmtProto)},
+  { 1404, 1414, -1, sizeof(::zetasql::ResolvedCreateModelAliasedQueryProto)},
+  { 1418, 1437, -1, sizeof(::zetasql::ResolvedCreateModelStmtProto)},
+  { 1450, -1, -1, sizeof(::zetasql::AnyResolvedCreateViewBaseProto)},
+  { 1459, 1475, -1, sizeof(::zetasql::ResolvedCreateViewBaseProto)},
+  { 1485, 1492, -1, sizeof(::zetasql::ResolvedCreateViewStmtProto)},
+  { 1493, 1501, -1, sizeof(::zetasql::ResolvedWithPartitionColumnsProto)},
+  { 1503, 1512, -1, sizeof(::zetasql::ResolvedCreateSnapshotTableStmtProto)},
+  { 1515, 1523, -1, sizeof(::zetasql::ResolvedCreateExternalTableStmtProto)},
+  { 1525, 1535, -1, sizeof(::zetasql::ResolvedExportModelStmtProto)},
+  { 1539, 1551, -1, sizeof(::zetasql::ResolvedExportDataStmtProto)},
+  { 1557, 1566, -1, sizeof(::zetasql::ResolvedDefineTableStmtProto)},
+  { 1569, 1579, -1, sizeof(::zetasql::ResolvedDescribeStmtProto)},
+  { 1583, 1593, -1, sizeof(::zetasql::ResolvedShowStmtProto)},
+  { 1597, 1606, -1, sizeof(::zetasql::ResolvedBeginStmtProto)},
+  { 1609, 1618, -1, sizeof(::zetasql::ResolvedSetTransactionStmtProto)},
+  { 1621, 1628, -1, sizeof(::zetasql::ResolvedCommitStmtProto)},
+  { 1629, 1636, -1, sizeof(::zetasql::ResolvedRollbackStmtProto)},
+  { 1637, 1645, -1, sizeof(::zetasql::ResolvedStartBatchStmtProto)},
+  { 1647, 1654, -1, sizeof(::zetasql::ResolvedRunBatchStmtProto)},
+  { 1655, 1662, -1, sizeof(::zetasql::ResolvedAbortBatchStmtProto)},
+  { 1663, 1674, -1, sizeof(::zetasql::ResolvedDropStmtProto)},
+  { 1679, 1688, -1, sizeof(::zetasql::ResolvedDropMaterializedViewStmtProto)},
+  { 1691, 1700, -1, sizeof(::zetasql::ResolvedDropSnapshotTableStmtProto)},
+  { 1703, 1710, -1, sizeof(::zetasql::ResolvedRecursiveRefScanProto)},
+  { 1711, 1721, -1, sizeof(::zetasql::ResolvedRecursiveScanProto)},
+  { 1725, 1735, -1, sizeof(::zetasql::ResolvedWithScanProto)},
+  { 1739, 1748, -1, sizeof(::zetasql::ResolvedWithEntryProto)},
+  { 1751, 1761, -1, sizeof(::zetasql::ResolvedOptionProto)},
+  { 1765, 1774, -1, sizeof(::zetasql::ResolvedWindowPartitioningProto)},
+  { 1777, 1786, -1, sizeof(::zetasql::ResolvedWindowOrderingProto)},
+  { 1789, 1799, -1, sizeof(::zetasql::ResolvedWindowFrameProto)},
+  { 1803, 1813, -1, sizeof(::zetasql::ResolvedAnalyticFunctionGroupProto)},
+  { 1817, 1826, -1, sizeof(::zetasql::ResolvedWindowFrameExprProto)},
+  { 1829, 1837, -1, sizeof(::zetasql::ResolvedDMLValueProto)},
+  { 1839, 1846, -1, sizeof(::zetasql::ResolvedDMLDefaultProto)},
+  { 1847, 1856, -1, sizeof(::zetasql::ResolvedAssertStmtProto)},
+  { 1859, 1867, -1, sizeof(::zetasql::ResolvedAssertRowsModifiedProto)},
+  { 1869, 1877, -1, sizeof(::zetasql::ResolvedInsertRowProto)},
+  { 1879, 1896, -1, sizeof(::zetasql::ResolvedInsertStmtProto)},
+  { 1907, 1920, -1, sizeof(::zetasql::ResolvedDeleteStmtProto)},
+  { 1927, 1941, -1, sizeof(::zetasql::ResolvedUpdateItemProto)},
+  { 1949, 1958, -1, sizeof(::zetasql::ResolvedUpdateArrayItemProto)},
+  { 1961, 1976, -1, sizeof(::zetasql::ResolvedUpdateStmtProto)},
+  { 1985, 1998, -1, sizeof(::zetasql::ResolvedMergeWhenProto)},
+  { 2005, 2017, -1, sizeof(::zetasql::ResolvedMergeStmtProto)},
+  { 2023, 2032, -1, sizeof(::zetasql::ResolvedTruncateStmtProto)},
+  { 2035, 2043, -1, sizeof(::zetasql::ResolvedObjectUnitProto)},
+  { 2045, 2054, -1, sizeof(::zetasql::ResolvedPrivilegeProto)},
+  { 2057, -1, -1, sizeof(::zetasql::AnyResolvedGrantOrRevokeStmtProto)},
+  { 2066, 2078, -1, sizeof(::zetasql::ResolvedGrantOrRevokeStmtProto)},
+  { 2084, 2091, -1, sizeof(::zetasql::ResolvedGrantStmtProto)},
+  { 2092, 2099, -1, sizeof(::zetasql::ResolvedRevokeStmtProto)},
+  { 2100, -1, -1, sizeof(::zetasql::AnyResolvedAlterObjectStmtProto)},
+  { 2117, 2127, -1, sizeof(::zetasql::ResolvedAlterObjectStmtProto)},
+  { 2131, 2138, -1, sizeof(::zetasql::ResolvedAlterDatabaseStmtProto)},
+  { 2139, 2146, -1, sizeof(::zetasql::ResolvedAlterMaterializedViewStmtProto)},
+  { 2147, 2154, -1, sizeof(::zetasql::ResolvedAlterSchemaStmtProto)},
+  { 2155, 2162, -1, sizeof(::zetasql::ResolvedAlterModelStmtProto)},
+  { 2163, 2170, -1, sizeof(::zetasql::ResolvedAlterTableStmtProto)},
+  { 2171, 2178, -1, sizeof(::zetasql::ResolvedAlterViewStmtProto)},
+  { 2179, -1, -1, sizeof(::zetasql::AnyResolvedAlterActionProto)},
+  { 2206, 2213, -1, sizeof(::zetasql::ResolvedAlterActionProto)},
+  { 2214, -1, -1, sizeof(::zetasql::AnyResolvedAlterColumnActionProto)},
+  { 2226, 2235, -1, sizeof(::zetasql::ResolvedAlterColumnActionProto)},
+  { 2238, 2246, -1, sizeof(::zetasql::ResolvedSetOptionsActionProto)},
+  { 2248, 2259, -1, sizeof(::zetasql::ResolvedAlterSubEntityActionProto)},
+  { 2264, 2275, -1, sizeof(::zetasql::ResolvedAddSubEntityActionProto)},
+  { 2280, 2290, -1, sizeof(::zetasql::ResolvedDropSubEntityActionProto)},
+  { 2294, 2303, -1, sizeof(::zetasql::ResolvedAddColumnActionProto)},
+  { 2306, 2316, -1, sizeof(::zetasql::ResolvedAddConstraintActionProto)},
+  { 2320, 2329, -1, sizeof(::zetasql::ResolvedDropConstraintActionProto)},
+  { 2332, 2340, -1, sizeof(::zetasql::ResolvedDropPrimaryKeyActionProto)},
+  { 2342, 2350, -1, sizeof(::zetasql::ResolvedAlterColumnOptionsActionProto)},
+  { 2352, 2359, -1, sizeof(::zetasql::ResolvedAlterColumnDropNotNullActionProto)},
+  { 2360, 2370, -1, sizeof(::zetasql::ResolvedAlterColumnSetDataTypeActionProto)},
+  { 2374, 2382, -1, sizeof(::zetasql::ResolvedAlterColumnSetDefaultActionProto)},
+  { 2384, 2391, -1, sizeof(::zetasql::ResolvedAlterColumnDropDefaultActionProto)},
+  { 2392, 2401, -1, sizeof(::zetasql::ResolvedDropColumnActionProto)},
+  { 2404, 2414, -1, sizeof(::zetasql::ResolvedRenameColumnActionProto)},
+  { 2418, 2427, -1, sizeof(::zetasql::ResolvedSetAsActionProto)},
+  { 2430, 2438, -1, sizeof(::zetasql::ResolvedSetCollateClauseProto)},
+  { 2440, 2450, -1, sizeof(::zetasql::ResolvedAlterTableSetOptionsStmtProto)},
+  { 2454, 2464, -1, sizeof(::zetasql::ResolvedRenameStmtProto)},
+  { 2468, 2478, -1, sizeof(::zetasql::ResolvedCreatePrivilegeRestrictionStmtProto)},
+  { 2482, 2497, -1, sizeof(::zetasql::ResolvedCreateRowAccessPolicyStmtProto)},
+  { 2506, 2517, -1, sizeof(::zetasql::ResolvedDropPrivilegeRestrictionStmtProto)},
+  { 2522, 2533, -1, sizeof(::zetasql::ResolvedDropRowAccessPolicyStmtProto)},
+  { 2538, 2548, -1, sizeof(::zetasql::ResolvedDropSearchIndexStmtProto)},
+  { 2552, 2560, -1, sizeof(::zetasql::ResolvedGrantToActionProto)},
+  { 2562, 2570, -1, sizeof(::zetasql::ResolvedRestrictToActionProto)},
+  { 2572, 2581, -1, sizeof(::zetasql::ResolvedAddToRestricteeListActionProto)},
+  { 2584, 2593, -1, sizeof(::zetasql::ResolvedRemoveFromRestricteeListActionProto)},
+  { 2596, 2605, -1, sizeof(::zetasql::ResolvedFilterUsingActionProto)},
+  { 2608, 2617, -1, sizeof(::zetasql::ResolvedRevokeFromActionProto)},
+  { 2620, 2628, -1, sizeof(::zetasql::ResolvedRenameToActionProto)},
+  { 2630, 2639, -1, sizeof(::zetasql::ResolvedAlterPrivilegeRestrictionStmtProto)},
+  { 2642, 2651, -1, sizeof(::zetasql::ResolvedAlterRowAccessPolicyStmtProto)},
+  { 2654, 2662, -1, sizeof(::zetasql::ResolvedAlterAllRowAccessPoliciesStmtProto)},
+  { 2664, 2672, -1, sizeof(::zetasql::ResolvedCreateConstantStmtProto)},
+  { 2674, 2695, -1, sizeof(::zetasql::ResolvedCreateFunctionStmtProto)},
+  { 2710, 2720, -1, sizeof(::zetasql::ResolvedArgumentDefProto)},
+  { 2724, 2733, -1, sizeof(::zetasql::ResolvedArgumentRefProto)},
+  { 2736, 2753, -1, sizeof(::zetasql::ResolvedCreateTableFunctionStmtProto)},
+  { 2764, 2773, -1, sizeof(::zetasql::ResolvedRelationArgumentScanProto)},
+  { 2776, 2784, -1, sizeof(::zetasql::ResolvedArgumentListProto)},
+  { 2786, 2794, -1, sizeof(::zetasql::ResolvedFunctionSignatureHolderProto)},
+  { 2796, 2807, -1, sizeof(::zetasql::ResolvedDropFunctionStmtProto)},
+  { 2812, 2821, -1, sizeof(::zetasql::ResolvedDropTableFunctionStmtProto)},
+  { 2824, 2834, -1, sizeof(::zetasql::ResolvedCallStmtProto)},
+  { 2838, 2851, -1, sizeof(::zetasql::ResolvedImportStmtProto)},
+  { 2858, 2867, -1, sizeof(::zetasql::ResolvedModuleStmtProto)},
+  { 2870, 2879, -1, sizeof(::zetasql::ResolvedAggregateHavingModifierProto)},
+  { 2882, 2891, -1, sizeof(::zetasql::ResolvedCreateMaterializedViewStmtProto)},
+  { 2894, 2908, -1, sizeof(::zetasql::ResolvedCreateProcedureStmtProto)},
+  { 2916, 2925, -1, sizeof(::zetasql::ResolvedExecuteImmediateArgumentProto)},
+  { 2928, 2938, -1, sizeof(::zetasql::ResolvedExecuteImmediateStmtProto)},
+  { 2942, 2951, -1, sizeof(::zetasql::ResolvedAssignmentStmtProto)},
+  { 2954, 2965, -1, sizeof(::zetasql::ResolvedCreateEntityStmtProto)},
+  { 2970, 2978, -1, sizeof(::zetasql::ResolvedAlterEntityStmtProto)},
+  { 2980, 2990, -1, sizeof(::zetasql::ResolvedPivotColumnProto)},
+  { 2994, 3007, -1, sizeof(::zetasql::ResolvedPivotScanProto)},
+  { 3014, 3024, -1, sizeof(::zetasql::ResolvedReturningClauseProto)},
+  { 3028, 3036, -1, sizeof(::zetasql::ResolvedUnpivotArgProto)},
+  { 3038, 3052, -1, sizeof(::zetasql::ResolvedUnpivotScanProto)},
+  { 3060, 3069, -1, sizeof(::zetasql::ResolvedCloneDataStmtProto)},
+  { 3072, 3081, -1, sizeof(::zetasql::ResolvedTableAndColumnInfoProto)},
+  { 3084, 3093, -1, sizeof(::zetasql::ResolvedAnalyzeStmtProto)},
+  { 3096, 3105, -1, sizeof(::zetasql::ResolvedAuxLoadDataPartitionFilterProto)},
+  { 3108, 3131, -1, sizeof(::zetasql::ResolvedAuxLoadDataStmtProto)},
+  { 3148, 3159, -1, sizeof(::zetasql::ResolvedUndropStmtProto)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -6718,6 +6785,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAggregateScanProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAnonymizedAggregateScanProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedDifferentialPrivacyAggregateScanProto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAggregationThresholdAggregateScanProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedSetOperationItemProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedSetOperationScanProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedOrderByScanProto_default_instance_),
@@ -6885,6 +6953,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAnalyzeStmtProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAuxLoadDataPartitionFilterProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAuxLoadDataStmtProto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedUndropStmtProto_default_instance_),
 };
 
 const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -7314,7 +7383,7 @@ const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2
   "prProto\"\211\001\n\030ResolvedGroupingSetProto\022.\n\006"
   "parent\030\001 \001(\0132\036.zetasql.ResolvedArgumentP"
   "roto\022=\n\024group_by_column_list\030\002 \003(\0132\037.zet"
-  "asql.ResolvedColumnRefProto\"\320\002\n!AnyResol"
+  "asql.ResolvedColumnRefProto\"\310\003\n!AnyResol"
   "vedAggregateScanBaseProto\022K\n\034resolved_ag"
   "gregate_scan_node\030\031 \001(\0132#.zetasql.Resolv"
   "edAggregateScanProtoH\000\022`\n\'resolved_anony"
@@ -7322,7 +7391,10 @@ const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2
   "l.ResolvedAnonymizedAggregateScanProtoH\000"
   "\022t\n1resolved_differential_privacy_aggreg"
   "ate_scan_node\030\335\001 \001(\01326.zetasql.ResolvedD"
-  "ifferentialPrivacyAggregateScanProtoH\000B\006"
+  "ifferentialPrivacyAggregateScanProtoH\000\022v"
+  "\n2resolved_aggregation_threshold_aggrega"
+  "te_scan_node\030\344\001 \001(\01327.zetasql.ResolvedAg"
+  "gregationThresholdAggregateScanProtoH\000B\006"
   "\n\004node\"\263\002\n\036ResolvedAggregateScanBaseProt"
   "o\022*\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedScan"
   "Proto\0221\n\ninput_scan\030\002 \001(\0132\035.zetasql.AnyR"
@@ -7347,1089 +7419,1105 @@ const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2
   "eScanBaseProto\022E\n\036group_selection_thresh"
   "old_expr\030\005 \001(\0132\035.zetasql.AnyResolvedExpr"
   "Proto\0221\n\013option_list\030\006 \003(\0132\034.zetasql.Res"
-  "olvedOptionProto\"\266\001\n\035ResolvedSetOperatio"
-  "nItemProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Res"
-  "olvedArgumentProto\022+\n\004scan\030\002 \001(\0132\035.zetas"
-  "ql.AnyResolvedScanProto\0228\n\022output_column"
-  "_list\030\003 \003(\0132\034.zetasql.ResolvedColumnProt"
-  "o\"\326\001\n\035ResolvedSetOperationScanProto\022*\n\006p"
-  "arent\030\001 \001(\0132\032.zetasql.ResolvedScanProto\022"
-  "H\n\007op_type\030\002 \001(\01627.zetasql.ResolvedSetOp"
-  "erationScanEnums.SetOperationType\022\?\n\017inp"
-  "ut_item_list\030\004 \003(\0132&.zetasql.ResolvedSet"
-  "OperationItemProto\"\270\001\n\030ResolvedOrderBySc"
-  "anProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.Resolv"
-  "edScanProto\0221\n\ninput_scan\030\002 \001(\0132\035.zetasq"
-  "l.AnyResolvedScanProto\022=\n\022order_by_item_"
-  "list\030\003 \003(\0132!.zetasql.ResolvedOrderByItem"
-  "Proto\"\332\001\n\034ResolvedLimitOffsetScanProto\022*"
-  "\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedScanPro"
-  "to\0221\n\ninput_scan\030\002 \001(\0132\035.zetasql.AnyReso"
-  "lvedScanProto\022,\n\005limit\030\003 \001(\0132\035.zetasql.A"
-  "nyResolvedExprProto\022-\n\006offset\030\004 \001(\0132\035.ze"
-  "tasql.AnyResolvedExprProto\"_\n\030ResolvedWi"
-  "thRefScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasql"
-  ".ResolvedScanProto\022\027\n\017with_query_name\030\002 "
-  "\001(\t\"\304\001\n\031ResolvedAnalyticScanProto\022*\n\006par"
-  "ent\030\001 \001(\0132\032.zetasql.ResolvedScanProto\0221\n"
-  "\ninput_scan\030\002 \001(\0132\035.zetasql.AnyResolvedS"
-  "canProto\022H\n\023function_group_list\030\003 \003(\0132+."
-  "zetasql.ResolvedAnalyticFunctionGroupPro"
-  "to\"\241\003\n\027ResolvedSampleScanProto\022*\n\006parent"
-  "\030\001 \001(\0132\032.zetasql.ResolvedScanProto\0221\n\nin"
-  "put_scan\030\002 \001(\0132\035.zetasql.AnyResolvedScan"
-  "Proto\022\016\n\006method\030\003 \001(\t\022+\n\004size\030\004 \001(\0132\035.ze"
-  "tasql.AnyResolvedExprProto\0229\n\004unit\030\005 \001(\016"
-  "2+.zetasql.ResolvedSampleScanEnums.Sampl"
-  "eUnit\022:\n\023repeatable_argument\030\006 \001(\0132\035.zet"
-  "asql.AnyResolvedExprProto\0229\n\rweight_colu"
-  "mn\030\007 \001(\0132\".zetasql.ResolvedColumnHolderP"
-  "roto\0228\n\021partition_by_list\030\010 \003(\0132\035.zetasq"
-  "l.AnyResolvedExprProto\"\250\001\n\033ResolvedCompu"
-  "tedColumnProto\022.\n\006parent\030\001 \001(\0132\036.zetasql"
-  ".ResolvedArgumentProto\022,\n\006column\030\002 \001(\0132\034"
-  ".zetasql.ResolvedColumnProto\022+\n\004expr\030\003 \001"
-  "(\0132\035.zetasql.AnyResolvedExprProto\"\306\002\n\030Re"
-  "solvedOrderByItemProto\022.\n\006parent\030\001 \001(\0132\036"
-  ".zetasql.ResolvedArgumentProto\0223\n\ncolumn"
-  "_ref\030\002 \001(\0132\037.zetasql.ResolvedColumnRefPr"
-  "oto\0225\n\016collation_name\030\003 \001(\0132\035.zetasql.An"
-  "yResolvedExprProto\022\025\n\ris_descending\030\004 \001("
-  "\010\022C\n\nnull_order\030\005 \001(\0162/.zetasql.Resolved"
-  "OrderByItemEnums.NullOrderMode\0222\n\tcollat"
-  "ion\030\006 \001(\0132\037.zetasql.ResolvedCollationPro"
-  "to\"\300\002\n\036ResolvedColumnAnnotationsProto\022.\n"
-  "\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgument"
-  "Proto\0225\n\016collation_name\030\006 \001(\0132\035.zetasql."
-  "AnyResolvedExprProto\022\020\n\010not_null\030\002 \001(\010\0221"
-  "\n\013option_list\030\003 \003(\0132\034.zetasql.ResolvedOp"
-  "tionProto\022;\n\nchild_list\030\004 \003(\0132\'.zetasql."
-  "ResolvedColumnAnnotationsProto\0225\n\017type_p"
-  "arameters\030\005 \001(\0132\034.zetasql.TypeParameters"
-  "Proto\"\320\001\n ResolvedGeneratedColumnInfoPro"
-  "to\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArg"
-  "umentProto\0221\n\nexpression\030\002 \001(\0132\035.zetasql"
-  ".AnyResolvedExprProto\022I\n\013stored_mode\030\005 \001"
-  "(\01624.zetasql.ResolvedGeneratedColumnInfo"
-  "Enums.StoredMode\"\221\001\n\037ResolvedColumnDefau"
-  "ltValueProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.R"
-  "esolvedArgumentProto\0221\n\nexpression\030\002 \001(\013"
-  "2\035.zetasql.AnyResolvedExprProto\022\013\n\003sql\030\003"
-  " \001(\t\"\211\003\n\035ResolvedColumnDefinitionProto\022."
-  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
-  "tProto\022\014\n\004name\030\002 \001(\t\022 \n\004type\030\003 \001(\0132\022.zet"
-  "asql.TypeProto\022<\n\013annotations\030\004 \001(\0132\'.ze"
-  "tasql.ResolvedColumnAnnotationsProto\022\021\n\t"
-  "is_hidden\030\005 \001(\010\022,\n\006column\030\006 \001(\0132\034.zetasq"
-  "l.ResolvedColumnProto\022H\n\025generated_colum"
-  "n_info\030\007 \001(\0132).zetasql.ResolvedGenerated"
-  "ColumnInfoProto\022\?\n\rdefault_value\030\t \001(\0132("
-  ".zetasql.ResolvedColumnDefaultValueProto"
-  "\"\203\002\n\032AnyResolvedConstraintProto\022E\n\031resol"
-  "ved_primary_key_node\030\\ \001(\0132 .zetasql.Res"
-  "olvedPrimaryKeyProtoH\000\022E\n\031resolved_forei"
-  "gn_key_node\030n \001(\0132 .zetasql.ResolvedFore"
-  "ignKeyProtoH\000\022O\n\036resolved_check_constrai"
-  "nt_node\030q \001(\0132%.zetasql.ResolvedCheckCon"
-  "straintProtoH\000B\006\n\004node\"I\n\027ResolvedConstr"
-  "aintProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Reso"
-  "lvedArgumentProto\"\341\001\n\027ResolvedPrimaryKey"
-  "Proto\0220\n\006parent\030\001 \001(\0132 .zetasql.Resolved"
-  "ConstraintProto\022\032\n\022column_offset_list\030\002 "
-  "\003(\003\0221\n\013option_list\030\003 \003(\0132\034.zetasql.Resol"
-  "vedOptionProto\022\022\n\nunenforced\030\004 \001(\010\022\027\n\017co"
-  "nstraint_name\030\005 \001(\t\022\030\n\020column_name_list\030"
-  "\006 \003(\t\"\235\004\n\027ResolvedForeignKeyProto\0220\n\006par"
-  "ent\030\001 \001(\0132 .zetasql.ResolvedConstraintPr"
-  "oto\022\027\n\017constraint_name\030\002 \001(\t\022&\n\036referenc"
-  "ing_column_offset_list\030\003 \003(\003\0220\n\020referenc"
-  "ed_table\030\004 \001(\0132\026.zetasql.TableRefProto\022%"
-  "\n\035referenced_column_offset_list\030\005 \003(\003\022>\n"
-  "\nmatch_mode\030\006 \001(\0162*.zetasql.ResolvedFore"
-  "ignKeyEnums.MatchMode\022G\n\rupdate_action\030\007"
-  " \001(\01620.zetasql.ResolvedForeignKeyEnums.A"
-  "ctionOperation\022G\n\rdelete_action\030\010 \001(\01620."
-  "zetasql.ResolvedForeignKeyEnums.ActionOp"
-  "eration\022\020\n\010enforced\030\t \001(\010\0221\n\013option_list"
-  "\030\n \003(\0132\034.zetasql.ResolvedOptionProto\022\037\n\027"
-  "referencing_column_list\030\013 \003(\t\"\341\001\n\034Resolv"
-  "edCheckConstraintProto\0220\n\006parent\030\001 \001(\0132 "
-  ".zetasql.ResolvedConstraintProto\022\027\n\017cons"
-  "traint_name\030\002 \001(\t\0221\n\nexpression\030\003 \001(\0132\035."
-  "zetasql.AnyResolvedExprProto\022\020\n\010enforced"
-  "\030\004 \001(\010\0221\n\013option_list\030\005 \003(\0132\034.zetasql.Re"
-  "solvedOptionProto\"\207\001\n\031ResolvedOutputColu"
-  "mnProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolv"
-  "edArgumentProto\022\014\n\004name\030\002 \001(\t\022,\n\006column\030"
-  "\003 \001(\0132\034.zetasql.ResolvedColumnProto\"\262\001\n\030"
-  "ResolvedProjectScanProto\022*\n\006parent\030\001 \001(\013"
-  "2\032.zetasql.ResolvedScanProto\0227\n\texpr_lis"
-  "t\030\002 \003(\0132$.zetasql.ResolvedComputedColumn"
-  "Proto\0221\n\ninput_scan\030\003 \001(\0132\035.zetasql.AnyR"
-  "esolvedScanProto\"\317\002\n\024ResolvedTVFScanProt"
-  "o\022*\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedScan"
-  "Proto\0221\n\003tvf\030\002 \001(\0132$.zetasql.TableValued"
-  "FunctionRefProto\022-\n\tsignature\030\003 \001(\0132\032.ze"
-  "tasql.TVFSignatureProto\022=\n\rargument_list"
-  "\030\005 \003(\0132&.zetasql.ResolvedFunctionArgumen"
-  "tProto\022\031\n\021column_index_list\030\010 \003(\003\022\r\n\005ali"
-  "as\030\006 \001(\t\022@\n\027function_call_signature\030\007 \001("
-  "\0132\037.zetasql.FunctionSignatureProto\"\230\001\n\032R"
-  "esolvedGroupRowsScanProto\022*\n\006parent\030\001 \001("
-  "\0132\032.zetasql.ResolvedScanProto\022\?\n\021input_c"
-  "olumn_list\030\002 \003(\0132$.zetasql.ResolvedCompu"
-  "tedColumnProto\022\r\n\005alias\030\003 \001(\t\"\274\003\n\035Resolv"
-  "edFunctionArgumentProto\022.\n\006parent\030\001 \001(\0132"
-  "\036.zetasql.ResolvedArgumentProto\022+\n\004expr\030"
-  "\002 \001(\0132\035.zetasql.AnyResolvedExprProto\022+\n\004"
-  "scan\030\003 \001(\0132\035.zetasql.AnyResolvedScanProt"
-  "o\022*\n\005model\030\005 \001(\0132\033.zetasql.ResolvedModel"
-  "Proto\0224\n\nconnection\030\006 \001(\0132 .zetasql.Reso"
-  "lvedConnectionProto\0228\n\016descriptor_arg\030\007 "
-  "\001(\0132 .zetasql.ResolvedDescriptorProto\022:\n"
-  "\024argument_column_list\030\004 \003(\0132\034.zetasql.Re"
-  "solvedColumnProto\0229\n\rinline_lambda\030\010 \001(\013"
-  "2\".zetasql.ResolvedInlineLambdaProto\"\301\033\n"
-  "\031AnyResolvedStatementProto\022G\n\032resolved_e"
-  "xplain_stmt_node\030% \001(\0132!.zetasql.Resolve"
-  "dExplainStmtProtoH\000\022C\n\030resolved_query_st"
-  "mt_node\030& \001(\0132\037.zetasql.ResolvedQueryStm"
-  "tProtoH\000\022R\n\036resolved_create_statement_no"
-  "de\030\' \001(\0132(.zetasql.AnyResolvedCreateStat"
-  "ementProtoH\000\022N\n\036resolved_export_data_stm"
-  "t_node\030+ \001(\0132$.zetasql.ResolvedExportDat"
-  "aStmtProtoH\000\022P\n\037resolved_define_table_st"
-  "mt_node\030, \001(\0132%.zetasql.ResolvedDefineTa"
-  "bleStmtProtoH\000\022I\n\033resolved_describe_stmt"
-  "_node\030- \001(\0132\".zetasql.ResolvedDescribeSt"
-  "mtProtoH\000\022A\n\027resolved_show_stmt_node\030. \001"
-  "(\0132\036.zetasql.ResolvedShowStmtProtoH\000\022C\n\030"
-  "resolved_begin_stmt_node\030/ \001(\0132\037.zetasql"
-  ".ResolvedBeginStmtProtoH\000\022E\n\031resolved_co"
-  "mmit_stmt_node\0300 \001(\0132 .zetasql.ResolvedC"
-  "ommitStmtProtoH\000\022I\n\033resolved_rollback_st"
-  "mt_node\0301 \001(\0132\".zetasql.ResolvedRollback"
-  "StmtProtoH\000\022A\n\027resolved_drop_stmt_node\0302"
-  " \001(\0132\036.zetasql.ResolvedDropStmtProtoH\000\022E"
-  "\n\031resolved_insert_stmt_node\030\? \001(\0132 .zeta"
-  "sql.ResolvedInsertStmtProtoH\000\022E\n\031resolve"
-  "d_delete_stmt_node\030@ \001(\0132 .zetasql.Resol"
-  "vedDeleteStmtProtoH\000\022E\n\031resolved_update_"
-  "stmt_node\030B \001(\0132 .zetasql.ResolvedUpdate"
-  "StmtProtoH\000\022X\n\"resolved_grant_or_revoke_"
-  "stmt_node\030D \001(\0132*.zetasql.AnyResolvedGra"
-  "ntOrRevokeStmtProtoH\000\022d\n*resolved_alter_"
-  "table_set_options_stmt_node\030G \001(\0132..zeta"
-  "sql.ResolvedAlterTableSetOptionsStmtProt"
-  "oH\000\022E\n\031resolved_rename_stmt_node\030H \001(\0132 "
-  ".zetasql.ResolvedRenameStmtProtoH\000\022f\n+re"
-  "solved_create_row_access_policy_stmt_nod"
-  "e\030I \001(\0132/.zetasql.ResolvedCreateRowAcces"
-  "sPolicyStmtProtoH\000\022b\n)resolved_drop_row_"
-  "access_policy_stmt_node\030J \001(\0132-.zetasql."
-  "ResolvedDropRowAccessPolicyStmtProtoH\000\022R"
-  "\n resolved_drop_function_stmt_node\030P \001(\013"
-  "2&.zetasql.ResolvedDropFunctionStmtProto"
-  "H\000\022A\n\027resolved_call_stmt_node\030S \001(\0132\036.ze"
-  "tasql.ResolvedCallStmtProtoH\000\022E\n\031resolve"
-  "d_import_stmt_node\030V \001(\0132 .zetasql.Resol"
-  "vedImportStmtProtoH\000\022E\n\031resolved_module_"
-  "stmt_node\030W \001(\0132 .zetasql.ResolvedModule"
-  "StmtProtoH\000\022V\n\"resolved_create_database_"
-  "stmt_node\030_ \001(\0132(.zetasql.ResolvedCreate"
-  "DatabaseStmtProtoH\000\022E\n\031resolved_assert_s"
-  "tmt_node\030b \001(\0132 .zetasql.ResolvedAssertS"
-  "tmtProtoH\000\022C\n\030resolved_merge_stmt_node\030e"
-  " \001(\0132\037.zetasql.ResolvedMergeStmtProtoH\000\022"
-  "S\n\037resolved_alter_object_stmt_node\030r \001(\013"
-  "2(.zetasql.AnyResolvedAlterObjectStmtPro"
-  "toH\000\022V\n\"resolved_set_transaction_stmt_no"
-  "de\030x \001(\0132(.zetasql.ResolvedSetTransactio"
-  "nStmtProtoH\000\022c\n)resolved_drop_materializ"
-  "ed_view_stmt_node\030y \001(\0132..zetasql.Resolv"
-  "edDropMaterializedViewStmtProtoH\000\022N\n\036res"
-  "olved_start_batch_stmt_node\030z \001(\0132$.zeta"
-  "sql.ResolvedStartBatchStmtProtoH\000\022J\n\034res"
-  "olved_run_batch_stmt_node\030{ \001(\0132\".zetasq"
-  "l.ResolvedRunBatchStmtProtoH\000\022N\n\036resolve"
-  "d_abort_batch_stmt_node\030| \001(\0132$.zetasql."
-  "ResolvedAbortBatchStmtProtoH\000\022J\n\033resolve"
-  "d_truncate_stmt_node\030\205\001 \001(\0132\".zetasql.Re"
-  "solvedTruncateStmtProtoH\000\022[\n$resolved_ex"
-  "ecute_immediate_stmt_node\030\214\001 \001(\0132*.zetas"
-  "ql.ResolvedExecuteImmediateStmtProtoH\000\022N"
-  "\n\035resolved_assignment_stmt_node\030\216\001 \001(\0132$"
-  ".zetasql.ResolvedAssignmentStmtProtoH\000\022Q"
-  "\n\037resolved_export_model_stmt_node\030\230\001 \001(\013"
-  "2%.zetasql.ResolvedExportModelStmtProtoH"
-  "\000\022^\n&resolved_drop_table_function_stmt_n"
-  "ode\030\257\001 \001(\0132+.zetasql.ResolvedDropTableFu"
-  "nctionStmtProtoH\000\022M\n\035resolved_clone_data"
-  "_stmt_node\030\261\001 \001(\0132#.zetasql.ResolvedClon"
-  "eDataStmtProtoH\000\022H\n\032resolved_analyze_stm"
-  "t_node\030\264\001 \001(\0132!.zetasql.ResolvedAnalyzeS"
-  "tmtProtoH\000\022^\n&resolved_drop_snapshot_tab"
-  "le_stmt_node\030\267\001 \001(\0132+.zetasql.ResolvedDr"
-  "opSnapshotTableStmtProtoH\000\022R\n resolved_a"
-  "ux_load_data_stmt_node\030\272\001 \001(\0132%.zetasql."
-  "ResolvedAuxLoadDataStmtProtoH\000\022Z\n$resolv"
-  "ed_drop_search_index_stmt_node\030\276\001 \001(\0132)."
-  "zetasql.ResolvedDropSearchIndexStmtProto"
-  "H\000\022l\n-resolved_drop_privilege_restrictio"
-  "n_stmt_node\030\300\001 \001(\01322.zetasql.ResolvedDro"
-  "pPrivilegeRestrictionStmtProtoH\000B\006\n\004node"
-  "\"u\n\026ResolvedStatementProto\022*\n\006parent\030\001 \001"
-  "(\0132\032.zetasql.ResolvedNodeProto\022/\n\thint_l"
-  "ist\030\002 \003(\0132\034.zetasql.ResolvedOptionProto\""
-  "\202\001\n\030ResolvedExplainStmtProto\022/\n\006parent\030\001"
-  " \001(\0132\037.zetasql.ResolvedStatementProto\0225\n"
-  "\tstatement\030\002 \001(\0132\".zetasql.AnyResolvedSt"
-  "atementProto\"\317\001\n\026ResolvedQueryStmtProto\022"
-  "/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedStatem"
-  "entProto\022>\n\022output_column_list\030\002 \003(\0132\".z"
-  "etasql.ResolvedOutputColumnProto\022\026\n\016is_v"
-  "alue_table\030\003 \001(\010\022,\n\005query\030\004 \001(\0132\035.zetasq"
-  "l.AnyResolvedScanProto\"\230\001\n\037ResolvedCreat"
-  "eDatabaseStmtProto\022/\n\006parent\030\001 \001(\0132\037.zet"
-  "asql.ResolvedStatementProto\022\021\n\tname_path"
-  "\030\002 \003(\t\0221\n\013option_list\030\003 \003(\0132\034.zetasql.Re"
-  "solvedOptionProto\"\353\010\n\037AnyResolvedCreateS"
-  "tatementProto\022V\n\"resolved_create_functio"
-  "n_stmt_node\030L \001(\0132(.zetasql.ResolvedCrea"
-  "teFunctionStmtProtoH\000\022a\n(resolved_create"
-  "_table_function_stmt_node\030X \001(\0132-.zetasq"
-  "l.ResolvedCreateTableFunctionStmtProtoH\000"
-  "\022P\n\037resolved_create_index_stmt_node\030a \001("
-  "\0132%.zetasql.ResolvedCreateIndexStmtProto"
-  "H\000\022V\n\"resolved_create_constant_stmt_node"
-  "\030c \001(\0132(.zetasql.ResolvedCreateConstantS"
-  "tmtProtoH\000\022\\\n$resolved_create_table_stmt"
-  "_base_node\030j \001(\0132,.zetasql.AnyResolvedCr"
-  "eateTableStmtBaseProtoH\000\022P\n\037resolved_cre"
-  "ate_model_stmt_node\030k \001(\0132%.zetasql.Reso"
-  "lvedCreateModelStmtProtoH\000\022Q\n\036resolved_c"
-  "reate_view_base_node\030l \001(\0132\'.zetasql.Any"
-  "ResolvedCreateViewBaseProtoH\000\022X\n#resolve"
-  "d_create_procedure_stmt_node\030} \001(\0132).zet"
-  "asql.ResolvedCreateProcedureStmtProtoH\000\022"
-  "S\n resolved_create_entity_stmt_node\030\232\001 \001"
-  "(\0132&.zetasql.ResolvedCreateEntityStmtPro"
-  "toH\000\022S\n resolved_create_schema_stmt_node"
-  "\030\235\001 \001(\0132&.zetasql.ResolvedCreateSchemaSt"
-  "mtProtoH\000\022b\n(resolved_create_snapshot_ta"
-  "ble_stmt_node\030\266\001 \001(\0132-.zetasql.ResolvedC"
-  "reateSnapshotTableStmtProtoH\000\022p\n/resolve"
-  "d_create_privilege_restriction_stmt_node"
-  "\030\277\001 \001(\01324.zetasql.ResolvedCreatePrivileg"
-  "eRestrictionStmtProtoH\000B\006\n\004node\"\362\001\n\034Reso"
-  "lvedCreateStatementProto\022/\n\006parent\030\001 \001(\013"
-  "2\037.zetasql.ResolvedStatementProto\022\021\n\tnam"
-  "e_path\030\002 \003(\t\022G\n\014create_scope\030\005 \001(\01621.zet"
-  "asql.ResolvedCreateStatementEnums.Create"
-  "Scope\022E\n\013create_mode\030\004 \001(\01620.zetasql.Res"
-  "olvedCreateStatementEnums.CreateMode\"\221\001\n"
-  "\026ResolvedIndexItemProto\022.\n\006parent\030\001 \001(\0132"
+  "olvedOptionProto\"\234\001\n.ResolvedAggregation"
+  "ThresholdAggregateScanProto\0227\n\006parent\030\001 "
+  "\001(\0132\'.zetasql.ResolvedAggregateScanBaseP"
+  "roto\0221\n\013option_list\030\005 \003(\0132\034.zetasql.Reso"
+  "lvedOptionProto\"\266\001\n\035ResolvedSetOperation"
+  "ItemProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Reso"
+  "lvedArgumentProto\022+\n\004scan\030\002 \001(\0132\035.zetasq"
+  "l.AnyResolvedScanProto\0228\n\022output_column_"
+  "list\030\003 \003(\0132\034.zetasql.ResolvedColumnProto"
+  "\"\240\003\n\035ResolvedSetOperationScanProto\022*\n\006pa"
+  "rent\030\001 \001(\0132\032.zetasql.ResolvedScanProto\022H"
+  "\n\007op_type\030\002 \001(\01627.zetasql.ResolvedSetOpe"
+  "rationScanEnums.SetOperationType\022\?\n\017inpu"
+  "t_item_list\030\004 \003(\0132&.zetasql.ResolvedSetO"
+  "perationItemProto\022]\n\021column_match_mode\030\005"
+  " \001(\0162B.zetasql.ResolvedSetOperationScanE"
+  "nums.SetOperationColumnMatchMode\022i\n\027colu"
+  "mn_propagation_mode\030\006 \001(\0162H.zetasql.Reso"
+  "lvedSetOperationScanEnums.SetOperationCo"
+  "lumnPropagationMode\"\270\001\n\030ResolvedOrderByS"
+  "canProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.Resol"
+  "vedScanProto\0221\n\ninput_scan\030\002 \001(\0132\035.zetas"
+  "ql.AnyResolvedScanProto\022=\n\022order_by_item"
+  "_list\030\003 \003(\0132!.zetasql.ResolvedOrderByIte"
+  "mProto\"\332\001\n\034ResolvedLimitOffsetScanProto\022"
+  "*\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedScanPr"
+  "oto\0221\n\ninput_scan\030\002 \001(\0132\035.zetasql.AnyRes"
+  "olvedScanProto\022,\n\005limit\030\003 \001(\0132\035.zetasql."
+  "AnyResolvedExprProto\022-\n\006offset\030\004 \001(\0132\035.z"
+  "etasql.AnyResolvedExprProto\"_\n\030ResolvedW"
+  "ithRefScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasq"
+  "l.ResolvedScanProto\022\027\n\017with_query_name\030\002"
+  " \001(\t\"\304\001\n\031ResolvedAnalyticScanProto\022*\n\006pa"
+  "rent\030\001 \001(\0132\032.zetasql.ResolvedScanProto\0221"
+  "\n\ninput_scan\030\002 \001(\0132\035.zetasql.AnyResolved"
+  "ScanProto\022H\n\023function_group_list\030\003 \003(\0132+"
+  ".zetasql.ResolvedAnalyticFunctionGroupPr"
+  "oto\"\241\003\n\027ResolvedSampleScanProto\022*\n\006paren"
+  "t\030\001 \001(\0132\032.zetasql.ResolvedScanProto\0221\n\ni"
+  "nput_scan\030\002 \001(\0132\035.zetasql.AnyResolvedSca"
+  "nProto\022\016\n\006method\030\003 \001(\t\022+\n\004size\030\004 \001(\0132\035.z"
+  "etasql.AnyResolvedExprProto\0229\n\004unit\030\005 \001("
+  "\0162+.zetasql.ResolvedSampleScanEnums.Samp"
+  "leUnit\022:\n\023repeatable_argument\030\006 \001(\0132\035.ze"
+  "tasql.AnyResolvedExprProto\0229\n\rweight_col"
+  "umn\030\007 \001(\0132\".zetasql.ResolvedColumnHolder"
+  "Proto\0228\n\021partition_by_list\030\010 \003(\0132\035.zetas"
+  "ql.AnyResolvedExprProto\"\250\001\n\033ResolvedComp"
+  "utedColumnProto\022.\n\006parent\030\001 \001(\0132\036.zetasq"
+  "l.ResolvedArgumentProto\022,\n\006column\030\002 \001(\0132"
+  "\034.zetasql.ResolvedColumnProto\022+\n\004expr\030\003 "
+  "\001(\0132\035.zetasql.AnyResolvedExprProto\"\306\002\n\030R"
+  "esolvedOrderByItemProto\022.\n\006parent\030\001 \001(\0132"
   "\036.zetasql.ResolvedArgumentProto\0223\n\ncolum"
   "n_ref\030\002 \001(\0132\037.zetasql.ResolvedColumnRefP"
-  "roto\022\022\n\ndescending\030\003 \001(\010\"\363\001\n\027ResolvedUnn"
-  "estItemProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.R"
-  "esolvedArgumentProto\0221\n\narray_expr\030\002 \001(\013"
-  "2\035.zetasql.AnyResolvedExprProto\0224\n\016eleme"
-  "nt_column\030\003 \001(\0132\034.zetasql.ResolvedColumn"
-  "Proto\022\?\n\023array_offset_column\030\004 \001(\0132\".zet"
-  "asql.ResolvedColumnHolderProto\"\231\004\n\034Resol"
-  "vedCreateIndexStmtProto\0225\n\006parent\030\001 \001(\0132"
-  "%.zetasql.ResolvedCreateStatementProto\022\027"
-  "\n\017table_name_path\030\002 \003(\t\0223\n\ntable_scan\030\003 "
-  "\001(\0132\037.zetasql.ResolvedTableScanProto\022\021\n\t"
-  "is_unique\030\004 \001(\010\022\021\n\tis_search\030\n \001(\010\022\031\n\021in"
-  "dex_all_columns\030\013 \001(\010\0228\n\017index_item_list"
-  "\030\005 \003(\0132\037.zetasql.ResolvedIndexItemProto\022"
-  ">\n\027storing_expression_list\030\t \003(\0132\035.zetas"
-  "ql.AnyResolvedExprProto\0221\n\013option_list\030\006"
-  " \003(\0132\034.zetasql.ResolvedOptionProto\022C\n\025co"
-  "mputed_columns_list\030\007 \003(\0132$.zetasql.Reso"
-  "lvedComputedColumnProto\022A\n\027unnest_expres"
-  "sions_list\030\010 \003(\0132 .zetasql.ResolvedUnnes"
-  "tItemProto\"\300\001\n\035ResolvedCreateSchemaStmtP"
+  "roto\0225\n\016collation_name\030\003 \001(\0132\035.zetasql.A"
+  "nyResolvedExprProto\022\025\n\ris_descending\030\004 \001"
+  "(\010\022C\n\nnull_order\030\005 \001(\0162/.zetasql.Resolve"
+  "dOrderByItemEnums.NullOrderMode\0222\n\tcolla"
+  "tion\030\006 \001(\0132\037.zetasql.ResolvedCollationPr"
+  "oto\"\300\002\n\036ResolvedColumnAnnotationsProto\022."
+  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
+  "tProto\0225\n\016collation_name\030\006 \001(\0132\035.zetasql"
+  ".AnyResolvedExprProto\022\020\n\010not_null\030\002 \001(\010\022"
+  "1\n\013option_list\030\003 \003(\0132\034.zetasql.ResolvedO"
+  "ptionProto\022;\n\nchild_list\030\004 \003(\0132\'.zetasql"
+  ".ResolvedColumnAnnotationsProto\0225\n\017type_"
+  "parameters\030\005 \001(\0132\034.zetasql.TypeParameter"
+  "sProto\"\320\001\n ResolvedGeneratedColumnInfoPr"
+  "oto\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedAr"
+  "gumentProto\0221\n\nexpression\030\002 \001(\0132\035.zetasq"
+  "l.AnyResolvedExprProto\022I\n\013stored_mode\030\005 "
+  "\001(\01624.zetasql.ResolvedGeneratedColumnInf"
+  "oEnums.StoredMode\"\221\001\n\037ResolvedColumnDefa"
+  "ultValueProto\022.\n\006parent\030\001 \001(\0132\036.zetasql."
+  "ResolvedArgumentProto\0221\n\nexpression\030\002 \001("
+  "\0132\035.zetasql.AnyResolvedExprProto\022\013\n\003sql\030"
+  "\003 \001(\t\"\211\003\n\035ResolvedColumnDefinitionProto\022"
+  ".\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgume"
+  "ntProto\022\014\n\004name\030\002 \001(\t\022 \n\004type\030\003 \001(\0132\022.ze"
+  "tasql.TypeProto\022<\n\013annotations\030\004 \001(\0132\'.z"
+  "etasql.ResolvedColumnAnnotationsProto\022\021\n"
+  "\tis_hidden\030\005 \001(\010\022,\n\006column\030\006 \001(\0132\034.zetas"
+  "ql.ResolvedColumnProto\022H\n\025generated_colu"
+  "mn_info\030\007 \001(\0132).zetasql.ResolvedGenerate"
+  "dColumnInfoProto\022\?\n\rdefault_value\030\t \001(\0132"
+  "(.zetasql.ResolvedColumnDefaultValueProt"
+  "o\"\203\002\n\032AnyResolvedConstraintProto\022E\n\031reso"
+  "lved_primary_key_node\030\\ \001(\0132 .zetasql.Re"
+  "solvedPrimaryKeyProtoH\000\022E\n\031resolved_fore"
+  "ign_key_node\030n \001(\0132 .zetasql.ResolvedFor"
+  "eignKeyProtoH\000\022O\n\036resolved_check_constra"
+  "int_node\030q \001(\0132%.zetasql.ResolvedCheckCo"
+  "nstraintProtoH\000B\006\n\004node\"I\n\027ResolvedConst"
+  "raintProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Res"
+  "olvedArgumentProto\"\341\001\n\027ResolvedPrimaryKe"
+  "yProto\0220\n\006parent\030\001 \001(\0132 .zetasql.Resolve"
+  "dConstraintProto\022\032\n\022column_offset_list\030\002"
+  " \003(\003\0221\n\013option_list\030\003 \003(\0132\034.zetasql.Reso"
+  "lvedOptionProto\022\022\n\nunenforced\030\004 \001(\010\022\027\n\017c"
+  "onstraint_name\030\005 \001(\t\022\030\n\020column_name_list"
+  "\030\006 \003(\t\"\235\004\n\027ResolvedForeignKeyProto\0220\n\006pa"
+  "rent\030\001 \001(\0132 .zetasql.ResolvedConstraintP"
+  "roto\022\027\n\017constraint_name\030\002 \001(\t\022&\n\036referen"
+  "cing_column_offset_list\030\003 \003(\003\0220\n\020referen"
+  "ced_table\030\004 \001(\0132\026.zetasql.TableRefProto\022"
+  "%\n\035referenced_column_offset_list\030\005 \003(\003\022>"
+  "\n\nmatch_mode\030\006 \001(\0162*.zetasql.ResolvedFor"
+  "eignKeyEnums.MatchMode\022G\n\rupdate_action\030"
+  "\007 \001(\01620.zetasql.ResolvedForeignKeyEnums."
+  "ActionOperation\022G\n\rdelete_action\030\010 \001(\01620"
+  ".zetasql.ResolvedForeignKeyEnums.ActionO"
+  "peration\022\020\n\010enforced\030\t \001(\010\0221\n\013option_lis"
+  "t\030\n \003(\0132\034.zetasql.ResolvedOptionProto\022\037\n"
+  "\027referencing_column_list\030\013 \003(\t\"\341\001\n\034Resol"
+  "vedCheckConstraintProto\0220\n\006parent\030\001 \001(\0132"
+  " .zetasql.ResolvedConstraintProto\022\027\n\017con"
+  "straint_name\030\002 \001(\t\0221\n\nexpression\030\003 \001(\0132\035"
+  ".zetasql.AnyResolvedExprProto\022\020\n\010enforce"
+  "d\030\004 \001(\010\0221\n\013option_list\030\005 \003(\0132\034.zetasql.R"
+  "esolvedOptionProto\"\207\001\n\031ResolvedOutputCol"
+  "umnProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resol"
+  "vedArgumentProto\022\014\n\004name\030\002 \001(\t\022,\n\006column"
+  "\030\003 \001(\0132\034.zetasql.ResolvedColumnProto\"\262\001\n"
+  "\030ResolvedProjectScanProto\022*\n\006parent\030\001 \001("
+  "\0132\032.zetasql.ResolvedScanProto\0227\n\texpr_li"
+  "st\030\002 \003(\0132$.zetasql.ResolvedComputedColum"
+  "nProto\0221\n\ninput_scan\030\003 \001(\0132\035.zetasql.Any"
+  "ResolvedScanProto\"\317\002\n\024ResolvedTVFScanPro"
+  "to\022*\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedSca"
+  "nProto\0221\n\003tvf\030\002 \001(\0132$.zetasql.TableValue"
+  "dFunctionRefProto\022-\n\tsignature\030\003 \001(\0132\032.z"
+  "etasql.TVFSignatureProto\022=\n\rargument_lis"
+  "t\030\005 \003(\0132&.zetasql.ResolvedFunctionArgume"
+  "ntProto\022\031\n\021column_index_list\030\010 \003(\003\022\r\n\005al"
+  "ias\030\006 \001(\t\022@\n\027function_call_signature\030\007 \001"
+  "(\0132\037.zetasql.FunctionSignatureProto\"\230\001\n\032"
+  "ResolvedGroupRowsScanProto\022*\n\006parent\030\001 \001"
+  "(\0132\032.zetasql.ResolvedScanProto\022\?\n\021input_"
+  "column_list\030\002 \003(\0132$.zetasql.ResolvedComp"
+  "utedColumnProto\022\r\n\005alias\030\003 \001(\t\"\274\003\n\035Resol"
+  "vedFunctionArgumentProto\022.\n\006parent\030\001 \001(\013"
+  "2\036.zetasql.ResolvedArgumentProto\022+\n\004expr"
+  "\030\002 \001(\0132\035.zetasql.AnyResolvedExprProto\022+\n"
+  "\004scan\030\003 \001(\0132\035.zetasql.AnyResolvedScanPro"
+  "to\022*\n\005model\030\005 \001(\0132\033.zetasql.ResolvedMode"
+  "lProto\0224\n\nconnection\030\006 \001(\0132 .zetasql.Res"
+  "olvedConnectionProto\0228\n\016descriptor_arg\030\007"
+  " \001(\0132 .zetasql.ResolvedDescriptorProto\022:"
+  "\n\024argument_column_list\030\004 \003(\0132\034.zetasql.R"
+  "esolvedColumnProto\0229\n\rinline_lambda\030\010 \001("
+  "\0132\".zetasql.ResolvedInlineLambdaProto\"\211\034"
+  "\n\031AnyResolvedStatementProto\022G\n\032resolved_"
+  "explain_stmt_node\030% \001(\0132!.zetasql.Resolv"
+  "edExplainStmtProtoH\000\022C\n\030resolved_query_s"
+  "tmt_node\030& \001(\0132\037.zetasql.ResolvedQuerySt"
+  "mtProtoH\000\022R\n\036resolved_create_statement_n"
+  "ode\030\' \001(\0132(.zetasql.AnyResolvedCreateSta"
+  "tementProtoH\000\022N\n\036resolved_export_data_st"
+  "mt_node\030+ \001(\0132$.zetasql.ResolvedExportDa"
+  "taStmtProtoH\000\022P\n\037resolved_define_table_s"
+  "tmt_node\030, \001(\0132%.zetasql.ResolvedDefineT"
+  "ableStmtProtoH\000\022I\n\033resolved_describe_stm"
+  "t_node\030- \001(\0132\".zetasql.ResolvedDescribeS"
+  "tmtProtoH\000\022A\n\027resolved_show_stmt_node\030. "
+  "\001(\0132\036.zetasql.ResolvedShowStmtProtoH\000\022C\n"
+  "\030resolved_begin_stmt_node\030/ \001(\0132\037.zetasq"
+  "l.ResolvedBeginStmtProtoH\000\022E\n\031resolved_c"
+  "ommit_stmt_node\0300 \001(\0132 .zetasql.Resolved"
+  "CommitStmtProtoH\000\022I\n\033resolved_rollback_s"
+  "tmt_node\0301 \001(\0132\".zetasql.ResolvedRollbac"
+  "kStmtProtoH\000\022A\n\027resolved_drop_stmt_node\030"
+  "2 \001(\0132\036.zetasql.ResolvedDropStmtProtoH\000\022"
+  "E\n\031resolved_insert_stmt_node\030\? \001(\0132 .zet"
+  "asql.ResolvedInsertStmtProtoH\000\022E\n\031resolv"
+  "ed_delete_stmt_node\030@ \001(\0132 .zetasql.Reso"
+  "lvedDeleteStmtProtoH\000\022E\n\031resolved_update"
+  "_stmt_node\030B \001(\0132 .zetasql.ResolvedUpdat"
+  "eStmtProtoH\000\022X\n\"resolved_grant_or_revoke"
+  "_stmt_node\030D \001(\0132*.zetasql.AnyResolvedGr"
+  "antOrRevokeStmtProtoH\000\022d\n*resolved_alter"
+  "_table_set_options_stmt_node\030G \001(\0132..zet"
+  "asql.ResolvedAlterTableSetOptionsStmtPro"
+  "toH\000\022E\n\031resolved_rename_stmt_node\030H \001(\0132"
+  " .zetasql.ResolvedRenameStmtProtoH\000\022f\n+r"
+  "esolved_create_row_access_policy_stmt_no"
+  "de\030I \001(\0132/.zetasql.ResolvedCreateRowAcce"
+  "ssPolicyStmtProtoH\000\022b\n)resolved_drop_row"
+  "_access_policy_stmt_node\030J \001(\0132-.zetasql"
+  ".ResolvedDropRowAccessPolicyStmtProtoH\000\022"
+  "R\n resolved_drop_function_stmt_node\030P \001("
+  "\0132&.zetasql.ResolvedDropFunctionStmtProt"
+  "oH\000\022A\n\027resolved_call_stmt_node\030S \001(\0132\036.z"
+  "etasql.ResolvedCallStmtProtoH\000\022E\n\031resolv"
+  "ed_import_stmt_node\030V \001(\0132 .zetasql.Reso"
+  "lvedImportStmtProtoH\000\022E\n\031resolved_module"
+  "_stmt_node\030W \001(\0132 .zetasql.ResolvedModul"
+  "eStmtProtoH\000\022V\n\"resolved_create_database"
+  "_stmt_node\030_ \001(\0132(.zetasql.ResolvedCreat"
+  "eDatabaseStmtProtoH\000\022E\n\031resolved_assert_"
+  "stmt_node\030b \001(\0132 .zetasql.ResolvedAssert"
+  "StmtProtoH\000\022C\n\030resolved_merge_stmt_node\030"
+  "e \001(\0132\037.zetasql.ResolvedMergeStmtProtoH\000"
+  "\022S\n\037resolved_alter_object_stmt_node\030r \001("
+  "\0132(.zetasql.AnyResolvedAlterObjectStmtPr"
+  "otoH\000\022V\n\"resolved_set_transaction_stmt_n"
+  "ode\030x \001(\0132(.zetasql.ResolvedSetTransacti"
+  "onStmtProtoH\000\022c\n)resolved_drop_materiali"
+  "zed_view_stmt_node\030y \001(\0132..zetasql.Resol"
+  "vedDropMaterializedViewStmtProtoH\000\022N\n\036re"
+  "solved_start_batch_stmt_node\030z \001(\0132$.zet"
+  "asql.ResolvedStartBatchStmtProtoH\000\022J\n\034re"
+  "solved_run_batch_stmt_node\030{ \001(\0132\".zetas"
+  "ql.ResolvedRunBatchStmtProtoH\000\022N\n\036resolv"
+  "ed_abort_batch_stmt_node\030| \001(\0132$.zetasql"
+  ".ResolvedAbortBatchStmtProtoH\000\022J\n\033resolv"
+  "ed_truncate_stmt_node\030\205\001 \001(\0132\".zetasql.R"
+  "esolvedTruncateStmtProtoH\000\022[\n$resolved_e"
+  "xecute_immediate_stmt_node\030\214\001 \001(\0132*.zeta"
+  "sql.ResolvedExecuteImmediateStmtProtoH\000\022"
+  "N\n\035resolved_assignment_stmt_node\030\216\001 \001(\0132"
+  "$.zetasql.ResolvedAssignmentStmtProtoH\000\022"
+  "Q\n\037resolved_export_model_stmt_node\030\230\001 \001("
+  "\0132%.zetasql.ResolvedExportModelStmtProto"
+  "H\000\022^\n&resolved_drop_table_function_stmt_"
+  "node\030\257\001 \001(\0132+.zetasql.ResolvedDropTableF"
+  "unctionStmtProtoH\000\022M\n\035resolved_clone_dat"
+  "a_stmt_node\030\261\001 \001(\0132#.zetasql.ResolvedClo"
+  "neDataStmtProtoH\000\022H\n\032resolved_analyze_st"
+  "mt_node\030\264\001 \001(\0132!.zetasql.ResolvedAnalyze"
+  "StmtProtoH\000\022^\n&resolved_drop_snapshot_ta"
+  "ble_stmt_node\030\267\001 \001(\0132+.zetasql.ResolvedD"
+  "ropSnapshotTableStmtProtoH\000\022R\n resolved_"
+  "aux_load_data_stmt_node\030\272\001 \001(\0132%.zetasql"
+  ".ResolvedAuxLoadDataStmtProtoH\000\022Z\n$resol"
+  "ved_drop_search_index_stmt_node\030\276\001 \001(\0132)"
+  ".zetasql.ResolvedDropSearchIndexStmtProt"
+  "oH\000\022l\n-resolved_drop_privilege_restricti"
+  "on_stmt_node\030\300\001 \001(\01322.zetasql.ResolvedDr"
+  "opPrivilegeRestrictionStmtProtoH\000\022F\n\031res"
+  "olved_undrop_stmt_node\030\343\001 \001(\0132 .zetasql."
+  "ResolvedUndropStmtProtoH\000B\006\n\004node\"u\n\026Res"
+  "olvedStatementProto\022*\n\006parent\030\001 \001(\0132\032.ze"
+  "tasql.ResolvedNodeProto\022/\n\thint_list\030\002 \003"
+  "(\0132\034.zetasql.ResolvedOptionProto\"\202\001\n\030Res"
+  "olvedExplainStmtProto\022/\n\006parent\030\001 \001(\0132\037."
+  "zetasql.ResolvedStatementProto\0225\n\tstatem"
+  "ent\030\002 \001(\0132\".zetasql.AnyResolvedStatement"
+  "Proto\"\317\001\n\026ResolvedQueryStmtProto\022/\n\006pare"
+  "nt\030\001 \001(\0132\037.zetasql.ResolvedStatementProt"
+  "o\022>\n\022output_column_list\030\002 \003(\0132\".zetasql."
+  "ResolvedOutputColumnProto\022\026\n\016is_value_ta"
+  "ble\030\003 \001(\010\022,\n\005query\030\004 \001(\0132\035.zetasql.AnyRe"
+  "solvedScanProto\"\230\001\n\037ResolvedCreateDataba"
+  "seStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Re"
+  "solvedStatementProto\022\021\n\tname_path\030\002 \003(\t\022"
+  "1\n\013option_list\030\003 \003(\0132\034.zetasql.ResolvedO"
+  "ptionProto\"\353\010\n\037AnyResolvedCreateStatemen"
+  "tProto\022V\n\"resolved_create_function_stmt_"
+  "node\030L \001(\0132(.zetasql.ResolvedCreateFunct"
+  "ionStmtProtoH\000\022a\n(resolved_create_table_"
+  "function_stmt_node\030X \001(\0132-.zetasql.Resol"
+  "vedCreateTableFunctionStmtProtoH\000\022P\n\037res"
+  "olved_create_index_stmt_node\030a \001(\0132%.zet"
+  "asql.ResolvedCreateIndexStmtProtoH\000\022V\n\"r"
+  "esolved_create_constant_stmt_node\030c \001(\0132"
+  "(.zetasql.ResolvedCreateConstantStmtProt"
+  "oH\000\022\\\n$resolved_create_table_stmt_base_n"
+  "ode\030j \001(\0132,.zetasql.AnyResolvedCreateTab"
+  "leStmtBaseProtoH\000\022P\n\037resolved_create_mod"
+  "el_stmt_node\030k \001(\0132%.zetasql.ResolvedCre"
+  "ateModelStmtProtoH\000\022Q\n\036resolved_create_v"
+  "iew_base_node\030l \001(\0132\'.zetasql.AnyResolve"
+  "dCreateViewBaseProtoH\000\022X\n#resolved_creat"
+  "e_procedure_stmt_node\030} \001(\0132).zetasql.Re"
+  "solvedCreateProcedureStmtProtoH\000\022S\n reso"
+  "lved_create_entity_stmt_node\030\232\001 \001(\0132&.ze"
+  "tasql.ResolvedCreateEntityStmtProtoH\000\022S\n"
+  " resolved_create_schema_stmt_node\030\235\001 \001(\013"
+  "2&.zetasql.ResolvedCreateSchemaStmtProto"
+  "H\000\022b\n(resolved_create_snapshot_table_stm"
+  "t_node\030\266\001 \001(\0132-.zetasql.ResolvedCreateSn"
+  "apshotTableStmtProtoH\000\022p\n/resolved_creat"
+  "e_privilege_restriction_stmt_node\030\277\001 \001(\013"
+  "24.zetasql.ResolvedCreatePrivilegeRestri"
+  "ctionStmtProtoH\000B\006\n\004node\"\362\001\n\034ResolvedCre"
+  "ateStatementProto\022/\n\006parent\030\001 \001(\0132\037.zeta"
+  "sql.ResolvedStatementProto\022\021\n\tname_path\030"
+  "\002 \003(\t\022G\n\014create_scope\030\005 \001(\01621.zetasql.Re"
+  "solvedCreateStatementEnums.CreateScope\022E"
+  "\n\013create_mode\030\004 \001(\01620.zetasql.ResolvedCr"
+  "eateStatementEnums.CreateMode\"\221\001\n\026Resolv"
+  "edIndexItemProto\022.\n\006parent\030\001 \001(\0132\036.zetas"
+  "ql.ResolvedArgumentProto\0223\n\ncolumn_ref\030\002"
+  " \001(\0132\037.zetasql.ResolvedColumnRefProto\022\022\n"
+  "\ndescending\030\003 \001(\010\"\363\001\n\027ResolvedUnnestItem"
+  "Proto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolved"
+  "ArgumentProto\0221\n\narray_expr\030\002 \001(\0132\035.zeta"
+  "sql.AnyResolvedExprProto\0224\n\016element_colu"
+  "mn\030\003 \001(\0132\034.zetasql.ResolvedColumnProto\022\?"
+  "\n\023array_offset_column\030\004 \001(\0132\".zetasql.Re"
+  "solvedColumnHolderProto\"\231\004\n\034ResolvedCrea"
+  "teIndexStmtProto\0225\n\006parent\030\001 \001(\0132%.zetas"
+  "ql.ResolvedCreateStatementProto\022\027\n\017table"
+  "_name_path\030\002 \003(\t\0223\n\ntable_scan\030\003 \001(\0132\037.z"
+  "etasql.ResolvedTableScanProto\022\021\n\tis_uniq"
+  "ue\030\004 \001(\010\022\021\n\tis_search\030\n \001(\010\022\031\n\021index_all"
+  "_columns\030\013 \001(\010\0228\n\017index_item_list\030\005 \003(\0132"
+  "\037.zetasql.ResolvedIndexItemProto\022>\n\027stor"
+  "ing_expression_list\030\t \003(\0132\035.zetasql.AnyR"
+  "esolvedExprProto\0221\n\013option_list\030\006 \003(\0132\034."
+  "zetasql.ResolvedOptionProto\022C\n\025computed_"
+  "columns_list\030\007 \003(\0132$.zetasql.ResolvedCom"
+  "putedColumnProto\022A\n\027unnest_expressions_l"
+  "ist\030\010 \003(\0132 .zetasql.ResolvedUnnestItemPr"
+  "oto\"\300\001\n\035ResolvedCreateSchemaStmtProto\0225\n"
+  "\006parent\030\001 \001(\0132%.zetasql.ResolvedCreateSt"
+  "atementProto\0225\n\016collation_name\030\003 \001(\0132\035.z"
+  "etasql.AnyResolvedExprProto\0221\n\013option_li"
+  "st\030\002 \003(\0132\034.zetasql.ResolvedOptionProto\"\306"
+  "\002\n#AnyResolvedCreateTableStmtBaseProto\022b"
+  "\n)resolved_create_table_as_select_stmt_n"
+  "ode\030( \001(\0132-.zetasql.ResolvedCreateTableA"
+  "sSelectStmtProtoH\000\022a\n(resolved_create_ex"
+  "ternal_table_stmt_node\030* \001(\0132-.zetasql.R"
+  "esolvedCreateExternalTableStmtProtoH\000\022P\n"
+  "\037resolved_create_table_stmt_node\030Z \001(\0132%"
+  ".zetasql.ResolvedCreateTableStmtProtoH\000B"
+  "\006\n\004node\"\370\004\n ResolvedCreateTableStmtBaseP"
   "roto\0225\n\006parent\030\001 \001(\0132%.zetasql.ResolvedC"
-  "reateStatementProto\0225\n\016collation_name\030\003 "
-  "\001(\0132\035.zetasql.AnyResolvedExprProto\0221\n\013op"
-  "tion_list\030\002 \003(\0132\034.zetasql.ResolvedOption"
-  "Proto\"\306\002\n#AnyResolvedCreateTableStmtBase"
-  "Proto\022b\n)resolved_create_table_as_select"
-  "_stmt_node\030( \001(\0132-.zetasql.ResolvedCreat"
-  "eTableAsSelectStmtProtoH\000\022a\n(resolved_cr"
-  "eate_external_table_stmt_node\030* \001(\0132-.ze"
-  "tasql.ResolvedCreateExternalTableStmtPro"
-  "toH\000\022P\n\037resolved_create_table_stmt_node\030"
-  "Z \001(\0132%.zetasql.ResolvedCreateTableStmtP"
-  "rotoH\000B\006\n\004node\"\370\004\n ResolvedCreateTableSt"
-  "mtBaseProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Re"
-  "solvedCreateStatementProto\0221\n\013option_lis"
-  "t\030\002 \003(\0132\034.zetasql.ResolvedOptionProto\022F\n"
-  "\026column_definition_list\030\003 \003(\0132&.zetasql."
-  "ResolvedColumnDefinitionProto\0228\n\022pseudo_"
-  "column_list\030\007 \003(\0132\034.zetasql.ResolvedColu"
-  "mnProto\0225\n\013primary_key\030\004 \001(\0132 .zetasql.R"
-  "esolvedPrimaryKeyProto\022:\n\020foreign_key_li"
-  "st\030\t \003(\0132 .zetasql.ResolvedForeignKeyPro"
-  "to\022D\n\025check_constraint_list\030\n \003(\0132%.zeta"
-  "sql.ResolvedCheckConstraintProto\022\026\n\016is_v"
-  "alue_table\030\010 \001(\010\022*\n\nlike_table\030\013 \001(\0132\026.z"
-  "etasql.TableRefProto\0225\n\016collation_name\030\014"
-  " \001(\0132\035.zetasql.AnyResolvedExprProto\0224\n\nc"
-  "onnection\030\r \001(\0132 .zetasql.ResolvedConnec"
-  "tionProto\"\260\002\n\034ResolvedCreateTableStmtPro"
-  "to\0229\n\006parent\030\001 \001(\0132).zetasql.ResolvedCre"
-  "ateTableStmtBaseProto\0221\n\nclone_from\030\007 \001("
-  "\0132\035.zetasql.AnyResolvedScanProto\0220\n\tcopy"
-  "_from\030\010 \001(\0132\035.zetasql.AnyResolvedScanPro"
-  "to\0228\n\021partition_by_list\030\005 \003(\0132\035.zetasql."
-  "AnyResolvedExprProto\0226\n\017cluster_by_list\030"
-  "\006 \003(\0132\035.zetasql.AnyResolvedExprProto\"\301\002\n"
-  "$ResolvedCreateTableAsSelectStmtProto\0229\n"
-  "\006parent\030\001 \001(\0132).zetasql.ResolvedCreateTa"
-  "bleStmtBaseProto\0228\n\021partition_by_list\030\005 "
-  "\003(\0132\035.zetasql.AnyResolvedExprProto\0226\n\017cl"
-  "uster_by_list\030\006 \003(\0132\035.zetasql.AnyResolve"
-  "dExprProto\022>\n\022output_column_list\030\002 \003(\0132\""
-  ".zetasql.ResolvedOutputColumnProto\022,\n\005qu"
-  "ery\030\003 \001(\0132\035.zetasql.AnyResolvedScanProto"
-  "\"\323\001\n$ResolvedCreateModelAliasedQueryProt"
-  "o\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgu"
-  "mentProto\022\r\n\005alias\030\002 \001(\t\022,\n\005query\030\003 \001(\0132"
-  "\035.zetasql.AnyResolvedScanProto\022>\n\022output"
-  "_column_list\030\004 \003(\0132\".zetasql.ResolvedOut"
-  "putColumnProto\"\331\006\n\034ResolvedCreateModelSt"
-  "mtProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolv"
+  "reateStatementProto\0221\n\013option_list\030\002 \003(\013"
+  "2\034.zetasql.ResolvedOptionProto\022F\n\026column"
+  "_definition_list\030\003 \003(\0132&.zetasql.Resolve"
+  "dColumnDefinitionProto\0228\n\022pseudo_column_"
+  "list\030\007 \003(\0132\034.zetasql.ResolvedColumnProto"
+  "\0225\n\013primary_key\030\004 \001(\0132 .zetasql.Resolved"
+  "PrimaryKeyProto\022:\n\020foreign_key_list\030\t \003("
+  "\0132 .zetasql.ResolvedForeignKeyProto\022D\n\025c"
+  "heck_constraint_list\030\n \003(\0132%.zetasql.Res"
+  "olvedCheckConstraintProto\022\026\n\016is_value_ta"
+  "ble\030\010 \001(\010\022*\n\nlike_table\030\013 \001(\0132\026.zetasql."
+  "TableRefProto\0225\n\016collation_name\030\014 \001(\0132\035."
+  "zetasql.AnyResolvedExprProto\0224\n\nconnecti"
+  "on\030\r \001(\0132 .zetasql.ResolvedConnectionPro"
+  "to\"\260\002\n\034ResolvedCreateTableStmtProto\0229\n\006p"
+  "arent\030\001 \001(\0132).zetasql.ResolvedCreateTabl"
+  "eStmtBaseProto\0221\n\nclone_from\030\007 \001(\0132\035.zet"
+  "asql.AnyResolvedScanProto\0220\n\tcopy_from\030\010"
+  " \001(\0132\035.zetasql.AnyResolvedScanProto\0228\n\021p"
+  "artition_by_list\030\005 \003(\0132\035.zetasql.AnyReso"
+  "lvedExprProto\0226\n\017cluster_by_list\030\006 \003(\0132\035"
+  ".zetasql.AnyResolvedExprProto\"\301\002\n$Resolv"
+  "edCreateTableAsSelectStmtProto\0229\n\006parent"
+  "\030\001 \001(\0132).zetasql.ResolvedCreateTableStmt"
+  "BaseProto\0228\n\021partition_by_list\030\005 \003(\0132\035.z"
+  "etasql.AnyResolvedExprProto\0226\n\017cluster_b"
+  "y_list\030\006 \003(\0132\035.zetasql.AnyResolvedExprPr"
+  "oto\022>\n\022output_column_list\030\002 \003(\0132\".zetasq"
+  "l.ResolvedOutputColumnProto\022,\n\005query\030\003 \001"
+  "(\0132\035.zetasql.AnyResolvedScanProto\"\323\001\n$Re"
+  "solvedCreateModelAliasedQueryProto\022.\n\006pa"
+  "rent\030\001 \001(\0132\036.zetasql.ResolvedArgumentPro"
+  "to\022\r\n\005alias\030\002 \001(\t\022,\n\005query\030\003 \001(\0132\035.zetas"
+  "ql.AnyResolvedScanProto\022>\n\022output_column"
+  "_list\030\004 \003(\0132\".zetasql.ResolvedOutputColu"
+  "mnProto\"\331\006\n\034ResolvedCreateModelStmtProto"
+  "\0225\n\006parent\030\001 \001(\0132%.zetasql.ResolvedCreat"
+  "eStatementProto\0221\n\013option_list\030\002 \003(\0132\034.z"
+  "etasql.ResolvedOptionProto\022>\n\022output_col"
+  "umn_list\030\003 \003(\0132\".zetasql.ResolvedOutputC"
+  "olumnProto\022,\n\005query\030\004 \001(\0132\035.zetasql.AnyR"
+  "esolvedScanProto\022I\n\022aliased_query_list\030\r"
+  " \003(\0132-.zetasql.ResolvedCreateModelAliase"
+  "dQueryProto\022K\n\033transform_input_column_li"
+  "st\030\010 \003(\0132&.zetasql.ResolvedColumnDefinit"
+  "ionProto\022<\n\016transform_list\030\005 \003(\0132$.zetas"
+  "ql.ResolvedComputedColumnProto\022H\n\034transf"
+  "orm_output_column_list\030\006 \003(\0132\".zetasql.R"
+  "esolvedOutputColumnProto\022[\n&transform_an"
+  "alytic_function_group_list\030\007 \003(\0132+.zetas"
+  "ql.ResolvedAnalyticFunctionGroupProto\022L\n"
+  "\034input_column_definition_list\030\t \003(\0132&.ze"
+  "tasql.ResolvedColumnDefinitionProto\022M\n\035o"
+  "utput_column_definition_list\030\n \003(\0132&.zet"
+  "asql.ResolvedColumnDefinitionProto\022\021\n\tis"
+  "_remote\030\013 \001(\010\0224\n\nconnection\030\014 \001(\0132 .zeta"
+  "sql.ResolvedConnectionProto\"\341\001\n\036AnyResol"
+  "vedCreateViewBaseProto\022N\n\036resolved_creat"
+  "e_view_stmt_node\030) \001(\0132$.zetasql.Resolve"
+  "dCreateViewStmtProtoH\000\022g\n+resolved_creat"
+  "e_materialized_view_stmt_node\030w \001(\01320.ze"
+  "tasql.ResolvedCreateMaterializedViewStmt"
+  "ProtoH\000B\006\n\004node\"\334\003\n\033ResolvedCreateViewBa"
+  "seProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolv"
   "edCreateStatementProto\0221\n\013option_list\030\002 "
   "\003(\0132\034.zetasql.ResolvedOptionProto\022>\n\022out"
   "put_column_list\030\003 \003(\0132\".zetasql.Resolved"
-  "OutputColumnProto\022,\n\005query\030\004 \001(\0132\035.zetas"
-  "ql.AnyResolvedScanProto\022I\n\022aliased_query"
-  "_list\030\r \003(\0132-.zetasql.ResolvedCreateMode"
-  "lAliasedQueryProto\022K\n\033transform_input_co"
-  "lumn_list\030\010 \003(\0132&.zetasql.ResolvedColumn"
-  "DefinitionProto\022<\n\016transform_list\030\005 \003(\0132"
-  "$.zetasql.ResolvedComputedColumnProto\022H\n"
-  "\034transform_output_column_list\030\006 \003(\0132\".ze"
-  "tasql.ResolvedOutputColumnProto\022[\n&trans"
-  "form_analytic_function_group_list\030\007 \003(\0132"
-  "+.zetasql.ResolvedAnalyticFunctionGroupP"
-  "roto\022L\n\034input_column_definition_list\030\t \003"
-  "(\0132&.zetasql.ResolvedColumnDefinitionPro"
-  "to\022M\n\035output_column_definition_list\030\n \003("
-  "\0132&.zetasql.ResolvedColumnDefinitionProt"
-  "o\022\021\n\tis_remote\030\013 \001(\010\0224\n\nconnection\030\014 \001(\013"
-  "2 .zetasql.ResolvedConnectionProto\"\341\001\n\036A"
-  "nyResolvedCreateViewBaseProto\022N\n\036resolve"
-  "d_create_view_stmt_node\030) \001(\0132$.zetasql."
-  "ResolvedCreateViewStmtProtoH\000\022g\n+resolve"
-  "d_create_materialized_view_stmt_node\030w \001"
-  "(\01320.zetasql.ResolvedCreateMaterializedV"
-  "iewStmtProtoH\000B\006\n\004node\"\334\003\n\033ResolvedCreat"
-  "eViewBaseProto\0225\n\006parent\030\001 \001(\0132%.zetasql"
-  ".ResolvedCreateStatementProto\0221\n\013option_"
-  "list\030\002 \003(\0132\034.zetasql.ResolvedOptionProto"
-  "\022>\n\022output_column_list\030\003 \003(\0132\".zetasql.R"
-  "esolvedOutputColumnProto\022\034\n\024has_explicit"
-  "_columns\030\t \001(\010\022,\n\005query\030\005 \001(\0132\035.zetasql."
-  "AnyResolvedScanProto\022\013\n\003sql\030\006 \001(\t\022G\n\014sql"
-  "_security\030\007 \001(\01621.zetasql.ResolvedCreate"
-  "StatementEnums.SqlSecurity\022\026\n\016is_value_t"
-  "able\030\004 \001(\010\022\021\n\trecursive\030\010 \001(\010\022F\n\026column_"
-  "definition_list\030\n \003(\0132&.zetasql.Resolved"
-  "ColumnDefinitionProto\"S\n\033ResolvedCreateV"
-  "iewStmtProto\0224\n\006parent\030\001 \001(\0132$.zetasql.R"
-  "esolvedCreateViewBaseProto\"\233\001\n!ResolvedW"
-  "ithPartitionColumnsProto\022.\n\006parent\030\001 \001(\013"
-  "2\036.zetasql.ResolvedArgumentProto\022F\n\026colu"
-  "mn_definition_list\030\002 \003(\0132&.zetasql.Resol"
-  "vedColumnDefinitionProto\"\303\001\n$ResolvedCre"
-  "ateSnapshotTableStmtProto\0225\n\006parent\030\001 \001("
-  "\0132%.zetasql.ResolvedCreateStatementProto"
-  "\0221\n\nclone_from\030\002 \001(\0132\035.zetasql.AnyResolv"
-  "edScanProto\0221\n\013option_list\030\003 \003(\0132\034.zetas"
-  "ql.ResolvedOptionProto\"\255\001\n$ResolvedCreat"
-  "eExternalTableStmtProto\0229\n\006parent\030\001 \001(\0132"
-  ").zetasql.ResolvedCreateTableStmtBasePro"
-  "to\022J\n\026with_partition_columns\030\002 \001(\0132*.zet"
-  "asql.ResolvedWithPartitionColumnsProto\"\321"
-  "\001\n\034ResolvedExportModelStmtProto\022/\n\006paren"
-  "t\030\001 \001(\0132\037.zetasql.ResolvedStatementProto"
-  "\022\027\n\017model_name_path\030\002 \003(\t\0224\n\nconnection\030"
-  "\003 \001(\0132 .zetasql.ResolvedConnectionProto\022"
-  "1\n\013option_list\030\004 \003(\0132\034.zetasql.ResolvedO"
-  "ptionProto\"\275\002\n\033ResolvedExportDataStmtPro"
-  "to\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSta"
-  "tementProto\0224\n\nconnection\030\006 \001(\0132 .zetasq"
-  "l.ResolvedConnectionProto\0221\n\013option_list"
-  "\030\002 \003(\0132\034.zetasql.ResolvedOptionProto\022>\n\022"
-  "output_column_list\030\003 \003(\0132\".zetasql.Resol"
-  "vedOutputColumnProto\022\026\n\016is_value_table\030\004"
-  " \001(\010\022,\n\005query\030\005 \001(\0132\035.zetasql.AnyResolve"
-  "dScanProto\"\225\001\n\034ResolvedDefineTableStmtPr"
-  "oto\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSt"
-  "atementProto\022\021\n\tname_path\030\002 \003(\t\0221\n\013optio"
-  "n_list\030\003 \003(\0132\034.zetasql.ResolvedOptionPro"
-  "to\"\214\001\n\031ResolvedDescribeStmtProto\022/\n\006pare"
-  "nt\030\001 \001(\0132\037.zetasql.ResolvedStatementProt"
-  "o\022\023\n\013object_type\030\002 \001(\t\022\021\n\tname_path\030\003 \003("
-  "\t\022\026\n\016from_name_path\030\004 \003(\t\"\241\001\n\025ResolvedSh"
-  "owStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Re"
-  "solvedStatementProto\022\022\n\nidentifier\030\002 \001(\t"
-  "\022\021\n\tname_path\030\003 \003(\t\0220\n\tlike_expr\030\004 \001(\0132\035"
-  ".zetasql.ResolvedLiteralProto\"\257\001\n\026Resolv"
-  "edBeginStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetas"
-  "ql.ResolvedStatementProto\022F\n\017read_write_"
-  "mode\030\003 \001(\0162-.zetasql.ResolvedBeginStmtEn"
-  "ums.ReadWriteMode\022\034\n\024isolation_level_lis"
-  "t\030\002 \003(\t\"\270\001\n\037ResolvedSetTransactionStmtPr"
-  "oto\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSt"
-  "atementProto\022F\n\017read_write_mode\030\003 \001(\0162-."
-  "zetasql.ResolvedBeginStmtEnums.ReadWrite"
-  "Mode\022\034\n\024isolation_level_list\030\002 \003(\t\"J\n\027Re"
-  "solvedCommitStmtProto\022/\n\006parent\030\001 \001(\0132\037."
-  "zetasql.ResolvedStatementProto\"L\n\031Resolv"
-  "edRollbackStmtProto\022/\n\006parent\030\001 \001(\0132\037.ze"
-  "tasql.ResolvedStatementProto\"b\n\033Resolved"
-  "StartBatchStmtProto\022/\n\006parent\030\001 \001(\0132\037.ze"
-  "tasql.ResolvedStatementProto\022\022\n\nbatch_ty"
-  "pe\030\002 \001(\t\"L\n\031ResolvedRunBatchStmtProto\022/\n"
-  "\006parent\030\001 \001(\0132\037.zetasql.ResolvedStatemen"
-  "tProto\"N\n\033ResolvedAbortBatchStmtProto\022/\n"
-  "\006parent\030\001 \001(\0132\037.zetasql.ResolvedStatemen"
-  "tProto\"\302\001\n\025ResolvedDropStmtProto\022/\n\006pare"
-  "nt\030\001 \001(\0132\037.zetasql.ResolvedStatementProt"
-  "o\022\023\n\013object_type\030\002 \001(\t\022\024\n\014is_if_exists\030\003"
-  " \001(\010\022\021\n\tname_path\030\004 \003(\t\022:\n\tdrop_mode\030\005 \001"
-  "(\0162\'.zetasql.ResolvedDropStmtEnums.DropM"
-  "ode\"\201\001\n%ResolvedDropMaterializedViewStmt"
-  "Proto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolved"
-  "StatementProto\022\024\n\014is_if_exists\030\003 \001(\010\022\021\n\t"
-  "name_path\030\004 \003(\t\"~\n\"ResolvedDropSnapshotT"
-  "ableStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql."
-  "ResolvedStatementProto\022\024\n\014is_if_exists\030\003"
-  " \001(\010\022\021\n\tname_path\030\004 \003(\t\"K\n\035ResolvedRecur"
-  "siveRefScanProto\022*\n\006parent\030\001 \001(\0132\032.zetas"
-  "ql.ResolvedScanProto\"\234\002\n\032ResolvedRecursi"
-  "veScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.Re"
-  "solvedScanProto\022N\n\007op_type\030\002 \001(\0162=.zetas"
-  "ql.ResolvedRecursiveScanEnums.RecursiveS"
-  "etOperationType\022B\n\022non_recursive_term\030\003 "
-  "\001(\0132&.zetasql.ResolvedSetOperationItemPr"
-  "oto\022>\n\016recursive_term\030\004 \001(\0132&.zetasql.Re"
-  "solvedSetOperationItemProto\"\276\001\n\025Resolved"
-  "WithScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasql."
-  "ResolvedScanProto\0228\n\017with_entry_list\030\002 \003"
-  "(\0132\037.zetasql.ResolvedWithEntryProto\022,\n\005q"
-  "uery\030\003 \001(\0132\035.zetasql.AnyResolvedScanProt"
-  "o\022\021\n\trecursive\030\004 \001(\010\"\227\001\n\026ResolvedWithEnt"
-  "ryProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolv"
-  "edArgumentProto\022\027\n\017with_query_name\030\002 \001(\t"
-  "\0224\n\rwith_subquery\030\003 \001(\0132\035.zetasql.AnyRes"
-  "olvedScanProto\"\224\001\n\023ResolvedOptionProto\022."
-  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
-  "tProto\022\021\n\tqualifier\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022"
-  ",\n\005value\030\004 \001(\0132\035.zetasql.AnyResolvedExpr"
-  "Proto\"\276\001\n\037ResolvedWindowPartitioningProt"
-  "o\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgu"
-  "mentProto\022:\n\021partition_by_list\030\002 \003(\0132\037.z"
-  "etasql.ResolvedColumnRefProto\022/\n\thint_li"
-  "st\030\003 \003(\0132\034.zetasql.ResolvedOptionProto\"\275"
-  "\001\n\033ResolvedWindowOrderingProto\022.\n\006parent"
-  "\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto\022="
-  "\n\022order_by_item_list\030\002 \003(\0132!.zetasql.Res"
-  "olvedOrderByItemProto\022/\n\thint_list\030\003 \003(\013"
-  "2\034.zetasql.ResolvedOptionProto\"\377\001\n\030Resol"
-  "vedWindowFrameProto\022.\n\006parent\030\001 \001(\0132\036.ze"
-  "tasql.ResolvedArgumentProto\022\?\n\nframe_uni"
-  "t\030\002 \001(\0162+.zetasql.ResolvedWindowFrameEnu"
-  "ms.FrameUnit\0229\n\nstart_expr\030\003 \001(\0132%.zetas"
-  "ql.ResolvedWindowFrameExprProto\0227\n\010end_e"
-  "xpr\030\004 \001(\0132%.zetasql.ResolvedWindowFrameE"
-  "xprProto\"\222\002\n\"ResolvedAnalyticFunctionGro"
-  "upProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolv"
-  "edArgumentProto\022>\n\014partition_by\030\002 \001(\0132(."
-  "zetasql.ResolvedWindowPartitioningProto\022"
-  "6\n\010order_by\030\003 \001(\0132$.zetasql.ResolvedWind"
-  "owOrderingProto\022D\n\026analytic_function_lis"
-  "t\030\004 \003(\0132$.zetasql.ResolvedComputedColumn"
-  "Proto\"\314\001\n\034ResolvedWindowFrameExprProto\022."
-  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
-  "tProto\022I\n\rboundary_type\030\002 \001(\01622.zetasql."
-  "ResolvedWindowFrameExprEnums.BoundaryTyp"
-  "e\0221\n\nexpression\030\003 \001(\0132\035.zetasql.AnyResol"
-  "vedExprProto\"u\n\025ResolvedDMLValueProto\022.\n"
-  "\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgument"
-  "Proto\022,\n\005value\030\002 \001(\0132\035.zetasql.AnyResolv"
-  "edExprProto\"E\n\027ResolvedDMLDefaultProto\022*"
-  "\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedExprPro"
-  "to\"\222\001\n\027ResolvedAssertStmtProto\022/\n\006parent"
-  "\030\001 \001(\0132\037.zetasql.ResolvedStatementProto\022"
-  "1\n\nexpression\030\002 \001(\0132\035.zetasql.AnyResolve"
-  "dExprProto\022\023\n\013description\030\003 \001(\t\"~\n\037Resol"
-  "vedAssertRowsModifiedProto\022.\n\006parent\030\001 \001"
-  "(\0132\036.zetasql.ResolvedArgumentProto\022+\n\004ro"
-  "ws\030\002 \001(\0132\035.zetasql.AnyResolvedExprProto\""
-  "|\n\026ResolvedInsertRowProto\022.\n\006parent\030\001 \001("
-  "\0132\036.zetasql.ResolvedArgumentProto\0222\n\nval"
-  "ue_list\030\002 \003(\0132\036.zetasql.ResolvedDMLValue"
-  "Proto\"\247\005\n\027ResolvedInsertStmtProto\022/\n\006par"
-  "ent\030\001 \001(\0132\037.zetasql.ResolvedStatementPro"
-  "to\0223\n\ntable_scan\030\002 \001(\0132\037.zetasql.Resolve"
-  "dTableScanProto\022@\n\013insert_mode\030\003 \001(\0162+.z"
-  "etasql.ResolvedInsertStmtEnums.InsertMod"
-  "e\022F\n\024assert_rows_modified\030\004 \001(\0132(.zetasq"
-  "l.ResolvedAssertRowsModifiedProto\0228\n\tret"
-  "urning\030\n \001(\0132%.zetasql.ResolvedReturning"
-  "ClauseProto\0228\n\022insert_column_list\030\005 \003(\0132"
-  "\034.zetasql.ResolvedColumnProto\022=\n\024query_p"
-  "arameter_list\030\t \003(\0132\037.zetasql.ResolvedCo"
-  "lumnRefProto\022,\n\005query\030\006 \001(\0132\035.zetasql.An"
-  "yResolvedScanProto\022>\n\030query_output_colum"
-  "n_list\030\010 \003(\0132\034.zetasql.ResolvedColumnPro"
-  "to\0221\n\010row_list\030\007 \003(\0132\037.zetasql.ResolvedI"
-  "nsertRowProto\022H\n\022column_access_list\030\013 \003("
-  "\0162,.zetasql.ResolvedStatementEnums.Objec"
-  "tAccess\"\277\003\n\027ResolvedDeleteStmtProto\022/\n\006p"
+  "OutputColumnProto\022\034\n\024has_explicit_column"
+  "s\030\t \001(\010\022,\n\005query\030\005 \001(\0132\035.zetasql.AnyReso"
+  "lvedScanProto\022\013\n\003sql\030\006 \001(\t\022G\n\014sql_securi"
+  "ty\030\007 \001(\01621.zetasql.ResolvedCreateStateme"
+  "ntEnums.SqlSecurity\022\026\n\016is_value_table\030\004 "
+  "\001(\010\022\021\n\trecursive\030\010 \001(\010\022F\n\026column_definit"
+  "ion_list\030\n \003(\0132&.zetasql.ResolvedColumnD"
+  "efinitionProto\"S\n\033ResolvedCreateViewStmt"
+  "Proto\0224\n\006parent\030\001 \001(\0132$.zetasql.Resolved"
+  "CreateViewBaseProto\"\233\001\n!ResolvedWithPart"
+  "itionColumnsProto\022.\n\006parent\030\001 \001(\0132\036.zeta"
+  "sql.ResolvedArgumentProto\022F\n\026column_defi"
+  "nition_list\030\002 \003(\0132&.zetasql.ResolvedColu"
+  "mnDefinitionProto\"\303\001\n$ResolvedCreateSnap"
+  "shotTableStmtProto\0225\n\006parent\030\001 \001(\0132%.zet"
+  "asql.ResolvedCreateStatementProto\0221\n\nclo"
+  "ne_from\030\002 \001(\0132\035.zetasql.AnyResolvedScanP"
+  "roto\0221\n\013option_list\030\003 \003(\0132\034.zetasql.Reso"
+  "lvedOptionProto\"\255\001\n$ResolvedCreateExtern"
+  "alTableStmtProto\0229\n\006parent\030\001 \001(\0132).zetas"
+  "ql.ResolvedCreateTableStmtBaseProto\022J\n\026w"
+  "ith_partition_columns\030\002 \001(\0132*.zetasql.Re"
+  "solvedWithPartitionColumnsProto\"\321\001\n\034Reso"
+  "lvedExportModelStmtProto\022/\n\006parent\030\001 \001(\013"
+  "2\037.zetasql.ResolvedStatementProto\022\027\n\017mod"
+  "el_name_path\030\002 \003(\t\0224\n\nconnection\030\003 \001(\0132 "
+  ".zetasql.ResolvedConnectionProto\0221\n\013opti"
+  "on_list\030\004 \003(\0132\034.zetasql.ResolvedOptionPr"
+  "oto\"\275\002\n\033ResolvedExportDataStmtProto\022/\n\006p"
   "arent\030\001 \001(\0132\037.zetasql.ResolvedStatementP"
-  "roto\0223\n\ntable_scan\030\002 \001(\0132\037.zetasql.Resol"
-  "vedTableScanProto\022F\n\024assert_rows_modifie"
-  "d\030\003 \001(\0132(.zetasql.ResolvedAssertRowsModi"
-  "fiedProto\0228\n\treturning\030\006 \001(\0132%.zetasql.R"
-  "esolvedReturningClauseProto\022H\n\022column_ac"
-  "cess_list\030\007 \003(\0162,.zetasql.ResolvedStatem"
-  "entEnums.ObjectAccess\022\?\n\023array_offset_co"
-  "lumn\030\005 \001(\0132\".zetasql.ResolvedColumnHolde"
-  "rProto\0221\n\nwhere_expr\030\004 \001(\0132\035.zetasql.Any"
-  "ResolvedExprProto\"\316\003\n\027ResolvedUpdateItem"
-  "Proto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolved"
-  "ArgumentProto\022-\n\006target\030\002 \001(\0132\035.zetasql."
-  "AnyResolvedExprProto\0221\n\tset_value\030\003 \001(\0132"
-  "\036.zetasql.ResolvedDMLValueProto\022:\n\016eleme"
-  "nt_column\030\004 \001(\0132\".zetasql.ResolvedColumn"
-  "HolderProto\022@\n\021array_update_list\030\010 \003(\0132%"
-  ".zetasql.ResolvedUpdateArrayItemProto\0225\n"
-  "\013delete_list\030\005 \003(\0132 .zetasql.ResolvedDel"
-  "eteStmtProto\0225\n\013update_list\030\006 \003(\0132 .zeta"
-  "sql.ResolvedUpdateStmtProto\0225\n\013insert_li"
-  "st\030\007 \003(\0132 .zetasql.ResolvedInsertStmtPro"
-  "to\"\264\001\n\034ResolvedUpdateArrayItemProto\022.\n\006p"
-  "arent\030\001 \001(\0132\036.zetasql.ResolvedArgumentPr"
-  "oto\022-\n\006offset\030\002 \001(\0132\035.zetasql.AnyResolve"
-  "dExprProto\0225\n\013update_item\030\003 \001(\0132 .zetasq"
-  "l.ResolvedUpdateItemProto\"\255\004\n\027ResolvedUp"
-  "dateStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql."
-  "ResolvedStatementProto\0223\n\ntable_scan\030\002 \001"
-  "(\0132\037.zetasql.ResolvedTableScanProto\022H\n\022c"
-  "olumn_access_list\030\010 \003(\0162,.zetasql.Resolv"
-  "edStatementEnums.ObjectAccess\022F\n\024assert_"
-  "rows_modified\030\003 \001(\0132(.zetasql.ResolvedAs"
-  "sertRowsModifiedProto\0228\n\treturning\030\t \001(\013"
-  "2%.zetasql.ResolvedReturningClauseProto\022"
-  "\?\n\023array_offset_column\030\007 \001(\0132\".zetasql.R"
-  "esolvedColumnHolderProto\0221\n\nwhere_expr\030\004"
-  " \001(\0132\035.zetasql.AnyResolvedExprProto\022:\n\020u"
-  "pdate_item_list\030\005 \003(\0132 .zetasql.Resolved"
-  "UpdateItemProto\0220\n\tfrom_scan\030\006 \001(\0132\035.zet"
-  "asql.AnyResolvedScanProto\"\246\003\n\026ResolvedMe"
-  "rgeWhenProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.R"
-  "esolvedArgumentProto\022=\n\nmatch_type\030\002 \001(\016"
-  "2).zetasql.ResolvedMergeWhenEnums.MatchT"
-  "ype\0221\n\nmatch_expr\030\003 \001(\0132\035.zetasql.AnyRes"
-  "olvedExprProto\022\?\n\013action_type\030\004 \001(\0162*.ze"
-  "tasql.ResolvedMergeWhenEnums.ActionType\022"
-  "8\n\022insert_column_list\030\005 \003(\0132\034.zetasql.Re"
-  "solvedColumnProto\0223\n\ninsert_row\030\006 \001(\0132\037."
-  "zetasql.ResolvedInsertRowProto\022:\n\020update"
-  "_item_list\030\007 \003(\0132 .zetasql.ResolvedUpdat"
-  "eItemProto\"\350\002\n\026ResolvedMergeStmtProto\022/\n"
-  "\006parent\030\001 \001(\0132\037.zetasql.ResolvedStatemen"
-  "tProto\0223\n\ntable_scan\030\002 \001(\0132\037.zetasql.Res"
-  "olvedTableScanProto\022H\n\022column_access_lis"
-  "t\030\006 \003(\0162,.zetasql.ResolvedStatementEnums"
-  ".ObjectAccess\0220\n\tfrom_scan\030\003 \001(\0132\035.zetas"
-  "ql.AnyResolvedScanProto\0221\n\nmerge_expr\030\004 "
-  "\001(\0132\035.zetasql.AnyResolvedExprProto\0229\n\020wh"
-  "en_clause_list\030\005 \003(\0132\037.zetasql.ResolvedM"
-  "ergeWhenProto\"\264\001\n\031ResolvedTruncateStmtPr"
-  "oto\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSt"
-  "atementProto\0223\n\ntable_scan\030\003 \001(\0132\037.zetas"
-  "ql.ResolvedTableScanProto\0221\n\nwhere_expr\030"
-  "\004 \001(\0132\035.zetasql.AnyResolvedExprProto\"\\\n\027"
-  "ResolvedObjectUnitProto\022.\n\006parent\030\001 \001(\0132"
-  "\036.zetasql.ResolvedArgumentProto\022\021\n\tname_"
-  "path\030\002 \003(\t\"\222\001\n\026ResolvedPrivilegeProto\022.\n"
-  "\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgument"
-  "Proto\022\023\n\013action_type\030\002 \001(\t\0223\n\tunit_list\030"
-  "\003 \003(\0132 .zetasql.ResolvedObjectUnitProto\""
-  "\267\001\n!AnyResolvedGrantOrRevokeStmtProto\022C\n"
-  "\030resolved_grant_stmt_node\030E \001(\0132\037.zetasq"
-  "l.ResolvedGrantStmtProtoH\000\022E\n\031resolved_r"
-  "evoke_stmt_node\030F \001(\0132 .zetasql.Resolved"
-  "RevokeStmtProtoH\000B\006\n\004node\"\202\002\n\036ResolvedGr"
-  "antOrRevokeStmtProto\022/\n\006parent\030\001 \001(\0132\037.z"
-  "etasql.ResolvedStatementProto\0227\n\016privile"
-  "ge_list\030\002 \003(\0132\037.zetasql.ResolvedPrivileg"
-  "eProto\022\023\n\013object_type\030\003 \001(\t\022\021\n\tname_path"
-  "\030\004 \003(\t\022\024\n\014grantee_list\030\005 \003(\t\0228\n\021grantee_"
-  "expr_list\030\006 \003(\0132\035.zetasql.AnyResolvedExp"
-  "rProto\"Q\n\026ResolvedGrantStmtProto\0227\n\006pare"
-  "nt\030\001 \001(\0132\'.zetasql.ResolvedGrantOrRevoke"
-  "StmtProto\"R\n\027ResolvedRevokeStmtProto\0227\n\006"
-  "parent\030\001 \001(\0132\'.zetasql.ResolvedGrantOrRe"
-  "vokeStmtProto\"\304\007\n\037AnyResolvedAlterObject"
-  "StmtProto\022d\n*resolved_alter_row_access_p"
-  "olicy_stmt_node\030K \001(\0132..zetasql.Resolved"
-  "AlterRowAccessPolicyStmtProtoH\000\022N\n\036resol"
-  "ved_alter_table_stmt_node\030s \001(\0132$.zetasq"
-  "l.ResolvedAlterTableStmtProtoH\000\022L\n\035resol"
-  "ved_alter_view_stmt_node\030v \001(\0132#.zetasql"
-  ".ResolvedAlterViewStmtProtoH\000\022e\n*resolve"
-  "d_alter_materialized_view_stmt_node\030\177 \001("
-  "\0132/.zetasql.ResolvedAlterMaterializedVie"
-  "wStmtProtoH\000\022U\n!resolved_alter_database_"
-  "stmt_node\030\206\001 \001(\0132\'.zetasql.ResolvedAlter"
-  "DatabaseStmtProtoH\000\022p\n0resolved_alter_al"
-  "l_row_access_policies_stmt_node\030\221\001 \001(\01323"
-  ".zetasql.ResolvedAlterAllRowAccessPolici"
-  "esStmtProtoH\000\022Q\n\037resolved_alter_entity_s"
-  "tmt_node\030\233\001 \001(\0132%.zetasql.ResolvedAlterE"
-  "ntityStmtProtoH\000\022Q\n\037resolved_alter_schem"
-  "a_stmt_node\030\240\001 \001(\0132%.zetasql.ResolvedAlt"
-  "erSchemaStmtProtoH\000\022n\n.resolved_alter_pr"
-  "ivilege_restriction_stmt_node\030\304\001 \001(\01323.z"
-  "etasql.ResolvedAlterPrivilegeRestriction"
-  "StmtProtoH\000\022O\n\036resolved_alter_model_stmt"
-  "_node\030\315\001 \001(\0132$.zetasql.ResolvedAlterMode"
-  "lStmtProtoH\000B\006\n\004node\"\271\001\n\034ResolvedAlterOb"
-  "jectStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql."
-  "ResolvedStatementProto\022\021\n\tname_path\030\002 \003("
-  "\t\022\?\n\021alter_action_list\030\003 \003(\0132$.zetasql.A"
-  "nyResolvedAlterActionProto\022\024\n\014is_if_exis"
-  "ts\030\004 \001(\010\"W\n\036ResolvedAlterDatabaseStmtPro"
-  "to\0225\n\006parent\030\001 \001(\0132%.zetasql.ResolvedAlt"
-  "erObjectStmtProto\"_\n&ResolvedAlterMateri"
-  "alizedViewStmtProto\0225\n\006parent\030\001 \001(\0132%.ze"
-  "tasql.ResolvedAlterObjectStmtProto\"U\n\034Re"
-  "solvedAlterSchemaStmtProto\0225\n\006parent\030\001 \001"
-  "(\0132%.zetasql.ResolvedAlterObjectStmtProt"
-  "o\"T\n\033ResolvedAlterModelStmtProto\0225\n\006pare"
-  "nt\030\001 \001(\0132%.zetasql.ResolvedAlterObjectSt"
-  "mtProto\"T\n\033ResolvedAlterTableStmtProto\0225"
-  "\n\006parent\030\001 \001(\0132%.zetasql.ResolvedAlterOb"
-  "jectStmtProto\"S\n\032ResolvedAlterViewStmtPr"
-  "oto\0225\n\006parent\030\001 \001(\0132%.zetasql.ResolvedAl"
-  "terObjectStmtProto\"\233\016\n\033AnyResolvedAlterA"
-  "ctionProto\022R\n resolved_set_options_actio"
-  "n_node\030u \001(\0132&.zetasql.ResolvedSetOption"
-  "sActionProtoH\000\022Q\n\037resolved_add_column_ac"
-  "tion_node\030\203\001 \001(\0132%.zetasql.ResolvedAddCo"
-  "lumnActionProtoH\000\022S\n resolved_drop_colum"
-  "n_action_node\030\204\001 \001(\0132&.zetasql.ResolvedD"
-  "ropColumnActionProtoH\000\022M\n\035resolved_grant"
-  "_to_action_node\030\207\001 \001(\0132#.zetasql.Resolve"
-  "dGrantToActionProtoH\000\022U\n!resolved_filter"
-  "_using_action_node\030\210\001 \001(\0132\'.zetasql.Reso"
-  "lvedFilterUsingActionProtoH\000\022S\n resolved"
-  "_revoke_from_action_node\030\211\001 \001(\0132&.zetasq"
-  "l.ResolvedRevokeFromActionProtoH\000\022O\n\036res"
-  "olved_rename_to_action_node\030\212\001 \001(\0132$.zet"
-  "asql.ResolvedRenameToActionProtoH\000\022I\n\033re"
-  "solved_set_as_action_node\030\234\001 \001(\0132!.zetas"
-  "ql.ResolvedSetAsActionProtoH\000\022Y\n#resolve"
-  "d_add_constraint_action_node\030\243\001 \001(\0132).ze"
-  "tasql.ResolvedAddConstraintActionProtoH\000"
-  "\022[\n$resolved_drop_constraint_action_node"
-  "\030\244\001 \001(\0132*.zetasql.ResolvedDropConstraint"
-  "ActionProtoH\000\022\\\n%resolved_drop_primary_k"
-  "ey_action_node\030\270\001 \001(\0132*.zetasql.Resolved"
-  "DropPrimaryKeyActionProtoH\000\022W\n\"resolved_"
-  "rename_column_action_node\030\271\001 \001(\0132(.zetas"
-  "ql.ResolvedRenameColumnActionProtoH\000\022S\n "
-  "resolved_set_collate_clause_node\030\273\001 \001(\0132"
-  "&.zetasql.ResolvedSetCollateClauseProtoH"
-  "\000\022S\n resolved_restrict_to_action_node\030\301\001"
-  " \001(\0132&.zetasql.ResolvedRestrictToActionP"
-  "rotoH\000\022g\n+resolved_add_to_restrictee_lis"
-  "t_action_node\030\302\001 \001(\0132/.zetasql.ResolvedA"
-  "ddToRestricteeListActionProtoH\000\022q\n0resol"
-  "ved_remove_from_restrictee_list_action_n"
-  "ode\030\303\001 \001(\01324.zetasql.ResolvedRemoveFromR"
-  "estricteeListActionProtoH\000\022X\n!resolved_a"
-  "lter_column_action_node\030\311\001 \001(\0132*.zetasql"
-  ".AnyResolvedAlterColumnActionProtoH\000\022\\\n%"
-  "resolved_alter_sub_entity_action_node\030\312\001"
-  " \001(\0132*.zetasql.ResolvedAlterSubEntityAct"
-  "ionProtoH\000\022X\n#resolved_add_sub_entity_ac"
-  "tion_node\030\313\001 \001(\0132(.zetasql.ResolvedAddSu"
-  "bEntityActionProtoH\000\022Z\n$resolved_drop_su"
-  "b_entity_action_node\030\314\001 \001(\0132).zetasql.Re"
-  "solvedDropSubEntityActionProtoH\000B\006\n\004node"
-  "\"J\n\030ResolvedAlterActionProto\022.\n\006parent\030\001"
-  " \001(\0132\036.zetasql.ResolvedArgumentProto\"\315\004\n"
-  "!AnyResolvedAlterColumnActionProto\022d\n)re"
-  "solved_alter_column_options_action_node\030"
-  "\251\001 \001(\0132..zetasql.ResolvedAlterColumnOpti"
-  "onsActionProtoH\000\022n\n/resolved_alter_colum"
-  "n_drop_not_null_action_node\030\262\001 \001(\01322.zet"
-  "asql.ResolvedAlterColumnDropNotNullActio"
-  "nProtoH\000\022n\n/resolved_alter_column_set_da"
-  "ta_type_action_node\030\265\001 \001(\01322.zetasql.Res"
-  "olvedAlterColumnSetDataTypeActionProtoH\000"
-  "\022k\n-resolved_alter_column_set_default_ac"
-  "tion_node\030\306\001 \001(\01321.zetasql.ResolvedAlter"
-  "ColumnSetDefaultActionProtoH\000\022m\n.resolve"
-  "d_alter_column_drop_default_action_node\030"
-  "\307\001 \001(\01322.zetasql.ResolvedAlterColumnDrop"
-  "DefaultActionProtoH\000B\006\n\004node\"y\n\036Resolved"
-  "AlterColumnActionProto\0221\n\006parent\030\001 \001(\0132!"
-  ".zetasql.ResolvedAlterActionProto\022\024\n\014is_"
-  "if_exists\030\002 \001(\010\022\016\n\006column\030\003 \001(\t\"\205\001\n\035Reso"
-  "lvedSetOptionsActionProto\0221\n\006parent\030\001 \001("
-  "\0132!.zetasql.ResolvedAlterActionProto\0221\n\013"
-  "option_list\030\002 \003(\0132\034.zetasql.ResolvedOpti"
-  "onProto\"\313\001\n!ResolvedAlterSubEntityAction"
-  "Proto\0221\n\006parent\030\001 \001(\0132!.zetasql.Resolved"
-  "AlterActionProto\022\023\n\013entity_type\030\002 \001(\t\022\014\n"
-  "\004name\030\003 \001(\t\022:\n\014alter_action\030\004 \001(\0132$.zeta"
-  "sql.AnyResolvedAlterActionProto\022\024\n\014is_if"
-  "_exists\030\005 \001(\010\"\305\001\n\037ResolvedAddSubEntityAc"
-  "tionProto\0221\n\006parent\030\001 \001(\0132!.zetasql.Reso"
-  "lvedAlterActionProto\022\023\n\013entity_type\030\002 \001("
-  "\t\022\014\n\004name\030\003 \001(\t\0222\n\014options_list\030\004 \003(\0132\034."
-  "zetasql.ResolvedOptionProto\022\030\n\020is_if_not"
-  "_exists\030\005 \001(\010\"\216\001\n ResolvedDropSubEntityA"
-  "ctionProto\0221\n\006parent\030\001 \001(\0132!.zetasql.Res"
-  "olvedAlterActionProto\022\023\n\013entity_type\030\002 \001"
-  "(\t\022\014\n\004name\030\003 \001(\t\022\024\n\014is_if_exists\030\004 \001(\010\"\256"
-  "\001\n\034ResolvedAddColumnActionProto\0221\n\006paren"
-  "t\030\001 \001(\0132!.zetasql.ResolvedAlterActionPro"
-  "to\022\030\n\020is_if_not_exists\030\002 \001(\010\022A\n\021column_d"
-  "efinition\030\003 \001(\0132&.zetasql.ResolvedColumn"
-  "DefinitionProto\"\317\001\n ResolvedAddConstrain"
-  "tActionProto\0221\n\006parent\030\001 \001(\0132!.zetasql.R"
-  "esolvedAlterActionProto\022\030\n\020is_if_not_exi"
-  "sts\030\002 \001(\010\0227\n\nconstraint\030\003 \001(\0132#.zetasql."
-  "AnyResolvedConstraintProto\022%\n\005table\030\004 \001("
-  "\0132\026.zetasql.TableRefProto\"z\n!ResolvedDro"
-  "pConstraintActionProto\0221\n\006parent\030\001 \001(\0132!"
-  ".zetasql.ResolvedAlterActionProto\022\024\n\014is_"
-  "if_exists\030\002 \001(\010\022\014\n\004name\030\003 \001(\t\"l\n!Resolve"
-  "dDropPrimaryKeyActionProto\0221\n\006parent\030\001 \001"
-  "(\0132!.zetasql.ResolvedAlterActionProto\022\024\n"
-  "\014is_if_exists\030\002 \001(\010\"\223\001\n%ResolvedAlterCol"
-  "umnOptionsActionProto\0227\n\006parent\030\001 \001(\0132\'."
-  "zetasql.ResolvedAlterColumnActionProto\0221"
-  "\n\013option_list\030\002 \003(\0132\034.zetasql.ResolvedOp"
-  "tionProto\"d\n)ResolvedAlterColumnDropNotN"
-  "ullActionProto\0227\n\006parent\030\001 \001(\0132\'.zetasql"
-  ".ResolvedAlterColumnActionProto\"\223\002\n)Reso"
-  "lvedAlterColumnSetDataTypeActionProto\0227\n"
-  "\006parent\030\001 \001(\0132\'.zetasql.ResolvedAlterCol"
-  "umnActionProto\022(\n\014updated_type\030\004 \001(\0132\022.z"
-  "etasql.TypeProto\022=\n\027updated_type_paramet"
-  "ers\030\005 \001(\0132\034.zetasql.TypeParametersProto\022"
-  "D\n\023updated_annotations\030\006 \001(\0132\'.zetasql.R"
-  "esolvedColumnAnnotationsProto\"\244\001\n(Resolv"
-  "edAlterColumnSetDefaultActionProto\0227\n\006pa"
-  "rent\030\001 \001(\0132\'.zetasql.ResolvedAlterColumn"
-  "ActionProto\022\?\n\rdefault_value\030\004 \001(\0132(.zet"
-  "asql.ResolvedColumnDefaultValueProto\"d\n)"
-  "ResolvedAlterColumnDropDefaultActionProt"
-  "o\0227\n\006parent\030\001 \001(\0132\'.zetasql.ResolvedAlte"
-  "rColumnActionProto\"v\n\035ResolvedDropColumn"
-  "ActionProto\0221\n\006parent\030\001 \001(\0132!.zetasql.Re"
-  "solvedAlterActionProto\022\024\n\014is_if_exists\030\002"
-  " \001(\010\022\014\n\004name\030\003 \001(\t\"\212\001\n\037ResolvedRenameCol"
-  "umnActionProto\0221\n\006parent\030\001 \001(\0132!.zetasql"
-  ".ResolvedAlterActionProto\022\024\n\014is_if_exist"
-  "s\030\004 \001(\010\022\014\n\004name\030\002 \001(\t\022\020\n\010new_name\030\003 \001(\t\""
-  "\201\001\n\030ResolvedSetAsActionProto\0221\n\006parent\030\001"
-  " \001(\0132!.zetasql.ResolvedAlterActionProto\022"
-  "\030\n\020entity_body_json\030\002 \001(\t\022\030\n\020entity_body"
-  "_text\030\003 \001(\t\"\211\001\n\035ResolvedSetCollateClause"
-  "Proto\0221\n\006parent\030\001 \001(\0132!.zetasql.Resolved"
-  "AlterActionProto\0225\n\016collation_name\030\002 \001(\013"
-  "2\035.zetasql.AnyResolvedExprProto\"\264\001\n%Reso"
-  "lvedAlterTableSetOptionsStmtProto\022/\n\006par"
-  "ent\030\001 \001(\0132\037.zetasql.ResolvedStatementPro"
-  "to\022\021\n\tname_path\030\002 \003(\t\0221\n\013option_list\030\003 \003"
-  "(\0132\034.zetasql.ResolvedOptionProto\022\024\n\014is_i"
-  "f_exists\030\004 \001(\010\"\215\001\n\027ResolvedRenameStmtPro"
-  "to\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSta"
-  "tementProto\022\023\n\013object_type\030\002 \001(\t\022\025\n\rold_"
-  "name_path\030\003 \003(\t\022\025\n\rnew_name_path\030\004 \003(\t\"\361"
-  "\001\n+ResolvedCreatePrivilegeRestrictionStm"
-  "tProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolve"
-  "dCreateStatementProto\022>\n\025column_privileg"
-  "e_list\030\002 \003(\0132\037.zetasql.ResolvedPrivilege"
-  "Proto\022\023\n\013object_type\030\003 \001(\t\0226\n\017restrictee"
-  "_list\030\004 \003(\0132\035.zetasql.AnyResolvedExprPro"
-  "to\"\226\003\n&ResolvedCreateRowAccessPolicyStmt"
-  "Proto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolved"
-  "StatementProto\022E\n\013create_mode\030\002 \001(\01620.ze"
-  "tasql.ResolvedCreateStatementEnums.Creat"
-  "eMode\022\014\n\004name\030\003 \001(\t\022\030\n\020target_name_path\030"
-  "\004 \003(\t\022\024\n\014grantee_list\030\005 \003(\t\0228\n\021grantee_e"
-  "xpr_list\030\t \003(\0132\035.zetasql.AnyResolvedExpr"
-  "Proto\0223\n\ntable_scan\030\006 \001(\0132\037.zetasql.Reso"
-  "lvedTableScanProto\0220\n\tpredicate\030\007 \001(\0132\035."
-  "zetasql.AnyResolvedExprProto\022\025\n\rpredicat"
-  "e_str\030\010 \001(\t\"\332\001\n)ResolvedDropPrivilegeRes"
-  "trictionStmtProto\022/\n\006parent\030\001 \001(\0132\037.zeta"
-  "sql.ResolvedStatementProto\022\023\n\013object_typ"
-  "e\030\002 \001(\t\022\024\n\014is_if_exists\030\003 \001(\010\022\021\n\tname_pa"
-  "th\030\004 \003(\t\022>\n\025column_privilege_list\030\005 \003(\0132"
-  "\037.zetasql.ResolvedPrivilegeProto\"\252\001\n$Res"
-  "olvedDropRowAccessPolicyStmtProto\022/\n\006par"
-  "ent\030\001 \001(\0132\037.zetasql.ResolvedStatementPro"
-  "to\022\023\n\013is_drop_all\030\002 \001(\010\022\024\n\014is_if_exists\030"
-  "\003 \001(\010\022\014\n\004name\030\004 \001(\t\022\030\n\020target_name_path\030"
-  "\005 \003(\t\"\220\001\n ResolvedDropSearchIndexStmtPro"
-  "to\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSta"
-  "tementProto\022\024\n\014is_if_exists\030\002 \001(\010\022\014\n\004nam"
-  "e\030\003 \001(\t\022\027\n\017table_name_path\030\004 \003(\t\"\211\001\n\032Res"
-  "olvedGrantToActionProto\0221\n\006parent\030\001 \001(\0132"
-  "!.zetasql.ResolvedAlterActionProto\0228\n\021gr"
-  "antee_expr_list\030\002 \003(\0132\035.zetasql.AnyResol"
-  "vedExprProto\"\212\001\n\035ResolvedRestrictToActio"
-  "nProto\0221\n\006parent\030\001 \001(\0132!.zetasql.Resolve"
-  "dAlterActionProto\0226\n\017restrictee_list\030\002 \003"
-  "(\0132\035.zetasql.AnyResolvedExprProto\"\255\001\n&Re"
-  "solvedAddToRestricteeListActionProto\0221\n\006"
-  "parent\030\001 \001(\0132!.zetasql.ResolvedAlterActi"
-  "onProto\022\030\n\020is_if_not_exists\030\002 \001(\010\0226\n\017res"
-  "trictee_list\030\003 \003(\0132\035.zetasql.AnyResolved"
-  "ExprProto\"\256\001\n+ResolvedRemoveFromRestrict"
-  "eeListActionProto\0221\n\006parent\030\001 \001(\0132!.zeta"
-  "sql.ResolvedAlterActionProto\022\024\n\014is_if_ex"
-  "ists\030\002 \001(\010\0226\n\017restrictee_list\030\003 \003(\0132\035.ze"
-  "tasql.AnyResolvedExprProto\"\234\001\n\036ResolvedF"
-  "ilterUsingActionProto\0221\n\006parent\030\001 \001(\0132!."
-  "zetasql.ResolvedAlterActionProto\0220\n\tpred"
-  "icate\030\002 \001(\0132\035.zetasql.AnyResolvedExprPro"
-  "to\022\025\n\rpredicate_str\030\003 \001(\t\"\250\001\n\035ResolvedRe"
-  "vokeFromActionProto\0221\n\006parent\030\001 \001(\0132!.ze"
-  "tasql.ResolvedAlterActionProto\0228\n\021revoke"
-  "e_expr_list\030\002 \003(\0132\035.zetasql.AnyResolvedE"
-  "xprProto\022\032\n\022is_revoke_from_all\030\003 \001(\010\"b\n\033"
-  "ResolvedRenameToActionProto\0221\n\006parent\030\001 "
-  "\001(\0132!.zetasql.ResolvedAlterActionProto\022\020"
-  "\n\010new_path\030\002 \003(\t\"\270\001\n*ResolvedAlterPrivil"
-  "egeRestrictionStmtProto\0225\n\006parent\030\001 \001(\0132"
-  "%.zetasql.ResolvedAlterObjectStmtProto\022>"
-  "\n\025column_privilege_list\030\002 \003(\0132\037.zetasql."
-  "ResolvedPrivilegeProto\022\023\n\013object_type\030\003 "
-  "\001(\t\"\241\001\n%ResolvedAlterRowAccessPolicyStmt"
-  "Proto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolved"
-  "AlterObjectStmtProto\022\014\n\004name\030\002 \001(\t\0223\n\nta"
-  "ble_scan\030\006 \001(\0132\037.zetasql.ResolvedTableSc"
-  "anProto\"\230\001\n*ResolvedAlterAllRowAccessPol"
-  "iciesStmtProto\0225\n\006parent\030\001 \001(\0132%.zetasql"
-  ".ResolvedAlterObjectStmtProto\0223\n\ntable_s"
-  "can\030\006 \001(\0132\037.zetasql.ResolvedTableScanPro"
-  "to\"\205\001\n\037ResolvedCreateConstantStmtProto\0225"
-  "\n\006parent\030\001 \001(\0132%.zetasql.ResolvedCreateS"
-  "tatementProto\022+\n\004expr\030\002 \001(\0132\035.zetasql.An"
-  "yResolvedExprProto\"\306\005\n\037ResolvedCreateFun"
-  "ctionStmtProto\0225\n\006parent\030\001 \001(\0132%.zetasql"
-  ".ResolvedCreateStatementProto\022 \n\030has_exp"
-  "licit_return_type\030\r \001(\010\022\'\n\013return_type\030\003"
-  " \001(\0132\022.zetasql.TypeProto\022\032\n\022argument_nam"
-  "e_list\030\013 \003(\t\0222\n\tsignature\030\n \001(\0132\037.zetasq"
-  "l.FunctionSignatureProto\022\024\n\014is_aggregate"
-  "\030\010 \001(\010\022\020\n\010language\030\004 \001(\t\022\014\n\004code\030\005 \001(\t\022G"
-  "\n\031aggregate_expression_list\030\t \003(\0132$.zeta"
-  "sql.ResolvedComputedColumnProto\022:\n\023funct"
-  "ion_expression\030\006 \001(\0132\035.zetasql.AnyResolv"
-  "edExprProto\0221\n\013option_list\030\007 \003(\0132\034.zetas"
-  "ql.ResolvedOptionProto\022G\n\014sql_security\030\014"
-  " \001(\01621.zetasql.ResolvedCreateStatementEn"
-  "ums.SqlSecurity\022Q\n\021determinism_level\030\016 \001"
-  "(\01626.zetasql.ResolvedCreateStatementEnum"
-  "s.DeterminismLevel\022\021\n\tis_remote\030\017 \001(\010\0224\n"
-  "\nconnection\030\020 \001(\0132 .zetasql.ResolvedConn"
-  "ectionProto\"\301\001\n\030ResolvedArgumentDefProto"
-  "\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgum"
-  "entProto\022\014\n\004name\030\002 \001(\t\022 \n\004type\030\003 \001(\0132\022.z"
-  "etasql.TypeProto\022E\n\rargument_kind\030\004 \001(\0162"
-  "..zetasql.ResolvedArgumentDefEnums.Argum"
-  "entKind\"\233\001\n\030ResolvedArgumentRefProto\022*\n\006"
-  "parent\030\001 \001(\0132\032.zetasql.ResolvedExprProto"
-  "\022\014\n\004name\030\002 \001(\t\022E\n\rargument_kind\030\003 \001(\0162.."
-  "zetasql.ResolvedArgumentDefEnums.Argumen"
-  "tKind\"\363\003\n$ResolvedCreateTableFunctionStm"
-  "tProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolve"
-  "dCreateStatementProto\022\032\n\022argument_name_l"
-  "ist\030\002 \003(\t\0222\n\tsignature\030\003 \001(\0132\037.zetasql.F"
-  "unctionSignatureProto\022\"\n\032has_explicit_re"
-  "turn_schema\030\013 \001(\010\0221\n\013option_list\030\004 \003(\0132\034"
-  ".zetasql.ResolvedOptionProto\022\020\n\010language"
-  "\030\005 \001(\t\022\014\n\004code\030\006 \001(\t\022,\n\005query\030\007 \001(\0132\035.ze"
-  "tasql.AnyResolvedScanProto\022>\n\022output_col"
-  "umn_list\030\010 \003(\0132\".zetasql.ResolvedOutputC"
-  "olumnProto\022\026\n\016is_value_table\030\t \001(\010\022G\n\014sq"
-  "l_security\030\n \001(\01621.zetasql.ResolvedCreat"
-  "eStatementEnums.SqlSecurity\"u\n!ResolvedR"
-  "elationArgumentScanProto\022*\n\006parent\030\001 \001(\013"
-  "2\032.zetasql.ResolvedScanProto\022\014\n\004name\030\002 \001"
-  "(\t\022\026\n\016is_value_table\030\003 \001(\010\"\200\001\n\031ResolvedA"
-  "rgumentListProto\022.\n\006parent\030\001 \001(\0132\036.zetas"
-  "ql.ResolvedArgumentProto\0223\n\010arg_list\030\002 \003"
-  "(\0132!.zetasql.ResolvedArgumentDefProto\"\212\001"
-  "\n$ResolvedFunctionSignatureHolderProto\022."
-  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
-  "tProto\0222\n\tsignature\030\002 \001(\0132\037.zetasql.Func"
-  "tionSignatureProto\"\362\001\n\035ResolvedDropFunct"
-  "ionStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.R"
-  "esolvedStatementProto\022\024\n\014is_if_exists\030\002 "
-  "\001(\010\022\021\n\tname_path\030\003 \003(\t\0225\n\targuments\030\004 \001("
-  "\0132\".zetasql.ResolvedArgumentListProto\022@\n"
-  "\tsignature\030\005 \001(\0132-.zetasql.ResolvedFunct"
-  "ionSignatureHolderProto\"~\n\"ResolvedDropT"
-  "ableFunctionStmtProto\022/\n\006parent\030\001 \001(\0132\037."
-  "zetasql.ResolvedStatementProto\022\024\n\014is_if_"
-  "exists\030\002 \001(\010\022\021\n\tname_path\030\003 \003(\t\"\341\001\n\025Reso"
-  "lvedCallStmtProto\022/\n\006parent\030\001 \001(\0132\037.zeta"
-  "sql.ResolvedStatementProto\022-\n\tprocedure\030"
-  "\002 \001(\0132\032.zetasql.ProcedureRefProto\0222\n\tsig"
-  "nature\030\003 \001(\0132\037.zetasql.FunctionSignature"
-  "Proto\0224\n\rargument_list\030\004 \003(\0132\035.zetasql.A"
-  "nyResolvedExprProto\"\222\002\n\027ResolvedImportSt"
-  "mtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolv"
-  "edStatementProto\022@\n\013import_kind\030\002 \001(\0162+."
-  "zetasql.ResolvedImportStmtEnums.ImportKi"
-  "nd\022\021\n\tname_path\030\003 \003(\t\022\021\n\tfile_path\030\004 \001(\t"
-  "\022\022\n\nalias_path\030\005 \003(\t\022\027\n\017into_alias_path\030"
-  "\007 \003(\t\0221\n\013option_list\030\006 \003(\0132\034.zetasql.Res"
-  "olvedOptionProto\"\220\001\n\027ResolvedModuleStmtP"
-  "roto\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedS"
-  "tatementProto\022\021\n\tname_path\030\002 \003(\t\0221\n\013opti"
-  "on_list\030\003 \003(\0132\034.zetasql.ResolvedOptionPr"
-  "oto\"\332\001\n$ResolvedAggregateHavingModifierP"
-  "roto\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedA"
-  "rgumentProto\022N\n\004kind\030\002 \001(\0162@.zetasql.Res"
-  "olvedAggregateHavingModifierEnums.Having"
-  "ModifierKind\0222\n\013having_expr\030\003 \001(\0132\035.zeta"
-  "sql.AnyResolvedExprProto\"\321\001\n\'ResolvedCre"
-  "ateMaterializedViewStmtProto\0224\n\006parent\030\001"
-  " \001(\0132$.zetasql.ResolvedCreateViewBasePro"
-  "to\0228\n\021partition_by_list\030\003 \003(\0132\035.zetasql."
-  "AnyResolvedExprProto\0226\n\017cluster_by_list\030"
-  "\004 \003(\0132\035.zetasql.AnyResolvedExprProto\"\312\002\n"
-  " ResolvedCreateProcedureStmtProto\0225\n\006par"
-  "ent\030\001 \001(\0132%.zetasql.ResolvedCreateStatem"
-  "entProto\022\032\n\022argument_name_list\030\002 \003(\t\0222\n\t"
-  "signature\030\003 \001(\0132\037.zetasql.FunctionSignat"
-  "ureProto\0221\n\013option_list\030\004 \003(\0132\034.zetasql."
-  "ResolvedOptionProto\022\026\n\016procedure_body\030\005 "
-  "\001(\t\0224\n\nconnection\030\006 \001(\0132 .zetasql.Resolv"
-  "edConnectionProto\022\020\n\010language\030\007 \001(\t\022\014\n\004c"
-  "ode\030\010 \001(\t\"\230\001\n%ResolvedExecuteImmediateAr"
-  "gumentProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Re"
-  "solvedArgumentProto\022\014\n\004name\030\002 \001(\t\0221\n\nexp"
-  "ression\030\003 \001(\0132\035.zetasql.AnyResolvedExprP"
-  "roto\"\353\001\n!ResolvedExecuteImmediateStmtPro"
-  "to\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSta"
-  "tementProto\022*\n\003sql\030\002 \001(\0132\035.zetasql.AnyRe"
-  "solvedExprProto\022\034\n\024into_identifier_list\030"
-  "\003 \003(\t\022K\n\023using_argument_list\030\004 \003(\0132..zet"
-  "asql.ResolvedExecuteImmediateArgumentPro"
-  "to\"\252\001\n\033ResolvedAssignmentStmtProto\022/\n\006pa"
-  "rent\030\001 \001(\0132\037.zetasql.ResolvedStatementPr"
-  "oto\022-\n\006target\030\002 \001(\0132\035.zetasql.AnyResolve"
-  "dExprProto\022+\n\004expr\030\003 \001(\0132\035.zetasql.AnyRe"
-  "solvedExprProto\"\322\001\n\035ResolvedCreateEntity"
-  "StmtProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Reso"
-  "lvedCreateStatementProto\022\023\n\013entity_type\030"
-  "\002 \001(\t\022\030\n\020entity_body_json\030\003 \001(\t\022\030\n\020entit"
-  "y_body_text\030\005 \001(\t\0221\n\013option_list\030\004 \003(\0132\034"
-  ".zetasql.ResolvedOptionProto\"j\n\034Resolved"
-  "AlterEntityStmtProto\0225\n\006parent\030\001 \001(\0132%.z"
-  "etasql.ResolvedAlterObjectStmtProto\022\023\n\013e"
-  "ntity_type\030\002 \001(\t\"\255\001\n\030ResolvedPivotColumn"
-  "Proto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolved"
-  "ArgumentProto\022,\n\006column\030\002 \001(\0132\034.zetasql."
-  "ResolvedColumnProto\022\030\n\020pivot_expr_index\030"
-  "\003 \001(\003\022\031\n\021pivot_value_index\030\004 \001(\003\"\224\003\n\026Res"
-  "olvedPivotScanProto\022*\n\006parent\030\001 \001(\0132\032.ze"
-  "tasql.ResolvedScanProto\0221\n\ninput_scan\030\002 "
-  "\001(\0132\035.zetasql.AnyResolvedScanProto\022;\n\rgr"
-  "oup_by_list\030\003 \003(\0132$.zetasql.ResolvedComp"
-  "utedColumnProto\0226\n\017pivot_expr_list\030\004 \003(\013"
-  "2\035.zetasql.AnyResolvedExprProto\022/\n\010for_e"
-  "xpr\030\005 \001(\0132\035.zetasql.AnyResolvedExprProto"
-  "\0227\n\020pivot_value_list\030\006 \003(\0132\035.zetasql.Any"
-  "ResolvedExprProto\022<\n\021pivot_column_list\030\007"
-  " \003(\0132!.zetasql.ResolvedPivotColumnProto\""
-  "\202\002\n\034ResolvedReturningClauseProto\022.\n\006pare"
-  "nt\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto"
-  "\022>\n\022output_column_list\030\002 \003(\0132\".zetasql.R"
-  "esolvedOutputColumnProto\0229\n\raction_colum"
-  "n\030\003 \001(\0132\".zetasql.ResolvedColumnHolderPr"
-  "oto\0227\n\texpr_list\030\004 \003(\0132$.zetasql.Resolve"
-  "dComputedColumnProto\"\177\n\027ResolvedUnpivotA"
-  "rgProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolv"
-  "edArgumentProto\0224\n\013column_list\030\002 \003(\0132\037.z"
-  "etasql.ResolvedColumnRefProto\"\267\003\n\030Resolv"
-  "edUnpivotScanProto\022*\n\006parent\030\001 \001(\0132\032.zet"
-  "asql.ResolvedScanProto\0221\n\ninput_scan\030\002 \001"
-  "(\0132\035.zetasql.AnyResolvedScanProto\0227\n\021val"
-  "ue_column_list\030\003 \003(\0132\034.zetasql.ResolvedC"
-  "olumnProto\0222\n\014label_column\030\004 \001(\0132\034.zetas"
-  "ql.ResolvedColumnProto\0221\n\nlabel_list\030\005 \003"
-  "(\0132\035.zetasql.ResolvedLiteralProto\022:\n\020unp"
-  "ivot_arg_list\030\006 \003(\0132 .zetasql.ResolvedUn"
-  "pivotArgProto\022I\n\033projected_input_column_"
-  "list\030\007 \003(\0132$.zetasql.ResolvedComputedCol"
-  "umnProto\022\025\n\rinclude_nulls\030\010 \001(\010\"\267\001\n\032Reso"
-  "lvedCloneDataStmtProto\022/\n\006parent\030\001 \001(\0132\037"
-  ".zetasql.ResolvedStatementProto\0225\n\014targe"
-  "t_table\030\002 \001(\0132\037.zetasql.ResolvedTableSca"
-  "nProto\0221\n\nclone_from\030\003 \001(\0132\035.zetasql.Any"
-  "ResolvedScanProto\"\223\001\n\037ResolvedTableAndCo"
-  "lumnInfoProto\022.\n\006parent\030\001 \001(\0132\036.zetasql."
-  "ResolvedArgumentProto\022%\n\005table\030\002 \001(\0132\026.z"
-  "etasql.TableRefProto\022\031\n\021column_index_lis"
-  "t\030\003 \003(\003\"\315\001\n\030ResolvedAnalyzeStmtProto\022/\n\006"
+  "roto\0224\n\nconnection\030\006 \001(\0132 .zetasql.Resol"
+  "vedConnectionProto\0221\n\013option_list\030\002 \003(\0132"
+  "\034.zetasql.ResolvedOptionProto\022>\n\022output_"
+  "column_list\030\003 \003(\0132\".zetasql.ResolvedOutp"
+  "utColumnProto\022\026\n\016is_value_table\030\004 \001(\010\022,\n"
+  "\005query\030\005 \001(\0132\035.zetasql.AnyResolvedScanPr"
+  "oto\"\225\001\n\034ResolvedDefineTableStmtProto\022/\n\006"
   "parent\030\001 \001(\0132\037.zetasql.ResolvedStatement"
-  "Proto\0221\n\013option_list\030\002 \003(\0132\034.zetasql.Res"
-  "olvedOptionProto\022M\n\033table_and_column_ind"
-  "ex_list\030\003 \003(\0132(.zetasql.ResolvedTableAnd"
-  "ColumnInfoProto\"\236\001\n\'ResolvedAuxLoadDataP"
-  "artitionFilterProto\022.\n\006parent\030\001 \001(\0132\036.ze"
-  "tasql.ResolvedArgumentProto\022-\n\006filter\030\002 "
-  "\001(\0132\035.zetasql.AnyResolvedExprProto\022\024\n\014is"
-  "_overwrite\030\003 \001(\010\"\362\007\n\034ResolvedAuxLoadData"
+  "Proto\022\021\n\tname_path\030\002 \003(\t\0221\n\013option_list\030"
+  "\003 \003(\0132\034.zetasql.ResolvedOptionProto\"\214\001\n\031"
+  "ResolvedDescribeStmtProto\022/\n\006parent\030\001 \001("
+  "\0132\037.zetasql.ResolvedStatementProto\022\023\n\013ob"
+  "ject_type\030\002 \001(\t\022\021\n\tname_path\030\003 \003(\t\022\026\n\016fr"
+  "om_name_path\030\004 \003(\t\"\241\001\n\025ResolvedShowStmtP"
+  "roto\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedS"
+  "tatementProto\022\022\n\nidentifier\030\002 \001(\t\022\021\n\tnam"
+  "e_path\030\003 \003(\t\0220\n\tlike_expr\030\004 \001(\0132\035.zetasq"
+  "l.ResolvedLiteralProto\"\257\001\n\026ResolvedBegin"
   "StmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Reso"
-  "lvedStatementProto\022K\n\016insertion_mode\030\002 \001"
-  "(\01623.zetasql.ResolvedAuxLoadDataStmtEnum"
-  "s.InsertionMode\022\025\n\ris_temp_table\030\021 \001(\010\022\021"
-  "\n\tname_path\030\003 \003(\t\022J\n\020partition_filter\030\020 "
-  "\001(\01320.zetasql.ResolvedAuxLoadDataPartiti"
-  "onFilterProto\022>\n\022output_column_list\030\004 \003("
-  "\0132\".zetasql.ResolvedOutputColumnProto\022F\n"
-  "\026column_definition_list\030\005 \003(\0132&.zetasql."
-  "ResolvedColumnDefinitionProto\0228\n\022pseudo_"
-  "column_list\030\006 \003(\0132\034.zetasql.ResolvedColu"
-  "mnProto\0225\n\013primary_key\030\007 \001(\0132 .zetasql.R"
-  "esolvedPrimaryKeyProto\022:\n\020foreign_key_li"
-  "st\030\010 \003(\0132 .zetasql.ResolvedForeignKeyPro"
-  "to\022D\n\025check_constraint_list\030\t \003(\0132%.zeta"
-  "sql.ResolvedCheckConstraintProto\0228\n\021part"
-  "ition_by_list\030\n \003(\0132\035.zetasql.AnyResolve"
-  "dExprProto\0226\n\017cluster_by_list\030\013 \003(\0132\035.ze"
-  "tasql.AnyResolvedExprProto\0221\n\013option_lis"
-  "t\030\014 \003(\0132\034.zetasql.ResolvedOptionProto\022J\n"
-  "\026with_partition_columns\030\r \001(\0132*.zetasql."
-  "ResolvedWithPartitionColumnsProto\0224\n\ncon"
-  "nection\030\016 \001(\0132 .zetasql.ResolvedConnecti"
-  "onProto\022<\n\026from_files_option_list\030\017 \003(\0132"
-  "\034.zetasql.ResolvedOptionProtoB,\n\022com.goo"
-  "gle.zetasqlB\022ZetaSQLResolvedASTH\002P\001"
+  "lvedStatementProto\022F\n\017read_write_mode\030\003 "
+  "\001(\0162-.zetasql.ResolvedBeginStmtEnums.Rea"
+  "dWriteMode\022\034\n\024isolation_level_list\030\002 \003(\t"
+  "\"\270\001\n\037ResolvedSetTransactionStmtProto\022/\n\006"
+  "parent\030\001 \001(\0132\037.zetasql.ResolvedStatement"
+  "Proto\022F\n\017read_write_mode\030\003 \001(\0162-.zetasql"
+  ".ResolvedBeginStmtEnums.ReadWriteMode\022\034\n"
+  "\024isolation_level_list\030\002 \003(\t\"J\n\027ResolvedC"
+  "ommitStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql"
+  ".ResolvedStatementProto\"L\n\031ResolvedRollb"
+  "ackStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.R"
+  "esolvedStatementProto\"b\n\033ResolvedStartBa"
+  "tchStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.R"
+  "esolvedStatementProto\022\022\n\nbatch_type\030\002 \001("
+  "\t\"L\n\031ResolvedRunBatchStmtProto\022/\n\006parent"
+  "\030\001 \001(\0132\037.zetasql.ResolvedStatementProto\""
+  "N\n\033ResolvedAbortBatchStmtProto\022/\n\006parent"
+  "\030\001 \001(\0132\037.zetasql.ResolvedStatementProto\""
+  "\302\001\n\025ResolvedDropStmtProto\022/\n\006parent\030\001 \001("
+  "\0132\037.zetasql.ResolvedStatementProto\022\023\n\013ob"
+  "ject_type\030\002 \001(\t\022\024\n\014is_if_exists\030\003 \001(\010\022\021\n"
+  "\tname_path\030\004 \003(\t\022:\n\tdrop_mode\030\005 \001(\0162\'.ze"
+  "tasql.ResolvedDropStmtEnums.DropMode\"\201\001\n"
+  "%ResolvedDropMaterializedViewStmtProto\022/"
+  "\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedStateme"
+  "ntProto\022\024\n\014is_if_exists\030\003 \001(\010\022\021\n\tname_pa"
+  "th\030\004 \003(\t\"~\n\"ResolvedDropSnapshotTableStm"
+  "tProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolve"
+  "dStatementProto\022\024\n\014is_if_exists\030\003 \001(\010\022\021\n"
+  "\tname_path\030\004 \003(\t\"K\n\035ResolvedRecursiveRef"
+  "ScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.Reso"
+  "lvedScanProto\"\234\002\n\032ResolvedRecursiveScanP"
+  "roto\022*\n\006parent\030\001 \001(\0132\032.zetasql.ResolvedS"
+  "canProto\022N\n\007op_type\030\002 \001(\0162=.zetasql.Reso"
+  "lvedRecursiveScanEnums.RecursiveSetOpera"
+  "tionType\022B\n\022non_recursive_term\030\003 \001(\0132&.z"
+  "etasql.ResolvedSetOperationItemProto\022>\n\016"
+  "recursive_term\030\004 \001(\0132&.zetasql.ResolvedS"
+  "etOperationItemProto\"\276\001\n\025ResolvedWithSca"
+  "nProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.Resolve"
+  "dScanProto\0228\n\017with_entry_list\030\002 \003(\0132\037.ze"
+  "tasql.ResolvedWithEntryProto\022,\n\005query\030\003 "
+  "\001(\0132\035.zetasql.AnyResolvedScanProto\022\021\n\tre"
+  "cursive\030\004 \001(\010\"\227\001\n\026ResolvedWithEntryProto"
+  "\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgum"
+  "entProto\022\027\n\017with_query_name\030\002 \001(\t\0224\n\rwit"
+  "h_subquery\030\003 \001(\0132\035.zetasql.AnyResolvedSc"
+  "anProto\"\224\001\n\023ResolvedOptionProto\022.\n\006paren"
+  "t\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto\022"
+  "\021\n\tqualifier\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022,\n\005valu"
+  "e\030\004 \001(\0132\035.zetasql.AnyResolvedExprProto\"\276"
+  "\001\n\037ResolvedWindowPartitioningProto\022.\n\006pa"
+  "rent\030\001 \001(\0132\036.zetasql.ResolvedArgumentPro"
+  "to\022:\n\021partition_by_list\030\002 \003(\0132\037.zetasql."
+  "ResolvedColumnRefProto\022/\n\thint_list\030\003 \003("
+  "\0132\034.zetasql.ResolvedOptionProto\"\275\001\n\033Reso"
+  "lvedWindowOrderingProto\022.\n\006parent\030\001 \001(\0132"
+  "\036.zetasql.ResolvedArgumentProto\022=\n\022order"
+  "_by_item_list\030\002 \003(\0132!.zetasql.ResolvedOr"
+  "derByItemProto\022/\n\thint_list\030\003 \003(\0132\034.zeta"
+  "sql.ResolvedOptionProto\"\377\001\n\030ResolvedWind"
+  "owFrameProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.R"
+  "esolvedArgumentProto\022\?\n\nframe_unit\030\002 \001(\016"
+  "2+.zetasql.ResolvedWindowFrameEnums.Fram"
+  "eUnit\0229\n\nstart_expr\030\003 \001(\0132%.zetasql.Reso"
+  "lvedWindowFrameExprProto\0227\n\010end_expr\030\004 \001"
+  "(\0132%.zetasql.ResolvedWindowFrameExprProt"
+  "o\"\222\002\n\"ResolvedAnalyticFunctionGroupProto"
+  "\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgum"
+  "entProto\022>\n\014partition_by\030\002 \001(\0132(.zetasql"
+  ".ResolvedWindowPartitioningProto\0226\n\010orde"
+  "r_by\030\003 \001(\0132$.zetasql.ResolvedWindowOrder"
+  "ingProto\022D\n\026analytic_function_list\030\004 \003(\013"
+  "2$.zetasql.ResolvedComputedColumnProto\"\314"
+  "\001\n\034ResolvedWindowFrameExprProto\022.\n\006paren"
+  "t\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto\022"
+  "I\n\rboundary_type\030\002 \001(\01622.zetasql.Resolve"
+  "dWindowFrameExprEnums.BoundaryType\0221\n\nex"
+  "pression\030\003 \001(\0132\035.zetasql.AnyResolvedExpr"
+  "Proto\"u\n\025ResolvedDMLValueProto\022.\n\006parent"
+  "\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto\022,"
+  "\n\005value\030\002 \001(\0132\035.zetasql.AnyResolvedExprP"
+  "roto\"E\n\027ResolvedDMLDefaultProto\022*\n\006paren"
+  "t\030\001 \001(\0132\032.zetasql.ResolvedExprProto\"\222\001\n\027"
+  "ResolvedAssertStmtProto\022/\n\006parent\030\001 \001(\0132"
+  "\037.zetasql.ResolvedStatementProto\0221\n\nexpr"
+  "ession\030\002 \001(\0132\035.zetasql.AnyResolvedExprPr"
+  "oto\022\023\n\013description\030\003 \001(\t\"~\n\037ResolvedAsse"
+  "rtRowsModifiedProto\022.\n\006parent\030\001 \001(\0132\036.ze"
+  "tasql.ResolvedArgumentProto\022+\n\004rows\030\002 \001("
+  "\0132\035.zetasql.AnyResolvedExprProto\"|\n\026Reso"
+  "lvedInsertRowProto\022.\n\006parent\030\001 \001(\0132\036.zet"
+  "asql.ResolvedArgumentProto\0222\n\nvalue_list"
+  "\030\002 \003(\0132\036.zetasql.ResolvedDMLValueProto\"\247"
+  "\005\n\027ResolvedInsertStmtProto\022/\n\006parent\030\001 \001"
+  "(\0132\037.zetasql.ResolvedStatementProto\0223\n\nt"
+  "able_scan\030\002 \001(\0132\037.zetasql.ResolvedTableS"
+  "canProto\022@\n\013insert_mode\030\003 \001(\0162+.zetasql."
+  "ResolvedInsertStmtEnums.InsertMode\022F\n\024as"
+  "sert_rows_modified\030\004 \001(\0132(.zetasql.Resol"
+  "vedAssertRowsModifiedProto\0228\n\treturning\030"
+  "\n \001(\0132%.zetasql.ResolvedReturningClauseP"
+  "roto\0228\n\022insert_column_list\030\005 \003(\0132\034.zetas"
+  "ql.ResolvedColumnProto\022=\n\024query_paramete"
+  "r_list\030\t \003(\0132\037.zetasql.ResolvedColumnRef"
+  "Proto\022,\n\005query\030\006 \001(\0132\035.zetasql.AnyResolv"
+  "edScanProto\022>\n\030query_output_column_list\030"
+  "\010 \003(\0132\034.zetasql.ResolvedColumnProto\0221\n\010r"
+  "ow_list\030\007 \003(\0132\037.zetasql.ResolvedInsertRo"
+  "wProto\022H\n\022column_access_list\030\013 \003(\0162,.zet"
+  "asql.ResolvedStatementEnums.ObjectAccess"
+  "\"\277\003\n\027ResolvedDeleteStmtProto\022/\n\006parent\030\001"
+  " \001(\0132\037.zetasql.ResolvedStatementProto\0223\n"
+  "\ntable_scan\030\002 \001(\0132\037.zetasql.ResolvedTabl"
+  "eScanProto\022F\n\024assert_rows_modified\030\003 \001(\013"
+  "2(.zetasql.ResolvedAssertRowsModifiedPro"
+  "to\0228\n\treturning\030\006 \001(\0132%.zetasql.Resolved"
+  "ReturningClauseProto\022H\n\022column_access_li"
+  "st\030\007 \003(\0162,.zetasql.ResolvedStatementEnum"
+  "s.ObjectAccess\022\?\n\023array_offset_column\030\005 "
+  "\001(\0132\".zetasql.ResolvedColumnHolderProto\022"
+  "1\n\nwhere_expr\030\004 \001(\0132\035.zetasql.AnyResolve"
+  "dExprProto\"\316\003\n\027ResolvedUpdateItemProto\022."
+  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
+  "tProto\022-\n\006target\030\002 \001(\0132\035.zetasql.AnyReso"
+  "lvedExprProto\0221\n\tset_value\030\003 \001(\0132\036.zetas"
+  "ql.ResolvedDMLValueProto\022:\n\016element_colu"
+  "mn\030\004 \001(\0132\".zetasql.ResolvedColumnHolderP"
+  "roto\022@\n\021array_update_list\030\010 \003(\0132%.zetasq"
+  "l.ResolvedUpdateArrayItemProto\0225\n\013delete"
+  "_list\030\005 \003(\0132 .zetasql.ResolvedDeleteStmt"
+  "Proto\0225\n\013update_list\030\006 \003(\0132 .zetasql.Res"
+  "olvedUpdateStmtProto\0225\n\013insert_list\030\007 \003("
+  "\0132 .zetasql.ResolvedInsertStmtProto\"\264\001\n\034"
+  "ResolvedUpdateArrayItemProto\022.\n\006parent\030\001"
+  " \001(\0132\036.zetasql.ResolvedArgumentProto\022-\n\006"
+  "offset\030\002 \001(\0132\035.zetasql.AnyResolvedExprPr"
+  "oto\0225\n\013update_item\030\003 \001(\0132 .zetasql.Resol"
+  "vedUpdateItemProto\"\255\004\n\027ResolvedUpdateStm"
+  "tProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolve"
+  "dStatementProto\0223\n\ntable_scan\030\002 \001(\0132\037.ze"
+  "tasql.ResolvedTableScanProto\022H\n\022column_a"
+  "ccess_list\030\010 \003(\0162,.zetasql.ResolvedState"
+  "mentEnums.ObjectAccess\022F\n\024assert_rows_mo"
+  "dified\030\003 \001(\0132(.zetasql.ResolvedAssertRow"
+  "sModifiedProto\0228\n\treturning\030\t \001(\0132%.zeta"
+  "sql.ResolvedReturningClauseProto\022\?\n\023arra"
+  "y_offset_column\030\007 \001(\0132\".zetasql.Resolved"
+  "ColumnHolderProto\0221\n\nwhere_expr\030\004 \001(\0132\035."
+  "zetasql.AnyResolvedExprProto\022:\n\020update_i"
+  "tem_list\030\005 \003(\0132 .zetasql.ResolvedUpdateI"
+  "temProto\0220\n\tfrom_scan\030\006 \001(\0132\035.zetasql.An"
+  "yResolvedScanProto\"\246\003\n\026ResolvedMergeWhen"
+  "Proto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolved"
+  "ArgumentProto\022=\n\nmatch_type\030\002 \001(\0162).zeta"
+  "sql.ResolvedMergeWhenEnums.MatchType\0221\n\n"
+  "match_expr\030\003 \001(\0132\035.zetasql.AnyResolvedEx"
+  "prProto\022\?\n\013action_type\030\004 \001(\0162*.zetasql.R"
+  "esolvedMergeWhenEnums.ActionType\0228\n\022inse"
+  "rt_column_list\030\005 \003(\0132\034.zetasql.ResolvedC"
+  "olumnProto\0223\n\ninsert_row\030\006 \001(\0132\037.zetasql"
+  ".ResolvedInsertRowProto\022:\n\020update_item_l"
+  "ist\030\007 \003(\0132 .zetasql.ResolvedUpdateItemPr"
+  "oto\"\350\002\n\026ResolvedMergeStmtProto\022/\n\006parent"
+  "\030\001 \001(\0132\037.zetasql.ResolvedStatementProto\022"
+  "3\n\ntable_scan\030\002 \001(\0132\037.zetasql.ResolvedTa"
+  "bleScanProto\022H\n\022column_access_list\030\006 \003(\016"
+  "2,.zetasql.ResolvedStatementEnums.Object"
+  "Access\0220\n\tfrom_scan\030\003 \001(\0132\035.zetasql.AnyR"
+  "esolvedScanProto\0221\n\nmerge_expr\030\004 \001(\0132\035.z"
+  "etasql.AnyResolvedExprProto\0229\n\020when_clau"
+  "se_list\030\005 \003(\0132\037.zetasql.ResolvedMergeWhe"
+  "nProto\"\264\001\n\031ResolvedTruncateStmtProto\022/\n\006"
+  "parent\030\001 \001(\0132\037.zetasql.ResolvedStatement"
+  "Proto\0223\n\ntable_scan\030\003 \001(\0132\037.zetasql.Reso"
+  "lvedTableScanProto\0221\n\nwhere_expr\030\004 \001(\0132\035"
+  ".zetasql.AnyResolvedExprProto\"\\\n\027Resolve"
+  "dObjectUnitProto\022.\n\006parent\030\001 \001(\0132\036.zetas"
+  "ql.ResolvedArgumentProto\022\021\n\tname_path\030\002 "
+  "\003(\t\"\222\001\n\026ResolvedPrivilegeProto\022.\n\006parent"
+  "\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto\022\023"
+  "\n\013action_type\030\002 \001(\t\0223\n\tunit_list\030\003 \003(\0132 "
+  ".zetasql.ResolvedObjectUnitProto\"\267\001\n!Any"
+  "ResolvedGrantOrRevokeStmtProto\022C\n\030resolv"
+  "ed_grant_stmt_node\030E \001(\0132\037.zetasql.Resol"
+  "vedGrantStmtProtoH\000\022E\n\031resolved_revoke_s"
+  "tmt_node\030F \001(\0132 .zetasql.ResolvedRevokeS"
+  "tmtProtoH\000B\006\n\004node\"\202\002\n\036ResolvedGrantOrRe"
+  "vokeStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql."
+  "ResolvedStatementProto\0227\n\016privilege_list"
+  "\030\002 \003(\0132\037.zetasql.ResolvedPrivilegeProto\022"
+  "\023\n\013object_type\030\003 \001(\t\022\021\n\tname_path\030\004 \003(\t\022"
+  "\024\n\014grantee_list\030\005 \003(\t\0228\n\021grantee_expr_li"
+  "st\030\006 \003(\0132\035.zetasql.AnyResolvedExprProto\""
+  "Q\n\026ResolvedGrantStmtProto\0227\n\006parent\030\001 \001("
+  "\0132\'.zetasql.ResolvedGrantOrRevokeStmtPro"
+  "to\"R\n\027ResolvedRevokeStmtProto\0227\n\006parent\030"
+  "\001 \001(\0132\'.zetasql.ResolvedGrantOrRevokeStm"
+  "tProto\"\304\007\n\037AnyResolvedAlterObjectStmtPro"
+  "to\022d\n*resolved_alter_row_access_policy_s"
+  "tmt_node\030K \001(\0132..zetasql.ResolvedAlterRo"
+  "wAccessPolicyStmtProtoH\000\022N\n\036resolved_alt"
+  "er_table_stmt_node\030s \001(\0132$.zetasql.Resol"
+  "vedAlterTableStmtProtoH\000\022L\n\035resolved_alt"
+  "er_view_stmt_node\030v \001(\0132#.zetasql.Resolv"
+  "edAlterViewStmtProtoH\000\022e\n*resolved_alter"
+  "_materialized_view_stmt_node\030\177 \001(\0132/.zet"
+  "asql.ResolvedAlterMaterializedViewStmtPr"
+  "otoH\000\022U\n!resolved_alter_database_stmt_no"
+  "de\030\206\001 \001(\0132\'.zetasql.ResolvedAlterDatabas"
+  "eStmtProtoH\000\022p\n0resolved_alter_all_row_a"
+  "ccess_policies_stmt_node\030\221\001 \001(\01323.zetasq"
+  "l.ResolvedAlterAllRowAccessPoliciesStmtP"
+  "rotoH\000\022Q\n\037resolved_alter_entity_stmt_nod"
+  "e\030\233\001 \001(\0132%.zetasql.ResolvedAlterEntitySt"
+  "mtProtoH\000\022Q\n\037resolved_alter_schema_stmt_"
+  "node\030\240\001 \001(\0132%.zetasql.ResolvedAlterSchem"
+  "aStmtProtoH\000\022n\n.resolved_alter_privilege"
+  "_restriction_stmt_node\030\304\001 \001(\01323.zetasql."
+  "ResolvedAlterPrivilegeRestrictionStmtPro"
+  "toH\000\022O\n\036resolved_alter_model_stmt_node\030\315"
+  "\001 \001(\0132$.zetasql.ResolvedAlterModelStmtPr"
+  "otoH\000B\006\n\004node\"\271\001\n\034ResolvedAlterObjectStm"
+  "tProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolve"
+  "dStatementProto\022\021\n\tname_path\030\002 \003(\t\022\?\n\021al"
+  "ter_action_list\030\003 \003(\0132$.zetasql.AnyResol"
+  "vedAlterActionProto\022\024\n\014is_if_exists\030\004 \001("
+  "\010\"W\n\036ResolvedAlterDatabaseStmtProto\0225\n\006p"
+  "arent\030\001 \001(\0132%.zetasql.ResolvedAlterObjec"
+  "tStmtProto\"_\n&ResolvedAlterMaterializedV"
+  "iewStmtProto\0225\n\006parent\030\001 \001(\0132%.zetasql.R"
+  "esolvedAlterObjectStmtProto\"U\n\034ResolvedA"
+  "lterSchemaStmtProto\0225\n\006parent\030\001 \001(\0132%.ze"
+  "tasql.ResolvedAlterObjectStmtProto\"T\n\033Re"
+  "solvedAlterModelStmtProto\0225\n\006parent\030\001 \001("
+  "\0132%.zetasql.ResolvedAlterObjectStmtProto"
+  "\"T\n\033ResolvedAlterTableStmtProto\0225\n\006paren"
+  "t\030\001 \001(\0132%.zetasql.ResolvedAlterObjectStm"
+  "tProto\"S\n\032ResolvedAlterViewStmtProto\0225\n\006"
+  "parent\030\001 \001(\0132%.zetasql.ResolvedAlterObje"
+  "ctStmtProto\"\233\016\n\033AnyResolvedAlterActionPr"
+  "oto\022R\n resolved_set_options_action_node\030"
+  "u \001(\0132&.zetasql.ResolvedSetOptionsAction"
+  "ProtoH\000\022Q\n\037resolved_add_column_action_no"
+  "de\030\203\001 \001(\0132%.zetasql.ResolvedAddColumnAct"
+  "ionProtoH\000\022S\n resolved_drop_column_actio"
+  "n_node\030\204\001 \001(\0132&.zetasql.ResolvedDropColu"
+  "mnActionProtoH\000\022M\n\035resolved_grant_to_act"
+  "ion_node\030\207\001 \001(\0132#.zetasql.ResolvedGrantT"
+  "oActionProtoH\000\022U\n!resolved_filter_using_"
+  "action_node\030\210\001 \001(\0132\'.zetasql.ResolvedFil"
+  "terUsingActionProtoH\000\022S\n resolved_revoke"
+  "_from_action_node\030\211\001 \001(\0132&.zetasql.Resol"
+  "vedRevokeFromActionProtoH\000\022O\n\036resolved_r"
+  "ename_to_action_node\030\212\001 \001(\0132$.zetasql.Re"
+  "solvedRenameToActionProtoH\000\022I\n\033resolved_"
+  "set_as_action_node\030\234\001 \001(\0132!.zetasql.Reso"
+  "lvedSetAsActionProtoH\000\022Y\n#resolved_add_c"
+  "onstraint_action_node\030\243\001 \001(\0132).zetasql.R"
+  "esolvedAddConstraintActionProtoH\000\022[\n$res"
+  "olved_drop_constraint_action_node\030\244\001 \001(\013"
+  "2*.zetasql.ResolvedDropConstraintActionP"
+  "rotoH\000\022\\\n%resolved_drop_primary_key_acti"
+  "on_node\030\270\001 \001(\0132*.zetasql.ResolvedDropPri"
+  "maryKeyActionProtoH\000\022W\n\"resolved_rename_"
+  "column_action_node\030\271\001 \001(\0132(.zetasql.Reso"
+  "lvedRenameColumnActionProtoH\000\022S\n resolve"
+  "d_set_collate_clause_node\030\273\001 \001(\0132&.zetas"
+  "ql.ResolvedSetCollateClauseProtoH\000\022S\n re"
+  "solved_restrict_to_action_node\030\301\001 \001(\0132&."
+  "zetasql.ResolvedRestrictToActionProtoH\000\022"
+  "g\n+resolved_add_to_restrictee_list_actio"
+  "n_node\030\302\001 \001(\0132/.zetasql.ResolvedAddToRes"
+  "tricteeListActionProtoH\000\022q\n0resolved_rem"
+  "ove_from_restrictee_list_action_node\030\303\001 "
+  "\001(\01324.zetasql.ResolvedRemoveFromRestrict"
+  "eeListActionProtoH\000\022X\n!resolved_alter_co"
+  "lumn_action_node\030\311\001 \001(\0132*.zetasql.AnyRes"
+  "olvedAlterColumnActionProtoH\000\022\\\n%resolve"
+  "d_alter_sub_entity_action_node\030\312\001 \001(\0132*."
+  "zetasql.ResolvedAlterSubEntityActionProt"
+  "oH\000\022X\n#resolved_add_sub_entity_action_no"
+  "de\030\313\001 \001(\0132(.zetasql.ResolvedAddSubEntity"
+  "ActionProtoH\000\022Z\n$resolved_drop_sub_entit"
+  "y_action_node\030\314\001 \001(\0132).zetasql.ResolvedD"
+  "ropSubEntityActionProtoH\000B\006\n\004node\"J\n\030Res"
+  "olvedAlterActionProto\022.\n\006parent\030\001 \001(\0132\036."
+  "zetasql.ResolvedArgumentProto\"\315\004\n!AnyRes"
+  "olvedAlterColumnActionProto\022d\n)resolved_"
+  "alter_column_options_action_node\030\251\001 \001(\0132"
+  "..zetasql.ResolvedAlterColumnOptionsActi"
+  "onProtoH\000\022n\n/resolved_alter_column_drop_"
+  "not_null_action_node\030\262\001 \001(\01322.zetasql.Re"
+  "solvedAlterColumnDropNotNullActionProtoH"
+  "\000\022n\n/resolved_alter_column_set_data_type"
+  "_action_node\030\265\001 \001(\01322.zetasql.ResolvedAl"
+  "terColumnSetDataTypeActionProtoH\000\022k\n-res"
+  "olved_alter_column_set_default_action_no"
+  "de\030\306\001 \001(\01321.zetasql.ResolvedAlterColumnS"
+  "etDefaultActionProtoH\000\022m\n.resolved_alter"
+  "_column_drop_default_action_node\030\307\001 \001(\0132"
+  "2.zetasql.ResolvedAlterColumnDropDefault"
+  "ActionProtoH\000B\006\n\004node\"y\n\036ResolvedAlterCo"
+  "lumnActionProto\0221\n\006parent\030\001 \001(\0132!.zetasq"
+  "l.ResolvedAlterActionProto\022\024\n\014is_if_exis"
+  "ts\030\002 \001(\010\022\016\n\006column\030\003 \001(\t\"\205\001\n\035ResolvedSet"
+  "OptionsActionProto\0221\n\006parent\030\001 \001(\0132!.zet"
+  "asql.ResolvedAlterActionProto\0221\n\013option_"
+  "list\030\002 \003(\0132\034.zetasql.ResolvedOptionProto"
+  "\"\313\001\n!ResolvedAlterSubEntityActionProto\0221"
+  "\n\006parent\030\001 \001(\0132!.zetasql.ResolvedAlterAc"
+  "tionProto\022\023\n\013entity_type\030\002 \001(\t\022\014\n\004name\030\003"
+  " \001(\t\022:\n\014alter_action\030\004 \001(\0132$.zetasql.Any"
+  "ResolvedAlterActionProto\022\024\n\014is_if_exists"
+  "\030\005 \001(\010\"\305\001\n\037ResolvedAddSubEntityActionPro"
+  "to\0221\n\006parent\030\001 \001(\0132!.zetasql.ResolvedAlt"
+  "erActionProto\022\023\n\013entity_type\030\002 \001(\t\022\014\n\004na"
+  "me\030\003 \001(\t\0222\n\014options_list\030\004 \003(\0132\034.zetasql"
+  ".ResolvedOptionProto\022\030\n\020is_if_not_exists"
+  "\030\005 \001(\010\"\216\001\n ResolvedDropSubEntityActionPr"
+  "oto\0221\n\006parent\030\001 \001(\0132!.zetasql.ResolvedAl"
+  "terActionProto\022\023\n\013entity_type\030\002 \001(\t\022\014\n\004n"
+  "ame\030\003 \001(\t\022\024\n\014is_if_exists\030\004 \001(\010\"\256\001\n\034Reso"
+  "lvedAddColumnActionProto\0221\n\006parent\030\001 \001(\013"
+  "2!.zetasql.ResolvedAlterActionProto\022\030\n\020i"
+  "s_if_not_exists\030\002 \001(\010\022A\n\021column_definiti"
+  "on\030\003 \001(\0132&.zetasql.ResolvedColumnDefinit"
+  "ionProto\"\317\001\n ResolvedAddConstraintAction"
+  "Proto\0221\n\006parent\030\001 \001(\0132!.zetasql.Resolved"
+  "AlterActionProto\022\030\n\020is_if_not_exists\030\002 \001"
+  "(\010\0227\n\nconstraint\030\003 \001(\0132#.zetasql.AnyReso"
+  "lvedConstraintProto\022%\n\005table\030\004 \001(\0132\026.zet"
+  "asql.TableRefProto\"z\n!ResolvedDropConstr"
+  "aintActionProto\0221\n\006parent\030\001 \001(\0132!.zetasq"
+  "l.ResolvedAlterActionProto\022\024\n\014is_if_exis"
+  "ts\030\002 \001(\010\022\014\n\004name\030\003 \001(\t\"l\n!ResolvedDropPr"
+  "imaryKeyActionProto\0221\n\006parent\030\001 \001(\0132!.ze"
+  "tasql.ResolvedAlterActionProto\022\024\n\014is_if_"
+  "exists\030\002 \001(\010\"\223\001\n%ResolvedAlterColumnOpti"
+  "onsActionProto\0227\n\006parent\030\001 \001(\0132\'.zetasql"
+  ".ResolvedAlterColumnActionProto\0221\n\013optio"
+  "n_list\030\002 \003(\0132\034.zetasql.ResolvedOptionPro"
+  "to\"d\n)ResolvedAlterColumnDropNotNullActi"
+  "onProto\0227\n\006parent\030\001 \001(\0132\'.zetasql.Resolv"
+  "edAlterColumnActionProto\"\223\002\n)ResolvedAlt"
+  "erColumnSetDataTypeActionProto\0227\n\006parent"
+  "\030\001 \001(\0132\'.zetasql.ResolvedAlterColumnActi"
+  "onProto\022(\n\014updated_type\030\004 \001(\0132\022.zetasql."
+  "TypeProto\022=\n\027updated_type_parameters\030\005 \001"
+  "(\0132\034.zetasql.TypeParametersProto\022D\n\023upda"
+  "ted_annotations\030\006 \001(\0132\'.zetasql.Resolved"
+  "ColumnAnnotationsProto\"\244\001\n(ResolvedAlter"
+  "ColumnSetDefaultActionProto\0227\n\006parent\030\001 "
+  "\001(\0132\'.zetasql.ResolvedAlterColumnActionP"
+  "roto\022\?\n\rdefault_value\030\004 \001(\0132(.zetasql.Re"
+  "solvedColumnDefaultValueProto\"d\n)Resolve"
+  "dAlterColumnDropDefaultActionProto\0227\n\006pa"
+  "rent\030\001 \001(\0132\'.zetasql.ResolvedAlterColumn"
+  "ActionProto\"v\n\035ResolvedDropColumnActionP"
+  "roto\0221\n\006parent\030\001 \001(\0132!.zetasql.ResolvedA"
+  "lterActionProto\022\024\n\014is_if_exists\030\002 \001(\010\022\014\n"
+  "\004name\030\003 \001(\t\"\212\001\n\037ResolvedRenameColumnActi"
+  "onProto\0221\n\006parent\030\001 \001(\0132!.zetasql.Resolv"
+  "edAlterActionProto\022\024\n\014is_if_exists\030\004 \001(\010"
+  "\022\014\n\004name\030\002 \001(\t\022\020\n\010new_name\030\003 \001(\t\"\201\001\n\030Res"
+  "olvedSetAsActionProto\0221\n\006parent\030\001 \001(\0132!."
+  "zetasql.ResolvedAlterActionProto\022\030\n\020enti"
+  "ty_body_json\030\002 \001(\t\022\030\n\020entity_body_text\030\003"
+  " \001(\t\"\211\001\n\035ResolvedSetCollateClauseProto\0221"
+  "\n\006parent\030\001 \001(\0132!.zetasql.ResolvedAlterAc"
+  "tionProto\0225\n\016collation_name\030\002 \001(\0132\035.zeta"
+  "sql.AnyResolvedExprProto\"\264\001\n%ResolvedAlt"
+  "erTableSetOptionsStmtProto\022/\n\006parent\030\001 \001"
+  "(\0132\037.zetasql.ResolvedStatementProto\022\021\n\tn"
+  "ame_path\030\002 \003(\t\0221\n\013option_list\030\003 \003(\0132\034.ze"
+  "tasql.ResolvedOptionProto\022\024\n\014is_if_exist"
+  "s\030\004 \001(\010\"\215\001\n\027ResolvedRenameStmtProto\022/\n\006p"
+  "arent\030\001 \001(\0132\037.zetasql.ResolvedStatementP"
+  "roto\022\023\n\013object_type\030\002 \001(\t\022\025\n\rold_name_pa"
+  "th\030\003 \003(\t\022\025\n\rnew_name_path\030\004 \003(\t\"\361\001\n+Reso"
+  "lvedCreatePrivilegeRestrictionStmtProto\022"
+  "5\n\006parent\030\001 \001(\0132%.zetasql.ResolvedCreate"
+  "StatementProto\022>\n\025column_privilege_list\030"
+  "\002 \003(\0132\037.zetasql.ResolvedPrivilegeProto\022\023"
+  "\n\013object_type\030\003 \001(\t\0226\n\017restrictee_list\030\004"
+  " \003(\0132\035.zetasql.AnyResolvedExprProto\"\226\003\n&"
+  "ResolvedCreateRowAccessPolicyStmtProto\022/"
+  "\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedStateme"
+  "ntProto\022E\n\013create_mode\030\002 \001(\01620.zetasql.R"
+  "esolvedCreateStatementEnums.CreateMode\022\014"
+  "\n\004name\030\003 \001(\t\022\030\n\020target_name_path\030\004 \003(\t\022\024"
+  "\n\014grantee_list\030\005 \003(\t\0228\n\021grantee_expr_lis"
+  "t\030\t \003(\0132\035.zetasql.AnyResolvedExprProto\0223"
+  "\n\ntable_scan\030\006 \001(\0132\037.zetasql.ResolvedTab"
+  "leScanProto\0220\n\tpredicate\030\007 \001(\0132\035.zetasql"
+  ".AnyResolvedExprProto\022\025\n\rpredicate_str\030\010"
+  " \001(\t\"\332\001\n)ResolvedDropPrivilegeRestrictio"
+  "nStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Res"
+  "olvedStatementProto\022\023\n\013object_type\030\002 \001(\t"
+  "\022\024\n\014is_if_exists\030\003 \001(\010\022\021\n\tname_path\030\004 \003("
+  "\t\022>\n\025column_privilege_list\030\005 \003(\0132\037.zetas"
+  "ql.ResolvedPrivilegeProto\"\252\001\n$ResolvedDr"
+  "opRowAccessPolicyStmtProto\022/\n\006parent\030\001 \001"
+  "(\0132\037.zetasql.ResolvedStatementProto\022\023\n\013i"
+  "s_drop_all\030\002 \001(\010\022\024\n\014is_if_exists\030\003 \001(\010\022\014"
+  "\n\004name\030\004 \001(\t\022\030\n\020target_name_path\030\005 \003(\t\"\220"
+  "\001\n ResolvedDropSearchIndexStmtProto\022/\n\006p"
+  "arent\030\001 \001(\0132\037.zetasql.ResolvedStatementP"
+  "roto\022\024\n\014is_if_exists\030\002 \001(\010\022\014\n\004name\030\003 \001(\t"
+  "\022\027\n\017table_name_path\030\004 \003(\t\"\211\001\n\032ResolvedGr"
+  "antToActionProto\0221\n\006parent\030\001 \001(\0132!.zetas"
+  "ql.ResolvedAlterActionProto\0228\n\021grantee_e"
+  "xpr_list\030\002 \003(\0132\035.zetasql.AnyResolvedExpr"
+  "Proto\"\212\001\n\035ResolvedRestrictToActionProto\022"
+  "1\n\006parent\030\001 \001(\0132!.zetasql.ResolvedAlterA"
+  "ctionProto\0226\n\017restrictee_list\030\002 \003(\0132\035.ze"
+  "tasql.AnyResolvedExprProto\"\255\001\n&ResolvedA"
+  "ddToRestricteeListActionProto\0221\n\006parent\030"
+  "\001 \001(\0132!.zetasql.ResolvedAlterActionProto"
+  "\022\030\n\020is_if_not_exists\030\002 \001(\010\0226\n\017restrictee"
+  "_list\030\003 \003(\0132\035.zetasql.AnyResolvedExprPro"
+  "to\"\256\001\n+ResolvedRemoveFromRestricteeListA"
+  "ctionProto\0221\n\006parent\030\001 \001(\0132!.zetasql.Res"
+  "olvedAlterActionProto\022\024\n\014is_if_exists\030\002 "
+  "\001(\010\0226\n\017restrictee_list\030\003 \003(\0132\035.zetasql.A"
+  "nyResolvedExprProto\"\234\001\n\036ResolvedFilterUs"
+  "ingActionProto\0221\n\006parent\030\001 \001(\0132!.zetasql"
+  ".ResolvedAlterActionProto\0220\n\tpredicate\030\002"
+  " \001(\0132\035.zetasql.AnyResolvedExprProto\022\025\n\rp"
+  "redicate_str\030\003 \001(\t\"\250\001\n\035ResolvedRevokeFro"
+  "mActionProto\0221\n\006parent\030\001 \001(\0132!.zetasql.R"
+  "esolvedAlterActionProto\0228\n\021revokee_expr_"
+  "list\030\002 \003(\0132\035.zetasql.AnyResolvedExprProt"
+  "o\022\032\n\022is_revoke_from_all\030\003 \001(\010\"b\n\033Resolve"
+  "dRenameToActionProto\0221\n\006parent\030\001 \001(\0132!.z"
+  "etasql.ResolvedAlterActionProto\022\020\n\010new_p"
+  "ath\030\002 \003(\t\"\270\001\n*ResolvedAlterPrivilegeRest"
+  "rictionStmtProto\0225\n\006parent\030\001 \001(\0132%.zetas"
+  "ql.ResolvedAlterObjectStmtProto\022>\n\025colum"
+  "n_privilege_list\030\002 \003(\0132\037.zetasql.Resolve"
+  "dPrivilegeProto\022\023\n\013object_type\030\003 \001(\t\"\241\001\n"
+  "%ResolvedAlterRowAccessPolicyStmtProto\0225"
+  "\n\006parent\030\001 \001(\0132%.zetasql.ResolvedAlterOb"
+  "jectStmtProto\022\014\n\004name\030\002 \001(\t\0223\n\ntable_sca"
+  "n\030\006 \001(\0132\037.zetasql.ResolvedTableScanProto"
+  "\"\230\001\n*ResolvedAlterAllRowAccessPoliciesSt"
+  "mtProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolv"
+  "edAlterObjectStmtProto\0223\n\ntable_scan\030\006 \001"
+  "(\0132\037.zetasql.ResolvedTableScanProto\"\205\001\n\037"
+  "ResolvedCreateConstantStmtProto\0225\n\006paren"
+  "t\030\001 \001(\0132%.zetasql.ResolvedCreateStatemen"
+  "tProto\022+\n\004expr\030\002 \001(\0132\035.zetasql.AnyResolv"
+  "edExprProto\"\306\005\n\037ResolvedCreateFunctionSt"
+  "mtProto\0225\n\006parent\030\001 \001(\0132%.zetasql.Resolv"
+  "edCreateStatementProto\022 \n\030has_explicit_r"
+  "eturn_type\030\r \001(\010\022\'\n\013return_type\030\003 \001(\0132\022."
+  "zetasql.TypeProto\022\032\n\022argument_name_list\030"
+  "\013 \003(\t\0222\n\tsignature\030\n \001(\0132\037.zetasql.Funct"
+  "ionSignatureProto\022\024\n\014is_aggregate\030\010 \001(\010\022"
+  "\020\n\010language\030\004 \001(\t\022\014\n\004code\030\005 \001(\t\022G\n\031aggre"
+  "gate_expression_list\030\t \003(\0132$.zetasql.Res"
+  "olvedComputedColumnProto\022:\n\023function_exp"
+  "ression\030\006 \001(\0132\035.zetasql.AnyResolvedExprP"
+  "roto\0221\n\013option_list\030\007 \003(\0132\034.zetasql.Reso"
+  "lvedOptionProto\022G\n\014sql_security\030\014 \001(\01621."
+  "zetasql.ResolvedCreateStatementEnums.Sql"
+  "Security\022Q\n\021determinism_level\030\016 \001(\01626.ze"
+  "tasql.ResolvedCreateStatementEnums.Deter"
+  "minismLevel\022\021\n\tis_remote\030\017 \001(\010\0224\n\nconnec"
+  "tion\030\020 \001(\0132 .zetasql.ResolvedConnectionP"
+  "roto\"\301\001\n\030ResolvedArgumentDefProto\022.\n\006par"
+  "ent\030\001 \001(\0132\036.zetasql.ResolvedArgumentProt"
+  "o\022\014\n\004name\030\002 \001(\t\022 \n\004type\030\003 \001(\0132\022.zetasql."
+  "TypeProto\022E\n\rargument_kind\030\004 \001(\0162..zetas"
+  "ql.ResolvedArgumentDefEnums.ArgumentKind"
+  "\"\233\001\n\030ResolvedArgumentRefProto\022*\n\006parent\030"
+  "\001 \001(\0132\032.zetasql.ResolvedExprProto\022\014\n\004nam"
+  "e\030\002 \001(\t\022E\n\rargument_kind\030\003 \001(\0162..zetasql"
+  ".ResolvedArgumentDefEnums.ArgumentKind\"\363"
+  "\003\n$ResolvedCreateTableFunctionStmtProto\022"
+  "5\n\006parent\030\001 \001(\0132%.zetasql.ResolvedCreate"
+  "StatementProto\022\032\n\022argument_name_list\030\002 \003"
+  "(\t\0222\n\tsignature\030\003 \001(\0132\037.zetasql.Function"
+  "SignatureProto\022\"\n\032has_explicit_return_sc"
+  "hema\030\013 \001(\010\0221\n\013option_list\030\004 \003(\0132\034.zetasq"
+  "l.ResolvedOptionProto\022\020\n\010language\030\005 \001(\t\022"
+  "\014\n\004code\030\006 \001(\t\022,\n\005query\030\007 \001(\0132\035.zetasql.A"
+  "nyResolvedScanProto\022>\n\022output_column_lis"
+  "t\030\010 \003(\0132\".zetasql.ResolvedOutputColumnPr"
+  "oto\022\026\n\016is_value_table\030\t \001(\010\022G\n\014sql_secur"
+  "ity\030\n \001(\01621.zetasql.ResolvedCreateStatem"
+  "entEnums.SqlSecurity\"u\n!ResolvedRelation"
+  "ArgumentScanProto\022*\n\006parent\030\001 \001(\0132\032.zeta"
+  "sql.ResolvedScanProto\022\014\n\004name\030\002 \001(\t\022\026\n\016i"
+  "s_value_table\030\003 \001(\010\"\200\001\n\031ResolvedArgument"
+  "ListProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Reso"
+  "lvedArgumentProto\0223\n\010arg_list\030\002 \003(\0132!.ze"
+  "tasql.ResolvedArgumentDefProto\"\212\001\n$Resol"
+  "vedFunctionSignatureHolderProto\022.\n\006paren"
+  "t\030\001 \001(\0132\036.zetasql.ResolvedArgumentProto\022"
+  "2\n\tsignature\030\002 \001(\0132\037.zetasql.FunctionSig"
+  "natureProto\"\362\001\n\035ResolvedDropFunctionStmt"
+  "Proto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Resolved"
+  "StatementProto\022\024\n\014is_if_exists\030\002 \001(\010\022\021\n\t"
+  "name_path\030\003 \003(\t\0225\n\targuments\030\004 \001(\0132\".zet"
+  "asql.ResolvedArgumentListProto\022@\n\tsignat"
+  "ure\030\005 \001(\0132-.zetasql.ResolvedFunctionSign"
+  "atureHolderProto\"~\n\"ResolvedDropTableFun"
+  "ctionStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql"
+  ".ResolvedStatementProto\022\024\n\014is_if_exists\030"
+  "\002 \001(\010\022\021\n\tname_path\030\003 \003(\t\"\341\001\n\025ResolvedCal"
+  "lStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Res"
+  "olvedStatementProto\022-\n\tprocedure\030\002 \001(\0132\032"
+  ".zetasql.ProcedureRefProto\0222\n\tsignature\030"
+  "\003 \001(\0132\037.zetasql.FunctionSignatureProto\0224"
+  "\n\rargument_list\030\004 \003(\0132\035.zetasql.AnyResol"
+  "vedExprProto\"\222\002\n\027ResolvedImportStmtProto"
+  "\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedState"
+  "mentProto\022@\n\013import_kind\030\002 \001(\0162+.zetasql"
+  ".ResolvedImportStmtEnums.ImportKind\022\021\n\tn"
+  "ame_path\030\003 \003(\t\022\021\n\tfile_path\030\004 \001(\t\022\022\n\nali"
+  "as_path\030\005 \003(\t\022\027\n\017into_alias_path\030\007 \003(\t\0221"
+  "\n\013option_list\030\006 \003(\0132\034.zetasql.ResolvedOp"
+  "tionProto\"\220\001\n\027ResolvedModuleStmtProto\022/\n"
+  "\006parent\030\001 \001(\0132\037.zetasql.ResolvedStatemen"
+  "tProto\022\021\n\tname_path\030\002 \003(\t\0221\n\013option_list"
+  "\030\003 \003(\0132\034.zetasql.ResolvedOptionProto\"\332\001\n"
+  "$ResolvedAggregateHavingModifierProto\022.\n"
+  "\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgument"
+  "Proto\022N\n\004kind\030\002 \001(\0162@.zetasql.ResolvedAg"
+  "gregateHavingModifierEnums.HavingModifie"
+  "rKind\0222\n\013having_expr\030\003 \001(\0132\035.zetasql.Any"
+  "ResolvedExprProto\"\321\001\n\'ResolvedCreateMate"
+  "rializedViewStmtProto\0224\n\006parent\030\001 \001(\0132$."
+  "zetasql.ResolvedCreateViewBaseProto\0228\n\021p"
+  "artition_by_list\030\003 \003(\0132\035.zetasql.AnyReso"
+  "lvedExprProto\0226\n\017cluster_by_list\030\004 \003(\0132\035"
+  ".zetasql.AnyResolvedExprProto\"\312\002\n Resolv"
+  "edCreateProcedureStmtProto\0225\n\006parent\030\001 \001"
+  "(\0132%.zetasql.ResolvedCreateStatementProt"
+  "o\022\032\n\022argument_name_list\030\002 \003(\t\0222\n\tsignatu"
+  "re\030\003 \001(\0132\037.zetasql.FunctionSignatureProt"
+  "o\0221\n\013option_list\030\004 \003(\0132\034.zetasql.Resolve"
+  "dOptionProto\022\026\n\016procedure_body\030\005 \001(\t\0224\n\n"
+  "connection\030\006 \001(\0132 .zetasql.ResolvedConne"
+  "ctionProto\022\020\n\010language\030\007 \001(\t\022\014\n\004code\030\010 \001"
+  "(\t\"\230\001\n%ResolvedExecuteImmediateArgumentP"
+  "roto\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedA"
+  "rgumentProto\022\014\n\004name\030\002 \001(\t\0221\n\nexpression"
+  "\030\003 \001(\0132\035.zetasql.AnyResolvedExprProto\"\353\001"
+  "\n!ResolvedExecuteImmediateStmtProto\022/\n\006p"
+  "arent\030\001 \001(\0132\037.zetasql.ResolvedStatementP"
+  "roto\022*\n\003sql\030\002 \001(\0132\035.zetasql.AnyResolvedE"
+  "xprProto\022\034\n\024into_identifier_list\030\003 \003(\t\022K"
+  "\n\023using_argument_list\030\004 \003(\0132..zetasql.Re"
+  "solvedExecuteImmediateArgumentProto\"\252\001\n\033"
+  "ResolvedAssignmentStmtProto\022/\n\006parent\030\001 "
+  "\001(\0132\037.zetasql.ResolvedStatementProto\022-\n\006"
+  "target\030\002 \001(\0132\035.zetasql.AnyResolvedExprPr"
+  "oto\022+\n\004expr\030\003 \001(\0132\035.zetasql.AnyResolvedE"
+  "xprProto\"\322\001\n\035ResolvedCreateEntityStmtPro"
+  "to\0225\n\006parent\030\001 \001(\0132%.zetasql.ResolvedCre"
+  "ateStatementProto\022\023\n\013entity_type\030\002 \001(\t\022\030"
+  "\n\020entity_body_json\030\003 \001(\t\022\030\n\020entity_body_"
+  "text\030\005 \001(\t\0221\n\013option_list\030\004 \003(\0132\034.zetasq"
+  "l.ResolvedOptionProto\"j\n\034ResolvedAlterEn"
+  "tityStmtProto\0225\n\006parent\030\001 \001(\0132%.zetasql."
+  "ResolvedAlterObjectStmtProto\022\023\n\013entity_t"
+  "ype\030\002 \001(\t\"\255\001\n\030ResolvedPivotColumnProto\022."
+  "\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgumen"
+  "tProto\022,\n\006column\030\002 \001(\0132\034.zetasql.Resolve"
+  "dColumnProto\022\030\n\020pivot_expr_index\030\003 \001(\003\022\031"
+  "\n\021pivot_value_index\030\004 \001(\003\"\224\003\n\026ResolvedPi"
+  "votScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.R"
+  "esolvedScanProto\0221\n\ninput_scan\030\002 \001(\0132\035.z"
+  "etasql.AnyResolvedScanProto\022;\n\rgroup_by_"
+  "list\030\003 \003(\0132$.zetasql.ResolvedComputedCol"
+  "umnProto\0226\n\017pivot_expr_list\030\004 \003(\0132\035.zeta"
+  "sql.AnyResolvedExprProto\022/\n\010for_expr\030\005 \001"
+  "(\0132\035.zetasql.AnyResolvedExprProto\0227\n\020piv"
+  "ot_value_list\030\006 \003(\0132\035.zetasql.AnyResolve"
+  "dExprProto\022<\n\021pivot_column_list\030\007 \003(\0132!."
+  "zetasql.ResolvedPivotColumnProto\"\202\002\n\034Res"
+  "olvedReturningClauseProto\022.\n\006parent\030\001 \001("
+  "\0132\036.zetasql.ResolvedArgumentProto\022>\n\022out"
+  "put_column_list\030\002 \003(\0132\".zetasql.Resolved"
+  "OutputColumnProto\0229\n\raction_column\030\003 \001(\013"
+  "2\".zetasql.ResolvedColumnHolderProto\0227\n\t"
+  "expr_list\030\004 \003(\0132$.zetasql.ResolvedComput"
+  "edColumnProto\"\177\n\027ResolvedUnpivotArgProto"
+  "\022.\n\006parent\030\001 \001(\0132\036.zetasql.ResolvedArgum"
+  "entProto\0224\n\013column_list\030\002 \003(\0132\037.zetasql."
+  "ResolvedColumnRefProto\"\267\003\n\030ResolvedUnpiv"
+  "otScanProto\022*\n\006parent\030\001 \001(\0132\032.zetasql.Re"
+  "solvedScanProto\0221\n\ninput_scan\030\002 \001(\0132\035.ze"
+  "tasql.AnyResolvedScanProto\0227\n\021value_colu"
+  "mn_list\030\003 \003(\0132\034.zetasql.ResolvedColumnPr"
+  "oto\0222\n\014label_column\030\004 \001(\0132\034.zetasql.Reso"
+  "lvedColumnProto\0221\n\nlabel_list\030\005 \003(\0132\035.ze"
+  "tasql.ResolvedLiteralProto\022:\n\020unpivot_ar"
+  "g_list\030\006 \003(\0132 .zetasql.ResolvedUnpivotAr"
+  "gProto\022I\n\033projected_input_column_list\030\007 "
+  "\003(\0132$.zetasql.ResolvedComputedColumnProt"
+  "o\022\025\n\rinclude_nulls\030\010 \001(\010\"\267\001\n\032ResolvedClo"
+  "neDataStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasq"
+  "l.ResolvedStatementProto\0225\n\014target_table"
+  "\030\002 \001(\0132\037.zetasql.ResolvedTableScanProto\022"
+  "1\n\nclone_from\030\003 \001(\0132\035.zetasql.AnyResolve"
+  "dScanProto\"\223\001\n\037ResolvedTableAndColumnInf"
+  "oProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.Resolve"
+  "dArgumentProto\022%\n\005table\030\002 \001(\0132\026.zetasql."
+  "TableRefProto\022\031\n\021column_index_list\030\003 \003(\003"
+  "\"\315\001\n\030ResolvedAnalyzeStmtProto\022/\n\006parent\030"
+  "\001 \001(\0132\037.zetasql.ResolvedStatementProto\0221"
+  "\n\013option_list\030\002 \003(\0132\034.zetasql.ResolvedOp"
+  "tionProto\022M\n\033table_and_column_index_list"
+  "\030\003 \003(\0132(.zetasql.ResolvedTableAndColumnI"
+  "nfoProto\"\236\001\n\'ResolvedAuxLoadDataPartitio"
+  "nFilterProto\022.\n\006parent\030\001 \001(\0132\036.zetasql.R"
+  "esolvedArgumentProto\022-\n\006filter\030\002 \001(\0132\035.z"
+  "etasql.AnyResolvedExprProto\022\024\n\014is_overwr"
+  "ite\030\003 \001(\010\"\362\007\n\034ResolvedAuxLoadDataStmtPro"
+  "to\022/\n\006parent\030\001 \001(\0132\037.zetasql.ResolvedSta"
+  "tementProto\022K\n\016insertion_mode\030\002 \001(\01623.ze"
+  "tasql.ResolvedAuxLoadDataStmtEnums.Inser"
+  "tionMode\022\025\n\ris_temp_table\030\021 \001(\010\022\021\n\tname_"
+  "path\030\003 \003(\t\022J\n\020partition_filter\030\020 \001(\01320.z"
+  "etasql.ResolvedAuxLoadDataPartitionFilte"
+  "rProto\022>\n\022output_column_list\030\004 \003(\0132\".zet"
+  "asql.ResolvedOutputColumnProto\022F\n\026column"
+  "_definition_list\030\005 \003(\0132&.zetasql.Resolve"
+  "dColumnDefinitionProto\0228\n\022pseudo_column_"
+  "list\030\006 \003(\0132\034.zetasql.ResolvedColumnProto"
+  "\0225\n\013primary_key\030\007 \001(\0132 .zetasql.Resolved"
+  "PrimaryKeyProto\022:\n\020foreign_key_list\030\010 \003("
+  "\0132 .zetasql.ResolvedForeignKeyProto\022D\n\025c"
+  "heck_constraint_list\030\t \003(\0132%.zetasql.Res"
+  "olvedCheckConstraintProto\0228\n\021partition_b"
+  "y_list\030\n \003(\0132\035.zetasql.AnyResolvedExprPr"
+  "oto\0226\n\017cluster_by_list\030\013 \003(\0132\035.zetasql.A"
+  "nyResolvedExprProto\0221\n\013option_list\030\014 \003(\013"
+  "2\034.zetasql.ResolvedOptionProto\022J\n\026with_p"
+  "artition_columns\030\r \001(\0132*.zetasql.Resolve"
+  "dWithPartitionColumnsProto\0224\n\nconnection"
+  "\030\016 \001(\0132 .zetasql.ResolvedConnectionProto"
+  "\022<\n\026from_files_option_list\030\017 \003(\0132\034.zetas"
+  "ql.ResolvedOptionProto\"\320\001\n\027ResolvedUndro"
+  "pStmtProto\022/\n\006parent\030\001 \001(\0132\037.zetasql.Res"
+  "olvedStatementProto\022\032\n\022schema_object_kin"
+  "d\030\002 \001(\t\022\030\n\020is_if_not_exists\030\003 \001(\010\022\021\n\tnam"
+  "e_path\030\004 \003(\t\022;\n\024for_system_time_expr\030\005 \001"
+  "(\0132\035.zetasql.AnyResolvedExprProtoB,\n\022com"
+  ".google.zetasqlB\022ZetaSQLResolvedASTH\002P\001"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_deps[8] = {
   &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
@@ -8443,8 +8531,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto = {
-  false, false, 61675, descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, "zetasql/resolved_ast/resolved_ast.proto", 
-  &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once, descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_deps, 8, 222,
+  false, false, 62439, descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, "zetasql/resolved_ast/resolved_ast.proto", 
+  &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once, descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_deps, 8, 224,
   schemas, file_default_instances, TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto::offsets,
   file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto, file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto,
 };
@@ -16402,6 +16490,7 @@ class AnyResolvedAggregateScanBaseProto::_Internal {
   static const ::zetasql::ResolvedAggregateScanProto& resolved_aggregate_scan_node(const AnyResolvedAggregateScanBaseProto* msg);
   static const ::zetasql::ResolvedAnonymizedAggregateScanProto& resolved_anonymized_aggregate_scan_node(const AnyResolvedAggregateScanBaseProto* msg);
   static const ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto& resolved_differential_privacy_aggregate_scan_node(const AnyResolvedAggregateScanBaseProto* msg);
+  static const ::zetasql::ResolvedAggregationThresholdAggregateScanProto& resolved_aggregation_threshold_aggregate_scan_node(const AnyResolvedAggregateScanBaseProto* msg);
 };
 
 const ::zetasql::ResolvedAggregateScanProto&
@@ -16415,6 +16504,10 @@ AnyResolvedAggregateScanBaseProto::_Internal::resolved_anonymized_aggregate_scan
 const ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto&
 AnyResolvedAggregateScanBaseProto::_Internal::resolved_differential_privacy_aggregate_scan_node(const AnyResolvedAggregateScanBaseProto* msg) {
   return *msg->node_.resolved_differential_privacy_aggregate_scan_node_;
+}
+const ::zetasql::ResolvedAggregationThresholdAggregateScanProto&
+AnyResolvedAggregateScanBaseProto::_Internal::resolved_aggregation_threshold_aggregate_scan_node(const AnyResolvedAggregateScanBaseProto* msg) {
+  return *msg->node_.resolved_aggregation_threshold_aggregate_scan_node_;
 }
 void AnyResolvedAggregateScanBaseProto::set_allocated_resolved_aggregate_scan_node(::zetasql::ResolvedAggregateScanProto* resolved_aggregate_scan_node) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -16461,6 +16554,21 @@ void AnyResolvedAggregateScanBaseProto::set_allocated_resolved_differential_priv
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.AnyResolvedAggregateScanBaseProto.resolved_differential_privacy_aggregate_scan_node)
 }
+void AnyResolvedAggregateScanBaseProto::set_allocated_resolved_aggregation_threshold_aggregate_scan_node(::zetasql::ResolvedAggregationThresholdAggregateScanProto* resolved_aggregation_threshold_aggregate_scan_node) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_node();
+  if (resolved_aggregation_threshold_aggregate_scan_node) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedAggregationThresholdAggregateScanProto>::GetOwningArena(resolved_aggregation_threshold_aggregate_scan_node);
+    if (message_arena != submessage_arena) {
+      resolved_aggregation_threshold_aggregate_scan_node = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, resolved_aggregation_threshold_aggregate_scan_node, submessage_arena);
+    }
+    set_has_resolved_aggregation_threshold_aggregate_scan_node();
+    node_.resolved_aggregation_threshold_aggregate_scan_node_ = resolved_aggregation_threshold_aggregate_scan_node;
+  }
+  // @@protoc_insertion_point(field_set_allocated:zetasql.AnyResolvedAggregateScanBaseProto.resolved_aggregation_threshold_aggregate_scan_node)
+}
 AnyResolvedAggregateScanBaseProto::AnyResolvedAggregateScanBaseProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -16485,6 +16593,10 @@ AnyResolvedAggregateScanBaseProto::AnyResolvedAggregateScanBaseProto(const AnyRe
     }
     case kResolvedDifferentialPrivacyAggregateScanNode: {
       _internal_mutable_resolved_differential_privacy_aggregate_scan_node()->::zetasql::ResolvedDifferentialPrivacyAggregateScanProto::MergeFrom(from._internal_resolved_differential_privacy_aggregate_scan_node());
+      break;
+    }
+    case kResolvedAggregationThresholdAggregateScanNode: {
+      _internal_mutable_resolved_aggregation_threshold_aggregate_scan_node()->::zetasql::ResolvedAggregationThresholdAggregateScanProto::MergeFrom(from._internal_resolved_aggregation_threshold_aggregate_scan_node());
       break;
     }
     case NODE_NOT_SET: {
@@ -16540,6 +16652,12 @@ void AnyResolvedAggregateScanBaseProto::clear_node() {
     case kResolvedDifferentialPrivacyAggregateScanNode: {
       if (GetArenaForAllocation() == nullptr) {
         delete node_.resolved_differential_privacy_aggregate_scan_node_;
+      }
+      break;
+    }
+    case kResolvedAggregationThresholdAggregateScanNode: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete node_.resolved_aggregation_threshold_aggregate_scan_node_;
       }
       break;
     }
@@ -16919,6 +17037,80 @@ void ResolvedDifferentialPrivacyAggregateScanProto::InternalSwap(ResolvedDiffere
 
 // ===================================================================
 
+class ResolvedAggregationThresholdAggregateScanProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ResolvedAggregationThresholdAggregateScanProto>()._has_bits_);
+  static const ::zetasql::ResolvedAggregateScanBaseProto& parent(const ResolvedAggregationThresholdAggregateScanProto* msg);
+  static void set_has_parent(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+const ::zetasql::ResolvedAggregateScanBaseProto&
+ResolvedAggregationThresholdAggregateScanProto::_Internal::parent(const ResolvedAggregationThresholdAggregateScanProto* msg) {
+  return *msg->parent_;
+}
+ResolvedAggregationThresholdAggregateScanProto::ResolvedAggregationThresholdAggregateScanProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  option_list_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedAggregationThresholdAggregateScanProto)
+}
+ResolvedAggregationThresholdAggregateScanProto::ResolvedAggregationThresholdAggregateScanProto(const ResolvedAggregationThresholdAggregateScanProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_),
+      option_list_(from.option_list_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_parent()) {
+    parent_ = new ::zetasql::ResolvedAggregateScanBaseProto(*from.parent_);
+  } else {
+    parent_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedAggregationThresholdAggregateScanProto)
+}
+
+inline void ResolvedAggregationThresholdAggregateScanProto::SharedCtor() {
+parent_ = nullptr;
+}
+
+ResolvedAggregationThresholdAggregateScanProto::~ResolvedAggregationThresholdAggregateScanProto() {
+  // @@protoc_insertion_point(destructor:zetasql.ResolvedAggregationThresholdAggregateScanProto)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ResolvedAggregationThresholdAggregateScanProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete parent_;
+}
+
+void ResolvedAggregationThresholdAggregateScanProto::ArenaDtor(void* object) {
+  ResolvedAggregationThresholdAggregateScanProto* _this = reinterpret_cast< ResolvedAggregationThresholdAggregateScanProto* >(object);
+  (void)_this;
+}
+void ResolvedAggregationThresholdAggregateScanProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ResolvedAggregationThresholdAggregateScanProto::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ResolvedAggregationThresholdAggregateScanProto::InternalSwap(ResolvedAggregationThresholdAggregateScanProto* other) {
+  using std::swap;
+  GetReflection()->Swap(this, other);}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAggregationThresholdAggregateScanProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[55]);
+}
+
+// ===================================================================
+
 class ResolvedSetOperationItemProto::_Internal {
  public:
   using HasBits = decltype(std::declval<ResolvedSetOperationItemProto>()._has_bits_);
@@ -17008,7 +17200,7 @@ void ResolvedSetOperationItemProto::InternalSwap(ResolvedSetOperationItemProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetOperationItemProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[55]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[56]);
 }
 
 // ===================================================================
@@ -17022,6 +17214,12 @@ class ResolvedSetOperationScanProto::_Internal {
   }
   static void set_has_op_type(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
+  }
+  static void set_has_column_match_mode(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_column_propagation_mode(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
   }
 };
 
@@ -17049,15 +17247,17 @@ ResolvedSetOperationScanProto::ResolvedSetOperationScanProto(const ResolvedSetOp
   } else {
     parent_ = nullptr;
   }
-  op_type_ = from.op_type_;
+  ::memcpy(&op_type_, &from.op_type_,
+    static_cast<size_t>(reinterpret_cast<char*>(&column_propagation_mode_) -
+    reinterpret_cast<char*>(&op_type_)) + sizeof(column_propagation_mode_));
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedSetOperationScanProto)
 }
 
 inline void ResolvedSetOperationScanProto::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&parent_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&op_type_) -
-    reinterpret_cast<char*>(&parent_)) + sizeof(op_type_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&column_propagation_mode_) -
+    reinterpret_cast<char*>(&parent_)) + sizeof(column_propagation_mode_));
 }
 
 ResolvedSetOperationScanProto::~ResolvedSetOperationScanProto() {
@@ -17089,7 +17289,7 @@ void ResolvedSetOperationScanProto::InternalSwap(ResolvedSetOperationScanProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetOperationScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[56]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[57]);
 }
 
 // ===================================================================
@@ -17180,7 +17380,7 @@ void ResolvedOrderByScanProto::InternalSwap(ResolvedOrderByScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedOrderByScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[57]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[58]);
 }
 
 // ===================================================================
@@ -17297,7 +17497,7 @@ void ResolvedLimitOffsetScanProto::InternalSwap(ResolvedLimitOffsetScanProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedLimitOffsetScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[58]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[59]);
 }
 
 // ===================================================================
@@ -17385,7 +17585,7 @@ void ResolvedWithRefScanProto::InternalSwap(ResolvedWithRefScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWithRefScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[59]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[60]);
 }
 
 // ===================================================================
@@ -17476,7 +17676,7 @@ void ResolvedAnalyticScanProto::InternalSwap(ResolvedAnalyticScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAnalyticScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[60]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[61]);
 }
 
 // ===================================================================
@@ -17629,7 +17829,7 @@ void ResolvedSampleScanProto::InternalSwap(ResolvedSampleScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSampleScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[61]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[62]);
 }
 
 // ===================================================================
@@ -17736,7 +17936,7 @@ void ResolvedComputedColumnProto::InternalSwap(ResolvedComputedColumnProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedComputedColumnProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[62]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[63]);
 }
 
 // ===================================================================
@@ -17866,7 +18066,7 @@ void ResolvedOrderByItemProto::InternalSwap(ResolvedOrderByItemProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedOrderByItemProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[63]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[64]);
 }
 
 // ===================================================================
@@ -17981,7 +18181,7 @@ void ResolvedColumnAnnotationsProto::InternalSwap(ResolvedColumnAnnotationsProto
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedColumnAnnotationsProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[64]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[65]);
 }
 
 // ===================================================================
@@ -18074,7 +18274,7 @@ void ResolvedGeneratedColumnInfoProto::InternalSwap(ResolvedGeneratedColumnInfoP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedGeneratedColumnInfoProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[65]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[66]);
 }
 
 // ===================================================================
@@ -18179,7 +18379,7 @@ void ResolvedColumnDefaultValueProto::InternalSwap(ResolvedColumnDefaultValuePro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedColumnDefaultValueProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[66]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[67]);
 }
 
 // ===================================================================
@@ -18352,7 +18552,7 @@ void ResolvedColumnDefinitionProto::InternalSwap(ResolvedColumnDefinitionProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedColumnDefinitionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[67]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[68]);
 }
 
 // ===================================================================
@@ -18518,7 +18718,7 @@ void AnyResolvedConstraintProto::InternalSwap(AnyResolvedConstraintProto* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedConstraintProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[68]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[69]);
 }
 
 // ===================================================================
@@ -18590,7 +18790,7 @@ void ResolvedConstraintProto::InternalSwap(ResolvedConstraintProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedConstraintProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[69]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[70]);
 }
 
 // ===================================================================
@@ -18691,7 +18891,7 @@ void ResolvedPrimaryKeyProto::InternalSwap(ResolvedPrimaryKeyProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedPrimaryKeyProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[70]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[71]);
 }
 
 // ===================================================================
@@ -18823,7 +19023,7 @@ void ResolvedForeignKeyProto::InternalSwap(ResolvedForeignKeyProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedForeignKeyProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[71]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[72]);
 }
 
 // ===================================================================
@@ -18934,7 +19134,7 @@ void ResolvedCheckConstraintProto::InternalSwap(ResolvedCheckConstraintProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCheckConstraintProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[72]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[73]);
 }
 
 // ===================================================================
@@ -19043,7 +19243,7 @@ void ResolvedOutputColumnProto::InternalSwap(ResolvedOutputColumnProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedOutputColumnProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[73]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[74]);
 }
 
 // ===================================================================
@@ -19134,7 +19334,7 @@ void ResolvedProjectScanProto::InternalSwap(ResolvedProjectScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedProjectScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[74]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[75]);
 }
 
 // ===================================================================
@@ -19283,7 +19483,7 @@ void ResolvedTVFScanProto::InternalSwap(ResolvedTVFScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedTVFScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[75]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[76]);
 }
 
 // ===================================================================
@@ -19373,7 +19573,7 @@ void ResolvedGroupRowsScanProto::InternalSwap(ResolvedGroupRowsScanProto* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedGroupRowsScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[76]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[77]);
 }
 
 // ===================================================================
@@ -19537,7 +19737,7 @@ void ResolvedFunctionArgumentProto::InternalSwap(ResolvedFunctionArgumentProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedFunctionArgumentProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[77]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[78]);
 }
 
 // ===================================================================
@@ -19587,6 +19787,7 @@ class AnyResolvedStatementProto::_Internal {
   static const ::zetasql::ResolvedAuxLoadDataStmtProto& resolved_aux_load_data_stmt_node(const AnyResolvedStatementProto* msg);
   static const ::zetasql::ResolvedDropSearchIndexStmtProto& resolved_drop_search_index_stmt_node(const AnyResolvedStatementProto* msg);
   static const ::zetasql::ResolvedDropPrivilegeRestrictionStmtProto& resolved_drop_privilege_restriction_stmt_node(const AnyResolvedStatementProto* msg);
+  static const ::zetasql::ResolvedUndropStmtProto& resolved_undrop_stmt_node(const AnyResolvedStatementProto* msg);
 };
 
 const ::zetasql::ResolvedExplainStmtProto&
@@ -19760,6 +19961,10 @@ AnyResolvedStatementProto::_Internal::resolved_drop_search_index_stmt_node(const
 const ::zetasql::ResolvedDropPrivilegeRestrictionStmtProto&
 AnyResolvedStatementProto::_Internal::resolved_drop_privilege_restriction_stmt_node(const AnyResolvedStatementProto* msg) {
   return *msg->node_.resolved_drop_privilege_restriction_stmt_node_;
+}
+const ::zetasql::ResolvedUndropStmtProto&
+AnyResolvedStatementProto::_Internal::resolved_undrop_stmt_node(const AnyResolvedStatementProto* msg) {
+  return *msg->node_.resolved_undrop_stmt_node_;
 }
 void AnyResolvedStatementProto::set_allocated_resolved_explain_stmt_node(::zetasql::ResolvedExplainStmtProto* resolved_explain_stmt_node) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -20406,6 +20611,21 @@ void AnyResolvedStatementProto::set_allocated_resolved_drop_privilege_restrictio
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.AnyResolvedStatementProto.resolved_drop_privilege_restriction_stmt_node)
 }
+void AnyResolvedStatementProto::set_allocated_resolved_undrop_stmt_node(::zetasql::ResolvedUndropStmtProto* resolved_undrop_stmt_node) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_node();
+  if (resolved_undrop_stmt_node) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedUndropStmtProto>::GetOwningArena(resolved_undrop_stmt_node);
+    if (message_arena != submessage_arena) {
+      resolved_undrop_stmt_node = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, resolved_undrop_stmt_node, submessage_arena);
+    }
+    set_has_resolved_undrop_stmt_node();
+    node_.resolved_undrop_stmt_node_ = resolved_undrop_stmt_node;
+  }
+  // @@protoc_insertion_point(field_set_allocated:zetasql.AnyResolvedStatementProto.resolved_undrop_stmt_node)
+}
 AnyResolvedStatementProto::AnyResolvedStatementProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -20590,6 +20810,10 @@ AnyResolvedStatementProto::AnyResolvedStatementProto(const AnyResolvedStatementP
     }
     case kResolvedDropPrivilegeRestrictionStmtNode: {
       _internal_mutable_resolved_drop_privilege_restriction_stmt_node()->::zetasql::ResolvedDropPrivilegeRestrictionStmtProto::MergeFrom(from._internal_resolved_drop_privilege_restriction_stmt_node());
+      break;
+    }
+    case kResolvedUndropStmtNode: {
+      _internal_mutable_resolved_undrop_stmt_node()->::zetasql::ResolvedUndropStmtProto::MergeFrom(from._internal_resolved_undrop_stmt_node());
       break;
     }
     case NODE_NOT_SET: {
@@ -20888,6 +21112,12 @@ void AnyResolvedStatementProto::clear_node() {
       }
       break;
     }
+    case kResolvedUndropStmtNode: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete node_.resolved_undrop_stmt_node_;
+      }
+      break;
+    }
     case NODE_NOT_SET: {
       break;
     }
@@ -20903,7 +21133,7 @@ void AnyResolvedStatementProto::InternalSwap(AnyResolvedStatementProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedStatementProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[78]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[79]);
 }
 
 // ===================================================================
@@ -20981,7 +21211,7 @@ void ResolvedStatementProto::InternalSwap(ResolvedStatementProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedStatementProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[79]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[80]);
 }
 
 // ===================================================================
@@ -21070,7 +21300,7 @@ void ResolvedExplainStmtProto::InternalSwap(ResolvedExplainStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedExplainStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[80]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[81]);
 }
 
 // ===================================================================
@@ -21165,7 +21395,7 @@ void ResolvedQueryStmtProto::InternalSwap(ResolvedQueryStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedQueryStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[81]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[82]);
 }
 
 // ===================================================================
@@ -21241,7 +21471,7 @@ void ResolvedCreateDatabaseStmtProto::InternalSwap(ResolvedCreateDatabaseStmtPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateDatabaseStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[82]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[83]);
 }
 
 // ===================================================================
@@ -21677,7 +21907,7 @@ void AnyResolvedCreateStatementProto::InternalSwap(AnyResolvedCreateStatementPro
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedCreateStatementProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[83]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[84]);
 }
 
 // ===================================================================
@@ -21763,7 +21993,7 @@ void ResolvedCreateStatementProto::InternalSwap(ResolvedCreateStatementProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateStatementProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[84]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[85]);
 }
 
 // ===================================================================
@@ -21856,7 +22086,7 @@ void ResolvedIndexItemProto::InternalSwap(ResolvedIndexItemProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedIndexItemProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[85]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[86]);
 }
 
 // ===================================================================
@@ -21977,7 +22207,7 @@ void ResolvedUnnestItemProto::InternalSwap(ResolvedUnnestItemProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUnnestItemProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[86]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[87]);
 }
 
 // ===================================================================
@@ -22090,7 +22320,7 @@ void ResolvedCreateIndexStmtProto::InternalSwap(ResolvedCreateIndexStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateIndexStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[87]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[88]);
 }
 
 // ===================================================================
@@ -22181,7 +22411,7 @@ void ResolvedCreateSchemaStmtProto::InternalSwap(ResolvedCreateSchemaStmtProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateSchemaStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[88]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[89]);
 }
 
 // ===================================================================
@@ -22347,7 +22577,7 @@ void AnyResolvedCreateTableStmtBaseProto::InternalSwap(AnyResolvedCreateTableStm
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedCreateTableStmtBaseProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[89]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[90]);
 }
 
 // ===================================================================
@@ -22499,7 +22729,7 @@ void ResolvedCreateTableStmtBaseProto::InternalSwap(ResolvedCreateTableStmtBaseP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateTableStmtBaseProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[90]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[91]);
 }
 
 // ===================================================================
@@ -22606,7 +22836,7 @@ void ResolvedCreateTableStmtProto::InternalSwap(ResolvedCreateTableStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateTableStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[91]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[92]);
 }
 
 // ===================================================================
@@ -22701,7 +22931,7 @@ void ResolvedCreateTableAsSelectStmtProto::InternalSwap(ResolvedCreateTableAsSel
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateTableAsSelectStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[92]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[93]);
 }
 
 // ===================================================================
@@ -22808,7 +23038,7 @@ void ResolvedCreateModelAliasedQueryProto::InternalSwap(ResolvedCreateModelAlias
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateModelAliasedQueryProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[93]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[94]);
 }
 
 // ===================================================================
@@ -22933,7 +23163,7 @@ void ResolvedCreateModelStmtProto::InternalSwap(ResolvedCreateModelStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateModelStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[94]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[95]);
 }
 
 // ===================================================================
@@ -23069,7 +23299,7 @@ void AnyResolvedCreateViewBaseProto::InternalSwap(AnyResolvedCreateViewBaseProto
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedCreateViewBaseProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[95]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[96]);
 }
 
 // ===================================================================
@@ -23195,7 +23425,7 @@ void ResolvedCreateViewBaseProto::InternalSwap(ResolvedCreateViewBaseProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateViewBaseProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[96]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[97]);
 }
 
 // ===================================================================
@@ -23267,7 +23497,7 @@ void ResolvedCreateViewStmtProto::InternalSwap(ResolvedCreateViewStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateViewStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[97]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[98]);
 }
 
 // ===================================================================
@@ -23341,7 +23571,7 @@ void ResolvedWithPartitionColumnsProto::InternalSwap(ResolvedWithPartitionColumn
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWithPartitionColumnsProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[98]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[99]);
 }
 
 // ===================================================================
@@ -23432,7 +23662,7 @@ void ResolvedCreateSnapshotTableStmtProto::InternalSwap(ResolvedCreateSnapshotTa
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateSnapshotTableStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[99]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[100]);
 }
 
 // ===================================================================
@@ -23521,7 +23751,7 @@ void ResolvedCreateExternalTableStmtProto::InternalSwap(ResolvedCreateExternalTa
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateExternalTableStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[100]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[101]);
 }
 
 // ===================================================================
@@ -23614,7 +23844,7 @@ void ResolvedExportModelStmtProto::InternalSwap(ResolvedExportModelStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedExportModelStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[101]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[102]);
 }
 
 // ===================================================================
@@ -23725,7 +23955,7 @@ void ResolvedExportDataStmtProto::InternalSwap(ResolvedExportDataStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedExportDataStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[102]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[103]);
 }
 
 // ===================================================================
@@ -23801,7 +24031,7 @@ void ResolvedDefineTableStmtProto::InternalSwap(ResolvedDefineTableStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDefineTableStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[103]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[104]);
 }
 
 // ===================================================================
@@ -23893,7 +24123,7 @@ void ResolvedDescribeStmtProto::InternalSwap(ResolvedDescribeStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDescribeStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[104]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[105]);
 }
 
 // ===================================================================
@@ -24000,7 +24230,7 @@ void ResolvedShowStmtProto::InternalSwap(ResolvedShowStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedShowStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[105]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[106]);
 }
 
 // ===================================================================
@@ -24081,7 +24311,7 @@ void ResolvedBeginStmtProto::InternalSwap(ResolvedBeginStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedBeginStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[106]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[107]);
 }
 
 // ===================================================================
@@ -24162,7 +24392,7 @@ void ResolvedSetTransactionStmtProto::InternalSwap(ResolvedSetTransactionStmtPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetTransactionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[107]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[108]);
 }
 
 // ===================================================================
@@ -24234,7 +24464,7 @@ void ResolvedCommitStmtProto::InternalSwap(ResolvedCommitStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCommitStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[108]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[109]);
 }
 
 // ===================================================================
@@ -24306,7 +24536,7 @@ void ResolvedRollbackStmtProto::InternalSwap(ResolvedRollbackStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRollbackStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[109]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[110]);
 }
 
 // ===================================================================
@@ -24394,7 +24624,7 @@ void ResolvedStartBatchStmtProto::InternalSwap(ResolvedStartBatchStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedStartBatchStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[110]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[111]);
 }
 
 // ===================================================================
@@ -24466,7 +24696,7 @@ void ResolvedRunBatchStmtProto::InternalSwap(ResolvedRunBatchStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRunBatchStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[111]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[112]);
 }
 
 // ===================================================================
@@ -24538,7 +24768,7 @@ void ResolvedAbortBatchStmtProto::InternalSwap(ResolvedAbortBatchStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAbortBatchStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[112]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[113]);
 }
 
 // ===================================================================
@@ -24640,7 +24870,7 @@ void ResolvedDropStmtProto::InternalSwap(ResolvedDropStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[113]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[114]);
 }
 
 // ===================================================================
@@ -24721,7 +24951,7 @@ void ResolvedDropMaterializedViewStmtProto::InternalSwap(ResolvedDropMaterialize
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropMaterializedViewStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[114]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[115]);
 }
 
 // ===================================================================
@@ -24802,7 +25032,7 @@ void ResolvedDropSnapshotTableStmtProto::InternalSwap(ResolvedDropSnapshotTableS
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropSnapshotTableStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[115]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[116]);
 }
 
 // ===================================================================
@@ -24874,7 +25104,7 @@ void ResolvedRecursiveRefScanProto::InternalSwap(ResolvedRecursiveRefScanProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRecursiveRefScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[116]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[117]);
 }
 
 // ===================================================================
@@ -24981,7 +25211,7 @@ void ResolvedRecursiveScanProto::InternalSwap(ResolvedRecursiveScanProto* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRecursiveScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[117]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[118]);
 }
 
 // ===================================================================
@@ -25076,7 +25306,7 @@ void ResolvedWithScanProto::InternalSwap(ResolvedWithScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWithScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[118]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[119]);
 }
 
 // ===================================================================
@@ -25181,7 +25411,7 @@ void ResolvedWithEntryProto::InternalSwap(ResolvedWithEntryProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWithEntryProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[119]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[120]);
 }
 
 // ===================================================================
@@ -25302,7 +25532,7 @@ void ResolvedOptionProto::InternalSwap(ResolvedOptionProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedOptionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[120]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[121]);
 }
 
 // ===================================================================
@@ -25378,7 +25608,7 @@ void ResolvedWindowPartitioningProto::InternalSwap(ResolvedWindowPartitioningPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWindowPartitioningProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[121]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[122]);
 }
 
 // ===================================================================
@@ -25454,7 +25684,7 @@ void ResolvedWindowOrderingProto::InternalSwap(ResolvedWindowOrderingProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWindowOrderingProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[122]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[123]);
 }
 
 // ===================================================================
@@ -25561,7 +25791,7 @@ void ResolvedWindowFrameProto::InternalSwap(ResolvedWindowFrameProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWindowFrameProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[123]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[124]);
 }
 
 // ===================================================================
@@ -25666,7 +25896,7 @@ void ResolvedAnalyticFunctionGroupProto::InternalSwap(ResolvedAnalyticFunctionGr
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAnalyticFunctionGroupProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[124]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[125]);
 }
 
 // ===================================================================
@@ -25759,7 +25989,7 @@ void ResolvedWindowFrameExprProto::InternalSwap(ResolvedWindowFrameExprProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWindowFrameExprProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[125]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[126]);
 }
 
 // ===================================================================
@@ -25848,7 +26078,7 @@ void ResolvedDMLValueProto::InternalSwap(ResolvedDMLValueProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDMLValueProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[126]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[127]);
 }
 
 // ===================================================================
@@ -25920,7 +26150,7 @@ void ResolvedDMLDefaultProto::InternalSwap(ResolvedDMLDefaultProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDMLDefaultProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[127]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[128]);
 }
 
 // ===================================================================
@@ -26025,7 +26255,7 @@ void ResolvedAssertStmtProto::InternalSwap(ResolvedAssertStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAssertStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[128]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[129]);
 }
 
 // ===================================================================
@@ -26114,7 +26344,7 @@ void ResolvedAssertRowsModifiedProto::InternalSwap(ResolvedAssertRowsModifiedPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAssertRowsModifiedProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[129]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[130]);
 }
 
 // ===================================================================
@@ -26188,7 +26418,7 @@ void ResolvedInsertRowProto::InternalSwap(ResolvedInsertRowProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedInsertRowProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[130]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[131]);
 }
 
 // ===================================================================
@@ -26339,7 +26569,7 @@ void ResolvedInsertStmtProto::InternalSwap(ResolvedInsertStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedInsertStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[131]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[132]);
 }
 
 // ===================================================================
@@ -26486,7 +26716,7 @@ void ResolvedDeleteStmtProto::InternalSwap(ResolvedDeleteStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDeleteStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[132]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[133]);
 }
 
 // ===================================================================
@@ -26611,7 +26841,7 @@ void ResolvedUpdateItemProto::InternalSwap(ResolvedUpdateItemProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUpdateItemProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[133]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[134]);
 }
 
 // ===================================================================
@@ -26714,7 +26944,7 @@ void ResolvedUpdateArrayItemProto::InternalSwap(ResolvedUpdateArrayItemProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUpdateArrayItemProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[134]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[135]);
 }
 
 // ===================================================================
@@ -26877,7 +27107,7 @@ void ResolvedUpdateStmtProto::InternalSwap(ResolvedUpdateStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUpdateStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[135]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[136]);
 }
 
 // ===================================================================
@@ -26996,7 +27226,7 @@ void ResolvedMergeWhenProto::InternalSwap(ResolvedMergeWhenProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedMergeWhenProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[136]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[137]);
 }
 
 // ===================================================================
@@ -27117,7 +27347,7 @@ void ResolvedMergeStmtProto::InternalSwap(ResolvedMergeStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedMergeStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[137]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[138]);
 }
 
 // ===================================================================
@@ -27220,7 +27450,7 @@ void ResolvedTruncateStmtProto::InternalSwap(ResolvedTruncateStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedTruncateStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[138]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[139]);
 }
 
 // ===================================================================
@@ -27294,7 +27524,7 @@ void ResolvedObjectUnitProto::InternalSwap(ResolvedObjectUnitProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedObjectUnitProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[139]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[140]);
 }
 
 // ===================================================================
@@ -27384,7 +27614,7 @@ void ResolvedPrivilegeProto::InternalSwap(ResolvedPrivilegeProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedPrivilegeProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[140]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[141]);
 }
 
 // ===================================================================
@@ -27520,7 +27750,7 @@ void AnyResolvedGrantOrRevokeStmtProto::InternalSwap(AnyResolvedGrantOrRevokeStm
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedGrantOrRevokeStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[141]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[142]);
 }
 
 // ===================================================================
@@ -27616,7 +27846,7 @@ void ResolvedGrantOrRevokeStmtProto::InternalSwap(ResolvedGrantOrRevokeStmtProto
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedGrantOrRevokeStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[142]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[143]);
 }
 
 // ===================================================================
@@ -27688,7 +27918,7 @@ void ResolvedGrantStmtProto::InternalSwap(ResolvedGrantStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedGrantStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[143]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[144]);
 }
 
 // ===================================================================
@@ -27760,7 +27990,7 @@ void ResolvedRevokeStmtProto::InternalSwap(ResolvedRevokeStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRevokeStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[144]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[145]);
 }
 
 // ===================================================================
@@ -28136,7 +28366,7 @@ void AnyResolvedAlterObjectStmtProto::InternalSwap(AnyResolvedAlterObjectStmtPro
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedAlterObjectStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[145]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[146]);
 }
 
 // ===================================================================
@@ -28219,7 +28449,7 @@ void ResolvedAlterObjectStmtProto::InternalSwap(ResolvedAlterObjectStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterObjectStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[146]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[147]);
 }
 
 // ===================================================================
@@ -28291,7 +28521,7 @@ void ResolvedAlterDatabaseStmtProto::InternalSwap(ResolvedAlterDatabaseStmtProto
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterDatabaseStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[147]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[148]);
 }
 
 // ===================================================================
@@ -28363,7 +28593,7 @@ void ResolvedAlterMaterializedViewStmtProto::InternalSwap(ResolvedAlterMateriali
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterMaterializedViewStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[148]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[149]);
 }
 
 // ===================================================================
@@ -28435,7 +28665,7 @@ void ResolvedAlterSchemaStmtProto::InternalSwap(ResolvedAlterSchemaStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterSchemaStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[149]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[150]);
 }
 
 // ===================================================================
@@ -28507,7 +28737,7 @@ void ResolvedAlterModelStmtProto::InternalSwap(ResolvedAlterModelStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterModelStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[150]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[151]);
 }
 
 // ===================================================================
@@ -28579,7 +28809,7 @@ void ResolvedAlterTableStmtProto::InternalSwap(ResolvedAlterTableStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterTableStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[151]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[152]);
 }
 
 // ===================================================================
@@ -28651,7 +28881,7 @@ void ResolvedAlterViewStmtProto::InternalSwap(ResolvedAlterViewStmtProto* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterViewStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[152]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[153]);
 }
 
 // ===================================================================
@@ -29327,7 +29557,7 @@ void AnyResolvedAlterActionProto::InternalSwap(AnyResolvedAlterActionProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedAlterActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[153]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[154]);
 }
 
 // ===================================================================
@@ -29399,7 +29629,7 @@ void ResolvedAlterActionProto::InternalSwap(ResolvedAlterActionProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[154]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[155]);
 }
 
 // ===================================================================
@@ -29625,7 +29855,7 @@ void AnyResolvedAlterColumnActionProto::InternalSwap(AnyResolvedAlterColumnActio
 ::PROTOBUF_NAMESPACE_ID::Metadata AnyResolvedAlterColumnActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[155]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[156]);
 }
 
 // ===================================================================
@@ -29720,7 +29950,7 @@ void ResolvedAlterColumnActionProto::InternalSwap(ResolvedAlterColumnActionProto
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterColumnActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[156]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[157]);
 }
 
 // ===================================================================
@@ -29794,7 +30024,7 @@ void ResolvedSetOptionsActionProto::InternalSwap(ResolvedSetOptionsActionProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetOptionsActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[157]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[158]);
 }
 
 // ===================================================================
@@ -29919,7 +30149,7 @@ void ResolvedAlterSubEntityActionProto::InternalSwap(ResolvedAlterSubEntityActio
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterSubEntityActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[158]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[159]);
 }
 
 // ===================================================================
@@ -30032,7 +30262,7 @@ void ResolvedAddSubEntityActionProto::InternalSwap(ResolvedAddSubEntityActionPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAddSubEntityActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[159]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[160]);
 }
 
 // ===================================================================
@@ -30143,7 +30373,7 @@ void ResolvedDropSubEntityActionProto::InternalSwap(ResolvedDropSubEntityActionP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropSubEntityActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[160]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[161]);
 }
 
 // ===================================================================
@@ -30236,7 +30466,7 @@ void ResolvedAddColumnActionProto::InternalSwap(ResolvedAddColumnActionProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAddColumnActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[161]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[162]);
 }
 
 // ===================================================================
@@ -30347,7 +30577,7 @@ void ResolvedAddConstraintActionProto::InternalSwap(ResolvedAddConstraintActionP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAddConstraintActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[162]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[163]);
 }
 
 // ===================================================================
@@ -30442,7 +30672,7 @@ void ResolvedDropConstraintActionProto::InternalSwap(ResolvedDropConstraintActio
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropConstraintActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[163]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[164]);
 }
 
 // ===================================================================
@@ -30521,7 +30751,7 @@ void ResolvedDropPrimaryKeyActionProto::InternalSwap(ResolvedDropPrimaryKeyActio
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropPrimaryKeyActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[164]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[165]);
 }
 
 // ===================================================================
@@ -30595,7 +30825,7 @@ void ResolvedAlterColumnOptionsActionProto::InternalSwap(ResolvedAlterColumnOpti
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterColumnOptionsActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[165]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[166]);
 }
 
 // ===================================================================
@@ -30667,7 +30897,7 @@ void ResolvedAlterColumnDropNotNullActionProto::InternalSwap(ResolvedAlterColumn
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterColumnDropNotNullActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[166]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[167]);
 }
 
 // ===================================================================
@@ -30792,7 +31022,7 @@ void ResolvedAlterColumnSetDataTypeActionProto::InternalSwap(ResolvedAlterColumn
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterColumnSetDataTypeActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[167]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[168]);
 }
 
 // ===================================================================
@@ -30881,7 +31111,7 @@ void ResolvedAlterColumnSetDefaultActionProto::InternalSwap(ResolvedAlterColumnS
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterColumnSetDefaultActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[168]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[169]);
 }
 
 // ===================================================================
@@ -30953,7 +31183,7 @@ void ResolvedAlterColumnDropDefaultActionProto::InternalSwap(ResolvedAlterColumn
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterColumnDropDefaultActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[169]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[170]);
 }
 
 // ===================================================================
@@ -31048,7 +31278,7 @@ void ResolvedDropColumnActionProto::InternalSwap(ResolvedDropColumnActionProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropColumnActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[170]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[171]);
 }
 
 // ===================================================================
@@ -31159,7 +31389,7 @@ void ResolvedRenameColumnActionProto::InternalSwap(ResolvedRenameColumnActionPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRenameColumnActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[171]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[172]);
 }
 
 // ===================================================================
@@ -31263,7 +31493,7 @@ void ResolvedSetAsActionProto::InternalSwap(ResolvedSetAsActionProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetAsActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[172]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[173]);
 }
 
 // ===================================================================
@@ -31352,7 +31582,7 @@ void ResolvedSetCollateClauseProto::InternalSwap(ResolvedSetCollateClauseProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetCollateClauseProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[173]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[174]);
 }
 
 // ===================================================================
@@ -31435,7 +31665,7 @@ void ResolvedAlterTableSetOptionsStmtProto::InternalSwap(ResolvedAlterTableSetOp
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterTableSetOptionsStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[174]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[175]);
 }
 
 // ===================================================================
@@ -31527,7 +31757,7 @@ void ResolvedRenameStmtProto::InternalSwap(ResolvedRenameStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRenameStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[175]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[176]);
 }
 
 // ===================================================================
@@ -31619,7 +31849,7 @@ void ResolvedCreatePrivilegeRestrictionStmtProto::InternalSwap(ResolvedCreatePri
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreatePrivilegeRestrictionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[176]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[177]);
 }
 
 // ===================================================================
@@ -31764,7 +31994,7 @@ void ResolvedCreateRowAccessPolicyStmtProto::InternalSwap(ResolvedCreateRowAcces
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateRowAccessPolicyStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[177]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[178]);
 }
 
 // ===================================================================
@@ -31863,7 +32093,7 @@ void ResolvedDropPrivilegeRestrictionStmtProto::InternalSwap(ResolvedDropPrivile
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropPrivilegeRestrictionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[178]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[179]);
 }
 
 // ===================================================================
@@ -31965,7 +32195,7 @@ void ResolvedDropRowAccessPolicyStmtProto::InternalSwap(ResolvedDropRowAccessPol
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropRowAccessPolicyStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[179]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[180]);
 }
 
 // ===================================================================
@@ -32062,7 +32292,7 @@ void ResolvedDropSearchIndexStmtProto::InternalSwap(ResolvedDropSearchIndexStmtP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropSearchIndexStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[180]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[181]);
 }
 
 // ===================================================================
@@ -32136,7 +32366,7 @@ void ResolvedGrantToActionProto::InternalSwap(ResolvedGrantToActionProto* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedGrantToActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[181]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[182]);
 }
 
 // ===================================================================
@@ -32210,7 +32440,7 @@ void ResolvedRestrictToActionProto::InternalSwap(ResolvedRestrictToActionProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRestrictToActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[182]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[183]);
 }
 
 // ===================================================================
@@ -32291,7 +32521,7 @@ void ResolvedAddToRestricteeListActionProto::InternalSwap(ResolvedAddToRestricte
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAddToRestricteeListActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[183]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[184]);
 }
 
 // ===================================================================
@@ -32372,7 +32602,7 @@ void ResolvedRemoveFromRestricteeListActionProto::InternalSwap(ResolvedRemoveFro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRemoveFromRestricteeListActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[184]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[185]);
 }
 
 // ===================================================================
@@ -32477,7 +32707,7 @@ void ResolvedFilterUsingActionProto::InternalSwap(ResolvedFilterUsingActionProto
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedFilterUsingActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[185]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[186]);
 }
 
 // ===================================================================
@@ -32558,7 +32788,7 @@ void ResolvedRevokeFromActionProto::InternalSwap(ResolvedRevokeFromActionProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRevokeFromActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[186]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[187]);
 }
 
 // ===================================================================
@@ -32632,7 +32862,7 @@ void ResolvedRenameToActionProto::InternalSwap(ResolvedRenameToActionProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRenameToActionProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[187]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[188]);
 }
 
 // ===================================================================
@@ -32722,7 +32952,7 @@ void ResolvedAlterPrivilegeRestrictionStmtProto::InternalSwap(ResolvedAlterPrivi
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterPrivilegeRestrictionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[188]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[189]);
 }
 
 // ===================================================================
@@ -32827,7 +33057,7 @@ void ResolvedAlterRowAccessPolicyStmtProto::InternalSwap(ResolvedAlterRowAccessP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterRowAccessPolicyStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[189]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[190]);
 }
 
 // ===================================================================
@@ -32916,7 +33146,7 @@ void ResolvedAlterAllRowAccessPoliciesStmtProto::InternalSwap(ResolvedAlterAllRo
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterAllRowAccessPoliciesStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[190]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[191]);
 }
 
 // ===================================================================
@@ -33005,7 +33235,7 @@ void ResolvedCreateConstantStmtProto::InternalSwap(ResolvedCreateConstantStmtPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateConstantStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[191]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[192]);
 }
 
 // ===================================================================
@@ -33200,7 +33430,7 @@ void ResolvedCreateFunctionStmtProto::InternalSwap(ResolvedCreateFunctionStmtPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateFunctionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[192]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[193]);
 }
 
 // ===================================================================
@@ -33313,7 +33543,7 @@ void ResolvedArgumentDefProto::InternalSwap(ResolvedArgumentDefProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedArgumentDefProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[193]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[194]);
 }
 
 // ===================================================================
@@ -33408,7 +33638,7 @@ void ResolvedArgumentRefProto::InternalSwap(ResolvedArgumentRefProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedArgumentRefProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[194]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[195]);
 }
 
 // ===================================================================
@@ -33565,7 +33795,7 @@ void ResolvedCreateTableFunctionStmtProto::InternalSwap(ResolvedCreateTableFunct
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateTableFunctionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[195]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[196]);
 }
 
 // ===================================================================
@@ -33660,7 +33890,7 @@ void ResolvedRelationArgumentScanProto::InternalSwap(ResolvedRelationArgumentSca
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRelationArgumentScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[196]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[197]);
 }
 
 // ===================================================================
@@ -33734,7 +33964,7 @@ void ResolvedArgumentListProto::InternalSwap(ResolvedArgumentListProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedArgumentListProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[197]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[198]);
 }
 
 // ===================================================================
@@ -33827,7 +34057,7 @@ void ResolvedFunctionSignatureHolderProto::InternalSwap(ResolvedFunctionSignatur
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedFunctionSignatureHolderProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[198]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[199]);
 }
 
 // ===================================================================
@@ -33936,7 +34166,7 @@ void ResolvedDropFunctionStmtProto::InternalSwap(ResolvedDropFunctionStmtProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropFunctionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[199]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[200]);
 }
 
 // ===================================================================
@@ -34017,7 +34247,7 @@ void ResolvedDropTableFunctionStmtProto::InternalSwap(ResolvedDropTableFunctionS
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropTableFunctionStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[200]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[201]);
 }
 
 // ===================================================================
@@ -34130,7 +34360,7 @@ void ResolvedCallStmtProto::InternalSwap(ResolvedCallStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCallStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[201]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[202]);
 }
 
 // ===================================================================
@@ -34233,7 +34463,7 @@ void ResolvedImportStmtProto::InternalSwap(ResolvedImportStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedImportStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[202]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[203]);
 }
 
 // ===================================================================
@@ -34309,7 +34539,7 @@ void ResolvedModuleStmtProto::InternalSwap(ResolvedModuleStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedModuleStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[203]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[204]);
 }
 
 // ===================================================================
@@ -34402,7 +34632,7 @@ void ResolvedAggregateHavingModifierProto::InternalSwap(ResolvedAggregateHavingM
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAggregateHavingModifierProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[204]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[205]);
 }
 
 // ===================================================================
@@ -34478,7 +34708,7 @@ void ResolvedCreateMaterializedViewStmtProto::InternalSwap(ResolvedCreateMateria
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateMaterializedViewStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[205]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[206]);
 }
 
 // ===================================================================
@@ -34637,7 +34867,7 @@ void ResolvedCreateProcedureStmtProto::InternalSwap(ResolvedCreateProcedureStmtP
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateProcedureStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[206]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[207]);
 }
 
 // ===================================================================
@@ -34742,7 +34972,7 @@ void ResolvedExecuteImmediateArgumentProto::InternalSwap(ResolvedExecuteImmediat
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedExecuteImmediateArgumentProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[207]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[208]);
 }
 
 // ===================================================================
@@ -34835,7 +35065,7 @@ void ResolvedExecuteImmediateStmtProto::InternalSwap(ResolvedExecuteImmediateStm
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedExecuteImmediateStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[208]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[209]);
 }
 
 // ===================================================================
@@ -34938,7 +35168,7 @@ void ResolvedAssignmentStmtProto::InternalSwap(ResolvedAssignmentStmtProto* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAssignmentStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[209]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[210]);
 }
 
 // ===================================================================
@@ -35060,7 +35290,7 @@ void ResolvedCreateEntityStmtProto::InternalSwap(ResolvedCreateEntityStmtProto* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateEntityStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[210]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[211]);
 }
 
 // ===================================================================
@@ -35148,7 +35378,7 @@ void ResolvedAlterEntityStmtProto::InternalSwap(ResolvedAlterEntityStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAlterEntityStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[211]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[212]);
 }
 
 // ===================================================================
@@ -35250,7 +35480,7 @@ void ResolvedPivotColumnProto::InternalSwap(ResolvedPivotColumnProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedPivotColumnProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[212]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[213]);
 }
 
 // ===================================================================
@@ -35361,7 +35591,7 @@ void ResolvedPivotScanProto::InternalSwap(ResolvedPivotScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedPivotScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[213]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[214]);
 }
 
 // ===================================================================
@@ -35454,7 +35684,7 @@ void ResolvedReturningClauseProto::InternalSwap(ResolvedReturningClauseProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedReturningClauseProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[214]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[215]);
 }
 
 // ===================================================================
@@ -35528,7 +35758,7 @@ void ResolvedUnpivotArgProto::InternalSwap(ResolvedUnpivotArgProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUnpivotArgProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[215]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[216]);
 }
 
 // ===================================================================
@@ -35650,7 +35880,7 @@ void ResolvedUnpivotScanProto::InternalSwap(ResolvedUnpivotScanProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUnpivotScanProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[216]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[217]);
 }
 
 // ===================================================================
@@ -35753,7 +35983,7 @@ void ResolvedCloneDataStmtProto::InternalSwap(ResolvedCloneDataStmtProto* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCloneDataStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[217]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[218]);
 }
 
 // ===================================================================
@@ -35848,7 +36078,7 @@ void ResolvedTableAndColumnInfoProto::InternalSwap(ResolvedTableAndColumnInfoPro
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedTableAndColumnInfoProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[218]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[219]);
 }
 
 // ===================================================================
@@ -35924,7 +36154,7 @@ void ResolvedAnalyzeStmtProto::InternalSwap(ResolvedAnalyzeStmtProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAnalyzeStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[219]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[220]);
 }
 
 // ===================================================================
@@ -36017,7 +36247,7 @@ void ResolvedAuxLoadDataPartitionFilterProto::InternalSwap(ResolvedAuxLoadDataPa
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAuxLoadDataPartitionFilterProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[220]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[221]);
 }
 
 // ===================================================================
@@ -36180,7 +36410,118 @@ void ResolvedAuxLoadDataStmtProto::InternalSwap(ResolvedAuxLoadDataStmtProto* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAuxLoadDataStmtProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
-      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[221]);
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[222]);
+}
+
+// ===================================================================
+
+class ResolvedUndropStmtProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ResolvedUndropStmtProto>()._has_bits_);
+  static const ::zetasql::ResolvedStatementProto& parent(const ResolvedUndropStmtProto* msg);
+  static void set_has_parent(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_schema_object_kind(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_is_if_not_exists(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static const ::zetasql::AnyResolvedExprProto& for_system_time_expr(const ResolvedUndropStmtProto* msg);
+  static void set_has_for_system_time_expr(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+};
+
+const ::zetasql::ResolvedStatementProto&
+ResolvedUndropStmtProto::_Internal::parent(const ResolvedUndropStmtProto* msg) {
+  return *msg->parent_;
+}
+const ::zetasql::AnyResolvedExprProto&
+ResolvedUndropStmtProto::_Internal::for_system_time_expr(const ResolvedUndropStmtProto* msg) {
+  return *msg->for_system_time_expr_;
+}
+ResolvedUndropStmtProto::ResolvedUndropStmtProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  name_path_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedUndropStmtProto)
+}
+ResolvedUndropStmtProto::ResolvedUndropStmtProto(const ResolvedUndropStmtProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_),
+      name_path_(from.name_path_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  schema_object_kind_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    schema_object_kind_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_schema_object_kind()) {
+    schema_object_kind_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_schema_object_kind(), 
+      GetArenaForAllocation());
+  }
+  if (from._internal_has_parent()) {
+    parent_ = new ::zetasql::ResolvedStatementProto(*from.parent_);
+  } else {
+    parent_ = nullptr;
+  }
+  if (from._internal_has_for_system_time_expr()) {
+    for_system_time_expr_ = new ::zetasql::AnyResolvedExprProto(*from.for_system_time_expr_);
+  } else {
+    for_system_time_expr_ = nullptr;
+  }
+  is_if_not_exists_ = from.is_if_not_exists_;
+  // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedUndropStmtProto)
+}
+
+inline void ResolvedUndropStmtProto::SharedCtor() {
+schema_object_kind_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  schema_object_kind_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&parent_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&is_if_not_exists_) -
+    reinterpret_cast<char*>(&parent_)) + sizeof(is_if_not_exists_));
+}
+
+ResolvedUndropStmtProto::~ResolvedUndropStmtProto() {
+  // @@protoc_insertion_point(destructor:zetasql.ResolvedUndropStmtProto)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ResolvedUndropStmtProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  schema_object_kind_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete parent_;
+  if (this != internal_default_instance()) delete for_system_time_expr_;
+}
+
+void ResolvedUndropStmtProto::ArenaDtor(void* object) {
+  ResolvedUndropStmtProto* _this = reinterpret_cast< ResolvedUndropStmtProto* >(object);
+  (void)_this;
+}
+void ResolvedUndropStmtProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ResolvedUndropStmtProto::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ResolvedUndropStmtProto::InternalSwap(ResolvedUndropStmtProto* other) {
+  using std::swap;
+  GetReflection()->Swap(this, other);}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ResolvedUndropStmtProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto_once,
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto[223]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -36350,6 +36691,9 @@ template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAnonymizedAggregateScanProto* Ar
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* Arena::CreateMaybeMessage< ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAggregationThresholdAggregateScanProto* Arena::CreateMaybeMessage< ::zetasql::ResolvedAggregationThresholdAggregateScanProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ResolvedAggregationThresholdAggregateScanProto >(arena);
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSetOperationItemProto* Arena::CreateMaybeMessage< ::zetasql::ResolvedSetOperationItemProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedSetOperationItemProto >(arena);
@@ -36851,6 +37195,9 @@ template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAuxLoadDataPartitionFilterProto*
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAuxLoadDataStmtProto* Arena::CreateMaybeMessage< ::zetasql::ResolvedAuxLoadDataStmtProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedAuxLoadDataStmtProto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedUndropStmtProto* Arena::CreateMaybeMessage< ::zetasql::ResolvedUndropStmtProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ResolvedUndropStmtProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

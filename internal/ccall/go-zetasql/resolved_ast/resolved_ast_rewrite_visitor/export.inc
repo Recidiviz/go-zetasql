@@ -10,6 +10,7 @@
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/common/thread_stack/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 

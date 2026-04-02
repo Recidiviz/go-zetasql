@@ -82,6 +82,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTRollup(const ASTRollup* node, void* data) = 0;
 
+  virtual void visitASTExpressionWithAlias(const ASTExpressionWithAlias* node, void* data) = 0;
+
   virtual void visitASTFunctionCall(const ASTFunctionCall* node, void* data) = 0;
 
   virtual void visitASTArrayConstructor(const ASTArrayConstructor* node, void* data) = 0;
@@ -135,6 +137,8 @@ class ParseTreeVisitor {
   virtual void visitASTHavingModifier(const ASTHavingModifier* node, void* data) = 0;
 
   virtual void visitASTIntervalExpr(const ASTIntervalExpr* node, void* data) = 0;
+
+  virtual void visitASTSequenceArg(const ASTSequenceArg* node, void* data) = 0;
 
   virtual void visitASTNamedArgument(const ASTNamedArgument* node, void* data) = 0;
 
@@ -620,6 +624,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTCreateMaterializedViewStatement(const ASTCreateMaterializedViewStatement* node, void* data) = 0;
 
+  virtual void visitASTCreateApproxViewStatement(const ASTCreateApproxViewStatement* node, void* data) = 0;
+
   virtual void visitASTWhileStatement(const ASTWhileStatement* node, void* data) = 0;
 
   virtual void visitASTRepeatStatement(const ASTRepeatStatement* node, void* data) = 0;
@@ -635,6 +641,8 @@ class ParseTreeVisitor {
   virtual void visitASTAlterViewStatement(const ASTAlterViewStatement* node, void* data) = 0;
 
   virtual void visitASTAlterMaterializedViewStatement(const ASTAlterMaterializedViewStatement* node, void* data) = 0;
+
+  virtual void visitASTAlterApproxViewStatement(const ASTAlterApproxViewStatement* node, void* data) = 0;
 
   virtual void visitASTAlterModelStatement(const ASTAlterModelStatement* node, void* data) = 0;
 
@@ -699,6 +707,10 @@ class ParseTreeVisitor {
   virtual void visitASTDefineMacroStatement(const ASTDefineMacroStatement* node, void* data) = 0;
 
   virtual void visitASTUndropStatement(const ASTUndropStatement* node, void* data) = 0;
+
+  virtual void visitASTReplicaMaterializedViewDataSource(const ASTReplicaMaterializedViewDataSource* node, void* data) = 0;
+
+  virtual void visitASTCreateReplicaMaterializedViewStatement(const ASTCreateReplicaMaterializedViewStatement* node, void* data) = 0;
 
 };
 
@@ -856,6 +868,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTExpressionWithAlias(const ASTExpressionWithAlias* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTFunctionCall(const ASTFunctionCall* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -961,6 +977,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTIntervalExpr(const ASTIntervalExpr* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTSequenceArg(const ASTSequenceArg* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -1932,6 +1952,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTCreateApproxViewStatement(const ASTCreateApproxViewStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTWhileStatement(const ASTWhileStatement* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -1961,6 +1985,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTAlterMaterializedViewStatement(const ASTAlterMaterializedViewStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTAlterApproxViewStatement(const ASTAlterApproxViewStatement* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2092,6 +2120,14 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTReplicaMaterializedViewDataSource(const ASTReplicaMaterializedViewDataSource* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTCreateReplicaMaterializedViewStatement(const ASTCreateReplicaMaterializedViewStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
 };
 
 class NonRecursiveParseTreeVisitor {
@@ -2175,6 +2211,8 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTRollup(const ASTRollup* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTExpressionWithAlias(const ASTExpressionWithAlias* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTFunctionCall(const ASTFunctionCall* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTArrayConstructor(const ASTArrayConstructor* node) {return defaultVisit(node);};
@@ -2228,6 +2266,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTHavingModifier(const ASTHavingModifier* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTIntervalExpr(const ASTIntervalExpr* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTSequenceArg(const ASTSequenceArg* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTNamedArgument(const ASTNamedArgument* node) {return defaultVisit(node);};
 
@@ -2713,6 +2753,8 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTCreateMaterializedViewStatement(const ASTCreateMaterializedViewStatement* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTCreateApproxViewStatement(const ASTCreateApproxViewStatement* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTWhileStatement(const ASTWhileStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTRepeatStatement(const ASTRepeatStatement* node) {return defaultVisit(node);};
@@ -2728,6 +2770,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTAlterViewStatement(const ASTAlterViewStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTAlterMaterializedViewStatement(const ASTAlterMaterializedViewStatement* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTAlterApproxViewStatement(const ASTAlterApproxViewStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTAlterModelStatement(const ASTAlterModelStatement* node) {return defaultVisit(node);};
 
@@ -2792,6 +2836,10 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTDefineMacroStatement(const ASTDefineMacroStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTUndropStatement(const ASTUndropStatement* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTReplicaMaterializedViewDataSource(const ASTReplicaMaterializedViewDataSource* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTCreateReplicaMaterializedViewStatement(const ASTCreateReplicaMaterializedViewStatement* node) {return defaultVisit(node);};
 
 };
 }  // namespace zetasql

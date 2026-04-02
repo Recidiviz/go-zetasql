@@ -26,6 +26,7 @@
 #include <utility>
 #include <vector>
 
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_ast_builder.h"
 #include "zetasql/resolved_ast/resolved_node.h"
@@ -563,6 +564,17 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedDifferentialPrivacyAggregateScan (
       std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedAggregationThresholdAggregateScan(
+      const ResolvedAggregationThresholdAggregateScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAggregationThresholdAggregateScan (
+      std::unique_ptr<const ResolvedAggregationThresholdAggregateScan> node) {
     return node;
   }
 
@@ -2205,6 +2217,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedUndropStmt(
+      const ResolvedUndropStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedUndropStmt (
+      std::unique_ptr<const ResolvedUndropStmt> node) {
+    return node;
+  }
+
  private:
   template <typename ExpectedReturnT>
   static absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> VerifyType(
@@ -2312,6 +2335,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAnonymizedAggregateScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAggregationThresholdAggregateScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSetOperationItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2610,6 +2635,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAuxLoadDataStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedUndropStmt> node);
   template <typename TypeName>
   std::unique_ptr<const TypeName> CastUniquePtr(std::unique_ptr<const ResolvedNode> node) {
     return absl::WrapUnique(static_cast<const TypeName*>(node.release()));
@@ -2618,6 +2645,7 @@ class ResolvedASTRewriteVisitor {
   template <typename ExpectedReturnT>
   absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> Dispatch(
       std::unique_ptr<const ResolvedNode> node) {
+    ZETASQL_RETURN_IF_NOT_ENOUGH_STACK("Resolved AST nested too deeply.");
     ZETASQL_RET_CHECK(node != nullptr);
     absl::StatusOr<std::unique_ptr<const ResolvedNode>> visited_node;
     switch(node->node_kind()) {
@@ -2912,6 +2940,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedDifferentialPrivacyAggregateScan>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedDifferentialPrivacyAggregateScan>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedAggregationThresholdAggregateScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAggregationThresholdAggregateScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAggregationThresholdAggregateScan>(std::move(node)));
         }
         break;
       }
@@ -3955,6 +3990,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAuxLoadDataStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedAuxLoadDataStmt>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedUndropStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedUndropStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedUndropStmt>(std::move(node)));
         }
         break;
       }

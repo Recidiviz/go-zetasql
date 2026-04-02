@@ -148,6 +148,10 @@ void ASTRollup::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTRollup(this, data);
 }
 
+void ASTExpressionWithAlias::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTExpressionWithAlias(this, data);
+}
+
 void ASTFunctionCall::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTFunctionCall(this, data);
 }
@@ -254,6 +258,10 @@ void ASTHavingModifier::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTIntervalExpr::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTIntervalExpr(this, data);
+}
+
+void ASTSequenceArg::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSequenceArg(this, data);
 }
 
 void ASTNamedArgument::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1224,6 +1232,10 @@ void ASTCreateMaterializedViewStatement::Accept(ParseTreeVisitor* visitor, void*
   visitor->visitASTCreateMaterializedViewStatement(this, data);
 }
 
+void ASTCreateApproxViewStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTCreateApproxViewStatement(this, data);
+}
+
 void ASTWhileStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTWhileStatement(this, data);
 }
@@ -1254,6 +1266,10 @@ void ASTAlterViewStatement::Accept(ParseTreeVisitor* visitor, void* data) const 
 
 void ASTAlterMaterializedViewStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterMaterializedViewStatement(this, data);
+}
+
+void ASTAlterApproxViewStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterApproxViewStatement(this, data);
 }
 
 void ASTAlterModelStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1382,6 +1398,14 @@ void ASTDefineMacroStatement::Accept(ParseTreeVisitor* visitor, void* data) cons
 
 void ASTUndropStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTUndropStatement(this, data);
+}
+
+void ASTReplicaMaterializedViewDataSource::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTReplicaMaterializedViewDataSource(this, data);
+}
+
+void ASTCreateReplicaMaterializedViewStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTCreateReplicaMaterializedViewStatement(this, data);
 }
 
 absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1532,6 +1556,10 @@ absl::StatusOr<VisitResult> ASTRollup::Accept(NonRecursiveParseTreeVisitor* visi
   return visitor->visitASTRollup(this);
 }
 
+absl::StatusOr<VisitResult> ASTExpressionWithAlias::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTExpressionWithAlias(this);
+}
+
 absl::StatusOr<VisitResult> ASTFunctionCall::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTFunctionCall(this);
 }
@@ -1638,6 +1666,10 @@ absl::StatusOr<VisitResult> ASTHavingModifier::Accept(NonRecursiveParseTreeVisit
 
 absl::StatusOr<VisitResult> ASTIntervalExpr::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTIntervalExpr(this);
+}
+
+absl::StatusOr<VisitResult> ASTSequenceArg::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSequenceArg(this);
 }
 
 absl::StatusOr<VisitResult> ASTNamedArgument::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2608,6 +2640,10 @@ absl::StatusOr<VisitResult> ASTCreateMaterializedViewStatement::Accept(NonRecurs
   return visitor->visitASTCreateMaterializedViewStatement(this);
 }
 
+absl::StatusOr<VisitResult> ASTCreateApproxViewStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTCreateApproxViewStatement(this);
+}
+
 absl::StatusOr<VisitResult> ASTWhileStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTWhileStatement(this);
 }
@@ -2638,6 +2674,10 @@ absl::StatusOr<VisitResult> ASTAlterViewStatement::Accept(NonRecursiveParseTreeV
 
 absl::StatusOr<VisitResult> ASTAlterMaterializedViewStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAlterMaterializedViewStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTAlterApproxViewStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterApproxViewStatement(this);
 }
 
 absl::StatusOr<VisitResult> ASTAlterModelStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2766,6 +2806,14 @@ absl::StatusOr<VisitResult> ASTDefineMacroStatement::Accept(NonRecursiveParseTre
 
 absl::StatusOr<VisitResult> ASTUndropStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTUndropStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTReplicaMaterializedViewDataSource::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTReplicaMaterializedViewDataSource(this);
+}
+
+absl::StatusOr<VisitResult> ASTCreateReplicaMaterializedViewStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTCreateReplicaMaterializedViewStatement(this);
 }
 
 }  // namespace zetasql

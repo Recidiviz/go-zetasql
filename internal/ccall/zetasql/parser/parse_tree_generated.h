@@ -1434,6 +1434,32 @@ class ASTRollup final : public ASTNode {
   absl::Span<const ASTExpression* const> expressions_;
 };
 
+class ASTExpressionWithAlias final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_EXPRESSION_WITH_ALIAS;
+
+  ASTExpressionWithAlias() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* expression() const { return expression_; }
+  const ASTAlias* alias() const { return alias_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* expression_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+};
+
 class ASTFunctionCall final : public ASTExpression {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_FUNCTION_CALL;
@@ -2358,6 +2384,31 @@ class ASTIntervalExpr final : public ASTExpression {
   const ASTIdentifier* date_part_name_to_ = nullptr;
 };
 
+// This represents a clause of form "SEQUENCE <target>", where <target> is a
+// sequence name.
+class ASTSequenceArg final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_SEQUENCE_ARG;
+
+  ASTSequenceArg() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTPathExpression* sequence_path() const { return sequence_path_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&sequence_path_));
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* sequence_path_ = nullptr;
+};
+
 // Represents a named function call argument using syntax: name => expression.
 // The resolver will match these against available argument names in the
 // function signature.
@@ -2536,10 +2587,10 @@ class ASTSetOperation final : public ASTQueryExpression {
 
   // This enum is equivalent to ASTSetOperationEnums::ColumnPropagationMode in ast_enums.proto
   enum ColumnPropagationMode {
+    STRICT = ASTSetOperationEnums::STRICT,
     INNER = ASTSetOperationEnums::INNER,
     LEFT = ASTSetOperationEnums::LEFT,
-    FULL = ASTSetOperationEnums::FULL,
-    STRICT = ASTSetOperationEnums::STRICT
+    FULL = ASTSetOperationEnums::FULL
   };
 
   const ASTSetOperationMetadataList* metadata() const { return metadata_; }
@@ -2742,7 +2793,7 @@ class ASTSetOperationColumnPropagationMode final : public ASTNode {
     return fl.Finalize();
   }
 
-  ASTSetOperation::ColumnPropagationMode value_ = ASTSetOperation::INNER;
+  ASTSetOperation::ColumnPropagationMode value_ = ASTSetOperation::STRICT;
 };
 
 class ASTSetOperationMetadata final : public ASTNode {
@@ -10298,6 +10349,28 @@ class ASTCreateMaterializedViewStatement final : public ASTCreateViewStatementBa
   const ASTClusterBy* cluster_by_ = nullptr;
 };
 
+class ASTCreateApproxViewStatement final : public ASTCreateViewStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_APPROX_VIEW_STATEMENT;
+
+  ASTCreateApproxViewStatement() : ASTCreateViewStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&column_with_options_list_, AST_COLUMN_WITH_OPTIONS_LIST);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    return fl.Finalize();
+  }
+};
+
 // Base class for all loop statements (loop/end loop, while, foreach, etc.).
 // Every loop has a body.
 class ASTLoopStatement : public ASTScriptStatement {
@@ -10520,6 +10593,26 @@ class ASTAlterMaterializedViewStatement final : public ASTAlterStatementBase {
   static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_MATERIALIZED_VIEW_STATEMENT;
 
   ASTAlterMaterializedViewStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_, AST_PATH_EXPRESSION);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    return fl.Finalize();
+  }
+};
+
+class ASTAlterApproxViewStatement final : public ASTAlterStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_APPROX_VIEW_STATEMENT;
+
+  ASTAlterApproxViewStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -11506,6 +11599,58 @@ class ASTUndropStatement final : public ASTDdlStatement {
   const ASTPathExpression* name_ = nullptr;
   bool is_if_not_exists_ = false;
   const ASTForSystemTime* for_system_time_ = nullptr;
+};
+
+class ASTReplicaMaterializedViewDataSource final : public ASTTableDataSource {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_REPLICA_MATERIALIZED_VIEW_DATA_SOURCE;
+
+  ASTReplicaMaterializedViewDataSource() : ASTTableDataSource(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
+    fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
+    fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    return fl.Finalize();
+  }
+};
+
+class ASTCreateReplicaMaterializedViewStatement final : public ASTCreateStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_REPLICA_MATERIALIZED_VIEW_STATEMENT;
+
+  ASTCreateReplicaMaterializedViewStatement() : ASTCreateStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTReplicaMaterializedViewDataSource* data_source() const { return data_source_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&data_source_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* name_ = nullptr;
+  const ASTReplicaMaterializedViewDataSource* data_source_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
 };
 
 }  // namespace zetasql

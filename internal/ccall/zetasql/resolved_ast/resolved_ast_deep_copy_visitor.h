@@ -435,6 +435,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedDifferentialPrivacyAggregateScan(
       const ResolvedDifferentialPrivacyAggregateScan* node);
 
+  absl::Status CopyVisitResolvedAggregationThresholdAggregateScan(
+      const ResolvedAggregationThresholdAggregateScan* node);
+
   absl::Status CopyVisitResolvedSetOperationItem(
       const ResolvedSetOperationItem* node);
 
@@ -882,6 +885,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node);
 
+  absl::Status CopyVisitResolvedUndropStmt(
+      const ResolvedUndropStmt* node);
+
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
   // The individual visit methods for each of the node types. We will copy
@@ -1011,6 +1017,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedDifferentialPrivacyAggregateScan(
       const ResolvedDifferentialPrivacyAggregateScan* node) override;
+
+  absl::Status VisitResolvedAggregationThresholdAggregateScan(
+      const ResolvedAggregationThresholdAggregateScan* node) override;
 
   absl::Status VisitResolvedSetOperationItem(
       const ResolvedSetOperationItem* node) override;
@@ -1458,6 +1467,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node) override;
+
+  absl::Status VisitResolvedUndropStmt(
+      const ResolvedUndropStmt* node) override;
 
   // Copies the hint list from the original node to the copied node. This is
   // required, as hint_list is not a constructor arg, and the only way to

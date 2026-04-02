@@ -11,6 +11,7 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
+#include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/public/coercer/export.inc"
 #include "go-zetasql/public/function/export.inc"

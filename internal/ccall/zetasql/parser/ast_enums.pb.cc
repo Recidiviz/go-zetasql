@@ -668,7 +668,7 @@ const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PR
   "L\020\001\022\014\n\010DISTINCT\020\002\"K\n\017ColumnMatchMode\022\017\n\013"
   "BY_POSITION\020\001\022\021\n\rCORRESPONDING\020\002\022\024\n\020CORR"
   "ESPONDING_BY\020\003\"B\n\025ColumnPropagationMode\022"
-  "\t\n\005INNER\020\001\022\010\n\004LEFT\020\002\022\010\n\004FULL\020\003\022\n\n\006STRICT"
+  "\n\n\006STRICT\020\001\022\t\n\005INNER\020\002\022\010\n\004LEFT\020\003\022\010\n\004FULL"
   "\020\004\"\177\n\027ASTUnaryExpressionEnums\"d\n\002Op\022\013\n\007N"
   "OT_SET\020\000\022\007\n\003NOT\020\001\022\017\n\013BITWISE_NOT\020\002\022\t\n\005MI"
   "NUS\020\003\022\010\n\004PLUS\020\004\022\016\n\nIS_UNKNOWN\020\005\022\022\n\016IS_NO"
@@ -733,20 +733,21 @@ const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PR
   "InsertionMode\022\013\n\007NOT_SET\020\000\022\n\n\006APPEND\020\001\022\r"
   "\n\tOVERWRITE\020\002\"M\n\037ASTSpannerInterleaveCla"
   "useEnums\"*\n\004Type\022\013\n\007NOT_SET\020\000\022\006\n\002IN\020\001\022\r\n"
-  "\tIN_PARENT\020\002*\323\002\n\020SchemaObjectKind\022=\n0__S"
+  "\tIN_PARENT\020\002*\344\002\n\020SchemaObjectKind\022=\n0__S"
   "chemaObjectKind__switch_must_have_a_defa"
   "ult__\020\377\377\377\377\377\377\377\377\377\001\022\034\n\030kInvalidSchemaObject"
-  "Kind\020\001\022\026\n\022kAggregateFunction\020\002\022\r\n\tkConst"
-  "ant\020\003\022\r\n\tkDatabase\020\004\022\022\n\016kExternalTable\020\005"
-  "\022\r\n\tkFunction\020\006\022\n\n\006kIndex\020\007\022\025\n\021kMaterial"
-  "izedView\020\010\022\n\n\006kModel\020\t\022\016\n\nkProcedure\020\n\022\013"
-  "\n\007kSchema\020\013\022\n\n\006kTable\020\014\022\022\n\016kTableFunctio"
-  "n\020\r\022\t\n\005kView\020\016\022\022\n\016kSnapshotTable\020\017B\035\n\031co"
-  "m.google.zetasql.parserP\001"
+  "Kind\020\001\022\026\n\022kAggregateFunction\020\002\022\017\n\013kAppro"
+  "xView\020\021\022\r\n\tkConstant\020\003\022\r\n\tkDatabase\020\004\022\022\n"
+  "\016kExternalTable\020\005\022\r\n\tkFunction\020\006\022\n\n\006kInd"
+  "ex\020\007\022\025\n\021kMaterializedView\020\010\022\n\n\006kModel\020\t\022"
+  "\016\n\nkProcedure\020\n\022\013\n\007kSchema\020\013\022\n\n\006kTable\020\014"
+  "\022\022\n\016kTableFunction\020\r\022\t\n\005kView\020\016\022\022\n\016kSnap"
+  "shotTable\020\017B\035\n\031com.google.zetasql.parser"
+  "P\001"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto = {
-  false, false, 4145, descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto, "zetasql/parser/ast_enums.proto", 
+  false, false, 4162, descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto, "zetasql/parser/ast_enums.proto", 
   &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once, nullptr, 0, 32,
   schemas, file_default_instances, TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets,
   file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto, file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto, file_level_service_descriptors_zetasql_2fparser_2fast_5fenums_2eproto,
@@ -1074,10 +1075,10 @@ bool ASTSetOperationEnums_ColumnPropagationMode_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::STRICT;
 constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::INNER;
 constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::LEFT;
 constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::FULL;
-constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::STRICT;
 constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::ColumnPropagationMode_MIN;
 constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums::ColumnPropagationMode_MAX;
 constexpr int ASTSetOperationEnums::ColumnPropagationMode_ARRAYSIZE;
@@ -1742,6 +1743,7 @@ bool SchemaObjectKind_IsValid(int value) {
     case 13:
     case 14:
     case 15:
+    case 17:
       return true;
     default:
       return false;

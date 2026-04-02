@@ -33,6 +33,7 @@
 #include "go-zetasql/public/functions/convert_string_with_format/export.inc"
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
+#include "go-zetasql/public/functions/range/export.inc"
 #include "go-zetasql/public/functions/string/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/algorithm/container/export.inc"

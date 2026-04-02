@@ -88,106 +88,43 @@ class CastFilterScanCopyVisitor : public ResolvedASTRewriteVisitor {
   }
 };
 
-// This is a more complex example of modifying an AST.
-// This class does one thing: adds a WHERE clause to a simple query. It works
-// by visiting all table scans, and when it finds a table scan on the column
-// name and table provided, will add a >= comparison for the given threshold.
-//
-// Because this is just an example, corner cases are likely not covered.
-class AddFilterToTableScanCopyVisitor : public ResolvedASTRewriteVisitor {
+// This class will produce an error at the stated staged when
+// it encounters a ResolvedLiteral of the given int value.
+class ErrorCopyVisitor : public ResolvedASTRewriteVisitor {
  public:
-  // Constructor for AddFilterToTableScan. Takes a table name and column
-  // name to apply filter to, and the threshold in wihch to apply the >= on.
-  AddFilterToTableScanCopyVisitor(const std::string& table_name,
-                                  const std::string& column_name,
-                                  int32_t threshold, SimpleCatalog* catalog,
-                                  IdStringPool* id_string_pool)
-      : table_name_(table_name),
-        column_name_(column_name),
-        threshold_(threshold),
-        catalog_(catalog),
-        id_string_pool_(id_string_pool) {}
+  ErrorCopyVisitor(int pre_visit_error_value, int post_visit_error_value,
+                   int wrong_type_error_value)
+      : pre_visit_error_value_(pre_visit_error_value),
+        post_visit_error_value_(post_visit_error_value),
+        wrong_type_error_value_(wrong_type_error_value) {}
 
  private:
-  absl::Status PreVisitResolvedFilterScan(
-      const ResolvedFilterScan& node) override {
-    // Code does not exist for this case, so just return failure. In a real
-    // example, you would likely try to make an association between the
-    // table scan children of this node and add an AND clause to combine
-    // the existing filter with the added one as appropriate.
-    return absl::Status(absl::StatusCode::kCancelled,
-                        "No filter scans allowed.");
+  absl::Status PreVisitResolvedLiteral(const ResolvedLiteral& node) override {
+    if (node.value().type()->IsInteger() && !node.value().is_null() &&
+        node.value().int64_value() == pre_visit_error_value_) {
+      return absl::Status(absl::StatusCode::kCancelled, "pre visit error");
+    }
+    return absl::OkStatus();
   }
-
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedTableScan(
-      std::unique_ptr<const ResolvedTableScan> table_scan_copy) override {
-    // Visit a table scan. If it is on the correct table/column, add the filter.
-    int column_id_in_scan = -1;
-
-    // Check if it has the column.
-    for (const auto& column : table_scan_copy->column_list()) {
-      if (column.table_name() == table_name_ && column.name() == column_name_) {
-        column_id_in_scan = column.column_id();
-        break;
-      }
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> PostVisitResolvedLiteral(
+      std::unique_ptr<const ResolvedLiteral> node) override {
+    if (node->value().type()->IsInteger() && !node->value().is_null() &&
+        node->value().int64_value() == post_visit_error_value_) {
+      return absl::Status(absl::StatusCode::kCancelled, "post visit error");
+    }
+    if (node->value().type()->IsInteger() && !node->value().is_null() &&
+        node->value().int64_value() == wrong_type_error_value_) {
+      // The actual type doesn't matter, but it doesn't share any class
+      // hierarchy with ResolvedLiteral, so it's guaranteed to produce an
+      // error when returned (except at top-level).
+      return ResolvedObjectUnitBuilder().Build();
     }
 
-    // If the ResolvedTableScan is over the correct column, add the filter.
-    if (column_id_in_scan == -1) {
-      // Does not contain the column, so we should not modify it.
-      return table_scan_copy;
-    }
-    // Get a copy of the ResolvedTableScan to use as an input scan for the
-    // filter scan. We push it to the stack and pop it to get a deep copy.
-    EXPECT_EQ(table_scan_copy->for_system_time_expr(), nullptr);
-
-    // Create the function for the filter expression.
-    const Function* function = nullptr;
-    ZETASQL_RETURN_IF_ERROR(catalog_->FindFunction(
-        {FunctionSignatureIdToName(FN_GREATER_OR_EQUAL)}, &function));
-
-    // Create a new column for the input of >= comparison.
-    ResolvedColumn input_column(
-        column_id_in_scan, id_string_pool_->Make(table_name_),
-        id_string_pool_->Make(column_name_), types::Int32Type());
-
-    // We have two arguments for our function call, the column that we compare
-    // and the literal value.
-
-    // We have only twos argument, and the type of both are int32_t.
-    FunctionArgumentTypeList argument_type_list = {types::Int32Type(),
-                                                   types::Int32Type()};
-
-    // The type of the result of function call. It is bool, as we are doing
-    // a comparison.
-    const FunctionArgumentType fn_result_type(types::BoolType());
-
-    // Create the FunctionSignature. Return type is Bool, argument type is
-    // int32_t. There is no context_ptr, so pass nullptr.
-    FunctionSignature signature(fn_result_type, argument_type_list, nullptr);
-
-    std::vector<ResolvedColumn> column_list = table_scan_copy->column_list();
-    // Add this new filter scan to the stack, instead of the old table scan.
-    return ResolvedFilterScanBuilder()
-        .set_column_list(std::move(column_list))
-        .set_input_scan(std::move(table_scan_copy))
-        .set_filter_expr(ResolvedFunctionCallBuilder()
-                             .set_type(types::BoolType())
-                             .set_function(function)
-                             .add_argument_list(MakeResolvedColumnRef(
-                                 types::Int32Type(), input_column, false))
-                             .add_argument_list(
-                                 MakeResolvedLiteral(Value::Int32(threshold_))))
-        .Build();
+    return node;
   }
-
- private:
-  const std::string table_name_;
-  const std::string column_name_;
-  int32_t threshold_;
-  SimpleCatalog* catalog_;
-  IdStringPool* id_string_pool_;
+  const int pre_visit_error_value_;
+  const int post_visit_error_value_;
+  const int wrong_type_error_value_;
 };
 
 class ResolvedASTRewriteVisitorTest : public ::testing::Test {
@@ -261,6 +198,10 @@ class ResolvedASTRewriteVisitorTest : public ::testing::Test {
       const std::string& query);
   std::unique_ptr<const ResolvedNode> TestCastFilterScanCopyVisitor(
       const std::string& query);
+  absl::Status TestErrorPropagationInVisitor(const std::string& query,
+                                             int pre_visit_error_value,
+                                             int post_visit_error_value,
+                                             int wrong_type_error_value);
 
   // Keeps the analyzer outputs from the tests alive without having to pass them
   // around. This is a vector because there are tests that analyze multiple
@@ -344,6 +285,14 @@ ResolvedASTRewriteVisitorTest::TestCastFilterScanCopyVisitor(
     const std::string& query) {
   CastFilterScanCopyVisitor visitor;
   return ApplyCopyVisitor(query, &visitor);
+}
+
+absl::Status ResolvedASTRewriteVisitorTest::TestErrorPropagationInVisitor(
+    const std::string& query, int pre_visit_error_value,
+    int post_visit_error_value, int wrong_type_error_value) {
+  ErrorCopyVisitor visitor(pre_visit_error_value, post_visit_error_value,
+                           wrong_type_error_value);
+  return ApplyCopyVisitorImpl(query, &visitor).status();
 }
 
 TEST_F(ResolvedASTRewriteVisitorTest, DeepCopyASTTest) {
@@ -436,6 +385,33 @@ TEST_F(ResolvedASTRewriteVisitorTest, TestCastFilterScan) {
   auto desired_ast = TestDeepCopyAST(input_sql_modified);
 
   ASSERT_EQ(ast->DebugString(), desired_ast->DebugString());
+}
+
+TEST_F(ResolvedASTRewriteVisitorTest, TestErrorPropagation) {
+  // Queries are expected to fail at specific stages.
+  {
+    const std::string input_sql = "SELECT 1";
+    EXPECT_THAT(TestErrorPropagationInVisitor(input_sql, 1, 0, 0),
+                zetasql_base::testing::StatusIs(absl::StatusCode::kCancelled,
+                                          "pre visit error"));
+    EXPECT_THAT(TestErrorPropagationInVisitor(input_sql, 0, 1, 0),
+                zetasql_base::testing::StatusIs(absl::StatusCode::kCancelled,
+                                          "post visit error"));
+    EXPECT_THAT(TestErrorPropagationInVisitor(input_sql, 0, 0, 1),
+                zetasql_base::testing::StatusIs(absl::StatusCode::kInternal));
+  }
+  {
+    // Slightly more complicated.
+    const std::string input_sql = "SELECT * from (select 5) where 1 + 1 = 1";
+    EXPECT_THAT(TestErrorPropagationInVisitor(input_sql, 1, 0, 0),
+                zetasql_base::testing::StatusIs(absl::StatusCode::kCancelled,
+                                          "pre visit error"));
+    EXPECT_THAT(TestErrorPropagationInVisitor(input_sql, 0, 1, 0),
+                zetasql_base::testing::StatusIs(absl::StatusCode::kCancelled,
+                                          "post visit error"));
+    EXPECT_THAT(TestErrorPropagationInVisitor(input_sql, 0, 0, 1),
+                zetasql_base::testing::StatusIs(absl::StatusCode::kInternal));
+  }
 }
 
 TEST_F(ResolvedASTRewriteVisitorTest, TestOrderByNotRepropagated) {

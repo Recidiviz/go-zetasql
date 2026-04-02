@@ -88,6 +88,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"and", KW_AND, kReserved},
     {"anonymization", KW_ANONYMIZATION},
     {"any", KW_ANY, kReserved},
+    {"approx", KW_APPROX},
     {"are", KW_ARE},
     {"array", KW_ARRAY, kReserved},
     {"as", KW_AS, kReserved},
@@ -292,6 +293,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"search", KW_SEARCH},
     {"security", KW_SECURITY},
     {"select", KW_SELECT, kReserved},
+    {"sequence", KW_SEQUENCE},
     {"set", KW_SET, kReserved},
     {"show", KW_SHOW},
     {"simple", KW_SIMPLE},
@@ -549,6 +551,7 @@ CreateNonReservedIdentifiersThatMustBeBackquotedTrie() {
                          // POLICY
            "safe_cast",  // SAFE_CAST(...) versus `safe_cast`(3)
            "update",     // INSERT UPDATE versus INSERT `update`
+           "clamped",    // See AMBIGUOUS CASE 14 in bison_parser.y
            // "value" is not included because it causes too much escaping for
            // this very commonly used name. The impact of this is small. The
            // only place where this can be interpreted as a keyword is in AS

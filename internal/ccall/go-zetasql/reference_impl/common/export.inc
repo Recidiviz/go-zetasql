@@ -8,6 +8,7 @@
 #include "zetasql/reference_impl/variable_id.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/collator_lite/export.inc"
 #include "go-zetasql/public/type/export.inc"
