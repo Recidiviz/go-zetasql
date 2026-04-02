@@ -311,7 +311,10 @@ void GO_EXPORT(Type_TypeNameWithParameters)(void * arg0,void * arg1,int arg2,voi
 {
   zetasql::Type *type = (zetasql::Type *)arg0;
   zetasql::TypeParameters *params = (zetasql::TypeParameters *)arg1;
-  absl::StatusOr<std::string> ret = type->TypeNameWithParameters(*params, (zetasql::ProductMode)arg2);
+  zetasql::TypeModifiers mods = zetasql::TypeModifiers::MakeTypeModifiers(
+      *params, zetasql::Collation{});
+  absl::StatusOr<std::string> ret =
+      type->TypeNameWithModifiers(mods, (zetasql::ProductMode)arg2);
   if (ret.ok()) {
     *arg3 = (void *)((new std::string(ret.value()))->c_str());
     *arg4 = (void *)(new absl::Status(absl::OkStatus()));
@@ -756,7 +759,12 @@ void GO_EXPORT(Value_enum_value)(void * arg0,int* arg1)
 void GO_EXPORT(Value_enum_name)(void * arg0,void ** arg1)
 {
   zetasql::Value *value = (zetasql::Value *)arg0;
-  *arg1 = (void *)((new std::string(value->enum_name()))->c_str());
+  absl::StatusOr<std::string_view> ret = value->EnumName();
+  if (ret.ok()) {
+    *arg1 = (void *)((new std::string(std::string(ret.value())))->c_str());
+  } else {
+    *arg1 = (void *)((new std::string(""))->c_str());
+  }
 }
 
 void GO_EXPORT(Value_ToTime)(void * arg0,int64_t* arg1)
@@ -2778,7 +2786,8 @@ void GO_EXPORT(TableValuedFunction_GetSupportedSignaturesUserFacingText)(void * 
 {
   zetasql::TableValuedFunction *f = (zetasql::TableValuedFunction *)arg0;
   zetasql::LanguageOptions opt;
-  *arg1 = (void *)((new std::string(f->GetSupportedSignaturesUserFacingText(opt)))->c_str());
+  *arg1 = (void *)((new std::string(f->GetSupportedSignaturesUserFacingText(
+      opt, /*print_template_and_name_details=*/false)))->c_str());
 }
 
 void GO_EXPORT(TableValuedFunction_DebugString)(void * arg0,void ** arg1)
