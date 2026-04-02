@@ -4,11 +4,6 @@
 // bytesinkutil.h
 // created: 2017sep14 Markus W. Scherer
 
-#pragma once
-
-#ifndef ICU_COMMON_BYTESINKUTIL_H_
-#define ICU_COMMON_BYTESINKUTIL_H_
-
 #ifndef GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
 #define GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
 
@@ -91,4 +86,3 @@ private:
 U_NAMESPACE_END
 
 #endif  // GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
-#endif  // ICU_COMMON_BYTESINKUTIL_H_

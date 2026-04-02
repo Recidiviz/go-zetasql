@@ -52,6 +52,89 @@ func outExternalDir() string {
 	return filepath.Join(outDir(), "external")
 }
 
+func appendLineIfMissing(path string, needle string, insertAfter string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	content := string(data)
+	if strings.Contains(content, needle) {
+		return nil
+	}
+	idx := strings.Index(content, insertAfter)
+	if idx == -1 {
+		return nil
+	}
+	idx += len(insertAfter)
+	content = content[:idx] + "\n" + needle + content[idx:]
+	return os.WriteFile(path, []byte(content), 0o644)
+}
+
+func replaceIfMissing(path string, old string, new string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	content := string(data)
+	if strings.Contains(content, new) {
+		return nil
+	}
+	if !strings.Contains(content, old) {
+		return nil
+	}
+	content = strings.Replace(content, old, new, 1)
+	return os.WriteFile(path, []byte(content), 0o644)
+}
+
+func applyPostCopyOverlays() error {
+	if err := replaceIfMissing(
+		filepath.Join(ccallDir(), "zetasql", "public", "functions", "date_time_util.cc"),
+		`  return MakeEvalError() << "Converting timestamp interval " << interval
+                         << " at " << TimestampScale_Name(interval_scale)
+                         << " scale to " << TimestampScale_Name(output_scale)
+                         << " scale causes overflow";
+}`,
+		`  return MakeEvalError() << "Converting timestamp interval " << interval
+                         << " at " << TimestampScale_Name(interval_scale)
+                         << " scale to " << TimestampScale_Name(output_scale)
+                         << " scale causes overflow";
+}
+#undef FCT`,
+	); err != nil {
+		return err
+	}
+	if err := appendLineIfMissing(
+		filepath.Join(ccallDir(), "zetasql", "public", "types", "BUILD"),
+		`        "//zetasql/public/proto:wire_format_annotation_cc_proto",`,
+		`        "//zetasql/public/functions:rounding_mode_cc_proto",`,
+	); err != nil {
+		return err
+	}
+	if err := replaceIfMissing(
+		filepath.Join(ccallDir(), "icu", "common", "bytesinkutil.h"),
+		`#include "unicode/utypes.h"
+`,
+		`#ifndef GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+#define GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+
+#include "unicode/utypes.h"
+`,
+	); err != nil {
+		return err
+	}
+	if err := replaceIfMissing(
+		filepath.Join(ccallDir(), "icu", "common", "bytesinkutil.h"),
+		"U_NAMESPACE_END\n",
+		`U_NAMESPACE_END
+
+#endif  // GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+`,
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
 var copyExternalLibMap = map[string]string{
 	"icu/source":                "icu",
 	"json":                      "json",
@@ -146,6 +229,9 @@ func main() {
 			return nil
 		},
 	); err != nil {
+		panic(err)
+	}
+	if err := applyPostCopyOverlays(); err != nil {
 		panic(err)
 	}
 }
