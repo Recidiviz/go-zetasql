@@ -64,7 +64,7 @@ mkdir -p "$GOCACHE" "$GOMODCACHE"
 
 Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
 
-**Docker-based tests:** `make test/linux` in this repo builds a local **`go-zetasql:dev`** image and runs `go test` with a **mounted tree** and **named Docker volumes** (`go-zetasql-gocache`, `go-zetasql-gomodcache`) so repeated runs reuse the CGO build cache. Use `make docker/build-dev` to build only the image.
+**Docker-based tests (recommended):** Use **`make test`** or **`make test/linux`** — this builds a slim **`go-zetasql:dev`** image (**`--target dev`**: Go + clang only; no module compile in the image build) and runs **`go test`** with your **working tree** and **`DOCKER_GO_CACHE_ROOT`** (default **`~/.cache/go-zetasql-docker`**) bind-mounted as **`gocache/`** and **`gomodcache/`**. Compilation therefore happens **once**, inside the test container, and repeats reuse the same host caches. This matches CI flags (`-race`, root package by default); set e.g. **`TESTPKG=./...`** to widen scope. **`go-zetasqlite`** and **`bigquery-emulator`** **`make test/linux`** use the same **`DOCKER_GO_CACHE_ROOT`** so the stack shares one warm cache. The default **`docker build`** (release image) still runs **`go install`** with BuildKit cache mounts for registry builds; that path is separate from local test caches.
 
 **Downstream Docker images:** `bigquery-emulator` accepts `GO_ZETASQL_BASE` (default: the Recidiviz base image). After building `go-zetasql:dev`, you can point the emulator at it, for example:
 
