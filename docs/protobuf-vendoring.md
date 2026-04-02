@@ -82,4 +82,66 @@ These are implementation choices for maintainers; none are required for a correc
 
 ---
 
-**Related code**: updater entrypoint [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`skipProtobufCopyFromCache`, `applyPostCopyOverlays`, `copyExternalLibMap`).
+## Protobuf upgrade runbook (beyond amalgamation patches)
+
+Use this when bumping **ZetaSQL** (and its pinned protobuf / Abseil) or when CGO fails after a vendor refresh. It complements the amalgamation rules above: first keep **one** coherent protobuf tree, then address **API** and **cross-package** skew.
+
+### Blocking: table-driven merge and `CodedInputStream`
+
+Amalgamation includes [`generated_message_table_driven_lite.cc`](../internal/ccall/protobuf/google/protobuf/generated_message_table_driven_lite.cc) and [`generated_message_table_driven.cc`](../internal/ccall/protobuf/google/protobuf/generated_message_table_driven.cc). Their `UnknownFieldHandler::*::ParseExtension` paths call `ExtensionSet::ParseField` with an **`io::CodedInputStream*`** (tag + stream + prototype + unknown-field sink).
+
+Newer upstream protobuf may emphasize the **pointer + `ParseContext`** parser only. If your vendored headers drop the **`CodedInputStream` overloads**, the TU fails to compile or link even when amalgamation guards are correct.
+
+**Preferred fix (compatibility layer):** restore or keep the **lite** overloads that delegate through `GeneratedExtensionFinder`, `FieldSkipper`, and `CodedOutputStreamFieldSkipper` (see [`wire_format_lite.h`](../internal/ccall/protobuf/google/protobuf/wire_format_lite.h)). Implement in [`extension_set.cc`](../internal/ccall/protobuf/google/protobuf/extension_set.cc) and declare in [`extension_set.h`](../internal/ccall/protobuf/google/protobuf/extension_set.h); full-runtime paths live in [`extension_set_heavy.cc`](../internal/ccall/protobuf/google/protobuf/extension_set_heavy.cc) (e.g. `UnknownFieldSetFieldSkipper`). Port from historical protobuf or from a single consistent upstream revision, adapting renames (`PROTOBUF_PREDICT`, `ExtensionInfo` layout, `Add*` / `descriptor` parameters).
+
+**Larger alternative:** refactor table-driven merge to build `internal::ParseContext` + a zero-copy stream and call `ParseField(uint64_t tag, const char* ptr, …, ParseContext*)` only—only if restoring the compatibility layer is infeasible given current `Extension` internals.
+
+**Validation:** `CGO_ENABLED=1 go test -count=1 ./internal/ccall/go-protobuf/protobuf/` until `ParseField` arity / overload errors are gone.
+
+```mermaid
+flowchart LR
+  subgraph merge [Table-driven merge]
+    T[MergePartialFromCodedStreamImpl]
+    U[UnknownFieldHandler ParseExtension]
+    T --> U
+  end
+  U --> E[ExtensionSet ParseField with CodedInputStream]
+  E --> OK[Compiles and links]
+```
+
+### Abseil C++ standard (go-absl CGO)
+
+Packages under [`internal/ccall/go-absl/`](../internal/ccall/go-absl/) that set **`-std=c++11`** can fail Abseil’s `policy_checks.h` (C++14+). Align with **`c++17`** (or at least **`c++14`**) on any `bind_*.go` that compiles Abseil headers, consistent with [`internal/ccall/go-protobuf/protobuf/bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) and siblings.
+
+### Updater and generator (ZetaSQL / parser / proto skew)
+
+Parser errors (e.g. missing AST types or fields in generated headers) usually mean **vendored ZetaSQL C++** and **generated `.pb.*` / Go** are out of sync—not amalgamation alone.
+
+1. Run [`internal/cmd/updater`](../internal/cmd/updater) with a populated **`cache/`** as required by the tool.
+2. **Unset** `GO_ZETASQL_SKIP_PROTOBUF_COPY` (do **not** set `=1`) when you intend a **full** protobuf copy from cache for that upgrade.
+3. Run [`internal/cmd/generator`](../internal/cmd/generator) so `includeDirs`, copied trees (e.g. `utf8_range`, protobuf), and generated Go stay aligned.
+4. Re-check parser sources (e.g. [`parse_tree_serializer.cc`](../internal/ccall/zetasql/parser/parse_tree_serializer.cc)) against [`parse_tree.pb.h`](../internal/ccall/zetasql/parser/parse_tree.pb.h) after protos match the pinned tag (e.g. **2023.08.1**).
+
+Commit large `internal/ccall` vendor updates separately from small CGO flag fixes, per conventional commits.
+
+### Three-repository verification
+
+After go-zetasql is green:
+
+1. **[go-zetasql](../..)** — `go test ./...` (or narrow packages first).
+2. **[go-zetasqlite](https://github.com/goccy/go-zetasqlite)** — same, after updating the `go-zetasql` module replace/version if needed.
+3. **[bigquery-emulator](https://github.com/goccy/bigquery-emulator)** — same.
+
+### Optional cleanup
+
+- Remove or **gitignore** stray build artifacts (e.g. `libprotobuf_cgo.a` under `internal/ccall/go-protobuf/protobuf/lib/` if present).
+- Reconcile [`.github/workflows/go.yml`](../.github/workflows/go.yml) if macOS or static-library steps were added for an abandoned static-archive approach.
+
+### Risk notes
+
+- Porting **`ParseField(CodedInputStream*)`** must stay consistent with current **`ExtensionInfo`** and **`ExtensionSet::Add*`** APIs; expect iterative compile fixes, not a blind copy-paste from old protobuf.
+- Edits around **mutable default strings** / **`Arena`** in table-driven lite paths (e.g. [`generated_message_table_driven_lite.h`](../internal/ccall/protobuf/google/protobuf/generated_message_table_driven_lite.h)) can affect **non-empty default string** parsing; if tests regress, compare with [`arenastring.h`](../internal/ccall/protobuf/google/protobuf/arenastring.h) (`LazyString`, `InitExternal`, etc.).
+
+---
+
+**Related code**: updater [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`copyExternalLibMapForRun`, `applyPostCopyOverlays`, `copyExternalLibMap`).
