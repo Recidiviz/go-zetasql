@@ -2,7 +2,7 @@ DOCKER_IMAGE ?= go-zetasql
 DOCKER_DEV_IMAGE ?= go-zetasql:dev
 # Shared host tree for GOCACHE, GOMODCACHE, and ccache (CGO). Default matches go-zetasqlite and
 # bigquery-emulator Makefiles so Docker runs and local/build share one warm cache.
-LOCAL_GO_CACHE_ROOT ?= $(HOME)/.cache/go-zetasql
+GO_CACHE_ROOT ?= $(HOME)/.cache/go-zetasql
 # Default matches .github/workflows/go.yml (root package only). Set TESTPKG=./... to test all packages.
 TESTPKG ?= ./
 # For local/build: package pattern passed to go build (default all modules under repo root).
@@ -17,9 +17,9 @@ DOCKER_DEV_ENV := \
 
 DOCKER_DEV_VOLUMES := \
 	-v "$(CURDIR)":/go-zetasql \
-	-v "$(LOCAL_GO_CACHE_ROOT)/gocache":/root/.cache/go-build \
-	-v "$(LOCAL_GO_CACHE_ROOT)/gomodcache":/go/pkg/mod \
-	-v "$(LOCAL_GO_CACHE_ROOT)/ccache":/root/.ccache
+	-v "$(GO_CACHE_ROOT)/gocache":/root/.cache/go-build \
+	-v "$(GO_CACHE_ROOT)/gomodcache":/go/pkg/mod \
+	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
 
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
 	local/build local/test \
@@ -27,9 +27,9 @@ DOCKER_DEV_VOLUMES := \
 
 cache-dirs:
 	mkdir -p \
-		"$(LOCAL_GO_CACHE_ROOT)/gocache" \
-		"$(LOCAL_GO_CACHE_ROOT)/gomodcache" \
-		"$(LOCAL_GO_CACHE_ROOT)/ccache"
+		"$(GO_CACHE_ROOT)/gocache" \
+		"$(GO_CACHE_ROOT)/gomodcache" \
+		"$(GO_CACHE_ROOT)/ccache"
 
 docker/build:
 	docker build -t $(DOCKER_IMAGE) .
@@ -37,7 +37,7 @@ docker/build:
 docker/build-dev: cache-dirs
 	docker build -t $(DOCKER_DEV_IMAGE) --target dev .
 
-# --- Local host (no Docker): ccache + clang + same LOCAL_GO_CACHE_ROOT as Docker ----------
+# --- Local host (no Docker): ccache + clang + same GO_CACHE_ROOT as Docker ----------
 # Requires: clang, clang++, ccache on PATH.
 
 # Example: make local/build BUILDPKG=./internal/ccall/go-zetasql
@@ -45,10 +45,10 @@ local/build: cache-dirs
 	CGO_ENABLED=1 \
 	CC="ccache clang" \
 	CXX="ccache clang++" \
-	CCACHE_DIR="$(LOCAL_GO_CACHE_ROOT)/ccache" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
 	CCACHE_COMPRESS=1 \
-	GOCACHE="$(LOCAL_GO_CACHE_ROOT)/gocache" \
-	GOMODCACHE="$(LOCAL_GO_CACHE_ROOT)/gomodcache" \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go build -tags zetasql $(BUILDPKG)
 
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
@@ -56,10 +56,10 @@ local/test: cache-dirs
 	CGO_ENABLED=1 \
 	CC="ccache clang" \
 	CXX="ccache clang++" \
-	CCACHE_DIR="$(LOCAL_GO_CACHE_ROOT)/ccache" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
 	CCACHE_COMPRESS=1 \
-	GOCACHE="$(LOCAL_GO_CACHE_ROOT)/gocache" \
-	GOMODCACHE="$(LOCAL_GO_CACHE_ROOT)/gomodcache" \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go test -tags zetasql -v $(TESTPKG) -count=1
 
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
