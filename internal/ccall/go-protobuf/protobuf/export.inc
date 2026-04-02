@@ -2,6 +2,7 @@
 #define PROTOBUF_EXPORT_H
 
 #define InsertIfNotPresent protobuf_InsertIfNotPresent
+#pragma push_macro("GO_EXPORT")
 #define GO_EXPORT(x) export_protobuf_##x
 
 // Single port_def / port_undef for this translation unit (see port_def.inc).
@@ -165,8 +166,10 @@
 
 #undef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 #include "google/protobuf/port_undef.inc"
+/* Later zetasql *.pb.cc in the same TU include port_def.inc again; allow it. */
+#undef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
 
 #undef InsertIfNotPresent
-#undef GO_EXPORT
+#pragma pop_macro("GO_EXPORT")
 
 #endif
