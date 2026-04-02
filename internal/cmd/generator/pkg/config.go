@@ -28,9 +28,10 @@ type DependencyConfig struct {
 }
 
 type ConflictSymbol struct {
-	File    string   `yaml:"file"`
-	Symbol  string   `yaml:"symbol"`
-	Symbols []string `yaml:"symbols"`
+	File           string            `yaml:"file"`
+	Symbol         string            `yaml:"symbol"`
+	Symbols        []string          `yaml:"symbols"`
+	ExportSuffixes map[string]string `yaml:"export_suffixes"` // per-symbol suffix between FQDN and symbol (e.g. expr -> FQDN_expr_kOrderById)
 }
 
 type SourceConfig struct {

@@ -59,7 +59,12 @@ func goPkgPath(base, pkg string) string {
 	if baseJoined == "" {
 		return "go-" + pkg
 	}
-	return "go-" + filepath.Join(baseJoined, pkg)
+	joined := filepath.Join(baseJoined, pkg)
+	// @boringssl//boringssl maps to a single go-boringssl tree (export.inc at root), not go-boringssl/boringssl.
+	if joined == "boringssl/boringssl" {
+		return "go-boringssl"
+	}
+	return "go-" + joined
 }
 
 func normalizeGoPkgPath(name string) string {

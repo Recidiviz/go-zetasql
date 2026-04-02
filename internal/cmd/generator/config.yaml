@@ -220,8 +220,12 @@ conflict_symbols:
     symbols:
       - kOrderById
       - kIsNullFnName
+    export_suffixes:
+      kOrderById: expr
   - file:   zetasql/analyzer/resolver_query.cc
     symbol: kOrderById
+    export_suffixes:
+      kOrderById: query
   - file:   zetasql/public/functions/cast_date_time.cc
     symbols:
       - powers_of_ten

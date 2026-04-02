@@ -31,7 +31,8 @@ type Generator struct {
 	libMap                        map[string]*Lib
 	pkgMap                        map[string]Package
 	importSymbolPackageMap        map[string]Package
-	containsConflictSymbolFileMap map[string][]string
+	containsConflictSymbolFileMap     map[string][]string
+	conflictExportSuffixByFileSymbol map[string]map[string]string // file -> symbol -> suffix
 	containsAddSourceFileMap      map[string]SourceConfig
 	pkgToAllDeps                  map[string][]string
 	internalExportNames           []string
@@ -40,6 +41,7 @@ type Generator struct {
 
 func NewGenerator(cfg *Config, bridge *Bridge, importSymbol *ImportSymbol, templates embed.FS) *Generator {
 	containsConflictSymbolFileMap := map[string][]string{}
+	conflictExportSuffixByFileSymbol := map[string]map[string]string{}
 	for _, sym := range cfg.ConflictSymbols {
 		sym := sym
 		symbols := append([]string{}, sym.Symbols...)
@@ -47,6 +49,14 @@ func NewGenerator(cfg *Config, bridge *Bridge, importSymbol *ImportSymbol, templ
 			symbols = append(symbols, sym.Symbol)
 		}
 		containsConflictSymbolFileMap[sym.File] = append(containsConflictSymbolFileMap[sym.File], symbols...)
+		if len(sym.ExportSuffixes) > 0 {
+			if conflictExportSuffixByFileSymbol[sym.File] == nil {
+				conflictExportSuffixByFileSymbol[sym.File] = map[string]string{}
+			}
+			for k, v := range sym.ExportSuffixes {
+				conflictExportSuffixByFileSymbol[sym.File][k] = v
+			}
+		}
 	}
 	containsAddSourceFileMap := map[string]SourceConfig{}
 	for _, src := range cfg.AddSources {
@@ -70,7 +80,8 @@ func NewGenerator(cfg *Config, bridge *Bridge, importSymbol *ImportSymbol, templ
 		bridge:                        bridge,
 		importSymbol:                  importSymbol,
 		templates:                     templates,
-		containsConflictSymbolFileMap: containsConflictSymbolFileMap,
+		containsConflictSymbolFileMap:     containsConflictSymbolFileMap,
+		conflictExportSuffixByFileSymbol: conflictExportSuffixByFileSymbol,
 		containsAddSourceFileMap:      containsAddSourceFileMap,
 		importSymbolPackageMap:        importSymbolPackageMap,
 		pkgMap:                        pkgMap,
@@ -599,7 +610,13 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 		sourceParam := SourceParam{Value: src}
 		if symbols, exists := g.containsConflictSymbolFileMap[src]; exists {
 			for _, symbol := range symbols {
-				sourceParam.BeforeIncludeHook += fmt.Sprintf("\n#define %s %s_%s", symbol, param.FQDN, symbol)
+				rhs := fmt.Sprintf("%s_%s", param.FQDN, symbol)
+				if g.conflictExportSuffixByFileSymbol != nil {
+					if suf, ok := g.conflictExportSuffixByFileSymbol[src][symbol]; ok && suf != "" {
+						rhs = fmt.Sprintf("%s_%s_%s", param.FQDN, suf, symbol)
+					}
+				}
+				sourceParam.BeforeIncludeHook += fmt.Sprintf("\n#define %s %s", symbol, rhs)
 			}
 			sourceParam.AfterIncludeHook = "\n"
 			for i := len(symbols) - 1; i >= 0; i-- {
