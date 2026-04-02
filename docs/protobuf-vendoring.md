@@ -145,3 +145,62 @@ After go-zetasql is green:
 ---
 
 **Related code**: updater [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`copyExternalLibMapForRun`, `applyPostCopyOverlays`, `copyExternalLibMap`).
+
+---
+
+## Upgrade plan execution notes (protobuf / ZetaSQL refresh)
+
+This section tracks the **“protobuf upgrade next steps”** plan: restore table-driven + `CodedInputStream` compatibility, align Abseil C++, run updater/generator, verify downstream modules, optional CI cleanup.
+
+### Completed in this repo (vendor coherence)
+
+| Item | Detail |
+|------|--------|
+| **ExtensionSet `CodedInputStream` overloads** | Keep the **`io::CodedInputStream*`-based** `ParseField` / `ParseFieldWithExtensionInfo` overloads and template that table-driven merge expects; **do not** declare the same overload set twice (parameter names `extendee` vs `containing_type` still count as one signature in C++). |
+| **`MapEntryHelper` + `FromHelper`** | Some Bazel-pinned protobuf drops move **`MapEntryHelper`** out of [`map_entry_lite.h`](../internal/ccall/protobuf/google/protobuf/map_entry_lite.h) while [`generated_message_table_driven.h`](../internal/ccall/protobuf/google/protobuf/generated_message_table_driven.h) still references it. Restore the **table-driven facsimile** of a map entry (`_has_bits_`, `_cached_size_`, `key_`, `value_`) plus **`FromHelper`** for `TYPE_STRING` / `TYPE_BYTES` / `TYPE_MESSAGE` so `MapFieldSerializer` and deterministic map sorting compile. |
+| **`EntryTypeTrait` on map fields** | `MapFieldSerializer` uses `MapEntryHelper<typename MapFieldType::EntryTypeTrait>`. Add **`typedef Derived EntryTypeTrait`** next to `EntryType` on [`MapFieldLite`](../internal/ccall/protobuf/google/protobuf/map_field_lite.h) and [`MapField`](../internal/ccall/protobuf/google/protobuf/map_field.h). |
+| **`ArenaStringPtr` shims for lite table-driven** | [`generated_message_table_driven_lite.h`](../internal/ccall/protobuf/google/protobuf/generated_message_table_driven_lite.h) may call **`Destroy(ArenaStringPtr::EmptyDefault{}, arena)`**, **`UnsafeSetDefault`**, and **`MutableNoCopy(default_ptr, arena)`** while [`arenastring.h`](../internal/ccall/protobuf/google/protobuf/arenastring.h) only exposed the one-arg `MutableNoCopy`. Add nested **`EmptyDefault`**, **`UnsafeSetDefault(const std::string*)`**, **`MutableNoCopy(const std::string*, Arena*)`**, and **`Destroy(EmptyDefault, Arena*)`** in the amalgamation copy. |
+
+**Sanity compile:** from repo root:
+
+```bash
+CGO_ENABLED=1 go test -count=1 ./internal/ccall/go-protobuf/protobuf/
+```
+
+(Package has no tests; a quick pass still builds the amalgamated protobuf TU.)
+
+### Updater / generator (runbook commands)
+
+From a populated [`internal/cmd/updater/cache/`](../internal/cmd/updater/cache/) (Bazel `external/` + `execroot/.../bin` layout the updater expects):
+
+```bash
+# Refresh ZetaSQL + third-party trees from cache. Omit protobuf copy if you are
+# preserving local patches (otherwise the copy overwrites this doc’s fixes):
+cd internal/cmd/updater
+GO_ZETASQL_SKIP_PROTOBUF_COPY=1 go run .
+
+cd ../generator
+go run .
+```
+
+After any **`com_google_protobuf` full copy**, re-apply at minimum: **`port_def.inc` / `port_undef.inc` amalgamation guards**, **`export.inc`**, and the rows in the table above if upstream still omits them.
+
+### Verification (three repositories)
+
+1. **go-zetasql** — `CGO_ENABLED=1 go test ./...` once parser/proto/flex amalgamation issues are resolved (see below).
+2. **[go-zetasqlite](https://github.com/goccy/go-zetasqlite)** — update the `go-zetasql` replace/version, then `go test ./...`.
+3. **[bigquery-emulator](https://github.com/goccy/bigquery-emulator)** — same.
+
+### Known follow-ups (full `./...` on this branch)
+
+These are **not** fixed by protobuf amalgamation alone; treat them as separate upgrade checklist items:
+
+- **`utf8_validity.h`**: newer `parse_context.cc` / `wire_format_lite.cc` include it; vendor **`utf8_range`** (or equivalent) into [`internal/ccall/`](../internal/ccall/) and expose include paths in the relevant `bind_*.go` packages, or extend the updater **`copyExternalLibMap`** when the Bazel tree is available.
+- **Generated `.pb.cc` / macros**: errors such as unknown **`PROTOBUF_PRAGMA_INIT_SEG`** usually mean `.pb.*` were generated with a **different protoc** than the vendored runtime — regenerate or re-copy from the ZetaSQL build that matches the pinned tag.
+- **Parser / flex amalgamation**: including **`flex_tokenizer.flex.cc`** from mixed **`darwin-fastbuild`** vs **`k8-fastbuild`** paths can break generated tables (`yy_ec`, `yy_base`, …); use a **single** Bazel output tree in `export.inc` / vendored sources.
+- **`parse_tree` skew**: serializer C++ referencing **`ASTWithClauseEntry`** / **`anonymization_options`** when **`parse_tree.pb.h`** does not match — rerun updater + generator against the same ZetaSQL revision until C++ and `.pb.h` agree.
+
+### Optional cleanup
+
+- No `libprotobuf_cgo.a` was present under `internal/ccall/go-protobuf/protobuf/lib/` in a typical tree; add to **`.gitignore`** if it appears from local experiments.
+- Reconcile **[`.github/workflows/go.yml`](../.github/workflows/go.yml)** with the amalgamation-only CGO approach if macOS or static-archive steps are obsolete.
