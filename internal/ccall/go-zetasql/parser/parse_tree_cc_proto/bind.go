@@ -6,6 +6,7 @@ package parse_tree_cc_proto
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../gtest
 #cgo CXXFLAGS: -I../../../icu
+#cgo CXXFLAGS: -I../../../utf8_range
 #cgo CXXFLAGS: -Wno-char-subscripts
 #cgo CXXFLAGS: -Wno-sign-compare
 #cgo CXXFLAGS: -Wno-switch
