@@ -17,23 +17,24 @@
 #include "zetasql/tools/formatter/internal/token.h"
 
 #include <stddef.h>
+#include <stdint.h>
 
-#include <algorithm>
 #include <initializer_list>
-#include <iterator>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/utf_util.h"
+
 #include "zetasql/parser/keywords.h"
 #include "zetasql/public/formatter_options.h"
 #include "zetasql/public/language_options.h"
+#include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_location.h"
 #include "zetasql/public/parse_resume_location.h"
 #include "zetasql/public/parse_tokens.h"
-#include "zetasql/public/strings.h"
+#include "zetasql/public/value.h"
+#include <cstdint>  
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -1167,6 +1168,16 @@ TokenGroupingState MaybeMoveParseTokenIntoTokens(
         return grouping_state;
       }
 
+      if (TokenEndOffset(parse_token) > grouping_state.start_position) {
+        // Token starts before <<EOF, but ends after it. This can happen when
+        // EOF appears to be a part of the comment, e.g.:
+        // DEFINE TABLE #comment <<EOF
+        //              [parse_token ]
+        // It means we marked the line as legacy define table statement by
+        // mistake and should reset.
+        grouping_state.Reset();
+      }
+
       break;
     }
 
@@ -1406,6 +1417,8 @@ absl::StatusOr<std::vector<Token>> TokenizeNextStatement(
     ParseResumeLocation* parse_location, bool allow_invalid_tokens) {
   LanguageOptions language_options;
   language_options.EnableMaximumLanguageFeaturesForDevelopment();
+  // TODO Allow V_1_4_SQL_MACROS as well
+  language_options.DisableLanguageFeature(FEATURE_V_1_4_SQL_MACROS);
   ParseTokenOptions parser_options{.stop_at_end_of_statement = true,
                                    .include_comments = true,
                                    .language_options = language_options};
@@ -1563,6 +1576,11 @@ std::string Token::ImageForPrinting(const FormatterOptions& options,
                                     bool is_first_token, int new_column,
                                     int original_column) const {
   std::string result;
+
+  if (options.IsCapitalizeFunctions() && Is(Type::BUILTIN_FUNCTION)) {
+    return std::string(GetKeyword());
+  }
+
   if (options.IsCapitalizeKeywords() && !IsMacroCall()) {
     if (IsReservedKeyword() || UsedAsKeyword() || Is(Type::TOP_LEVEL_KEYWORD)) {
       // When the token is a reserved keyword, we use a canonical uppercase

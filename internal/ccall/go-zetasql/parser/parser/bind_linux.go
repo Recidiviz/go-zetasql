@@ -1,7 +1,7 @@
 package parser
 
 /*
-#cgo CXXFLAGS: -std=c++1z
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../gtest
@@ -794,17 +794,6 @@ func parser_ASTSelect_hint(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	C.export_zetasql_parser_parser_ASTSelect_hint(arg0, arg1)
 }
 
-func ASTSelect_anonymization_options(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	parser_ASTSelect_anonymization_options(
-		arg0,
-		arg1,
-	)
-}
-
-func parser_ASTSelect_anonymization_options(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_parser_parser_ASTSelect_anonymization_options(arg0, arg1)
-}
-
 func ASTSelect_select_as(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	parser_ASTSelect_select_as(
 		arg0,
@@ -891,6 +880,17 @@ func ASTSelect_window_clause(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 
 func parser_ASTSelect_window_clause(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	C.export_zetasql_parser_parser_ASTSelect_window_clause(arg0, arg1)
+}
+
+func ASTSelect_anonymization_options(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTSelect_anonymization_options(
+		arg0,
+		arg1,
+	)
+}
+
+func parser_ASTSelect_anonymization_options(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTSelect_anonymization_options(arg0, arg1)
 }
 
 func ASTSelectList_column_num(arg0 unsafe.Pointer, arg1 *int) {
@@ -1549,26 +1549,26 @@ func parser_ASTOnClause_expression(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	C.export_zetasql_parser_parser_ASTOnClause_expression(arg0, arg1)
 }
 
-func ASTWithClauseEntry_alias(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	parser_ASTWithClauseEntry_alias(
+func ASTAliasedQuery_alias(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTAliasedQuery_alias(
 		arg0,
 		arg1,
 	)
 }
 
-func parser_ASTWithClauseEntry_alias(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_parser_parser_ASTWithClauseEntry_alias(arg0, arg1)
+func parser_ASTAliasedQuery_alias(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTAliasedQuery_alias(arg0, arg1)
 }
 
-func ASTWithClauseEntry_query(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	parser_ASTWithClauseEntry_query(
+func ASTAliasedQuery_query(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTAliasedQuery_query(
 		arg0,
 		arg1,
 	)
 }
 
-func parser_ASTWithClauseEntry_query(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_parser_parser_ASTWithClauseEntry_query(arg0, arg1)
+func parser_ASTAliasedQuery_query(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTAliasedQuery_query(arg0, arg1)
 }
 
 func ASTJoin_set_join_type(arg0 unsafe.Pointer, arg1 int) {
@@ -1856,6 +1856,28 @@ func ASTWithClause_with(arg0 unsafe.Pointer, arg1 int, arg2 *unsafe.Pointer) {
 
 func parser_ASTWithClause_with(arg0 unsafe.Pointer, arg1 C.int, arg2 *unsafe.Pointer) {
 	C.export_zetasql_parser_parser_ASTWithClause_with(arg0, arg1, arg2)
+}
+
+func ASTWithClauseEntry_alias(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTWithClauseEntry_alias(
+		arg0,
+		arg1,
+	)
+}
+
+func parser_ASTWithClauseEntry_alias(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTWithClauseEntry_alias(arg0, arg1)
+}
+
+func ASTWithClauseEntry_query(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTWithClauseEntry_query(
+		arg0,
+		arg1,
+	)
+}
+
+func parser_ASTWithClauseEntry_query(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTWithClauseEntry_query(arg0, arg1)
 }
 
 func ASTHaving_expression(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {

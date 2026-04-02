@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
 #include "zetasql/public/formatter_options.h"
 #include "zetasql/public/parse_location.h"
 #include "zetasql/tools/formatter/internal/token.h"
@@ -578,7 +577,6 @@ class ChunkBlock {
     reverse_iterator rend() { return children_ptr_->rend(); }
 
     ChunkBlock* front() const { return children_ptr_->front(); }
-    ChunkBlock* back() const { return children_ptr_->back(); }
 
    private:
     ChildrenT* children_ptr_;
@@ -694,7 +692,8 @@ class ChunkBlock {
 // Groups the given <tokens> into Chunks.
 absl::StatusOr<std::vector<Chunk>> ChunksFromTokens(
     const TokensView& tokens,
-    const ParseLocationTranslator& location_translator);
+    const ParseLocationTranslator& location_translator,
+    const FormatterOptions& formatter_options = FormatterOptions());
 
 }  // namespace zetasql::formatter::internal
 

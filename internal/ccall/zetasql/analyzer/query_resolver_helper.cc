@@ -39,6 +39,7 @@
 #include "zetasql/public/type.h"
 #include "zetasql/public/value.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
+#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "zetasql/resolved_ast/resolved_column.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/flat_hash_map.h"
@@ -55,7 +56,6 @@ namespace zetasql {
 void QueryGroupByAndAggregateInfo::Reset() {
   has_group_by = false;
   has_aggregation = false;
-  has_anonymized_aggregation = false;
   aggregate_expr_map.clear();
   group_by_columns_to_compute.clear();
   group_by_expr_map.clear();
@@ -432,13 +432,26 @@ std::string QueryResolutionInfo::DebugString() const {
                        ? "NULL"
                        : select_column_state_list_->DebugString()),
                   "\n");
+  absl::StrAppend(&debug_string, "has_order_by: ", has_order_by_, "\n");
   absl::StrAppend(&debug_string, "has_group_by: ", group_by_info_.has_group_by,
                   "\n");
   absl::StrAppend(&debug_string,
                   "has_aggregation: ", group_by_info_.has_aggregation, "\n");
+
+  const absl::string_view select_with_mode_str = [&] {
+    switch (select_with_mode_) {
+      case SelectWithMode::NONE:
+        return "NONE";
+      case SelectWithMode::ANONYMIZATION:
+        return "ANONYMIZATION";
+      case SelectWithMode::DIFFERENTIAL_PRIVACY:
+        return "DIFFERENTIAL_PRIVACY";
+    }
+  }();
+  absl::StrAppend(&debug_string, "select_with_mode: ", select_with_mode_str,
+                  "\n");
   absl::StrAppend(&debug_string,
-                  "has_anonymized_aggregation: ",
-                  group_by_info_.has_anonymized_aggregation, "\n");
+                  "has_aggregation: ", group_by_info_.has_aggregation, "\n");
   absl::StrAppend(&debug_string, "group_by_columns(size ",
                   group_by_info_.group_by_columns_to_compute.size(), "):\n");
   for (const auto& column : group_by_info_.group_by_columns_to_compute) {
@@ -456,7 +469,31 @@ std::string QueryResolutionInfo::DebugString() const {
       group_by_info_.group_by_valid_field_info_map.DebugString("  "));
   absl::StrAppend(&debug_string, "select_list_valid_field_info:\n",
                   select_list_valid_field_info_map_.DebugString("  "));
-
+  absl::StrAppend(
+      &debug_string, "select_list_columns_to_compute_before_aggregation [",
+      absl::StrJoin(select_list_columns_to_compute_before_aggregation_, ", ",
+                    [](std::string* out, const auto& column) {
+                      absl::StrAppend(out, column->column().DebugString());
+                    }),
+      "]\n");
+  absl::StrAppend(
+      &debug_string,
+      "dot_star_columns_with_aggregation_for_second_pass_resolution:[",
+      absl::StrJoin(
+          dot_star_columns_with_aggregation_for_second_pass_resolution_, ", ",
+          [](std::string* out, const auto& column) {
+            absl::StrAppend(out, column.first.DebugString());
+          }),
+      "]\n");
+  absl::StrAppend(
+      &debug_string,
+      "dot_star_columns_with_analytic_for_second_pass_resolution:[",
+      absl::StrJoin(dot_star_columns_with_analytic_for_second_pass_resolution_,
+                    ", ",
+                    [](std::string* out, const auto& column) {
+                      absl::StrAppend(out, column.first.DebugString());
+                    }),
+      "]\n");
   return debug_string;
 }
 

@@ -3,6 +3,8 @@
 
 #include "zetasql/public/convert_type_to_proto.h"
 #include "zetasql/public/type.h"
+// Wire format proto defines google.protobuf extensions used by convert_type_to_proto.cc.
+#include "go-zetasql/public/proto/wire_format_annotation_cc_proto/export.inc"
 // include sources
 #include "zetasql/public/convert_type_to_proto.cc"
 // include dependencies

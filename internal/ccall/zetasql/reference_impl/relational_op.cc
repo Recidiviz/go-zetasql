@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <queue>
 #include <string>
 #include <tuple>
@@ -29,6 +30,7 @@
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/internal_value.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/evaluator_table_iterator.h"
 #include "zetasql/public/type.h"
@@ -1608,7 +1610,7 @@ class LimitTupleIterator : public TupleIterator {
     }
 
     // Don't return more than 'count_' tuples from 'iter_'.
-    if (next_iter_row_number_ >= offset_ + count_) {
+    if (next_iter_row_number_ - offset_ >= count_) {
       Finish(absl::nullopt);
       return nullptr;
     }
@@ -2932,6 +2934,7 @@ class JoinTupleIterator : public TupleIterator {
   //    over all the right tuples.
   // 2a) For each right tuple, we may have to left-pad NULLs.
   TupleData* Next() override {
+
     if (!left_padding_right_tuples_ && !next_left_tuple_.has_value() &&
         next_right_tuple_idx_ == 0) {
       const absl::Status init_status = InitializeJoinCandidates();
@@ -3390,6 +3393,7 @@ class JoinTupleIterator : public TupleIterator {
 absl::StatusOr<std::unique_ptr<TupleIterator>> JoinOp::CreateIterator(
     absl::Span<const TupleData* const> params, int num_extra_slots,
     EvaluationContext* context) const {
+
   std::unique_ptr<RightInputForJoin> right_hand_side;
   switch (join_kind_) {
     case kInnerJoin:
@@ -3437,6 +3441,7 @@ absl::StatusOr<std::unique_ptr<TupleIterator>> JoinOp::CreateIterator(
 }
 
 std::unique_ptr<TupleSchema> JoinOp::CreateOutputSchema() const {
+
   const std::unique_ptr<TupleSchema> left_schema =
       left_input()->CreateOutputSchema();
   const std::unique_ptr<TupleSchema> right_schema =

@@ -27,13 +27,12 @@
 #include <queue>
 #include <stack>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
 
 #include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/json_parser.h"
 #include "zetasql/public/numeric_parser.h"
 #include <cstdint>  
 #include "absl/base/optimization.h"
@@ -52,6 +51,7 @@ namespace zetasql {
 
 using JSON = ::nlohmann::json;
 using ::absl::StatusOr;
+using WideNumberMode = JSONParsingOptions::WideNumberMode;
 
 namespace {
 
@@ -80,7 +80,7 @@ class JSONValueBuilder {
 
   absl::Status BeginObject() {
     if (max_nesting_.has_value() && ref_stack_.size() >= *max_nesting_) {
-      return absl::InvalidArgumentError(
+      return absl::OutOfRangeError(
           absl::StrCat("Max nesting of ", *max_nesting_,
                        " has been exceeded while parsing JSON document"));
     }
@@ -118,7 +118,7 @@ class JSONValueBuilder {
 
   absl::Status BeginArray() {
     if (max_nesting_.has_value() && ref_stack_.size() >= *max_nesting_) {
-      return absl::InvalidArgumentError(
+      return absl::OutOfRangeError(
           absl::StrCat("Max nesting of ", *max_nesting_,
                        " has been exceeded while parsing JSON document"));
     }
@@ -225,6 +225,48 @@ class JSONValueParserBase {
   // The current status of the parser.
   absl::Status status() const { return status_; }
 
+  bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
+                   const nlohmann::detail::exception& ex) {
+    absl::string_view error = ex.what();
+    // Strip the error code specific to the nlohmann JSON library.
+    // See the list of error messages here:
+    // https://json.nlohmann.me/home/exceptions/
+    //
+    // There are 2 types of errors:
+    // [json.exception.parse_error.101] parse error at 2: unexpected end of
+    // input; expected string literal
+    //
+    // and
+    //
+    // [json.exception.out_of_range.406] number overflow parsing '1e9999'
+    // [json.exception.out_of_range.408] excessive array size:
+    // 8658170730974374167
+    //
+    // Parse errors always indicate the index followed by ':'. We want to remove
+    // this as it is indexed from the JSON input, not the SQL input.
+    // However, out of range errors don't always have ':' and we don't want to
+    // remove everything before ':'.
+    if (ABSL_PREDICT_FALSE(!absl::StartsWith(error, "[json.exception."))) {
+      return MaybeUpdateStatus(absl::OutOfRangeError(error));
+    }
+    if (ABSL_PREDICT_TRUE(
+            absl::StartsWith(error, "[json.exception.parse_error"))) {
+      std::pair<absl::string_view, absl::string_view> splits =
+          absl::StrSplit(error, absl::MaxSplits(": ", 1));
+      if (ABSL_PREDICT_TRUE(!splits.second.empty())) {
+        return MaybeUpdateStatus(absl::OutOfRangeError(splits.second));
+      }
+    }
+
+    std::pair<absl::string_view, absl::string_view> splits =
+        absl::StrSplit(error, absl::MaxSplits("] ", 1));
+    if (ABSL_PREDICT_TRUE(!splits.second.empty())) {
+      error = splits.second;
+    }
+
+    return MaybeUpdateStatus(absl::OutOfRangeError(error));
+  }
+
  protected:
   // If the given 'status' is not ok, updates the state of the parser to reflect
   // the error only if the parser is not in the error state already. Otherwise
@@ -243,72 +285,18 @@ class JSONValueParserBase {
   absl::Status status_;
 };
 
-// The parser implementation that uses proto based legacy ZetaSQL JSON parser.
-class JSONValueLegacyParser : public ::zetasql::JSONParser,
-                              public JSONValueParserBase {
- public:
-  JSONValueLegacyParser(absl::string_view str, JSON& value,
-                        std::optional<int> max_nesting)
-      : zetasql::JSONParser(str), value_builder_(value, max_nesting) {}
-
- protected:
-  bool BeginObject() override {
-    return MaybeUpdateStatus(value_builder_.BeginObject());
-  }
-
-  bool EndObject() override {
-    return MaybeUpdateStatus(value_builder_.EndObject());
-  }
-
-  bool BeginMember(const std::string& key) override {
-    return MaybeUpdateStatus(value_builder_.BeginMember(key));
-  }
-
-  bool BeginArray() override {
-    return MaybeUpdateStatus(value_builder_.BeginArray());
-  }
-
-  bool EndArray() override {
-    return MaybeUpdateStatus(value_builder_.EndArray());
-  }
-
-  bool ParsedString(const std::string& str) override {
-    return MaybeUpdateStatus(value_builder_.ParsedString(str));
-  }
-
-  bool ParsedNumber(absl::string_view str) override {
-    return MaybeUpdateStatus(value_builder_.ParsedNumber(str));
-  }
-
-  bool ParsedBool(bool val) override {
-    return MaybeUpdateStatus(value_builder_.ParsedBool(val));
-  }
-  bool ParsedNull() override {
-    return MaybeUpdateStatus(value_builder_.ParsedNull());
-  }
-
-  bool ReportFailure(const std::string& error_message) override {
-    if (status().ok()) {
-      MaybeUpdateStatus(absl::InvalidArgumentError(
-          absl::Substitute("Parsing JSON string failed: $0", error_message)));
-    }
-    return false;
-  }
-
- private:
-  JSONValueBuilder value_builder_;
-};
-
 // The parser implementation that uses nlohmann library implementation based on
 // the JSON RFC.
 //
 // NOTE: Method names are specific requirement of nlohmann SAX parser interface.
 class JSONValueStandardParser : public JSONValueParserBase {
  public:
-  JSONValueStandardParser(JSON& value, bool strict_number_parsing,
+  JSONValueStandardParser(JSON& value, WideNumberMode wide_number_mode,
                           std::optional<int> max_nesting)
       : value_builder_(value, max_nesting),
-        strict_number_parsing_(strict_number_parsing) {}
+        wide_number_mode_(wide_number_mode) {
+    ZETASQL_DCHECK(wide_number_mode != WideNumberMode::kIgnore);
+  }
   JSONValueStandardParser() = delete;
 
   bool null() { return MaybeUpdateStatus(value_builder_.ParsedNull()); }
@@ -326,8 +314,8 @@ class JSONValueStandardParser : public JSONValueParserBase {
   }
 
   bool number_float(double val, const std::string& input_str) {
-    if (strict_number_parsing_) {
-      auto status = internal::CheckNumberRoundtrip(input_str, val);
+    if (wide_number_mode_ == WideNumberMode::kExact) {
+      auto status = CheckNumberRoundtrip(input_str, val);
       if (!status.ok()) {
         return MaybeUpdateStatus(status);
       }
@@ -361,27 +349,11 @@ class JSONValueStandardParser : public JSONValueParserBase {
 
   bool end_array() { return MaybeUpdateStatus(value_builder_.EndArray()); }
 
-  bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
-                   const nlohmann::detail::exception& ex) {
-    absl::string_view error = ex.what();
-    // Strip the error code specific to the nlohmann JSON library and the
-    // position in the input. Example of error message:
-    // [json.exception.parse_error.101] parse error at line 1, column 2: syntax
-    // error while parsing value - <rest of the message>
-    // This would remove everything before "syntax error".
-    std::pair<absl::string_view, absl::string_view> splits =
-        absl::StrSplit(error, absl::MaxSplits(": ", 1));
-    if (!splits.second.empty()) {
-      error = splits.second;
-    }
-    return MaybeUpdateStatus(absl::InvalidArgumentError(error));
-  }
-
   bool is_errored() const { return !status().ok(); }
 
  private:
   JSONValueBuilder value_builder_;
-  const bool strict_number_parsing_;
+  const WideNumberMode wide_number_mode_;
 };
 
 // The parser implementation that uses nlohmann library implementation based on
@@ -408,7 +380,7 @@ class JSONValueStandardValidator : public JSONValueParserBase {
   bool number_unsigned(std::uint64_t val) { return true; }
   bool number_float(double val, const std::string& input_str) {
     if (strict_number_parsing_) {
-      auto status = internal::CheckNumberRoundtrip(input_str, val);
+      auto status = CheckNumberRoundtrip(input_str, val);
       if (!status.ok()) {
         return MaybeUpdateStatus(status);
       }
@@ -423,7 +395,7 @@ class JSONValueStandardValidator : public JSONValueParserBase {
   }
   bool start_object(std::size_t /*unused*/) {
     if (max_nesting_.has_value() && current_nesting_ >= *max_nesting_) {
-      return MaybeUpdateStatus(absl::InvalidArgumentError(
+      return MaybeUpdateStatus(absl::OutOfRangeError(
           absl::StrCat("Max nesting of ", *max_nesting_,
                        " has been exceeded while parsing JSON document")));
     }
@@ -439,7 +411,7 @@ class JSONValueStandardValidator : public JSONValueParserBase {
 
   bool start_array(std::size_t /*unused*/) {
     if (max_nesting_.has_value() && current_nesting_ >= *max_nesting_) {
-      return MaybeUpdateStatus(absl::InvalidArgumentError(
+      return MaybeUpdateStatus(absl::OutOfRangeError(
           absl::StrCat("Max nesting of ", *max_nesting_,
                        " has been exceeded while parsing JSON document")));
     }
@@ -450,17 +422,6 @@ class JSONValueStandardValidator : public JSONValueParserBase {
   bool end_array() {
     --current_nesting_;
     return true;
-  }
-
-  bool parse_error(std::size_t /*unused*/, const std::string& /*unused*/,
-                   const nlohmann::detail::exception& ex) {
-    absl::string_view error = ex.what();
-    // Strip the error code specific to the nlohmann JSON library.
-    std::vector<absl::string_view> v = absl::StrSplit(error, "] ");
-    if (v.size() > 1) {
-      error = v[1];
-    }
-    return MaybeUpdateStatus(absl::InvalidArgumentError(error));
   }
 
   bool is_errored() const { return !status().ok(); }
@@ -475,16 +436,17 @@ class JSONValueStandardValidator : public JSONValueParserBase {
 
 absl::Status IsValidJSON(absl::string_view str,
                          const JSONParsingOptions& parsing_options) {
-  if (parsing_options.legacy_mode) {
-    // TODO: This is inefficient as it builds a JSONValue. Build a
-    // more efficient version.
-    return JSONValue::ParseJSONString(str, parsing_options).status();
-  } else {
-    JSONValueStandardValidator validator(parsing_options.strict_number_parsing,
-                                         parsing_options.max_nesting);
-    JSON::sax_parse(str, &validator);
-    return validator.status();
+  WideNumberMode wide_number_mode = parsing_options.wide_number_mode;
+  if (wide_number_mode == WideNumberMode::kIgnore) {
+    wide_number_mode =
+        (parsing_options.strict_number_parsing ? WideNumberMode::kExact
+                                               : WideNumberMode::kRound);
   }
+  ZETASQL_RET_CHECK(wide_number_mode != WideNumberMode::kIgnore);
+  JSONValueStandardValidator validator(
+      wide_number_mode == WideNumberMode::kExact, parsing_options.max_nesting);
+  JSON::sax_parse(str, &validator);
+  return validator.status();
 }
 
 // NOTE: DO NOT CHANGE THIS STRUCT. The JSONValueRef code assumes that
@@ -495,36 +457,24 @@ struct JSONValue::Impl {
 
 StatusOr<JSONValue> JSONValue::ParseJSONString(
     absl::string_view str, JSONParsingOptions parsing_options) {
-  JSONValue json;
-  if (parsing_options.legacy_mode) {
-    ZETASQL_RET_CHECK(!parsing_options.strict_number_parsing)
-        << "Strict number parsing not supported in legacy mode.";
-    JSONValueLegacyParser parser(str, json.impl_->value,
-                                 parsing_options.max_nesting);
-    if (!parser.Parse()) {
-      if (parser.status().ok()) {
-        return absl::InternalError(
-            "Parsing JSON failed but didn't return an error");
-      } else {
-        return parser.status();
-      }
-    }
-  } else {
-    JSONValueStandardParser parser(json.impl_->value,
-                                   parsing_options.strict_number_parsing,
-                                   parsing_options.max_nesting);
-    JSON::sax_parse(str, &parser);
-    ZETASQL_RETURN_IF_ERROR(parser.status());
+  WideNumberMode wide_number_mode = parsing_options.wide_number_mode;
+  if (wide_number_mode == WideNumberMode::kIgnore) {
+    wide_number_mode =
+        (parsing_options.strict_number_parsing ? WideNumberMode::kExact
+                                               : WideNumberMode::kRound);
   }
-
+  JSONValue json;
+  JSONValueStandardParser parser(json.impl_->value, wide_number_mode,
+                                 parsing_options.max_nesting);
+  JSON::sax_parse(str, &parser);
+  ZETASQL_RETURN_IF_ERROR(parser.status());
   return json;
 }
 
 StatusOr<JSONValue> JSONValue::DeserializeFromProtoBytes(
     absl::string_view str, std::optional<int> max_nesting_level) {
   JSONValue json;
-  JSONValueStandardParser parser(json.impl_->value,
-                                 /*strict_number_parsing=*/false,
+  JSONValueStandardParser parser(json.impl_->value, WideNumberMode::kRound,
                                  max_nesting_level);
   JSON::sax_parse(str, &parser, JSON::input_format_t::ubjson);
   ZETASQL_RETURN_IF_ERROR(parser.status());
@@ -543,7 +493,7 @@ JSONValue::JSONValue(int64_t value) : impl_(new Impl{value}) {}
 JSONValue::JSONValue(uint64_t value) : impl_(new Impl{value}) {}
 JSONValue::JSONValue(double value) : impl_(new Impl{value}) {}
 JSONValue::JSONValue(bool value) : impl_(new Impl{value}) {}
-JSONValue::JSONValue(std::string value) : impl_(new Impl{std::move(value)}) {}
+JSONValue::JSONValue(std::string_view value) : impl_(new Impl{value}) {}
 
 JSONValue::JSONValue(JSONValue&& value) : impl_(std::move(value.impl_)) {}
 
@@ -813,11 +763,11 @@ void JSONValueRef::SetToEmptyObject() { impl_->value = JSON::object(); }
 
 void JSONValueRef::SetToEmptyArray() { impl_->value = JSON::array(); }
 
-absl::Status internal::CheckNumberRoundtrip(absl::string_view lhs, double val) {
+absl::Status CheckNumberRoundtrip(absl::string_view lhs, double val) {
   constexpr uint32_t kMaxStringLength = 1500;
   // Reject round-trip if input string is too long
   if (lhs.length() > kMaxStringLength) {
-    return zetasql_base::InvalidArgumentErrorBuilder()
+    return zetasql_base::OutOfRangeErrorBuilder()
            << "Input number " << lhs << " is too long.";
   }
 
@@ -844,7 +794,7 @@ absl::Status internal::CheckNumberRoundtrip(absl::string_view lhs, double val) {
       lhs_number.output == rhs_number.output) {
     return absl::OkStatus();
   }
-  return zetasql_base::InvalidArgumentErrorBuilder()
+  return zetasql_base::OutOfRangeErrorBuilder()
          << "Input number: " << lhs
          << " cannot round-trip through string representation";
 }

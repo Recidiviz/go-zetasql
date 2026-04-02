@@ -16,17 +16,19 @@
 
 #include "zetasql/public/proto_util.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
-#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/public/civil_time.h"
 #include "zetasql/public/functions/arithmetics.h"
 #include "zetasql/public/functions/date_time_util.h"
@@ -36,10 +38,12 @@
 #include "zetasql/public/proto/type_annotation.pb.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/type.pb.h"
+#include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/value.h"
 #include "absl/base/casts.h"
 #include <cstdint>
 #include "absl/base/optimization.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/container/inlined_vector.h"
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
@@ -48,8 +52,9 @@
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
+#include "google/protobuf/descriptor.h"
 #include "google/protobuf/io/coded_stream.h"
-#include "google/protobuf/io/zero_copy_stream_impl.h"
+#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/ret_check.h"
@@ -76,10 +81,10 @@ ProtoFieldDefaultOptions ProtoFieldDefaultOptions::FromFieldAndLanguage(
     const google::protobuf::FieldDescriptor* field,
     const LanguageOptions& language_options) {
   ProtoFieldDefaultOptions options;
-  if (field->containing_type()->file()->syntax() ==
-          google::protobuf::FileDescriptor::SYNTAX_PROTO3 &&
-      language_options.LanguageFeatureEnabled(
-          FEATURE_V_1_3_IGNORE_PROTO3_USE_DEFAULTS)) {
+    if (field->containing_type()->file()->syntax() ==
+            google::protobuf::FileDescriptor::SYNTAX_PROTO3 &&
+        language_options.LanguageFeatureEnabled(
+            FEATURE_V_1_3_IGNORE_PROTO3_USE_DEFAULTS)) {
     options.ignore_use_default_annotations = true;
   }
   if (field->containing_type()->options().map_entry() &&
@@ -93,9 +98,10 @@ absl::Status GetProtoFieldDefault(const ProtoFieldDefaultOptions& options,
                                   const google::protobuf::FieldDescriptor* field,
                                   const Type* type, Value* default_value) {
   if (options.ignore_format_annotations &&
-      !(type->IsSimpleType() || type->IsArray())) {
+      !(type->IsSimpleType() || type->IsArray() || field->is_required())) {
     // If we are ignoring format annotations, non-simple, non-array types do
     // not have default values.
+    // If field is required, do not set default value.
     *default_value = Value::Null(type);
     return absl::OkStatus();
   }
@@ -200,8 +206,8 @@ absl::Status GetProtoFieldDefault(const ProtoFieldDefaultOptions& options,
       *default_value = Value::Bytes(field->default_value_string());
       break;
     case TYPE_ENUM:
-      *default_value = Value::Enum(
-          type->AsEnum(), field->default_value_enum()->number());
+      *default_value =
+          Value::Enum(type->AsEnum(), field->default_value_enum()->number());
       break;
     case TYPE_NUMERIC:
       *default_value = Value::Numeric(NumericValue());
@@ -308,16 +314,16 @@ absl::Status GetProtoFieldDefault(const ProtoFieldDefaultOptions& options,
 
 absl::Status GetProtoFieldTypeAndDefault(
     const ProtoFieldDefaultOptions& options,
-    const google::protobuf::FieldDescriptor* field, TypeFactory* type_factory,
+    const google::protobuf::FieldDescriptor* field,
+    absl::Span<const std::string> catalog_name_path, TypeFactory* type_factory,
     const Type** type, Value* default_value) {
   ZETASQL_RETURN_IF_ERROR(type_factory->GetProtoFieldType(
-      options.ignore_format_annotations, field, type));
+      options.ignore_format_annotations, field, catalog_name_path, type));
   if (default_value != nullptr) {
     ZETASQL_RETURN_IF_ERROR(GetProtoFieldDefault(options, field, *type, default_value));
   }
 
-  ZETASQL_DCHECK(default_value == nullptr ||
-         !default_value->is_valid() ||
+  ZETASQL_DCHECK(default_value == nullptr || !default_value->is_valid() ||
          default_value->type_kind() == (*type)->kind());
 
   if (ZETASQL_DEBUG_MODE) {
@@ -327,7 +333,8 @@ absl::Status GetProtoFieldTypeAndDefault(
     ZETASQL_RETURN_IF_ERROR(ProtoType::FieldDescriptorToTypeKind(
         options.ignore_format_annotations, field, &computed_type_kind));
     ZETASQL_RET_CHECK_EQ((*type)->kind(), computed_type_kind)
-        << (*type)->DebugString() << "\n" << field->DebugString();
+        << (*type)->DebugString() << "\n"
+        << field->DebugString();
   }
 
   return absl::OkStatus();
@@ -395,7 +402,97 @@ using WireValueType = std::variant<
     // TYPE_BYTES
     std::string>;
 
+// Returns true if we should pretend the wire value is not present. This occurs
+// for unknown enums in proto2.
+bool WireValueShouldBeHidden(const ProtoFieldInfo& info,
+                             WireValueType const& wire_value) {
+  const google::protobuf::EnumDescriptor* enum_descriptor = info.descriptor->enum_type();
+  if (!enum_descriptor) {
+    return false;
+  }
+
+  const int32_t* const value = std::get_if<int32_t>(&wire_value);
+  if (!value) {
+    return false;
+  }
+
+  // TODO: Update to use feature.enum when that is available.
+  if (enum_descriptor->file()->syntax() ==
+          google::protobuf::FileDescriptor::SYNTAX_PROTO2 &&
+      !enum_descriptor->FindValueByNumber(*value)) {
+    // Proto2 hides unknown enums, and returns false for has_.
+    return true;
+  }
+  return false;
+}
+
+// Determines all wire values should be hidden, as if the whole vector did not
+// exist. Shorthand for WireValueShouldBeHidden being true for all values in the
+// vector.
+template <typename Vector>
+bool AllWireValuesShouldBeHidden(const ProtoFieldInfo& info,
+                                 const Vector& values) {
+  for (WireValueType const& wire_value : values) {
+    if (!WireValueShouldBeHidden(info, wire_value)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 }  // namespace
+
+// Removes duplicate map keys from an array of map_values. If the values are not
+// protobufs with the map_entry() option set, does nothing.
+absl::Status RemoveDupsByKeyIfProtoMap(std::vector<Value>& values) {
+  if (values.empty()) return absl::OkStatus();
+
+  const ProtoType* const map_entry_type = values.front().type()->AsProto();
+
+  if (map_entry_type == nullptr ||
+      !map_entry_type->descriptor()->options().map_entry()) {
+    return absl::OkStatus();
+  }
+
+  const google::protobuf::FieldDescriptor* const key_descriptor =
+      map_entry_type->AsProto()->map_key();
+  ZETASQL_RET_CHECK(key_descriptor != nullptr) << map_entry_type->DebugString();
+
+  TypeKind key_type_kind;
+  ZETASQL_RET_CHECK_OK(
+      ProtoType::FieldDescriptorToTypeKind(key_descriptor, &key_type_kind))
+      << "all proto map key types should be simple type kinds";
+  const Type* key_type = types::TypeFromSimpleTypeKind(key_type_kind);
+  ZETASQL_RET_CHECK(key_type != nullptr) << key_descriptor->DebugString();
+
+  absl::flat_hash_set<Value> seen_keys;
+  absl::Status status;
+
+  // Erase any entries that have the same key as an earlier entry.
+  // Since we reverse the map, this effectively keeps only the last element that
+  // has a given key. This matches the proto2 wire format specification -- last
+  // entry with a given key wins.
+  std::reverse(values.begin(), values.end());
+  values.erase(
+      std::remove_if(
+          values.begin(), values.end(),
+          [&](const Value& value) {
+            ZETASQL_DCHECK(value.type()->IsProto()) << value.DebugString(true);
+            Value key;
+            if (value.is_valid() && !value.is_null()) {
+              status.Update(ReadProtoField(
+                  key_descriptor, FieldFormat::DEFAULT_FORMAT, key_type,
+                  /*default_value=*/Value(), value.proto_value(), &key));
+            }
+            if (!status.ok()) return false;
+            return !seen_keys.insert(key).second;
+          }),
+      values.end());
+  ZETASQL_RETURN_IF_ERROR(status);
+  // Reverse it back to the original order.
+  std::reverse(values.begin(), values.end());
+  return absl::OkStatus();
+}
 
 // Populates 'value' with the value of the field at the front of 'in' (which is
 // backed by 'bytes'), without considering any zetasql semantics.
@@ -715,6 +812,7 @@ static absl::StatusOr<Value> TranslateWireValue(
       ZETASQL_RET_CHECK_NE(value, nullptr);
       Value enum_value = Value::Enum(type->AsEnum(), *value);
       if (ABSL_PREDICT_FALSE(!enum_value.is_valid())) {
+        // TODO: Properly support open proto3 enums.
         return zetasql_base::OutOfRangeErrorBuilder()
                << MakeReadValueErrorReason(field_descriptor, format, *value);
       }
@@ -745,7 +843,7 @@ static absl::StatusOr<Value> TranslateWireValue(
 
 inline bool IsPackedWireType(uint32_t tag) {
   return WireFormatLite::GetTagWireType(tag) ==
-      WireFormatLite::WIRETYPE_LENGTH_DELIMITED;
+         WireFormatLite::WIRETYPE_LENGTH_DELIMITED;
 }
 
 using PackedValuesVector = absl::InlinedVector<WireValueType, 8>;
@@ -830,9 +928,12 @@ static absl::StatusOr<Value> ReadSingularProtoField(
     ZETASQL_RET_CHECK(!wire_values.empty());
 
     if (field_info.get_has_bit) {
-      return Value::Bool(true);
+      return Value::Bool(!AllWireValuesShouldBeHidden(field_info, wire_values));
     }
     for (const WireValueType& wire_value : wire_values) {
+      if (WireValueShouldBeHidden(field_info, wire_value)) {
+        continue;
+      }
       const Type* element_type =
           field_info.type->IsArray()
               ? field_info.type->AsArray()->element_type()
@@ -852,10 +953,12 @@ static absl::StatusOr<Value> ReadSingularProtoField(
   ZETASQL_RET_CHECK_EQ(field_info.type->IsArray(),
                field_info.descriptor->is_repeated());
   if (field_info.type->IsArray()) {
-    return Value::MakeArray(
-        field_info.type->AsArray(),
-        std::vector<Value>(std::make_move_iterator(elements.begin()),
-                           std::make_move_iterator(elements.end())));
+    std::vector<Value> values_not_inlined(
+        std::make_move_iterator(elements.begin()),
+        std::make_move_iterator(elements.end()));
+    ZETASQL_RETURN_IF_ERROR(RemoveDupsByKeyIfProtoMap(values_not_inlined));
+    return Value::MakeArray(field_info.type->AsArray(),
+                            std::move(values_not_inlined));
   }
   if (elements.empty()) {
     if (ABSL_PREDICT_FALSE(field_info.descriptor->is_required())) {
@@ -974,15 +1077,19 @@ absl::Status ReadProtoFields(
 
         if (info->get_has_bit) {
           if (elements.empty()) {
-            elements.push_back(Value::Bool(true));
+            if (!AllWireValuesShouldBeHidden(*info, wire_values)) {
+              elements.push_back(Value::Bool(true));
+            }
           }
         } else {
           const Type* element_type = info->type->IsArray()
                                          ? info->type->AsArray()->element_type()
                                          : info->type;
           for (const WireValueType& wire_value : wire_values) {
-            elements.push_back(TranslateWireValue(wire_value, descriptor,
-                                                  info->format, element_type));
+            if (!WireValueShouldBeHidden(*info, wire_value)) {
+              elements.push_back(TranslateWireValue(
+                  wire_value, descriptor, info->format, element_type));
+            }
           }
         }
       }
@@ -1011,6 +1118,8 @@ absl::Status ReadProtoFields(
           }
           element_values.push_back(std::move(value).value());
         }
+
+        ZETASQL_RETURN_IF_ERROR(RemoveDupsByKeyIfProtoMap(element_values));
 
         if (success) {
           new_value = Value::MakeArray(info->type->AsArray(),
@@ -1117,6 +1226,10 @@ bool IsProtoMap(const Type* type) {
 absl::Status ParseProtoMap(const Value& array_of_map_entry,
                            const Type* key_type, const Type* value_type,
                            std::vector<std::pair<Value, Value>>& output) {
+  // `value_type` can be null pointer in cases such as when we are implementing
+  // `CONTAINS_KEY`. In that case, we don't need the value type and plumbing
+  // it properly in the reference implementation is also non-trivail.
+  ZETASQL_RET_CHECK(key_type != nullptr);
   if (!IsProtoMap(array_of_map_entry.type())) {
     return absl::InvalidArgumentError(
         absl::StrCat("Expected a proto map and got ",
@@ -1143,10 +1256,8 @@ absl::Status ParseProtoMap(const Value& array_of_map_entry,
   ProtoFieldInfo value_info;
   std::vector<ProtoFieldInfo*> info_pointers;
   info_pointers.reserve(2);
-  if (key_type != nullptr) {
-    key_info = MakeInfo(key_type, entry_type->map_key());
-    info_pointers.push_back(&key_info);
-  }
+  key_info = MakeInfo(key_type, entry_type->map_key());
+  info_pointers.push_back(&key_info);
   if (value_type != nullptr) {
     value_info = MakeInfo(value_type, entry_type->map_value());
     info_pointers.push_back(&value_info);
@@ -1155,18 +1266,21 @@ absl::Status ParseProtoMap(const Value& array_of_map_entry,
   ProtoFieldValueList value_list;
   output.reserve(array_of_map_entry.elements().size());
   for (const Value& element : array_of_map_entry.elements()) {
-    if (element.is_null()) continue;
+    std::pair<Value, Value>& element_parsed = output.emplace_back();
+    if (element.is_null()) {
+      element_parsed.first = Value::Null(key_type);
+      if (value_type != nullptr) {
+        element_parsed.second = Value::Null(value_type);
+      }
+      continue;
+    }
     ZETASQL_RETURN_IF_ERROR(
         ReadProtoFields(info_pointers, element.ToCord(), &value_list));
-    std::pair<Value, Value> element_parsed;
     int i = 0;
-    if (key_type != nullptr) {
-      ZETASQL_ASSIGN_OR_RETURN(element_parsed.first, value_list[i++]);
-    }
+    ZETASQL_ASSIGN_OR_RETURN(element_parsed.first, value_list[i++]);
     if (value_type != nullptr) {
       ZETASQL_ASSIGN_OR_RETURN(element_parsed.second, value_list[i]);
     }
-    output.push_back(std::move(element_parsed));
     value_list.clear();
   }
   return absl::OkStatus();

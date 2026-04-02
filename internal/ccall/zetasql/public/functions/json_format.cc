@@ -21,6 +21,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "zetasql/base/logging.h"
@@ -62,8 +63,11 @@ void FloatToString(double value, std::string* output) {
 
 // Implementation of JsonFromNumericOrBool for float and double.
 template <typename FloatType>
-void JsonFromFloatImpl(FloatType value, std::string* output) {
-  if (std::isfinite(value)) {
+void JsonFromFloatImpl(FloatType value, std::string* output,
+                       bool canonicalize_zero) {
+  if (canonicalize_zero && value == -0.0) {
+    FloatToString<FloatType>(0.0, output);
+  } else if (std::isfinite(value)) {
     // Common case: we have to call the correct version of SimpleFtoa or
     // SimpleDtoa. SimpleFtoa accepts double but truncates the precision.
     FloatToString(value, output);
@@ -197,12 +201,14 @@ void JsonFromNumericOrBool(uint64_t value, std::string* output) {
   }
 }
 
-void JsonFromNumericOrBool(float value, std::string* output) {
-  JsonFromFloatImpl(value, output);
+void JsonFromNumericOrBool(float value, std::string* output,
+                           bool canonicalize_zero) {
+  JsonFromFloatImpl(value, output, canonicalize_zero);
 }
 
-void JsonFromNumericOrBool(double value, std::string* output) {
-  JsonFromFloatImpl(value, output);
+void JsonFromNumericOrBool(double value, std::string* output,
+                           bool canonicalize_zero) {
+  JsonFromFloatImpl(value, output, canonicalize_zero);
 }
 
 void JsonFromNumericOrBool(NumericValue value, std::string* output) {
@@ -379,10 +385,12 @@ absl::Status JsonFromValue(const Value& value,
       JsonFromNumericOrBool(value.uint64_value(), output);
       break;
     case TYPE_FLOAT:
-      JsonFromNumericOrBool(value.float_value(), output);
+      JsonFromNumericOrBool(value.float_value(), output,
+                            json_parsing_options.canonicalize_zero);
       break;
     case TYPE_DOUBLE:
-      JsonFromNumericOrBool(value.double_value(), output);
+      JsonFromNumericOrBool(value.double_value(), output,
+                            json_parsing_options.canonicalize_zero);
       break;
     case TYPE_NUMERIC:
       JsonFromNumericOrBool(value.numeric_value(), output);
@@ -480,7 +488,11 @@ absl::Status JsonFromValue(const Value& value,
       break;
     }
     case TYPE_ENUM:
-      JsonFromString(value.enum_name(), output);
+      if (absl::StatusOr<std::string_view> name = value.EnumName(); name.ok()) {
+        JsonFromString(*name, output);
+      } else {
+        JsonFromNumericOrBool(value.enum_value(), output);
+      }
       break;
     default:
       return ::zetasql_base::UnimplementedErrorBuilder()

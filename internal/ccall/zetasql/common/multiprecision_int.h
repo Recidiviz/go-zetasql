@@ -22,8 +22,7 @@
 // VarIntRef, ConstVarIntRef: signed integer reference with variable length
 //
 // VarUintRef, ConstVarUintRef, VarIntRef, ConstVarIntRef have very limited
-// support. Their performance is not optimized. FixedUint and FixedInt should
-// be used instead whenever possible.
+// support. FixedUint and FixedInt should be used instead whenever possible.
 //
 // All classes defined in this library represent an integer by an array of
 // 32 or 64 bit words, in little endian order. For example, FixedInt<64, 4>
@@ -31,8 +30,9 @@
 // Word=int64_t and UnsignedWord=uint64_t), and interprets the array
 // {0x1, 0x2, 0x3, 0x4} as 0x4000000000000000300000000000000020000000000000001.
 // Negative values are represented with 2's complement.
-// In general, 64-bit words perform better, except for some corner cases (see
-// performance hints below).
+//
+// In general, 64-bit words perform better. 32-bit support was added due to
+// historical reasons and is now deprecated.
 //
 // Supported operators and functions of FixedUint and FixedInt
 //     Operator/function      Argument type           Notes
@@ -41,40 +41,40 @@
 //   ==, !=, <, >, <=, >=     FixedUint/FixedInt
 //
 //      +=, AddOverflow       Word
-//      +=, AddOverflow       UnsignedWord            Same as Word for FixedUint
+//      +=, AddOverflow       UnsignedWord
 //      +=, AddOverflow       FixedUint/FixedInt
 //
 //   -=, SubtractOverflow     Word
-//   -=, SubtractOverflow     UnsignedWord            Same as Word for FixedUint
+//   -=, SubtractOverflow     UnsignedWord
 //   -=, SubtractOverflow     FixedUint/FixedInt
 //
 //   *=, MultiplyOverflow     Word
-//   *=, MultiplyOverflow     UnsignedWord            Same as Word for FixedUint
+//   *=, MultiplyOverflow     UnsignedWord
 //   *=, MultiplyOverflow     FixedUint/FixedInt
 //     ExtendAndMultiply      FixedUint/FixedInt
 //
-//            /=              integral_constant<uint32_t>
-//            /=              integral_constant<int32_t>    (FixedInt only)
+//            /=              std::integral_constant<Word>
+//            /=              std::integral_constant<UnsignedWord>
 //            /=              Word
-//            /=              UnsignedWord            Same as Word for FixedUint
+//            /=              UnsignedWord
 //            /=              FixedUint/FixedInt
 //
-//            %=              integral_constant<uint32_t>
-//            %=              integral_constant<int32_t>    (FixedInt only)
+//            %=              std::integral_constant<Word>
+//            %=              std::integral_constant<UnsignedWord>
 //            %=              Word
-//            %=              UnsignedWord            Same as Word for FixedUint
+//            %=              UnsignedWord
 //            %=              FixedUint/FixedInt
 //
-//  DivAndRoundAwayFromZero   integral_constant<uint32_t>
-//  DivAndRoundAwayFromZero   integral_constant<int32_t>    (FixedInt only)
+//  DivAndRoundAwayFromZero   std::integral_constant<Word>
+//  DivAndRoundAwayFromZero   std::integral_constant<UnsignedWord>
 //  DivAndRoundAwayFromZero   Word
-//  DivAndRoundAwayFromZero   UnsignedWord            Same as Word for FixedUint
+//  DivAndRoundAwayFromZero   UnsignedWord
 //  DivAndRoundAwayFromZero   FixedUint/FixedInt
 //
-//          DivMod            integral_constant<uint32_t>   (FixedUint only)
-//          DivMod            integral_constant<int32_t>    (FixedInt only)
+//          DivMod            std::integral_constant<Word>
+//          DivMod            std::integral_constant<UnsignedWord>
 //          DivMod            Word
-//          DivMod            UnsignedWord                (FixedUint only)
+//          DivMod            UnsignedWord
 //          DivMod            FixedUint/FixedInt
 //
 //          is_zero           None
@@ -104,15 +104,13 @@
 //   - FixedUint is generally no slower than FixedInt.
 //   - FixedUint<64, n> is generally faster than FixedUint<32, 2 * n>, and
 //     FixedInt<64, n> is generally faster than FixedInt<32, 2 * n>.
-//     <32, m> is recommended only when m is an odd number *and* the bottleneck
-//     is a division by integral_constant<uint32_t> or integral_constant<int32_t>.
 //
 // * Right hand side (from fastest to slowest):
-//     integral_constant<uint32_t> > integral_constant<int32_t> > UnsignedWord
-//       >= Word >= FixedUint/FixedInt
+//     integral_constant<UnsignedWord> >= integral_constant<Word>
+//        > UnsignedWord >= Word >= FixedUint/FixedInt
 //   For FixedUint on the left hand side, UnsignedWord = Word;
 //   for FixedInt on the left hand side, UnsignedWord is faster than Word.
-//   Note, constexpr int32_t/uint32 will not be converted to integral_constant.
+//   Note, constexpr int64_t/uint64 will not be converted to integral_constant.
 //   In C++, currently there is no reliable way to identify constexpr arguments.
 //
 // * Comparison among operators and functions:
@@ -142,6 +140,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <iterator>
 #include <limits>
@@ -152,11 +151,10 @@
 #include "zetasql/base/logging.h"
 #include "zetasql/common/multiprecision_int_impl.h"
 #include "absl/base/attributes.h"
-#include <cstdint>
 #include "absl/base/optimization.h"
-#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
+#include "zetasql/base/endian.h"
 
 namespace zetasql {
 
@@ -176,7 +174,6 @@ class VarIntBase {
   void SerializeToBytes(std::string* bytes) const;
   bool DeserializeFromBytes(absl::string_view bytes);
 
-  // Defined only for UnsignedWord = uint32_t.
   void AppendToString(std::string* result) const;
   std::string ToString() const {
     std::string result;
@@ -202,13 +199,27 @@ class VarUintRef
  public:
   using VarIntBase<false,
                    multiprecision_int_impl::Uint<kNumBitsPerWord>>::VarIntBase;
+  using UnsignedWord = multiprecision_int_impl::Uint<kNumBitsPerWord>;
 
-  // Defined only for kNumBitsPerWord == 32.
-  // Computes *this /= divisor and returns the remainder.
-  template <uint32_t divisor>
-  uint32_t DivMod(std::integral_constant<uint32_t, divisor> x);
-  uint32_t DivMod(uint32_t divisor);
+  // Defined only for kNumBitsPerWord == 64.
+  // Computes *this /= divisor and returns the remainder. This number must be
+  // non-empty.
+  template <UnsignedWord divisor>
+  UnsignedWord DivMod(std::integral_constant<UnsignedWord, divisor> x);
+
+  // Defined only for kNumBitsPerWord == 64. Scales down by up to 10**19.
+  // Do not pass a negative or > 19 scale_down_digits. Returns divisor.
+  uint64_t ScaleDown(int scale_down_digits, uint64_t& remainder);
+
+ private:
+  using DivModFn = uint64_t (*)(VarUintRef&, uint64_t&);
+  // Array of function pointers where function i divides the VarUintRef by
+  // 10**i. Defined for range [1, 19].
+  static const DivModFn kVarUintDivModPow10[];
 };
+
+template <>
+const VarUintRef<64>::DivModFn VarUintRef<64>::kVarUintDivModPow10[];
 
 template <int kNumBitsPerWord>
 class VarIntRef
@@ -253,22 +264,6 @@ class FixedUint final {
       : number_(multiprecision_int_impl::UintToArray<128, kNumBitsPerWord,
                                                      kNumWords>(x, Word{0})) {
     static_assert(kNumBits >= 128, "Size too small");
-  }
-  FixedUint(uint64_t hi, unsigned __int128 low) {
-    static_assert(kNumBits >= 192, "Size too small");
-    number_.fill(0);
-    multiprecision_int_impl::UintToArray<128, kNumBitsPerWord>(low,
-                                                               number_.data());
-    multiprecision_int_impl::UintToArray<64, kNumBitsPerWord>(
-        hi, &number_[128 / kNumBitsPerWord]);
-  }
-  FixedUint(unsigned __int128 hi, unsigned __int128 low) {
-    static_assert(kNumBits >= 256, "Size too small");
-    number_.fill(0);
-    multiprecision_int_impl::UintToArray<128, kNumBitsPerWord>(low,
-                                                               number_.data());
-    multiprecision_int_impl::UintToArray<128, kNumBitsPerWord>(
-        hi, &number_[128 / kNumBitsPerWord]);
   }
 
   // If k * n > kNumBits, then the k * n - kNumBits most significant bits are
@@ -340,13 +335,13 @@ class FixedUint final {
   }
 
   bool SubtractOverflow(Word x) {
-    uint8_t carry =
+    uint8_t borrow =
         multiprecision_int_impl::SubtractWithBorrow(&number_[0], x, 0);
     for (int i = 1; i < kNumWords; ++i) {
-      carry = multiprecision_int_impl::SubtractWithBorrow(&number_[i], Word{0},
-                                                          carry);
+      borrow = multiprecision_int_impl::SubtractWithBorrow(&number_[i], Word{0},
+                                                           borrow);
     }
-    return carry != 0;
+    return borrow != 0;
   }
   bool SubtractOverflow(const FixedUint& rh) {
     return multiprecision_int_impl::Subtract<kNumWords>(number_, rh.number_) !=
@@ -383,10 +378,10 @@ class FixedUint final {
     return overflow;
   }
 
-  template <uint32_t divisor>
-  void DivMod(std::integral_constant<uint32_t, divisor> x, FixedUint* quotient,
-              uint32_t* remainder) const {
-    uint32_t r = multiprecision_int_impl::ShortDivModConstant<kNumWords>(
+  template <Word divisor>
+  void DivMod(std::integral_constant<Word, divisor> x, FixedUint* quotient,
+              Word* remainder) const {
+    Word r = multiprecision_int_impl::ShortDivModConstant<kNumWords>(
         number_, x, quotient != nullptr ? &quotient->number_ : nullptr);
     if (remainder != nullptr) {
       *remainder = r;
@@ -411,9 +406,9 @@ class FixedUint final {
         remainder != nullptr ? &remainder->number_ : nullptr);
   }
 
-  // The caller is responsible for ensuring that the value is not zero.
-  template <uint32_t divisor>
-  FixedUint& operator/=(std::integral_constant<uint32_t, divisor> x) {
+  // The caller is responsible for ensuring that the divisor is not zero.
+  template <Word divisor>
+  FixedUint& operator/=(std::integral_constant<Word, divisor> x) {
     multiprecision_int_impl::ShortDivModConstant<kNumWords>(number_, x,
                                                             &number_);
     return *this;
@@ -436,9 +431,8 @@ class FixedUint final {
     return *this /= tmp;
   }
 
-  template <uint32_t divisor>
-  FixedUint& DivAndRoundAwayFromZero(
-      std::integral_constant<uint32_t, divisor> x) {
+  template <Word divisor>
+  FixedUint& DivAndRoundAwayFromZero(std::integral_constant<Word, divisor> x) {
     if (ABSL_PREDICT_TRUE(!AddOverflow(divisor >> 1))) {
       return *this /= x;
     }
@@ -469,10 +463,10 @@ class FixedUint final {
     return *this += Word{1};
   }
 
-  template <uint32_t divisor>
-  FixedUint& operator%=(std::integral_constant<uint32_t, divisor> x) {
+  template <Word divisor>
+  FixedUint& operator%=(std::integral_constant<Word, divisor> x) {
     number_[0] = multiprecision_int_impl::ShortDivModConstant<kNumWords>(
-        number_, x, nullptr);
+        number_, x, /*quotient=*/nullptr);
     std::fill(number_.begin() + 1, number_.end(), 0);
     return *this;
   }
@@ -605,7 +599,7 @@ class FixedUint final {
     return PowersAsc<kMaxDigits>(FixedUint(Word{1}), 10);
   }
 
-  // PowersAsc<size>(v, multipler) returns an array of arrays
+  // PowersAsc<size>(v, multiplier) returns an array of arrays
   // representing {v, v * multiplier, ..., v * pow(multiplier, size - 1)}.
   template <size_t size, typename... T>
   static constexpr std::array<FixedUint, size> PowersAsc(
@@ -672,43 +666,67 @@ FixedUint<kNumBitsPerWord, kNumWords>::operator double() const {
   static_assert(kNumBits <= kMaxBitsToDouble,
                 "Size too big to convert to double.");
   static_assert(kNumBits > 0, "The number has less than one bit.");
-  // DOUBLE can have 53 bits in the significand, which is less than 64. We will
-  // keep 55 bits at most for rounding. We take at most 54 bits from the
-  // FixedUint, and decide the 55th by the trailing bits if needed. Keeping
-  // two more bits for rounding halves ties to the nearest even number.
-  uint64_t significand = 0;
   int word_idx = NonZeroLength() - 1;
   if (word_idx == -1) {
     return 0.0;
   }
-  int bit_idx = multiprecision_int_impl::FindMSBSetNonZero(number_[word_idx]);
-  int significant_bits = 0;
-  while (true) {
-    if (significant_bits + bit_idx >= 54) {
-      significand <<= (54 - significant_bits);
-      bit_idx += (significant_bits - 54);
-      significand |= (number_[word_idx] >> bit_idx);
-      // Set the 55th bit for rounding. Set it to 1 if any non-zero in trailing
-      // digits.
-      significand <<= 1;
-      int exp = word_idx * kNumBitsPerWord + bit_idx - 1;
-      Word remainder = number_[word_idx] & ~(~Word{0} << bit_idx);
-      while (remainder == 0) {
-        if (--word_idx < 0) {
-          return std::ldexp(significand, exp);
-        }
-        remainder = number_[word_idx];
-      }
-      return std::ldexp(significand | 1, exp);
+  int msb = multiprecision_int_impl::FindMSBSetNonZero(number_[word_idx]);
+  constexpr int kMantissaBits = 52;
+  constexpr uint64_t kMantissaMask = (1ULL << kMantissaBits) - 1;
+  constexpr int kExponentBias = 1023;
+  uint64_t exponent = word_idx * kNumBitsPerWord + msb + kExponentBias;
+
+  // Copy the most significant 64 bits to mantissa. The extra 11 bits will help
+  // determine whether to round up.
+  uint64_t mantissa;
+  if constexpr (kNumBitsPerWord == 64) {
+    mantissa = number_[word_idx] << (63 - msb);
+    if (--word_idx >= 0 && msb < 63) {
+      mantissa |= number_[word_idx] >> (1 + msb);
     }
-    significand = (significand << bit_idx) | number_[word_idx];
-    significant_bits += bit_idx;
-    bit_idx = kNumBitsPerWord;
-    if (--word_idx < 0) {
-      ZETASQL_DCHECK_LT(significant_bits, 54);
-      return static_cast<double>(significand);
+  } else {
+    mantissa = static_cast<uint64_t>(number_[word_idx]) << (63 - msb);
+    if (--word_idx >= 0) {
+      mantissa |= static_cast<uint64_t>(number_[word_idx]) << (31 - msb);
+      if (--word_idx >= 0 && msb < 31) {
+        mantissa |= static_cast<uint64_t>(number_[word_idx]) >> (1 + msb);
+      }
     }
   }
+  constexpr uint64_t kExtraBitMask = (1ULL << (63 - kMantissaBits)) - 1;
+  constexpr uint64_t kHalfExtraBits = 1ULL << (63 - kMantissaBits - 1);
+  uint64_t extra_bits = mantissa & kExtraBitMask;
+  mantissa >>= (63 - kMantissaBits);
+  bool round_up = false;
+  if (extra_bits > kHalfExtraBits) {
+    round_up = true;
+  } else if (extra_bits == kHalfExtraBits) {
+    // If any of the remaining bits (those not in the most significant 64 bits)
+    // is 1, then round up because the value is greater than the mid point.
+    // If all the remaining bits are 0, then round to even, i.e., round up iff
+    // mantissa is an odd number.
+    // For performance, first check whether mantissa is an odd number, and then
+    // check the remaining bits.
+    round_up = mantissa & 1;
+    if (!round_up && word_idx >= 0) {
+      round_up = (number_[word_idx] << (kNumBitsPerWord - 1 - msb)) != 0;
+      while (!round_up && --word_idx >= 0) {
+        round_up = (number_[word_idx] != 0);
+      }
+    }
+  }
+  mantissa += round_up;
+
+  // If mantissa becomes 54 bits long, then adjust it down to 53 bits.
+  if (mantissa == (2ULL << kMantissaBits)) {
+    mantissa = (1ULL << kMantissaBits);
+    ++exponent;
+  }
+
+  // No need to consider subnormal/infinite values.
+  uint64_t result = mantissa & kMantissaMask;
+  result |= exponent << kMantissaBits;
+  return absl::bit_cast<double>(result);
 }
 
 template <int kNumBitsPerWord, int kNumWords>
@@ -779,13 +797,22 @@ inline bool operator>=(const FixedUint<kNumBitsPerWord, kNumWords>& lh,
 template <int kNumBitsPerWord, int kNumWords>
 void FixedUint<kNumBitsPerWord, kNumWords>::AppendToString(
     std::string* result) const {
-  // 32-bit quotient is faster than 64-bit.
-  static_assert(kNumBits % 32 == 0);
-  FixedUint<32, kNumBits / 32> quotient(*this);
-  std::integral_constant<uint32_t, 1000000000> divisor;
-  // The number of segments needed = ceil(kNumBits * log(2) / log(1000000000))
-  // = ceil(kNumBits / 29.897352854) <= ceil(kNumBits / 29).
-  std::array<uint32_t, (kNumBits + 28) / 29> segments;
+  static_assert(kNumBitsPerWord == 64 || kNumBitsPerWord == 32);
+  FixedUint<kNumBitsPerWord, kNumWords> quotient(*this);
+  std::integral_constant<
+      Word, multiprecision_int_impl::IntTraits<kNumBitsPerWord>::kMaxPowerOf10>
+      divisor;
+  // For 32bit words we will group into segments 10**9 and for 10**19 for
+  // 64bit words.
+  // The number of segments needed = ceil(num_bits / log(SegmentSize, 2))
+  // = ceil(num_bits / log(SegmentSize, 2)) <=
+  //   ceil(num_bits / floor(log(SegmentSize, 2))).
+  constexpr int kFloorLog2MaxPowerOf10 = multiprecision_int_impl::IntTraits<
+      kNumBitsPerWord>::kFloorLog2MaxPowerOf10;
+  constexpr int kMaxNumSegments =
+      (kNumBitsPerWord * kNumWords + kFloorLog2MaxPowerOf10 - 1) /
+      kFloorLog2MaxPowerOf10;
+  std::array<Word, kMaxNumSegments> segments;
   int num_segments = 0;
   while (!quotient.is_zero()) {
     quotient.DivMod(divisor, &quotient, &segments[num_segments]);
@@ -857,7 +884,7 @@ class FixedInt final {
         kMaxUnsigned, static_cast<UnsignedWord>(kMaxSigned)));
   }
 
-  constexpr FixedInt() {}
+  constexpr FixedInt() = default;
 
   constexpr explicit FixedInt(int32_t x)
       : rep_(multiprecision_int_impl::RightPad<UnsignedWord, kNumWords>(
@@ -874,23 +901,6 @@ class FixedInt final {
                                                   kNumWords>(
             x, x >= 0 ? 0 : ~UnsignedWord{0})) {
     static_assert(kNumBits >= 128, "Size too small");
-  }
-  FixedInt(int64_t hi, unsigned __int128 low) {
-    static_assert(kNumBits >= 192, "Size too small");
-    rep_.number_.fill(hi >= 0 ? 0 : ~UnsignedWord{0});
-    multiprecision_int_impl::UintToArray<128, kNumBitsPerWord>(
-        low, rep_.number_.data());
-    multiprecision_int_impl::UintToArray<64, kNumBitsPerWord>(
-        static_cast<uint64_t>(hi), &rep_.number_[128 / kNumBitsPerWord]);
-  }
-  FixedInt(__int128 hi, unsigned __int128 low) {
-    static_assert(kNumBits >= 256, "Size too small");
-    rep_.number_.fill(hi >= 0 ? 0 : ~UnsignedWord{0});
-    multiprecision_int_impl::UintToArray<128, kNumBitsPerWord>(
-        low, rep_.number_.data());
-    multiprecision_int_impl::UintToArray<128, kNumBitsPerWord>(
-        static_cast<unsigned __int128>(hi),
-        &rep_.number_[128 / kNumBitsPerWord]);
   }
 
   template <int k, int n>
@@ -1032,13 +1042,23 @@ class FixedInt final {
            !SetSignAndAbs(result_non_positive, rep_);
   }
 
-  template <int32_t divisor>
-  void DivMod(std::integral_constant<int32_t, divisor> x, FixedInt* quotient,
-              int32_t* remainder) const {
+  template <UnsignedWord divisor>
+  void DivMod(std::integral_constant<UnsignedWord, divisor> x,
+              FixedInt* quotient, Word* remainder) const {
+    constexpr Word signed_divisor = static_cast<Word>(divisor);
+    // ABS(remainder) can be up to divisor - 1. If divisor is too high,
+    // remainder might not fit into Word.
+    static_assert(signed_divisor > 0);
+    DivMod(std::integral_constant<Word, divisor>(), quotient, remainder);
+  }
+
+  template <Word divisor>
+  void DivMod(std::integral_constant<Word, divisor> x, FixedInt* quotient,
+              Word* remainder) const {
     bool neg = is_negative();
     bool divisor_negative = divisor < 0;
     const FixedInt& dividend_abs = ABSL_PREDICT_TRUE(!neg) ? *this : -(*this);
-    uint32_t r = multiprecision_int_impl::ShortDivModConstant<kNumWords>(
+    UnsignedWord r = multiprecision_int_impl::ShortDivModConstant<kNumWords>(
         dividend_abs.rep_.number_, SafeAbs(x),
         quotient != nullptr ? &quotient->rep_.number_ : nullptr);
     if (ABSL_PREDICT_FALSE(neg != divisor_negative) && quotient != nullptr) {
@@ -1083,12 +1103,12 @@ class FixedInt final {
     }
   }
 
-  template <uint32_t divisor>
-  FixedInt& operator/=(std::integral_constant<uint32_t, divisor> x) {
+  template <UnsignedWord divisor>
+  FixedInt& operator/=(std::integral_constant<UnsignedWord, divisor> x) {
     return InternalDivMod<DivOp, true>(x);
   }
-  template <int32_t divisor>
-  FixedInt& operator/=(std::integral_constant<int32_t, divisor> x) {
+  template <Word divisor>
+  FixedInt& operator/=(std::integral_constant<Word, divisor> x) {
     return InternalDivMod<DivOp, true>(x);
   }
   FixedInt& operator/=(UnsignedWord x) {
@@ -1099,14 +1119,13 @@ class FixedInt final {
     return InternalDivMod<DivOp, true>(x);
   }
 
-  template <uint32_t divisor>
+  template <UnsignedWord divisor>
   FixedInt& DivAndRoundAwayFromZero(
-      std::integral_constant<uint32_t, divisor> x) {
+      std::integral_constant<UnsignedWord, divisor> x) {
     return InternalDivMod<DivRoundOp, true>(x);
   }
-  template <int32_t divisor>
-  FixedInt& DivAndRoundAwayFromZero(
-      std::integral_constant<int32_t, divisor> x) {
+  template <Word divisor>
+  FixedInt& DivAndRoundAwayFromZero(std::integral_constant<Word, divisor> x) {
     return InternalDivMod<DivRoundOp, true>(x);
   }
   FixedInt& DivAndRoundAwayFromZero(UnsignedWord x) {
@@ -1119,12 +1138,12 @@ class FixedInt final {
     return InternalDivMod<DivRoundOp, true>(x);
   }
 
-  template <int32_t divisor>
-  FixedInt& operator%=(std::integral_constant<int32_t, divisor> x) {
+  template <UnsignedWord divisor>
+  FixedInt& operator%=(std::integral_constant<UnsignedWord, divisor> x) {
     return InternalDivMod<ModOp, false>(x);
   }
-  template <uint32_t divisor>
-  FixedInt& operator%=(std::integral_constant<uint32_t, divisor> x) {
+  template <Word divisor>
+  FixedInt& operator%=(std::integral_constant<Word, divisor> x) {
     return InternalDivMod<ModOp, false>(x);
   }
   FixedInt& operator%=(UnsignedWord x) {
@@ -1300,15 +1319,16 @@ class FixedInt final {
     return multiprecision_int_impl::SafeAbs<Word>(x);
   }
   static UnsignedWord SafeAbs(UnsignedWord x) { return x; }
-  template <int32_t v>
-  static std::integral_constant<uint32_t, multiprecision_int_impl::SafeAbs(v)>
-  SafeAbs(std::integral_constant<int32_t, v> x) {
-    return std::integral_constant<uint32_t,
+  template <Word v>
+  static std::integral_constant<UnsignedWord,
+                                multiprecision_int_impl::SafeAbs(v)>
+  SafeAbs(std::integral_constant<Word, v> x) {
+    return std::integral_constant<UnsignedWord,
                                   multiprecision_int_impl::SafeAbs(v)>();
   }
-  template <uint32_t v>
-  static std::integral_constant<uint32_t, v> SafeAbs(
-      std::integral_constant<uint32_t, v> x) {
+  template <UnsignedWord v>
+  static std::integral_constant<UnsignedWord, v> SafeAbs(
+      std::integral_constant<UnsignedWord, v> x) {
     return x;
   }
 
@@ -1486,29 +1506,54 @@ void VarIntRef<kNumBitsPerWord>::Negate() {
 }
 
 template <int kNumBitsPerWord>
+uint64_t VarUintRef<kNumBitsPerWord>::ScaleDown(int scale_down_digits,
+                                                uint64_t& remainder) {
+  static_assert(kNumBitsPerWord == 64);
+  return kVarUintDivModPow10[scale_down_digits](*this, remainder);
+}
+
+template <>
 template <uint32_t divisor>
-uint32_t VarUintRef<kNumBitsPerWord>::DivMod(
-    std::integral_constant<uint32_t, divisor> x) {
-  static_assert(kNumBitsPerWord == 32);
+uint32_t VarUintRef<32>::DivMod(std::integral_constant<uint32_t, divisor> x) {
   uint32_t remainder = 0;
   for (auto itr = this->number_.rbegin(); itr != this->number_.rend(); ++itr) {
-    // DivModWord is more efficient than RawDivModWord if and only if
-    // the divisor is a compile-time constant.
     multiprecision_int_impl::DivModWord(remainder, *itr, divisor, &*itr,
                                         &remainder);
   }
   return remainder;
 }
 
-template <int kNumBitsPerWord>
-uint32_t VarUintRef<kNumBitsPerWord>::DivMod(uint32_t divisor) {
-  static_assert(kNumBitsPerWord == 32);
-  uint32_t remainder = 0;
-  for (auto itr = this->number_.rbegin(); itr != this->number_.rend(); ++itr) {
-    multiprecision_int_impl::RawDivModWord(remainder, *itr, divisor, &*itr,
-                                           &remainder);
+template <>
+template <uint64_t divisor>
+uint64_t VarUintRef<64>::DivMod(std::integral_constant<uint64_t, divisor> x) {
+  uint64_t remainder = 0;
+  uint64_t throwaway;
+  // Since the divisor is shifted we also must shift the dividend. We do this
+  // inline.
+  constexpr uint64_t kShiftAmount =
+      multiprecision_int_impl::NormalizedDivisorShiftAmount(divisor);
+  if constexpr (kShiftAmount != 0) {
+    // The first division's quotient is always zero, so we throw it away.
+    multiprecision_int_impl::DivModWordNormalizedConstant<divisor>(
+        remainder,
+        multiprecision_int_impl::ShiftLeftAndGetHighWord(
+            0, this->number_.back(), kShiftAmount),
+        &throwaway, &remainder);
   }
-  return remainder;
+  for (auto itr = this->number_.rbegin(); itr != (this->number_.rend() - 1);
+       ++itr) {
+    multiprecision_int_impl::DivModWordNormalizedConstant<divisor>(
+        remainder,
+        multiprecision_int_impl::ShiftLeftAndGetHighWord(*itr, *(itr + 1),
+                                                         kShiftAmount),
+        &*itr, &remainder);
+  }
+  multiprecision_int_impl::DivModWordNormalizedConstant<divisor>(
+      remainder,
+      multiprecision_int_impl::ShiftLeftAndGetHighWord(this->number_.front(), 0,
+                                                       kShiftAmount),
+      &this->number_.front(), &remainder);
+  return remainder >> kShiftAmount;
 }
 
 template <bool is_signed, typename UnsignedWord>
@@ -1519,10 +1564,13 @@ void VarIntBase<is_signed, UnsignedWord>::AppendToString(
     result->push_back('0');
     return;
   }
-  static_assert(sizeof(UnsignedWord) == sizeof(uint32_t));
-  std::vector<uint32_t> dividend(data(), data() + size());
-  if (is_signed && (dividend.back() & (1U << 31)) != 0) {
-    VarIntRef<32>(dividend).Negate();
+  constexpr UnsignedWord kBitWidth =
+      static_cast<UnsignedWord>(sizeof(UnsignedWord) * 8);
+  // In the case of ConstVarIntRef, UnsignedWord has const modifier.
+  using UnsignedWordBase = std::remove_const_t<UnsignedWord>;
+  std::vector<UnsignedWordBase> dividend(data(), data() + size());
+  if (is_signed && (dividend.back() & (1ULL << (kBitWidth - 1))) != 0) {
+    VarIntRef<kBitWidth>(dividend).Negate();
     result->push_back('-');
   }
 
@@ -1534,15 +1582,23 @@ void VarIntBase<is_signed, UnsignedWord>::AppendToString(
     }
   }
 
-  size_t num_bits = 32 * dividend.size();
-  // The number of segments needed = ceil(num_bits * log(2) / log(1000000000))
-  // = ceil(num_bits / 29.897352854) <= ceil(num_bits / 29).
-  std::vector<uint32_t> segments((num_bits + 28) / 29);
+  size_t num_bits = kBitWidth * dividend.size();
+  // For 32bit words we will group into segments 10**9 and for 10**19 for
+  // 64bit words.
+  // The number of segments needed = ceil(num_bits / log(SegmentSize, 2))
+  // = ceil(num_bits / log(SegmentSize, 2)) <=
+  //   ceil(num_bits / floor(log(SegmentSize, 2))).
+  constexpr int kFloorLog2MaxPowerOf10 =
+      multiprecision_int_impl::IntTraits<kBitWidth>::kFloorLog2MaxPowerOf10;
+  std::vector<UnsignedWordBase> segments(
+      (num_bits + kFloorLog2MaxPowerOf10 - 1) / kFloorLog2MaxPowerOf10);
   size_t num_segments = 0;
   do {
-    VarUintRef<32> ref(dividend);
-    segments[num_segments] =
-        ref.DivMod(std::integral_constant<uint32_t, 1000000000>());
+    VarUintRef<kBitWidth> ref(dividend);
+    segments[num_segments] = static_cast<UnsignedWordBase>(ref.DivMod(
+        std::integral_constant<
+            UnsignedWordBase,
+            multiprecision_int_impl::IntTraits<kBitWidth>::kMaxPowerOf10>()));
     ++num_segments;
     if (dividend.back() == 0) {
       dividend.pop_back();

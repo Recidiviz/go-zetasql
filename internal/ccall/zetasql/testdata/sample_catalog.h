@@ -19,6 +19,8 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/descriptor_database.h"
@@ -47,6 +49,16 @@ class SampleCatalog {
   // used instead.
   explicit SampleCatalog(const LanguageOptions& language_options,
                          TypeFactory* type_factory = nullptr);
+
+  // Constructor given 'builtin_function_options' and optional 'type_factory'.
+  // If 'type_factory' is specified then it must outlive this SampleCatalog
+  // and this SampleCatalog does not take ownership of it.  If 'type_factory'
+  // is not specified then a locally owned TypeFactory is created and
+  // used instead.
+  explicit SampleCatalog(
+      const ZetaSQLBuiltinFunctionOptions& builtin_function_options,
+      TypeFactory* type_factory = nullptr);
+
   SampleCatalog(const SampleCatalog&) = delete;
   SampleCatalog& operator=(const SampleCatalog&) = delete;
   ~SampleCatalog();
@@ -69,12 +81,16 @@ class SampleCatalog {
 
   void LoadCatalog(const LanguageOptions& language_options);
   void LoadCatalogBuiltins(const LanguageOptions& language_options);
+  void LoadCatalogBuiltins(
+      const ZetaSQLBuiltinFunctionOptions& builtin_function_options);
   void LoadCatalogImpl(const LanguageOptions& language_options);
   void LoadTypes();
   void LoadTables();
   void LoadProtoTables();
+  void LoadViews(const LanguageOptions& language_options);
   void LoadNestedCatalogs();
   void AddFunctionWithArgumentType(std::string type_name, const Type* arg_type);
+  void LoadFunctionsWithStructArgs();
   void LoadFunctions();
   void LoadExtendedSubscriptFunctions();
   void LoadFunctionsWithDefaultArguments();
@@ -86,7 +102,6 @@ class SampleCatalog {
   // split it up in order to avoid lint warnings.
   void LoadTableValuedFunctions1();
   void LoadTableValuedFunctions2();
-  void LoadTableValuedFunctionsWithStructArgs();
   void LoadTVFWithExtraColumns();
   void LoadConnectionTableValuedFunctions();
   void LoadDescriptorTableValuedFunctions();
@@ -96,7 +111,8 @@ class SampleCatalog {
   // function statement.
   void AddSqlDefinedTableFunctionFromCreate(
       absl::string_view create_table_function,
-      const LanguageOptions& language_options);
+      const LanguageOptions& language_options,
+      const std::string& user_id_column = "");
   void LoadNonTemplatedSqlTableValuedFunctions(
       const LanguageOptions& language_options);
   void LoadTemplatedSQLTableValuedFunctions();
@@ -199,8 +215,9 @@ class SampleCatalog {
   std::unordered_map<std::string, std::unique_ptr<SimpleConnection>>
       owned_connections_;
 
-  // Manages the lifetime of SQLFunction body expressions.
-  std::vector<std::unique_ptr<const AnalyzerOutput>> sql_function_artifacts_;
+  // Manages the lifetime of ResolvedAST objects for SQL defined statements like
+  // views, SQL functions, column expressions, or SQL TVFs.
+  std::vector<std::unique_ptr<const AnalyzerOutput>> sql_object_artifacts_;
 };
 
 }  // namespace zetasql

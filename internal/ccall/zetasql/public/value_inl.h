@@ -36,7 +36,6 @@
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
 #include "google/protobuf/message.h"
-#include "zetasql/common/float_margin.h"
 #include "zetasql/public/civil_time.h"
 #include "zetasql/public/json_value.h"
 #include "zetasql/public/numeric_value.h"
@@ -46,36 +45,45 @@
 #include "zetasql/public/value.h"  
 #include <cstdint>
 #include "absl/hash/hash.h"
+#include "absl/status/status.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/simple_reference_counted.h"
+#include "zetasql/base/compact_reference_counted.h"
 
 namespace zetasql {
 
-class Value::TypedList : public zetasql_base::SimpleReferenceCounted {
+class Value::TypedList : public internal::ValueContentContainer {
  public:
-  TypedList() = default;
+  explicit TypedList(std::vector<Value>&& values)
+      : values_(std::move(values)) {}
   TypedList(const TypedList&) = delete;
   TypedList& operator=(const TypedList&) = delete;
 
   std::vector<Value>& values() { return values_; }
-  uint64_t physical_byte_size() const {
-    if (physical_byte_size_.has_value()) {
-      return physical_byte_size_.value();
-    }
+
+  const std::vector<Value>& values() const { return values_; }
+
+  uint64_t physical_byte_size() const override {
     uint64_t size = sizeof(TypedList);
     for (const Value& value : values_) {
       size += value.physical_byte_size();
     }
-    physical_byte_size_ = size;
     return size;
   }
 
+  internal::ValueContentContainerElement element(int i) const override {
+    if (values_.at(i).is_null()) {
+      return internal::ValueContentContainerElement();
+    }
+    return internal::ValueContentContainerElement(values_.at(i).GetContent());
+  }
+
+  int64_t num_elements() const override { return values_.size(); }
+
  private:
   std::vector<Value> values_;
-  mutable std::optional<uint64_t> physical_byte_size_;
 };
 
 // -------------------------------------------------------
@@ -88,7 +96,7 @@ constexpr
 #else
 inline
 #endif
-Value::Value() {}
+    Value::Value() = default;
 
 inline Value::Value(const Value& that) { CopyFrom(that); }
 
@@ -311,8 +319,9 @@ inline Value Value::UnvalidatedJsonString(std::string v) {
 inline Value Value::Json(JSONValue v) {
   return Value(new internal::JSONRef(std::move(v)));
 }
-inline Value Value::Enum(const EnumType* type, int64_t value) {
-  return Value(type, value);
+inline Value Value::Enum(const EnumType* type, int64_t value,
+                         bool allow_unknown_enum_values) {
+  return Value(type, value, allow_unknown_enum_values);
 }
 inline Value Value::Enum(const EnumType* type, absl::string_view name) {
   return Value(type, name);
@@ -461,6 +470,12 @@ inline int32_t Value::enum_value() const {
   return enum_value_;
 }
 
+inline const absl::Cord& Value::proto_value() const {
+  ZETASQL_DCHECK_EQ(TYPE_PROTO, metadata_.type_kind()) << "Not a proto value";
+  ZETASQL_DCHECK(!metadata_.is_null()) << "Null value";
+  return proto_ptr_->value();
+}
+
 inline TimeValue Value::time_value() const {
   return TimeValue::FromPacked32SecondsAndNanos(bit_field_32_value_,
                                                 subsecond_nanos());
@@ -546,8 +561,7 @@ inline const Value& Value::element(int i) const {
 }
 
 inline bool Value::Equals(const Value& that) const {
-  return EqualsInternal(*this, that, /*allow_bags=*/false,
-                        /*deep_order_spec=*/nullptr, /*options=*/{});
+  return EqualsInternal(*this, that, /*allow_bags=*/false, /*options=*/{});
 }
 
 inline const Value& Value::start() const {
@@ -555,8 +569,12 @@ inline const Value& Value::start() const {
       << "Not a range value";
   ZETASQL_CHECK(!is_null()) << "Null value";  // Crash ok
   ZETASQL_CHECK(type()->IsRange());           // Crash ok
-  ZETASQL_CHECK_EQ(list_ptr_->values().size(), 2);  // Crash ok
-  return list_ptr_->values().at(0);
+  const internal::ValueContentContainer* const container_ptr =
+      container_ptr_->value();
+  const TypedList* const list_ptr =
+      static_cast<const TypedList* const>(container_ptr);
+  ZETASQL_CHECK_EQ(list_ptr->values().size(), 2);  // Crash ok
+  return list_ptr->values().at(0);
 }
 
 inline const Value& Value::end() const {
@@ -564,8 +582,12 @@ inline const Value& Value::end() const {
       << "Not a range value";
   ZETASQL_CHECK(!is_null()) << "Null value";  // Crash ok
   ZETASQL_CHECK(type()->IsRange());           // Crash ok
-  ZETASQL_CHECK_EQ(list_ptr_->values().size(), 2);  // Crash ok
-  return list_ptr_->values().at(1);
+  const internal::ValueContentContainer* const container_ptr =
+      container_ptr_->value();
+  const TypedList* const list_ptr =
+      static_cast<const TypedList* const>(container_ptr);
+  ZETASQL_CHECK_EQ(list_ptr->values().size(), 2);  // Crash ok
+  return list_ptr->values().at(1);
 }
 
 template <typename H>
@@ -602,30 +624,8 @@ H Value::HashValueInternal(H h) const {
   }
 
   // Third, hash the value itself.
-  // TODO: currently we still handle array and struct related logic
-  // in a Value class. This can be moved to a Type class, when we have
-  // Value-agnostic interface for a list of values.
-  switch (type_kind) {
-    case TYPE_ARRAY: {
-      // We must hash arrays as if unordered to support hash_map and hash_set of
-      // values containing arrays with order_kind()=kIgnoresOrder.
-      // absl::Hash lacks support for unordered containers, so we create a
-      // cheapo solution of just adding the hashcodes.
-      absl::Hash<Value> element_hasher;
-      size_t combined_hash = 1;
-      for (int i = 0; i < num_elements(); i++) {
-        combined_hash += element_hasher(element(i));
-      }
-      return H::combine(std::move(h), combined_hash);
-    }
-    case TYPE_STRUCT: {
-      // combine is an ordered combine, which is what we want.
-      return H::combine(std::move(h), fields());
-    }
-    default:
-      type()->HashValueContent(GetContent(), absl::HashState::Create(&h));
-      return h;
-  }
+  type()->HashValueContent(GetContent(), absl::HashState::Create(&h));
+  return h;
 }
 
 template <>
@@ -754,25 +754,29 @@ class Value::Metadata::ContentLayout<8> {
       : type_(reinterpret_cast<uint64_t>(type) |
               GetTagValue(/*has_type=*/true, is_null, preserves_order)) {}
 
+  // clang-format off
   constexpr ContentLayout<8>(TypeKind kind, bool is_null, bool preserves_order,
                              int32_t value_extended_content)
 #if defined(ABSL_IS_BIG_ENDIAN)
       : value_extended_content_(value_extended_content),
         kind_(kind),
         tags_placeholder_(
-            GetTagValue(/*has_type=*/false, is_null, preserves_order)) {
-  }
+            GetTagValue(/*has_type=*/false, is_null, preserves_order)){}
 #elif defined(ABSL_IS_LITTLE_ENDIAN)
       : tags_placeholder_(
             GetTagValue(/*has_type=*/false, is_null, preserves_order)),
         kind_(kind),
-        value_extended_content_(value_extended_content) {
-  }
+        value_extended_content_(value_extended_content) {}
 #else
 #error Platform is not supported: neither big nor little endian;
 #endif
 
-  int16_t kind() const { return kind_; }
+  int16_t kind() const {
+    return kind_;
+  }
+  // TODO: wait for fixed clang-format
+  // clang-format on
+
   const Type* type() const {
     return reinterpret_cast<const Type*>(type_ & kTypeMask);
   }
@@ -780,18 +784,19 @@ class Value::Metadata::ContentLayout<8> {
   bool is_null() const { return type_ & kIsNullTag; }
   bool preserves_order() const { return type_ & kPreserverOrderTag; }
   bool has_type_pointer() const { return type_ & kHasTypeTag; }
+
+  friend constexpr Value::Metadata::Metadata(TypeKind kind, bool is_null,
+                                             bool preserves_order,
+                                             int32_t value_extended_content);
 };
 
 constexpr Value::Metadata::Metadata(TypeKind kind, bool is_null,
                                     bool preserves_order,
-                                    int32_t value_extended_content) {
-  *content() = Content(kind, is_null, preserves_order, value_extended_content);
-  ZETASQL_DCHECK(!content()->has_type_pointer());
-  ZETASQL_DCHECK(content()->kind() == kind);
-  ZETASQL_DCHECK(content()->value_extended_content() == value_extended_content);
-  ZETASQL_DCHECK(content()->preserves_order() == preserves_order);
-  ZETASQL_DCHECK(content()->is_null() == is_null);
-}
+                                    int32_t value_extended_content)
+    // To maintain constexpr consistency under C++17 we pass the int64_t from
+    // the union type to the data_ member.
+    : data_(Content(kind, is_null, preserves_order, value_extended_content)
+                .type_) {}
 
 namespace values {
 
@@ -811,6 +816,10 @@ inline Value Bytes(const absl::Cord& v) { return Value::Bytes(v); }
 template <size_t N>
 inline Value Bytes(const char (&str)[N]) { return Value::Bytes(str); }
 inline Value Date(int32_t v) { return Value::Date(v); }
+inline Value Date(absl::CivilDay day) {
+  static constexpr absl::CivilDay kEpochDay = absl::CivilDay(1970, 1, 1);
+  return Value::Date(static_cast<int32_t>(day - kEpochDay));
+}
 inline Value Timestamp(absl::Time time) { return Value::Timestamp(time); }
 inline Value TimestampFromUnixMicros(int64_t v) {
   return Value::TimestampFromUnixMicros(v);
@@ -840,8 +849,9 @@ inline Value BigNumeric(int64_t v) {
 
 inline Value Json(JSONValue v) { return Value::Json(std::move(v)); }
 
-inline Value Enum(const EnumType* enum_type, int32_t value) {
-  return Value::Enum(enum_type, value);
+inline Value Enum(const EnumType* enum_type, int32_t value,
+                  bool allow_unnamed_values) {
+  return Value::Enum(enum_type, value, allow_unnamed_values);
 }
 inline Value Enum(const EnumType* enum_type, absl::string_view name) {
   return Value::Enum(enum_type, name);

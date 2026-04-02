@@ -23,6 +23,7 @@
 // consume the same tests using appropriate options.
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "zetasql/public/analyzer_options.h"
@@ -122,7 +123,6 @@ extern const char* const kExpectErrorLocation;
 extern const char* const kInScopeExpressionColumnName;
 extern const char* const kInScopeExpressionColumnType;
 extern const char* const kCoercedQueryOutputTypes;
-extern const char* const kLanguageFeatures;
 extern const char* const kModeOption;
 extern const char* const kParameterMode;
 extern const char* const kParseMultiple;
@@ -157,6 +157,21 @@ extern const char* const kCreateTableLikeNotScanned;
 extern const char* const kPrivilegeRestrictionTableNotScanned;
 extern const char* const kPreserveUnnecessaryCast;
 extern const char* const kEnableSampleAnnotation;
+extern const char* const kAdditionalAllowedAnonymizationOptions;
+extern const char* const kSuppressBuiltinFunctions;
+extern const char* const kOptionNamesToIgnoreInLiteralReplacement;
+extern const char* const kScrubLimitOffsetInLiteralReplacement;
+extern const char* const kAlsoShowSignatureMismatchDetails;
+
+// set_flag
+// Causes a command line flag to be set to a particular value during the run
+// of a given analyzer test. Each flag is set as though by
+// SetCommandLineOption(key, value);
+//
+// Format:
+// [set_flag=flag1=value1,flag2=value2,...]
+extern const char* const kSetFlag;
+
 void RegisterAnalyzerTestOptions(
     file_based_test_driver::TestCaseOptions* test_case_options);
 
@@ -171,11 +186,6 @@ std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
 // Returns a collection of positional parameters used in the analyzer tests.
 std::vector<const zetasql::Type*> GetPositionalQueryParameters(
     TypeFactory* type_factory);
-
-// Returns a collection of LanguageFeatures that must be enabled for the
-// provided 'test_case_options'.
-absl::StatusOr<LanguageOptions::LanguageFeatureSet> GetRequiredLanguageFeatures(
-    const file_based_test_driver::TestCaseOptions& test_case_options);
 
 // A map-like type where keys are a canonicalized version of the string that
 // apperas in the kEnabledASTRewewrites and ASTRewriteSet is the set of rewrites

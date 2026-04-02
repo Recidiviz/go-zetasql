@@ -46,11 +46,11 @@ const uint32_t TableStruct_google_2fprotobuf_2fany_2eproto::offsets[] PROTOBUF_S
   PROTOBUF_FIELD_OFFSET(::PROTOBUF_NAMESPACE_ID::Any, type_url_),
   PROTOBUF_FIELD_OFFSET(::PROTOBUF_NAMESPACE_ID::Any, value_),
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_google_2fprotobuf_2fany_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::PROTOBUF_NAMESPACE_ID::Any)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_google_2fprotobuf_2fany_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::PROTOBUF_NAMESPACE_ID::_Any_default_instance_),
 };
 
@@ -66,7 +66,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_google_2fpr
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_google_2fprotobuf_2fany_2eproto = {
   false, false, 212, descriptor_table_protodef_google_2fprotobuf_2fany_2eproto, "google/protobuf/any.proto", 
   &descriptor_table_google_2fprotobuf_2fany_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_google_2fprotobuf_2fany_2eproto::offsets,
+  schemas_google_2fprotobuf_2fany_2eproto, file_default_instances_google_2fprotobuf_2fany_2eproto, TableStruct_google_2fprotobuf_2fany_2eproto::offsets,
   file_level_metadata_google_2fprotobuf_2fany_2eproto, file_level_enum_descriptors_google_2fprotobuf_2fany_2eproto, file_level_service_descriptors_google_2fprotobuf_2fany_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_google_2fprotobuf_2fany_2eproto_getter() {

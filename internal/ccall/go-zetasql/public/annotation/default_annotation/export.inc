@@ -1,0 +1,12 @@
+#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANNOTATION_DEFAULT_ANNOTATION_EXPORT_H
+#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANNOTATION_DEFAULT_ANNOTATION_EXPORT_H
+
+#include "zetasql/public/annotation/default_annotation_spec.h"
+// include sources
+#include "zetasql/public/annotation/default_annotation_spec.cc"
+// include dependencies
+#include "go-zetasql/public/types/types/export.inc"
+#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-absl/status/status/export.inc"
+
+#endif

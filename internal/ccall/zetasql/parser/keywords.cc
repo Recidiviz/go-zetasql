@@ -22,6 +22,7 @@
 #include <memory>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include <cstdint>
@@ -87,6 +88,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"and", KW_AND, kReserved},
     {"anonymization", KW_ANONYMIZATION},
     {"any", KW_ANY, kReserved},
+    {"are", KW_ARE},
     {"array", KW_ARRAY, kReserved},
     {"as", KW_AS, kReserved},
     {"asc", KW_ASC, kReserved},
@@ -118,6 +120,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"contains", KW_CONTAINS, kReserved},
     {"continue", KW_CONTINUE},
     {"copy", KW_COPY},
+    {"corresponding", KW_CORRESPONDING},
     {"create", KW_CREATE, kReserved},
     {"cross", KW_CROSS, kReserved},
     {"cube", KW_CUBE, kReserved},
@@ -189,6 +192,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"index", KW_INDEX},
     {"inner", KW_INNER, kReserved},
     {"inout", KW_INOUT},
+    {"input", KW_INPUT},
     {"insert", KW_INSERT},
     {"intersect", KW_INTERSECT, kReserved},
     {"interval", KW_INTERVAL, kReserved},
@@ -211,6 +215,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"load", KW_LOAD},
     {"lookup", KW_LOOKUP, kReserved},
     {"loop", KW_LOOP},
+    {"macro", KW_MACRO, kNotReserved},
     {"match", KW_MATCH},
     {"matched", KW_MATCHED},
     {"materialized", KW_MATERIALIZED},
@@ -236,9 +241,11 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"order", KW_ORDER, kReserved},
     {"out", KW_OUT},
     {"outer", KW_OUTER, kReserved},
+    {"output", KW_OUTPUT},
     {"over", KW_OVER, kReserved},
     {"overwrite", KW_OVERWRITE},
     {"partition", KW_PARTITION, kReserved},
+    {"partitions", KW_PARTITIONS},
     {"percent", KW_PERCENT},
     {"pivot", KW_PIVOT},
     {"policies", KW_POLICIES},
@@ -266,6 +273,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"repeatable", KW_REPEATABLE},
     {"replace", KW_REPLACE},
     {"replace_fields", KW_REPLACE_FIELDS},
+    {"replica", KW_REPLICA},
     {"report", KW_REPORT},
     {"respect", KW_RESPECT, kReserved},
     {"restrict", KW_RESTRICT},
@@ -295,10 +303,12 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"start", KW_START},
     {"stored", KW_STORED},
     {"storing", KW_STORING},
+    {"strict", KW_STRICT},
     {"struct", KW_STRUCT, kReserved},
     {"system", KW_SYSTEM},
     {"system_time", KW_SYSTEM_TIME},
     {"table", KW_TABLE},
+    {"tables", KW_TABLES},
     {"tablesample", KW_TABLESAMPLE, kReserved},
     {"target", KW_TARGET},
     {"temp", KW_TEMP},
@@ -314,6 +324,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"truncate", KW_TRUNCATE},
     {"type", KW_TYPE},
     {"unbounded", KW_UNBOUNDED, kReserved},
+    {"undrop", KW_UNDROP},
     {"union", KW_UNION, kReserved},
     {"unique", KW_UNIQUE},
     {"unknown", KW_UNKNOWN},
@@ -561,6 +572,27 @@ bool NonReservedIdentifierMustBeBackquoted(absl::string_view identifier) {
   static const auto& trie =
       *CreateNonReservedIdentifiersThatMustBeBackquotedTrie().release();
   return trie.Get(identifier);
+}
+
+const absl::flat_hash_map<absl::string_view, absl::string_view>&
+GetUserFacingImagesForSpecialKeywordsMap() {
+  static absl::flat_hash_map<absl::string_view, absl::string_view>* kMap =
+      []() {
+        return new absl::flat_hash_map<absl::string_view, absl::string_view>{
+            // TODO: Fold this mapping into kAllTokens instead of
+            //     having this second place that needs updating.
+            // (broken link) start
+            {"AND for BETWEEN", "AND"},
+            {"EXCEPT in set operation", "EXCEPT"},
+            {"KW_FULL_IN_SET_OP", "FULL"},
+            {"KW_LEFT_IN_SET_OP", "LEFT"},
+            {"KW_QUALIFY_RESERVED", "QUALIFY"},
+            {"NOT_SPECIAL", "NOT"},
+            {"WITH starting with expression", "WITH"},
+            // (broken link) end
+        };
+      }();
+  return *kMap;
 }
 
 }  // namespace parser

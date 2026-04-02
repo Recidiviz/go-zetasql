@@ -25,6 +25,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -49,6 +50,7 @@ using ::zetasql::JSONValueRef;
 using ::testing::HasSubstr;
 using ::testing::IsEmpty;
 using ::zetasql_base::testing::StatusIs;
+using WideNumberMode = ::zetasql::JSONParsingOptions::WideNumberMode;
 
 constexpr char kJSONStr[] = R"(
   {
@@ -485,34 +487,31 @@ TEST_P(JSONParserTest, ParseLargeNumbers) {
   ASSERT_TRUE(value.GetConstRef().IsUInt64());
   EXPECT_EQ(11111111111111111111ULL, value.GetConstRef().GetUInt64());
 
-  if (GetParam().strict_number_parsing) {
-    EXPECT_THAT(
-        JSONValue::ParseJSONString("123456789012345678901234567890", GetParam())
-            .status()
-            .message(),
-        ::testing::HasSubstr("cannot round-trip"));
-  } else {
-    value =
-        JSONValue::ParseJSONString("123456789012345678901234567890", GetParam())
-            .value();
-    EXPECT_FALSE(value.GetConstRef().IsInt64());
-    ASSERT_TRUE(value.GetConstRef().IsDouble());
-    EXPECT_THAT(value.GetConstRef().GetDouble(),
-                testing::DoubleEq(1.23456789012345678901234567890e+29));
+  switch (GetParam().wide_number_mode) {
+    case WideNumberMode::kRound:
+      value = JSONValue::ParseJSONString("123456789012345678901234567890",
+                                         GetParam())
+                  .value();
+      EXPECT_FALSE(value.GetConstRef().IsInt64());
+      ASSERT_TRUE(value.GetConstRef().IsDouble());
+      EXPECT_THAT(value.GetConstRef().GetDouble(),
+                  testing::DoubleEq(1.23456789012345678901234567890e+29));
+      break;
+    case WideNumberMode::kExact:
+      EXPECT_THAT(JSONValue::ParseJSONString("123456789012345678901234567890",
+                                             GetParam())
+                      .status()
+                      .message(),
+                  ::testing::HasSubstr("cannot round-trip"));
+      break;
+    case WideNumberMode::kIgnore:
+      ZETASQL_LOG(DFATAL) << "Incorrect value for wide_number_mode: kIgnore";
   }
 
-  // Legacy parser parses out of range doubles as inf while standard parser
-  // fails the parse.
   auto result = JSONValue::ParseJSONString("3.14e314", GetParam());
-  if (GetParam().legacy_mode) {
-    auto const_ref = result.value().GetConstRef();
-    ASSERT_TRUE(const_ref.IsDouble());
-    EXPECT_TRUE(std::isinf(const_ref.GetDouble()));
-  } else {
-    EXPECT_FALSE(result.ok());
-    EXPECT_THAT(result.status().message(),
-                ::testing::HasSubstr("number overflow parsing '3.14e314'"));
-  }
+  EXPECT_FALSE(result.ok());
+  EXPECT_THAT(result.status().message(),
+              ::testing::HasSubstr("number overflow parsing '3.14e314'"));
 }
 
 TEST_P(JSONParserTest, ParseBoolean) {
@@ -718,16 +717,12 @@ TEST_P(JSONParserTest, ParseDuplicateKeys) {
 
 INSTANTIATE_TEST_SUITE_P(
     CommonJSONParserTests, JSONParserTest,
-    ::testing::Values(JSONParsingOptions{.legacy_mode = true,
-                                         .strict_number_parsing = false},
-                      JSONParsingOptions{.legacy_mode = false,
-                                         .strict_number_parsing = false},
-                      JSONParsingOptions{.legacy_mode = false,
-                                         .strict_number_parsing = true}));
+    ::testing::Values(
+        JSONParsingOptions{.wide_number_mode = WideNumberMode::kRound},
+        JSONParsingOptions{.wide_number_mode = WideNumberMode::kExact}));
 
 TEST(JSONStrictNumberParsingTest, NumberParsingSuccess) {
-  JSONParsingOptions options{.legacy_mode = false,
-                             .strict_number_parsing = true};
+  JSONParsingOptions options{.wide_number_mode = WideNumberMode::kExact};
   absl::flat_hash_map<absl::string_view, absl::string_view> test_cases;
   test_cases.try_emplace("1", "1");
   test_cases.try_emplace("1e0", "1.0");
@@ -759,8 +754,7 @@ TEST(JSONStrictNumberParsingTest, NumberParsingFailure) {
   constexpr char overflow_err[] = "number overflow parsing";
   constexpr char failed_to_parse_err[] = "Failed to parse";
   constexpr char roundtrip_err[] = "cannot round-trip through string";
-  JSONParsingOptions options{.legacy_mode = false,
-                             .strict_number_parsing = true};
+  JSONParsingOptions options{.wide_number_mode = WideNumberMode::kExact};
   absl::flat_hash_map<std::string, std::string> test_cases;
   // Number overflow failure test cases
   test_cases.try_emplace("1e1000", overflow_err);
@@ -785,117 +779,77 @@ TEST(JSONStrictNumberParsingTest, NumberParsingFailure) {
   }
 }
 
-TEST(JSONLegacyParserTest, ParseSingleQuotes) {
-  JSONValue value =
-      JSONValue::ParseJSONString(
-          "'abc'", JSONParsingOptions{.legacy_mode = true,
-                                      .strict_number_parsing = false})
-          .value();
-  ASSERT_TRUE(value.GetConstRef().IsString());
-  EXPECT_EQ("abc", value.GetConstRef().GetString());
+TEST(JSONStrictNumberParsingTest, TestsWideNumberModeIsCorrectlySelected) {
+  absl::string_view json = "-1.003502000000000000000000001";
 
-  constexpr char json_str[] = R"(
-    {
-      "pi": 3.141,
-      "happy": true,
-      "name": "Niels",
-      "nothing": null,
-      'answer': {
-        "everything": 42
-      },
-      "list": [1, 0, 2],
-      "object": {
-        "currency": 'USD',
-        "value": 42.99
-      }
-    }
-  )";
-  value = JSONValue::ParseJSONString(
-              json_str, JSONParsingOptions{.legacy_mode = true,
-                                           .strict_number_parsing = false})
-              .value();
-  ASSERT_TRUE(value.GetConstRef().IsObject());
-  EXPECT_EQ(value.GetConstRef().GetObjectSize(), 7);
-  ASSERT_TRUE(value.GetConstRef().GetMember("pi").IsDouble());
-  EXPECT_EQ(3.141, value.GetConstRef().GetMember("pi").GetDouble());
-  ASSERT_TRUE(value.GetConstRef().GetMember("happy").IsBoolean());
-  EXPECT_TRUE(value.GetConstRef().GetMember("happy").GetBoolean());
-  ASSERT_TRUE(value.GetConstRef().GetMember("name").IsString());
-  EXPECT_EQ("Niels", value.GetConstRef().GetMember("name").GetString());
-  ASSERT_TRUE(value.GetConstRef().GetMember("nothing").IsNull());
-  ASSERT_TRUE(value.GetConstRef().GetMember("list").IsArray());
-  EXPECT_EQ(3, value.GetConstRef().GetMember("list").GetArraySize());
-  ASSERT_TRUE(value.GetConstRef().GetMember("object").IsObject());
+  // No options: defaults to kRound.
+  ZETASQL_EXPECT_OK(JSONValue::ParseJSONString(json).status());
+
+  // Maps to kRound.
+  ZETASQL_EXPECT_OK(JSONValue::ParseJSONString(json, {.strict_number_parsing = false})
+                .status());
+
+  // Maps to kExact.
+  EXPECT_THAT(JSONValue::ParseJSONString(json, {.strict_number_parsing = true})
+                  .status(),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("cannot round-trip through string")));
+
+  // kRound.
+  ZETASQL_EXPECT_OK(JSONValue::ParseJSONString(
+                json, {.wide_number_mode =
+                           JSONParsingOptions::WideNumberMode::kRound})
+                .status());
+
+  // kExact.
+  EXPECT_THAT(JSONValue::ParseJSONString(
+                  json, {.wide_number_mode =
+                             JSONParsingOptions::WideNumberMode::kExact})
+                  .status(),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("cannot round-trip through string")));
+
+  // kIgnore will use 'strict_number_mode' which default to false = kRound.
+  ZETASQL_EXPECT_OK(JSONValue::ParseJSONString(
+                json, {.wide_number_mode =
+                           JSONParsingOptions::WideNumberMode::kIgnore})
+                .status());
 }
 
 TEST(JSONStandardParserTest, ParseErrorStandard) {
   auto result = JSONValue::ParseJSONString("[[[");
   EXPECT_FALSE(result.ok());
-  EXPECT_THAT(
-      result.status().message(),
-      ::testing::HasSubstr(
-          "syntax error while parsing value - unexpected end of input"));
+  EXPECT_EQ(result.status().message(),
+            "syntax error while parsing value - unexpected end of input; "
+            "expected '[', '{', or a literal");
 
   result = JSONValue::ParseJSONString("t");
   EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr(
-                  "syntax error while parsing value - invalid literal"));
+  EXPECT_EQ(
+      result.status().message(),
+      "syntax error while parsing value - invalid literal; last read: 't'");
 
   result = JSONValue::ParseJSONString("[1, a]");
   EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr(
-                  "syntax error while parsing value - invalid literal"));
+  EXPECT_EQ(
+      result.status().message(),
+      "syntax error while parsing value - invalid literal; last read: '1, a'");
 
   result = JSONValue::ParseJSONString("{a: b}");
   EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr(
-                  "syntax error while parsing object key - invalid literal"));
+  EXPECT_EQ(result.status().message(),
+            "syntax error while parsing object key - invalid literal; last "
+            "read: '{a'; expected string literal");
 
   result = JSONValue::ParseJSONString("+");
   EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr(
-                  "syntax error while parsing value - invalid literal"));
-}
+  EXPECT_EQ(
+      result.status().message(),
+      "syntax error while parsing value - invalid literal; last read: '+'");
 
-TEST(JSONLegacyParserTest, ParseErrorLegacy) {
-  auto result = JSONValue::ParseJSONString(
-      "[[[",
-      JSONParsingOptions{.legacy_mode = true, .strict_number_parsing = false});
+  result = JSONValue::ParseJSONString("1e99999");
   EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr("Unexpected end of string"));
-
-  result = JSONValue::ParseJSONString(
-      "t",
-      JSONParsingOptions{.legacy_mode = true, .strict_number_parsing = false});
-  EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr("Unexpected token"));
-
-  result = JSONValue::ParseJSONString(
-      "[1, a]",
-      JSONParsingOptions{.legacy_mode = true, .strict_number_parsing = false});
-  EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr("Unexpected token"));
-
-  result = JSONValue::ParseJSONString(
-      "{a: b}",
-      JSONParsingOptions{.legacy_mode = true, .strict_number_parsing = false});
-  EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr("Non-string key encountered"));
-
-  result = JSONValue::ParseJSONString(
-      "+",
-      JSONParsingOptions{.legacy_mode = true, .strict_number_parsing = false});
-  EXPECT_FALSE(result.ok());
-  EXPECT_THAT(result.status().message(),
-              ::testing::HasSubstr("Unknown token type"));
+  EXPECT_EQ(result.status().message(), "number overflow parsing '1e99999'");
 }
 
 TEST(JSONValueTest, SerializePrimitiveValueToString) {
@@ -1023,14 +977,14 @@ TEST(JSONValueTest, DeserializeFromProtoBytesMaxNestingLevel) {
   EXPECT_THAT(JSONValue::DeserializeFromProtoBytes(encoded_bytes,
                                                    /*max_nesting_level=*/2)
                   .status(),
-              StatusIs(absl::StatusCode::kInvalidArgument,
+              StatusIs(absl::StatusCode::kOutOfRange,
                        HasSubstr("Max nesting of 2 has been exceeded while "
                                  "parsing JSON document")));
 
   EXPECT_THAT(JSONValue::DeserializeFromProtoBytes(encoded_bytes,
                                                    /*max_nesting_level=*/0)
                   .status(),
-              StatusIs(absl::StatusCode::kInvalidArgument,
+              StatusIs(absl::StatusCode::kOutOfRange,
                        HasSubstr("Max nesting of 0 has been exceeded while "
                                  "parsing JSON document")));
 
@@ -1273,8 +1227,7 @@ TEST(JSONValueTest, NormalizedEqualsArray) {
 }
 
 TEST(JSONValueTest, ParseWithNestingLimit) {
-  JSONParsingOptions options{.legacy_mode = false,
-                             .strict_number_parsing = false,
+  JSONParsingOptions options{.wide_number_mode = WideNumberMode::kRound,
                              .max_nesting = std::nullopt};
   auto result = JSONValue::ParseJSONString("[10, 20]", options);
   ASSERT_TRUE(result.ok());
@@ -1367,16 +1320,17 @@ TEST(JSONValueValidator, InvalidJSON) {
   ZETASQL_EXPECT_OK(IsValidJSON(json, {.max_nesting = 3}));
 
   EXPECT_THAT(IsValidJSON(json, {.max_nesting = 2}),
-              StatusIs(absl::StatusCode::kInvalidArgument,
+              StatusIs(absl::StatusCode::kOutOfRange,
                        HasSubstr("Max nesting of 2 has been exceeded while "
                                  "parsing JSON document")));
 
   // Strict number parsing
   std::string large_double = R"({"foo": 123456789012345678901234567890})";
   ZETASQL_EXPECT_OK(IsValidJSON(large_double));
-  EXPECT_THAT(IsValidJSON(large_double, {.strict_number_parsing = true}),
-              StatusIs(absl::StatusCode::kInvalidArgument,
-                       ::testing::HasSubstr("cannot round-trip")));
+  EXPECT_THAT(
+      IsValidJSON(large_double, {.wide_number_mode = WideNumberMode::kExact}),
+      StatusIs(absl::StatusCode::kOutOfRange,
+               ::testing::HasSubstr("cannot round-trip")));
 
   // Invalid values
   std::vector<std::pair<std::string, std::string>> jsons_and_errors = {
@@ -1391,7 +1345,7 @@ TEST(JSONValueValidator, InvalidJSON) {
 
   for (const auto& [json, error] : jsons_and_errors) {
     EXPECT_THAT(IsValidJSON(json),
-                StatusIs(absl::StatusCode::kInvalidArgument,
+                StatusIs(absl::StatusCode::kOutOfRange,
                          AllOf(HasSubstr("syntax error while parsing"),
                                HasSubstr(error))));
   }

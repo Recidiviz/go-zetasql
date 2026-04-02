@@ -1,7 +1,7 @@
 package parse_date_time_utils
 
 /*
-#cgo CXXFLAGS: -std=c++1z
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../../
 #cgo CXXFLAGS: -I../../../../protobuf
 #cgo CXXFLAGS: -I../../../../gtest

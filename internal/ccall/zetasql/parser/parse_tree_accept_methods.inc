@@ -104,8 +104,8 @@ void ASTOnClause::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTOnClause(this, data);
 }
 
-void ASTWithClauseEntry::Accept(ParseTreeVisitor* visitor, void* data) const {
-  visitor->visitASTWithClauseEntry(this, data);
+void ASTAliasedQuery::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAliasedQuery(this, data);
 }
 
 void ASTJoin::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -278,6 +278,30 @@ void ASTPartitionBy::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTSetOperation::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTSetOperation(this, data);
+}
+
+void ASTSetOperationMetadataList::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSetOperationMetadataList(this, data);
+}
+
+void ASTSetOperationAllOrDistinct::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSetOperationAllOrDistinct(this, data);
+}
+
+void ASTSetOperationType::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSetOperationType(this, data);
+}
+
+void ASTSetOperationColumnMatchMode::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSetOperationColumnMatchMode(this, data);
+}
+
+void ASTSetOperationColumnPropagationMode::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSetOperationColumnPropagationMode(this, data);
+}
+
+void ASTSetOperationMetadata::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSetOperationMetadata(this, data);
 }
 
 void ASTStarExceptList::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -638,6 +662,10 @@ void ASTCreateProcedureStatement::Accept(ParseTreeVisitor* visitor, void* data) 
 
 void ASTCreateSchemaStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTCreateSchemaStatement(this, data);
+}
+
+void ASTAliasedQueryList::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAliasedQueryList(this, data);
 }
 
 void ASTTransformClause::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1068,6 +1096,10 @@ void ASTArrayColumnSchema::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTArrayColumnSchema(this, data);
 }
 
+void ASTRangeColumnSchema::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRangeColumnSchema(this, data);
+}
+
 void ASTPrimaryKeyElement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTPrimaryKeyElement(this, data);
 }
@@ -1276,6 +1308,10 @@ void ASTAuxLoadDataFromFilesOptionsList::Accept(ParseTreeVisitor* visitor, void*
   visitor->visitASTAuxLoadDataFromFilesOptionsList(this, data);
 }
 
+void ASTAuxLoadDataPartitionsClause::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAuxLoadDataPartitionsClause(this, data);
+}
+
 void ASTAuxLoadDataStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAuxLoadDataStatement(this, data);
 }
@@ -1296,6 +1332,10 @@ void ASTLocation::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTLocation(this, data);
 }
 
+void ASTInputOutputClause::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTInputOutputClause(this, data);
+}
+
 void ASTSpannerTableOptions::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTSpannerTableOptions(this, data);
 }
@@ -1314,6 +1354,34 @@ void ASTSpannerSetOnDeleteAction::Accept(ParseTreeVisitor* visitor, void* data) 
 
 void ASTRangeLiteral::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTRangeLiteral(this, data);
+}
+
+void ASTRangeType::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRangeType(this, data);
+}
+
+void ASTSelectWith::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTSelectWith(this, data);
+}
+
+void ASTColumnWithOptions::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTColumnWithOptions(this, data);
+}
+
+void ASTColumnWithOptionsList::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTColumnWithOptionsList(this, data);
+}
+
+void ASTMacroBody::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTMacroBody(this, data);
+}
+
+void ASTDefineMacroStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTDefineMacroStatement(this, data);
+}
+
+void ASTUndropStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTUndropStatement(this, data);
 }
 
 absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1420,8 +1488,8 @@ absl::StatusOr<VisitResult> ASTOnClause::Accept(NonRecursiveParseTreeVisitor* vi
   return visitor->visitASTOnClause(this);
 }
 
-absl::StatusOr<VisitResult> ASTWithClauseEntry::Accept(NonRecursiveParseTreeVisitor* visitor) const {
-  return visitor->visitASTWithClauseEntry(this);
+absl::StatusOr<VisitResult> ASTAliasedQuery::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAliasedQuery(this);
 }
 
 absl::StatusOr<VisitResult> ASTJoin::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1594,6 +1662,30 @@ absl::StatusOr<VisitResult> ASTPartitionBy::Accept(NonRecursiveParseTreeVisitor*
 
 absl::StatusOr<VisitResult> ASTSetOperation::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTSetOperation(this);
+}
+
+absl::StatusOr<VisitResult> ASTSetOperationMetadataList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSetOperationMetadataList(this);
+}
+
+absl::StatusOr<VisitResult> ASTSetOperationAllOrDistinct::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSetOperationAllOrDistinct(this);
+}
+
+absl::StatusOr<VisitResult> ASTSetOperationType::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSetOperationType(this);
+}
+
+absl::StatusOr<VisitResult> ASTSetOperationColumnMatchMode::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSetOperationColumnMatchMode(this);
+}
+
+absl::StatusOr<VisitResult> ASTSetOperationColumnPropagationMode::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSetOperationColumnPropagationMode(this);
+}
+
+absl::StatusOr<VisitResult> ASTSetOperationMetadata::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSetOperationMetadata(this);
 }
 
 absl::StatusOr<VisitResult> ASTStarExceptList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1954,6 +2046,10 @@ absl::StatusOr<VisitResult> ASTCreateProcedureStatement::Accept(NonRecursivePars
 
 absl::StatusOr<VisitResult> ASTCreateSchemaStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTCreateSchemaStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTAliasedQueryList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAliasedQueryList(this);
 }
 
 absl::StatusOr<VisitResult> ASTTransformClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2384,6 +2480,10 @@ absl::StatusOr<VisitResult> ASTArrayColumnSchema::Accept(NonRecursiveParseTreeVi
   return visitor->visitASTArrayColumnSchema(this);
 }
 
+absl::StatusOr<VisitResult> ASTRangeColumnSchema::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRangeColumnSchema(this);
+}
+
 absl::StatusOr<VisitResult> ASTPrimaryKeyElement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTPrimaryKeyElement(this);
 }
@@ -2592,6 +2692,10 @@ absl::StatusOr<VisitResult> ASTAuxLoadDataFromFilesOptionsList::Accept(NonRecurs
   return visitor->visitASTAuxLoadDataFromFilesOptionsList(this);
 }
 
+absl::StatusOr<VisitResult> ASTAuxLoadDataPartitionsClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAuxLoadDataPartitionsClause(this);
+}
+
 absl::StatusOr<VisitResult> ASTAuxLoadDataStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAuxLoadDataStatement(this);
 }
@@ -2612,6 +2716,10 @@ absl::StatusOr<VisitResult> ASTLocation::Accept(NonRecursiveParseTreeVisitor* vi
   return visitor->visitASTLocation(this);
 }
 
+absl::StatusOr<VisitResult> ASTInputOutputClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTInputOutputClause(this);
+}
+
 absl::StatusOr<VisitResult> ASTSpannerTableOptions::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTSpannerTableOptions(this);
 }
@@ -2630,6 +2738,34 @@ absl::StatusOr<VisitResult> ASTSpannerSetOnDeleteAction::Accept(NonRecursivePars
 
 absl::StatusOr<VisitResult> ASTRangeLiteral::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTRangeLiteral(this);
+}
+
+absl::StatusOr<VisitResult> ASTRangeType::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRangeType(this);
+}
+
+absl::StatusOr<VisitResult> ASTSelectWith::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTSelectWith(this);
+}
+
+absl::StatusOr<VisitResult> ASTColumnWithOptions::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTColumnWithOptions(this);
+}
+
+absl::StatusOr<VisitResult> ASTColumnWithOptionsList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTColumnWithOptionsList(this);
+}
+
+absl::StatusOr<VisitResult> ASTMacroBody::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTMacroBody(this);
+}
+
+absl::StatusOr<VisitResult> ASTDefineMacroStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTDefineMacroStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTUndropStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTUndropStatement(this);
 }
 
 }  // namespace zetasql

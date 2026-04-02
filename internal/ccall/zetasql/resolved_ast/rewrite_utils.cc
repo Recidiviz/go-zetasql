@@ -31,6 +31,11 @@
 #include "zetasql/resolved_ast/resolved_ast_builder.h"
 #include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
 #include "zetasql/resolved_ast/resolved_ast_visitor.h"
+#include "zetasql/resolved_ast/resolved_column.h"
+#include "absl/status/status.h"
+#include "absl/strings/substitute.h"
+#include "zetasql/base/ret_check.h"
+#include "zetasql/base/status_builder.h"
 #include "zetasql/base/status_macros.h"
 
 namespace zetasql {
@@ -337,11 +342,8 @@ absl::StatusOr<std::unique_ptr<ResolvedFunctionCall>> FunctionCallBuilder::If(
   ZETASQL_RET_CHECK(condition->type()->IsBool());
   ZETASQL_RET_CHECK(then_case->type()->Equals(else_case->type()));
 
-  const Function* if_fn;
-  ZETASQL_RET_CHECK_OK(
-      catalog_.FindFunction({"if"}, &if_fn, analyzer_options_.find_options()));
-  ZETASQL_RET_CHECK_NE(if_fn, nullptr);
-  ZETASQL_RET_CHECK(if_fn->IsZetaSQLBuiltin());
+  const Function* if_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("if", &if_fn));
   FunctionArgumentType condition_arg(condition->type(), 1);
   FunctionArgumentType arg(then_case->type(), 1);
   FunctionSignature if_signature(arg, {condition_arg, arg, arg}, FN_IF);
@@ -355,15 +357,44 @@ absl::StatusOr<std::unique_ptr<ResolvedFunctionCall>> FunctionCallBuilder::If(
                                   ResolvedFunctionCall::DEFAULT_ERROR_MODE);
 }
 
+absl::StatusOr<std::unique_ptr<ResolvedScan>> ReplaceScanColumns(
+    ColumnFactory& column_factory, const ResolvedScan& scan,
+    const std::vector<int>& target_column_indices,
+    const std::vector<ResolvedColumn>& replacement_columns_to_use) {
+  // Initialize a map from the column ids in the VIEW/TVF definition to the
+  // column ids in the invoking query to remap the columns that were consumed
+  // by the TableScan.
+  ZETASQL_RET_CHECK_EQ(replacement_columns_to_use.size(), target_column_indices.size());
+  ColumnReplacementMap column_map;
+  for (int i = 0; i < target_column_indices.size(); ++i) {
+    int column_idx = target_column_indices[i];
+    ZETASQL_RET_CHECK_GT(scan.column_list_size(), column_idx);
+    column_map[scan.column_list(column_idx)] = replacement_columns_to_use[i];
+  }
+
+  return CopyResolvedASTAndRemapColumns(scan, column_factory, column_map);
+}
+
+std::vector<ResolvedColumn> CreateReplacementColumns(
+    ColumnFactory& column_factory,
+    const std::vector<ResolvedColumn>& column_list) {
+  std::vector<ResolvedColumn> replacement_columns;
+  replacement_columns.reserve(column_list.size());
+
+  for (const ResolvedColumn& old_column : column_list) {
+    replacement_columns.push_back(column_factory.MakeCol(
+        old_column.table_name(), old_column.name(), old_column.type()));
+  }
+
+  return replacement_columns;
+}
+
 absl::StatusOr<std::unique_ptr<ResolvedFunctionCall>>
 FunctionCallBuilder::IsNull(std::unique_ptr<const ResolvedExpr> arg) {
   ZETASQL_RET_CHECK_NE(arg.get(), nullptr);
 
-  const Function* is_null_fn;
-  ZETASQL_RET_CHECK_OK(catalog_.FindFunction({"$is_null"}, &is_null_fn,
-                                     analyzer_options_.find_options()));
-  ZETASQL_RET_CHECK_NE(is_null_fn, nullptr);
-  ZETASQL_RET_CHECK(is_null_fn->IsZetaSQLBuiltin());
+  const Function* is_null_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("$is_null", &is_null_fn));
   FunctionSignature is_null_signature(
       FunctionArgumentType(types::BoolType(), 1),
       {FunctionArgumentType(arg->type(), 1)}, FN_IS_NULL);
@@ -385,11 +416,8 @@ FunctionCallBuilder::IfError(std::unique_ptr<const ResolvedExpr> try_expr,
       << try_expr->type()->DebugString()
       << ", handle_expr->type(): " << handle_expr->type()->DebugString();
 
-  const Function* iferror_fn;
-  ZETASQL_RET_CHECK_OK(catalog_.FindFunction({"iferror"}, &iferror_fn,
-                                     analyzer_options_.find_options()));
-  ZETASQL_RET_CHECK_NE(iferror_fn, nullptr);
-  ZETASQL_RET_CHECK(iferror_fn->IsZetaSQLBuiltin());
+  const Function* iferror_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("iferror", &iferror_fn));
 
   FunctionArgumentType arg_type(try_expr->type(), 1);
 
@@ -407,13 +435,9 @@ absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
 FunctionCallBuilder::MakeArray(
     const ArrayType* array_type,
     std::vector<std::unique_ptr<ResolvedExpr>>& elements) {
-  const Function* make_array_fn;
-  ZETASQL_RET_CHECK_OK(catalog_.FindFunction({"$make_array"}, &make_array_fn,
-                                     analyzer_options_.find_options()))
-      << "Engine does not support make_array function";
-  ZETASQL_RET_CHECK(make_array_fn->IsZetaSQLBuiltin());
+  const Function* make_array_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("$make_array", &make_array_fn));
 
-  ZETASQL_RET_CHECK_NE(make_array_fn, nullptr);
   FunctionArgumentType make_array_arg(array_type->element_type(),
                                       FunctionArgumentType::REPEATED,
                                       static_cast<int>(elements.size()));
@@ -447,12 +471,8 @@ FunctionCallBuilder::Like(std::unique_ptr<ResolvedExpr> input,
                      << input->type()->DebugString();
   }
 
-  const Function* like_fn;
-  ZETASQL_RET_CHECK_OK(catalog_.FindFunction({"$like"}, &like_fn,
-                                     analyzer_options_.find_options()))
-      << "Engine does not support $like function";
-  ZETASQL_RET_CHECK(like_fn->IsZetaSQLBuiltin());
-  ZETASQL_RET_CHECK_NE(like_fn, nullptr);
+  const Function* like_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("$like", &like_fn));
 
   FunctionArgumentType input_arg(input->type(), 1);
   FunctionArgumentType pattern_arg(pattern->type(), 1);
@@ -474,12 +494,8 @@ FunctionCallBuilder::CaseNoValue(
     std::unique_ptr<const ResolvedExpr> else_result) {
   ZETASQL_RET_CHECK_GT(conditions.size(), 0);
   ZETASQL_RET_CHECK_EQ(conditions.size(), results.size());
-  const Function* case_fn;
-  ZETASQL_RET_CHECK_OK(catalog_.FindFunction({"$case_no_value"}, &case_fn,
-                                     analyzer_options_.find_options()))
-      << "Engine does not support $case_no_value function";
-  ZETASQL_RET_CHECK(case_fn->IsZetaSQLBuiltin());
-  ZETASQL_RET_CHECK_NE(case_fn, nullptr);
+  const Function* case_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("$case_no_value", &case_fn));
 
   const Type* result_type = results[0]->type();
   std::vector<std::unique_ptr<const ResolvedExpr>> case_fn_args;
@@ -517,12 +533,8 @@ FunctionCallBuilder::Not(std::unique_ptr<const ResolvedExpr> expression) {
       << "Type of expression is not a BOOL: expression->type(): "
       << expression->type()->DebugString();
 
-  const Function* not_fn;
-  ZETASQL_RET_CHECK_OK(catalog_.FindFunction({"$not"}, &not_fn,
-                                     analyzer_options_.find_options()))
-      << "Engine does not support $not function";
-  ZETASQL_RET_CHECK(not_fn->IsZetaSQLBuiltin());
-  ZETASQL_RET_CHECK_NE(not_fn, nullptr);
+  const Function* not_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("$not", &not_fn));
 
   FunctionArgumentType bool_argument_type(types::BoolType(), 1);
   FunctionSignature not_signature(bool_argument_type, {bool_argument_type},
@@ -533,6 +545,123 @@ FunctionCallBuilder::Not(std::unique_ptr<const ResolvedExpr> expression) {
   return MakeResolvedFunctionCall(types::BoolType(), not_fn, not_signature,
                                   std::move(not_fn_args),
                                   ResolvedFunctionCall::DEFAULT_ERROR_MODE);
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
+FunctionCallBuilder::Equal(std::unique_ptr<const ResolvedExpr> left_expr,
+                           std::unique_ptr<const ResolvedExpr> right_expr) {
+  ZETASQL_RET_CHECK_NE(left_expr.get(), nullptr);
+  ZETASQL_RET_CHECK_NE(right_expr.get(), nullptr);
+  ZETASQL_RET_CHECK(left_expr->type()->Equals(right_expr->type()));
+  ZETASQL_RET_CHECK(left_expr->type()->SupportsEquality());
+
+  const Function* equal_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog("$equal", &equal_fn));
+
+  FunctionSignature equal_signature(
+      {types::BoolType(), 1}, {{left_expr->type(), 1}, {right_expr->type(), 1}},
+      FN_EQUAL);
+  std::vector<std::unique_ptr<const ResolvedExpr>> equal_fn_args(2);
+  equal_fn_args[0] = std::move(left_expr);
+  equal_fn_args[1] = std::move(right_expr);
+
+  return ResolvedFunctionCallBuilder()
+      .set_type(types::BoolType())
+      .set_function(equal_fn)
+      .set_signature(equal_signature)
+      .set_argument_list(std::move(equal_fn_args))
+      .set_error_mode(ResolvedFunctionCall::DEFAULT_ERROR_MODE)
+      .set_function_call_info(std::make_shared<ResolvedFunctionCallInfo>())
+      .Build();
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
+FunctionCallBuilder::And(
+    std::vector<std::unique_ptr<const ResolvedExpr>> expressions) {
+  return NaryLogic("$and", FN_AND, std::move(expressions));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
+FunctionCallBuilder::Or(
+    std::vector<std::unique_ptr<const ResolvedExpr>> expressions) {
+  return NaryLogic("$or", FN_OR, std::move(expressions));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
+FunctionCallBuilder::NaryLogic(
+    absl::string_view op_catalog_name, FunctionSignatureId op_function_id,
+    std::vector<std::unique_ptr<const ResolvedExpr>> expressions) {
+  ZETASQL_RET_CHECK_GE(expressions.size(), 2);
+  ZETASQL_RET_CHECK(absl::c_all_of(expressions, [](const auto& expr) {
+    return expr->type()->Equals(types::BoolType());
+  }));
+
+  const Function* fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(GetBuiltinFunctionFromCatalog(op_catalog_name, &fn));
+
+  FunctionSignature signature(
+      {types::BoolType(), 1},
+      {{types::BoolType(), FunctionArgumentType::REPEATED,
+        static_cast<int>(expressions.size())}},
+      op_function_id);
+  return ResolvedFunctionCallBuilder()
+      .set_type(types::BoolType())
+      .set_function(fn)
+      .set_signature(signature)
+      .set_argument_list(std::move(expressions))
+      .set_error_mode(ResolvedFunctionCall::DEFAULT_ERROR_MODE)
+      .set_function_call_info(std::make_shared<ResolvedFunctionCallInfo>())
+      .Build();
+}
+
+absl::StatusOr<bool> CatalogSupportsBuiltinFunction(
+    absl::string_view function_name, const AnalyzerOptions& analyzer_options,
+    Catalog& catalog) {
+  const Function* fn;
+  absl::Status find_status = catalog.FindFunction(
+      {std::string(function_name)}, &fn, analyzer_options.find_options());
+  if (find_status.ok()) {
+    return fn != nullptr && fn->IsZetaSQLBuiltin();
+  }
+  if (absl::IsNotFound(find_status)) {
+    return false;
+  }
+  return find_status;
+}
+
+absl::Status CheckCatalogSupportsSafeMode(
+    absl::string_view function_name, const AnalyzerOptions& analyzer_options,
+    Catalog& catalog) {
+  ZETASQL_ASSIGN_OR_RETURN(
+      bool supports_safe_mode,
+      CatalogSupportsBuiltinFunction("NULLIFERROR", analyzer_options, catalog));
+  // In case NULLIFERROR is supported through rewrite (a common case) then we
+  // also need to check for the IFERROR function.
+  if (supports_safe_mode && analyzer_options.enabled_rewrites().contains(
+                                REWRITE_NULLIFERROR_FUNCTION)) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        supports_safe_mode,
+        CatalogSupportsBuiltinFunction("IFERROR", analyzer_options, catalog));
+  }
+  if (!supports_safe_mode) {
+    return absl::UnimplementedError(absl::StrCat(
+        "SAFE mode calls to ", function_name, " are not supported."));
+  }
+  return absl::OkStatus();
+}
+
+absl::Status FunctionCallBuilder::GetBuiltinFunctionFromCatalog(
+    absl::string_view function_name, const Function** fn_out) {
+  ZETASQL_RET_CHECK_NE(fn_out, nullptr);
+  ZETASQL_RET_CHECK_EQ(*fn_out, nullptr);
+  ZETASQL_RETURN_IF_ERROR(catalog_.FindFunction({std::string(function_name)}, fn_out,
+                                        analyzer_options_.find_options()));
+  if (fn_out == nullptr || *fn_out == nullptr ||
+      !(*fn_out)->IsZetaSQLBuiltin()) {
+    return absl::NotFoundError(absl::Substitute(
+        "Required built-in function \"$0\" not available.", function_name));
+  }
+  return absl::OkStatus();
 }
 
 absl::StatusOr<std::unique_ptr<ResolvedAggregateScan>>
@@ -667,4 +796,14 @@ bool IsBuiltInFunctionIdEq(const ResolvedFunctionCall* const function_call,
          function_call->signature().context_id() == function_signature_id &&
          function_call->function()->IsZetaSQLBuiltin();
 }
+
+zetasql_base::StatusBuilder MakeUnimplementedErrorAtNode(const ResolvedNode* node) {
+  zetasql_base::StatusBuilder builder = zetasql_base::UnimplementedErrorBuilder();
+  if (node != nullptr && node->GetParseLocationOrNULL() != nullptr) {
+    builder.Attach(
+        node->GetParseLocationOrNULL()->start().ToInternalErrorLocation());
+  }
+  return builder;
+}
+
 }  // namespace zetasql

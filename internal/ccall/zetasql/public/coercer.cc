@@ -17,6 +17,8 @@
 #include "zetasql/public/coercer.h"
 
 #include <algorithm>
+#include <functional>
+#include <iterator>
 #include <memory>
 #include <set>
 #include <stack>
@@ -39,6 +41,7 @@
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
+#include "absl/strings/match.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_builder.h"
@@ -312,7 +315,6 @@ absl::Status CheckSupertypesGlobalOrderForCoercer(
 
   return TypeGlobalOrderChecker::Check(supertypes_list, catalog);
 }
-
 }  // namespace
 
 absl::StatusOr<TypeListView> GetCandidateSuperTypes(const Type* type,
@@ -369,10 +371,6 @@ class Coercer::ContextBase {
     return extended_conversion_evaluators_;
   }
 
-  ConversionEvaluatorSet&& extended_conversion_evaluators() && {
-    return std::move(extended_conversion_evaluators_);
-  }
-
   // Saves the extended conversion function. Returns an error if function is
   // already set.
   absl::Status AddExtendedConversion(const Conversion& extended_conversion);
@@ -411,10 +409,6 @@ class Coercer::Context : public Coercer::ContextBase {
       Catalog::ConversionSourceExpressionKind source_kind,
       SignatureMatchResult* result);
 
-  absl::StatusOr<bool> ExtendedTypeCoercesTo(const InputArgumentType& argument,
-                                             const Type* to_type,
-                                             SignatureMatchResult* result);
-
   absl::StatusOr<bool> StructCoercesTo(const InputArgumentType& struct_argument,
                                        const Type* to_type,
                                        SignatureMatchResult* result);
@@ -445,6 +439,9 @@ class Coercer::Context : public Coercer::ContextBase {
   absl::StatusOr<bool> StructCoercesToProtoMapEntry(
       const StructType* from_struct, const ProtoType* to_type,
       SignatureMatchResult* result);
+
+  bool IsIntToOpaqueEnumInProductExternal(const Type* from_type,
+                                          const Type* to_type) const;
 };
 
 int GetLiteralCoercionCost(const Value& literal_value, const Type* to_type) {
@@ -1038,7 +1035,8 @@ absl::StatusOr<bool> Coercer::Context::ParameterCoercesTo(
       (SupportsParameterCoercion(property->type) ||
        (is_explicit() && SupportsExplicitCast(property->type))) &&
       (from_type->IsSimpleType() || to_type->IsSimpleType() ||
-       from_type->Equivalent(to_type))) {
+       from_type->Equivalent(to_type)) &&
+      !IsIntToOpaqueEnumInProductExternal(from_type, to_type)) {
     // Count these the same as literal coercion.  This is because
     // it is a useful property to have the same coercion cost and stability
     // between two queries where one uses literals and the other uses
@@ -1049,6 +1047,15 @@ absl::StatusOr<bool> Coercer::Context::ParameterCoercesTo(
   }
   result->incr_non_matched_arguments();
   return false;
+}
+
+bool Coercer::Context::IsIntToOpaqueEnumInProductExternal(
+    const Type* from_type, const Type* to_type) const {
+  // Note, this logic should probably be based on IsSupportedType, but
+  // there are weird exceptions related to 'legacy' enums, like NormalizeMode.
+  return from_type->IsInteger() && to_type->IsEnum() &&
+         to_type->AsEnum()->IsOpaque() &&
+         language_options().product_mode() == PRODUCT_EXTERNAL;
 }
 
 absl::StatusOr<bool> Coercer::Context::TypeCoercesTo(
@@ -1081,6 +1088,7 @@ absl::StatusOr<bool> Coercer::Context::TypeCoercesTo(
     result->incr_non_matched_arguments();
     return false;
   }
+
   // Enum and proto types can coerce to a (same or different) type if
   // the from/to types are equivalent.
   if (!from_type->IsSimpleType() && !to_type->IsSimpleType()) {
@@ -1195,11 +1203,11 @@ absl::StatusOr<bool> Coercer::Context::StructCoercesToProtoMapEntry(
   bool ignore_annotations = false;
   if (!type_factory()
            .GetProtoFieldType(ignore_annotations, to_type_proto->map_key(),
-                              &key_type)
+                              to_type_proto->CatalogNamePath(), &key_type)
            .ok() ||
       !type_factory()
            .GetProtoFieldType(ignore_annotations, to_type_proto->map_value(),
-                              &value_type)
+                              to_type_proto->CatalogNamePath(), &value_type)
            .ok()) {
     result->incr_non_matched_arguments();
     return false;
@@ -1285,6 +1293,10 @@ absl::StatusOr<bool> Coercer::Context::LiteralCoercesTo(
     result->incr_literals_distance(local_result.non_literals_distance());
     return true;
   }
+  if (IsIntToOpaqueEnumInProductExternal(literal_value.type(), to_type)) {
+    return false;
+  }
+
   if (literal_value.type()->IsStruct()) {
     // Structs are coerced on a field-by-field basis.
     return StructCoercesTo(InputArgumentType(literal_value), to_type, result);
@@ -1351,25 +1363,11 @@ absl::StatusOr<bool> Coercer::CoercesTo(
   return status;
 }
 
-bool Coercer::TypeCoercesTo(const Type* from_type, const Type* to_type,
-                            bool is_explicit,
-                            SignatureMatchResult* result) const {
-  return StatusToBool(
-      Context(*this, is_explicit).TypeCoercesTo(from_type, to_type, result));
-}
-
 bool Coercer::StructCoercesTo(const InputArgumentType& struct_argument,
                               const Type* to_type, bool is_explicit,
                               SignatureMatchResult* result) const {
   return StatusToBool(Context(*this, is_explicit)
                           .StructCoercesTo(struct_argument, to_type, result));
-}
-
-bool Coercer::ArrayCoercesTo(const InputArgumentType& array_argument,
-                             const Type* to_type, bool is_explicit,
-                             SignatureMatchResult* result) const {
-  return StatusToBool(Context(*this, is_explicit)
-                          .ArrayCoercesTo(array_argument, to_type, result));
 }
 
 bool Coercer::ParameterCoercesTo(const Type* from_type, const Type* to_type,

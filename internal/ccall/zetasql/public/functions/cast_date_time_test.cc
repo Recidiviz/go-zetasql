@@ -18,7 +18,10 @@
 
 #include <cstdint>
 #include <functional>
+#include <set>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/compliance/functions_testlib.h"
@@ -35,6 +38,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/substitute.h"
 #include "absl/time/time.h"
+#include "zetasql/base/map_util.h"
 
 namespace zetasql {
 namespace functions {
@@ -485,41 +489,42 @@ static void TestCastStringToTimestamp(const FunctionTestCall& test) {
       format_param.DebugString(), timestamp_string_param.DebugString(),
       timezone_param.DebugString(), current_timestamp_param.DebugString());
 
-  const QueryParamsWithResult::Result& micros_test_result = zetasql_base::FindOrDie(
-      test.params.results(), QueryParamsWithResult::kEmptyFeatureSet);
-  if (micros_test_result.status.ok()) {
-    ZETASQL_EXPECT_OK(status) << test_string;
-    if (status.ok()) {
-      EXPECT_EQ(TYPE_TIMESTAMP, micros_test_result.result.type_kind())
-          << test_string;
-      EXPECT_EQ(micros_test_result.result.ToTime(),
-                absl::FromUnixMicros(result_timestamp))
-          << test_string << "\nexpected: "
-          << absl::FormatTime(
-                 absl::FromUnixMicros(micros_test_result.result.ToUnixMicros()))
-          << "\nactual: "
-          << absl::FormatTime(absl::FromUnixMicros(result_timestamp));
+  // Test micros, unless the test case requires nanos precision.
+  if (!zetasql_base::ContainsKey(test.params.required_features(),
+                        FEATURE_TIMESTAMP_NANOS)) {
+    if (test.params.status().ok()) {
+      ZETASQL_EXPECT_OK(status) << test_string;
+      if (status.ok()) {
+        EXPECT_EQ(TYPE_TIMESTAMP, test.params.result().type_kind())
+            << test_string;
+        EXPECT_EQ(test.params.result().ToTime(),
+                  absl::FromUnixMicros(result_timestamp))
+            << test_string << "\nexpected: "
+            << absl::FormatTime(
+                   absl::FromUnixMicros(test.params.result().ToUnixMicros()))
+            << "\nactual: "
+            << absl::FormatTime(absl::FromUnixMicros(result_timestamp));
+      }
+    } else {
+      EXPECT_FALSE(status.ok())
+          << test_string << "\nstatus: " << test.params.status();
     }
-  } else {
-    EXPECT_FALSE(status.ok())
-        << test_string << "\nstatus: " << micros_test_result.status;
   }
-
-  const std::set<LanguageFeature> feature_set{FEATURE_TIMESTAMP_NANOS};
-  const QueryParamsWithResult::Result& nanos_test_result =
-      zetasql_base::FindOrDie(test.params.results(), feature_set);
-
-  if (nanos_test_result.status.ok()) {
-    ZETASQL_EXPECT_OK(base_time_status) << test_string;
-    EXPECT_EQ(TYPE_TIMESTAMP, nanos_test_result.result.type_kind())
-        << test_string;
-    EXPECT_EQ(nanos_test_result.result.ToTime(), base_time_result)
-        << test_string << ": "
-        << absl::FormatTime(nanos_test_result.result.ToTime()) << " vs "
-        << absl::FormatTime(base_time_result);
-  } else {
-    EXPECT_FALSE(base_time_status.ok())
-        << test_string << "\nstatus: " << nanos_test_result.status;
+  // Test nanos, unless the test case prohibits nanos precision.
+  if (!zetasql_base::ContainsKey(test.params.prohibited_features(),
+                        FEATURE_TIMESTAMP_NANOS)) {
+    if (test.params.status().ok()) {
+      ZETASQL_EXPECT_OK(base_time_status) << test_string;
+      EXPECT_EQ(TYPE_TIMESTAMP, test.params.result().type_kind())
+          << test_string;
+      EXPECT_EQ(test.params.result().ToTime(), base_time_result)
+          << test_string << ": "
+          << absl::FormatTime(test.params.result().ToTime()) << " vs "
+          << absl::FormatTime(base_time_result);
+    } else {
+      EXPECT_FALSE(base_time_status.ok())
+          << test_string << "\nstatus: " << test.params.status();
+    }
   }
 }
 
@@ -597,28 +602,25 @@ static void TestCivilTimeFunction(
   if (should_skip_test_case(testcase)) {
     return;
   }
-
-  // Validate micro result
-  const QueryParamsWithResult::FeatureSet civil_time_feature_set(
-      {FEATURE_V_1_2_CIVIL_TIME});
-  std::string actual_micro_string_value;
-  absl::Status actual_micro_status =
-      function_to_test_for_micro(testcase, &actual_micro_string_value);
-  const QueryParamsWithResult::Result* expected_micro_result =
-      zetasql_base::FindOrNull(testcase.params.results(), civil_time_feature_set);
-  ValidateResult(expected_micro_result, actual_micro_status,
-                 actual_micro_string_value, result_validator);
-
-  // Validate nano result
-  const QueryParamsWithResult::FeatureSet civil_time_and_nano_feature_set(
-      {FEATURE_V_1_2_CIVIL_TIME, FEATURE_TIMESTAMP_NANOS});
-  std::string actual_nano_string_value;
-  absl::Status actual_nano_status =
-      function_to_test_for_nano(testcase, &actual_nano_string_value);
-  const QueryParamsWithResult::Result* expected_nano_result = zetasql_base::FindOrNull(
-      testcase.params.results(), civil_time_and_nano_feature_set);
-  ValidateResult(expected_nano_result, actual_nano_status,
-                 actual_nano_string_value, result_validator);
+  for (auto& [features, result] : testcase.params.results()) {
+    // Validate micro result
+    if (!zetasql_base::ContainsKey(features, FEATURE_TIMESTAMP_NANOS)) {
+      std::string actual_micro_string_value;
+      absl::Status actual_micro_status =
+          function_to_test_for_micro(testcase, &actual_micro_string_value);
+      ValidateResult(&result, actual_micro_status, actual_micro_string_value,
+                     result_validator);
+    }
+    // Validate nano result
+    if (!zetasql_base::ContainsKey(testcase.params.prohibited_features(),
+                          FEATURE_TIMESTAMP_NANOS)) {
+      std::string actual_nano_string_value;
+      absl::Status actual_nano_status =
+          function_to_test_for_nano(testcase, &actual_nano_string_value);
+      ValidateResult(&result, actual_nano_status, actual_nano_string_value,
+                     result_validator);
+    }
+  }
 }
 
 static void TestCastStringToTime(const FunctionTestCall& test) {
@@ -730,9 +732,11 @@ static void TestCastFormatFunction(
   std::string result_string;
   const auto result_status = function_to_test(&result_string, &test_name);
   if (result_status.ok()) {
-    EXPECT_EQ(TYPE_STRING, testcase.params.result().type_kind()) << test_name;
-    EXPECT_EQ(result_string, testcase.params.result().string_value())
-        << test_name;
+    const QueryParamsWithResult::ResultMap& results = testcase.params.results();
+    ASSERT_EQ(results.size(), 1) << test_name;
+    Value result = results.begin()->second.result;
+    EXPECT_EQ(TYPE_STRING, result.type_kind()) << test_name;
+    EXPECT_EQ(result_string, result.string_value()) << test_name;
   } else {
     EXPECT_FALSE(result_status.ok()) << test_name;
   }
@@ -1511,6 +1515,152 @@ TEST(DateTimeUtilTest, FormatStringTooLongForFormatting) {
       CastFormatTimeToString(too_long_format_string, time, &out));
   ExpectFormatStringTooLongError(
       CastFormatDatetimeToString(too_long_format_string, datetime, &out));
+}
+
+TEST(DateTimeUtilTest, DateToStringCasterTest) {
+  EXPECT_THAT(DateToStringCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(auto caster, DateToStringCaster::Create("YYYY-MM-DD"));
+  std::string out;
+  EXPECT_THAT(
+      caster.Cast(zetasql::types::kDateMax + 1, &out),
+      StatusIs(absl::StatusCode::kOutOfRange, HasSubstr("Invalid date value")));
+
+  ZETASQL_EXPECT_OK(caster.Cast(2932896, &out));
+  EXPECT_EQ(out, "9999-12-31");
+}
+
+TEST(DateTimeUtilTest, DatetimeToStringCasterTest) {
+  EXPECT_THAT(DatetimeToStringCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(auto caster,
+                       DatetimeToStringCaster::Create("YYYY-MM-DD HH24:MI:SS"));
+  std::string out;
+  EXPECT_THAT(
+      caster.Cast(DatetimeValue::FromYMDHMSAndMicros(1234, 30, 0, 0, 0, 0, 0),
+                  &out),
+      StatusIs(absl::StatusCode::kOutOfRange,
+               HasSubstr("Invalid datetime value")));
+
+  ZETASQL_EXPECT_OK(caster.Cast(
+      DatetimeValue::FromYMDHMSAndMicros(1234, 1, 2, 3, 4, 5, 0), &out));
+  EXPECT_EQ(out, "1234-01-02 03:04:05");
+}
+
+TEST(DateTimeUtilTest, TimeToStringCasterTest) {
+  EXPECT_THAT(TimeToStringCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(auto caster, TimeToStringCaster::Create("HH24:MI:SS"));
+  std::string out;
+  EXPECT_THAT(
+      caster.Cast(TimeValue::FromHMSAndMicros(30, 0, 0, 0), &out),
+      StatusIs(absl::StatusCode::kOutOfRange, HasSubstr("Invalid time value")));
+
+  ZETASQL_EXPECT_OK(caster.Cast(TimeValue::FromHMSAndMicros(14, 1, 2, 3), &out));
+  EXPECT_EQ(out, "14:01:02");
+}
+
+TEST(DateTimeUtilTest, TimestampToStringCasterTest) {
+  EXPECT_THAT(TimestampToStringCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(
+      auto caster, TimestampToStringCaster::Create("YYYY-MM-DD HH24:MI:SS"));
+  std::string out;
+  EXPECT_THAT(caster.Cast(zetasql::types::kTimestampMax + 1,
+                          absl::UTCTimeZone(), &out),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Invalid timestamp value")));
+
+  int64_t timestamp =
+      123456789012345;  // Thursday, November 29, 1973 9:33:09 PM
+  ZETASQL_EXPECT_OK(caster.Cast(timestamp, absl::UTCTimeZone(), &out));
+  EXPECT_EQ(out, "1973-11-29 21:33:09");
+}
+
+TEST(DateTimeUtilTest, StringToDateCasterTest) {
+  EXPECT_THAT(StringToDateCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  absl::Time current_ts = absl::UnixEpoch();
+  int32_t current_date;
+  ZETASQL_EXPECT_OK(ExtractFromTimestamp(DATE, current_ts, absl::UTCTimeZone(),
+                                 &current_date));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(auto caster, StringToDateCaster::Create("YYYY-MM-DD"));
+  int32_t date;
+  EXPECT_THAT(caster.Cast("\xc3\x28", current_date, &date),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Input string is not valid UTF-8")));
+
+  ZETASQL_EXPECT_OK(caster.Cast("9999-12-31", current_date, &date));
+  EXPECT_EQ(date, zetasql::types::kDateMax);
+}
+
+TEST(DateTimeUtilTest, StringToDatetimeCasterTest) {
+  EXPECT_THAT(StringToDatetimeCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  absl::Time current_ts = absl::UnixEpoch();
+  int32_t current_date;
+  ZETASQL_EXPECT_OK(ExtractFromTimestamp(DATE, current_ts, absl::UTCTimeZone(),
+                                 &current_date));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(auto caster,
+                       StringToDatetimeCaster::Create("YYYY MM DD HH24:MI:SS"));
+  DatetimeValue datetime;
+  EXPECT_THAT(caster.Cast("\xc3\x28", TimestampScale::kMicroseconds,
+                          current_date, &datetime),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Input string is not valid UTF-8")));
+
+  ZETASQL_EXPECT_OK(caster.Cast("1234 01 02 03:04:05", TimestampScale::kMicroseconds,
+                        current_date, &datetime));
+  EXPECT_EQ(datetime.DebugString(), "1234-01-02 03:04:05");
+}
+
+TEST(DateTimeUtilTest, StringToTimeCasterTest) {
+  EXPECT_THAT(StringToTimeCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(auto caster, StringToTimeCaster::Create("HH24.MI.SS"));
+  TimeValue time;
+  EXPECT_THAT(caster.Cast("\xc3\x28", TimestampScale::kMicroseconds, &time),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Input string is not valid UTF-8")));
+
+  ZETASQL_EXPECT_OK(caster.Cast("01.02.03", TimestampScale::kMicroseconds, &time));
+  EXPECT_EQ(time.DebugString(), "01:02:03");
+}
+
+TEST(DateTimeUtilTest, StringToTimestampCasterTest) {
+  EXPECT_THAT(StringToTimestampCaster::Create("A"),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Cannot find matched format element at 0")));
+
+  absl::Time current_ts = absl::UnixEpoch();
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(
+      auto caster, StringToTimestampCaster::Create("YYYY MM DD HH24:MI:SS"));
+  int64_t timestamp_micros;
+  EXPECT_THAT(caster.Cast("\xc3\x28", absl::UTCTimeZone(), current_ts,
+                          &timestamp_micros),
+              StatusIs(absl::StatusCode::kOutOfRange,
+                       HasSubstr("Input string is not valid UTF-8")));
+
+  ZETASQL_EXPECT_OK(caster.Cast("1973 11 29 21:33:09", absl::UTCTimeZone(), current_ts,
+                        &timestamp_micros));
+  EXPECT_EQ(timestamp_micros, 123456789000000);
 }
 
 }  // namespace

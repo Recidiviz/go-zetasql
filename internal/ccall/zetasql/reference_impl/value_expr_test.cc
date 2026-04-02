@@ -17,7 +17,11 @@
 // Tests for ValueExprs not covered by other tests.
 
 #include <cstdint>
+#include <limits>
+#include <map>
 #include <memory>
+#include <optional>
+#include <ostream>
 #include <set>
 #include <string>
 #include <utility>
@@ -26,7 +30,6 @@
 #include "zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
-#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/common/internal_value.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/base/testing/status_matchers.h"
@@ -68,10 +71,12 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
+#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
@@ -163,11 +168,11 @@ std::ostream& operator<<(std::ostream& out, const NaryFunctionTemplate& t) {
     arguments.push_back(ConstExpr::Create(t.params.param(i)).value());
   }
   auto fct_op = ScalarFunctionCallExpr::Create(
-                    CreateFunction(t.kind, t.params.GetResultType()),
+                    CreateFunction(t.kind, t.params.result().type()),
                     std::move(arguments))
                     .value();
   out << fct_op->DebugString() << " == ";
-  if (t.params.HasEmptyFeatureSetAndNothingElse()) {
+  if (t.params.required_features().empty()) {
     out << t.params.result().DebugString(/*verbose=*/true);
   } else {
     out << "(";
@@ -248,7 +253,7 @@ TEST_P(NaryFunctionTemplateTest, NaryFunctionTest) {
     ZETASQL_ASSERT_OK_AND_ASSIGN(
         auto function_body,
         BuiltinScalarFunction::CreateValidated(
-            t.kind, language_options, t.params.GetResultType(), arguments));
+            t.kind, language_options, t.params.result().type(), arguments));
     ZETASQL_ASSERT_OK_AND_ASSIGN(
         auto fct, ScalarFunctionCallExpr::Create(std::move(function_body),
                                                  std::move(arguments)));
@@ -319,23 +324,18 @@ INSTANTIATE_TEST_SUITE_P(Not, NaryFunctionTemplateTest,
                          ValuesIn(GetFunctionTemplates(FunctionKind::kNot,
                                                        GetFunctionTestsNot())));
 
-INSTANTIATE_TEST_SUITE_P(
-    Equal, NaryFunctionTemplateTest,
-    ValuesIn(GetFunctionTemplates(FunctionKind::kEqual,
-                                  GetFunctionTestsEqual(
-                                      /*include_nano_timestamp=*/false))));
+INSTANTIATE_TEST_SUITE_P(Equal, NaryFunctionTemplateTest,
+                         ValuesIn(GetFunctionTemplates(
+                             FunctionKind::kEqual, GetFunctionTestsEqual())));
 
-INSTANTIATE_TEST_SUITE_P(
-    Less, NaryFunctionTemplateTest,
-    ValuesIn(GetFunctionTemplates(FunctionKind::kLess,
-                                  GetFunctionTestsLess(
-                                      /*include_nano_timestamp=*/false))));
+INSTANTIATE_TEST_SUITE_P(Less, NaryFunctionTemplateTest,
+                         ValuesIn(GetFunctionTemplates(
+                             FunctionKind::kLess, GetFunctionTestsLess())));
 
 INSTANTIATE_TEST_SUITE_P(
     LessOrEqual, NaryFunctionTemplateTest,
-    ValuesIn(GetFunctionTemplates(
-        FunctionKind::kLessOrEqual,
-        GetFunctionTestsLessOrEqual(/*include_nano_timestamp=*/false))));
+    ValuesIn(GetFunctionTemplates(FunctionKind::kLessOrEqual,
+                                  GetFunctionTestsLessOrEqual())));
 
 INSTANTIATE_TEST_SUITE_P(IsNull, NaryFunctionTemplateTest,
                          ValuesIn(GetFunctionTemplates(
@@ -351,17 +351,14 @@ INSTANTIATE_TEST_SUITE_P(
     ValuesIn(GetFunctionTemplates(FunctionKind::kSafeArrayAtOffset,
                                   GetFunctionTestsSafeAtOffset())));
 
-INSTANTIATE_TEST_SUITE_P(
-    Least, NaryFunctionTemplateTest,
-    ValuesIn(GetFunctionTemplates(
-        FunctionKind::kLeast,
-        GetFunctionTestsLeast(/*include_nano_timestamp=*/false))));
+INSTANTIATE_TEST_SUITE_P(Least, NaryFunctionTemplateTest,
+                         ValuesIn(GetFunctionTemplates(
+                             FunctionKind::kLeast, GetFunctionTestsLeast())));
 
 INSTANTIATE_TEST_SUITE_P(
     Greatest, NaryFunctionTemplateTest,
-    ValuesIn(GetFunctionTemplates(
-        FunctionKind::kGreatest,
-        GetFunctionTestsGreatest(/*include_nano_timestamp=*/false))));
+    ValuesIn(GetFunctionTemplates(FunctionKind::kGreatest,
+                                  GetFunctionTestsGreatest())));
 
 class EvalTest : public ::testing::Test {
  protected:
@@ -450,7 +447,7 @@ TEST_F(EvalTest, NewArrayExpr) {
   EXPECT_FALSE(
       array_op->EvalSimple(EmptyParams(), &value_size_context, &slot, &status));
   EXPECT_THAT(status,
-              StatusIs(absl::StatusCode::kOutOfRange,
+              StatusIs(absl::StatusCode::kResourceExhausted,
                        HasSubstr("Cannot construct array Value larger than")));
 }
 
@@ -998,6 +995,8 @@ TEST_F(DMLValueExprEvalTest, DMLInsertValueExpr) {
     (*resolved_expr_map)[value->value()] = std::move(const_expr);
   }
 
+  auto column_expr_map = std::make_unique<ColumnExprMap>();
+
   // Create the DMLInsertValueExpr to be tested.
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       std::unique_ptr<DMLInsertValueExpr> expr,
@@ -1007,7 +1006,7 @@ TEST_F(DMLValueExprEvalTest, DMLInsertValueExpr) {
           stmt.get(), &stmt->table_scan()->column_list(),
           /*returning_column_values=*/nullptr,
           std::move(column_to_variable_mapping), std::move(resolved_scan_map),
-          std::move(resolved_expr_map)));
+          std::move(resolved_expr_map), std::move(column_expr_map)));
 
   // Evaluate and check.
   TupleSlot result;
@@ -1111,6 +1110,8 @@ TEST_F(DMLValueExprEvalTest,
     (*resolved_expr_map)[value->value()] = std::move(const_expr);
   }
 
+  auto column_expr_map = std::make_unique<ColumnExprMap>();
+
   // Create the DMLInsertValueExpr to be tested.
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       std::unique_ptr<DMLInsertValueExpr> expr,
@@ -1120,7 +1121,7 @@ TEST_F(DMLValueExprEvalTest,
           stmt.get(), &stmt->table_scan()->column_list(),
           /*returning_column_values=*/nullptr,
           std::move(column_to_variable_mapping), std::move(resolved_scan_map),
-          std::move(resolved_expr_map)));
+          std::move(resolved_expr_map), std::move(column_expr_map)));
 
   // Evaluate and check.
   TupleSlot result;
@@ -1411,6 +1412,8 @@ TEST_F(DMLValueExprEvalTest, DMLUpdateValueExpr) {
   // Touch the getter to pass CheckFieldsAccessed().
   ASSERT_EQ(stmt->update_item_list(0)->element_column(), nullptr);
 
+  auto column_expr_map = std::make_unique<ColumnExprMap>();
+
   // Create the DMLUpdateValueExpr to be tested.
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       std::unique_ptr<DMLUpdateValueExpr> expr,
@@ -1420,7 +1423,7 @@ TEST_F(DMLValueExprEvalTest, DMLUpdateValueExpr) {
           stmt.get(), &stmt->table_scan()->column_list(),
           /*returning_column_values=*/nullptr,
           std::move(column_to_variable_mapping), std::move(resolved_scan_map),
-          std::move(resolved_expr_map)));
+          std::move(resolved_expr_map), std::move(column_expr_map)));
 
   // Evaluate and check.
   TupleSlot result;
@@ -1580,6 +1583,8 @@ TEST_F(DMLValueExprEvalTest,
   // Touch the getter to pass CheckFieldsAccessed().
   ASSERT_EQ(stmt->update_item_list(0)->element_column(), nullptr);
 
+  auto column_expr_map = std::make_unique<ColumnExprMap>();
+
   // Create the DMLUpdateValueExpr to be tested.
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       std::unique_ptr<DMLUpdateValueExpr> expr,
@@ -1589,7 +1594,7 @@ TEST_F(DMLValueExprEvalTest,
           stmt.get(), &stmt->table_scan()->column_list(),
           /*returning_column_values=*/nullptr,
           std::move(column_to_variable_mapping), std::move(resolved_scan_map),
-          std::move(resolved_expr_map)));
+          std::move(resolved_expr_map), std::move(column_expr_map)));
 
   // Evaluate and check.
   TupleSlot result;
@@ -1747,6 +1752,8 @@ TEST_F(DMLValueExprEvalTest,
   // Touch the getter to pass CheckFieldsAccessed().
   ASSERT_EQ(stmt->update_item_list(0)->element_column(), nullptr);
 
+  auto column_expr_map = std::make_unique<ColumnExprMap>();
+
   // Create the DMLUpdateValueExpr to be tested.
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       std::unique_ptr<DMLUpdateValueExpr> expr,
@@ -1756,7 +1763,7 @@ TEST_F(DMLValueExprEvalTest,
           stmt.get(), &stmt->table_scan()->column_list(),
           /*returning_column_values=*/nullptr,
           std::move(column_to_variable_mapping), std::move(resolved_scan_map),
-          std::move(resolved_expr_map)));
+          std::move(resolved_expr_map), std::move(column_expr_map)));
 
   // Evaluate and check.
   TupleSlot result;
@@ -1866,8 +1873,9 @@ class ProtoEvalTest : public ::testing::Test {
     ZETASQL_RET_CHECK(field_descr != nullptr);
     const Type* field_type;
     Value default_value;
-    ZETASQL_RET_CHECK_OK(GetProtoFieldTypeAndDefault({}, field_descr, type_factory_,
-                                             &field_type, &default_value));
+    ZETASQL_RET_CHECK_OK(GetProtoFieldTypeAndDefault(
+        {}, field_descr, /*catalog_name_path=*/{}, type_factory_, &field_type,
+        &default_value));
 
     ProtoFieldAccessInfo access_info;
     access_info.field_info.descriptor = field_descr;
@@ -3089,15 +3097,17 @@ TEST_F(ProtoEvalTest, GetProtoFieldExprsMultipleFieldsMultipleRows) {
     ProtoFieldAccessInfo access_info1;
     ProtoFieldInfo* info1 = &access_info1.field_info;
     info1->descriptor = p1.GetDescriptor()->FindFieldByName("int64_key_1");
-    ZETASQL_ASSERT_OK(GetProtoFieldTypeAndDefault({}, info1->descriptor, type_factory_,
-                                          &info1->type, &info1->default_value));
+    ZETASQL_ASSERT_OK(GetProtoFieldTypeAndDefault(
+        {}, info1->descriptor, /*catalog_name_path=*/{}, type_factory_,
+        &info1->type, &info1->default_value));
     info1->format = ProtoType::GetFormatAnnotation(info1->descriptor);
 
     ProtoFieldAccessInfo access_info2;
     ProtoFieldInfo* info2 = &access_info2.field_info;
     info2->descriptor = p2.GetDescriptor()->FindFieldByName("nested_value");
-    ZETASQL_ASSERT_OK(GetProtoFieldTypeAndDefault({}, info2->descriptor, type_factory_,
-                                          &info2->type, &info2->default_value));
+    ZETASQL_ASSERT_OK(GetProtoFieldTypeAndDefault(
+        {}, info2->descriptor, /*catalog_name_path=*/{}, type_factory_,
+        &info2->type, &info2->default_value));
     info2->format = ProtoType::GetFormatAnnotation(info2->descriptor);
 
     EvaluationOptions options;

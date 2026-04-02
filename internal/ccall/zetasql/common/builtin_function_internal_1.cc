@@ -17,6 +17,7 @@
 #include <ctype.h>
 
 #include <algorithm>
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
@@ -26,11 +27,12 @@
 #include "zetasql/base/logging.h"
 #include "zetasql/common/builtin_function_internal.h"
 #include "zetasql/common/errors.h"
-#include "zetasql/public/anon_function.h"
+#include "zetasql/public/builtin_function.pb.h"
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/cycle_detector.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/function.pb.h"
+#include "zetasql/public/function_signature.h"
 #include "zetasql/public/functions/date_time_util.h"
 #include "zetasql/public/functions/datetime.pb.h"
 #include "zetasql/public/functions/string_format.h"
@@ -203,6 +205,28 @@ std::string AnonSumWithReportProtoFunctionSQL(
   ZETASQL_DCHECK(inputs.size() == 1 || inputs.size() == 3);
   return absl::StrCat(
       "ANON_SUM(", inputs[0],
+      inputs.size() == 3
+          ? absl::StrCat(" CLAMPED BETWEEN ", inputs[1], " AND ", inputs[2])
+          : "",
+      " WITH REPORT(FORMAT=PROTO))");
+}
+
+std::string AnonAvgWithReportJsonFunctionSQL(
+    const std::vector<std::string>& inputs) {
+  ZETASQL_DCHECK(inputs.size() == 1 || inputs.size() == 3);
+  return absl::StrCat(
+      "ANON_AVG(", inputs[0],
+      inputs.size() == 3
+          ? absl::StrCat(" CLAMPED BETWEEN ", inputs[1], " AND ", inputs[2])
+          : "",
+      " WITH REPORT(FORMAT=JSON))");
+}
+
+std::string AnonAvgWithReportProtoFunctionSQL(
+    const std::vector<std::string>& inputs) {
+  ZETASQL_DCHECK(inputs.size() == 1 || inputs.size() == 3);
+  return absl::StrCat(
+      "ANON_AVG(", inputs[0],
       inputs.size() == 3
           ? absl::StrCat(" CLAMPED BETWEEN ", inputs[1], " AND ", inputs[2])
           : "",
@@ -446,16 +470,6 @@ bool ArgumentIsStringLiteral(const InputArgumentType& argument) {
     return true;
   }
   return false;
-}
-
-template <typename ArgumentType>
-bool AllArgumentsHaveType(const std::vector<ArgumentType>& arguments) {
-  for (const ArgumentType& arg : arguments) {
-    if (arg.type() == nullptr) {
-      return false;
-    }
-  }
-  return true;
 }
 
 absl::Status EnsureArgumentsHaveType(
@@ -1292,127 +1306,6 @@ std::string NoMatchingSignatureForGenerateDateOrTimestampArrayFunction(
       /*index_of_interval_argument=*/2);
 }
 
-// Supports 'ArgumentType' of either InputArgumentType or FunctionArgumentType.
-//
-// Example return values:
-//   DATE_TIME_PART FROM TIMESTAMP
-//   DATE FROM TIMESTAMP
-//   TIME FROM TIMESTAMP
-//   DATETIME FROM TIMESTAMP
-//   DATE_TIME_PART FROM TIMESTAMP AT TIME ZONE STRING
-//   DATETIME FROM TIMESTAMP [AT TIME ZONE STRING]
-//
-// 'include_bracket' indicates whether or not the 'AT TIME ZONE' argument
-// is enclosed in brackets to indicate that the clause is optional.
-// The input 'arguments' must be a valid signature for EXTRACT.
-//
-// If 'explicit_datepart_name' is non-empty, then the signature must not
-// have a date part argument.  Otherwise, the signature must have a date
-// part argument.
-//
-// For $extract, the date part argument is present in 'arguments', and
-// 'explicit_datepart_name' is empty.
-//
-// For $extract_date, $extract_time, and $extract_datetime, the date part
-// argument is *not* present in 'arguments', and 'explicit_datepart_name'
-// is non-empty.
-template <class ArgumentType>
-std::string GetExtractFunctionSignatureString(
-    const std::string& explicit_datepart_name,
-    const std::vector<ArgumentType>& arguments, ProductMode product_mode,
-    bool include_bracket) {
-  if (arguments.empty()) {
-    return "Must provide at least 1 argument.";
-  }
-  if (!AllArgumentsHaveType(arguments)) {
-    return "Unexpected types";
-  }
-  // The 0th argument is the one we are extracting the date part from.
-  const std::string source_type_string =
-      arguments[0].UserFacingName(product_mode);
-  std::string datepart_string;
-  std::string timezone_string;
-  if (explicit_datepart_name.empty()) {
-    // The date part argument is present in 'arguments', so arguments[1]
-    // is the date part and arguments[2] (if present) is the time zone.
-    //
-    // ZETASQL_DCHECK validated - given the non-standard function call syntax for
-    // EXTRACT, the parser enforces 2 or 3 arguments in the language.
-    ZETASQL_DCHECK(arguments.size() == 2 || arguments.size() == 3) << arguments.size();
-    // Expected invariant - the 1th argument is the date part argument.
-    ZETASQL_DCHECK(arguments[1].type()->Equivalent(types::DatePartEnumType()));
-    datepart_string = arguments[1].UserFacingName(product_mode);
-    if (arguments.size() == 3) {
-      timezone_string = arguments[2].UserFacingName(product_mode);
-    }
-  } else {
-    // The date part is populated from 'explicit_datepart_name' and the
-    // date part argument is not present in 'arguments', so arguments[1]
-    // (if present) is the time zone.
-    //
-    // ZETASQL_DCHECK validated - given the non-standard function call syntax for
-    // EXTRACT, the parser enforces 2 or 3 arguments in the language and
-    // the date part argument has been omitted from this signature (i.e.,
-    // $extract_date, etc.).
-    ZETASQL_DCHECK(arguments.size() == 1 || arguments.size() == 2) << arguments.size();
-    datepart_string = explicit_datepart_name;
-    // If present, the 1th argument is the optional timezone argument.
-    if (arguments.size() == 2) {
-      timezone_string = arguments[1].UserFacingName(product_mode);
-    }
-  }
-
-  std::string out;
-  absl::StrAppend(
-      &out, datepart_string, " FROM ", source_type_string,
-      (timezone_string.empty()
-           ? ""
-           : absl::StrCat(" ", (include_bracket ? "[" : ""), "AT TIME ZONE ",
-                          timezone_string, (include_bracket ? "]" : ""))));
-  return out;
-}
-
-std::string NoMatchingSignatureForExtractFunction(
-    const std::string& explicit_datepart_name,
-    const std::string& qualified_function_name,
-    const std::vector<InputArgumentType>& arguments, ProductMode product_mode) {
-  if (arguments.size() <= 1) {
-    return "No matching signature for function EXTRACT,"
-           " at least 1 argument must be provided.";
-  }
-  std::string msg =
-      "No matching signature for function EXTRACT for argument types: ";
-  absl::StrAppend(&msg, GetExtractFunctionSignatureString(
-                            explicit_datepart_name, arguments, product_mode,
-                            /*include_bracket=*/false));
-  return msg;
-}
-
-std::string ExtractSupportedSignatures(
-    const std::string& explicit_datepart_name,
-    const LanguageOptions& language_options, const Function& function) {
-  std::string supported_signatures;
-  for (const FunctionSignature& signature : function.signatures()) {
-    // Ignore deprecated signatures, and signatures that include
-    // unsupported data types.
-    if (signature.HasUnsupportedType(language_options)) {
-      // We must check for unsupported types since some engines do not
-      // support the DATETIME/TIME types yet.
-      continue;
-    }
-    if (!supported_signatures.empty()) {
-      absl::StrAppend(&supported_signatures, "; ");
-    }
-    absl::StrAppend(
-        &supported_signatures, "EXTRACT(",
-        GetExtractFunctionSignatureString(
-            explicit_datepart_name, signature.arguments(),
-            language_options.product_mode(), true /* include_bracket */),
-        ")");
-  }
-  return supported_signatures;
-}
-
 std::string NoMatchingSignatureForSubscript(
     absl::string_view offset_or_ordinal, absl::string_view operator_name,
     const std::vector<InputArgumentType>& arguments, ProductMode product_mode) {
@@ -1491,7 +1384,7 @@ absl::StatusOr<const Type*> GetOrMakeEnumValueDescriptorType(
   }
 
   const ProtoType* default_return_type = nullptr;
-  ZETASQL_CHECK_OK(type_factory->MakeProtoType(
+  ZETASQL_RETURN_IF_ERROR(type_factory->MakeProtoType(
       google::protobuf::EnumValueDescriptorProto::descriptor(), &default_return_type));
   return default_return_type;
 }
@@ -1905,13 +1798,45 @@ static bool FunctionSignatureIsDisabled(
   return false;
 }
 
-static void InsertCheckedFunction(NameToFunctionMap* functions,
-                                  std::unique_ptr<Function> function) {
+static absl::Status InsertCheckedFunction(
+    NameToFunctionMap* functions, std::unique_ptr<Function> function,
+    const ZetaSQLBuiltinFunctionOptions& options) {
+  // Check if a rewrite override has been specified in the rewrite_enabled
+  // map and set the enabled bit in FunctionSignatureRewriteOptions
+  // accordingly.
+  for (int idx = 0; idx < function->signatures().size(); ++idx) {
+    const FunctionSignature& signature = function->signatures()[idx];
+    ZETASQL_RET_CHECK(function->IsZetaSQLBuiltin());
+    auto found_override = options.rewrite_enabled.find(
+        static_cast<FunctionSignatureId>(signature.context_id()));
+    if (found_override != options.rewrite_enabled.end()) {
+      FunctionSignature& mutable_signature =
+          *function->GetMutableSignature(idx);
+      auto opt_rewrite_options =
+          mutable_signature.mutable_options().mutable_rewrite_options();
+      if (opt_rewrite_options.has_value()) {
+        mutable_signature.mutable_options()
+            .mutable_rewrite_options()
+            ->set_enabled(found_override->second);
+      } else {
+        if (found_override->second) {
+          return absl::FailedPreconditionError(absl::StrCat(
+              "Attempted to opt into a rewrite for the following function: ",
+              function->Name(),
+              " but found no valid FunctionSignatureRewriteOptions. Rewrites "
+              "may "
+              "only be opted into if a valid rewriter has already been "
+              "configured for that function. "));
+        }
+      }
+    }
+  }
   // Not using IdentifierPathToString to avoid escaping things like '$add' and
   // 'if'.
   std::string name = absl::StrJoin(function->FunctionNamePath(), ".");
-  ZETASQL_CHECK(functions->emplace(name, std::move(function)).second)
+  ZETASQL_RET_CHECK(functions->emplace(name, std::move(function)).second)
       << name << "already exists";
+  return absl::OkStatus();
 }
 
 void InsertCreatedFunction(NameToFunctionMap* functions,
@@ -1921,8 +1846,6 @@ void InsertCreatedFunction(NameToFunctionMap* functions,
   if (FunctionIsDisabled(options, function->function_options())) {
     return;
   }
-
-  const LanguageOptions& language_options = options.language_options;
 
   // Identify each signature that is unsupported via options checks.
   absl::flat_hash_set<int> signatures_to_remove;
@@ -1954,18 +1877,19 @@ void InsertCreatedFunction(NameToFunctionMap* functions,
     }
     function->ResetSignatures(new_signatures);
   }
-  InsertCheckedFunction(functions, std::move(function));
+  ZETASQL_CHECK_OK(InsertCheckedFunction(functions, std::move(function), options));
 }
 
+// Returns true if the function was actually inserted.
 template <typename FunctionSignatureListT>
-static void InsertFunctionImpl(NameToFunctionMap* functions,
-                               const ZetaSQLBuiltinFunctionOptions& options,
-                               std::vector<std::string> name,
-                               Function::Mode mode,
-                               const FunctionSignatureListT& signature_list,
-                               FunctionOptions function_options) {
+static absl::StatusOr<bool> InsertFunctionImpl(
+    NameToFunctionMap* functions,
+    const ZetaSQLBuiltinFunctionOptions& options,
+    std::vector<std::string> name, Function::Mode mode,
+    const FunctionSignatureListT& signature_list,
+    FunctionOptions function_options) {
   if (FunctionIsDisabled(options, function_options)) {
-    return;
+    return false;
   }
   std::vector<FunctionSignature> signatures;
   signatures.reserve(signature_list.size());
@@ -1980,7 +1904,7 @@ static void InsertFunctionImpl(NameToFunctionMap* functions,
     // then we do not insert the function into the map (it is as if the function
     // does not exist).
     if (signatures.empty()) {
-      return;
+      return false;
     }
   } else if (!options.include_function_ids.empty()) {
     // When a function is defined without signatures then we generally include
@@ -1991,13 +1915,16 @@ static void InsertFunctionImpl(NameToFunctionMap* functions,
     //
     // Note, however, that we do not insert the function into the map if the
     // <include_function_ids> list is present.
-    return;
+    return false;
   }
 
-  InsertCheckedFunction(
-      functions, std::make_unique<Function>(
-                     std::move(name), Function::kZetaSQLFunctionGroupName,
-                     mode, std::move(signatures), std::move(function_options)));
+  ZETASQL_RETURN_IF_ERROR(InsertCheckedFunction(
+      functions,
+      std::make_unique<Function>(
+          std::move(name), Function::kZetaSQLFunctionGroupName, mode,
+          std::move(signatures), std::move(function_options)),
+      options));
+  return true;
 }
 
 void InsertFunction(NameToFunctionMap* functions,
@@ -2009,8 +1936,31 @@ void InsertFunction(NameToFunctionMap* functions,
   names.reserve(1);
   names.emplace_back(name);
 
-  InsertFunctionImpl(functions, options, std::move(names), mode, signatures,
-                     function_options);
+  ZETASQL_CHECK_OK(InsertFunctionImpl(functions, options, std::move(names), mode,
+                              signatures, function_options));
+}
+
+// Inserts the given function and types, if the enabled with the given options.
+// Also inserts the given type, if at least one signature was added.
+absl::Status InsertFunctionAndTypes(
+    NameToFunctionMap* functions, NameToTypeMap* types,
+    const ZetaSQLBuiltinFunctionOptions& options, absl::string_view name,
+    Function::Mode mode, const std::vector<FunctionSignatureOnHeap>& signatures,
+    FunctionOptions function_options,
+    std::vector<const Type*> types_to_insert) {
+  std::vector<std::string> names;
+  names.reserve(1);
+  names.emplace_back(name);
+
+  ZETASQL_ASSIGN_OR_RETURN(bool inserted,
+                   InsertFunctionImpl(functions, options, std::move(names),
+                                      mode, signatures, function_options));
+  if (inserted) {
+    for (const Type* type : types_to_insert) {
+      ZETASQL_RETURN_IF_ERROR(InsertType(types, options, type));
+    }
+  }
+  return absl::OkStatus();
 }
 
 // Note: This function is intentionally overloaded to prevent a default
@@ -2023,8 +1973,9 @@ void InsertFunction(NameToFunctionMap* functions,
   names.reserve(1);
   names.emplace_back(name);
 
-  InsertFunctionImpl(functions, options, std::move(names), mode, signatures,
-                     /* function_options*/ {});
+  ZETASQL_CHECK_OK(InsertFunctionImpl(functions, options, std::move(names), mode,
+                              signatures,
+                              /* function_options=*/{}));
 }
 
 void InsertSimpleFunction(
@@ -2036,9 +1987,9 @@ void InsertSimpleFunction(
   names.reserve(1);
   names.emplace_back(name);
 
-  InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
+  ZETASQL_CHECK_OK(InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
       functions, options, std::move(names), mode, signatures,
-      /* function_options*/ {});
+      /* function_options*/ {}));
 }
 
 void InsertSimpleFunction(
@@ -2051,8 +2002,9 @@ void InsertSimpleFunction(
   names.reserve(1);
   names.emplace_back(name);
 
-  InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
-      functions, options, std::move(names), mode, signatures, function_options);
+  ZETASQL_CHECK_OK(InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
+      functions, options, std::move(names), mode, signatures,
+      function_options));
 }
 
 void InsertNamespaceFunction(
@@ -2065,8 +2017,8 @@ void InsertNamespaceFunction(
   names.reserve(2);
   names.emplace_back(space);
   names.emplace_back(name);
-  InsertFunctionImpl(functions, options, std::move(names), mode, signatures,
-                     std::move(function_options));
+  ZETASQL_CHECK_OK(InsertFunctionImpl(functions, options, std::move(names), mode,
+                              signatures, std::move(function_options)));
 }
 
 void InsertSimpleNamespaceFunction(
@@ -2078,9 +2030,9 @@ void InsertSimpleNamespaceFunction(
   names.reserve(2);
   names.emplace_back(space);
   names.emplace_back(name);
-  InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
+  ZETASQL_CHECK_OK(InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
       functions, options, std::move(names), mode, signatures,
-      /* function_options*/ {});
+      /* function_options*/ {}));
 }
 
 void InsertSimpleNamespaceFunction(
@@ -2093,9 +2045,36 @@ void InsertSimpleNamespaceFunction(
   names.reserve(2);
   names.emplace_back(space);
   names.emplace_back(name);
-  InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
+  ZETASQL_CHECK_OK(InsertFunctionImpl<std::initializer_list<FunctionSignatureProxy>>(
       functions, options, std::move(names), mode, signatures,
-      std::move(function_options));
+      std::move(function_options)));
+}
+
+absl::Status InsertType(NameToTypeMap* types,
+                        const ZetaSQLBuiltinFunctionOptions& options,
+                        const Type* type) {
+  if (!type->IsSupportedType(options.language_options)) {
+    return absl::OkStatus();
+  }
+
+  if (options.language_options.product_mode() == PRODUCT_EXTERNAL &&
+      type->IsEnum()) {
+    // We have special enforcement that EnumType should not be added as
+    // named types in external products (for now). IsSupportedType can't be
+    // relied on, because certain enums are considered 'supported' for the
+    // purposes of function signature matching.
+    // In effect, this an exception to an exception.
+    return absl::OkStatus();
+  }
+  auto [it, inserted] = types->try_emplace(
+      type->ShortTypeName(options.language_options.product_mode()), type);
+  if (!inserted) {
+    const Type* existing_type = it->second;
+    // Double insertion could be totally fine, but it must be the an equal
+    // type.
+    ZETASQL_RET_CHECK(existing_type->Equals(type));
+  }
+  return absl::OkStatus();
 }
 
 }  // namespace zetasql

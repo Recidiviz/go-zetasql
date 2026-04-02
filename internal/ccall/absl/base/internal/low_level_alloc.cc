@@ -332,7 +332,7 @@ size_t GetPageSize() {
 #elif defined(__wasm__) || defined(__asmjs__)
   return getpagesize();
 #else
-  return sysconf(_SC_PAGESIZE);
+  return static_cast<size_t>(sysconf(_SC_PAGESIZE));
 #endif
 }
 
@@ -364,7 +364,7 @@ LowLevelAlloc::Arena::Arena(uint32_t flags_value)
 }
 
 // L < meta_data_arena->mu
-LowLevelAlloc::Arena *LowLevelAlloc::NewArena(int32_t flags) {
+LowLevelAlloc::Arena *LowLevelAlloc::NewArena(uint32_t flags) {
   Arena *meta_data_arena = DefaultArena();
 #ifndef ABSL_LOW_LEVEL_ALLOC_ASYNC_SIGNAL_SAFE_MISSING
   if ((flags & LowLevelAlloc::kAsyncSignalSafe) != 0) {
@@ -550,7 +550,7 @@ static void *DoAllocWithArena(size_t request, LowLevelAlloc::Arena *arena) {
       size_t new_pages_size = RoundUp(req_rnd, arena->pagesize * 16);
       void *new_pages;
 #ifdef _WIN32
-      new_pages = VirtualAlloc(0, new_pages_size,
+      new_pages = VirtualAlloc(nullptr, new_pages_size,
                                MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
       ABSL_RAW_CHECK(new_pages != nullptr, "VirtualAlloc failed");
 #else

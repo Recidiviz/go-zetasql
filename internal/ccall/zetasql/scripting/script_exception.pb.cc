@@ -90,7 +90,7 @@ const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexception_2eproto::off
   ~0u,
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, _internal_metadata_),
-  ~0u,  // no _extensions_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptException, _extensions_),
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
@@ -99,13 +99,13 @@ const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexception_2eproto::off
   0,
   1,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fscripting_2fscript_5fexception_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 10, -1, sizeof(::zetasql::ScriptException_StackTraceFrame)},
   { 14, 22, -1, sizeof(::zetasql::ScriptException_Internal)},
   { 24, 32, -1, sizeof(::zetasql::ScriptException)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fscripting_2fscript_5fexception_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptException_StackTraceFrame_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptException_Internal_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptException_default_instance_),
@@ -113,20 +113,20 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexception_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n(zetasql/scripting/script_exception.pro"
-  "to\022\007zetasql\"\217\002\n\017ScriptException\022\017\n\007messa"
+  "to\022\007zetasql\"\232\002\n\017ScriptException\022\017\n\007messa"
   "ge\030\001 \001(\t\0223\n\010internal\030\002 \001(\0132!.zetasql.Scr"
   "iptException.Internal\032S\n\017StackTraceFrame"
   "\022\014\n\004line\030\001 \001(\003\022\016\n\006column\030\002 \001(\003\022\020\n\010filena"
   "me\030\003 \001(\t\022\020\n\010location\030\004 \001(\t\032a\n\010Internal\022\026"
   "\n\016statement_text\030\001 \001(\t\022=\n\013stack_trace\030\002 "
   "\003(\0132(.zetasql.ScriptException.StackTrace"
-  "Frame"
+  "Frame*\t\010\220N\020\200\200\200\200\002"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto = {
-  false, false, 325, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexception_2eproto, "zetasql/scripting/script_exception.proto", 
+  false, false, 336, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexception_2eproto, "zetasql/scripting/script_exception.proto", 
   &descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_once, nullptr, 0, 3,
-  schemas, file_default_instances, TableStruct_zetasql_2fscripting_2fscript_5fexception_2eproto::offsets,
+  schemas_zetasql_2fscripting_2fscript_5fexception_2eproto, file_default_instances_zetasql_2fscripting_2fscript_5fexception_2eproto, TableStruct_zetasql_2fscripting_2fscript_5fexception_2eproto::offsets,
   file_level_metadata_zetasql_2fscripting_2fscript_5fexception_2eproto, file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexception_2eproto, file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexception_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto_getter() {
@@ -762,7 +762,8 @@ ScriptException::_Internal::internal(const ScriptException* msg) {
 }
 ScriptException::ScriptException(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  _extensions_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -773,6 +774,7 @@ ScriptException::ScriptException(const ScriptException& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
   message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
@@ -826,6 +828,7 @@ void ScriptException::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _extensions_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
@@ -876,6 +879,11 @@ const char* ScriptException::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPAC
       ctx->SetLastTag(tag);
       goto message_done;
     }
+    if ((80000u <= tag)) {
+      ptr = _extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
+      CHK_(ptr != nullptr);
+      continue;
+    }
     ptr = UnknownFieldParse(
         tag,
         _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
@@ -916,6 +924,10 @@ uint8_t* ScriptException::_InternalSerialize(
         2, _Internal::internal(this), target, stream);
   }
 
+  // Extension range [10000, 536870912)
+  target = _extensions_._InternalSerialize(
+  internal_default_instance(), 10000, 536870912, target, stream);
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -927,6 +939,8 @@ uint8_t* ScriptException::_InternalSerialize(
 size_t ScriptException::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptException)
   size_t total_size = 0;
+
+  total_size += _extensions_.ByteSize();
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -980,6 +994,7 @@ void ScriptException::MergeFrom(const ScriptException& from) {
       _internal_mutable_internal()->::zetasql::ScriptException_Internal::MergeFrom(from._internal_internal());
     }
   }
+  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -991,11 +1006,16 @@ void ScriptException::CopyFrom(const ScriptException& from) {
 }
 
 bool ScriptException::IsInitialized() const {
+  if (!_extensions_.IsInitialized()) {
+    return false;
+  }
+
   return true;
 }
 
 void ScriptException::InternalSwap(ScriptException* other) {
   using std::swap;
+  _extensions_.InternalSwap(&other->_extensions_);
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);

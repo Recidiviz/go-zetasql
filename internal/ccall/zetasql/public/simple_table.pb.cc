@@ -50,13 +50,27 @@ struct SimpleTableProtoDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SimpleTableProtoDefaultTypeInternal _SimpleTableProto_default_instance_;
+constexpr ExpressionAttributeProto::ExpressionAttributeProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : expression_string_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct ExpressionAttributeProtoDefaultTypeInternal {
+  constexpr ExpressionAttributeProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ExpressionAttributeProtoDefaultTypeInternal() {}
+  union {
+    ExpressionAttributeProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ExpressionAttributeProtoDefaultTypeInternal _ExpressionAttributeProto_default_instance_;
 constexpr SimpleColumnProto::SimpleColumnProto(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , type_(nullptr)
   , annotation_map_(nullptr)
+  , column_expression_(nullptr)
   , is_pseudo_column_(false)
   , can_update_unwritable_to_default_(false)
+  , has_default_value_(false)
   , is_writable_column_(true){}
 struct SimpleColumnProtoDefaultTypeInternal {
   constexpr SimpleColumnProtoDefaultTypeInternal()
@@ -68,7 +82,7 @@ struct SimpleColumnProtoDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SimpleColumnProtoDefaultTypeInternal _SimpleColumnProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto[3];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto[4];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2fsimple_5ftable_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fsimple_5ftable_2eproto = nullptr;
 
@@ -106,6 +120,14 @@ const uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets[] 
   7,
   3,
   2,
+  PROTOBUF_FIELD_OFFSET(::zetasql::ExpressionAttributeProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ExpressionAttributeProto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ExpressionAttributeProto, expression_string_),
+  0,
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -118,22 +140,28 @@ const uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets[] 
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, is_writable_column_),
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, can_update_unwritable_to_default_),
   PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, annotation_map_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, has_default_value_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleColumnProto, column_expression_),
   0,
   1,
-  3,
-  5,
   4,
+  7,
+  5,
   2,
+  6,
+  3,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fpublic_2fsimple_5ftable_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::SimpleAnonymizationInfoProto)},
   { 7, 23, -1, sizeof(::zetasql::SimpleTableProto)},
-  { 33, 45, -1, sizeof(::zetasql::SimpleColumnProto)},
+  { 33, 40, -1, sizeof(::zetasql::ExpressionAttributeProto)},
+  { 41, 55, -1, sizeof(::zetasql::SimpleColumnProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fpublic_2fsimple_5ftable_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_SimpleAnonymizationInfoProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_SimpleTableProto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ExpressionAttributeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_SimpleColumnProto_default_instance_),
 };
 
@@ -150,14 +178,18 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto[]
   "w_anonymous_column_name\030\006 \001(\010\022$\n\034allow_d"
   "uplicate_column_names\030\007 \001(\010\022A\n\022anonymiza"
   "tion_info\030\010 \001(\0132%.zetasql.SimpleAnonymiz"
-  "ationInfoProto\022\021\n\tfull_name\030\n \001(\t\"\336\001\n\021Si"
-  "mpleColumnProto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 "
-  "\001(\0132\022.zetasql.TypeProto\022\030\n\020is_pseudo_col"
-  "umn\030\003 \001(\010\022 \n\022is_writable_column\030\004 \001(\010:\004t"
-  "rue\022(\n can_update_unwritable_to_default\030"
-  "\006 \001(\010\0223\n\016annotation_map\030\005 \001(\0132\033.zetasql."
-  "AnnotationMapProtoB\'\n\022com.google.zetasql"
-  "B\021SimpleTableProtos"
+  "ationInfoProto\022\021\n\tfull_name\030\n \001(\t\"5\n\030Exp"
+  "ressionAttributeProto\022\031\n\021expression_stri"
+  "ng\030\010 \001(\t\"\276\002\n\021SimpleColumnProto\022\014\n\004name\030\001"
+  " \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto\022\030"
+  "\n\020is_pseudo_column\030\003 \001(\010\022 \n\022is_writable_"
+  "column\030\004 \001(\010:\004true\022(\n can_update_unwrita"
+  "ble_to_default\030\006 \001(\010\0223\n\016annotation_map\030\005"
+  " \001(\0132\033.zetasql.AnnotationMapProto\022 \n\021has"
+  "_default_value\030\007 \001(\010:\005false\022<\n\021column_ex"
+  "pression\030\010 \001(\0132!.zetasql.ExpressionAttri"
+  "buteProtoB\'\n\022com.google.zetasqlB\021SimpleT"
+  "ableProtos"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_deps[2] = {
   &::descriptor_table_zetasql_2fpublic_2fannotation_2eproto,
@@ -165,9 +197,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto = {
-  false, false, 779, descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto, "zetasql/public/simple_table.proto", 
-  &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once, descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_deps, 2, 3,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets,
+  false, false, 930, descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto, "zetasql/public/simple_table.proto", 
+  &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once, descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_deps, 2, 4,
+  schemas_zetasql_2fpublic_2fsimple_5ftable_2eproto, file_default_instances_zetasql_2fpublic_2fsimple_5ftable_2eproto, TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fsimple_5ftable_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fsimple_5ftable_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_getter() {
@@ -948,6 +980,225 @@ void SimpleTableProto::InternalSwap(SimpleTableProto* other) {
 
 // ===================================================================
 
+class ExpressionAttributeProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ExpressionAttributeProto>()._has_bits_);
+  static void set_has_expression_string(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+ExpressionAttributeProto::ExpressionAttributeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ExpressionAttributeProto)
+}
+ExpressionAttributeProto::ExpressionAttributeProto(const ExpressionAttributeProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  expression_string_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    expression_string_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_expression_string()) {
+    expression_string_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_expression_string(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.ExpressionAttributeProto)
+}
+
+inline void ExpressionAttributeProto::SharedCtor() {
+expression_string_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  expression_string_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+ExpressionAttributeProto::~ExpressionAttributeProto() {
+  // @@protoc_insertion_point(destructor:zetasql.ExpressionAttributeProto)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ExpressionAttributeProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  expression_string_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void ExpressionAttributeProto::ArenaDtor(void* object) {
+  ExpressionAttributeProto* _this = reinterpret_cast< ExpressionAttributeProto* >(object);
+  (void)_this;
+}
+void ExpressionAttributeProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ExpressionAttributeProto::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ExpressionAttributeProto::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.ExpressionAttributeProto)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    expression_string_.ClearNonDefaultToEmpty();
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ExpressionAttributeProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional string expression_string = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          auto str = _internal_mutable_expression_string();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ExpressionAttributeProto.expression_string");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ExpressionAttributeProto::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.ExpressionAttributeProto)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // optional string expression_string = 8;
+  if (cached_has_bits & 0x00000001u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_expression_string().data(), static_cast<int>(this->_internal_expression_string().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "zetasql.ExpressionAttributeProto.expression_string");
+    target = stream->WriteStringMaybeAliased(
+        8, this->_internal_expression_string(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.ExpressionAttributeProto)
+  return target;
+}
+
+size_t ExpressionAttributeProto::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.ExpressionAttributeProto)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional string expression_string = 8;
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_expression_string());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ExpressionAttributeProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ExpressionAttributeProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ExpressionAttributeProto::GetClassData() const { return &_class_data_; }
+
+void ExpressionAttributeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ExpressionAttributeProto *>(to)->MergeFrom(
+      static_cast<const ExpressionAttributeProto &>(from));
+}
+
+
+void ExpressionAttributeProto::MergeFrom(const ExpressionAttributeProto& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ExpressionAttributeProto)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_expression_string()) {
+    _internal_set_expression_string(from._internal_expression_string());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ExpressionAttributeProto::CopyFrom(const ExpressionAttributeProto& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.ExpressionAttributeProto)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ExpressionAttributeProto::IsInitialized() const {
+  return true;
+}
+
+void ExpressionAttributeProto::InternalSwap(ExpressionAttributeProto* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &expression_string_, lhs_arena,
+      &other->expression_string_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ExpressionAttributeProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto[2]);
+}
+
+// ===================================================================
+
 class SimpleColumnProto::_Internal {
  public:
   using HasBits = decltype(std::declval<SimpleColumnProto>()._has_bits_);
@@ -959,17 +1210,24 @@ class SimpleColumnProto::_Internal {
     (*has_bits)[0] |= 2u;
   }
   static void set_has_is_pseudo_column(HasBits* has_bits) {
-    (*has_bits)[0] |= 8u;
+    (*has_bits)[0] |= 16u;
   }
   static void set_has_is_writable_column(HasBits* has_bits) {
-    (*has_bits)[0] |= 32u;
+    (*has_bits)[0] |= 128u;
   }
   static void set_has_can_update_unwritable_to_default(HasBits* has_bits) {
-    (*has_bits)[0] |= 16u;
+    (*has_bits)[0] |= 32u;
   }
   static const ::zetasql::AnnotationMapProto& annotation_map(const SimpleColumnProto* msg);
   static void set_has_annotation_map(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
+  }
+  static void set_has_has_default_value(HasBits* has_bits) {
+    (*has_bits)[0] |= 64u;
+  }
+  static const ::zetasql::ExpressionAttributeProto& column_expression(const SimpleColumnProto* msg);
+  static void set_has_column_expression(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
   }
 };
 
@@ -980,6 +1238,10 @@ SimpleColumnProto::_Internal::type(const SimpleColumnProto* msg) {
 const ::zetasql::AnnotationMapProto&
 SimpleColumnProto::_Internal::annotation_map(const SimpleColumnProto* msg) {
   return *msg->annotation_map_;
+}
+const ::zetasql::ExpressionAttributeProto&
+SimpleColumnProto::_Internal::column_expression(const SimpleColumnProto* msg) {
+  return *msg->column_expression_;
 }
 void SimpleColumnProto::clear_type() {
   if (type_ != nullptr) type_->Clear();
@@ -1020,6 +1282,11 @@ SimpleColumnProto::SimpleColumnProto(const SimpleColumnProto& from)
   } else {
     annotation_map_ = nullptr;
   }
+  if (from._internal_has_column_expression()) {
+    column_expression_ = new ::zetasql::ExpressionAttributeProto(*from.column_expression_);
+  } else {
+    column_expression_ = nullptr;
+  }
   ::memcpy(&is_pseudo_column_, &from.is_pseudo_column_,
     static_cast<size_t>(reinterpret_cast<char*>(&is_writable_column_) -
     reinterpret_cast<char*>(&is_pseudo_column_)) + sizeof(is_writable_column_));
@@ -1033,8 +1300,8 @@ name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&type_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&can_update_unwritable_to_default_) -
-    reinterpret_cast<char*>(&type_)) + sizeof(can_update_unwritable_to_default_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&has_default_value_) -
+    reinterpret_cast<char*>(&type_)) + sizeof(has_default_value_));
 is_writable_column_ = true;
 }
 
@@ -1050,6 +1317,7 @@ inline void SimpleColumnProto::SharedDtor() {
   name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete type_;
   if (this != internal_default_instance()) delete annotation_map_;
+  if (this != internal_default_instance()) delete column_expression_;
 }
 
 void SimpleColumnProto::ArenaDtor(void* object) {
@@ -1069,7 +1337,7 @@ void SimpleColumnProto::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
       name_.ClearNonDefaultToEmpty();
     }
@@ -1081,10 +1349,14 @@ void SimpleColumnProto::Clear() {
       GOOGLE_DCHECK(annotation_map_ != nullptr);
       annotation_map_->Clear();
     }
+    if (cached_has_bits & 0x00000008u) {
+      GOOGLE_DCHECK(column_expression_ != nullptr);
+      column_expression_->Clear();
+    }
   }
   ::memset(&is_pseudo_column_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&can_update_unwritable_to_default_) -
-      reinterpret_cast<char*>(&is_pseudo_column_)) + sizeof(can_update_unwritable_to_default_));
+      reinterpret_cast<char*>(&has_default_value_) -
+      reinterpret_cast<char*>(&is_pseudo_column_)) + sizeof(has_default_value_));
   is_writable_column_ = true;
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -1152,6 +1424,23 @@ const char* SimpleColumnProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
         } else
           goto handle_unusual;
         continue;
+      // optional bool has_default_value = 7 [default = false];
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _Internal::set_has_has_default_value(&has_bits);
+          has_default_value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional .zetasql.ExpressionAttributeProto column_expression = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          ptr = ctx->ParseMessage(_internal_mutable_column_expression(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -1202,13 +1491,13 @@ uint8_t* SimpleColumnProto::_InternalSerialize(
   }
 
   // optional bool is_pseudo_column = 3;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(3, this->_internal_is_pseudo_column(), target);
   }
 
   // optional bool is_writable_column = 4 [default = true];
-  if (cached_has_bits & 0x00000020u) {
+  if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(4, this->_internal_is_writable_column(), target);
   }
@@ -1222,9 +1511,23 @@ uint8_t* SimpleColumnProto::_InternalSerialize(
   }
 
   // optional bool can_update_unwritable_to_default = 6;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_can_update_unwritable_to_default(), target);
+  }
+
+  // optional bool has_default_value = 7 [default = false];
+  if (cached_has_bits & 0x00000040u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(7, this->_internal_has_default_value(), target);
+  }
+
+  // optional .zetasql.ExpressionAttributeProto column_expression = 8;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        8, _Internal::column_expression(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1244,7 +1547,7 @@ size_t SimpleColumnProto::ByteSizeLong() const {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000003fu) {
+  if (cached_has_bits & 0x000000ffu) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -1266,18 +1569,30 @@ size_t SimpleColumnProto::ByteSizeLong() const {
           *annotation_map_);
     }
 
-    // optional bool is_pseudo_column = 3;
+    // optional .zetasql.ExpressionAttributeProto column_expression = 8;
     if (cached_has_bits & 0x00000008u) {
-      total_size += 1 + 1;
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *column_expression_);
     }
 
-    // optional bool can_update_unwritable_to_default = 6;
+    // optional bool is_pseudo_column = 3;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 1;
     }
 
-    // optional bool is_writable_column = 4 [default = true];
+    // optional bool can_update_unwritable_to_default = 6;
     if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
+    // optional bool has_default_value = 7 [default = false];
+    if (cached_has_bits & 0x00000040u) {
+      total_size += 1 + 1;
+    }
+
+    // optional bool is_writable_column = 4 [default = true];
+    if (cached_has_bits & 0x00000080u) {
       total_size += 1 + 1;
     }
 
@@ -1305,7 +1620,7 @@ void SimpleColumnProto::MergeFrom(const SimpleColumnProto& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000003fu) {
+  if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_set_name(from._internal_name());
     }
@@ -1316,12 +1631,18 @@ void SimpleColumnProto::MergeFrom(const SimpleColumnProto& from) {
       _internal_mutable_annotation_map()->::zetasql::AnnotationMapProto::MergeFrom(from._internal_annotation_map());
     }
     if (cached_has_bits & 0x00000008u) {
-      is_pseudo_column_ = from.is_pseudo_column_;
+      _internal_mutable_column_expression()->::zetasql::ExpressionAttributeProto::MergeFrom(from._internal_column_expression());
     }
     if (cached_has_bits & 0x00000010u) {
-      can_update_unwritable_to_default_ = from.can_update_unwritable_to_default_;
+      is_pseudo_column_ = from.is_pseudo_column_;
     }
     if (cached_has_bits & 0x00000020u) {
+      can_update_unwritable_to_default_ = from.can_update_unwritable_to_default_;
+    }
+    if (cached_has_bits & 0x00000040u) {
+      has_default_value_ = from.has_default_value_;
+    }
+    if (cached_has_bits & 0x00000080u) {
       is_writable_column_ = from.is_writable_column_;
     }
     _has_bits_[0] |= cached_has_bits;
@@ -1355,8 +1676,8 @@ void SimpleColumnProto::InternalSwap(SimpleColumnProto* other) {
       &other->name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SimpleColumnProto, can_update_unwritable_to_default_)
-      + sizeof(SimpleColumnProto::can_update_unwritable_to_default_)
+      PROTOBUF_FIELD_OFFSET(SimpleColumnProto, has_default_value_)
+      + sizeof(SimpleColumnProto::has_default_value_)
       - PROTOBUF_FIELD_OFFSET(SimpleColumnProto, type_)>(
           reinterpret_cast<char*>(&type_),
           reinterpret_cast<char*>(&other->type_));
@@ -1366,7 +1687,7 @@ void SimpleColumnProto::InternalSwap(SimpleColumnProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SimpleColumnProto::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto[2]);
+      file_level_metadata_zetasql_2fpublic_2fsimple_5ftable_2eproto[3]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -1377,6 +1698,9 @@ template<> PROTOBUF_NOINLINE ::zetasql::SimpleAnonymizationInfoProto* Arena::Cre
 }
 template<> PROTOBUF_NOINLINE ::zetasql::SimpleTableProto* Arena::CreateMaybeMessage< ::zetasql::SimpleTableProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::SimpleTableProto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ExpressionAttributeProto* Arena::CreateMaybeMessage< ::zetasql::ExpressionAttributeProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ExpressionAttributeProto >(arena);
 }
 template<> PROTOBUF_NOINLINE ::zetasql::SimpleColumnProto* Arena::CreateMaybeMessage< ::zetasql::SimpleColumnProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::SimpleColumnProto >(arena);

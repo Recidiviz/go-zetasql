@@ -19,10 +19,13 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "zetasql/public/analyzer_options.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
@@ -41,6 +44,13 @@ struct ValidatorOptions {
   // When set to false disables checking that all parameter columns of a
   // ResolvedSubquery are referenced somewhere in that subquery.
   bool validate_no_unreferenced_subquery_params = true;
+
+  // This specifies the set of allowed hints and options, their expected
+  // types, and whether to give errors on unrecognized names.
+  // See the class definition for details. Currently only anonymization options
+  // are checked.
+  // TODO: Add validation for non anonymization options and hints.
+  AllowedHintsAndOptions allowed_hints_and_options;
 };
 
 // Used to validate generated Resolved AST structures.
@@ -228,6 +238,9 @@ class Validator {
   absl::Status ValidateResolvedAnonymizedAggregateScan(
       const ResolvedAnonymizedAggregateScan* scan,
       const std::set<ResolvedColumn>& visible_parameters);
+  absl::Status ValidateResolvedDifferentialPrivacyAggregateScan(
+      const ResolvedDifferentialPrivacyAggregateScan* scan,
+      const std::set<ResolvedColumn>& visible_parameters);
   absl::Status ValidateResolvedTableScan(
       const ResolvedTableScan* scan,
       const std::set<ResolvedColumn>& visible_parameters);
@@ -250,8 +263,12 @@ class Validator {
   absl::Status ValidateResolvedProjectScan(
       const ResolvedProjectScan* scan,
       const std::set<ResolvedColumn>& visible_parameters);
+  absl::Status ValidateTableValuedFunction(const TableValuedFunction* tvf);
   absl::Status ValidateResolvedTVFScan(
       const ResolvedTVFScan* resolved_tvf_scan,
+      const std::set<ResolvedColumn>& visible_parameters);
+  absl::Status ValidateResolvedExecuteAsRoleScan(
+      const ResolvedExecuteAsRoleScan* scan,
       const std::set<ResolvedColumn>& visible_parameters);
   absl::Status ValidateResolvedRelationArgumentScan(
       const ResolvedRelationArgumentScan* arg_ref,
@@ -541,7 +558,7 @@ class Validator {
 
   absl::Status ValidateResolvedForeignKey(
       const ResolvedForeignKey* foreign_key,
-      const std::vector<const Type*> column_types,
+      std::vector<const Type*> column_types,
       absl::flat_hash_set<std::string>* constraint_names);
 
   absl::Status ValidateResolvedPrimaryKey(
@@ -553,8 +570,18 @@ class Validator {
       const ResolvedAddConstraintAction* action,
       absl::flat_hash_set<std::string>* constraint_names);
 
+  absl::Status ValidateResolvedAuxLoadDataPartitionFilter(
+      const std::set<ResolvedColumn>& visible_columns,
+      const ResolvedAuxLoadDataPartitionFilter* partition_filter);
+
   absl::Status ValidateResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* stmt);
+
+  // Validates that <expr> is a valid expression of bool type.
+  absl::Status ValidateBoolExpr(
+      const std::set<ResolvedColumn>& visible_columns,
+      const std::set<ResolvedColumn>& visible_parameters,
+      const ResolvedExpr* expr);
 
   // Checks that <expr> contains only ColumnRefs, GetProtoField, GetStructField
   // and GetJsonField expressions. Sets 'ref' to point to the leaf

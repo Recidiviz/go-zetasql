@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -136,7 +137,7 @@ namespace {
 // the same as AggregateAccumulator,
 class IntermediateAggregateAccumulator {
  public:
-  virtual ~IntermediateAggregateAccumulator() {}
+  virtual ~IntermediateAggregateAccumulator() = default;
 
   virtual absl::Status Reset() = 0;
 
@@ -205,8 +206,11 @@ class LimitAccumulator : public IntermediateAggregateAccumulator {
  public:
   LimitAccumulator(
       int64_t limit,
-      std::unique_ptr<IntermediateAggregateAccumulator> accumulator)
-      : limit_(limit), accumulator_(std::move(accumulator)) {}
+      std::unique_ptr<IntermediateAggregateAccumulator> accumulator,
+      EvaluationContext* context)
+      : limit_(limit),
+        accumulator_(std::move(accumulator)),
+        context_(context) {}
 
   absl::Status Reset() override {
     num_rows_accumulated_ = 0;
@@ -231,6 +235,7 @@ class LimitAccumulator : public IntermediateAggregateAccumulator {
     ++num_rows_accumulated_;
 
     if (num_rows_accumulated_ >= limit_) {
+      nonzero_limit_reached_ = true;
       *stop_accumulation = true;
       return true;
     }
@@ -238,13 +243,26 @@ class LimitAccumulator : public IntermediateAggregateAccumulator {
   }
 
   absl::StatusOr<Value> GetFinalResult(bool inputs_in_defined_order) override {
+    // Note that the current code is overly aggressive in labeling
+    // non-deterministic output. For instance, in the case when the limit
+    // exactly equals the number of input rows to this accumulator. This is
+    // currently challenging because of the present accumulator API
+    // which provides no "peek" utility for input rows.
+    // TODO: Address the edge case where limit is exactly equal to
+    // the number of input rows.
+    // TODO: Address the edge case where all input rows are
+    // identical and the result is deterministic anyway.
+    if (nonzero_limit_reached_ && !inputs_in_defined_order) {
+      context_->SetNonDeterministicOutput();
+    }
     return accumulator_->GetFinalResult(inputs_in_defined_order);
   }
 
  private:
   const int64_t limit_;
+  bool nonzero_limit_reached_ = false;
   std::unique_ptr<IntermediateAggregateAccumulator> accumulator_;
-
+  EvaluationContext* context_;
   int64_t num_rows_accumulated_ = 0;
 };
 
@@ -277,7 +295,6 @@ class OrderByAccumulator : public IntermediateAggregateAccumulator {
   bool Accumulate(const TupleData& input_row, const Value& value,
                   bool* stop_accumulation, absl::Status* status) override {
     *stop_accumulation = false;
-
     auto input = std::make_unique<TupleData>(input_row);
     input->AddSlots(1);
     input->mutable_slot(input->num_slots() - 1)->SetValue(value);
@@ -921,27 +938,6 @@ static absl::Status PopulateSlotsForKeysAndValues(
   return absl::OkStatus();
 }
 
-namespace {
-
-absl::StatusOr<CollatorList> MakeCollatorList(
-    const std::vector<ResolvedCollation>& collation_list) {
-  CollatorList collator_list;
-
-  if (collation_list.empty()) {
-    return collator_list;
-  }
-
-  for (const ResolvedCollation& resolved_collation : collation_list) {
-    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ZetaSqlCollator> collator,
-                     GetCollatorFromResolvedCollation(resolved_collation));
-    collator_list.push_back(std::move(collator));
-  }
-
-  return std::move(collator_list);
-}
-
-}  // namespace
-
 absl::StatusOr<std::unique_ptr<AggregateArgAccumulator>>
 AggregateArg::CreateAccumulator(absl::Span<const TupleData* const> params,
                                 EvaluationContext* context) const {
@@ -1003,8 +999,8 @@ AggregateArg::CreateAccumulator(absl::Span<const TupleData* const> params,
       consumed_order_by = true;
       context->set_used_top_n_accumulator(true);
     } else {
-      accumulator = std::make_unique<LimitAccumulator>(limit_val.int64_value(),
-                                                       std::move(accumulator));
+      accumulator = std::make_unique<LimitAccumulator>(
+          limit_val.int64_value(), std::move(accumulator), context);
     }
   }
 

@@ -30,7 +30,6 @@
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/type_modifiers.h"
-#include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/value.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -210,7 +209,8 @@ typedef std::set<std::vector<std::string>> TableNamesSet;
 // Parameter table_names must not be null.
 absl::Status ExtractTableNamesFromStatement(absl::string_view sql,
                                             const AnalyzerOptions& options_in,
-                                            TableNamesSet* table_names);
+                                            TableNamesSet* table_names,
+                                            TableNamesSet* tvf_names = nullptr);
 
 // Same as ExtractTableNamesFromStatement(), but extracts table names from one
 // SQL statement from a string. The string may contain multiple statements, so
@@ -229,7 +229,8 @@ absl::Status ExtractTableNamesFromStatement(absl::string_view sql,
 // statements is not supported.
 absl::Status ExtractTableNamesFromNextStatement(
     ParseResumeLocation* resume_location, const AnalyzerOptions& options_in,
-    TableNamesSet* table_names, bool* at_end_of_input);
+    TableNamesSet* table_names, bool* at_end_of_input,
+    TableNamesSet* tvf_names = nullptr);
 
 // Same as ExtractTableNamesFromStatement(), but extracts table names from the
 // parsed AST instead of a raw SQL string. For projects which are allowed to use
@@ -239,7 +240,8 @@ absl::Status ExtractTableNamesFromNextStatement(
 // <*table_names> contains table names referenced in the AST statement.
 absl::Status ExtractTableNamesFromASTStatement(
     const ASTStatement& ast_statement, const AnalyzerOptions& options_in,
-    absl::string_view sql, TableNamesSet* table_names);
+    absl::string_view sql, TableNamesSet* table_names,
+    TableNamesSet* tvf_names = nullptr);
 
 // Extract the set of referenced table names from a script.
 //
@@ -257,7 +259,8 @@ absl::Status ExtractTableNamesFromASTStatement(
 // Parameter table_names must not be null.
 absl::Status ExtractTableNamesFromScript(absl::string_view sql,
                                          const AnalyzerOptions& options_in,
-                                         TableNamesSet* table_names);
+                                         TableNamesSet* table_names,
+                                         TableNamesSet* tvf_names = nullptr);
 
 // Same as ExtractTableNamesFromScript(), but extracts table names from
 // the parsed AST script. For projects which are allowed to use the parser
@@ -268,7 +271,8 @@ absl::Status ExtractTableNamesFromScript(absl::string_view sql,
 absl::Status ExtractTableNamesFromASTScript(const ASTScript& ast_script,
                                             const AnalyzerOptions& options_in,
                                             absl::string_view sql,
-                                            TableNamesSet* table_names);
+                                            TableNamesSet* table_names,
+                                            TableNamesSet* tvf_names = nullptr);
 
 // Resolved "FOR SYSTEM_TIME AS OF" expression.
 struct TableResolutionTimeExpr {
@@ -439,14 +443,18 @@ absl::StatusOr<std::unique_ptr<const AnalyzerOutput>> RewriteForAnonymization(
     TypeFactory* type_factory);
 
 // Performs resolved AST rewrites as requested with the enabled rewrites in
-// 'analyzer_options'.
+// `analyzer_options`.
 //
 // Note that rewrites enabled in the AnalyzerOptions used for Analyzing are
 // already applied, so this should only be explicitly called for an engine that
 // wants rewrites to happen after analyzing or which wants to apply more
 // rewrites.
 //
-// *WARNING* On error, 'analyzer_output' may be in an inconsistent state with
+// The `analyzer_output` does not include the extra runtime in overall time, or
+// finalize warnings. We should consider reivisiting this if a use-case wants
+// those outputs.
+//
+// *WARNING* On error, `analyzer_output` may be in an inconsistent state with
 // some rewrites applied (or even partially applied).
 absl::Status RewriteResolvedAst(const AnalyzerOptions& analyzer_options,
                                 absl::string_view sql, Catalog* catalog,

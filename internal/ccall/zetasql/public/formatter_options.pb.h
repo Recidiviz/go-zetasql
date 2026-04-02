@@ -206,6 +206,7 @@ class FormatterOptionsProto final :
     kPreserveLineBreaksFieldNumber = 6,
     kExpandFormatRangesFieldNumber = 7,
     kEnforceSingleQuotesFieldNumber = 8,
+    kCapitalizeFunctionsFieldNumber = 9,
   };
   // optional string new_line_type = 1;
   bool has_new_line_type() const;
@@ -316,6 +317,19 @@ class FormatterOptionsProto final :
   void _internal_set_enforce_single_quotes(bool value);
   public:
 
+  // optional bool capitalize_functions = 9;
+  bool has_capitalize_functions() const;
+  private:
+  bool _internal_has_capitalize_functions() const;
+  public:
+  void clear_capitalize_functions();
+  bool capitalize_functions() const;
+  void set_capitalize_functions(bool value);
+  private:
+  bool _internal_capitalize_functions() const;
+  void _internal_set_capitalize_functions(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:zetasql.FormatterOptionsProto)
  private:
   class _Internal;
@@ -333,6 +347,7 @@ class FormatterOptionsProto final :
   bool preserve_line_breaks_;
   bool expand_format_ranges_;
   bool enforce_single_quotes_;
+  bool capitalize_functions_;
   friend struct ::TableStruct_zetasql_2fpublic_2fformatter_5foptions_2eproto;
 };
 // -------------------------------------------------------------------
@@ -782,6 +797,34 @@ inline void FormatterOptionsProto::_internal_set_enforce_single_quotes(bool valu
 inline void FormatterOptionsProto::set_enforce_single_quotes(bool value) {
   _internal_set_enforce_single_quotes(value);
   // @@protoc_insertion_point(field_set:zetasql.FormatterOptionsProto.enforce_single_quotes)
+}
+
+// optional bool capitalize_functions = 9;
+inline bool FormatterOptionsProto::_internal_has_capitalize_functions() const {
+  bool value = (_has_bits_[0] & 0x00000100u) != 0;
+  return value;
+}
+inline bool FormatterOptionsProto::has_capitalize_functions() const {
+  return _internal_has_capitalize_functions();
+}
+inline void FormatterOptionsProto::clear_capitalize_functions() {
+  capitalize_functions_ = false;
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline bool FormatterOptionsProto::_internal_capitalize_functions() const {
+  return capitalize_functions_;
+}
+inline bool FormatterOptionsProto::capitalize_functions() const {
+  // @@protoc_insertion_point(field_get:zetasql.FormatterOptionsProto.capitalize_functions)
+  return _internal_capitalize_functions();
+}
+inline void FormatterOptionsProto::_internal_set_capitalize_functions(bool value) {
+  _has_bits_[0] |= 0x00000100u;
+  capitalize_functions_ = value;
+}
+inline void FormatterOptionsProto::set_capitalize_functions(bool value) {
+  _internal_set_capitalize_functions(value);
+  // @@protoc_insertion_point(field_set:zetasql.FormatterOptionsProto.capitalize_functions)
 }
 
 // -------------------------------------------------------------------

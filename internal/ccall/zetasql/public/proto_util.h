@@ -19,6 +19,8 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
+#include <variant>
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
@@ -26,7 +28,9 @@
 #include "zetasql/public/proto/type_annotation.pb.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/value.h"
+#include "absl/base/attributes.h"
 #include <cstdint>
+#include "absl/base/macros.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/declare.h"
 #include "absl/status/statusor.h"
@@ -67,8 +71,19 @@ absl::Status GetProtoFieldDefault(const ProtoFieldDefaultOptions& options,
 // the type of the field and the default value returned.
 absl::Status GetProtoFieldTypeAndDefault(
     const ProtoFieldDefaultOptions& options,
-    const google::protobuf::FieldDescriptor* field, TypeFactory* type_factory,
+    const google::protobuf::FieldDescriptor* field,
+    absl::Span<const std::string> catalog_name_path, TypeFactory* type_factory,
     const Type** type, Value* default_value = nullptr);
+
+// Prefer the one taking the parent ProtoType's <catalog_name_path>.
+ABSL_DEPRECATED("Inline me!")
+inline absl::Status GetProtoFieldTypeAndDefault(
+    const ProtoFieldDefaultOptions& options,
+    const google::protobuf::FieldDescriptor* field, TypeFactory* type_factory,
+    const Type** type, Value* default_value = nullptr) {
+  return GetProtoFieldTypeAndDefault(options, field, /*catalog_name_path=*/{},
+                                     type_factory, type, default_value);
+}
 
 // Represents a proto field access. If 'get_has_bit' is false, 'type' and
 // 'default_value' must be populated by GetProtoFieldTypeAndDefault().
@@ -145,6 +160,13 @@ using MapKeyVariant = std::variant<bool, int64_t, uint64_t, std::string>;
 absl::Status ParseProtoMap(const Value& array_of_map_entry,
                            const Type* key_type, const Type* value_type,
                            std::vector<std::pair<Value, Value>>& output);
+
+// If values are protobuf map entries, remove any duplicate keys.
+//
+// This should only be used when reading from or writing to the map entry field.
+// It is possible to have arrays of map entries with duplicate keys, they just
+// aren't allowed to be read from or written to an actual protocol buffer.
+absl::Status RemoveDupsByKeyIfProtoMap(std::vector<Value>& values);
 
 }  // namespace zetasql
 

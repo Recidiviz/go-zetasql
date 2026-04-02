@@ -18,17 +18,21 @@
 
 #include <cctype>
 #include <cstdint>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/common/errors.h"
+#include "zetasql/common/timer_util.h"
 #include "zetasql/common/utf_util.h"
 #include "zetasql/parser/bison_parser.bison.h"
 #include "zetasql/parser/keywords.h"
 #include "zetasql/public/id_string.h"
 #include <cstdint>
 #include "absl/cleanup/cleanup.h"
+#include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -55,8 +59,8 @@ constexpr int kBisonParseSuccess = 0;
 constexpr int kBisonParseError = 1;
 constexpr int kBisonMemoryExhausted = 2;
 
-BisonParser::BisonParser() {}
-BisonParser::~BisonParser() {}
+BisonParser::BisonParser() = default;
+BisonParser::~BisonParser() = default;
 
 static std::string GetBisonParserModeName(BisonParserMode mode) {
   switch (mode) {
@@ -71,6 +75,8 @@ static std::string GetBisonParserModeName(BisonParserMode mode) {
       return "statement";
     case BisonParserMode::kScript:
       return "script";
+    case BisonParserMode::kMacroBody:
+      return "macro";
     case BisonParserMode::kTokenizer:
     case BisonParserMode::kTokenizerPreserveComments:
       ZETASQL_LOG(FATAL) << "CleanUpBisonError called in tokenizer mode";
@@ -170,6 +176,9 @@ static absl::StatusOr<std::string> GenerateImprovedBisonSyntaxError(
   std::string expectations_string;
   RE2::FullMatch(bison_error_message, *re_expectations, &expectations_string);
 
+  const auto& user_facing_kw_images =
+      GetUserFacingImagesForSpecialKeywordsMap();
+
   // Transform the individual expectations, because Bison gives some weird
   // output for some of them.
   std::vector<std::string> expectations =
@@ -178,12 +187,16 @@ static absl::StatusOr<std::string> GenerateImprovedBisonSyntaxError(
     if (expectation.size() == 1 && !isalpha(expectation[0])) {
       expectation = absl::StrCat("\"", expectation, "\"");
     }
-    if (absl::StrContains(expectation, " for ")) {
-      // There are several tokens of the form "KEYWORD for CONTEXT" that the
-      // parser knows about but that we shouldn't expose externally. Strip off
-      // the " for CONTEXT" bit.
-      expectation = expectation.substr(0, expectation.find(" for "));
+
+    // We use some special tokens for lexical disambiguation. The labels we
+    // give those in the parser are not nessisarily user friendly or what we
+    // want to show in error messages. Here we re-map those labels back to what
+    // the user will find most understantable.
+    if (const auto found = user_facing_kw_images.find(expectation);
+        found != user_facing_kw_images.end()) {
+      expectation = found->second;
     }
+
     // These are a single token in the Bison tokenizer but we treat them as two
     // tokens externally.
     if (expectation == "\".*\"") {
@@ -334,6 +347,8 @@ absl::Status BisonParser::Parse(
     std::vector<std::unique_ptr<ASTNode>>* other_allocated_ast_nodes,
     ASTStatementProperties* ast_statement_properties,
     int* statement_end_byte_offset) {
+  auto parser_timer = internal::MakeScopedTimerStarted(
+      &parser_runtime_info_.parser_timed_value());
   id_string_pool_ = id_string_pool;
   arena_ = arena;
   language_options_ = &language_options;
@@ -361,6 +376,7 @@ absl::Status BisonParser::Parse(
       &error_message, &error_location, &move_error_location_past_whitespace,
       statement_end_byte_offset);
   const int parse_status_code = bison_parser_impl.parse();
+  parser_runtime_info_.add_lexical_tokens(tokenizer_->num_lexical_tokens());
   if (parse_status_code == kBisonParseSuccess &&
       tokenizer_->GetOverrideError().ok()) {
     // Make sure InitFields() is called for all ASTNodes that were created.
@@ -370,8 +386,7 @@ absl::Status BisonParser::Parse(
       ZETASQL_RETURN_IF_ERROR(ast_node->InitFields());
     }
 
-    if (mode != BisonParserMode::kNextStatementKind) {
-      ZETASQL_RET_CHECK(output_node != nullptr);
+    if (output != nullptr && output_node != nullptr) {
       *output = nullptr;
       // Move 'output_node' out of 'allocated_ast_nodes_' and into '*output'.
       for (int i = allocated_ast_nodes_->size() - 1; i >= 0; --i) {

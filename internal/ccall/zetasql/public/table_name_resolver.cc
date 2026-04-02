@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "zetasql/base/logging.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/parser/ast_node_kind.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parse_tree_decls.h"
@@ -49,6 +50,11 @@ namespace zetasql {
 namespace table_name_resolver {
 namespace {
 
+#define RETURN_ERROR_IF_OUT_OF_STACK_SPACE()                      \
+  ZETASQL_RETURN_IF_NOT_ENOUGH_STACK(                           \
+      "Out of stack space due to deeply nested query expression " \
+      "during table name extraction")
+
 // Each instance should be used only once.
 class TableNameResolver {
  public:
@@ -57,17 +63,22 @@ class TableNameResolver {
   // If 'type_factory' and 'catalog' are not null, their contents must
   // outlive the created TableNameResolver as well.
   //
-  TableNameResolver(
-      absl::string_view sql, const AnalyzerOptions* analyzer_options,
-      TypeFactory* type_factory, Catalog* catalog, TableNamesSet* table_names,
-      TableResolutionTimeInfoMap* table_resolution_time_info_map)
-    : sql_(sql), analyzer_options_(analyzer_options),
-      for_system_time_as_of_feature_enabled_(
-          analyzer_options->language().LanguageFeatureEnabled(
-              FEATURE_V_1_1_FOR_SYSTEM_TIME_AS_OF)),
-      type_factory_(type_factory), catalog_(catalog),
-      table_names_(table_names),
-      table_resolution_time_info_map_(table_resolution_time_info_map) {
+  TableNameResolver(absl::string_view sql,
+                    const AnalyzerOptions* analyzer_options,
+                    TypeFactory* type_factory, Catalog* catalog,
+                    TableNamesSet* table_names,
+                    TableResolutionTimeInfoMap* table_resolution_time_info_map,
+                    TableNamesSet* tvf_names)
+      : sql_(sql),
+        analyzer_options_(analyzer_options),
+        for_system_time_as_of_feature_enabled_(
+            analyzer_options->language().LanguageFeatureEnabled(
+                FEATURE_V_1_1_FOR_SYSTEM_TIME_AS_OF)),
+        type_factory_(type_factory),
+        catalog_(catalog),
+        table_names_(table_names),
+        tvf_names_(tvf_names),
+        table_resolution_time_info_map_(table_resolution_time_info_map) {
     ZETASQL_DCHECK(analyzer_options_->AllArenasAreInitialized());
   }
 
@@ -198,6 +209,13 @@ class TableNameResolver {
   // across recursive calls.
   TableNamesSet* table_names_ = nullptr;
 
+  // The set of TVF names we are building up in this call to FindTables.
+  // NOTE: This is also a borrowed reference. The raw pointer is not owned.
+  // We just cache the output parameter to FindTables/
+  // FindTableNamesAndTemporalReferences to simplify sharing
+  // across recursive calls.
+  TableNamesSet* tvf_names_ = nullptr;
+
   // The set of temporal table references we are building up
   // in this call to FindTemporalTableReferencess.
   // NOTE: The raw pointer is not owned.  We just cache the output parameter
@@ -218,6 +236,7 @@ class TableNameResolver {
 absl::Status TableNameResolver::FindTableNamesAndTemporalReferences(
     const ASTStatement& statement) {
   table_names_->clear();
+  if (tvf_names_ != nullptr) tvf_names_->clear();
   if (table_resolution_time_info_map_ != nullptr) {
     ZETASQL_RET_CHECK_EQ((type_factory_ == nullptr), (catalog_ == nullptr));
     table_resolution_time_info_map_->clear();
@@ -231,6 +250,9 @@ absl::Status TableNameResolver::FindTableNamesAndTemporalReferences(
 
 absl::Status TableNameResolver::FindTableNames(const ASTScript& script) {
   table_names_->clear();
+  if (tvf_names_ != nullptr) {
+    tvf_names_->clear();
+  }
   ZETASQL_RETURN_IF_ERROR(FindInScriptNode(&script));
   // Sanity check - these should get popped.
   ZETASQL_RET_CHECK(local_table_aliases_.empty());
@@ -238,6 +260,7 @@ absl::Status TableNameResolver::FindTableNames(const ASTScript& script) {
 }
 
 absl::Status TableNameResolver::FindInScriptNode(const ASTNode* node) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   for (int i = 0; i < node->num_children(); ++i) {
     const ASTNode* child = node->child(i);
     if (child->IsExpression()) {
@@ -251,6 +274,7 @@ absl::Status TableNameResolver::FindInScriptNode(const ASTNode* node) {
 }
 
 absl::Status TableNameResolver::FindInStatement(const ASTStatement* statement) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   // Find table name under OPTIONS (...) clause for any type of statement.
   ZETASQL_RETURN_IF_ERROR(FindInOptionsListUnder(statement, /*visible_aliases=*/{}));
   switch (statement->node_kind()) {
@@ -904,6 +928,12 @@ absl::Status TableNameResolver::FindInStatement(const ASTStatement* statement) {
     case AST_AUX_LOAD_DATA_STATEMENT:
       if (analyzer_options_->language().SupportsStatementKind(
               RESOLVED_AUX_LOAD_DATA_STMT)) {
+        const ASTAuxLoadDataStatement* stmt =
+            statement->GetAs<ASTAuxLoadDataStatement>();
+        const ASTTableElementList* table_elements = stmt->table_element_list();
+        if (table_elements != nullptr) {
+          ZETASQL_RETURN_IF_ERROR(FindInTableElements(table_elements));
+        }
         return absl::OkStatus();
       }
       break;
@@ -1090,6 +1120,7 @@ absl::Status TableNameResolver::FindInMergeStatement(
 absl::Status TableNameResolver::FindInQuery(
     const ASTQuery* query,
     const AliasSet& visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   AliasSet old_local_table_aliases;
   if (query->with_clause() != nullptr) {
     // Record the set of local table aliases visible in the outer scope so we
@@ -1099,14 +1130,12 @@ absl::Status TableNameResolver::FindInQuery(
     if (query->with_clause()->recursive()) {
       // In WITH RECURSIVE, any entry can access an alias defined in any other
       // entry, regardless of declaration order.
-      for (const ASTWithClauseEntry* with_entry :
-           query->with_clause()->with()) {
+      for (const ASTAliasedQuery* with_entry : query->with_clause()->with()) {
         const std::string with_alias =
             absl::AsciiStrToLower(with_entry->alias()->GetAsStringView());
         zetasql_base::InsertIfNotPresent(&local_table_aliases_, with_alias);
       }
-      for (const ASTWithClauseEntry* with_entry :
-           query->with_clause()->with()) {
+      for (const ASTAliasedQuery* with_entry : query->with_clause()->with()) {
         ZETASQL_RETURN_IF_ERROR(FindInQuery(with_entry->query(), visible_aliases));
         const std::string with_alias =
             absl::AsciiStrToLower(with_entry->alias()->GetAsStringView());
@@ -1114,8 +1143,7 @@ absl::Status TableNameResolver::FindInQuery(
     } else {
       // In WITH without RECURSIVE, entries can only access with aliases defined
       // in prior entries.
-      for (const ASTWithClauseEntry* with_entry :
-           query->with_clause()->with()) {
+      for (const ASTAliasedQuery* with_entry : query->with_clause()->with()) {
         ZETASQL_RETURN_IF_ERROR(FindInQuery(with_entry->query(), visible_aliases));
         const std::string with_alias =
             absl::AsciiStrToLower(with_entry->alias()->GetAsStringView());
@@ -1139,6 +1167,7 @@ absl::Status TableNameResolver::FindInQueryExpression(
     const ASTQueryExpression* query_expr,
     const ASTOrderBy* order_by,
     const AliasSet& visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   switch (query_expr->node_kind()) {
     case AST_SELECT:
       ZETASQL_RETURN_IF_ERROR(
@@ -1170,6 +1199,7 @@ absl::Status TableNameResolver::FindInSelect(
     const ASTSelect* select,
     const ASTOrderBy* order_by,
     const AliasSet& orig_visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   AliasSet visible_aliases = orig_visible_aliases;
   if (select->from_clause() != nullptr) {
     ZETASQL_RET_CHECK(select->from_clause()->table_expression() != nullptr);
@@ -1235,6 +1265,7 @@ absl::Status TableNameResolver::FindInJoin(
     const ASTJoin* join,
     const AliasSet& external_visible_aliases,
     AliasSet* local_visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   ZETASQL_RETURN_IF_ERROR(FindInTableExpression(join->lhs(), external_visible_aliases,
                                         local_visible_aliases));
   ZETASQL_RETURN_IF_ERROR(FindInTableExpression(join->rhs(), external_visible_aliases,
@@ -1247,6 +1278,7 @@ absl::Status TableNameResolver::FindInJoin(
 absl::Status TableNameResolver::FindInParenthesizedJoin(
     const ASTParenthesizedJoin* parenthesized_join,
     const AliasSet& external_visible_aliases, AliasSet* local_visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   const ASTJoin* join = parenthesized_join->join();
   // In parenthesized joins, we can't see names from outside the parentheses.
   std::unique_ptr<AliasSet> join_visible_aliases(
@@ -1260,8 +1292,9 @@ absl::Status TableNameResolver::FindInParenthesizedJoin(
 }
 
 absl::Status TableNameResolver::FindInTVF(
-    const ASTTVF* tvf,
-    const AliasSet& external_visible_aliases, AliasSet* local_visible_aliases) {
+    const ASTTVF* tvf, const AliasSet& external_visible_aliases,
+    AliasSet* local_visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   // The 'tvf' here is the TVF parse node. Each TVF argument may be a scalar, a
   // relation, or a TABLE clause. We've parsed all of the TVF arguments as
   // expressions by this point, so the FindInExpressionsUnder call will descend
@@ -1275,6 +1308,13 @@ absl::Status TableNameResolver::FindInTVF(
   // and so those aliases should not be visible. Because we don't know whether
   // the argument should be a scalar or a relation yet, we allow correlation
   // here and examine the arguments again during resolving.
+
+  // On encountering an ASTTVF node, add the name of the TVF represented by
+  // an identifier path to the optional tvf_names parameter if it has been set.
+  if (tvf_names_ != nullptr) {
+    zetasql_base::InsertIfNotPresent(tvf_names_, tvf->name()->ToIdentifierVector());
+  }
+
   ZETASQL_RETURN_IF_ERROR(FindInExpressionsUnder(tvf, *local_visible_aliases));
   for (const ASTTVFArgument* arg : tvf->argument_entries()) {
     if (arg->table_clause() != nullptr) {
@@ -1320,6 +1360,7 @@ absl::Status TableNameResolver::FindInTVF(
     local_visible_aliases->insert(
         absl::AsciiStrToLower(tvf->alias()->GetAsString()));
   }
+
   return absl::OkStatus();
 }
 
@@ -1327,6 +1368,7 @@ absl::Status TableNameResolver::FindInTableSubquery(
     const ASTTableSubquery* table_subquery,
     const AliasSet& external_visible_aliases,
     AliasSet* local_visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
 
   ZETASQL_RETURN_IF_ERROR(FindInQuery(table_subquery->subquery(),
                               external_visible_aliases));
@@ -1346,6 +1388,7 @@ absl::Status TableNameResolver::FindInTableSubquery(
 
 absl::Status TableNameResolver::FindInTableElements(
     const ASTTableElementList* elements) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
 
   std::vector<const ASTNode*> foreign_references;
   elements->GetDescendantSubtreesWithKinds({AST_FOREIGN_KEY_REFERENCE},
@@ -1395,6 +1438,7 @@ absl::Status TableNameResolver::ResolveTablePath(
 absl::Status TableNameResolver::FindInTablePathExpression(
     const ASTTablePathExpression* table_ref,
     AliasSet* visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
 
   std::string alias;
   if (table_ref->alias() != nullptr) {
@@ -1449,6 +1493,7 @@ absl::Status TableNameResolver::FindInTablePathExpression(
 absl::Status TableNameResolver::FindInExpressionsUnder(
     const ASTNode* root,
     const AliasSet& visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   if (root == nullptr) return absl::OkStatus();
 
   // The only thing that matters inside expressions are expression subqueries,
@@ -1468,6 +1513,7 @@ absl::Status TableNameResolver::FindInExpressionsUnder(
 absl::Status TableNameResolver::FindInOptionsListUnder(
     const ASTNode* root,
     const AliasSet& visible_aliases) {
+  RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   if (root == nullptr) return absl::OkStatus();
 
   std::vector<const ASTNode*> options_list_nodes;
@@ -1484,19 +1530,23 @@ absl::Status FindTableNamesAndResolutionTime(
     absl::string_view sql, const ASTStatement& statement,
     const AnalyzerOptions& analyzer_options, TypeFactory* type_factory,
     Catalog* catalog, TableNamesSet* table_names,
-    TableResolutionTimeInfoMap* table_resolution_time_info_map) {
+    TableResolutionTimeInfoMap* table_resolution_time_info_map,
+    TableNamesSet* tvf_names) {
   return TableNameResolver(sql, &analyzer_options, type_factory, catalog,
-                           table_names, table_resolution_time_info_map)
+                           table_names, table_resolution_time_info_map,
+                           tvf_names)
       .FindTableNamesAndTemporalReferences(statement);
 }
 
 absl::Status FindTableNamesInScript(absl::string_view sql,
                                     const ASTScript& script,
                                     const AnalyzerOptions& analyzer_options,
-                                    TableNamesSet* table_names) {
+                                    TableNamesSet* table_names,
+                                    TableNamesSet* tvf_names) {
   return TableNameResolver(sql, &analyzer_options, /*type_factory=*/nullptr,
                            /*catalog=*/nullptr, table_names,
-                           /*table_resolution_time_info_map=*/nullptr)
+                           /*table_resolution_time_info_map=*/nullptr,
+                           tvf_names)
       .FindTableNames(script);
 }
 

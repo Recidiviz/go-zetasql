@@ -32,6 +32,12 @@
 
 namespace zetasql::formatter::internal {
 
+// String used on comments to disable formatter.
+constexpr absl::string_view kDisableComment = "SQLFORMAT:OFF";
+
+// String used on comments to reenable formatter.
+constexpr absl::string_view kEnableComment = "SQLFORMAT:ON";
+
 // Augments the ParseToken returned by the ZetaSQL tokenizer with additional
 // type data.
 class Token : public ParseToken {
@@ -111,6 +117,14 @@ class Token : public ParseToken {
     DDL_KEYWORD,
     // Marks keywords inside CASE operator (WHEN, THEN, ELSE, END).
     CASE_KEYWORD,
+    // Marks builtin-functions, some of which may be multipart, e.g.
+    // D3A_COUNT.INIT()
+    BUILTIN_FUNCTION,
+    // Curly brace that starts a braced constructor. Braced constructors
+    // allow textproto-like syntax inside, with pairs "field_name: value".
+    STARTS_BRACED_CONSTR,
+    // Marks colons in braced constructors.
+    BRACED_CONSTR_COLON,
   };
 
   explicit Token(ParseToken t)

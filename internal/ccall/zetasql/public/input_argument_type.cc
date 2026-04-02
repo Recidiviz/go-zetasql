@@ -17,7 +17,9 @@
 #include "zetasql/public/input_argument_type.h"
 
 #include <algorithm>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/public/table_valued_function.h"
@@ -178,12 +180,22 @@ std::string InputArgumentType::DebugString(bool verbose) const {
 
 // static
 std::string InputArgumentType::ArgumentsToString(
-    const std::vector<InputArgumentType>& arguments, ProductMode product_mode) {
+    const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
+    absl::Span<const absl::string_view> argument_names) {
   constexpr int kMaxArgumentsStringLength = 1024;
   std::string arguments_string;
   bool first = true;
   for (const InputArgumentType& argument : arguments) {
+    // Shift the argument name at the front of the list.
+    absl::string_view argument_name;
+    if (!argument_names.empty()) {
+      argument_name = argument_names.front();
+      argument_names.remove_prefix(1);
+    }
+
     absl::StrAppend(&arguments_string, (first ? "" : ", "),
+                    !argument_name.empty() ? argument_name : "",
+                    !argument_name.empty() ? " => " : "",
                     argument.UserFacingName(product_mode));
     if (arguments_string.size() > kMaxArgumentsStringLength) {
       constexpr absl::string_view kEllipses = "...";

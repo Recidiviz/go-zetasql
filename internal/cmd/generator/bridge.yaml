@@ -349,11 +349,6 @@
         - struct
       ret:
         - struct
-    - name: ASTSelect_anonymization_options
-      args:
-        - struct
-      ret:
-        - struct
     - name: ASTSelect_select_as
       args:
         - struct
@@ -390,6 +385,11 @@
       ret:
         - struct
     - name: ASTSelect_window_clause
+      args:
+        - struct
+      ret:
+        - struct
+    - name: ASTSelect_anonymization_options
       args:
         - struct
       ret:
@@ -688,12 +688,12 @@
         - struct
       ret:
         - struct
-    - name: ASTWithClauseEntry_alias
+    - name: ASTAliasedQuery_alias
       args:
         - struct
       ret:
         - struct
-    - name: ASTWithClauseEntry_query
+    - name: ASTAliasedQuery_query
       args:
         - struct
       ret:
@@ -820,6 +820,16 @@
       args:
         - struct
         - int
+      ret:
+        - struct
+    - name: ASTWithClauseEntry_alias
+      args:
+        - struct
+      ret:
+        - struct
+    - name: ASTWithClauseEntry_query
+      args:
+        - struct
       ret:
         - struct
     - name: ASTHaving_expression

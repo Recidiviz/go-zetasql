@@ -58,12 +58,12 @@ const uint32_t TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto:
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::FieldFormat)},
   { 6, -1, -1, sizeof(::zetasql::DeprecatedEncoding)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FieldFormat_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_DeprecatedEncoding_default_instance_),
 };
@@ -71,39 +71,41 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n*zetasql/public/proto/type_annotation.p"
   "roto\022\007zetasql\032 google/protobuf/descripto"
-  "r.proto\"\324\002\n\013FieldFormat\"\304\002\n\006Format\022\022\n\016DE"
+  "r.proto\"\250\003\n\013FieldFormat\"\230\003\n\006Format\022\022\n\016DE"
   "FAULT_FORMAT\020\000\022\010\n\004DATE\020\001\022\025\n\021TIMESTAMP_SE"
   "CONDS\020\002\022\024\n\020TIMESTAMP_MILLIS\020\003\022\024\n\020TIMESTA"
   "MP_MICROS\020\004\022\023\n\017TIMESTAMP_NANOS\020\005\022\020\n\014DATE"
   "_DECIMAL\020\006\022\017\n\013TIME_MICROS\020\007\022\023\n\017DATETIME_"
   "MICROS\020\010\022\030\n\024ST_GEOGRAPHY_ENCODED\020\t\022\013\n\007NU"
   "MERIC\020\n\022\016\n\nBIGNUMERIC\020\013\022\010\n\004JSON\020\014\022\014\n\010INT"
-  "ERVAL\020\016\022=\n0__FieldFormat_Type__switch_mu"
-  "st_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\243\001\n\022Depre"
-  "catedEncoding\"\214\001\n\010Encoding\022\024\n\020DEFAULT_EN"
-  "CODING\020\000\022\021\n\rDATE_PACKED32\020\001\022\020\n\014DATE_DECI"
-  "MAL\020\001\022A\n4__FieldFormat_Encoding__switch_"
-  "must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001:M\n\006"
-  "format\022\035.google.protobuf.FieldOptions\030\313\353"
-  "\341  \001(\0162\033.zetasql.FieldFormat.Format:K\n\004t"
-  "ype\022\035.google.protobuf.FieldOptions\030\345\252\337\027 "
-  "\001(\0162\033.zetasql.FieldFormat.Format:X\n\010enco"
-  "ding\022\035.google.protobuf.FieldOptions\030\247\371\376\035"
-  " \001(\0162$.zetasql.DeprecatedEncoding.Encodi"
-  "ng:<\n\014use_defaults\022\035.google.protobuf.Fie"
-  "ldOptions\030\277\246\336\027 \001(\010:\004true:D\n\022use_field_de"
-  "faults\022\037.google.protobuf.MessageOptions\030"
-  "\202\371\326\027 \001(\010:\004trueB,\n\022com.google.zetasqlB\023Ty"
-  "peAnnotationProto\370\001\001"
+  "ERVAL\020\016\022\027\n\023RANGE_DATES_ENCODED\020\020\022\033\n\027RANG"
+  "E_DATETIMES_ENCODED\020\021\022\034\n\030RANGE_TIMESTAMP"
+  "S_ENCODED\020\022\022=\n0__FieldFormat_Type__switc"
+  "h_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\243\001\n\022D"
+  "eprecatedEncoding\"\214\001\n\010Encoding\022\024\n\020DEFAUL"
+  "T_ENCODING\020\000\022\021\n\rDATE_PACKED32\020\001\022\020\n\014DATE_"
+  "DECIMAL\020\001\022A\n4__FieldFormat_Encoding__swi"
+  "tch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001"
+  ":M\n\006format\022\035.google.protobuf.FieldOption"
+  "s\030\313\353\341  \001(\0162\033.zetasql.FieldFormat.Format:"
+  "K\n\004type\022\035.google.protobuf.FieldOptions\030\345"
+  "\252\337\027 \001(\0162\033.zetasql.FieldFormat.Format:X\n\010"
+  "encoding\022\035.google.protobuf.FieldOptions\030"
+  "\247\371\376\035 \001(\0162$.zetasql.DeprecatedEncoding.En"
+  "coding:<\n\014use_defaults\022\035.google.protobuf"
+  ".FieldOptions\030\277\246\336\027 \001(\010:\004true:D\n\022use_fiel"
+  "d_defaults\022\037.google.protobuf.MessageOpti"
+  "ons\030\202\371\326\027 \001(\010:\004trueB,\n\022com.google.zetasql"
+  "B\023TypeAnnotationProto\370\001\001"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = {
-  false, false, 1020, descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, "zetasql/public/proto/type_annotation.proto", 
+  false, false, 1104, descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, "zetasql/public/proto/type_annotation.proto", 
   &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps, 1, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto::offsets,
+  schemas_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, file_default_instances_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_getter() {
@@ -134,6 +136,9 @@ bool FieldFormat_Format_IsValid(int value) {
     case 11:
     case 12:
     case 14:
+    case 16:
+    case 17:
+    case 18:
       return true;
     default:
       return false;
@@ -155,6 +160,9 @@ constexpr FieldFormat_Format FieldFormat::NUMERIC;
 constexpr FieldFormat_Format FieldFormat::BIGNUMERIC;
 constexpr FieldFormat_Format FieldFormat::JSON;
 constexpr FieldFormat_Format FieldFormat::INTERVAL;
+constexpr FieldFormat_Format FieldFormat::RANGE_DATES_ENCODED;
+constexpr FieldFormat_Format FieldFormat::RANGE_DATETIMES_ENCODED;
+constexpr FieldFormat_Format FieldFormat::RANGE_TIMESTAMPS_ENCODED;
 constexpr FieldFormat_Format FieldFormat::__FieldFormat_Type__switch_must_have_a_default__;
 constexpr FieldFormat_Format FieldFormat::Format_MIN;
 constexpr FieldFormat_Format FieldFormat::Format_MAX;

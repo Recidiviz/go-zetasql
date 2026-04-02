@@ -19,6 +19,8 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <optional>
+#include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -36,6 +38,7 @@
 #include "zetasql/public/types/proto_type.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "zetasql/resolved_ast/sql_builder.h"
 #include "zetasql/tools/execute_query/execute_query_proto_writer.h"
 #include "zetasql/tools/execute_query/execute_query_writer.h"
 #include "absl/flags/flag.h"
@@ -59,10 +62,12 @@ ABSL_FLAG(std::string, product_mode, "internal",
 ABSL_FLAG(std::string, mode, "execute",
           "The tool mode to use. Valid values are:"
           "\n     'parse'   parse the parser AST"
-          "\n     'resolve' print the resolved AST"
-          "\n     'explain' print the query plan"
-          "\n     'execute' actually run the query and print the result. (not"
-          "                 all functionality is supported).");
+          "\n     'unparse'  parse, then dump as sql"
+          "\n     'analyze'  print the resolved AST"
+          "\n     'unanalyze'  analyze, then dump as sql"
+          "\n     'explain'  print the evaluator query plan"
+          "\n     'execute'  actually run the query and print the result. (not"
+          "                  all functionality is supported).");
 
 ABSL_FLAG(zetasql::internal::EnabledAstRewrites, enabled_ast_rewrites,
           zetasql::internal::EnabledAstRewrites{
@@ -84,6 +89,16 @@ ABSL_FLAG(zetasql::internal::EnabledAstRewrites, enabled_ast_rewrites,
 ABSL_FLAG(std::optional<zetasql::internal::EnabledLanguageFeatures>,
           enabled_language_features, std::nullopt,
           zetasql::internal::EnabledLanguageFeatures::kFlagDescription);
+
+ABSL_FLAG(std::string, parameters, {},
+          zetasql::internal::kQueryParameterMapHelpstring);
+
+ABSL_FLAG(bool, strict_name_resolution_mode, false,
+          "Sets LanguageOptions::strict_resolution_mode.");
+
+ABSL_FLAG(bool, evaluator_scramble_undefined_orderings, false,
+          "When true, shuffle the order of rows in intermediate reults that "
+          "are unordered.");
 
 ABSL_FLAG(std::string, table_spec, "",
           "The table spec to use for building the ZetaSQL Catalog. This is a "
@@ -143,7 +158,11 @@ absl::Status SetToolModeFromFlags(ExecuteQueryConfig& config) {
   if (mode == "parse" || mode == "parser") {
     config.set_tool_mode(ToolMode::kParse);
     return absl::OkStatus();
-  } else if (mode == "resolve" || mode == "analyze" || mode == "analyzer") {
+  } else if (mode == "unparse" || mode == "unparser") {
+    config.set_tool_mode(ToolMode::kUnparse);
+    return absl::OkStatus();
+  } else if (mode == "resolve" || mode == "resolver" || mode == "analyze" ||
+             mode == "analyzer") {
     config.set_tool_mode(ToolMode::kResolve);
     return absl::OkStatus();
   } else if (mode == "explain") {
@@ -151,6 +170,11 @@ absl::Status SetToolModeFromFlags(ExecuteQueryConfig& config) {
     return absl::OkStatus();
   } else if (mode == "execute") {
     config.set_tool_mode(ToolMode::kExecute);
+    return absl::OkStatus();
+  } else if (mode == "unanalyze" || mode == "unanalyzer" ||
+             mode == "unresolve" || mode == "unresolver" ||
+             mode == "sql_builder" || mode == "sqlbuilder") {
+    config.set_tool_mode(ToolMode::kUnAnalyze);
     return absl::OkStatus();
   } else {
     return zetasql_base::InvalidArgumentErrorBuilder()
@@ -205,6 +229,17 @@ static absl::Status SetProductModeFromFlags(ExecuteQueryConfig& config) {
   }
   return zetasql_base::InvalidArgumentErrorBuilder()
          << "Invalid --product_mode:'" << product_mode << "'";
+}
+
+static absl::Status SetNameResolutionModeFromFlags(ExecuteQueryConfig& config) {
+  config.mutable_analyzer_options()
+      .mutable_language()
+      ->set_name_resolution_mode(
+          absl::GetFlag(FLAGS_strict_name_resolution_mode)
+              ? NAME_RESOLUTION_STRICT
+              : NAME_RESOLUTION_DEFAULT);
+
+  return absl::OkStatus();
 }
 
 absl::Status SetDescriptorPoolFromFlags(ExecuteQueryConfig& config) {
@@ -339,6 +374,7 @@ absl::StatusOr<std::unique_ptr<ExecuteQueryWriter>> MakeWriterFromFlags(
 
 absl::Status SetLanguageOptionsFromFlags(ExecuteQueryConfig& config) {
   ZETASQL_RETURN_IF_ERROR(SetProductModeFromFlags(config));
+  ZETASQL_RETURN_IF_ERROR(SetNameResolutionModeFromFlags(config));
   return SetLanguageFeaturesFromFlags(config);
 }
 
@@ -355,6 +391,25 @@ absl::Status SetEvaluatorOptionsFromFlags(ExecuteQueryConfig& config) {
       val != -1) {
     config.mutable_evaluator_options().max_intermediate_byte_size = val;
   }
+  config.mutable_evaluator_options().scramble_undefined_orderings =
+      absl::GetFlag(FLAGS_evaluator_scramble_undefined_orderings);
+  return absl::OkStatus();
+}
+
+absl::Status SetQueryParametersFromFlags(ExecuteQueryConfig& config) {
+  ParameterValueMap parameters;
+  std::string err;
+  if (!internal::ParseQueryParameterFlag(
+          absl::GetFlag(FLAGS_parameters), config.analyzer_options(),
+          &config.mutable_catalog(), &parameters, &err)) {
+    return absl::InvalidArgumentError(err);
+  }
+  for (const auto& [name, value] : parameters) {
+    ZETASQL_RETURN_IF_ERROR(config.mutable_analyzer_options().AddQueryParameter(
+        name, value.type()));
+  }
+
+  config.mutable_query_parameter_values() = std::move(parameters);
   return absl::OkStatus();
 }
 
@@ -388,7 +443,8 @@ void ExecuteQueryConfig::SetOwnedDescriptorDatabase(
 
 absl::Status ExecuteQuery(absl::string_view sql, ExecuteQueryConfig& config,
                           ExecuteQueryWriter& writer) {
-  if (config.tool_mode() == ToolMode::kParse) {
+  if (config.tool_mode() == ToolMode::kParse ||
+      config.tool_mode() == ToolMode::kUnparse) {
     std::unique_ptr<ParserOutput> parser_output;
     ParserOptions parser_options;
 
@@ -410,9 +466,13 @@ absl::Status ExecuteQuery(absl::string_view sql, ExecuteQueryConfig& config,
     }
     ZETASQL_RET_CHECK_NE(root, nullptr);
 
-    // Note, ASTNode is not public, and therefore cannot be part of the public
-    // interface, thus, we can only return the string.
-    return writer.parsed(root->DebugString());
+    if (config.tool_mode() == ToolMode::kParse) {
+      // Note, ASTNode is not public, and therefore cannot be part of the public
+      // interface, thus, we can only return the string.
+      return writer.parsed(root->DebugString());
+    }
+    ZETASQL_RET_CHECK(config.tool_mode() == ToolMode::kUnparse);
+    return writer.unparsed(Unparse(root));
   }
 
   std::unique_ptr<const AnalyzerOutput> analyzer_output;
@@ -440,6 +500,12 @@ absl::Status ExecuteQuery(absl::string_view sql, ExecuteQueryConfig& config,
     return writer.resolved(*resolved_node);
   }
 
+  if (config.tool_mode() == ToolMode::kUnAnalyze) {
+    SQLBuilder builder;
+    ZETASQL_RETURN_IF_ERROR(builder.Process(*resolved_node));
+    return writer.unanalyze(builder.sql());
+  }
+
   if (config.sql_mode() == SqlMode::kQuery) {
     ZETASQL_RET_CHECK_EQ(resolved_node->node_kind(), RESOLVED_QUERY_STMT);
 
@@ -458,7 +524,8 @@ absl::Status ExecuteQuery(absl::string_view sql, ExecuteQueryConfig& config,
       }
       case ToolMode::kExecute: {
         ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<EvaluatorTableIterator> iter,
-                         query.ExecuteAfterPrepare());
+                         query.ExecuteAfterPrepare(
+                             {.parameters = config.query_parameter_values()}));
 
         return writer.executed(*resolved_node, std::move(iter));
       }
@@ -483,7 +550,10 @@ absl::Status ExecuteQuery(absl::string_view sql, ExecuteQueryConfig& config,
         return writer.explained(*resolved_node, explain);
       }
       case ToolMode::kExecute: {
-        ZETASQL_ASSIGN_OR_RETURN(Value value, expression.ExecuteAfterPrepare());
+        PreparedExpressionBase::ExpressionOptions expression_options;
+        expression_options.parameters = config.query_parameter_values();
+        ZETASQL_ASSIGN_OR_RETURN(Value value, expression.ExecuteAfterPrepare(
+                                          std::move(expression_options)));
 
         return writer.ExecutedExpression(*resolved_node, value);
       }

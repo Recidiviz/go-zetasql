@@ -38,6 +38,7 @@
 #include "zetasql/analyzer/resolver.h"
 #include "zetasql/common/errors.h"
 #include "zetasql/common/status_payload_utils.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/parser/ast_node_kind.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parse_tree_errors.h"
@@ -54,6 +55,7 @@
 #include "zetasql/public/error_location.pb.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/function.pb.h"
+#include "zetasql/public/function_signature.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/numeric_value.h"
@@ -80,7 +82,7 @@
 #include "zetasql/base/case.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_map.h"
-#include "absl/memory/memory.h"
+#include "absl/flags/flag.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/match.h"
@@ -90,6 +92,10 @@
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
+
+ABSL_FLAG(bool, zetasql_show_function_signature_mismatch_details, false,
+          "Output mismatch details about each signature that mismatches a "
+          "function call.");
 
 namespace zetasql {
 
@@ -320,28 +326,32 @@ absl::Status FunctionResolver::GetFunctionArgumentIndexMappingPerSignature(
     const std::string& function_name, const FunctionSignature& signature,
     const ASTNode* ast_location,
     const std::vector<const ASTNode*>& arg_locations,
-    const std::vector<std::pair<const ASTNamedArgument*, int>>& named_arguments,
+    const std::vector<NamedArgumentInfo>& named_arguments,
     int num_repeated_args_repetitions,
     bool always_include_omitted_named_arguments_in_index_mapping,
     std::vector<FunctionResolver::ArgIndexPair>* index_mapping) const {
   // Make sure the language feature is enabled.
   if (!named_arguments.empty() &&
       !resolver_->language().LanguageFeatureEnabled(FEATURE_NAMED_ARGUMENTS)) {
-    return MakeSqlErrorAt(named_arguments[0].first)
+    return named_arguments[0].MakeSQLError()
            << "Named arguments are not supported";
   }
 
-  // Build a set of all argument names in the function signature argument
-  // options.
-  std::set<std::string, zetasql_base::CaseLess>
+  // Build a map from all argument names in the function signature argument
+  // options to the options of the associated argument.
+  absl::flat_hash_map<absl::string_view, const FunctionArgumentTypeOptions*,
+                      zetasql_base::StringViewCaseHash,
+                      zetasql_base::StringViewCaseEqual>
       argument_names_from_signature_options;
   int last_arg_index_with_default = -1;
   int last_named_arg_index = -1;
   for (int i = 0; i < signature.arguments().size(); ++i) {
     const FunctionArgumentType& arg_type = signature.arguments()[i];
     if (arg_type.options().has_argument_name()) {
-      ZETASQL_RET_CHECK(zetasql_base::InsertIfNotPresent(&argument_names_from_signature_options,
-                                        arg_type.options().argument_name()))
+      ZETASQL_RET_CHECK(argument_names_from_signature_options
+                    .try_emplace(arg_type.options().argument_name(),
+                                 &arg_type.options())
+                    .second)
           << "Duplicate named argument " << arg_type.options().argument_name()
           << " found in signature for function " << function_name;
       last_named_arg_index = i;
@@ -363,33 +373,38 @@ absl::Status FunctionResolver::GetFunctionArgumentIndexMappingPerSignature(
       argument_names_to_indexes;
   int first_named_arg_index_in_call = std::numeric_limits<int>::max();
   int last_named_arg_index_in_call = -1;
-  for (int i = 0; i < named_arguments.size(); ++i) {
-    const std::pair<const ASTNamedArgument*, int>& named_arg =
-        named_arguments[i];
+  for (const auto& named_argument : named_arguments) {
     // Map the argument name to the index in which it appears in the function
     // call. If the name already exists in the map, this is a duplicate named
     // argument which is not allowed.
-    const std::string provided_arg_name =
-        named_arg.first->name()->GetAsString();
+    const std::string provided_arg_name = named_argument.name().ToString();
     if (!zetasql_base::InsertIfNotPresent(&argument_names_to_indexes, provided_arg_name,
-                                 named_arg.second)) {
-      return MakeSqlErrorAt(named_arg.first)
+                                 named_argument.index())) {
+      return named_argument.MakeSQLError()
              << "Duplicate named argument " << provided_arg_name
              << " found in call to function " << function_name;
     }
     // Make sure the provided argument name exists in the function signature.
-    if (!zetasql_base::ContainsKey(argument_names_from_signature_options,
-                          provided_arg_name)) {
-      return MakeSqlErrorAt(named_arg.first)
+    if (!argument_names_from_signature_options.contains(provided_arg_name)) {
+      return named_argument.MakeSQLError()
              << "Named argument " << provided_arg_name
              << " not found in signature for call to function "
              << function_name;
     }
+    // Make sure the argument name is allowed in function calls.
+    const FunctionArgumentTypeOptions* argument_options =
+        argument_names_from_signature_options[provided_arg_name];
+    ZETASQL_RET_CHECK(argument_options != nullptr);
+    if (argument_options->named_argument_kind() == kPositionalOnly) {
+      return named_argument.MakeSQLError()
+             << "Argument " << provided_arg_name << " must by supplied by "
+             << "position, not by name, for call to function " << function_name;
+    }
     // Keep track of the first and last named argument index.
     first_named_arg_index_in_call =
-        std::min(first_named_arg_index_in_call, named_arg.second);
+        std::min(first_named_arg_index_in_call, named_argument.index());
     last_named_arg_index_in_call =
-        std::max(last_named_arg_index_in_call, named_arg.second);
+        std::max(last_named_arg_index_in_call, named_argument.index());
   }
 
   // Check that named arguments are not followed by positional arguments.
@@ -399,7 +414,7 @@ absl::Status FunctionResolver::GetFunctionArgumentIndexMappingPerSignature(
       (last_named_arg_index_in_call - first_named_arg_index_in_call >=
            named_arguments.size() ||
        last_named_arg_index_in_call + 1 < num_provided_args)) {
-    return MakeSqlErrorAt(named_arguments.back().first)
+    return named_arguments.back().MakeSQLError()
            << "Call to function " << function_name << " must not specify "
            << "positional arguments after named arguments; named arguments "
            << "must be specified last in the argument list";
@@ -424,7 +439,7 @@ absl::Status FunctionResolver::GetFunctionArgumentIndexMappingPerSignature(
     // For positional arguments that appear before any named arguments appear,
     // simply retain their locations and argument types.
     if ((named_arguments.empty() ||
-         call_arg_index < named_arguments[0].second) &&
+         call_arg_index < named_arguments[0].index()) &&
         (call_arg_index < arg_locations.size() || signature_arg_name.empty())) {
       // Make sure that the function signature does not specify an optional name
       // for this positional argument that also appears later as a named
@@ -439,7 +454,7 @@ absl::Status FunctionResolver::GetFunctionArgumentIndexMappingPerSignature(
       // Make sure that the function signature does not specify an argument
       // name positionally when the options require that it must be named.
       if (!signature_arg_name.empty() &&
-          arg_type.options().argument_name_is_mandatory()) {
+          arg_type.options().named_argument_kind() == kNamedOnly) {
         return MakeSqlErrorAt(arg_locations.at(call_arg_index))
                << "Positional argument is invalid because this function "
                << "restricts that this argument is referred to by name \""
@@ -654,12 +669,12 @@ FunctionResolver::ReorderArgumentExpressionsPerIndexMapping(
 }
 
 std::string FunctionResolver::GenerateErrorMessageWithSupportedSignatures(
-    const Function* function,
-    const std::string& prefix_message) const {
+    const Function* function, const std::string& prefix_message,
+    FunctionArgumentType::NamePrintingStyle print_style) const {
   int num_signatures = 0;
   const std::string supported_signatures =
-      function->GetSupportedSignaturesUserFacingText(resolver_->language(),
-                                                     &num_signatures);
+      function->GetSupportedSignaturesUserFacingText(
+          resolver_->language(), print_style, &num_signatures);
   if (!supported_signatures.empty()) {
     return absl::StrCat(prefix_message, ". Supported signature",
                         (num_signatures > 1 ? "s" : ""), ": ",
@@ -692,10 +707,9 @@ std::string FunctionResolver::GenerateErrorMessageWithSupportedSignatures(
 // was, nor does it keep track of the best non-matching signature.
 absl::StatusOr<const FunctionSignature*>
 FunctionResolver::FindMatchingSignature(
-    const Function* function,
-    const ASTNode* ast_location,
+    const Function* function, const ASTNode* ast_location,
     const std::vector<const ASTNode*>& arg_locations_in,
-    const std::vector<std::pair<const ASTNamedArgument*, int>>& named_arguments,
+    const std::vector<NamedArgumentInfo>& named_arguments,
     const NameScope* name_scope,
     std::vector<InputArgumentType>* input_arguments,
     std::vector<FunctionArgumentOverride>* arg_overrides,
@@ -737,7 +751,8 @@ FunctionResolver::FindMatchingSignature(
                << GenerateErrorMessageWithSupportedSignatures(
                       function,
                       absl::StrCat("Number of arguments does not match for ",
-                                   function->QualifiedSQLName()));
+                                   function->QualifiedSQLName()),
+                      FunctionArgumentType::NamePrintingStyle::kIfNamedOnly);
       }
       continue;
     }
@@ -889,11 +904,20 @@ absl::Status ExtractStructFieldLocations(
   // Skip through gratuitous casts in the AST so that we can get the field
   // argument locations.
   const ASTNode* cast_free_ast_location = ast_location;
-  while (cast_free_ast_location->node_kind() == AST_CAST_EXPRESSION) {
-    const ASTCastExpression* ast_cast =
-        cast_free_ast_location->GetAs<ASTCastExpression>();
-    cast_free_ast_location = ast_cast->expr();
+  while (cast_free_ast_location != nullptr) {
+    if (cast_free_ast_location->node_kind() == AST_CAST_EXPRESSION) {
+      const ASTCastExpression* ast_cast =
+          cast_free_ast_location->GetAs<ASTCastExpression>();
+      cast_free_ast_location = ast_cast->expr();
+    } else if (cast_free_ast_location->node_kind() == AST_NAMED_ARGUMENT) {
+      const ASTNamedArgument* ast_arg =
+          cast_free_ast_location->GetAs<ASTNamedArgument>();
+      cast_free_ast_location = ast_arg->expr();
+    } else {
+      break;
+    }
   }
+  ZETASQL_RET_CHECK_NE(nullptr, cast_free_ast_location) << ast_location->DebugString();
 
   switch (cast_free_ast_location->node_kind()) {
     case AST_STRUCT_CONSTRUCTOR_WITH_PARENS: {
@@ -901,7 +925,7 @@ absl::Status ExtractStructFieldLocations(
           cast_free_ast_location->GetAs<ASTStructConstructorWithParens>();
       ZETASQL_DCHECK_EQ(ast_struct->field_expressions().size(),
                 to_struct_type->num_fields());
-      *field_arg_locations = ToLocations(ast_struct->field_expressions());
+      *field_arg_locations = ToASTNodes(ast_struct->field_expressions());
       break;
     }
     case AST_STRUCT_CONSTRUCTOR_WITH_KEYWORD: {
@@ -927,15 +951,22 @@ absl::Status ExtractStructFieldLocations(
 absl::Status FunctionResolver::AddCastOrConvertLiteral(
     const ASTNode* ast_location, AnnotatedType annotated_target_type,
     std::unique_ptr<const ResolvedExpr> format,
-    std::unique_ptr<const ResolvedExpr> time_zone,
-    const TypeParameters& type_params, const ResolvedScan* scan,
-    bool set_has_explicit_type, bool return_null_on_error,
+    std::unique_ptr<const ResolvedExpr> time_zone, TypeModifiers type_modifiers,
+    const ResolvedScan* scan, bool set_has_explicit_type,
+    bool return_null_on_error,
     std::unique_ptr<const ResolvedExpr>* argument) const {
   ZETASQL_RET_CHECK_NE(ast_location, nullptr);
 
   const Type* target_type = annotated_target_type.type;
   const AnnotationMap* target_type_annotation_map =
       annotated_target_type.annotation_map;
+  const TypeParameters& type_parameters = type_modifiers.type_parameters();
+  const Collation& collation = type_modifiers.collation();
+
+  ZETASQL_ASSIGN_OR_RETURN(
+      bool equals_collation_annotation,
+      collation.EqualsCollationAnnotation(target_type_annotation_map));
+  ZETASQL_RET_CHECK(equals_collation_annotation);
 
   // If this conversion is a no-op we can return early.
   if (target_type->Equals(argument->get()->type()) && !set_has_explicit_type &&
@@ -944,7 +975,7 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
                                          CollationAnnotation::GetId())) {
     // These fields should only be used for explicit casts when
     // set_has_explicit_type is true.
-    ZETASQL_RET_CHECK(type_params.IsEmpty());
+    ZETASQL_RET_CHECK(type_parameters.IsEmpty());
     ZETASQL_RET_CHECK_EQ(format.get(), nullptr);
     ZETASQL_RET_CHECK_EQ(time_zone.get(), nullptr);
     return absl::OkStatus();
@@ -966,7 +997,8 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
         argument->get()->GetAs<ResolvedMakeStruct>());
     const StructType* to_struct_type = target_type->AsStruct();
     ZETASQL_RET_CHECK_EQ(struct_expr->field_list_size(), to_struct_type->num_fields());
-    ZETASQL_RET_CHECK(type_params.MatchType(to_struct_type));
+    ZETASQL_RET_CHECK(type_parameters.MatchType(to_struct_type));
+    ZETASQL_RET_CHECK(collation.HasCompatibleStructure(to_struct_type));
 
     std::vector<const ASTNode*> field_arg_locations;
     // If we can't obtain the locations of field arguments and replace literals
@@ -991,24 +1023,17 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
           // This field has the same Type, but is a literal that needs to
           // have it set as has_explicit_type so we must replace the
           // expression.
-          const AnnotationMap* original_type_annotation_map =
-              field_exprs[i]->type_annotation_map();
           field_exprs[i] = resolver_->MakeResolvedLiteral(
-              field_arg_locations[i],
-              field_exprs[i]->GetAs<ResolvedLiteral>()->value().type(),
+              field_arg_locations[i], field_exprs[i]->annotated_type(),
               field_exprs[i]->GetAs<ResolvedLiteral>()->value(),
               /*has_explicit_type=*/true);
-          // TODO: Currently we set <type_annotation_map> on the
-          // output of MakeResolvedLiteral function. Consider passing
-          // <annotated_type> to the MakeResolvedLiteral and set the
-          // <type_annotation_map> inside.
-          const_cast<ResolvedExpr*>(field_exprs[i].get())
-              ->set_type_annotation_map(original_type_annotation_map);
         }
       }
 
-      const TypeParameters& child_params =
-          type_params.IsEmpty() ? TypeParameters() : type_params.child(i);
+      TypeModifiers field_type_modifers = TypeModifiers::MakeTypeModifiers(
+          type_modifiers.type_parameters().IsEmpty() ? TypeParameters()
+                                                     : type_parameters.child(i),
+          collation.Empty() ? Collation() : collation.child(i));
 
       // We pass nullptr for 'format' and 'time_zone' here because there is
       // currently no way to define format strings for individual struct fields.
@@ -1016,8 +1041,9 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
           field_arg_locations[i],
           AnnotatedType(to_struct_type->field(i).type,
                         field_type_annotation_map),
-          /*format=*/nullptr, /*time_zone=*/nullptr, child_params, scan,
-          set_has_explicit_type, return_null_on_error, &field_exprs[i]);
+          /*format=*/nullptr, /*time_zone=*/nullptr,
+          std::move(field_type_modifers), scan, set_has_explicit_type,
+          return_null_on_error, &field_exprs[i]);
       if (!cast_status.ok()) {
         // Propagate "Out of stack space" errors.
         // TODO: Propagate internal, unimplemented, etc
@@ -1102,9 +1128,9 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
     }
   }
 
-  // Implicitly convert literals if possible.  When casting to a parameterized
-  // type, we first cast to the base type here, and then add an explicit cast to
-  // the parameterized type after this implicit conversion.
+  // Implicitly convert literals if possible.  When casting to a type with
+  // modifiers, we first cast to the base type here, and then add an explicit
+  // cast to the type with modifiers after this implicit conversion.
   //
   // TODO: Should this look at time_zone and type_params too?
   if (argument_literal != nullptr && format == nullptr) {
@@ -1119,13 +1145,14 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
   ZETASQL_ASSIGN_OR_RETURN(
       const bool type_assigned,
       resolver_->MaybeAssignTypeToUndeclaredParameter(argument, target_type));
-  if (type_assigned && type_params.IsEmpty()) {
+  if (type_assigned && type_modifiers.IsEmpty()) {
     return absl::OkStatus();
   }
 
   return resolver_->ResolveCastWithResolvedArgument(
       ast_location, annotated_target_type, std::move(format),
-      std::move(time_zone), type_params, return_null_on_error, argument);
+      std::move(time_zone), std::move(type_modifiers), return_null_on_error,
+      argument);
 }
 
 absl::Status FunctionResolver::AddCastOrConvertLiteral(
@@ -1137,7 +1164,8 @@ absl::Status FunctionResolver::AddCastOrConvertLiteral(
     std::unique_ptr<const ResolvedExpr>* argument) const {
   return AddCastOrConvertLiteral(
       ast_location, AnnotatedType(target_type, /*annotation_map=*/nullptr),
-      std::move(format), std::move(time_zone), type_params, scan,
+      std::move(format), std::move(time_zone),
+      TypeModifiers::MakeTypeModifiers(type_params, Collation()), scan,
       set_has_explicit_type, return_null_on_error, std::move(argument));
 }
 
@@ -1236,9 +1264,9 @@ absl::Status FunctionResolver::ConvertLiteralToType(
   } else {
     // <coerced_literal_value> gets populated only when we can successfully
     // cast <argument_value> to <target_type>.
-    coerced_literal_value =
-        CastValue(*argument_value, resolver_->default_time_zone(),
-                  resolver_->language(), target_type, catalog_);
+    coerced_literal_value = CastValue(
+        *argument_value, resolver_->default_time_zone(), resolver_->language(),
+        target_type, catalog_, /*canonicalize_zero=*/true);
   }
 
   if (!coerced_literal_value.status().ok()) {
@@ -1254,7 +1282,7 @@ absl::Status FunctionResolver::ConvertLiteralToType(
           << "Could not cast "
           << (argument_literal->has_explicit_type() ? "" : "literal ")
           << argument_value->DebugString() << " to type "
-          << target_type->DebugString();
+          << target_type->ShortTypeName(resolver_->language().product_mode());
       // Give a more detailed error message for string/bytes -> proto
       // conversions, which can have subtle issues.
       absl::string_view error_message =
@@ -1263,6 +1291,19 @@ absl::Status FunctionResolver::ConvertLiteralToType(
       if ((argument_type->IsString() || argument_type->IsBytes()) &&
           target_type->IsProto() && !error_message.empty()) {
         builder << " (" << error_message << ")";
+      } else if (target_type->IsEnum() && argument_type->IsString() &&
+                 !argument_value->is_null()) {
+        std::string suggestion = catalog_->SuggestEnumValue(
+            target_type->AsEnum(), argument_value->string_value());
+
+        if (!suggestion.empty()) {
+          builder << "; Did you mean '" << suggestion << "'?";
+          if (zetasql_base::CaseEqual(suggestion,
+                                     argument_value->string_value())) {
+            // If the actual value only differs by case, add a reminder.
+            builder << " (Note: ENUM values are case sensitive)";
+          }
+        }
       }
       return builder;
     }
@@ -1298,7 +1339,7 @@ absl::Status FunctionResolver::ResolveGeneralFunctionCall(
     const std::vector<const ASTNode*>& arg_locations,
     const std::vector<std::string>& function_name_path, bool is_analytic,
     std::vector<std::unique_ptr<const ResolvedExpr>> arguments,
-    std::vector<std::pair<const ASTNamedArgument*, int>> named_arguments,
+    std::vector<NamedArgumentInfo> named_arguments,
     const Type* expected_result_type,
     std::unique_ptr<ResolvedFunctionCall>* resolved_expr_out) {
   const Function* function;
@@ -1318,7 +1359,7 @@ absl::Status FunctionResolver::ResolveGeneralFunctionCall(
     const std::vector<const ASTNode*>& arg_locations,
     const std::string& function_name, bool is_analytic,
     std::vector<std::unique_ptr<const ResolvedExpr>> arguments,
-    std::vector<std::pair<const ASTNamedArgument*, int>> named_arguments,
+    std::vector<NamedArgumentInfo> named_arguments,
     const Type* expected_result_type,
     std::unique_ptr<ResolvedFunctionCall>* resolved_expr_out) {
   const std::vector<std::string> function_name_path = {function_name};
@@ -1367,13 +1408,22 @@ absl::Status FunctionResolver::ResolveCollationForCollateFunction(
   return absl::OkStatus();
 }
 
+static std::vector<absl::string_view> NamedArgInfoToNameVector(
+    int num_args, absl::Span<const NamedArgumentInfo> named_arguments) {
+  std::vector<absl::string_view> names(num_args);
+  for (const auto& arg : named_arguments) {
+    names[arg.index()] = arg.name().ToStringView();
+  }
+  return names;
+}
+
 absl::Status FunctionResolver::ResolveGeneralFunctionCall(
     const ASTNode* ast_location,
     const std::vector<const ASTNode*>& arg_locations_in,
     const Function* function, ResolvedFunctionCallBase::ErrorMode error_mode,
     bool is_analytic,
     std::vector<std::unique_ptr<const ResolvedExpr>> arguments,
-    std::vector<std::pair<const ASTNamedArgument*, int>> named_arguments,
+    std::vector<NamedArgumentInfo> named_arguments,
     const Type* expected_result_type, const NameScope* name_scope,
     std::unique_ptr<ResolvedFunctionCall>* resolved_expr_out) {
 
@@ -1425,7 +1475,14 @@ absl::Status FunctionResolver::ResolveGeneralFunctionCall(
                   function,
                   function->GetNoMatchingFunctionSignatureErrorMessage(
                       input_argument_types,
-                      resolver_->language().product_mode()));
+                      resolver_->language().product_mode(),
+                      NamedArgInfoToNameVector(
+                          static_cast<int>(input_argument_types.size()),
+                          named_arguments)),
+                  named_arguments.empty()
+                      ? FunctionArgumentType::NamePrintingStyle::kIfNamedOnly
+                      : FunctionArgumentType::NamePrintingStyle::
+                            kIfNotPositionalOnly);
   }
 
   ZETASQL_RET_CHECK(result_signature->HasConcreteArguments());
@@ -1453,7 +1510,7 @@ absl::Status FunctionResolver::ResolveGeneralFunctionCall(
       // Check whether function call was using named argument or positional
       // argument, and if it was named - use the name in the error message.
       for (const auto& named_arg : named_arguments) {
-        if (zetasql_base::CaseEqual(named_arg.first->name()->GetAsString(),
+        if (zetasql_base::CaseEqual(named_arg.name().ToString(),
                                    argument.argument_name())) {
           return absl::StrCat("Argument '", argument.argument_name(), "' to ",
                               function->SQLName());
@@ -1538,6 +1595,62 @@ absl::Status FunctionResolver::ResolveGeneralFunctionCall(
              << BadArgErrorPrefix(idx) << " must support grouping; Type "
              << concrete_argument.type()->ShortTypeName(product_mode)
              << " does not";
+    }
+
+    // Constraint which requires argument type to be array type and its element
+    // type to support comparison (ordering, grouping, or equality).
+    if (concrete_argument.options().array_element_must_support_equality()) {
+      ZETASQL_RET_CHECK(concrete_argument.type()->IsArray())
+          << BadArgErrorPrefix(idx)
+          << " must be array type with element type that supports "
+             "equality. Type "
+          << concrete_argument.type()->ShortTypeName(product_mode)
+          << " is not an array type";
+      const ArrayType* array_type = concrete_argument.type()->AsArray();
+      ZETASQL_RET_CHECK_NE(array_type, nullptr);
+      if (!array_type->element_type()->SupportsEquality(
+              resolver_->language())) {
+        return MakeSqlErrorAt(ast_location)
+               << function->SQLName() << " cannot be used on argument of type "
+               << array_type->ShortTypeName(product_mode)
+               << " because the array's element type does not support equality";
+      }
+    }
+    if (concrete_argument.options().array_element_must_support_ordering()) {
+      ZETASQL_RET_CHECK(concrete_argument.type()->IsArray())
+          << BadArgErrorPrefix(idx)
+          << " must be array type with element type that supports "
+             "ordering. Type "
+          << concrete_argument.type()->ShortTypeName(product_mode)
+          << " is not an array type";
+
+      const ArrayType* array_type = concrete_argument.type()->AsArray();
+      ZETASQL_RET_CHECK_NE(array_type, nullptr);
+      if (!array_type->element_type()->SupportsOrdering(
+              resolver_->language(), /*type_description=*/nullptr)) {
+        return MakeSqlErrorAt(ast_location)
+               << function->SQLName() << " cannot be used on argument of type "
+               << array_type->ShortTypeName(product_mode)
+               << " because the array's element type does not support ordering";
+      }
+    }
+    if (concrete_argument.options().array_element_must_support_grouping()) {
+      ZETASQL_RET_CHECK(concrete_argument.type()->IsArray())
+          << BadArgErrorPrefix(idx)
+          << " must be array type with element type that supports "
+             "grouping. Type "
+          << concrete_argument.type()->ShortTypeName(product_mode)
+          << " is not an array type";
+
+      const ArrayType* array_type = concrete_argument.type()->AsArray();
+      ZETASQL_RET_CHECK_NE(array_type, nullptr);
+      if (!array_type->element_type()->SupportsGrouping(
+              resolver_->language())) {
+        return MakeSqlErrorAt(ast_location)
+               << function->SQLName() << " cannot be used on argument of type "
+               << array_type->ShortTypeName(product_mode)
+               << " because the array's element type does not support grouping";
+      }
     }
 
     // If we have a cast of a parameter, we want to check the expression inside
@@ -1802,10 +1915,9 @@ absl::Status FunctionResolver::ForwardNestedResolutionAnalysisError(
   } else if (HasErrorLocation(status)) {
     new_status = MakeFunctionExprAnalysisError(function, "");
     zetasql::internal::AttachPayload(
-        &new_status,
-        SetErrorSourcesFromStatus(
-            zetasql::internal::GetPayload<ErrorLocation>(status), status,
-            mode, std::string(parse_resume_location.input())));
+        &new_status, SetErrorSourcesFromStatus(
+                         zetasql::internal::GetPayload<ErrorLocation>(status),
+                         status, mode, parse_resume_location.input()));
   } else {
     new_status = StatusWithInternalErrorLocation(
         MakeFunctionExprAnalysisError(function, ""),
@@ -1816,7 +1928,7 @@ absl::Status FunctionResolver::ForwardNestedResolutionAnalysisError(
         &new_status,
         SetErrorSourcesFromStatus(
             zetasql::internal::GetPayload<InternalErrorLocation>(new_status),
-            status, mode, std::string(parse_resume_location.input())));
+            status, mode, parse_resume_location.input()));
   }
 
   // Update the <new_status> based on <mode>.
@@ -1873,15 +1985,20 @@ absl::Status FunctionResolver::ResolveTemplatedSQLFunctionCall(
         MakeResolvedArgumentRef(arg_type.type(), arg_name.ToString(), arg_kind);
   }
 
-  // Create a separate new parser and parse the function's SQL expression from
-  // the <parse_resume_location_>. Use the same ID string pool as the
-  // original parser.
-  std::unique_ptr<ParserOutput> parser_output;
-  ZETASQL_RETURN_IF_ERROR(ForwardNestedResolutionAnalysisError(
-      function,
-      ParseExpression(function.GetParseResumeLocation(),
-                      analyzer_options.GetParserOptions(), &parser_output),
-      analyzer_options.error_message_mode()));
+  std::unique_ptr<ParserOutput> parser_output_storage;
+  const ASTExpression* expression = nullptr;
+  // If parsed AST is not available create a separate new parser and parse the
+  // function's SQL expression from the <parse_resume_location_>. Use the same
+  // ID string pool as the original parser.
+  if (expression == nullptr) {
+    ZETASQL_RETURN_IF_ERROR(ForwardNestedResolutionAnalysisError(
+        function,
+        ParseExpression(function.GetParseResumeLocation(),
+                        analyzer_options.GetParserOptions(),
+                        &parser_output_storage),
+        analyzer_options.error_message_mode()));
+    expression = parser_output_storage->expression();
+  }
   Catalog* catalog = catalog_;
   if (function.resolution_catalog() != nullptr) {
     catalog = function.resolution_catalog();
@@ -1909,9 +2026,8 @@ absl::Status FunctionResolver::ResolveTemplatedSQLFunctionCall(
   ZETASQL_RETURN_IF_ERROR(ForwardNestedResolutionAnalysisError(
       function,
       resolver.ResolveExprWithFunctionArguments(
-          function.GetParseResumeLocation().input(),
-          parser_output->expression(), &function_arguments,
-          &expr_resolution_info, &resolved_sql_body),
+          function.GetParseResumeLocation().input(), expression,
+          &function_arguments, &expr_resolution_info, &resolved_sql_body),
       analyzer_options.error_message_mode()));
 
   if (function.IsAggregate()) {
@@ -1925,6 +2041,14 @@ absl::Status FunctionResolver::ResolveTemplatedSQLFunctionCall(
           analyzer_options.error_message_mode());
     }
   }
+
+  // TODO: Support templated UDF with collation in the return type
+  // of function body.
+  ZETASQL_RETURN_IF_ERROR(resolver_->ThrowErrorIfExprHasCollation(
+      /*error_node=*/nullptr,
+      "Collation $0 in return type of user-defined function body is not "
+      "allowed",
+      resolved_sql_body.get()));
 
   // Check the result type of the resolved expression against the expected
   // concrete return type of the function signature, if any. If the types do not

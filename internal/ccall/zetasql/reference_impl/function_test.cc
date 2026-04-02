@@ -19,8 +19,11 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <vector>
 
+#include "zetasql/common/evaluator_registration_utils.h"
 #include "zetasql/base/testing/status_matchers.h"
+#include "zetasql/public/interval_value.h"
 #include "zetasql/public/types/type_factory.h"
 #include "zetasql/reference_impl/evaluation.h"
 #include "zetasql/reference_impl/operator.h"
@@ -98,6 +101,298 @@ TEST(NonDeterministicEvaluationContextTest, ArrayFilterTransformFunctionTest) {
                       &context)
                 .status());
   EXPECT_FALSE(context.IsDeterministicOutput());
+}
+
+TEST(NonDeterministicEvaluationContextTest,
+     ArrayMinMaxDistinguishableTiesStringTest) {
+  // This setup overwrites the CollatorRegistration::CreateFromCollationNameFn
+  // for current process, so that case insensitive collation name can be used.
+  internal::EnableFullEvaluatorFeatures();
+
+  // String with collation introduces non-determinism against distinguishable
+  // ties.
+  TypeFactory factory;
+  const ArrayType* array_type;
+  const Type* element_type = factory.get_string();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &array_type));
+
+  std::vector<ResolvedCollation> collation_list;
+  collation_list.push_back(ResolvedCollation::MakeScalar("unicode:ci"));
+
+  // ARRAY_MIN
+  ZETASQL_ASSERT_OK_AND_ASSIGN(CollatorList collator_list_min,
+                       MakeCollatorList(collation_list));
+
+  ArrayMinMaxFunction arr_min_fn(FunctionKind::kArrayMin, element_type,
+                                 std::move(collator_list_min));
+  EvaluationContext context_min{/*options=*/{}};
+  EXPECT_TRUE(context_min.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(arr_min_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                          array_type, {Value::String("a"), Value::String("A")},
+                          InternalValue::kIgnoresOrder)},
+                      &context_min)
+                .status());
+  EXPECT_FALSE(context_min.IsDeterministicOutput());
+
+  // ARRAY_MAX
+  ZETASQL_ASSERT_OK_AND_ASSIGN(CollatorList collator_list_max,
+                       MakeCollatorList(collation_list));
+
+  ArrayMinMaxFunction arr_max_fn(FunctionKind::kArrayMax, element_type,
+                                 std::move(collator_list_max));
+  EvaluationContext context_max{/*options=*/{}};
+  EXPECT_TRUE(context_max.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(arr_max_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                          array_type, {Value::String("a"), Value::String("A")},
+                          InternalValue::kIgnoresOrder)},
+                      &context_max)
+                .status());
+  EXPECT_FALSE(context_max.IsDeterministicOutput());
+}
+
+TEST(NonDeterministicEvaluationContextTest,
+     ArrayMinMaxDistinguishableTiesIntervalTest) {
+  // Interval with distinguishable ties could also trigger the deterministic
+  // switch.
+  TypeFactory factory;
+  const ArrayType* array_type;
+  const Type* element_type = factory.get_interval();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &array_type));
+
+  // ARRAY_MIN
+  ArrayMinMaxFunction arr_min_fn(FunctionKind::kArrayMin, element_type);
+  EvaluationContext context_min{/*options=*/{}};
+  EXPECT_TRUE(context_min.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(
+      arr_min_fn
+          .Eval(/*params=*/{},
+                /*args=*/
+                {InternalValue::Array(
+                    array_type,
+                    {Value::Interval(IntervalValue::FromDays(30).value()),
+                     Value::Interval(IntervalValue::FromMonths(1).value())},
+                    InternalValue::kIgnoresOrder)},
+                &context_min)
+          .status());
+  EXPECT_FALSE(context_min.IsDeterministicOutput());
+
+  // ARRAY_MAX
+  ArrayMinMaxFunction arr_max_fn(FunctionKind::kArrayMax, element_type);
+  EvaluationContext context_max{/*options=*/{}};
+  EXPECT_TRUE(context_max.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(
+      arr_max_fn
+          .Eval(/*params=*/{},
+                /*args=*/
+                {InternalValue::Array(
+                    array_type,
+                    {Value::Interval(IntervalValue::FromDays(30).value()),
+                     Value::Interval(IntervalValue::FromMonths(1).value())},
+                    InternalValue::kIgnoresOrder)},
+                &context_max)
+          .status());
+  EXPECT_FALSE(context_max.IsDeterministicOutput());
+}
+
+TEST(NonDeterministicEvaluationContextTest, ArraySumAvgFloatingPointTypeTest) {
+  // Array input with floating-point type element introduces indeterminism for
+  // ARRAY_SUM and ARRAY_AVG because floating point addition is not associative.
+  TypeFactory factory;
+  const ArrayType* array_type;
+  const Type* element_type = factory.get_double();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &array_type));
+
+  // ARRAY_SUM
+  ArraySumAvgFunction arr_sum_fn(FunctionKind::kArraySum, factory.get_double());
+  EvaluationContext context_sum{/*options=*/{}};
+  EXPECT_TRUE(context_sum.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(arr_sum_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                          array_type, {Value::Double(4.1), Value::Double(-3.5)},
+                          InternalValue::kIgnoresOrder)},
+                      &context_sum)
+                .status());
+  EXPECT_FALSE(context_sum.IsDeterministicOutput());
+
+  // ARRAY_AVG
+  element_type = factory.get_float();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &array_type));
+  ArraySumAvgFunction arr_avg_fn(FunctionKind::kArrayAvg, factory.get_double());
+  EvaluationContext context_avg{/*options=*/{}};
+  EXPECT_TRUE(context_avg.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(arr_avg_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                          array_type, {Value::Float(4.1), Value::Float(-3.5)},
+                          InternalValue::kIgnoresOrder)},
+                      &context_avg)
+                .status());
+  EXPECT_FALSE(context_avg.IsDeterministicOutput());
+}
+
+TEST(NonDeterministicEvaluationContextTest, ArraySumAvgUnsignedIntTypeTest) {
+  // Array input with signed or unsigned integer type element introduces
+  // indeterminism for ARRAY_AVG but not for ARRAY_SUM.
+  TypeFactory factory;
+  const ArrayType* array_type;
+  const Type* element_type = factory.get_uint64();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &array_type));
+
+  // ARRAY_SUM
+  ArraySumAvgFunction arr_sum_fn(FunctionKind::kArraySum, factory.get_uint64());
+  EvaluationContext context_sum{/*options=*/{}};
+  EXPECT_TRUE(context_sum.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(arr_sum_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                          array_type, {Value::Uint64(40), Value::Uint64(20)},
+                          InternalValue::kIgnoresOrder)},
+                      &context_sum)
+                .status());
+  EXPECT_TRUE(context_sum.IsDeterministicOutput());
+
+  // ARRAY_AVG
+  ArraySumAvgFunction arr_avg_fn(FunctionKind::kArrayAvg, factory.get_double());
+  EvaluationContext context_avg{/*options=*/{}};
+  EXPECT_TRUE(context_avg.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(arr_avg_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                          array_type, {Value::Uint64(40), Value::Uint64(20)},
+                          InternalValue::kIgnoresOrder)},
+                      &context_avg)
+                .status());
+  EXPECT_FALSE(context_avg.IsDeterministicOutput());
+}
+
+TEST(NonDeterministicEvaluationContextTest,
+     ArrayOffsetDistinguishableTiesStringTest) {
+  // Array input with collated STRING type element introduces indeterminism for
+  // ARRAY_OFFSET(array<T>, T [, mode]) -> INT64
+  // but not for
+  // ARRAY_OFFSETS(array<T>, T) -> ARRAY<INT64>.
+
+  // This setup overwrites the CollatorRegistration::CreateFromCollationNameFn
+  // for current process, so that case insensitive collation name can be used.
+  internal::EnableFullEvaluatorFeatures();
+
+  TypeFactory factory;
+  const ArrayType* input_type;
+  const Type* element_type = factory.get_string();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &input_type));
+  const ArrayType* int64_array_type;
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(factory.get_int64(), &int64_array_type));
+
+  std::vector<ResolvedCollation> collation_list = {
+      ResolvedCollation::MakeScalar("unicode:ci")};
+  const Value array_find_mode_first =
+      Value::Enum(types::ArrayFindModeEnumType(), 1);
+
+  // ARRAY_OFFSET
+  ZETASQL_ASSERT_OK_AND_ASSIGN(CollatorList collator_list_offset,
+                       MakeCollatorList(collation_list));
+
+  ArrayFindFunctions offset_fn(FunctionKind::kArrayOffset, factory.get_int64(),
+                               std::move(collator_list_offset));
+  EvaluationContext context_offset{/*options=*/{}};
+  EXPECT_TRUE(context_offset.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(offset_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                           input_type, {Value::String("a"), Value::String("A")},
+                           InternalValue::kIgnoresOrder),
+                       Value::String("a"), array_find_mode_first},
+                      &context_offset)
+                .status());
+  EXPECT_FALSE(context_offset.IsDeterministicOutput());
+
+  // ARRAY_OFFSETS
+  ZETASQL_ASSERT_OK_AND_ASSIGN(CollatorList collator_list_offsets,
+                       MakeCollatorList(collation_list));
+
+  ArrayFindFunctions offsets_fn(FunctionKind::kArrayOffsets, int64_array_type,
+                                std::move(collator_list_offsets));
+  EvaluationContext context_offsets{/*options=*/{}};
+  EXPECT_TRUE(context_offsets.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(offsets_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                           input_type, {Value::String("a"), Value::String("A")},
+                           InternalValue::kIgnoresOrder),
+                       Value::String("a")},
+                      &context_offsets)
+                .status());
+  EXPECT_TRUE(context_offsets.IsDeterministicOutput());
+}
+
+TEST(NonDeterministicEvaluationContextTest,
+     ArrayOffsetFindDistinguishableTiesStringTest) {
+  // Array input with collated STRING type element introduces indeterminism for
+  // ARRAY_FIND(array<T>, T [, mode]) -> T.
+  // Only when the number of ties is larger than 1, will the indeterministic
+  // mark be set.
+
+  // This setup overwrites the CollatorRegistration::CreateFromCollationNameFn
+  // for current process, so that case insensitive collation name can be used.
+  internal::EnableFullEvaluatorFeatures();
+
+  TypeFactory factory;
+  const ArrayType* input_type;
+  const Type* element_type = factory.get_string();
+  ZETASQL_EXPECT_OK(factory.MakeArrayType(element_type, &input_type));
+
+  std::vector<ResolvedCollation> collation_list = {
+      ResolvedCollation::MakeScalar("unicode:ci")};
+  const Value array_find_mode_first =
+      Value::Enum(types::ArrayFindModeEnumType(), 1);
+
+  // ARRAY_FIND with one found element
+  ZETASQL_ASSERT_OK_AND_ASSIGN(CollatorList collator_list,
+                       MakeCollatorList(collation_list));
+
+  ArrayFindFunctions find_fn(FunctionKind::kArrayFind, factory.get_string(),
+                             std::move(collator_list));
+  EvaluationContext context1{/*options=*/{}};
+  EXPECT_TRUE(context1.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(find_fn
+                .Eval(/*params=*/{},
+                      /*args=*/
+                      {InternalValue::Array(
+                           input_type, {Value::String("b"), Value::String("A")},
+                           InternalValue::kIgnoresOrder),
+                       Value::String("a"), array_find_mode_first},
+                      &context1)
+                .status());
+  EXPECT_TRUE(context1.IsDeterministicOutput());
+
+  // ARRAY_FIND with two found elements that are distinguishable ties
+  EvaluationContext context2{/*options=*/{}};
+  EXPECT_TRUE(context2.IsDeterministicOutput());
+  ZETASQL_EXPECT_OK(
+      find_fn
+          .Eval(/*params=*/{},
+                /*args=*/
+                {InternalValue::Array(input_type,
+                                      {Value::String("b"), Value::String("a"),
+                                       Value::String("A")},
+                                      InternalValue::kIgnoresOrder),
+                 Value::String("a"), array_find_mode_first},
+                &context2)
+          .status());
+  EXPECT_FALSE(context2.IsDeterministicOutput());
 }
 
 }  // namespace zetasql

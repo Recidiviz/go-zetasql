@@ -22,13 +22,13 @@
 #include <limits>
 #include <memory>
 #include <numeric>
+#include <ostream>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "zetasql/base/logging.h"
-#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/type.pb.h"
@@ -53,6 +53,7 @@
 #include "absl/strings/str_join.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
+#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/stl_util.h"
 #include "zetasql/base/status.h"
@@ -1466,7 +1467,7 @@ struct AnalyticWindowTestCase {
 class AnalyticWindowTest
     : public ::testing::TestWithParam<AnalyticWindowTestCase> {
  public:
-  AnalyticWindowTest() {}
+  AnalyticWindowTest() = default;
   AnalyticWindowTest(const AnalyticWindowTest&) = delete;
   AnalyticWindowTest& operator=(const AnalyticWindowTest&) = delete;
 

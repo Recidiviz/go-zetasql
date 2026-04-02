@@ -20,19 +20,19 @@
 
 #include "zetasql/analyzer/anonymization_rewriter.h"
 #include "zetasql/analyzer/rewriters/array_functions_rewriter.h"
+#include "zetasql/analyzer/rewriters/builtin_function_inliner.h"
 #include "zetasql/analyzer/rewriters/flatten_rewriter.h"
 #include "zetasql/analyzer/rewriters/like_any_all_rewriter.h"
 #include "zetasql/analyzer/rewriters/map_function_rewriter.h"
 #include "zetasql/analyzer/rewriters/nulliferror_function_rewriter.h"
 #include "zetasql/analyzer/rewriters/pivot_rewriter.h"
 #include "zetasql/analyzer/rewriters/registration.h"
-#include "zetasql/analyzer/rewriters/rewriter_interface.h"
 #include "zetasql/analyzer/rewriters/sql_function_inliner.h"
-#include "zetasql/analyzer/rewriters/ternary_function_rewriter.h"
+#include "zetasql/analyzer/rewriters/sql_view_inliner.h"
 #include "zetasql/analyzer/rewriters/typeof_function_rewriter.h"
-#include "zetasql/analyzer/rewriters/unary_function_rewriter.h"
 #include "zetasql/analyzer/rewriters/unpivot_rewriter.h"
 #include "zetasql/analyzer/rewriters/with_expr_rewriter.h"
+#include "zetasql/public/options.pb.h"
 #include "absl/base/call_once.h"
 
 namespace zetasql {
@@ -53,6 +53,8 @@ void RegisterBuiltinRewriters() {
     r.Register(ResolvedASTRewrite::REWRITE_INLINE_SQL_FUNCTIONS,
                GetSqlFunctionInliner());
     r.Register(ResolvedASTRewrite::REWRITE_INLINE_SQL_TVFS, GetSqlTvfInliner());
+    r.Register(ResolvedASTRewrite::REWRITE_INLINE_SQL_VIEWS,
+               GetSqlViewInliner());
 
     r.Register(ResolvedASTRewrite::REWRITE_FLATTEN, GetFlattenRewriter());
     r.Register(ResolvedASTRewrite::REWRITE_ANONYMIZATION,
@@ -69,12 +71,10 @@ void RegisterBuiltinRewriters() {
                GetTypeofFunctionRewriter());
     r.Register(ResolvedASTRewrite::REWRITE_NULLIFERROR_FUNCTION,
                GetNullIfErrorFunctionRewriter());
-    r.Register(ResolvedASTRewrite::REWRITE_UNARY_FUNCTIONS,
-               GetUnaryFunctionRewriter());
+    r.Register(ResolvedASTRewrite::REWRITE_BUILTIN_FUNCTION_INLINER,
+               GetBuiltinFunctionInliner());
     r.Register(ResolvedASTRewrite::REWRITE_LIKE_ANY_ALL,
                GetLikeAnyAllRewriter());
-    r.Register(ResolvedASTRewrite::REWRITE_TERNARY_FUNCTIONS,
-               GetTernaryFunctionRewriter());
 
     // This rewriter should typically be the last in the rewrite sequence
     // because it cleans up after several other rewriters add ResolvedWithExprs.

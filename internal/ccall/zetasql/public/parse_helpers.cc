@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/parser/ast_node_kind.h"
@@ -288,6 +289,7 @@ absl::Status GetNextStatementProperties(
     case AST_DROP_SNAPSHOT_TABLE_STATEMENT:
     case AST_DROP_SEARCH_INDEX_STATEMENT:
     case AST_DROP_STATEMENT:
+    case AST_UNDROP_STATEMENT:
     case AST_RENAME_STATEMENT:
       statement_properties->statement_category = StatementProperties::DDL;
       break;
@@ -349,33 +351,8 @@ absl::Status GetNextStatementProperties(
   }
 
   statement_properties->statement_level_hints.clear();
-  const absl::string_view sql_input = resume_location.input();
-  if (ast_statement_properties.statement_level_hints != nullptr) {
-    ZETASQL_RET_CHECK_EQ(ast_statement_properties.statement_level_hints->node_kind(),
-                 AST_HINT);
-    const ASTHint* statement_level_hints = static_cast<const ASTHint*>(
-        ast_statement_properties.statement_level_hints);
-    for (const ASTHintEntry* hint : statement_level_hints->hint_entries()) {
-      std::string hint_name_text =
-          (hint->qualifier() == nullptr ? hint->name()->GetAsString()
-           : absl::StrCat(hint->qualifier()->GetAsStringView(), ".",
-                          hint->name()->GetAsStringView()));
-
-      // Get the start and end byte offset of the hint's value expression,
-      // and use the text from the input string.
-      const int start_offset =
-          hint->value()->GetParseLocationRange().start().GetByteOffset();
-      const int end_offset =
-          hint->value()->GetParseLocationRange().end().GetByteOffset();
-      absl::string_view hint_expr_text =
-          sql_input.substr(start_offset, end_offset - start_offset);
-
-      // Note that this method does not return an error if there are duplicates.
-      // If there are duplicates, then this uses the last one.
-      statement_properties->statement_level_hints[std::move(hint_name_text)]
-          = std::string(hint_expr_text);
-    }
-  }
+  ast_statement_properties.statement_level_hints.swap(
+      statement_properties->statement_level_hints);
 
   return absl::OkStatus();
 }

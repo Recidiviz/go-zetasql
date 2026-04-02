@@ -94,7 +94,8 @@ constexpr EnumTypeProto::EnumTypeProto(
   : catalog_name_path_()
   , enum_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , enum_file_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , file_descriptor_set_index_(0){}
+  , file_descriptor_set_index_(0)
+  , is_opaque_(false){}
 struct EnumTypeProtoDefaultTypeInternal {
   constexpr EnumTypeProtoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -116,8 +117,32 @@ struct RangeTypeProtoDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT RangeTypeProtoDefaultTypeInternal _RangeTypeProto_default_instance_;
+constexpr OpaqueEnumTypeOptions::OpaqueEnumTypeOptions(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : sql_opaque_enum_name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct OpaqueEnumTypeOptionsDefaultTypeInternal {
+  constexpr OpaqueEnumTypeOptionsDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~OpaqueEnumTypeOptionsDefaultTypeInternal() {}
+  union {
+    OpaqueEnumTypeOptions _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT OpaqueEnumTypeOptionsDefaultTypeInternal _OpaqueEnumTypeOptions_default_instance_;
+constexpr OpaqueEnumValueOptions::OpaqueEnumValueOptions(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : invalid_enum_value_(false){}
+struct OpaqueEnumValueOptionsDefaultTypeInternal {
+  constexpr OpaqueEnumValueOptionsDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~OpaqueEnumValueOptionsDefaultTypeInternal() {}
+  union {
+    OpaqueEnumValueOptions _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT OpaqueEnumValueOptionsDefaultTypeInternal _OpaqueEnumValueOptions_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ftype_2eproto[7];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ftype_2eproto[9];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ftype_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ftype_2eproto = nullptr;
 
@@ -193,10 +218,12 @@ const uint32_t TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets[] PROTOBUF_S
   PROTOBUF_FIELD_OFFSET(::zetasql::EnumTypeProto, enum_file_name_),
   PROTOBUF_FIELD_OFFSET(::zetasql::EnumTypeProto, file_descriptor_set_index_),
   PROTOBUF_FIELD_OFFSET(::zetasql::EnumTypeProto, catalog_name_path_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::EnumTypeProto, is_opaque_),
   0,
   1,
   2,
   ~0u,
+  3,
   PROTOBUF_FIELD_OFFSET(::zetasql::RangeTypeProto, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::zetasql::RangeTypeProto, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -205,18 +232,36 @@ const uint32_t TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets[] PROTOBUF_S
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::zetasql::RangeTypeProto, element_type_),
   0,
+  PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumTypeOptions, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumTypeOptions, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumTypeOptions, sql_opaque_enum_name_),
+  0,
+  PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumValueOptions, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumValueOptions, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumValueOptions, invalid_enum_value_),
+  0,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 14, -1, sizeof(::zetasql::TypeProto)},
   { 22, 29, -1, sizeof(::zetasql::ArrayTypeProto)},
   { 30, 38, -1, sizeof(::zetasql::StructFieldProto)},
   { 40, -1, -1, sizeof(::zetasql::StructTypeProto)},
   { 47, 57, -1, sizeof(::zetasql::ProtoTypeProto)},
-  { 61, 71, -1, sizeof(::zetasql::EnumTypeProto)},
-  { 75, 82, -1, sizeof(::zetasql::RangeTypeProto)},
+  { 61, 72, -1, sizeof(::zetasql::EnumTypeProto)},
+  { 77, 84, -1, sizeof(::zetasql::RangeTypeProto)},
+  { 85, 92, -1, sizeof(::zetasql::OpaqueEnumTypeOptions)},
+  { 93, 100, -1, sizeof(::zetasql::OpaqueEnumValueOptions)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fpublic_2ftype_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_TypeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ArrayTypeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_StructFieldProto_default_instance_),
@@ -224,6 +269,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ProtoTypeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_EnumTypeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_RangeTypeProto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_OpaqueEnumTypeOptions_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_OpaqueEnumValueOptions_default_instance_),
 };
 
 const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -246,34 +293,42 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_
   "uctFieldProto\"~\n\016ProtoTypeProto\022\022\n\nproto"
   "_name\030\001 \001(\t\022\027\n\017proto_file_name\030\002 \001(\t\022$\n\031"
   "file_descriptor_set_index\030\003 \001(\005:\0010\022\031\n\021ca"
-  "talog_name_path\030\004 \003(\t\"{\n\rEnumTypeProto\022\021"
-  "\n\tenum_name\030\001 \001(\t\022\026\n\016enum_file_name\030\002 \001("
-  "\t\022$\n\031file_descriptor_set_index\030\003 \001(\005:\0010\022"
-  "\031\n\021catalog_name_path\030\004 \003(\t\":\n\016RangeTypeP"
-  "roto\022(\n\014element_type\030\001 \001(\0132\022.zetasql.Typ"
-  "eProto*\353\003\n\010TypeKind\0225\n(__TypeKind__switc"
-  "h_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\022\020\n\014TY"
-  "PE_UNKNOWN\020\000\022\016\n\nTYPE_INT32\020\001\022\016\n\nTYPE_INT"
-  "64\020\002\022\017\n\013TYPE_UINT32\020\003\022\017\n\013TYPE_UINT64\020\004\022\r"
-  "\n\tTYPE_BOOL\020\005\022\016\n\nTYPE_FLOAT\020\006\022\017\n\013TYPE_DO"
-  "UBLE\020\007\022\017\n\013TYPE_STRING\020\010\022\016\n\nTYPE_BYTES\020\t\022"
-  "\r\n\tTYPE_DATE\020\n\022\022\n\016TYPE_TIMESTAMP\020\023\022\r\n\tTY"
-  "PE_ENUM\020\017\022\016\n\nTYPE_ARRAY\020\020\022\017\n\013TYPE_STRUCT"
-  "\020\021\022\016\n\nTYPE_PROTO\020\022\022\r\n\tTYPE_TIME\020\024\022\021\n\rTYP"
-  "E_DATETIME\020\025\022\022\n\016TYPE_GEOGRAPHY\020\026\022\020\n\014TYPE"
-  "_NUMERIC\020\027\022\023\n\017TYPE_BIGNUMERIC\020\030\022\021\n\rTYPE_"
-  "EXTENDED\020\031\022\r\n\tTYPE_JSON\020\032\022\021\n\rTYPE_INTERV"
-  "AL\020\033\022\016\n\nTYPE_RANGE\020\035B$\n\022com.google.zetas"
-  "qlB\013ZetaSQLType\370\001\001"
+  "talog_name_path\030\004 \003(\t\"\216\001\n\rEnumTypeProto\022"
+  "\021\n\tenum_name\030\001 \001(\t\022\026\n\016enum_file_name\030\002 \001"
+  "(\t\022$\n\031file_descriptor_set_index\030\003 \001(\005:\0010"
+  "\022\031\n\021catalog_name_path\030\004 \003(\t\022\021\n\tis_opaque"
+  "\030\005 \001(\010\":\n\016RangeTypeProto\022(\n\014element_type"
+  "\030\001 \001(\0132\022.zetasql.TypeProto\"5\n\025OpaqueEnum"
+  "TypeOptions\022\034\n\024sql_opaque_enum_name\030\001 \001("
+  "\t\"4\n\026OpaqueEnumValueOptions\022\032\n\022invalid_e"
+  "num_value\030\001 \001(\010*\353\003\n\010TypeKind\0225\n(__TypeKi"
+  "nd__switch_must_have_a_default__\020\377\377\377\377\377\377\377"
+  "\377\377\001\022\020\n\014TYPE_UNKNOWN\020\000\022\016\n\nTYPE_INT32\020\001\022\016\n"
+  "\nTYPE_INT64\020\002\022\017\n\013TYPE_UINT32\020\003\022\017\n\013TYPE_U"
+  "INT64\020\004\022\r\n\tTYPE_BOOL\020\005\022\016\n\nTYPE_FLOAT\020\006\022\017"
+  "\n\013TYPE_DOUBLE\020\007\022\017\n\013TYPE_STRING\020\010\022\016\n\nTYPE"
+  "_BYTES\020\t\022\r\n\tTYPE_DATE\020\n\022\022\n\016TYPE_TIMESTAM"
+  "P\020\023\022\r\n\tTYPE_ENUM\020\017\022\016\n\nTYPE_ARRAY\020\020\022\017\n\013TY"
+  "PE_STRUCT\020\021\022\016\n\nTYPE_PROTO\020\022\022\r\n\tTYPE_TIME"
+  "\020\024\022\021\n\rTYPE_DATETIME\020\025\022\022\n\016TYPE_GEOGRAPHY\020"
+  "\026\022\020\n\014TYPE_NUMERIC\020\027\022\023\n\017TYPE_BIGNUMERIC\020\030"
+  "\022\021\n\rTYPE_EXTENDED\020\031\022\r\n\tTYPE_JSON\020\032\022\021\n\rTY"
+  "PE_INTERVAL\020\033\022\016\n\nTYPE_RANGE\020\035:b\n\030opaque_"
+  "enum_type_options\022\034.google.protobuf.Enum"
+  "Options\030\206\372\245\337\001 \001(\0132\036.zetasql.OpaqueEnumTy"
+  "peOptions:i\n\031opaque_enum_value_options\022!"
+  ".google.protobuf.EnumValueOptions\030\246\216\246\342\001 "
+  "\001(\0132\037.zetasql.OpaqueEnumValueOptionsB$\n\022"
+  "com.google.zetasqlB\013ZetaSQLType\370\001\001"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ftype_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_2eproto = {
-  false, false, 1498, descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto, "zetasql/public/type.proto", 
-  &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once, descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps, 1, 7,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets,
+  false, false, 1834, descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto, "zetasql/public/type.proto", 
+  &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once, descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps, 1, 9,
+  schemas_zetasql_2fpublic_2ftype_2eproto, file_default_instances_zetasql_2fpublic_2ftype_2eproto, TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2ftype_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ftype_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ftype_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter() {
@@ -1921,6 +1976,9 @@ class EnumTypeProto::_Internal {
   static void set_has_file_descriptor_set_index(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
   }
+  static void set_has_is_opaque(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
 };
 
 EnumTypeProto::EnumTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -1954,7 +2012,9 @@ EnumTypeProto::EnumTypeProto(const EnumTypeProto& from)
     enum_file_name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_enum_file_name(), 
       GetArenaForAllocation());
   }
-  file_descriptor_set_index_ = from.file_descriptor_set_index_;
+  ::memcpy(&file_descriptor_set_index_, &from.file_descriptor_set_index_,
+    static_cast<size_t>(reinterpret_cast<char*>(&is_opaque_) -
+    reinterpret_cast<char*>(&file_descriptor_set_index_)) + sizeof(is_opaque_));
   // @@protoc_insertion_point(copy_constructor:zetasql.EnumTypeProto)
 }
 
@@ -1967,7 +2027,10 @@ enum_file_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStr
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   enum_file_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-file_descriptor_set_index_ = 0;
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&file_descriptor_set_index_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&is_opaque_) -
+    reinterpret_cast<char*>(&file_descriptor_set_index_)) + sizeof(is_opaque_));
 }
 
 EnumTypeProto::~EnumTypeProto() {
@@ -2009,7 +2072,11 @@ void EnumTypeProto::Clear() {
       enum_file_name_.ClearNonDefaultToEmpty();
     }
   }
-  file_descriptor_set_index_ = 0;
+  if (cached_has_bits & 0x0000000cu) {
+    ::memset(&file_descriptor_set_index_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&is_opaque_) -
+        reinterpret_cast<char*>(&file_descriptor_set_index_)) + sizeof(is_opaque_));
+  }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -2068,6 +2135,15 @@ const char* EnumTypeProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // optional bool is_opaque = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _Internal::set_has_is_opaque(&has_bits);
+          is_opaque_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -2138,6 +2214,12 @@ uint8_t* EnumTypeProto::_InternalSerialize(
     target = stream->WriteString(4, s, target);
   }
 
+  // optional bool is_opaque = 5;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_is_opaque(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2163,7 +2245,7 @@ size_t EnumTypeProto::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000000fu) {
     // optional string enum_name = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -2181,6 +2263,11 @@ size_t EnumTypeProto::ByteSizeLong() const {
     // optional int32 file_descriptor_set_index = 3 [default = 0];
     if (cached_has_bits & 0x00000004u) {
       total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_file_descriptor_set_index());
+    }
+
+    // optional bool is_opaque = 5;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -2208,7 +2295,7 @@ void EnumTypeProto::MergeFrom(const EnumTypeProto& from) {
 
   catalog_name_path_.MergeFrom(from.catalog_name_path_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_set_enum_name(from._internal_enum_name());
     }
@@ -2217,6 +2304,9 @@ void EnumTypeProto::MergeFrom(const EnumTypeProto& from) {
     }
     if (cached_has_bits & 0x00000004u) {
       file_descriptor_set_index_ = from.file_descriptor_set_index_;
+    }
+    if (cached_has_bits & 0x00000008u) {
+      is_opaque_ = from.is_opaque_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -2251,7 +2341,12 @@ void EnumTypeProto::InternalSwap(EnumTypeProto* other) {
       &enum_file_name_, lhs_arena,
       &other->enum_file_name_, rhs_arena
   );
-  swap(file_descriptor_set_index_, other->file_descriptor_set_index_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(EnumTypeProto, is_opaque_)
+      + sizeof(EnumTypeProto::is_opaque_)
+      - PROTOBUF_FIELD_OFFSET(EnumTypeProto, file_descriptor_set_index_)>(
+          reinterpret_cast<char*>(&file_descriptor_set_index_),
+          reinterpret_cast<char*>(&other->file_descriptor_set_index_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata EnumTypeProto::GetMetadata() const {
@@ -2470,6 +2565,421 @@ void RangeTypeProto::InternalSwap(RangeTypeProto* other) {
       file_level_metadata_zetasql_2fpublic_2ftype_2eproto[6]);
 }
 
+// ===================================================================
+
+class OpaqueEnumTypeOptions::_Internal {
+ public:
+  using HasBits = decltype(std::declval<OpaqueEnumTypeOptions>()._has_bits_);
+  static void set_has_sql_opaque_enum_name(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+OpaqueEnumTypeOptions::OpaqueEnumTypeOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.OpaqueEnumTypeOptions)
+}
+OpaqueEnumTypeOptions::OpaqueEnumTypeOptions(const OpaqueEnumTypeOptions& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  sql_opaque_enum_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    sql_opaque_enum_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_sql_opaque_enum_name()) {
+    sql_opaque_enum_name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_sql_opaque_enum_name(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.OpaqueEnumTypeOptions)
+}
+
+inline void OpaqueEnumTypeOptions::SharedCtor() {
+sql_opaque_enum_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  sql_opaque_enum_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+OpaqueEnumTypeOptions::~OpaqueEnumTypeOptions() {
+  // @@protoc_insertion_point(destructor:zetasql.OpaqueEnumTypeOptions)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void OpaqueEnumTypeOptions::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  sql_opaque_enum_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void OpaqueEnumTypeOptions::ArenaDtor(void* object) {
+  OpaqueEnumTypeOptions* _this = reinterpret_cast< OpaqueEnumTypeOptions* >(object);
+  (void)_this;
+}
+void OpaqueEnumTypeOptions::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void OpaqueEnumTypeOptions::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void OpaqueEnumTypeOptions::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.OpaqueEnumTypeOptions)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    sql_opaque_enum_name_.ClearNonDefaultToEmpty();
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* OpaqueEnumTypeOptions::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional string sql_opaque_enum_name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_sql_opaque_enum_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.OpaqueEnumTypeOptions.sql_opaque_enum_name");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* OpaqueEnumTypeOptions::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.OpaqueEnumTypeOptions)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // optional string sql_opaque_enum_name = 1;
+  if (cached_has_bits & 0x00000001u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_sql_opaque_enum_name().data(), static_cast<int>(this->_internal_sql_opaque_enum_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "zetasql.OpaqueEnumTypeOptions.sql_opaque_enum_name");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_sql_opaque_enum_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.OpaqueEnumTypeOptions)
+  return target;
+}
+
+size_t OpaqueEnumTypeOptions::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.OpaqueEnumTypeOptions)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional string sql_opaque_enum_name = 1;
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_sql_opaque_enum_name());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData OpaqueEnumTypeOptions::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    OpaqueEnumTypeOptions::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*OpaqueEnumTypeOptions::GetClassData() const { return &_class_data_; }
+
+void OpaqueEnumTypeOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<OpaqueEnumTypeOptions *>(to)->MergeFrom(
+      static_cast<const OpaqueEnumTypeOptions &>(from));
+}
+
+
+void OpaqueEnumTypeOptions::MergeFrom(const OpaqueEnumTypeOptions& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.OpaqueEnumTypeOptions)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_sql_opaque_enum_name()) {
+    _internal_set_sql_opaque_enum_name(from._internal_sql_opaque_enum_name());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void OpaqueEnumTypeOptions::CopyFrom(const OpaqueEnumTypeOptions& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.OpaqueEnumTypeOptions)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OpaqueEnumTypeOptions::IsInitialized() const {
+  return true;
+}
+
+void OpaqueEnumTypeOptions::InternalSwap(OpaqueEnumTypeOptions* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &sql_opaque_enum_name_, lhs_arena,
+      &other->sql_opaque_enum_name_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata OpaqueEnumTypeOptions::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[7]);
+}
+
+// ===================================================================
+
+class OpaqueEnumValueOptions::_Internal {
+ public:
+  using HasBits = decltype(std::declval<OpaqueEnumValueOptions>()._has_bits_);
+  static void set_has_invalid_enum_value(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+OpaqueEnumValueOptions::OpaqueEnumValueOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.OpaqueEnumValueOptions)
+}
+OpaqueEnumValueOptions::OpaqueEnumValueOptions(const OpaqueEnumValueOptions& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  invalid_enum_value_ = from.invalid_enum_value_;
+  // @@protoc_insertion_point(copy_constructor:zetasql.OpaqueEnumValueOptions)
+}
+
+inline void OpaqueEnumValueOptions::SharedCtor() {
+invalid_enum_value_ = false;
+}
+
+OpaqueEnumValueOptions::~OpaqueEnumValueOptions() {
+  // @@protoc_insertion_point(destructor:zetasql.OpaqueEnumValueOptions)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void OpaqueEnumValueOptions::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void OpaqueEnumValueOptions::ArenaDtor(void* object) {
+  OpaqueEnumValueOptions* _this = reinterpret_cast< OpaqueEnumValueOptions* >(object);
+  (void)_this;
+}
+void OpaqueEnumValueOptions::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void OpaqueEnumValueOptions::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void OpaqueEnumValueOptions::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.OpaqueEnumValueOptions)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  invalid_enum_value_ = false;
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* OpaqueEnumValueOptions::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional bool invalid_enum_value = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_invalid_enum_value(&has_bits);
+          invalid_enum_value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* OpaqueEnumValueOptions::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.OpaqueEnumValueOptions)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // optional bool invalid_enum_value = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_invalid_enum_value(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.OpaqueEnumValueOptions)
+  return target;
+}
+
+size_t OpaqueEnumValueOptions::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.OpaqueEnumValueOptions)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional bool invalid_enum_value = 1;
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData OpaqueEnumValueOptions::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    OpaqueEnumValueOptions::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*OpaqueEnumValueOptions::GetClassData() const { return &_class_data_; }
+
+void OpaqueEnumValueOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<OpaqueEnumValueOptions *>(to)->MergeFrom(
+      static_cast<const OpaqueEnumValueOptions &>(from));
+}
+
+
+void OpaqueEnumValueOptions::MergeFrom(const OpaqueEnumValueOptions& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.OpaqueEnumValueOptions)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_invalid_enum_value()) {
+    _internal_set_invalid_enum_value(from._internal_invalid_enum_value());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void OpaqueEnumValueOptions::CopyFrom(const OpaqueEnumValueOptions& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.OpaqueEnumValueOptions)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OpaqueEnumValueOptions::IsInitialized() const {
+  return true;
+}
+
+void OpaqueEnumValueOptions::InternalSwap(OpaqueEnumValueOptions* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(invalid_enum_value_, other->invalid_enum_value_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata OpaqueEnumValueOptions::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[8]);
+}
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::OpaqueEnumTypeOptions >, 11, false >
+  opaque_enum_type_options(kOpaqueEnumTypeOptionsFieldNumber, ::zetasql::OpaqueEnumTypeOptions::default_instance());
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::OpaqueEnumValueOptions >, 11, false >
+  opaque_enum_value_options(kOpaqueEnumValueOptionsFieldNumber, ::zetasql::OpaqueEnumValueOptions::default_instance());
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
@@ -2493,6 +3003,12 @@ template<> PROTOBUF_NOINLINE ::zetasql::EnumTypeProto* Arena::CreateMaybeMessage
 }
 template<> PROTOBUF_NOINLINE ::zetasql::RangeTypeProto* Arena::CreateMaybeMessage< ::zetasql::RangeTypeProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::RangeTypeProto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::OpaqueEnumTypeOptions* Arena::CreateMaybeMessage< ::zetasql::OpaqueEnumTypeOptions >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::OpaqueEnumTypeOptions >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::OpaqueEnumValueOptions* Arena::CreateMaybeMessage< ::zetasql::OpaqueEnumValueOptions >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::OpaqueEnumValueOptions >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

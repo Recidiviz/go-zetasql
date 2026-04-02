@@ -26,7 +26,6 @@
 #include <vector>
 
 #include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/options.pb.h"
 #include "zetasql/public/type.h"
 #include <cstdint>
 #include "absl/container/flat_hash_set.h"
@@ -51,6 +50,8 @@ class CycleDetector;
 class Function;
 class Model;
 class Procedure;
+class ResolvedExpr;
+class Sequence;
 class Table;
 class TableValuedFunction;
 
@@ -64,6 +65,7 @@ class TableValuedFunction;
 //   - procedures (can be invoked with CALL statement)
 //   - named constants
 //   - connections (external data source connections)
+//   - sequences
 //
 // A Catalog includes a separate namespace for each of these object types.
 // Objects of different types with the same name are allowed.
@@ -222,6 +224,22 @@ class Catalog {
                                  const Table** table,
                                  const FindOptions& options = FindOptions());
 
+  // Variant of FindTable() that allows for trailing field references in
+  // <path>.
+  //
+  // Finds the longest prefix of <path> that references a Table in this
+  // Catalog (or a nested Catalog, if <path> has more than one name in it).
+  // Returns the result in the output parameters <table> and
+  // <num_names_consumed>:
+  // - If a prefix of <path> references a Table, binds <table> to that
+  //   table and returns the length of the path prefix in
+  //   <num_names_consumed>.
+  // - If no such path prefix exists, sets <table> to null and
+  //   <num_names_consumed> to 0, and returns absl::StatusCode::kNotFound.
+  virtual absl::Status FindTableWithPathPrefix(
+      absl::Span<const std::string> path, const FindOptions& options,
+      int* num_names_consumed, const Table** table);
+
   virtual absl::Status FindModel(const absl::Span<const std::string>& path,
                                  const Model** model,
                                  const FindOptions& options = FindOptions());
@@ -229,6 +247,10 @@ class Catalog {
   virtual absl::Status FindConnection(const absl::Span<const std::string>& path,
                                       const Connection** connection,
                                       const FindOptions& options);
+
+  virtual absl::Status FindSequence(const absl::Span<const std::string>& path,
+                                    const Sequence** sequence,
+                                    const FindOptions& options);
 
   virtual absl::Status FindFunction(const absl::Span<const std::string>& path,
                                     const Function** function,
@@ -272,7 +294,7 @@ class Catalog {
   // if <path> contains a suffix of field extractions from the constant.
   // FindConstant delegates to FindConstantWithPathPrefix and checks that the
   // path suffix is empty in case of a successful resolution.
-  absl::Status FindConstant(const absl::Span<const std::string> path,
+  absl::Status FindConstant(absl::Span<const std::string> path,
                             const Constant** constant,
                             const FindOptions& options = FindOptions());
 
@@ -292,7 +314,7 @@ class Catalog {
   // Called by FindConstant. Subclasses can override this method to change the
   // lookup behavior.
   virtual absl::Status FindConstantWithPathPrefix(
-      const absl::Span<const std::string> path, int* num_names_consumed,
+      absl::Span<const std::string> path, int* num_names_consumed,
       const Constant** constant, const FindOptions& options = FindOptions());
 
   // Overloaded helper functions that forward the call to the appropriate
@@ -304,11 +326,13 @@ class Catalog {
                           const FindOptions& options);
   absl::Status FindObject(absl::Span<const std::string> path,
                           const Table** object, const FindOptions& options);
-  absl::Status FindObject(const absl::Span<const std::string> path,
+  absl::Status FindObject(absl::Span<const std::string> path,
                           const Model** object, const FindOptions& options);
-  absl::Status FindObject(const absl::Span<const std::string> path,
+  absl::Status FindObject(absl::Span<const std::string> path,
                           const Connection** object,
                           const FindOptions& options);
+  absl::Status FindObject(absl::Span<const std::string> path,
+                          const Sequence** object, const FindOptions& options);
   absl::Status FindObject(absl::Span<const std::string> path,
                           const Procedure** object, const FindOptions& options);
   absl::Status FindObject(absl::Span<const std::string> path,
@@ -391,6 +415,8 @@ class Catalog {
       const absl::Span<const std::string>& mistyped_path);
   virtual std::string SuggestConstant(
       const absl::Span<const std::string>& mistyped_path);
+  virtual std::string SuggestEnumValue(const EnumType* type,
+                                       absl::string_view mistyped_value);
 
   // Returns whether or not this Catalog is a specific catalog interface or
   // implementation.
@@ -437,6 +463,10 @@ class Catalog {
                                      const Connection** connection,
                                      const FindOptions& options);
 
+  virtual absl::Status GetSequence(const std::string& name,
+                                   const Sequence** sequence,
+                                   const FindOptions& options);
+
   virtual absl::Status GetFunction(const std::string& name,
                                    const Function** function,
                                    const FindOptions& options = FindOptions());
@@ -469,6 +499,7 @@ class Catalog {
   absl::Status ModelNotFoundError(absl::Span<const std::string> path) const;
   absl::Status ConnectionNotFoundError(
       absl::Span<const std::string> path) const;
+  absl::Status SequenceNotFoundError(absl::Span<const std::string> path) const;
   absl::Status FunctionNotFoundError(absl::Span<const std::string> path) const;
   absl::Status TableValuedFunctionNotFoundError(
       absl::Span<const std::string> path) const;
@@ -488,11 +519,12 @@ class Catalog {
             std::is_same<ObjectType, Table>::value ||
             std::is_same<ObjectType, Model>::value ||
             std::is_same<ObjectType, Connection>::value ||
+            std::is_same<ObjectType, Sequence>::value ||
             std::is_same<ObjectType, Type>::value ||
             std::is_same<ObjectType, Procedure>::value ||
             std::is_same<ObjectType, Constant>::value,
         "ObjectNotFoundError only supports Function, TableValuedFunction, "
-        "Table, Model, Connection, Type, Procedure, and Constant");
+        "Table, Model, Connection, Sequence, Type, Procedure and Constant");
     if (std::is_same<ObjectType, Function>::value) {
       return FunctionNotFoundError(path);
     } else if (std::is_same<ObjectType, TableValuedFunction>::value) {
@@ -503,6 +535,8 @@ class Catalog {
       return ModelNotFoundError(path);
     } else if (std::is_same<ObjectType, Connection>::value) {
       return ConnectionNotFoundError(path);
+    } else if (std::is_same<ObjectType, Sequence>::value) {
+      return SequenceNotFoundError(path);
     } else if (std::is_same<ObjectType, Type>::value) {
       return TypeNotFoundError(path);
     } else if (std::is_same<ObjectType, Procedure>::value) {
@@ -527,10 +561,12 @@ class Catalog {
             std::is_same<ObjectType, Table>::value ||
             std::is_same<ObjectType, Model>::value ||
             std::is_same<ObjectType, Connection>::value ||
+            std::is_same<ObjectType, Sequence>::value ||
             std::is_same<ObjectType, Type>::value ||
             std::is_same<ObjectType, Procedure>::value,
         "EmptyNamePathInternalError only supports Constant, Function, "
-        "TableValuedFunction, Table, Model, Connection, Type, and Procedure");
+        "TableValuedFunction, Table, Model, Connection, Sequence, "
+        "Type and Procedure");
     if (std::is_same<ObjectType, Constant>::value) {
       return EmptyNamePathInternalError("Constant");
     } else if (std::is_same<ObjectType, Function>::value) {
@@ -543,6 +579,8 @@ class Catalog {
       return EmptyNamePathInternalError("Model");
     } else if (std::is_same<ObjectType, Connection>::value) {
       return EmptyNamePathInternalError("Connection");
+    } else if (std::is_same<ObjectType, Sequence>::value) {
+      return EmptyNamePathInternalError("Sequence");
     } else if (std::is_same<ObjectType, Type>::value) {
       return EmptyNamePathInternalError("Type");
     } else if (std::is_same<ObjectType, Procedure>::value) {
@@ -550,13 +588,30 @@ class Catalog {
     }
   }
 
+  // Recursive implementation of FindTableWithPathPrefixImpl().
+  //
+  // <path> is the given identifier path where we search for the longest prefix
+  // that represents a valid table. This path does not include <root_name>.
+  // <root_name> is the FullName() of the root catalog.
+  // <current_index> represents the 0-based index of the <path> being processed
+  // in current recursion layer.
+  // <result_index> represents the index of the <path> where we find the table
+  // with a longest prefix.
+  // If no table is found, sets *table to nullptr, <result_index> to -1, and
+  // returns StatusCode::kNotFound status.
+  absl::Status FindTableWithPathPrefixImpl(absl::Span<const std::string> path,
+                                           const std::string& root_name,
+                                           const FindOptions& options,
+                                           int current_index, int* result_index,
+                                           const Table** table);
+
   // Recursive implementation of FindConstantWithPathPrefix().
   //
   // <num_names_consumed> is an input/output parameter that indicates the length
   // of the path prefix processed so far. It must be 0 in the outermost
   // invocation. It will get set to 0 if resolution fails.
   absl::Status FindConstantWithPathPrefixImpl(
-      const absl::Span<const std::string> path, int* num_names_consumed,
+      absl::Span<const std::string> path, int* num_names_consumed,
       const Constant** constant, const FindOptions& options);
 };
 
@@ -878,6 +933,20 @@ class Column {
   // See: (broken link).
   virtual bool CanUpdateUnwritableToDefault() const { return false; }
 
+  // Returns true if the column has a default value, false otherwise.
+  virtual bool HasDefaultValue() const { return false; }
+
+  // Returns a string representation of the default expression if the column has
+  // a default value.
+  virtual std::optional<std::string> ExpressionString() const {
+    return std::nullopt;
+  }
+
+  // Returns the analyzed default expression if the column has a default value.
+  // The pointer is not owned by the column, ownership is not transferred
+  // through this function.
+  virtual const ResolvedExpr* Expression() const { return nullptr; }
+
   // Returns whether or not this Column is a specific column interface or
   // implementation.
   template <class ColumnSubclass>
@@ -917,6 +986,32 @@ class Connection {
   template <class ConnectionSubclass>
   const ConnectionSubclass* GetAs() const {
     return static_cast<const ConnectionSubclass*>(this);
+  }
+};
+
+class Sequence {
+ public:
+  virtual ~Sequence() = default;
+
+  // Gets the sequence name.
+  virtual std::string Name() const = 0;
+
+  // Gets a fully-qualified description of this Sequence.
+  virtual std::string FullName() const = 0;
+
+  // Returns whether or not this Sequence is a specific sequence interface
+  // or implementation.
+  template <class SequenceSubclass>
+  bool Is() const {
+    return dynamic_cast<const SequenceSubclass*>(this) != nullptr;
+  }
+
+  // Returns this Connection as SequenceSubclass*. Must only be used when it
+  // is known that the object *is* this subclass, which can be checked using
+  // Is() before calling GetAs().
+  template <class SequenceSubclass>
+  const SequenceSubclass* GetAs() const {
+    return static_cast<const SequenceSubclass*>(this);
   }
 };
 

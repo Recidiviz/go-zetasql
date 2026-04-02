@@ -58,18 +58,18 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::google::type::LatLng, latitude_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::google::type::LatLng, longitude_),
 };
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+static const ::google::protobuf::internal::MigrationSchema schemas_google_type_latlng[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::google::type::LatLng)},
 };
 
-static ::google::protobuf::Message const * const file_default_instances[] = {
+static ::google::protobuf::Message const * const file_default_instances_google_type_latlng[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::google::type::_LatLng_default_instance_),
 };
 
 void protobuf_AssignDescriptors() {
   AddDescriptors();
   AssignDescriptors(
-      "google/type/latlng.proto", schemas, file_default_instances, TableStruct::offsets,
+      "google/type/latlng.proto", schemas_google_type_latlng, file_default_instances_google_type_latlng, TableStruct::offsets,
       file_level_metadata, NULL, NULL);
 }
 

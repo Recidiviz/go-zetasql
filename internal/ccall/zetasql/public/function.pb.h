@@ -237,6 +237,31 @@ inline bool FunctionEnums_ArgumentCollationMode_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FunctionEnums_ArgumentCollationMode>(
     FunctionEnums_ArgumentCollationMode_descriptor(), name, value);
 }
+enum FunctionEnums_NamedArgumentKind : int {
+  FunctionEnums_NamedArgumentKind_NAMED_ARGUMENT_KIND_UNSPECIFIED = 0,
+  FunctionEnums_NamedArgumentKind_POSITIONAL_ONLY = 1,
+  FunctionEnums_NamedArgumentKind_POSITIONAL_OR_NAMED = 2,
+  FunctionEnums_NamedArgumentKind_NAMED_ONLY = 3
+};
+bool FunctionEnums_NamedArgumentKind_IsValid(int value);
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums_NamedArgumentKind_NamedArgumentKind_MIN = FunctionEnums_NamedArgumentKind_NAMED_ARGUMENT_KIND_UNSPECIFIED;
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums_NamedArgumentKind_NamedArgumentKind_MAX = FunctionEnums_NamedArgumentKind_NAMED_ONLY;
+constexpr int FunctionEnums_NamedArgumentKind_NamedArgumentKind_ARRAYSIZE = FunctionEnums_NamedArgumentKind_NamedArgumentKind_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_NamedArgumentKind_descriptor();
+template<typename T>
+inline const std::string& FunctionEnums_NamedArgumentKind_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, FunctionEnums_NamedArgumentKind>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function FunctionEnums_NamedArgumentKind_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    FunctionEnums_NamedArgumentKind_descriptor(), enum_t_value);
+}
+inline bool FunctionEnums_NamedArgumentKind_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, FunctionEnums_NamedArgumentKind* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FunctionEnums_NamedArgumentKind>(
+    FunctionEnums_NamedArgumentKind_descriptor(), name, value);
+}
 enum SignatureArgumentKind : int {
   ARG_TYPE_FIXED = 0,
   ARG_TYPE_ANY_1 = 1,
@@ -256,11 +281,12 @@ enum SignatureArgumentKind : int {
   ARG_TYPE_CONNECTION = 12,
   ARG_TYPE_DESCRIPTOR = 13,
   ARG_TYPE_LAMBDA = 17,
+  ARG_RANGE_TYPE_ANY = 18,
   __SignatureArgumentKind__switch_must_have_a_default__ = -1
 };
 bool SignatureArgumentKind_IsValid(int value);
 constexpr SignatureArgumentKind SignatureArgumentKind_MIN = __SignatureArgumentKind__switch_must_have_a_default__;
-constexpr SignatureArgumentKind SignatureArgumentKind_MAX = ARG_TYPE_LAMBDA;
+constexpr SignatureArgumentKind SignatureArgumentKind_MAX = ARG_RANGE_TYPE_ANY;
 constexpr int SignatureArgumentKind_ARRAYSIZE = SignatureArgumentKind_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignatureArgumentKind_descriptor();
@@ -622,6 +648,40 @@ class FunctionEnums final :
     return FunctionEnums_ArgumentCollationMode_Parse(name, value);
   }
 
+  typedef FunctionEnums_NamedArgumentKind NamedArgumentKind;
+  static constexpr NamedArgumentKind NAMED_ARGUMENT_KIND_UNSPECIFIED =
+    FunctionEnums_NamedArgumentKind_NAMED_ARGUMENT_KIND_UNSPECIFIED;
+  static constexpr NamedArgumentKind POSITIONAL_ONLY =
+    FunctionEnums_NamedArgumentKind_POSITIONAL_ONLY;
+  static constexpr NamedArgumentKind POSITIONAL_OR_NAMED =
+    FunctionEnums_NamedArgumentKind_POSITIONAL_OR_NAMED;
+  static constexpr NamedArgumentKind NAMED_ONLY =
+    FunctionEnums_NamedArgumentKind_NAMED_ONLY;
+  static inline bool NamedArgumentKind_IsValid(int value) {
+    return FunctionEnums_NamedArgumentKind_IsValid(value);
+  }
+  static constexpr NamedArgumentKind NamedArgumentKind_MIN =
+    FunctionEnums_NamedArgumentKind_NamedArgumentKind_MIN;
+  static constexpr NamedArgumentKind NamedArgumentKind_MAX =
+    FunctionEnums_NamedArgumentKind_NamedArgumentKind_MAX;
+  static constexpr int NamedArgumentKind_ARRAYSIZE =
+    FunctionEnums_NamedArgumentKind_NamedArgumentKind_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  NamedArgumentKind_descriptor() {
+    return FunctionEnums_NamedArgumentKind_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& NamedArgumentKind_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, NamedArgumentKind>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function NamedArgumentKind_Name.");
+    return FunctionEnums_NamedArgumentKind_Name(enum_t_value);
+  }
+  static inline bool NamedArgumentKind_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      NamedArgumentKind* value) {
+    return FunctionEnums_NamedArgumentKind_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:zetasql.FunctionEnums)
@@ -689,6 +749,11 @@ template <> struct is_proto_enum< ::zetasql::FunctionEnums_ArgumentCollationMode
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::FunctionEnums_ArgumentCollationMode>() {
   return ::zetasql::FunctionEnums_ArgumentCollationMode_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::FunctionEnums_NamedArgumentKind> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::FunctionEnums_NamedArgumentKind>() {
+  return ::zetasql::FunctionEnums_NamedArgumentKind_descriptor();
 }
 template <> struct is_proto_enum< ::zetasql::SignatureArgumentKind> : ::std::true_type {};
 template <>

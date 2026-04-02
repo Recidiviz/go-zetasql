@@ -65,6 +65,13 @@ class ReferenceDriver : public TestDriver {
   ReferenceDriver& operator=(const ReferenceDriver&) = delete;
   ~ReferenceDriver() override;
 
+  // Returns true if the ResolvedAST tree at `root` contains any types not
+  // supported by `options`. If `example` is non-null, populate it with a
+  // pointer to an example unsupported type.
+  static bool UsesUnsupportedType(const LanguageOptions& options,
+                                  const ResolvedNode* root,
+                                  const Type** example = nullptr);
+
   LanguageOptions GetSupportedLanguageOptions() override {
     return language_options_;
   }
@@ -113,6 +120,11 @@ class ReferenceDriver : public TestDriver {
   // is a collection of "CREATE TEMP FUNCTION" statements.
   absl::Status AddSqlUdfs(
       absl::Span<const std::string> create_function_stmts) override;
+
+  // Adds some viewss to the catalog owned by this test driver. The argument
+  // is a collection of "CREATE TEMP VIEW" statements.
+  absl::Status AddViews(
+      absl::Span<const std::string> create_view_stmts) override;
 
   // Implements TestDriver::ExecuteStatement()
   absl::StatusOr<Value> ExecuteStatement(
@@ -178,8 +190,6 @@ class ReferenceDriver : public TestDriver {
   absl::Status SetDefaultTimeZone(const std::string& time_zone) override;
 
   LanguageOptions language_options() { return language_options_; }
-
-  absl::TimeZone default_time_zone() { return default_time_zone_; }
 
   absl::StatusOr<std::vector<Value>> RepeatExecuteStatement(
       const std::string& sql, const std::map<std::string, Value>& parameters,

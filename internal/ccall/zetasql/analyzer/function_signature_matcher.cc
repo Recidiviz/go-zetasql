@@ -240,7 +240,7 @@ class FunctionSignatureMatcher {
   // * If the input argument is a lambda, the resolved lambda is put into
   //   <arg_overrides>.
   bool CheckSingleInputArgumentTypeAndCollectTemplatedArgument(
-      const int arg_idx, const ASTNode* arg_ast_node,
+      int arg_idx, const ASTNode* arg_ast_node,
       const InputArgumentType& input_argument,
       const FunctionArgumentType& signature_argument,
       const ResolveLambdaCallback* resolve_lambda_callback,
@@ -265,7 +265,7 @@ class FunctionSignatureMatcher {
   //   * the lambda body can be resolved.
   //   * the lambda body result type matches that of the signature.
   bool CheckResolveLambdaTypeAndCollectTemplatedArguments(
-      const int arg_idx, const ASTNode* arg_ast_node,
+      int arg_idx, const ASTNode* arg_ast_node,
       const FunctionArgumentType& signature_argument,
       const InputArgumentType& input_argument,
       const ResolveLambdaCallback* resolve_lambda_callback,
@@ -339,6 +339,8 @@ SignatureArgumentKind RelatedTemplatedKind(SignatureArgumentKind kind) {
       return ARG_TYPE_ANY_1;
     case ARG_ARRAY_TYPE_ANY_2:
       return ARG_TYPE_ANY_2;
+    case ARG_RANGE_TYPE_ANY:
+      return ARG_TYPE_ANY_1;
     default:
       break;
   }
@@ -418,8 +420,9 @@ absl::StatusOr<bool> FunctionSignatureMatcher::GetConcreteArgument(
     }
     ZETASQL_RET_CHECK_NE(concrete_expr_arg->type(), nullptr);
 
-    *output_argument = std::make_unique<FunctionArgumentType>(
-        FunctionArgumentType::Lambda(concrete_arg_types, *concrete_expr_arg));
+    *output_argument =
+        std::make_unique<FunctionArgumentType>(FunctionArgumentType::Lambda(
+            concrete_arg_types, *concrete_expr_arg, argument.options()));
   } else {
     *output_argument = std::make_unique<FunctionArgumentType>(
         argument.type(), argument.options(), num_occurrences);
@@ -778,7 +781,8 @@ bool FunctionSignatureMatcher::CheckArgumentTypesAndCollectTemplatedArguments(
 
   // If the result type is ARRAY_ANY_K and there is an entry for ANY_K, make
   // sure we have an entry for ARRAY_ANY_K, adding an untyped NULL if necessary.
-  // We do the same for PROTO_MAP_ANY if we see entries for the key or value.
+  // We do the same for PROTO_MAP_ANY if we see entries for the key or value,
+  // and for RANGE_TYPE_ANY
   const SignatureArgumentKind result_kind = signature.result_type().kind();
   if (IsArgKind_ARRAY_ANY_K(result_kind) &&
       zetasql_base::ContainsKey(*templated_argument_map,
@@ -789,6 +793,10 @@ bool FunctionSignatureMatcher::CheckArgumentTypesAndCollectTemplatedArguments(
   if (result_kind == ARG_PROTO_MAP_ANY &&
       (zetasql_base::ContainsKey(*templated_argument_map, ARG_PROTO_MAP_KEY_ANY) ||
        zetasql_base::ContainsKey(*templated_argument_map, ARG_PROTO_MAP_VALUE_ANY))) {
+    (*templated_argument_map)[result_kind];
+  }
+  if (result_kind == ARG_RANGE_TYPE_ANY &&
+      zetasql_base::ContainsKey(*templated_argument_map, ARG_TYPE_ANY_1)) {
     (*templated_argument_map)[result_kind];
   }
 
@@ -809,11 +817,12 @@ absl::StatusOr<MapEntryTypes> GetMapEntryTypes(const Type* map_type,
   const ProtoType* map_entry_type =
       map_type->AsArray()->element_type()->AsProto();
   const Type* key_type;
-  ZETASQL_RETURN_IF_ERROR(
-      factory.GetProtoFieldType(map_entry_type->map_key(), &key_type));
+  ZETASQL_RETURN_IF_ERROR(factory.GetProtoFieldType(
+      map_entry_type->map_key(), map_entry_type->CatalogNamePath(), &key_type));
   const Type* value_type;
-  ZETASQL_RETURN_IF_ERROR(
-      factory.GetProtoFieldType(map_entry_type->map_value(), &value_type));
+  ZETASQL_RETURN_IF_ERROR(factory.GetProtoFieldType(map_entry_type->map_value(),
+                                            map_entry_type->CatalogNamePath(),
+                                            &value_type));
   return {{key_type, value_type}};
 }
 }  // namespace
@@ -915,6 +924,10 @@ bool FunctionSignatureMatcher::
       // signature's template types.
       (*templated_argument_map)[ARG_PROTO_MAP_ANY];
     }
+    if (kind == ARG_RANGE_TYPE_ANY) {
+      // Initializes to UNTYPED_NULL if not already set.
+      (*templated_argument_map)[ARG_RANGE_TYPE_ANY];
+    }
   } else {
     // Templated argument, input is not null.
     SignatureArgumentKind signature_argument_kind = signature_argument.kind();
@@ -929,6 +942,13 @@ bool FunctionSignatureMatcher::
 
     if (signature_argument_kind == ARG_PROTO_MAP_ANY &&
         !IsProtoMap(input_argument.type())) {
+      return false;
+    }
+
+    // If it is templated RANGE type, but the input argument type is not
+    // RANGE, then they do not match.
+    if (signature_argument_kind == ARG_RANGE_TYPE_ANY &&
+        !input_argument.type()->IsRangeType()) {
       return false;
     }
 
@@ -966,6 +986,16 @@ bool FunctionSignatureMatcher::
       const SignatureArgumentKind related_kind =
           RelatedTemplatedKind(signature_argument_kind);
       (*templated_argument_map)[related_kind].InsertTypedArgument(new_argument);
+    }
+
+    if (signature_argument_kind == ARG_RANGE_TYPE_ANY) {
+      // Get T from RANGE<T> and put it as template_arg_map[ARG_ANY_1] = T
+      // This is used to resolve function signature with RANGE<T> -> T
+      InputArgumentType arg_type = MakeConcreteArgument(
+          input_argument.type()->AsRange()->element_type());
+      const SignatureArgumentKind related_kind =
+          RelatedTemplatedKind(signature_argument_kind);
+      (*templated_argument_map)[related_kind].InsertTypedArgument(arg_type);
     }
 
     if (signature_argument_kind == ARG_PROTO_MAP_ANY) {
@@ -1157,6 +1187,34 @@ bool FunctionSignatureMatcher::DetermineResolvedTypesForTemplatedArguments(
         }
       }
       (*resolved_templated_arguments)[kind] = dominant_type->type();
+    } else if (kind == ARG_RANGE_TYPE_ANY) {
+      const Type** element_type =
+          zetasql_base::FindOrNull(*resolved_templated_arguments, ARG_TYPE_ANY_1);
+
+      if (element_type != nullptr) {
+        // element_type is not null, meaning ARG_TYPE_ANY_1 was already
+        // seen and resolved, which is used as a subtype for RANGE, such as DATE
+        // This is used for the RANGE constructor function
+        const RangeType* range_type;
+        absl::Status status =
+            type_factory_->MakeRangeType(*element_type, &range_type);
+        if (!status.ok()) {
+          return false;
+        }
+        // Use 'new_range_type'. InsertOrDie() is safe because 'kind' only
+        // occurs once in 'templated_argument_map'.
+        zetasql_base::InsertOrDie(resolved_templated_arguments, kind, range_type);
+      } else {
+        // We cannot tell the type from an untyped NULL and we do not have
+        // RANGE<INT64> as an option to default to like with other cases.
+        if (type_set.kind() == SignatureArgumentKindTypeSet::UNTYPED_NULL) {
+          return false;
+        }
+        // Resolve ARG_RANGE_TYPE_ANY to TYPE_RANGE
+        zetasql_base::InsertOrDie(
+            resolved_templated_arguments, kind,
+            type_set.typed_arguments().dominant_argument()->type());
+      }
     } else if (!IsArgKind_ARRAY_ANY_K(kind)) {
       switch (type_set.kind()) {
         case SignatureArgumentKindTypeSet::UNTYPED_NULL:

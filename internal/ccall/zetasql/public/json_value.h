@@ -23,6 +23,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -40,21 +41,35 @@ class JSONValueRef;
 
 // Options for parsing an input JSON-formatted string.
 struct JSONParsingOptions {
-  // If 'legacy_mode' is set to true, the parsing will be done using the legacy
-  // proto JSON parser. The legacy parser supports strings that are not
-  // valid JSON documents according to JSON RFC (such as single quote strings).
-  bool legacy_mode;
-  // If 'strict_number_parsing' is set to true, parsing will fail if there is at
-  // least one number value in 'str' that does not round-trip from
-  // string -> number -> string. 'strict_number_parsing' only affects non-legacy
-  // parsing (i.e. 'legacy_mode' = true and 'strict_number_parsing' = true
-  // returns an error).
-  bool strict_number_parsing;
+  enum class WideNumberMode {
+    // Numbers will be rounded to the nearest double value.
+    kRound = 0,
+    // Parsing will fail if there is a least one number value that does not
+    // round-trip from string -> number -> string.
+    kExact,
+    // Ignore 'wide_number_mode' and use 'strict_number_parsing'.
+    kIgnore,
+  };
+
+  bool ABSL_DEPRECATED("Use 'wide_number_mode' instead")
+      strict_number_parsing = false;
+
+  // This setting specifies how wide number should be handled.
+  // 'wide_number_mode' has precedence over 'strict_number_parsing' if
+  // 'wide_number_mode' != kIgnore with the following mapping:
+  // strict_number_mode: true  <-> wide_number_mode: kExact
+  // strict_number_mode: false <-> wide_number_mode: kRound
+  WideNumberMode wide_number_mode = WideNumberMode::kIgnore;
   // If 'max_nesting' is set to a non-negative number, parsing will fail if the
   // JSON document has more than 'max_nesting' levels of nesting. If it is set
   // to a negative number, the max nesting will be set to 0 instead (i.e. only
   // allowing scalar JSONs). JSON Arrays and Objects increase nesting levels.
-  std::optional<int> max_nesting;
+  std::optional<int> max_nesting = std::nullopt;
+  // If true, the sign on a signed zero is removed when converting numeric type
+  // to string.
+  // TODO : remove this option when all engines have
+  // rolled out this new behavior.
+  bool canonicalize_zero = false;
 };
 
 // Returns whether 'json_str' is a valid JSON string.
@@ -64,11 +79,11 @@ struct JSONParsingOptions {
 // TODO: Find a better place for this function. It is currently
 // placed in json_value.h because the implementation uses the
 // JSONValueParserBase (but this can be moved too).
-absl::Status IsValidJSON(absl::string_view json_str,
-                         const JSONParsingOptions& parsing_options = {
-                             .legacy_mode = false,
-                             .strict_number_parsing = false,
-                             .max_nesting = std::nullopt});
+absl::Status IsValidJSON(
+    absl::string_view json_str,
+    const JSONParsingOptions& parsing_options = {
+        .wide_number_mode = JSONParsingOptions::WideNumberMode::kRound,
+        .max_nesting = std::nullopt});
 
 // JSONValue stores a JSON document. Access to read and update the values and
 // their members and elements is provided through JSONValueRef and
@@ -83,7 +98,7 @@ class JSONValue final {
   explicit JSONValue(uint64_t value);
   explicit JSONValue(double value);
   explicit JSONValue(bool value);
-  explicit JSONValue(std::string value);
+  explicit JSONValue(std::string_view value);
 
   JSONValue(JSONValue&& value);
   ~JSONValue();
@@ -103,9 +118,9 @@ class JSONValue final {
   // Parses a given JSON document string and returns a JSON value.
   static absl::StatusOr<JSONValue> ParseJSONString(
       absl::string_view str,
-      JSONParsingOptions parsing_options = {.legacy_mode = false,
-                                            .strict_number_parsing = false,
-                                            .max_nesting = std::nullopt});
+      JSONParsingOptions parsing_options = {
+          .wide_number_mode = JSONParsingOptions::WideNumberMode::kRound,
+          .max_nesting = std::nullopt});
 
   // Decodes a binary representation of a JSON value produced by
   // JSONValueConstRef::SerializeAndAppendToProtoBytes(). Returns an error if
@@ -311,8 +326,6 @@ class JSONValueRef : public JSONValueConstRef {
   friend class JSONValue;
 };
 
-namespace internal {
-
 // Returns absl::OkStatus() if the number in string 'lhs' is numerically
 // equivalent to the number in the string created by serializing a JSON document
 // containing 'val' to a string. Returns an error status otherwise.
@@ -354,8 +367,6 @@ namespace internal {
 // significant decimal digits, while still being constrained to 1074 significant
 // fractional decimal digits.
 absl::Status CheckNumberRoundtrip(absl::string_view lhs, double val);
-
-}  // namespace internal
 
 }  // namespace zetasql
 

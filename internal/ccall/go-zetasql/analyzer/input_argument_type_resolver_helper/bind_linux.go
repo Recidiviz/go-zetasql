@@ -1,7 +1,7 @@
 package input_argument_type_resolver_helper
 
 /*
-#cgo CXXFLAGS: -std=c++1z
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../gtest

@@ -47,11 +47,11 @@ const uint32_t TableStruct_zetasql_2fpublic_2fcollation_2eproto::offsets[] PROTO
   0,
   ~0u,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fpublic_2fcollation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 8, -1, sizeof(::zetasql::CollationProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fpublic_2fcollation_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_CollationProto_default_instance_),
 };
 
@@ -59,14 +59,14 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fcollation_2eproto[] PROT
   "\n\036zetasql/public/collation.proto\022\007zetasq"
   "l\"U\n\016CollationProto\022\026\n\016collation_name\030\001 "
   "\001(\t\022+\n\nchild_list\030\002 \003(\0132\027.zetasql.Collat"
-  "ionProtoB\037\n\022com.google.zetasqlB\tCollatio"
-  "n"
+  "ionProtoB&\n\022com.google.zetasqlB\020ZetaSQLC"
+  "ollation"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fcollation_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fcollation_2eproto = {
-  false, false, 161, descriptor_table_protodef_zetasql_2fpublic_2fcollation_2eproto, "zetasql/public/collation.proto", 
+  false, false, 168, descriptor_table_protodef_zetasql_2fpublic_2fcollation_2eproto, "zetasql/public/collation.proto", 
   &descriptor_table_zetasql_2fpublic_2fcollation_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fcollation_2eproto::offsets,
+  schemas_zetasql_2fpublic_2fcollation_2eproto, file_default_instances_zetasql_2fpublic_2fcollation_2eproto, TableStruct_zetasql_2fpublic_2fcollation_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2fcollation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fcollation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fcollation_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fcollation_2eproto_getter() {

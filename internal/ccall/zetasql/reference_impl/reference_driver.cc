@@ -17,14 +17,19 @@
 #include "zetasql/reference_impl/reference_driver.h"
 
 #include <cstdint>
+#include <limits>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
+#include "zetasql/analyzer/resolver.h"
 #include "zetasql/common/evaluator_registration_utils.h"
+#include "zetasql/common/internal_analyzer_options.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/common/testing/testing_proto_util.h"
 #include "zetasql/compliance/test_util.h"
@@ -49,6 +54,7 @@
 #include "zetasql/reference_impl/type_helpers.h"
 #include "zetasql/reference_impl/variable_id.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
+#include "zetasql/resolved_ast/resolved_ast_builder.h"
 #include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "zetasql/scripting/error_helpers.h"
@@ -82,6 +88,12 @@ ABSL_FLAG(bool, reference_driver_enable_anonymization, false,
           "If true, enable the ZetaSQL Anonymization feature. See "
           "(broken link).");
 
+// TODO: Remove when zetasql::FEATURE_DIFFERENTIAL_PRIVACY is no
+// longer marked as in_development.
+ABSL_FLAG(bool, reference_driver_enable_differential_privacy, false,
+          "If true, enable the ZetaSQL new Differential Privacy syntax"
+          "feature. See (broken link).");
+
 namespace zetasql {
 
 ReferenceDriver::ReferenceDriver()
@@ -93,6 +105,14 @@ ReferenceDriver::ReferenceDriver()
   language_options_.EnableMaximumLanguageFeatures();
   if (absl::GetFlag(FLAGS_reference_driver_enable_anonymization)) {
     language_options_.EnableLanguageFeature(zetasql::FEATURE_ANONYMIZATION);
+  }
+  if (absl::GetFlag(FLAGS_reference_driver_enable_differential_privacy)) {
+    // Named arguments are required for Differential_privacy
+    language_options_.EnableLanguageFeature(zetasql::FEATURE_NAMED_ARGUMENTS);
+    language_options_.EnableLanguageFeature(
+        zetasql::FEATURE_DIFFERENTIAL_PRIVACY);
+    language_options_.EnableLanguageFeature(
+        zetasql::FEATURE_DIFFERENTIAL_PRIVACY_REPORT_FUNCTIONS);
   }
   language_options_.SetSupportedStatementKinds(
       Algebrizer::GetSupportedStatementKinds());
@@ -124,13 +144,39 @@ ReferenceDriver::ReferenceDriver(const LanguageOptions& options)
   if (absl::GetFlag(FLAGS_reference_driver_enable_anonymization)) {
     language_options_.EnableLanguageFeature(zetasql::FEATURE_ANONYMIZATION);
   }
+  if (absl::GetFlag(FLAGS_reference_driver_enable_differential_privacy)) {
+    // Named arguments are required for Differential_privacy
+    language_options_.EnableLanguageFeature(zetasql::FEATURE_NAMED_ARGUMENTS);
+    language_options_.EnableLanguageFeature(
+        zetasql::FEATURE_DIFFERENTIAL_PRIVACY);
+    language_options_.EnableLanguageFeature(
+        zetasql::FEATURE_DIFFERENTIAL_PRIVACY_REPORT_FUNCTIONS);
+  }
   // Optional evaluator features need to be enabled "manually" here since we do
   // not go through the public PreparedExpression/PreparedQuery interface, which
   // normally handles it.
   internal::EnableFullEvaluatorFeatures();
 }
 
-ReferenceDriver::~ReferenceDriver() {}
+ReferenceDriver::~ReferenceDriver() = default;
+
+// static
+bool ReferenceDriver::UsesUnsupportedType(const LanguageOptions& options,
+                                          const ResolvedNode* root,
+                                          const Type** example) {
+  std::vector<const ResolvedNode*> column_refs;
+  root->GetDescendantsWithKinds({RESOLVED_COLUMN_REF}, &column_refs);
+  for (const ResolvedNode* ref : column_refs) {
+    const ResolvedColumnRef* column_ref = ref->GetAs<ResolvedColumnRef>();
+    if (!column_ref->type()->IsSupportedType(options)) {
+      if (example != nullptr) {
+        *example = column_ref->type();
+      }
+      return true;
+    }
+  }
+  return false;
+}
 
 absl::Status ReferenceDriver::LoadProtoEnumTypes(
     const std::set<std::string>& filenames,
@@ -215,6 +261,25 @@ absl::Status ReferenceDriver::AddSqlUdfs(
     ZETASQL_RETURN_IF_ERROR(AddFunctionFromCreateFunction(
         create_function, analyzer_options, sql_udf_artifacts_.back(),
         *catalog_.catalog()));
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ReferenceDriver::AddViews(
+    absl::Span<const std::string> create_view_stmts) {
+  // Ensure the language options used allow CREATE VIEW
+  LanguageOptions language = language_options_;
+  language.AddSupportedStatementKind(RESOLVED_CREATE_VIEW_STMT);
+  AnalyzerOptions analyzer_options(language);
+  analyzer_options.set_default_time_zone(default_time_zone_);
+  // Don't pre-rewrite view bodies.
+  // TODO: In RQG mode, apply a random subset of rewriters.
+  analyzer_options.set_enabled_rewrites({});
+  for (const std::string& create_view : create_view_stmts) {
+    ZETASQL_RETURN_IF_ERROR(AddViewFromCreateView(create_view, analyzer_options,
+                                          /*allow_non_temp=*/false,
+                                          sql_udf_artifacts_.emplace_back(),
+                                          *catalog_.catalog()));
   }
   return absl::OkStatus();
 }
@@ -400,6 +465,7 @@ ReferenceDriver::ExecuteStatementForReferenceDriverInternal(
     bool* is_deterministic_output, bool* uses_unsupported_type,
     TestDatabase* database, std::string* created_table_name,
     const AnalyzerOutput* analyzer_out) {
+
   ZETASQL_CHECK(is_deterministic_output != nullptr);
   ZETASQL_CHECK(uses_unsupported_type != nullptr);
   *uses_unsupported_type = false;
@@ -446,17 +512,13 @@ ReferenceDriver::ExecuteStatementForReferenceDriverInternal(
 
   // Don't proceed if any columns referenced within the query have types not
   // supported by the language options.
-  std::vector<const ResolvedNode*> column_refs;
-  analyzed->resolved_statement()->GetDescendantsWithKinds({RESOLVED_COLUMN_REF},
-                                                          &column_refs);
-  for (const ResolvedNode* node : column_refs) {
-    const ResolvedColumnRef* column_ref = node->GetAs<ResolvedColumnRef>();
-    if (!column_ref->type()->IsSupportedType(language_options_)) {
-      *uses_unsupported_type = true;
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
-             << "Query references column with unsupported type: "
-             << column_ref->type()->DebugString();
-    }
+  const Type* example = nullptr;
+  if (UsesUnsupportedType(language_options_, analyzed->resolved_statement(),
+                          &example)) {
+    *uses_unsupported_type = true;
+    return ::zetasql_base::InvalidArgumentErrorBuilder()
+           << "Query references column with unsupported type: "
+           << example->DebugString();
   }
 
   AlgebrizerOptions algebrizer_options;
@@ -527,6 +589,12 @@ ReferenceDriver::ExecuteStatementForReferenceDriverInternal(
     auto it = parameter_map.find(absl::AsciiStrToLower(p.first));
     if (it != parameter_map.end() && it->second.is_valid()) {
       param_variables.push_back(it->second);
+      if (!analyzer_options.language().LanguageFeatureEnabled(
+              FEATURE_TIMESTAMP_NANOS)) {
+        // TODO assert that time related values have no significant
+        //     nanos fraction. Supplying parameters with nanos fractions can
+        //     lead to wrong results.
+      }
       param_values.push_back(p.second);
       ZETASQL_VLOG(1) << "Parameter @" << p.first << " (variable " << it->second
               << "): " << p.second.FullDebugString();

@@ -361,6 +361,7 @@ class ResolvedGetStructField;
 class ResolvedMakeStruct;
 class ResolvedSubqueryExpr;
 class ResolvedSetOperationScan;
+class ResolvedRecursiveScan;
 
 // Interface to define a possible annotation, with resolution and propagation
 // logic.
@@ -418,6 +419,12 @@ class AnnotationSpec {
       const ResolvedSetOperationScan& set_operation_scan,
       const std::vector<AnnotationMap*>& result_annotation_maps) = 0;
 
+  // Propagates annotations from the output columns of recursive scan operation
+  // items to <result_annotation_maps>.
+  virtual absl::Status CheckAndPropagateForRecursiveScan(
+      const ResolvedRecursiveScan& recursive_scan,
+      const std::vector<AnnotationMap*>& result_annotation_maps) = 0;
+
   // TODO: add more functions to handle different resolved nodes.
 };
 
@@ -432,6 +439,9 @@ enum class AnnotationKind {
   // built-in annotations.
   kMaxBuiltinAnnotationKind = 10000,
 };
+
+// Returns the kind's name.
+std::string GetAnnotationKindName(AnnotationKind kind);
 
 }  // namespace zetasql
 #endif  // ZETASQL_PUBLIC_TYPES_ANNOTATION_H_

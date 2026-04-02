@@ -52,6 +52,7 @@
 #include "zetasql/public/types/enum_type.h"
 #include "zetasql/public/types/proto_type.h"
 #include "zetasql/public/types/struct_type.h"
+#include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/value.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_column.h"
@@ -484,6 +485,58 @@ TEST_F(AnalyzerOptionsTest, SetDdlPseudoColumns) {
                        options_, catalog(), &type_factory_, &output));
 }
 
+TEST_F(AnalyzerOptionsTest, AnalyzeStatementWithPreRewriteCallback) {
+  AnalyzerOptions options;
+  options.mutable_language()->EnableLanguageFeature(
+      FEATURE_V_1_3_UNNEST_AND_FLATTEN_ARRAYS);
+  SampleCatalog catalog(options.language());
+  TypeFactory type_factory;
+  std::unique_ptr<const AnalyzerOutput> output;
+
+  options.SetPreRewriteCallback([](const AnalyzerOutput& output) {
+    if (output.resolved_statement() != nullptr) {
+      if (absl::StrContains(output.resolved_statement()->DebugString(),
+                            "FlattenedArg")) {
+        return absl::InternalError(
+            "Pre-rewrite callback called before rewrite");
+      }
+      return absl::InternalError("Pre-rewrite callback called after rewrite");
+    }
+    return absl::OkStatus();
+  });
+  options.enable_rewrite(REWRITE_FLATTEN, true);
+
+  EXPECT_THAT(
+      AnalyzeStatement("SELECT FLATTEN([STRUCT([] AS X)].X)", options,
+                       catalog.catalog(), &type_factory, &output),
+      StatusIs(_, HasSubstr("Pre-rewrite callback called before rewrite")));
+}
+
+TEST_F(AnalyzerOptionsTest, AnalyzeExpressionWithPreRewriteCallback) {
+  AnalyzerOptions options;
+  options.mutable_language()->EnableLanguageFeature(FEATURE_ANONYMIZATION);
+  SampleCatalog catalog(options.language());
+  TypeFactory type_factory;
+  std::unique_ptr<const AnalyzerOutput> output;
+
+  options.SetPreRewriteCallback([](const AnalyzerOutput& output) {
+    if (output.resolved_expr() != nullptr) {
+      if (!absl::StrContains(output.resolved_expr()->DebugString(),
+                             "+-AggregateScan")) {
+        return absl::InternalError(
+            "Pre-rewrite callback called before rewrite");
+      }
+      return absl::InternalError("Pre-rewrite callback called after rewrite");
+    }
+    return absl::OkStatus();
+  });
+
+  EXPECT_THAT(
+      AnalyzeExpression("5 IN (SELECT ANON_COUNT(*) FROM KeyValue)", options,
+                        catalog.catalog(), &type_factory, &output),
+      StatusIs(_, HasSubstr("Pre-rewrite callback called before rewrite")));
+}
+
 TEST_F(AnalyzerOptionsTest, ErrorMessageFormat) {
   std::unique_ptr<const AnalyzerOutput> output;
 
@@ -622,9 +675,8 @@ TEST_F(AnalyzerOptionsTest, LiteralReplacement) {
   std::string new_sql;
   LiteralReplacementMap literal_map;
   GeneratedParameterMap generated_parameters;
-  absl::node_hash_set<std::string> option_names_to_ignore;
   ZETASQL_ASSERT_OK(ReplaceLiteralsByParameters(
-      sql, option_names_to_ignore, options_, output.get(),
+      sql, LiteralReplacementOptions{}, options_, output->resolved_statement(),
       &literal_map, &generated_parameters, &new_sql));
   EXPECT_EQ(
       "   \tSELECT @_p0_INT64, @_p1_STRING, @_p2_STRING=@_p3_STRING "
@@ -660,9 +712,12 @@ TEST_F(AnalyzerOptionsTest, LiteralReplacementIgnoreAllowlistedOptions) {
   std::string new_sql;
   LiteralReplacementMap literal_map;
   GeneratedParameterMap generated_parameters;
+  // Ignore hint1 and hint3 but remove hint2
   ZETASQL_ASSERT_OK(ReplaceLiteralsByParameters(
-      sql, /* ignore hint1 and hint3 but remove hint2 */ {"hint1", "hint3"},
-      options_, output.get(), &literal_map, &generated_parameters, &new_sql));
+      sql,
+      LiteralReplacementOptions{.ignored_option_names = {"hint1", "hint3"}},
+      options_, output->resolved_statement(), &literal_map,
+      &generated_parameters, &new_sql));
   EXPECT_EQ(
       "   \t@{ hint1=1, hint2=@_p0_BOOL, hint3='foo' }SELECT @_p1_INT64, "
       "@_p2_STRING",
@@ -764,6 +819,45 @@ TEST_F(AnalyzerOptionsTest, DeprecationWarnings) {
   }
 }
 
+// When a built-in function that requires rewrite is hidden by a non-built-in
+// function, an error with status kNotFound is returned.
+TEST_F(AnalyzerOptionsTest, BuiltInHiddenByNonBuiltIn) {
+  // Hides the built-in `IF` function by a user-defined `IF`, equilvalent SQL:
+  // ```sql
+  //   CREATE TEMP FUNCTION `IF`(a BOOL, b BOOL, c BOOL)
+  //   AS (
+  //     CASE a WHEN TRUE THEN FALSE ELSE TRUE END
+  //   );
+  // ```
+  FunctionOptions function_options;
+  function_options.set_evaluator([](const absl::Span<const Value> args) {
+    bool condition = args[0].bool_value();
+    return Value::Bool(!condition);
+  });
+
+  SimpleCatalog catalog("catalog");
+  ZetaSQLBuiltinFunctionOptions options;
+  options.exclude_function_ids.insert(FN_IF);
+  catalog.AddZetaSQLFunctions(options);
+  catalog.AddOwnedFunction(
+      new Function("if", "test_group", Function::SCALAR,
+                   {{types::BoolType(),
+                     {types::BoolType(), types::BoolType(), types::BoolType()},
+                     1}},
+                   function_options));
+
+  // TYPEOF internally uses IF.
+  std::string expr = R"sql(
+    TYPEOF("hello")
+  )sql";
+  std::unique_ptr<const AnalyzerOutput> output;
+  absl::Status status =
+      AnalyzeExpression(expr, options_, &catalog, &type_factory_, &output);
+  EXPECT_EQ(status.code(), absl::StatusCode::kNotFound);
+  EXPECT_EQ(status.message(),
+            "Required built-in function \"if\" not available.");
+}
+
 TEST_F(AnalyzerOptionsTest, ResolvedASTRewrites) {
   // Should be on by default.
   EXPECT_TRUE(options_.rewrite_enabled(REWRITE_FLATTEN));
@@ -786,8 +880,8 @@ class MultiFileErrorCollector
   MultiFileErrorCollector() {}
   MultiFileErrorCollector(const MultiFileErrorCollector&) = delete;
   MultiFileErrorCollector& operator=(const MultiFileErrorCollector&) = delete;
-  void AddError(const std::string& filename, int line, int column,
-                const std::string& message) override {
+      void AddError(const std::string& filename, int line, int column,
+                    const std::string& message) override {
     absl::StrAppend(&error_, "Line ", line, " Column ", column, " :", message,
                     "\n");
   }
@@ -1021,18 +1115,16 @@ TEST_F(AnalyzerOptionsTest, Deserialize) {
                   ->second,
               IsNull());
   ASSERT_TRUE(generated_enum_type->Equals(options.allowed_hints_and_options()
-              .options_lower.find("option2")->second));
+                                              .options_lower.find("option2")
+                                              ->second.type));
   ASSERT_THAT(options.allowed_hints_and_options()
-              .options_lower.find("untyped_option")->second, IsNull());
+                  .options_lower.find("untyped_option")
+                  ->second.type,
+              IsNull());
 }
 
 TEST_F(AnalyzerOptionsTest, ClassAndProtoSize) {
-  EXPECT_EQ(280, sizeof(AnalyzerOptions) - sizeof(LanguageOptions) -
-                     sizeof(AllowedHintsAndOptions) -
-                     sizeof(Catalog::FindOptions) - sizeof(SystemVariablesMap) -
-                     2 * sizeof(QueryParametersMap) - 2 * sizeof(std::string) -
-                     sizeof(std::vector<AnnotationSpec*>) -
-                     sizeof(absl::btree_set<ResolvedASTRewrite>))
+  EXPECT_EQ(8, sizeof(AnalyzerOptions))
       << "The size of AnalyzerOptions class has changed, please also update "
       << "the proto and serialization code if you added/removed fields in it.";
   EXPECT_EQ(22, AnalyzerOptionsProto::descriptor()->field_count())
@@ -1108,13 +1200,13 @@ TEST_F(AnalyzerOptionsTest, AllowedHintsAndOptionsSerializeAndDeserialize) {
 }
 
 TEST(AllowedHintsAndOptionsTest, ClassAndProtoSize) {
-  EXPECT_EQ(8, sizeof(AllowedHintsAndOptions) -
-                   sizeof(std::set<std::string>) -
-                   2 * sizeof(absl::flat_hash_map<std::string, std::string>))
+  EXPECT_EQ(8, sizeof(AllowedHintsAndOptions) - sizeof(std::set<std::string>) -
+                   sizeof(absl::flat_hash_map<std::string, std::string>) -
+                   3 * sizeof(absl::flat_hash_map<std::string, const Type*>))
       << "The size of AllowedHintsAndOptions class has changed, please also "
       << "update the proto and serialization code if you added/removed fields "
       << "in it.";
-  EXPECT_EQ(4, AllowedHintsAndOptionsProto::descriptor()->field_count())
+  EXPECT_EQ(6, AllowedHintsAndOptionsProto::descriptor()->field_count())
       << "The number of fields in AllowedHintsAndOptionsProto has changed, "
       << "please also update the serialization code accordingly.";
 }
@@ -1797,6 +1889,70 @@ TEST(AnalyzerTest, AnalyzeStatementsOfScript) {
       catalog.catalog(), catalog.type_factory(), &analyzer_output);
   ASSERT_THAT(status, StatusIs(absl::StatusCode::kInvalidArgument,
                                "Unrecognized name: garbage [at 2:8]"));
+}
+
+// Verify the catalog name path of the outer proto type will be carried to its
+// inner field types.
+// Have to put it here rather than in a text-based test since the Java library
+// does not support deserializing the catalog name paths in the ProtoTypeProto
+// from the SampleCatalog yet.
+// See
+// https://github.com/google/zetasql/blob/master/java/com/google/zetasql/TypeFactory.java;rcl=468220127;l=378
+TEST(AnalyzerTest, ProtoTypesWithCatalogNamePath) {
+  SampleCatalog sample_catalog;
+  SimpleCatalog* catalog = sample_catalog.catalog();
+  TypeFactory* factory = sample_catalog.type_factory();
+
+  // Create a proto type with a catalog name path.
+  const ProtoType* kitchen_sink_type = nullptr;
+  ZETASQL_ASSERT_OK(factory->MakeProtoType(zetasql_test__::KitchenSinkPB::descriptor(),
+                                   &kitchen_sink_type,
+                                   /*catalog_name_path=*/{"abc", "def"}));
+  auto sub1 = std::make_unique<SimpleCatalog>("abc", factory);
+  auto sub2 = std::make_unique<SimpleCatalog>("def", factory);
+  sub2->AddType("zetasql_test__.KitchenSinkPB", kitchen_sink_type);
+  sub1->AddOwnedCatalog("def", std::move(sub2));
+  catalog->AddOwnedCatalog("abc", std::move(sub1));
+
+  // Get the AST
+  AnalyzerOptions analyzer_options;
+  std::unique_ptr<const AnalyzerOutput> analyzer_output;
+
+  constexpr absl::string_view sql = R"sql(
+WITH source AS (
+  SELECT NEW abc.def.zetasql_test__.KitchenSinkPB(
+    a as int64_key_1,
+    a + 1 as int64_key_2,
+    MOD(a, 3) as test_enum
+  )  t
+FROM UNNEST(GENERATE_ARRAY(1, 10)) a
+)
+SELECT
+  t.test_enum,
+  t.nested_value
+FROM source
+  )sql";
+  ZETASQL_ASSERT_OK(AnalyzeStatement(sql, analyzer_options, catalog, factory,
+                             &analyzer_output));
+
+  SQLBuilder sql_builder;
+  ZETASQL_ASSERT_OK(sql_builder.Process(*analyzer_output->resolved_statement()));
+  std::string formatted_sql;
+  ZETASQL_ASSERT_OK(FormatSql(sql_builder.sql(), &formatted_sql));
+  EXPECT_EQ(R"sql(WITH
+  source AS (
+    SELECT
+      NEW abc.def.`zetasql_test__.KitchenSinkPB`(a_1 AS int64_key_1, a_1 + 1 AS int64_key_2, CAST(MOD(a_1,
+          3) AS abc.def.`zetasql_test__.TestEnum`) AS test_enum) AS a_2
+    FROM
+      UNNEST(GENERATE_ARRAY(1, 10)) AS a_1
+  )
+SELECT
+  withrefscan_3.a_2.test_enum AS test_enum,
+  withrefscan_3.a_2.nested_value AS nested_value
+FROM
+  source AS withrefscan_3;)sql",
+            formatted_sql);
 }
 
 }  // namespace zetasql

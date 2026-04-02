@@ -1,7 +1,7 @@
 package analyzer_output_properties
 
 /*
-#cgo CXXFLAGS: -std=c++1z
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../gtest

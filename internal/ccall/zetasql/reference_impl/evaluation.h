@@ -20,6 +20,8 @@
 #include <cstdint>
 #include <functional>
 #include <map>
+#include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -33,6 +35,7 @@
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/declare.h"
 #include "absl/random/random.h"
+#include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/optional.h"
 #include "zetasql/base/map_util.h"
@@ -51,7 +54,7 @@ namespace zetasql {
 //   2. Does not have NULL Values
 //   3. Does not have duplicate Values
 absl::Status ValidateFirstColumnPrimaryKey(
-    const std::string& table_name, const Value& array,
+    absl::string_view table_name, const Value& array,
     const LanguageOptions& language_options);
 
 struct EvaluationOptions {
@@ -110,7 +113,7 @@ class ProtoFieldReader;
 // Base class for C++ values which can be associated with a variable.
 class CppValueBase {
  public:
-  virtual ~CppValueBase() {}
+  virtual ~CppValueBase() = default;
 };
 
 // Contains state about the evaluation in progress.
@@ -130,7 +133,7 @@ class EvaluationContext {
   MemoryAccountant* memory_accountant() { return &memory_accountant_; }
 
   // Returns the contents of table 'table_name' or Value::Invalid().
-  Value GetTableAsArray(const std::string& table_name) {
+  Value GetTableAsArray(absl::string_view table_name) {
     const auto it = tables_.find(table_name);
     if (it != tables_.end()) {
       return it->second;
@@ -139,9 +142,9 @@ class EvaluationContext {
   }
 
   // Makes the given 'array' accessible under 'table_name'.
-  absl::Status AddTableAsArray(const std::string& table_name,
-                                 bool is_value_table, Value array,
-                                 const LanguageOptions& language_options);
+  absl::Status AddTableAsArray(absl::string_view table_name,
+                               bool is_value_table, Value array,
+                               const LanguageOptions& language_options);
 
   // Indicates that the result of evaluation is non-deterministic.
   void SetNonDeterministicOutput() { deterministic_output_ = false; }
@@ -239,6 +242,13 @@ class EvaluationContext {
   void SetStatementEvaluationDeadline(absl::Time statement_deadline) {
     statement_eval_deadline_ = statement_deadline;
   }
+
+  void SetSessionUser(absl::string_view session_user) {
+    session_user_ = session_user;
+  }
+
+  // Gets the session user string from session_user_.
+  absl::string_view GetSessionUser() { return session_user_; }
 
   absl::Time GetStatementEvaluationDeadline() const {
     return statement_eval_deadline_;
@@ -369,7 +379,7 @@ class EvaluationContext {
   const EvaluationOptions options_;
   MemoryAccountant memory_accountant_;
   // Tables added by AddTableAsArray().
-  std::map<std::string, Value> tables_;
+  std::map<std::string, Value, std::less<>> tables_;
 
   const TupleDataDeque* active_group_rows_ = nullptr;
   // Indicates that the result of evaluation is non-deterministic.
@@ -411,6 +421,10 @@ class EvaluationContext {
 
   // Current C++ values associated with variables.
   absl::flat_hash_map<VariableId, std::unique_ptr<CppValueBase>> cpp_values_;
+
+  // The current user, specified by the engine. Used to evaluate the
+  // SESSION_USER function. Defaults to an empty string if not set.
+  std::string session_user_ = "";
 };
 
 // Returns true if we should suppress 'error' (which must not be OK) in

@@ -88,6 +88,31 @@ cc_test(
 )
 
 cc_library(
+    name = "timer_util",
+    hdrs = ["timer_util.h"],
+    deps = [
+        ":thread_stack",
+        "//zetasql/public/proto:logging_cc_proto",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/time",
+        "@com_google_protobuf//:protobuf",
+    ],
+)
+
+cc_test(
+    name = "timer_util_test",
+    srcs = ["timer_util_test.cc"],
+    deps = [
+        ":timer_util",
+        "//zetasql/base/testing:zetasql_gtest_main",
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/random:distributions",
+        "@com_google_absl//absl/time",
+        "@com_google_protobuf//:protobuf",
+    ],
+)
+
+cc_library(
     name = "int_ops_util",
     hdrs = ["int_ops_util.h"],
     deps = [
@@ -136,11 +161,15 @@ cc_library(
         "//zetasql/base:ret_check",
         "//zetasql/base:status",
         "//zetasql/public:analyzer_options",
+        "//zetasql/public:evaluator",
         "//zetasql/public:language_options",
         "//zetasql/public:options_cc_proto",
+        "//zetasql/public:parse_helpers",
+        "//zetasql/public:strings",
         "@com_google_absl//absl/container:btree",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
@@ -156,8 +185,14 @@ cc_test(
         ":options_utils",
         "//zetasql/base/testing:status_matchers",
         "//zetasql/base/testing:zetasql_gtest_main",
+        "//zetasql/common/testing:proto_matchers",
+        "//zetasql/common/testing:testing_proto_util",
         "//zetasql/public:analyzer_options",
+        "//zetasql/public:builtin_function_options",
         "//zetasql/public:options_cc_proto",
+        "//zetasql/public:simple_catalog",
+        "//zetasql/testdata:test_schema_cc_proto",
+        "//zetasql/testing:test_value",
         "@com_google_absl//absl/container:btree",
         "@com_google_absl//absl/flags:commandlineflag",
         "@com_google_absl//absl/flags:flag",
@@ -180,11 +215,34 @@ cc_test(
 )
 
 cc_library(
+    name = "thread_stack",
+    srcs = ["thread_stack.cc"],
+    hdrs = ["thread_stack.h"],
+    deps = [
+        "//zetasql/base:logging",
+        "//zetasql/base:status",
+        "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/base:log_severity",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/debugging:stacktrace",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/time",
+    ],
+)
+
+cc_library(
     name = "proto_helper",
     srcs = ["proto_helper.cc"],
     hdrs = ["proto_helper.h"],
     deps = [
         ":errors",
+        ":thread_stack",
         "//zetasql/base",
         "//zetasql/base:map_util",
         "//zetasql/base:ret_check",
@@ -232,7 +290,10 @@ cc_library(
 
 cc_library(
     name = "multiprecision_int",
-    srcs = ["multiprecision_int_impl.cc"],
+    srcs = [
+        "multiprecision_int.cc",
+        "multiprecision_int_impl.cc",
+    ],
     hdrs = [
         "multiprecision_int.h",
         "multiprecision_int_impl.h",
@@ -242,6 +303,7 @@ cc_library(
         "//zetasql/base:bits",
         "//zetasql/base:endian",
         "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/numeric:bits",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
     ],
@@ -316,9 +378,11 @@ cc_test(
 cc_library(
     name = "builtin_function_internal",
     srcs = [
+        "builtin_function_array.cc",
         "builtin_function_internal_1.cc",
         "builtin_function_internal_2.cc",
         "builtin_function_internal_3.cc",
+        "builtin_function_range.cc",
     ],
     hdrs = ["builtin_function_internal.h"],
     deps = [
@@ -343,10 +407,12 @@ cc_library(
         "//zetasql/public:value",
         "//zetasql/public/functions:date_time_util",
         "//zetasql/public/functions:datetime_cc_proto",
+        "//zetasql/public/functions:differential_privacy_cc_proto",
         "//zetasql/public/functions:string_format",
         "//zetasql/public/types",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",

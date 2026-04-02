@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "zetasql/base/logging.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/public/type.h"
 #include "absl/base/attributes.h"
 #include "absl/strings/str_cat.h"
@@ -42,7 +43,7 @@ AlgebraArg::AlgebraArg(const VariableId& variable,
                        std::unique_ptr<AlgebraNode> node)
     : variable_(variable), node_(std::move(node)) {}
 
-AlgebraArg::~AlgebraArg() {}
+AlgebraArg::~AlgebraArg() = default;
 
 const ValueExpr* AlgebraArg::value_expr() const {
   return node() ? node()->AsValueExpr() : nullptr;
@@ -143,7 +144,9 @@ InlineLambdaArg::InlineLambdaArg(std::unique_ptr<InlineLambdaExpr> lambda)
 // AlgebraNode
 // -------------------------------------------------------
 
-AlgebraNode::~AlgebraNode() { zetasql_base::STLDeleteElements(&args_); }
+AlgebraNode::~AlgebraNode() {
+  zetasql_base::STLDeleteElements(&args_);
+}
 
 const ValueExpr* AlgebraNode::AsValueExpr() const {
   return nullptr;

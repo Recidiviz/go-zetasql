@@ -1,6 +1,6 @@
 #include "_cgo_export.h"
 #include "zetasql/public/sql_tvf.h"
-#include "zetasql/public/sql_tvf.cc"
+// sql_tvf.cc is already in this TU via analyzer → resolver → sql_tvf/export.inc
 
 void GO_EXPORT(Type_Kind)(void * arg0,int* arg1)
 {
@@ -2111,7 +2111,7 @@ void GO_EXPORT(FunctionArgumentTypeOptions_argument_name)(void * arg0,void ** ar
 void GO_EXPORT(FunctionArgumentTypeOptions_argument_name_is_mandatory)(void * arg0,char* arg1)
 {
   zetasql::FunctionArgumentTypeOptions *opt = (zetasql::FunctionArgumentTypeOptions *)arg0;
-  *arg1 = opt->argument_name_is_mandatory();
+  *arg1 = opt->named_argument_kind() == zetasql::kNamedOnly;
 }
 
 void GO_EXPORT(FunctionArgumentTypeOptions_procedure_argument_mode)(void * arg0,int* arg1)
@@ -2189,7 +2189,19 @@ void GO_EXPORT(FunctionArgumentTypeOptions_set_argument_name)(void * arg0,void *
 void GO_EXPORT(FunctionArgumentTypeOptions_set_argument_name_is_mandatory)(void * arg0,int arg1)
 {
   zetasql::FunctionArgumentTypeOptions *opt = (zetasql::FunctionArgumentTypeOptions *)arg0;
-  opt->set_argument_name_is_mandatory(arg1);
+  if (arg1) {
+    if (opt->has_argument_name()) {
+      opt->set_argument_name(opt->argument_name(), zetasql::kNamedOnly);
+    } else {
+      opt->set_argument_name(absl::string_view(), zetasql::kNamedOnly);
+    }
+  } else {
+    if (opt->has_argument_name()) {
+      opt->set_argument_name(opt->argument_name(), zetasql::kPositionalOrNamed);
+    } else {
+      opt->set_argument_name(absl::string_view(), zetasql::kPositionalOnly);
+    }
+  }
 }
 
 void GO_EXPORT(FunctionArgumentTypeOptions_set_procedure_argument_mode)(void * arg0,int arg1)
@@ -2487,7 +2499,10 @@ void GO_EXPORT(FunctionArgumentType_UserFacingName)(void * arg0,int arg1,void **
 void GO_EXPORT(FunctionArgumentType_UserFacingNameWithCardinality)(void * arg0,int arg1,void ** arg2)
 {
   zetasql::FunctionArgumentType *type = (zetasql::FunctionArgumentType *)arg0;
-  *arg2 = (void *)((new std::string(type->UserFacingNameWithCardinality((zetasql::ProductMode)arg1)))->c_str());
+  *arg2 = (void *)((new std::string(type->UserFacingNameWithCardinality(
+      (zetasql::ProductMode)arg1,
+      zetasql::FunctionArgumentType::NamePrintingStyle::kIfNotPositionalOnly)))
+                      ->c_str());
 }
 
 void GO_EXPORT(FunctionArgumentType_IsValid)(void * arg0,int arg1,void ** arg2)

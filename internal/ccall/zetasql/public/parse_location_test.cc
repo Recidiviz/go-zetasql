@@ -17,7 +17,9 @@
 #include "zetasql/public/parse_location.h"
 
 #include <memory>
+#include <optional>
 #include <string>
+#include <vector>
 
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/proto/internal_error_location.pb.h"
@@ -485,6 +487,16 @@ TEST(ParseLocationRangeTest, DeserializationWorksIfFilenameNotPresent) {
 
   EXPECT_THAT(parse_location_range.start().GetByteOffset(), Eq(17));
   EXPECT_THAT(parse_location_range.end().GetByteOffset(), Eq(19));
+}
+
+TEST(ParseLocationRangeTest, CanGrabTextDefinedByOffsets) {
+  const std::string full_text = "0123456789";
+
+  ParseLocationRange range;
+  range.set_start(ParseLocationPoint::FromByteOffset(3));
+  range.set_end(ParseLocationPoint::FromByteOffset(7));
+
+  EXPECT_EQ(range.GetTextFrom(full_text), "3456");
 }
 
 }  // namespace zetasql

@@ -32,6 +32,7 @@
 #include "zetasql/analyzer/name_scope.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/public/id_string.h"
+#include "zetasql/public/select_with_mode.h"
 #include "zetasql/public/types/type.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
@@ -98,7 +99,6 @@ struct QueryGroupByAndAggregateInfo {
   // (sub)query.
   bool has_group_by = false;
   bool has_aggregation = false;
-  bool has_anonymized_aggregation = false;
 
   // Map from an aggregate function ASTNode to the related
   // ResolvedComputedColumn.  Populated during the first pass resolution of
@@ -295,7 +295,7 @@ class SelectColumnStateList {
   // <expr_resolution_info>.
   absl::Status FindAndValidateSelectColumnStateByOrdinal(
       const std::string& expr_description, const ASTNode* ast_location,
-      const int64_t ordinal, const ExprResolutionInfo* expr_resolution_info,
+      int64_t ordinal, const ExprResolutionInfo* expr_resolution_info,
       const SelectColumnState** select_column_state) const;
 
   static absl::Status ValidateAggregateAndAnalyticSupport(
@@ -576,20 +576,16 @@ class QueryResolutionInfo {
   void set_has_group_by(bool has_group_by) {
     group_by_info_.has_group_by = has_group_by;
   }
-  bool has_group_by() const { return group_by_info_.has_group_by; }
 
-  void set_has_anonymized_aggregation(bool has_anonymized_aggregation) {
-    group_by_info_.has_anonymized_aggregation = has_anonymized_aggregation;
+  void set_select_with_mode(SelectWithMode select_with_mode) {
+    select_with_mode_ = select_with_mode;
   }
-  bool has_anonymized_aggregation() const {
-    return group_by_info_.has_anonymized_aggregation;
-  }
+
+  SelectWithMode select_with_mode() const { return select_with_mode_; }
 
   void set_has_having(bool has_having) { has_having_ = has_having; }
-  bool has_having() const { return has_having_; }
 
   void set_has_order_by(bool has_order_by) { has_order_by_ = has_order_by; }
-  bool has_order_by() const { return has_order_by_; }
 
   bool HasHavingOrOrderBy() const { return has_having_ || has_order_by_; }
 
@@ -688,6 +684,9 @@ class QueryResolutionInfo {
   // SELECT DISTINCT.
 
   QueryGroupByAndAggregateInfo group_by_info_;
+
+  // Select mode defined by SELECT WITH <identifier> clause.
+  SelectWithMode select_with_mode_ = SelectWithMode::NONE;
 
   // HAVING information.
 

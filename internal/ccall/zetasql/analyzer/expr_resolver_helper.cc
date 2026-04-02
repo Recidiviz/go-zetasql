@@ -46,6 +46,7 @@ absl::StatusOr<bool> IsConstantExpression(const ResolvedExpr* expr) {
     case RESOLVED_SYSTEM_VARIABLE:
     case RESOLVED_ARGUMENT_REF:
     case RESOLVED_EXPRESSION_COLUMN:
+    case RESOLVED_CATALOG_COLUMN_REF:
     case RESOLVED_DMLDEFAULT:
       // These can't contain ColumnRefs and are constant for this query.
       return true;
@@ -285,6 +286,12 @@ bool ExprResolutionInfo::is_post_distinct() const {
     return query_resolution_info->is_post_distinct();
   }
   return false;
+}
+
+SelectWithMode ExprResolutionInfo::GetSelectWithMode() const {
+  return query_resolution_info == nullptr
+             ? SelectWithMode::NONE
+             : query_resolution_info->select_with_mode();
 }
 
 std::string ExprResolutionInfo::DebugString() const {

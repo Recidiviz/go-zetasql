@@ -17,7 +17,11 @@
 #ifndef ZETASQL_COMPLIANCE_TEST_DATABASE_CATALOG_H_
 #define ZETASQL_COMPLIANCE_TEST_DATABASE_CATALOG_H_
 
+#include <map>
+#include <memory>
+#include <set>
 #include <string>
+#include <vector>
 
 #include "google/protobuf/compiler/importer.h"
 #include "zetasql/compliance/test_driver.h"
@@ -34,7 +38,6 @@ class TestDatabaseCatalog {
   explicit TestDatabaseCatalog(TypeFactory* type_factory);
 
   SimpleCatalog* catalog() const { return catalog_.get(); }
-  TypeFactory* type_factory() { return type_factory_; }
   absl::Status SetTestDatabase(const TestDatabase& test_db);
   void SetLanguageOptions(const LanguageOptions& language_options);
 
@@ -47,15 +50,20 @@ class TestDatabaseCatalog {
   class BuiltinFunctionCache {
    public:
     ~BuiltinFunctionCache();
-    void SetLanguageOptions(const LanguageOptions& options,
-                            SimpleCatalog* catalog);
+    absl::Status SetLanguageOptions(const LanguageOptions& options,
+                                    SimpleCatalog* catalog);
     void DumpStats();
 
    private:
     using BuiltinFunctionMap = std::map<std::string, std::unique_ptr<Function>>;
+    using BuiltinTypeMap = absl::flat_hash_map<std::string, const Type*>;
+    struct CacheEntry {
+      BuiltinFunctionMap functions;
+      BuiltinTypeMap types;
+    };
     int total_calls_ = 0;
     int cache_hit_ = 0;
-    absl::flat_hash_map<LanguageOptions, BuiltinFunctionMap> function_cache_;
+    absl::flat_hash_map<LanguageOptions, CacheEntry> builtins_cache_;
   };
 
   std::vector<std::string> errors_;

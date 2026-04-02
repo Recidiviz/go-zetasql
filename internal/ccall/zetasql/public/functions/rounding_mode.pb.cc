@@ -23,22 +23,26 @@ namespace functions {
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto = nullptr;
 const uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto::offsets[1] = {};
-static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto = nullptr;
 
 const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n,zetasql/public/functions/rounding_mode"
-  ".proto\022\021zetasql.functions*a\n\014RoundingMod"
-  "e\022\035\n\031ROUNDING_MODE_UNSPECIFIED\020\000\022\035\n\031ROUN"
-  "D_HALF_AWAY_FROM_ZERO\020\001\022\023\n\017ROUND_HALF_EV"
-  "EN\020\002B3\n\034com.google.zetasql.functionsB\023Ze"
-  "taSQLRoundingMode"
+  ".proto\022\021zetasql.functions\032\031zetasql/publi"
+  "c/type.proto*\202\001\n\014RoundingMode\022\'\n\031ROUNDIN"
+  "G_MODE_UNSPECIFIED\020\000\032\010\262\362\260\222\016\002\010\001\022\035\n\031ROUND_"
+  "HALF_AWAY_FROM_ZERO\020\001\022\023\n\017ROUND_HALF_EVEN"
+  "\020\002\032\025\262\320\257\372\r\017\n\rROUNDING_MODEB3\n\034com.google."
+  "zetasql.functionsB\023ZetaSQLRoundingMode"
   ;
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto_deps[1] = {
+  &::descriptor_table_zetasql_2fpublic_2ftype_2eproto,
+};
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto = {
-  false, false, 217, descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto, "zetasql/public/functions/rounding_mode.proto", 
-  &descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto_once, nullptr, 0, 0,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto::offsets,
+  false, false, 278, descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto, "zetasql/public/functions/rounding_mode.proto", 
+  &descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto_once, descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto_deps, 1, 0,
+  schemas_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto, file_default_instances_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto, TableStruct_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto::offsets,
   nullptr, file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto_getter() {

@@ -34,8 +34,6 @@
 #include "common/uvector.cpp"
 #include "common/bytestream.cpp"
 
-#include "common/bytesinkutil.cpp"
-
 #include "common/errorcode.cpp"
 #include "common/unifunct.cpp"
 
@@ -115,6 +113,8 @@
 #include "common/ubidi_props.cpp"
 #include "common/ucol_swp.cpp"
 #include "common/loclikely.cpp"
+
+#include "common/bytesinkutil.cpp"
 
 #define ASCII_LIMIT GO_EXPORT(utrie_swap_ASCII_LIMIT)
 #include "common/utrie_swap.cpp"

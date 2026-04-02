@@ -31,6 +31,7 @@
 #include "google/protobuf/message.h"
 #include "zetasql/common/canonicalize_signed_zero_to_string.h"
 #include "zetasql/common/errors.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/public/functions/json_format.h"
 #include "zetasql/public/interval_value.h"
 #include "zetasql/public/json_value.h"
@@ -55,6 +56,23 @@ constexpr int64_t kInt64Max = std::numeric_limits<int64_t>::max();
 constexpr uint64_t kUint64Min = std::numeric_limits<uint64_t>::min();
 constexpr uint64_t kUint64Max = std::numeric_limits<uint64_t>::max();
 
+absl::Status GetToJsonStackOverflowStatus() {
+  // Status object returned when the stack overflows. Used to avoid
+  // RETURN_ERROR, which may end up calling GoogleOnceInit methods on
+  // GenericErrorSpace, which in turn would require more stack while the
+  // stack is already overflowed.
+  static absl::Status* overflow =
+      new absl::Status(absl::StatusCode::kResourceExhausted,
+                       "Out of stack space due to deeply nested json object "
+                       "in to_json function");
+  return *overflow;
+}
+
+#define RETURN_ERROR_IF_OUT_OF_STACK_SPACE()                       \
+  if (!::zetasql::ThreadHasEnoughStack()) {                      \
+    return ::zetasql::functions::GetToJsonStackOverflowStatus(); \
+  }
+
 // Returns JSONValue constructed from NumericValue and BigNumericValue.
 // If the value is int64_t or uint64_t, use the corresponding value directly.
 // If double, checks whether NumericValue/BigNumericValue can be
@@ -64,23 +82,24 @@ constexpr uint64_t kUint64Max = std::numeric_limits<uint64_t>::max();
 template <typename T>
 absl::StatusOr<JSONValue> ToJsonFromNumeric(
     const T& value, bool stringify_wide_number,
-    const LanguageOptions& language_options, const std::string_view type_name) {
+    const LanguageOptions& language_options, const std::string_view type_name,
+    bool canonicalize_zero) {
   if (!value.HasFractionalPart()) {
     // Check whether the value is int64_t
     if (value >= T(kInt64Min) && value <= T(kInt64Max)) {
       ZETASQL_ASSIGN_OR_RETURN(int64_t int64value, value.template To<int64_t>());
       return ToJson(Value::Int64(int64value), stringify_wide_number,
-                    language_options);
+                    language_options, canonicalize_zero);
     }
     // Check whether the value is uint64_t
     if (value >= T(kUint64Min) && value <= T(kUint64Max)) {
       ZETASQL_ASSIGN_OR_RETURN(uint64_t uint64value, value.template To<uint64_t>());
       return ToJson(Value::Uint64(uint64value), stringify_wide_number,
-                    language_options);
+                    language_options, canonicalize_zero);
     }
   }
   // Check whether the value can be converted to double without precision loss
-  if (internal::CheckNumberRoundtrip(value.ToString(), value.ToDouble()).ok()) {
+  if (CheckNumberRoundtrip(value.ToString(), value.ToDouble()).ok()) {
     return JSONValue(value.ToDouble());
   }
   if (stringify_wide_number) {
@@ -98,7 +117,7 @@ absl::StatusOr<JSONValue> ToJsonFromNumeric(
 // If the value is Infinity, -Infinity, or NaN, returns the json string
 // representation. Otherwise returns json number type.
 template <typename FloatType>
-JSONValue ToJsonFromFloat(FloatType value) {
+JSONValue ToJsonFromFloat(FloatType value, bool canonicalize_zero) {
   if (std::isnan(value)) {
     return JSONValue(std::string("NaN"));
   }
@@ -108,6 +127,9 @@ JSONValue ToJsonFromFloat(FloatType value) {
   }
   ZETASQL_DCHECK(std::isfinite(value))
       << "Floating point number with unexpected properties" << value;
+  if (canonicalize_zero && value == -0.0) {
+    value = 0.0;
+  }
   return JSONValue(value);
 }
 
@@ -119,10 +141,12 @@ JSONValue ToJsonFromFloat(FloatType value) {
 absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
                                        bool stringify_wide_numbers,
                                        const LanguageOptions& language_options,
-                                       int current_nesting_level) {
+                                       int current_nesting_level,
+                                       bool canonicalize_zero) {
   // Check the stack usage iff the <current_neesting_level> not less than
   // kNestingLevelStackCheckThreshold.
   if (current_nesting_level >= kNestingLevelStackCheckThreshold) {
+    RETURN_ERROR_IF_OUT_OF_STACK_SPACE();
   }
   if (value.is_null()) {
     return JSONValue();
@@ -152,17 +176,19 @@ absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
       }
     }
     case TYPE_FLOAT:
-      return ToJsonFromFloat(value.float_value());
+      return ToJsonFromFloat(value.float_value(), canonicalize_zero);
     case TYPE_DOUBLE:
-      return ToJsonFromFloat(value.double_value());
+      return ToJsonFromFloat(value.double_value(), canonicalize_zero);
     case TYPE_NUMERIC:
       return ToJsonFromNumeric(
           value.numeric_value(), stringify_wide_numbers, language_options,
-          value.type()->ShortTypeName(language_options.product_mode()));
+          value.type()->ShortTypeName(language_options.product_mode()),
+          canonicalize_zero);
     case TYPE_BIGNUMERIC:
       return ToJsonFromNumeric(
           value.bignumeric_value(), stringify_wide_numbers, language_options,
-          value.type()->ShortTypeName(language_options.product_mode()));
+          value.type()->ShortTypeName(language_options.product_mode()),
+          canonicalize_zero);
       break;
     case TYPE_STRING: {
       return JSONValue(value.string_value());
@@ -205,10 +231,11 @@ absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
       auto input_json = JSONValue::ParseJSONString(
           value.json_value_unparsed(),
           JSONParsingOptions{
-              .legacy_mode = language_options.LanguageFeatureEnabled(
-                  FEATURE_JSON_LEGACY_PARSE),
-              .strict_number_parsing = language_options.LanguageFeatureEnabled(
-                  FEATURE_JSON_STRICT_NUMBER_PARSING)});
+              .wide_number_mode =
+                  (language_options.LanguageFeatureEnabled(
+                       FEATURE_JSON_STRICT_NUMBER_PARSING)
+                       ? JSONParsingOptions::WideNumberMode::kExact
+                       : JSONParsingOptions::WideNumberMode::kRound)});
       if (!input_json.ok()) {
         return MakeEvalError() << input_json.status().message();
       }
@@ -230,7 +257,7 @@ absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
         ZETASQL_ASSIGN_OR_RETURN(
             JSONValue json_member_value,
             ToJsonHelper(field_value, stringify_wide_numbers, language_options,
-                         current_nesting_level + 1));
+                         current_nesting_level + 1, canonicalize_zero));
         JSONValueRef member_value_ref = json_value_ref.GetMember(name);
         member_value_ref.Set(std::move(json_member_value));
       }
@@ -247,7 +274,8 @@ absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
           ZETASQL_ASSIGN_OR_RETURN(
               JSONValue json_element,
               ToJsonHelper(element_value, stringify_wide_numbers,
-                           language_options, current_nesting_level + 1));
+                           language_options, current_nesting_level + 1,
+                           canonicalize_zero));
           json_value_ref.GetArrayElement(element_index)
               .Set(std::move(json_element));
           element_index++;
@@ -256,7 +284,11 @@ absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
       return json_value;
     }
     case TYPE_ENUM: {
-      return JSONValue(value.enum_name());
+      if (absl::StatusOr<std::string_view> name = value.EnumName(); name.ok()) {
+        return JSONValue(*name);
+      } else {
+        return JSONValue(static_cast<int64_t>(value.enum_value()));
+      }
     }
     default:
       return ::zetasql_base::UnimplementedErrorBuilder()
@@ -270,9 +302,10 @@ absl::StatusOr<JSONValue> ToJsonHelper(const Value& value,
 
 absl::StatusOr<JSONValue> ToJson(const Value& value,
                                  bool stringify_wide_numbers,
-                                 const LanguageOptions& language_options) {
+                                 const LanguageOptions& language_options,
+                                 bool canonicalize_zero) {
   return ToJsonHelper(value, stringify_wide_numbers, language_options,
-                      /*current_nesting_level=*/0);
+                      /*current_nesting_level=*/0, canonicalize_zero);
 }
 
 }  // namespace functions

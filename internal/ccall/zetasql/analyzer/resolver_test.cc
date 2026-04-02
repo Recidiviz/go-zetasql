@@ -16,8 +16,10 @@
 
 #include "zetasql/analyzer/resolver.h"
 
+#include <map>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
@@ -64,10 +66,10 @@
 
 namespace zetasql {
 
+using testing::_;
 using testing::HasSubstr;
 using testing::IsNull;
 using testing::NotNull;
-using testing::_;
 using zetasql_base::testing::StatusIs;
 
 class ResolverTest : public ::testing::Test {
@@ -102,6 +104,8 @@ class ResolverTest : public ::testing::Test {
         FEATURE_INTERVAL_TYPE);
     analyzer_options_.mutable_language()->EnableLanguageFeature(
         FEATURE_PARAMETERIZED_TYPES);
+    analyzer_options_.mutable_language()->EnableLanguageFeature(
+        FEATURE_RANGE_TYPE);
     analyzer_options_.CreateDefaultArenasIfNotSet();
     sample_catalog_ = std::make_unique<SampleCatalog>(
         analyzer_options_.language(), &type_factory_);
@@ -160,9 +164,9 @@ class ResolverTest : public ::testing::Test {
 
   absl::Status FindFieldDescriptors(
       absl::Span<const ASTIdentifier* const> path_vector,
-      const google::protobuf::Descriptor* root_descriptor,
+      const ProtoType* root_type,
       std::vector<const google::protobuf::FieldDescriptor*>* field_descriptors) {
-    return resolver_->FindFieldDescriptors(path_vector, root_descriptor,
+    return resolver_->FindFieldDescriptors(path_vector, root_type,
                                            field_descriptors);
   }
 
@@ -330,9 +334,8 @@ class ResolverTest : public ::testing::Test {
   }
 
   // 'path_expression' must parse to a ASTPathExpression or ASTIdentifier.
-  void TestFindFieldDescriptorsSuccess(
-      const std::string& path_expression,
-      const google::protobuf::Descriptor* root_descriptor) {
+  void TestFindFieldDescriptorsSuccess(const std::string& path_expression,
+                                       const ProtoType* root_type) {
     std::unique_ptr<ParserOutput> parser_output;
     ZETASQL_ASSERT_OK(ParseExpression(path_expression, ParserOptions(), &parser_output))
         << path_expression;
@@ -346,11 +349,10 @@ class ResolverTest : public ::testing::Test {
       path_vector = parsed_expression->GetAsOrDie<ASTPathExpression>()->names();
     }
     std::vector<const google::protobuf::FieldDescriptor*> field_descriptors;
-    ZETASQL_ASSERT_OK(
-        FindFieldDescriptors(path_vector, root_descriptor, &field_descriptors));
+    ZETASQL_ASSERT_OK(FindFieldDescriptors(path_vector, root_type, &field_descriptors));
 
     // Ensure that the field path is valid by checking field containment.
-    std::string containing_proto_name = root_descriptor->full_name();
+    std::string containing_proto_name = root_type->descriptor()->full_name();
     EXPECT_EQ(path_vector.size(), field_descriptors.size());
     for (int i = 0; i < field_descriptors.size(); ++i) {
       if (!field_descriptors[i]->is_extension()) {
@@ -369,7 +371,7 @@ class ResolverTest : public ::testing::Test {
 
   // 'path_expression' must parse to a ASTPathExpression or ASTIdentifier.
   void TestFindFieldDescriptorsFail(const std::string& path_expression,
-                                    const google::protobuf::Descriptor* root_descriptor,
+                                    const ProtoType* root_type,
                                     const std::string& expected_error_substr) {
     std::unique_ptr<ParserOutput> parser_output;
     ZETASQL_ASSERT_OK(ParseExpression(path_expression, ParserOptions(), &parser_output))
@@ -385,7 +387,7 @@ class ResolverTest : public ::testing::Test {
     }
     std::vector<const google::protobuf::FieldDescriptor*> field_descriptors;
     EXPECT_THAT(
-        FindFieldDescriptors(path_vector, root_descriptor, &field_descriptors),
+        FindFieldDescriptors(path_vector, root_type, &field_descriptors),
         StatusIs(_, HasSubstr(expected_error_substr)));
   }
 
@@ -449,6 +451,36 @@ class ResolverTest : public ::testing::Test {
         << input;
   }
 
+  void TestRangeLiteral(const std::string& expected, const std::string& input) {
+    std::unique_ptr<ParserOutput> parser_output;
+    std::unique_ptr<const ResolvedExpr> resolved_expression;
+    ZETASQL_ASSERT_OK(ParseExpression(input, ParserOptions(), &parser_output)) << input;
+    const ASTExpression* parsed_expression = parser_output->expression();
+    ASSERT_THAT(parsed_expression, NotNull());
+    EXPECT_EQ(parsed_expression->node_kind(), AST_RANGE_LITERAL);
+    ZETASQL_EXPECT_OK(ResolveExpr(parsed_expression, &resolved_expression))
+        << "Input: " << input
+        << "\nParsed/Unparsed expression: " << Unparse(parsed_expression);
+    EXPECT_THAT(resolved_expression.get(), NotNull());
+    const ResolvedLiteral* resolved_literal =
+        resolved_expression->GetAs<ResolvedLiteral>();
+    ASSERT_THAT(resolved_literal, NotNull());
+    EXPECT_TRUE(resolved_literal->value().type()->IsRange());
+    EXPECT_EQ(expected, resolved_literal->value().DebugString());
+  }
+
+  void TestRangeLiteralError(const std::string& input) {
+    std::unique_ptr<ParserOutput> parser_output;
+    std::unique_ptr<const ResolvedExpr> resolved_expression;
+    ZETASQL_ASSERT_OK(ParseExpression(input, ParserOptions(), &parser_output)) << input;
+    const ASTExpression* parsed_expression = parser_output->expression();
+    ASSERT_THAT(parsed_expression, NotNull()) << input;
+    EXPECT_EQ(parsed_expression->node_kind(), AST_RANGE_LITERAL) << input;
+    EXPECT_THAT(ResolveExpr(parsed_expression, &resolved_expression),
+                StatusIs(absl::StatusCode::kInvalidArgument))
+        << input;
+  }
+
   TypeFactory type_factory_;
   std::unique_ptr<SampleCatalog> sample_catalog_;
   AnalyzerOptions analyzer_options_;
@@ -495,6 +527,10 @@ TEST_F(ResolverTest, TestResolveTypeName) {
       "struct<INT32, x INT64, double>",
        &type));
   EXPECT_EQ("STRUCT<INT32, x INT64, DOUBLE>", type->DebugString());
+
+  ZETASQL_EXPECT_OK(resolver_->ResolveTypeName("RANGE<DATE>", &type));
+  EXPECT_THAT(type, NotNull());
+  EXPECT_TRUE(type->IsRange()) << type->DebugString();
 
   ZETASQL_EXPECT_OK(resolver_->ResolveTypeName("`zetasql_test__.KitchenSinkPB`",
                                        &type));
@@ -899,36 +935,42 @@ TEST_F(ResolverTest, ResolvingBuiltinFucntionsFail) {
 }
 
 TEST_F(ResolverTest, TestFindFieldDescriptorsSuccess) {
-  zetasql_test__::KitchenSinkPB kitchen_sink;
-  TestFindFieldDescriptorsSuccess("int64_key_1", kitchen_sink.descriptor());
-  TestFindFieldDescriptorsSuccess("int32_val", kitchen_sink.descriptor());
-  TestFindFieldDescriptorsSuccess("repeated_int32_val",
-                                  kitchen_sink.descriptor());
-  TestFindFieldDescriptorsSuccess("date64", kitchen_sink.descriptor());
-  TestFindFieldDescriptorsSuccess("nested_value.nested_int64",
-                                  kitchen_sink.descriptor());
+  TypeFactory factory;
+  const zetasql::ProtoType* root_type = nullptr;
+  ZETASQL_ASSERT_OK(factory.MakeProtoType(zetasql_test__::KitchenSinkPB::descriptor(),
+                                  &root_type));
+  TestFindFieldDescriptorsSuccess("int64_key_1", root_type);
+  TestFindFieldDescriptorsSuccess("int32_val", root_type);
+  TestFindFieldDescriptorsSuccess("repeated_int32_val", root_type);
+  TestFindFieldDescriptorsSuccess("date64", root_type);
+  TestFindFieldDescriptorsSuccess("nested_value.nested_int64", root_type);
   TestFindFieldDescriptorsSuccess("nested_value.nested_repeated_int64",
-                                  kitchen_sink.descriptor());
-  zetasql_test__::RecursivePB recursive_pb;
+                                  root_type);
+
+  ZETASQL_ASSERT_OK(factory.MakeProtoType(zetasql_test__::RecursivePB::descriptor(),
+                                  &root_type));
   TestFindFieldDescriptorsSuccess("recursive_pb.recursive_pb.int64_val",
-                                  recursive_pb.descriptor());
+                                  root_type);
 }
 
 TEST_F(ResolverTest, TestFindFieldDescriptorsFail) {
-  zetasql_test__::KitchenSinkPB kitchen_sink;
+  TypeFactory factory;
+  const zetasql::ProtoType* root_type = nullptr;
+  ZETASQL_ASSERT_OK(factory.MakeProtoType(zetasql_test__::KitchenSinkPB::descriptor(),
+                                  &root_type));
   const std::string& does_not_have_field = "does not have a field named ";
   TestFindFieldDescriptorsFail(
-      "invalid_field", kitchen_sink.descriptor(),
+      "invalid_field", root_type,
       absl::StrCat(does_not_have_field, "invalid_field"));
   TestFindFieldDescriptorsFail(
-      "nested_value.invalid_field", kitchen_sink.descriptor(),
+      "nested_value.invalid_field", root_type,
       absl::StrCat(does_not_have_field, "invalid_field"));
   const std::string& cannot_access_field = "Cannot access field ";
   TestFindFieldDescriptorsFail(
-      "int32_val.invalid_field", kitchen_sink.descriptor(),
+      "int32_val.invalid_field", root_type,
       absl::StrCat(cannot_access_field, "invalid_field"));
   TestFindFieldDescriptorsFail(
-      "nested_value.nested_int64.invalid_field", kitchen_sink.descriptor(),
+      "nested_value.nested_int64.invalid_field", root_type,
       absl::StrCat(cannot_access_field, "invalid_field"));
 }
 
@@ -1900,6 +1942,128 @@ TEST_F(ResolverTest, TestIntervalLiteral) {
   TestIntervalLiteralError("INTERVAL '0-0' MONTH TO YEAR");
   TestIntervalLiteralError("INTERVAL '0:0' MINUTE TO HOUR");
   TestIntervalLiteralError("INTERVAL '0:0:0' SECOND TO HOUR");
+}
+
+TEST_F(ResolverTest, TestRangeLiteral) {
+  // Test ranges of supported types
+  TestRangeLiteral("[2022-01-01, 2022-02-02)",
+                   R"sql(RANGE<DATE> "[2022-01-01, 2022-02-02)")sql");
+  TestRangeLiteral(
+      "[2022-09-13 16:36:11.000000001, 2022-09-13 16:37:11.000000001)",
+      R"sql(RANGE<DATETIME> "[2022-09-13 16:36:11.000000001, 2022-09-13 16:37:11.000000001)")sql");
+  TestRangeLiteral(
+      "[0001-01-01 00:00:00+00, 9999-12-31 23:59:59.999999999+00)",
+      R"sql(RANGE<TIMESTAMP> "[0001-01-01 00:00:00+00, 9999-12-31 23:59:59.999999999+00)")sql");
+
+  // Test ranges with UNBOUNDED
+  TestRangeLiteral("[NULL, 2022-02-02)",
+                   R"sql(RANGE<DATE> "[UNBOUNDED, 2022-02-02)")sql");
+  TestRangeLiteral(
+      "[2022-09-13 16:36:11.000000001, NULL)",
+      R"sql(RANGE<DATETIME> "[2022-09-13 16:36:11.000000001, unbounded)")sql");
+  TestRangeLiteral("[NULL, NULL)",
+                   R"sql(RANGE<TIMESTAMP> "[Unbounded, Unbounded)")sql");
+
+  // Test ranges with NULL. NULL could be used instead of UNBOUNDED
+  TestRangeLiteral("[NULL, 2022-02-02)",
+                   R"sql(RANGE<DATE> "[NULL, 2022-02-02)")sql");
+  TestRangeLiteral(
+      "[2022-09-13 16:36:11.000000001, NULL)",
+      R"sql(RANGE<DATETIME> "[2022-09-13 16:36:11.000000001, null)")sql");
+  TestRangeLiteral("[NULL, NULL)", R"sql(RANGE<TIMESTAMP> "[Null, Null)")sql");
+
+  // Test invalid ranges
+  // Supplied start and end values have type different than specified
+  TestRangeLiteralError(
+      R"sql(RANGE<DATE> "[0001-01-01 00:00:00+00, 9999-12-31 23:59:59.999999999+00)")sql");
+  // Supplied start and end values have different types
+  TestRangeLiteralError(
+      R"sql(RANGE<DATE> "[2022-01-01, 2022-09-13 16:37:11.000000001)")sql");
+  // Unsupported type
+  TestRangeLiteralError(R"sql(RANGE<INT64> "[1, 100)")sql");
+  // Literal with more than two parts
+  TestRangeLiteralError(
+      R"sql(RANGE<DATE> "[2022-01-01, 2022-02-02, 2022-03-02)")sql");
+  // Literal with less than two parts
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[)")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[2022-01-01)")sql");
+  // Literal with incorrect values
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[01/01/2022, 02/02/2022)")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[,)")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[2022-01-01, )")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[, 2022-01-01)")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[0000-01-01, 0000-01-02)")sql");
+  // Literal with invalid brackets
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[2022-01-01, 2022-02-02]")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "(2022-01-01, 2022-02-02]")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "(2022-01-01, 2022-02-02)")sql");
+  // Start <= end
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[2022-01-02, 2022-01-01)")sql");
+  TestRangeLiteralError(
+      R"sql(RANGE<DATETIME> "[2022-09-19 00:01:00.0, 2022-09-19 00:00:00.0)")sql");
+  TestRangeLiteralError(
+      R"sql(RANGE<TIMESTAMP> "[0001-01-01 00:00:00+00, 0001-01-01 00:00:00+00)")sql");
+  // Range literal must have exactly one space after , and no other spaces
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[2022-01-01,2022-02-02)")sql");
+  TestRangeLiteralError(R"sql(RANGE<DATE> "[ 2022-01-01 , 2022-02-02 )")sql");
+}
+
+TEST_F(ResolverTest, TestSpecialFunctionName) {
+  std::unique_ptr<ParserOutput> parser_output;
+  std::unique_ptr<const ResolvedStatement> resolved_statement;
+  std::string sql = "SELECT nested_catalog.udf.timestamp_add(1,2,3)";
+  ResetResolver(sample_catalog_->catalog());
+  ZETASQL_ASSERT_OK(ParseStatement(sql, ParserOptions(), &parser_output));
+  ZETASQL_EXPECT_OK(resolver_->ResolveStatement(sql, parser_output->statement(),
+                                        &resolved_statement));
+}
+
+TEST_F(ResolverTest, TestGetFunctionNameAndArguments) {
+  for (auto& [sql_in, expected_function_name_path,
+              expected_function_arguments] : {
+           std::make_tuple("COUNT(*)", std::vector<std::string>{"$count_star"},
+                           std::vector<std::string>{}),
+           std::make_tuple("CURRENT_DATE()",
+                           std::vector<std::string>{"CURRENT_DATE"},
+                           std::vector<std::string>{}),
+           std::make_tuple("COUNT(DISTINCT x)",
+                           std::vector<std::string>{"COUNT"},
+                           std::vector<std::string>{"x\n"}),
+           std::make_tuple("udfs.normalize(*)",
+                           std::vector<std::string>{"udfs", "normalize"},
+                           std::vector<std::string>{"*\n"}),
+           std::make_tuple(
+               "my_dataset.udfs.count(*)",
+               std::vector<std::string>{"my_dataset", "udfs", "count"},
+               std::vector<std::string>{"*\n"}),
+       }) {
+    SCOPED_TRACE(sql_in);
+
+    // Parse String query to ASTFunctionCall
+    std::unique_ptr<ParserOutput> parser_output;
+    ZETASQL_ASSERT_OK(ParseExpression(sql_in, ParserOptions(), &parser_output))
+        << sql_in;
+    const ASTExpression* parsed_expression = parser_output->expression();
+    ASSERT_EQ(parsed_expression->node_kind(), AST_FUNCTION_CALL);
+    const ASTFunctionCall* function_call =
+        parsed_expression->GetAsOrDie<ASTFunctionCall>();
+
+    // Use ASTFunctionCall to get function name and arguments
+    std::vector<std::string> function_name_path;
+    std::vector<const ASTExpression*> function_arguments;
+    std::map<int, Resolver::SpecialArgumentType> argument_option_map;
+    QueryResolutionInfo query_resolution_info(resolver_.get());
+    ZETASQL_EXPECT_OK(resolver_->GetFunctionNameAndArguments(
+        function_call, &function_name_path, &function_arguments,
+        &argument_option_map, &query_resolution_info));
+    EXPECT_THAT(function_name_path,
+                testing::ElementsAreArray(expected_function_name_path));
+
+    EXPECT_EQ(expected_function_arguments.size(), function_arguments.size());
+    for (int i = 0; i < expected_function_arguments.size(); ++i) {
+      EXPECT_EQ(expected_function_arguments[i], Unparse(function_arguments[i]));
+    }
+  }
 }
 
 TEST(FunctionArgumentInfoTest, BasicUse) {

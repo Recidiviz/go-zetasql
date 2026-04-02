@@ -17,6 +17,7 @@
 #include "zetasql/public/language_options.h"
 
 #include <string>
+#include <vector>
 
 #include "google/protobuf/descriptor.h"
 #include "zetasql/base/testing/status_matchers.h"
@@ -26,6 +27,7 @@
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 
 namespace zetasql {
 
@@ -62,6 +64,21 @@ TEST(LanguageOptions, TestStatementKindRestrictionWithDefault) {
   LanguageOptions options;  // Default is RESOLVED_QUERY_STMT.
   EXPECT_TRUE(options.SupportsStatementKind(RESOLVED_QUERY_STMT));
   EXPECT_FALSE(options.SupportsStatementKind(RESOLVED_EXPLAIN_STMT));
+}
+
+TEST(LanguageOptions, ProtoInProductExternal) {
+  // Create external language options.
+  LanguageOptions options;
+  options.set_product_mode(PRODUCT_EXTERNAL);
+  EXPECT_FALSE(options.SupportsProtoTypes());
+
+  // Disable external proto.
+  options.DisableLanguageFeature(FEATURE_PROTO_BASE);
+  EXPECT_FALSE(options.SupportsProtoTypes());
+
+  // Enable external proto.
+  options.EnableLanguageFeature(FEATURE_PROTO_BASE);
+  EXPECT_TRUE(options.SupportsProtoTypes());
 }
 
 // Get the set of possible enum values for a proto enum type.
@@ -342,8 +359,7 @@ TEST(LanguageOptions, Serialization) {
   proto.set_product_mode(PRODUCT_EXTERNAL);
   proto.set_name_resolution_mode(NAME_RESOLUTION_STRICT);
   proto.set_error_on_deprecated_syntax(true);
-  proto.add_enabled_language_features(
-      FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE);
+  proto.add_enabled_language_features(FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE);
   proto.add_enabled_language_features(FEATURE_TABLESAMPLE);
   proto.add_supported_statement_kinds(RESOLVED_EXPLAIN_STMT);
   proto.add_supported_generic_entity_types("NEW_TYPE");
@@ -354,12 +370,10 @@ TEST(LanguageOptions, Serialization) {
   ASSERT_EQ(PRODUCT_EXTERNAL, options.product_mode());
   ASSERT_EQ(NAME_RESOLUTION_STRICT, options.name_resolution_mode());
   ASSERT_TRUE(options.error_on_deprecated_syntax());
-  ASSERT_TRUE(options.LanguageFeatureEnabled(
-      FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE));
-  ASSERT_TRUE(options.LanguageFeatureEnabled(
-      FEATURE_TABLESAMPLE));
-  ASSERT_FALSE(options.LanguageFeatureEnabled(
-      FEATURE_V_1_1_ORDER_BY_COLLATE));
+  ASSERT_TRUE(
+      options.LanguageFeatureEnabled(FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE));
+  ASSERT_TRUE(options.LanguageFeatureEnabled(FEATURE_TABLESAMPLE));
+  ASSERT_FALSE(options.LanguageFeatureEnabled(FEATURE_V_1_1_ORDER_BY_COLLATE));
   ASSERT_TRUE(options.SupportsStatementKind(RESOLVED_EXPLAIN_STMT));
   ASSERT_FALSE(options.SupportsStatementKind(RESOLVED_QUERY_STMT));
   ASSERT_TRUE(options.GenericEntityTypeSupported("NEW_TYPE"));
@@ -368,6 +382,19 @@ TEST(LanguageOptions, Serialization) {
   ASSERT_TRUE(options.GenericSubEntityTypeSupported("NEW_SUB_TYPE"));
   ASSERT_TRUE(options.GenericSubEntityTypeSupported("new_sub_type"));
   ASSERT_FALSE(options.GenericSubEntityTypeSupported("unsupported_sub_type"));
+  ASSERT_TRUE(
+      options.GenericEntityTypeSupported(absl::string_view("NEW_TYPE")));
+  ASSERT_TRUE(
+      options.GenericEntityTypeSupported(absl::string_view("new_type")));
+  ASSERT_FALSE(
+      options.GenericEntityTypeSupported(absl::string_view("unsupported")));
+  ASSERT_TRUE(
+      options.GenericSubEntityTypeSupported(absl::string_view("NEW_SUB_TYPE")));
+  ASSERT_TRUE(
+      options.GenericSubEntityTypeSupported(absl::string_view("new_sub_type")));
+  ASSERT_FALSE(options.GenericSubEntityTypeSupported(
+      absl::string_view("unsupported_sub_type")));
+
   ASSERT_TRUE(options.IsReservedKeyword("QUALIFY"));
 }
 
@@ -381,15 +408,18 @@ TEST(LanguageOptions, GetEnabledLanguageFeaturesAsString) {
   EXPECT_EQ("FEATURE_ANALYTIC_FUNCTIONS, FEATURE_TABLESAMPLE",
             options.GetEnabledLanguageFeaturesAsString());
   options.EnableLanguageFeature(FEATURE_V_1_2_CIVIL_TIME);
-  EXPECT_EQ("FEATURE_ANALYTIC_FUNCTIONS, FEATURE_TABLESAMPLE, "
-            "FEATURE_V_1_2_CIVIL_TIME",
-            options.GetEnabledLanguageFeaturesAsString());
+  EXPECT_EQ(
+      "FEATURE_ANALYTIC_FUNCTIONS, FEATURE_TABLESAMPLE, "
+      "FEATURE_V_1_2_CIVIL_TIME",
+      options.GetEnabledLanguageFeaturesAsString());
 }
 
 TEST(LanguageOptions, ReservedKeywords) {
   // GetReservableKeywords
   EXPECT_TRUE(LanguageOptions::GetReservableKeywords().contains("QUALIFY"));
   EXPECT_TRUE(LanguageOptions::GetReservableKeywords().contains("qualify"));
+  EXPECT_TRUE(LanguageOptions::GetReservableKeywords().contains(
+      absl::string_view("qualify")));
   EXPECT_FALSE(LanguageOptions::GetReservableKeywords().contains("SELECT"));
   EXPECT_FALSE(LanguageOptions::GetReservableKeywords().contains("DECIMAL"));
   EXPECT_FALSE(LanguageOptions::GetReservableKeywords().contains(""));
@@ -397,6 +427,7 @@ TEST(LanguageOptions, ReservedKeywords) {
   // Initial LanguageOptions
   LanguageOptions options;
   EXPECT_FALSE(options.IsReservedKeyword("QUALIFY"));
+  EXPECT_FALSE(options.IsReservedKeyword(absl::string_view("QUALIFY")));
   EXPECT_FALSE(options.IsReservedKeyword("qualify"));
   EXPECT_FALSE(options.IsReservedKeyword(""));
   EXPECT_FALSE(options.IsReservedKeyword("DECIMAL"));
@@ -406,6 +437,7 @@ TEST(LanguageOptions, ReservedKeywords) {
   ZETASQL_EXPECT_OK(options.EnableReservableKeyword("QUALIFY", true));
   EXPECT_TRUE(options.IsReservedKeyword("QUALIFY"));
   EXPECT_TRUE(options.IsReservedKeyword("qualify"));
+  EXPECT_TRUE(options.IsReservedKeyword(absl::string_view("qualify")));
   EXPECT_TRUE(options.IsReservedKeyword("SELECT"));
   EXPECT_FALSE(options.IsReservedKeyword("DECIMAL"));
 

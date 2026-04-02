@@ -17,6 +17,7 @@
 #ifndef ZETASQL_PUBLIC_TYPES_COLLATION_H_
 #define ZETASQL_PUBLIC_TYPES_COLLATION_H_
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -88,6 +89,15 @@ class Collation {
   //   has a compatible structure with the array's element type.
   bool HasCompatibleStructure(const Type* type) const;
 
+  // Returns true if this Collation object semantically equals the collation
+  // annotations inside <annotation_map>. These are equal when these two
+  // conditions are met:
+  // * <annotation_map> is a nullptr and the Collation object is empty.
+  // * The Collation object equals the collation created by calling
+  //   MakeCollation with <annotation_map>.
+  absl::StatusOr<bool> EqualsCollationAnnotation(
+      const AnnotationMap* annotation_map) const;
+
   // Collation on current type (STRING), not on subfields.
   bool HasCollation() const { return collation_name_.has_string_value(); }
 
@@ -100,17 +110,18 @@ class Collation {
 
   // Children only exist if any of the children have a collation. See comments
   // on <child_list_> for more detail.
-  const std::vector<Collation>& child_list() const { return child_list_; }
   const Collation& child(int i) const { return child_list_[i]; }
   uint64_t num_children() const { return child_list_.size(); }
+
+  // Returns an annotation map that is compatible with the input <type> and has
+  // collation annotations equal to the Collation object.
+  absl::StatusOr<std::unique_ptr<AnnotationMap>> ToAnnotationMap(
+      const Type* type) const;
 
   absl::Status Serialize(CollationProto* proto) const;
   static absl::StatusOr<Collation> Deserialize(const CollationProto& proto);
 
   std::string DebugString() const;
-
-  static std::string ToString(
-      const std::vector<Collation>& resolved_collation_list);
 
  private:
   Collation(absl::string_view collation_name, std::vector<Collation> child_list)

@@ -25,15 +25,18 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <set>
 #include <stack>
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/type.h"
+#include "zetasql/reference_impl/function.h"
 #include "zetasql/reference_impl/operator.h"
 #include "zetasql/reference_impl/parameters.h"
 #include "zetasql/reference_impl/tuple.h"
@@ -91,10 +94,11 @@ struct AlgebrizerOptions {
 };
 
 struct AnonymizationOptions {
-  std::optional<Value> epsilon;      // double Value
-  std::optional<Value> delta;        // double Value
-  std::optional<Value> kappa;        // int64_t Value
-  std::optional<Value> k_threshold;  // int64_t Value
+  std::optional<Value> epsilon;                    // double Value
+  std::optional<Value> delta;                      // double Value
+  std::optional<Value> max_groups_contributed;     // int64_t Value
+  std::optional<Value> max_rows_contributed;       // int64_t Value
+  std::optional<Value> group_selection_threshold;  // int64_t Value
 };
 
 class Algebrizer {
@@ -117,8 +121,9 @@ class Algebrizer {
   // For query statements, 'output' is only valid for as long as 'type_factory'
   // is valid.
   //
-  // For DML statements, 'output' is only valid for as long as 'type_factory'
-  // and 'ast_root' are valid. Also, 'output' is always a DMLValueExpr.
+  // For DML statements:
+  //  * 'output' is only valid for as long as 'type_factory' and 'ast_root' are
+  //     valid. Also, 'output' is always a DMLValueExpr.
   //
   // For CREATE TABLE AS SELECT statements, algebrizes the query that would
   // go into the newly created table.
@@ -186,8 +191,6 @@ class Algebrizer {
   FRIEND_TEST(AlgebrizerTestGroupingAggregation, GroupByMax);
   FRIEND_TEST(AlgebrizerTestGroupingAggregation, GroupByMin);
   FRIEND_TEST(AlgebrizerTestGroupingAggregation, GroupBySum);
-  FRIEND_TEST(NonDeterministicEvaluationContextTest,
-              ArrayFilterTransformFunctionTest);
 
   Algebrizer(const LanguageOptions& options,
              const AlgebrizerOptions& algebrizer_options,
@@ -254,6 +257,14 @@ class Algebrizer {
       std::unique_ptr<ValueExpr> in_value,
       std::unique_ptr<ValueExpr> array_value,
       const ResolvedCollation& collation);
+
+  // TODO: Remove the special collation logics in this function.
+  absl::StatusOr<std::unique_ptr<ValueExpr>>
+  AlgebrizeScalarArrayFunctionWithCollation(
+      FunctionKind kind, const Type* output_type,
+      absl::string_view function_name,
+      std::vector<std::unique_ptr<ValueExpr>> args,
+      const std::vector<ResolvedCollation>& collation_list);
 
   // Algebrizes IN, LIKE ANY, or LIKE ALL when the rhs is a subquery.
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeInLikeAnyLikeAllRelation(
@@ -392,8 +403,15 @@ class Algebrizer {
       const ResolvedUnpivotScan* unpivot_scan,
       std::unique_ptr<RelationalOp> input);
   absl::StatusOr<std::unique_ptr<RelationalOp>>
+  AlgebrizeAnonymizedAggregateScanBase(
+      const ResolvedAggregateScanBase* aggregate_scan,
+      const AnonymizationOptions& anonymization_options);
+  absl::StatusOr<std::unique_ptr<RelationalOp>>
   AlgebrizeAnonymizedAggregateScan(
       const ResolvedAnonymizedAggregateScan* aggregate_scan);
+  absl::StatusOr<std::unique_ptr<RelationalOp>>
+  AlgebrizeDifferentialPrivacyAggregateScan(
+      const ResolvedDifferentialPrivacyAggregateScan* aggregate_scan);
   absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeSetOperationScan(
       const ResolvedSetOperationScan* set_scan);
   absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeUnionScan(
@@ -431,6 +449,13 @@ class Algebrizer {
   // index in the scan (not the Table).
   using TableScanColumnInfoMap =
       absl::flat_hash_map<ResolvedColumn, std::pair<VariableId, int>>;
+
+  // Algebrizes group_selection_threshold_expr expression of differential
+  // privacy nodes.
+  absl::StatusOr<std::vector<std::unique_ptr<ValueExpr>>>
+  AlgebrizeGroupSelectionThresholdExpression(
+      const ResolvedExpr* group_selection_threshold_expr,
+      const AnonymizationOptions& anonymization_options);
 
   // If 'conjunct_info' can be represented using ColumnFilterArgs with the
   // columns in 'column_info_map', appends them to 'and_filters'.
@@ -543,7 +568,7 @@ class Algebrizer {
       std::vector<VariableId>* output_column_variables);
 
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeDMLStatement(
-      const ResolvedStatement* ast_root);
+      const ResolvedStatement* ast_root, IdStringPool* id_string_pool);
 
   // Populates the ResolvedScanMap and the ResolvedExprMap corresponding to
   // 'ast_root', which must be a DML statement. If the DML statement is
@@ -555,7 +580,7 @@ class Algebrizer {
   // 'ast_root') to 'column_to_variable_'.
   absl::Status AlgebrizeDescendantsOfDMLStatement(
       const ResolvedStatement* ast_root, ResolvedScanMap* resolved_scan_map,
-      ResolvedExprMap* resolved_expr_map,
+      ResolvedExprMap* resolved_expr_map, ColumnExprMap* column_expr_map,
       const ResolvedTableScan** resolved_table_scan);
 
   // Populates the 'returning_column_list' and 'returning_column_values' from
@@ -564,7 +589,7 @@ class Algebrizer {
   // 'returning_column_values' contains the ValueExpr of the returning output
   // column list and then passed to its algebrized plan.
   absl::Status AlgebrizeDMLReturningClause(
-      const ResolvedStatement* ast_root,
+      const ResolvedStatement* ast_root, IdStringPool* id_string_pool,
       ResolvedColumnList* returning_column_list,
       std::vector<std::unique_ptr<ValueExpr>>* returning_column_values);
 
@@ -574,7 +599,7 @@ class Algebrizer {
   // 'ast_root') to 'column_to_variable_'.
   absl::Status AlgebrizeDescendantsOfUpdateItem(
       const ResolvedUpdateItem* update_item, ResolvedScanMap* resolved_scan_map,
-      ResolvedExprMap* resolved_expr_map);
+      ResolvedExprMap* resolved_expr_map, ColumnExprMap* column_expr_map);
 
   // Adds the entry corresponding to 'resolved_scan' to 'resolved_scan_map'
   // (whose key is 'resolved_scan' and whose value is the algebrized scan). Note
@@ -587,6 +612,11 @@ class Algebrizer {
   // expression). Note that the map does not own the ResolvedExpr nodes.
   absl::Status PopulateResolvedExprMap(const ResolvedExpr* resolved_expr,
                                        ResolvedExprMap* resolved_expr_map);
+
+  // Algebrize expressions of columns with default values or generated columns
+  // in 'table', and put them into the output argument, 'column_expr_map'.
+  absl::Status AlgebrizeDefaultExpressions(const ResolvedTableScan* table_scan,
+                                           ColumnExprMap* column_expr_map);
 
   // Given a list of ResolvedComputedColumn and a column_id, return in
   // (*definition) the expression that defines that column, or nullptr if not
@@ -753,7 +783,7 @@ class Algebrizer {
   // some ways is like a column and in some ways is like a parameter).
   class ColumnOrParameter {
    public:
-    ColumnOrParameter() {}
+    ColumnOrParameter() = default;
 
     explicit ColumnOrParameter(const ResolvedColumn& column)
         : column_or_param_(column) {}
@@ -988,6 +1018,12 @@ class Algebrizer {
   // There may be multiple in a stack as there could be Flatten used as part of
   // the input expression for another Flatten.
   std::stack<std::unique_ptr<const Value*>> flattened_arg_input_;
+
+  // The list of variables to use when algebrizing a ResolvedCatalogColumnRef.
+  // This is not a stack because we should never have a nested
+  // ResolvedCatalogColumnRef.
+  std::optional<absl::flat_hash_map<const Column*, VariableId>>
+      catalog_column_ref_variables_;
 };
 
 }  // namespace zetasql

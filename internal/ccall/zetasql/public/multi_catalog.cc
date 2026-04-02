@@ -16,7 +16,9 @@
 
 #include "zetasql/public/multi_catalog.h"
 
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "absl/status/status.h"
@@ -129,6 +131,33 @@ absl::Status MultiCatalog::FindConstantWithPathPrefix(
     }
   }
   return TypeNotFoundError(path);
+}
+
+absl::Status MultiCatalog::FindTableWithPathPrefix(
+    const absl::Span<const std::string> path, const FindOptions& options,
+    int* num_names_consumed, const Table** table) {
+  int max_names_consumed = 0;
+  for (Catalog* catalog : catalog_list_) {
+    const Table* result_table = nullptr;
+    const absl::Status find_status = catalog->FindTableWithPathPrefix(
+        path, options, num_names_consumed, &result_table);
+    // Returns any error status that is not NOT_FOUND. Any serious error
+    // surfaced in one of the catalog lookup should fail the query directly.
+    if (!find_status.ok() && !absl::IsNotFound(find_status)) {
+      return find_status;
+    }
+    if (result_table != nullptr && *num_names_consumed > max_names_consumed) {
+      max_names_consumed = *num_names_consumed;
+      *table = result_table;
+    }
+  }
+  if (max_names_consumed > 0) {
+    ZETASQL_RET_CHECK_NE(*table, nullptr);
+    *num_names_consumed = max_names_consumed;
+    return absl::OkStatus();
+  }
+  *num_names_consumed = 0;
+  return TableNotFoundError(path);
 }
 
 std::string MultiCatalog::SuggestTable(

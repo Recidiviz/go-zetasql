@@ -44,7 +44,8 @@ namespace zetasql {
 // 'options' must contain a zetasql_base::SequenceNumber that is higher than the highest
 // column id currently present in the parent AST or any of the 'variable'
 // expressions. 'options' must also use the same arenas as the parent AST did
-// during its analysis.
+// during its analysis. 'options' may not have any expression columns whose
+// names conflict with entries in 'variables'.
 //
 // 'expression' must not directly reference any positional query parameters (?)
 // and it must only reference named parameters that are keys in 'lambdas'.
@@ -55,14 +56,16 @@ namespace zetasql {
 // be no collision between the names in 'variables' and 'lambdas'.
 //
 // 'lambdas' is a map of lambda names to ResolvedInlineLambdas. Lambdas can be
-// invoked with INVOKE function calls in the SQL (see example below). The first
-// argument is a named parameter with the name of a lambda in 'lambdas'. The
-// remaining arguments are a list of columns defined in the SQL, which are to
-// replace lambda argument references in the lambda body. NOTE: INVOKE function
-// is a special function only available inside AnalyzeSubstitute for handling
-// lambdas. For example a INVOKE call:
-//     INVOKE(@mylambda, element, offset)
+// invoked by name in the SQL (see example below). The arguments to the lambda
+// are a list of columns defined in the SQL, which are to replace lambda
+// argument references in the lambda body. For example a named lambda such as
+//     mylambda(element, offset)
 // with mylambda as '(e, i)->e+i', will be equivalent to: 'element + offset'.
+//
+// Note about naming of lambdas: there is built in protection against naming
+// conflicts between the lambdas supplied to AnalyzeSubstitute and existing
+// UDFS or builtin functions. The names of the lambdas in AnalyzeSubstitute
+// do not appear in the final rewritten resolved AST.
 //
 // This is primarily designed for use in resolved AST rewrite rules. For
 // example, suppose you wanted to make a rewrite rule for

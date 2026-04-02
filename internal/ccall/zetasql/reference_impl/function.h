@@ -41,7 +41,6 @@
 #include "zetasql/reference_impl/tuple.h"
 #include "zetasql/reference_impl/tuple_comparator.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
-#include <cstdint>
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
@@ -112,6 +111,13 @@ enum class FunctionKind {
   kAnonStddevPop,
   kAnonQuantiles,
   kAnonQuantilesWithReportProto,
+  kAnonQuantilesWithReportJson,
+  // Differential privacy functions (broken link)
+  kDifferentialPrivacySum,
+  kDifferentialPrivacyAvg,
+  kDifferentialPrivacyVarPop,
+  kDifferentialPrivacyStddevPop,
+  kDifferentialPrivacyQuantiles,
   // Exists function
   kExists,
   // IsNull function
@@ -121,6 +127,7 @@ enum class FunctionKind {
   // Cast function
   kCast,
   kLike,
+  kLikeWithCollation,
   kLikeAny,
   kLikeAll,
   kLikeAnyArray,
@@ -206,6 +213,14 @@ enum class FunctionKind {
   kArrayFirst,
   kArrayLast,
   kArraySlice,
+  kArrayMin,
+  kArrayMax,
+  kArraySum,
+  kArrayAvg,
+  kArrayOffset,
+  kArrayFind,
+  kArrayOffsets,
+  kArrayFindAll,
 
   // Proto map functions. Like array functions, the map functions must use
   // MaybeSetNonDeterministicArrayOutput.
@@ -229,6 +244,10 @@ enum class FunctionKind {
   kDouble,
   kBool,
   kJsonType,
+  kLaxBool,
+  kLaxInt64,
+  kLaxDouble,
+  kLaxString,
   // Proto functions
   kFromProto,
   kToProto,
@@ -401,6 +420,15 @@ enum class FunctionKind {
 
   // Error function
   kError,
+
+  // Range functions
+  kRangeCtor,
+  kRangeIsStartUnbounded,
+  kRangeIsEndUnbounded,
+  kRangeStart,
+  kRangeEnd,
+  kRangeOverlaps,
+  kRangeIntersect,
 };
 
 // Provides two utility methods to look up a built-in function name or function
@@ -415,7 +443,7 @@ class BuiltinFunctionCatalog {
   static std::string GetDebugNameByKind(FunctionKind kind);
 
  private:
-  BuiltinFunctionCatalog() {}
+  BuiltinFunctionCatalog() = default;
 };
 
 // Abstract built-in scalar function.
@@ -427,7 +455,7 @@ class BuiltinScalarFunction : public ScalarFunctionBody {
   BuiltinScalarFunction(FunctionKind kind, const Type* output_type)
       : ScalarFunctionBody(output_type), kind_(kind) {}
 
-  ~BuiltinScalarFunction() override {}
+  ~BuiltinScalarFunction() override = default;
 
   FunctionKind kind() const { return kind_; }
 
@@ -460,7 +488,7 @@ class BuiltinScalarFunction : public ScalarFunctionBody {
   static absl::StatusOr<std::unique_ptr<ScalarFunctionCallExpr>> CreateCast(
       const LanguageOptions& language_options, const Type* output_type,
       std::unique_ptr<ValueExpr> argument, std::unique_ptr<ValueExpr> format,
-      std::unique_ptr<ValueExpr> time_zone, const TypeParameters& type_params,
+      std::unique_ptr<ValueExpr> time_zone, const TypeModifiers& type_modifiers,
       bool return_null_on_error, ResolvedFunctionCallBase::ErrorMode error_mode,
       std::unique_ptr<ExtendedCompositeCastEvaluator> extended_cast_evaluator);
 
@@ -480,10 +508,6 @@ class BuiltinScalarFunction : public ScalarFunctionBody {
       FunctionKind kind, const LanguageOptions& language_options,
       const Type* output_type,
       const std::vector<std::unique_ptr<AlgebraArg>>& arguments);
-
-  // Makes it easier to write test cases known to have valid input parameters.
-  static std::unique_ptr<BuiltinScalarFunction> CreateUnvalidated(
-      FunctionKind kind, const Type* output_type);
 
   // Creates a like function.
   static absl::StatusOr<std::unique_ptr<BuiltinScalarFunction>>
@@ -609,8 +633,6 @@ class BuiltinAnalyticFunction : public AnalyticFunctionBody {
   BuiltinAnalyticFunction(const BuiltinAnalyticFunction&) = delete;
   BuiltinAnalyticFunction& operator=(const BuiltinAnalyticFunction&) = delete;
 
-  FunctionKind kind() const { return kind_; }
-
   std::string debug_name() const override;
 
  private:
@@ -633,7 +655,7 @@ class BuiltinFunctionRegistry {
           constructor);
 
  private:
-  BuiltinFunctionRegistry() {}
+  BuiltinFunctionRegistry() = default;
 
   using ScalarFunctionConstructor =
       std::function<BuiltinScalarFunction*(const Type*)>;
@@ -700,8 +722,6 @@ class LambdaEvaluationContext {
  public:
   absl::StatusOr<Value> EvaluateLambda(const InlineLambdaExpr* lambda,
                                        absl::Span<const Value> args);
-
-  EvaluationContext* evaluation_context() const { return context_; }
 
  private:
   // Params to be passed to lambda. Used when a lambda needs to fetch a value
@@ -831,6 +851,74 @@ class ArraySliceFunction : public SimpleBuiltinScalarFunction {
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
                              absl::Span<const Value> args,
                              EvaluationContext* context) const override;
+};
+
+// Implementation for ARRAY_(MIN|MAX)(ARRAY<T1>) -> T1.
+class ArrayMinMaxFunction : public SimpleBuiltinScalarFunction {
+ public:
+  ArrayMinMaxFunction(FunctionKind kind, const Type* output_type)
+      : SimpleBuiltinScalarFunction(kind, output_type), collator_list_() {}
+
+  ArrayMinMaxFunction(FunctionKind kind, const Type* output_type,
+                      CollatorList collator_list)
+      : SimpleBuiltinScalarFunction(kind, output_type),
+        collator_list_(std::move(collator_list)) {}
+
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+
+  static absl::StatusOr<std::unique_ptr<ScalarFunctionCallExpr>> CreateCall(
+      FunctionKind kind, const LanguageOptions& language_options,
+      const Type* output_type,
+      std::vector<std::unique_ptr<AlgebraArg>> arguments,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
+      CollatorList collator_list);
+
+ private:
+  CollatorList collator_list_;
+};
+
+// Implementation for ARRAY_(SUM|AVG)(ARRAY<T>) -> U
+class ArraySumAvgFunction : public SimpleBuiltinScalarFunction {
+ public:
+  using SimpleBuiltinScalarFunction::SimpleBuiltinScalarFunction;
+
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
+// Implementation for
+//   ARRAY_OFFSET(ARRAY<T>, T [ , ARRAY_FIND_MODE ]) -> INT64.
+//   ARRAY_FIND(ARRAY<T>, T [ , ARRAY_FIND_MODE ]) -> T.
+//   ARRAY_OFFSETS(ARRAY<T>, T) -> ARRAY<INT64>.
+//   ARRAY_FIND_ALL(ARRAY<T>, T) -> ARRAY<T>.
+// TODO: Add lambda support for
+//   ARRAY_OFFSET(ARRAY<T>, lambda(T) -> BOOL [ , ARRAY_FIND_MODE ]) -> T.
+//   ARRAY_FIND(ARRAY<T>, lambda(T) -> BOOL [ , ARRAY_FIND_MODE ]) -> T.
+//   ARRAY_OFFSETS(ARRAY<T>, lambda(T) -> BOOL) -> T.
+//   ARRAY_FIND_ALL(ARRAY<T>, lambda(T) -> BOOL) -> T.
+class ArrayFindFunctions : public SimpleBuiltinScalarFunction {
+ public:
+  ArrayFindFunctions(FunctionKind kind, const Type* output_type,
+                     CollatorList collator_list)
+      : SimpleBuiltinScalarFunction(kind, output_type),
+        collator_list_(std::move(collator_list)) {}
+
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+
+  static absl::StatusOr<std::unique_ptr<ScalarFunctionCallExpr>> CreateCall(
+      FunctionKind kind, const LanguageOptions& language_options,
+      const Type* output_type,
+      std::vector<std::unique_ptr<AlgebraArg>> arguments,
+      ResolvedFunctionCallBase::ErrorMode error_mode,
+      CollatorList collator_list);
+
+ private:
+  CollatorList collator_list_;
 };
 
 class IsFunction : public BuiltinScalarFunction {
@@ -1324,7 +1412,7 @@ class FromProtoFunction : public SimpleBuiltinScalarFunction {
  public:
   using SimpleBuiltinScalarFunction::SimpleBuiltinScalarFunction;
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
-                             const absl::Span<const Value> args,
+                             absl::Span<const Value> args,
                              EvaluationContext* context) const override;
 };
 
@@ -1332,7 +1420,7 @@ class ToProtoFunction : public SimpleBuiltinScalarFunction {
  public:
   using SimpleBuiltinScalarFunction::SimpleBuiltinScalarFunction;
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
-                             const absl::Span<const Value> args,
+                             absl::Span<const Value> args,
                              EvaluationContext* context) const override;
 };
 
@@ -1340,7 +1428,7 @@ class EnumValueDescriptorProtoFunction : public SimpleBuiltinScalarFunction {
  public:
   using SimpleBuiltinScalarFunction::SimpleBuiltinScalarFunction;
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
-                             const absl::Span<const Value> args,
+                             absl::Span<const Value> args,
                              EvaluationContext* context) const override;
 };
 
@@ -1788,10 +1876,12 @@ class PercentileDiscFunction : public BuiltinAnalyticFunction {
  public:
   PercentileDiscFunction(
       const Type* output_type,
-      ResolvedAnalyticFunctionCall::NullHandlingModifier null_handling_modifier)
+      ResolvedAnalyticFunctionCall::NullHandlingModifier null_handling_modifier,
+      std::unique_ptr<const ZetaSqlCollator> collator)
       : BuiltinAnalyticFunction(FunctionKind::kPercentileDisc, output_type),
         ignore_nulls_(null_handling_modifier !=
-                      ResolvedAnalyticFunctionCall::RESPECT_NULLS) {}
+                      ResolvedAnalyticFunctionCall::RESPECT_NULLS),
+        collator_(std::move(collator)) {}
 
   bool RequireTupleComparator() const override { return false; }
 
@@ -1806,6 +1896,7 @@ class PercentileDiscFunction : public BuiltinAnalyticFunction {
 
  private:
   bool ignore_nulls_;
+  std::unique_ptr<const ZetaSqlCollator> collator_;
 };
 
 // This method is used only for setting non-deterministic output.
@@ -1829,6 +1920,15 @@ class ConvertJsonFunction : public SimpleBuiltinScalarFunction {
                              EvaluationContext* context) const override;
 };
 
+class ConvertJsonLaxFunction : public SimpleBuiltinScalarFunction {
+ public:
+  ConvertJsonLaxFunction(FunctionKind kind, const Type* output_type)
+      : SimpleBuiltinScalarFunction(kind, output_type) {}
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
 class TypeFunction : public SimpleBuiltinScalarFunction {
  public:
   TypeFunction(FunctionKind kind, const Type* output_type)
@@ -1837,6 +1937,12 @@ class TypeFunction : public SimpleBuiltinScalarFunction {
                              absl::Span<const Value> args,
                              EvaluationContext* context) const override;
 };
+
+// Helper to validate that time related values that are arguments to certain
+// functions don't have significant precieision beyond micros when the nanos
+// feature is not turned on.
+absl::Status ValidateMicrosPrecision(const Value& value,
+                                     EvaluationContext* context);
 
 }  // namespace zetasql
 

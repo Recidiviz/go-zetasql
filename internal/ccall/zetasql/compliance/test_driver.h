@@ -22,6 +22,7 @@
 #define ZETASQL_COMPLIANCE_TEST_DRIVER_H_
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -271,10 +272,25 @@ struct ScriptResult {
 };
 
 // Serialize TestDatabase to a proto. This is to allow building test drivers in
-// other languages (in particular, java).  Note, there is no c++ deserializer,
-// as serialization should not be necessary in this case.
+// other languages (in particular, java).
 absl::Status SerializeTestDatabase(const TestDatabase& database,
                                    TestDatabaseProto* proto);
+
+// Deserializes a TestDatabaseProto to a TestDatabase. This is used for running
+// a compliance driver for a standalone repro, by allowing the database to be
+// specified as a proto.
+//
+// <descriptor_pools> should be initialized by the caller to contain one element
+// per descriptor file in the proto; each pool will be filled with deserialized
+// proto descriptors, and should outlive the type factory.
+//
+// <annotation_maps> will own the lifetime of deserialized AnnotationMap objects
+// whose pointers are inserted into the returned TestDatabase; it should outlive
+// the TestDatabase object.
+absl::StatusOr<TestDatabase> DeserializeTestDatabase(
+    const TestDatabaseProto& proto, TypeFactory* type_factory,
+    const std::vector<google::protobuf::DescriptorPool*>& descriptor_pools,
+    std::vector<std::unique_ptr<const AnnotationMap>>& annotation_maps);
 
 static const char default_default_time_zone[] = "America/Los_Angeles";
 
@@ -319,6 +335,14 @@ class TestDriver {
   // ExecuteStatement.
   virtual absl::Status AddSqlUdfs(
       absl::Span<const std::string> create_function_stmts) {
+    return absl::UnimplementedError("Test driver does not support SQL UDFs.");
+  }
+
+  // Supplies several "temporary" view definitions that the driver should add
+  // to the catalog. This will be called after CreateDatabase but before
+  // ExecuteStatement.
+  virtual absl::Status AddViews(
+      absl::Span<const std::string> create_view_stmts) {
     return absl::UnimplementedError("Test driver does not support SQL UDFs.");
   }
 
@@ -415,8 +439,8 @@ class TestDriver {
    public:
     explicit ProtoSourceTree(const std::string& base_dir)
         : base_dir_(base_dir) {}
-    google::protobuf::io::ZeroCopyInputStream* Open(
-        const std::string& filename) override {
+      google::protobuf::io::ZeroCopyInputStream* Open(
+          const std::string& filename) override {
       std::string contents;
       if (internal::GetContents(zetasql_base::JoinPath(base_dir_, filename), &contents)
               .ok()) {

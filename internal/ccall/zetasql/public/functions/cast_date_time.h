@@ -19,6 +19,8 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "zetasql/public/functions/date_time_util.h"
 #include "zetasql/public/type.pb.h"
@@ -47,8 +49,8 @@ namespace functions {
 // (broken link).
 absl::Status CastStringToTimestamp(absl::string_view format_string,
                                    absl::string_view timestamp_string,
-                                   const absl::TimeZone default_timezone,
-                                   const absl::Time current_timestamp,
+                                   absl::TimeZone default_timezone,
+                                   absl::Time current_timestamp,
                                    int64_t* timestamp_micros);
 
 // Invokes MakeTimeZone() on <default_timezone_string> and invokes the prior
@@ -57,21 +59,21 @@ absl::Status CastStringToTimestamp(absl::string_view format_string,
 absl::Status CastStringToTimestamp(absl::string_view format_string,
                                    absl::string_view timestamp_string,
                                    absl::string_view default_timezone_string,
-                                   const absl::Time current_timestamp,
+                                   absl::Time current_timestamp,
                                    int64_t* timestamp_micros);
 
 // The 2 functions below are similar to the above functions but support
 // nanoseconds precision.
 absl::Status CastStringToTimestamp(absl::string_view format_string,
                                    absl::string_view timestamp_string,
-                                   const absl::TimeZone default_timezone,
-                                   const absl::Time current_timestamp,
+                                   absl::TimeZone default_timezone,
+                                   absl::Time current_timestamp,
                                    absl::Time* timestamp);
 
 absl::Status CastStringToTimestamp(absl::string_view format_string,
                                    absl::string_view timestamp_string,
                                    absl::string_view default_timezone_string,
-                                   const absl::Time current_timestamp,
+                                   absl::Time current_timestamp,
                                    absl::Time* timestamp);
 
 // CastStringToDate function is used for CAST(input AS Date FORMAT '...')
@@ -332,6 +334,151 @@ absl::StatusOr<std::vector<DateTimeFormatElement>> GetDateTimeFormatElements(
     absl::string_view format_str);
 
 }  // namespace cast_date_time_internal
+
+class StringToDateCaster {
+ public:
+  static absl::StatusOr<StringToDateCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the string to Date using the format string.
+  absl::Status Cast(absl::string_view date_string, int32_t current_date,
+                    int32_t* date) const;
+
+ private:
+  explicit StringToDateCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class StringToTimeCaster {
+ public:
+  static absl::StatusOr<StringToTimeCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the string to Time using the format string.
+  absl::Status Cast(absl::string_view time_string, TimestampScale scale,
+                    TimeValue* time) const;
+
+ private:
+  explicit StringToTimeCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class StringToDatetimeCaster {
+ public:
+  static absl::StatusOr<StringToDatetimeCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the string to Datetime using the format string.
+  absl::Status Cast(absl::string_view datetime_string, TimestampScale scale,
+                    int32_t current_date, DatetimeValue* datetime) const;
+
+ private:
+  explicit StringToDatetimeCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class StringToTimestampCaster {
+ public:
+  static absl::StatusOr<StringToTimestampCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the string to Timestamp using the format string.
+  absl::Status Cast(absl::string_view timestamp_string,
+                    absl::TimeZone default_timezone,
+                    absl::Time current_timestamp,
+                    int64_t* timestamp_micros) const;
+
+ private:
+  explicit StringToTimestampCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class DateToStringCaster {
+ public:
+  static absl::StatusOr<DateToStringCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the date to string using the format string.
+  absl::Status Cast(int32_t date, std::string* out) const;
+
+ private:
+  explicit DateToStringCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class DatetimeToStringCaster {
+ public:
+  static absl::StatusOr<DatetimeToStringCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the datetime to string using the format string.
+  absl::Status Cast(const DatetimeValue& datetime, std::string* out) const;
+
+ private:
+  explicit DatetimeToStringCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class TimeToStringCaster {
+ public:
+  static absl::StatusOr<TimeToStringCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the time to string using the format string.
+  absl::Status Cast(const TimeValue& time, std::string* out) const;
+
+ private:
+  explicit TimeToStringCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
+
+class TimestampToStringCaster {
+ public:
+  static absl::StatusOr<TimestampToStringCaster> Create(
+      absl::string_view format_string);
+
+  // Cast the timestamp to string using the format string.
+  absl::Status Cast(int64_t timestamp_micros, absl::TimeZone timezone,
+                    std::string* out) const;
+  absl::Status Cast(absl::Time timestamp, absl::TimeZone timezone,
+                    std::string* out) const;
+
+ private:
+  explicit TimestampToStringCaster(
+      std::vector<cast_date_time_internal::DateTimeFormatElement>&&
+          format_elements)
+      : format_elements_(std::move(format_elements)) {}
+
+  std::vector<cast_date_time_internal::DateTimeFormatElement> format_elements_;
+};
 
 }  // namespace functions
 }  // namespace zetasql

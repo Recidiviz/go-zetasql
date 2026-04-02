@@ -162,7 +162,8 @@ absl::Status ProtoType::GetFieldTypeByTagNumber(int number,
   if (name != nullptr) {
     *name = field_descr->name();
   }
-  return factory->GetProtoFieldType(field_descr, use_obsolete_timestamp, type);
+  return factory->GetProtoFieldType(field_descr, use_obsolete_timestamp,
+                                    CatalogNamePath(), type);
 }
 
 absl::Status ProtoType::GetFieldTypeByName(const std::string& name,
@@ -180,7 +181,8 @@ absl::Status ProtoType::GetFieldTypeByName(const std::string& name,
   if (number != nullptr) {
     *number = field_descr->number();
   }
-  return factory->GetProtoFieldType(field_descr, use_obsolete_timestamp, type);
+  return factory->GetProtoFieldType(field_descr, use_obsolete_timestamp,
+                                    CatalogNamePath(), type);
 }
 
 std::string ProtoType::TypeName() const {
@@ -341,6 +343,11 @@ absl::Status ProtoType::GetTypeKindFromFieldDescriptor(
           break;
         case FieldFormat::INTERVAL:
           *kind = TYPE_INTERVAL;
+          break;
+        case FieldFormat::RANGE_DATES_ENCODED:
+        case FieldFormat::RANGE_DATETIMES_ENCODED:
+        case FieldFormat::RANGE_TIMESTAMPS_ENCODED:
+          *kind = TYPE_RANGE;
           break;
         default:
           // Should not reach this if ValidateTypeAnnotations() is working

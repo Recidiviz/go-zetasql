@@ -20,9 +20,10 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
-#include "zetasql/common/testing/proto_matchers.h"
+#include "zetasql/common/testing/proto_matchers.h"  
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/common/testing/testing_proto_util.h"
 #include "zetasql/proto/function.pb.h"
@@ -35,14 +36,12 @@
 #include "zetasql/public/parse_location.h"
 #include "zetasql/public/parse_location_range.pb.h"
 #include "zetasql/public/sql_function.h"
-#include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/type_deserializer.h"
 #include "zetasql/public/types/type_factory.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/str_join.h"
 
 // Note - test coverage for the 'Function' class interface is primarily
@@ -109,8 +108,10 @@ TEST(SimpleFunctionTests, FunctionMethodTests) {
   int num_signatures;
   EXPECT_EQ("TEST_FUNCTION_NAME", fn.SQLName());
   EXPECT_EQ("TEST_FUNCTION_NAME(BYTES); TEST_FUNCTION_NAME(INT32)",
-            fn.GetSupportedSignaturesUserFacingText(LanguageOptions(),
-                                                    &num_signatures));
+            fn.GetSupportedSignaturesUserFacingText(
+                LanguageOptions(),
+                FunctionArgumentType::NamePrintingStyle::kIfNamedOnly,
+                &num_signatures));
   EXPECT_EQ(2, num_signatures);
 
   Function fn2("test_Function_NAME", Function::kZetaSQLFunctionGroupName,
@@ -119,8 +120,10 @@ TEST(SimpleFunctionTests, FunctionMethodTests) {
   fn2.AddSignatureOrDie(TYPE_STRING, {TYPE_BYTES}, nullptr, &type_factory);
   EXPECT_EQ("test_Function_NAME", fn2.SQLName());
   EXPECT_EQ("test_Function_NAME(BYTES)",
-            fn2.GetSupportedSignaturesUserFacingText(LanguageOptions(),
-                                                     &num_signatures));
+            fn2.GetSupportedSignaturesUserFacingText(
+                LanguageOptions(),
+                FunctionArgumentType::NamePrintingStyle::kIfNamedOnly,
+                &num_signatures));
   EXPECT_EQ(1, num_signatures);
 
   std::vector<FunctionSignature> no_signatures;
@@ -491,8 +494,9 @@ TEST_F(FunctionSerializationTests,
   }
   TypeFactory factory;
   std::unique_ptr<FunctionSignature> result;
-  ZETASQL_ASSERT_OK(FunctionSignature::Deserialize(signature_proto, pools, &factory,
-                                           &result));
+  ZETASQL_ASSERT_OK_AND_ASSIGN(result, FunctionSignature::Deserialize(
+                                   signature_proto, zetasql::TypeDeserializer(
+                                                        &factory, pools)));
   ExpectEqualsIgnoringCallbacks(simple_signature, *result);
   ASSERT_EQ(result->arguments().size(), 2);
   ASSERT_TRUE(result->argument(0).options().has_argument_name());
@@ -608,8 +612,9 @@ TEST_F(FunctionSerializationTests,
   // Another factory for deserialization.
   TypeFactory factory;
   std::unique_ptr<FunctionSignature> result;
-  ZETASQL_ASSERT_OK(FunctionSignature::Deserialize(signature_proto, pools, &factory,
-                                           &result));
+  ZETASQL_ASSERT_OK_AND_ASSIGN(result, FunctionSignature::Deserialize(
+                                   signature_proto, zetasql::TypeDeserializer(
+                                                        &factory, pools)));
   ExpectEqualsIgnoringCallbacks(simple_signature, *result);
 
   ASSERT_EQ(result->arguments().size(), 8);
@@ -721,8 +726,9 @@ TEST_F(FunctionSerializationTests,
 
   TypeFactory factory;
   std::unique_ptr<FunctionSignature> result;
-  ZETASQL_ASSERT_OK(FunctionSignature::Deserialize(signature_proto, pools, &factory,
-                                           &result));
+  ZETASQL_ASSERT_OK_AND_ASSIGN(result, FunctionSignature::Deserialize(
+                                   signature_proto, zetasql::TypeDeserializer(
+                                                        &factory, pools)));
   ExpectEqualsIgnoringCallbacks(templated_signature, *result);
 
   ASSERT_EQ(result->arguments().size(), 6);
@@ -803,6 +809,25 @@ TEST_F(FunctionSerializationTests,
 
     CheckSerializationAndDeserialization(argument_type);
   }
+}
+
+// Test serialization and deserialization of array element type comparison
+// constraint signal in the function argument type options.
+TEST_F(FunctionSerializationTests,
+       SerializationAndDeserializationArrayElementTypeConstraint) {
+  FunctionArgumentTypeOptions options1;
+  options1.set_array_element_must_support_equality();
+  FunctionArgumentType argument_type1(ARG_ARRAY_TYPE_ANY_1, options1);
+  CheckSerializationAndDeserialization(argument_type1);
+
+  FunctionArgumentTypeOptions options2;
+  options2.set_array_element_must_support_ordering();
+  FunctionArgumentType argument_type2(ARG_ARRAY_TYPE_ANY_2, options2);
+  CheckSerializationAndDeserialization(argument_type2);
+
+  options2.set_array_element_must_support_grouping();
+  FunctionArgumentType argument_type3(ARG_ARRAY_TYPE_ANY_2, options2);
+  CheckSerializationAndDeserialization(argument_type3);
 }
 
 }  // namespace zetasql

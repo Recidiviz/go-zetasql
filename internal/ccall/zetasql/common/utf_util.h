@@ -18,6 +18,7 @@
 #define ZETASQL_COMMON_UTF_UTIL_H_
 
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "absl/status/statusor.h"
@@ -34,9 +35,7 @@ namespace zetasql {
 // `s.length()` if it is completely well formed UTF8.
 absl::string_view::size_type SpanWellFormedUTF8(absl::string_view s);
 
-inline bool IsWellFormedUTF8(absl::string_view s) {
-  return SpanWellFormedUTF8(s) == s.length();
-}
+bool IsWellFormedUTF8(absl::string_view s);
 
 // Returns a well-formed Unicode string. Replaces any ill-formed
 // subsequences with the Unicode REPLACEMENT CHARACTER (U+FFFD).

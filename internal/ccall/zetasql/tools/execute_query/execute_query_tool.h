@@ -20,6 +20,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <utility>
 
@@ -51,8 +52,16 @@ class ExecuteQueryConfig {
     // Parse the query, and print a debug string of the parsed AST.
     kParse,
 
+    // Parse the query, print an 'unparse' of the input using the parsers
+    // Unparse API. Should be semantically equivalent.
+    kUnparse,
+
     // Resolve the query, and print the ResolveAST
     kResolve,
+
+    // Analyze the query, then run 'sqlbuilder' to produce a semantically
+    // equivalent sql query (...mostly).
+    kUnAnalyze,
 
     // Prepare the query, and print a representation of the query from the
     // reference implementation.
@@ -84,6 +93,13 @@ class ExecuteQueryConfig {
     return evaluator_options_;
   }
   EvaluatorOptions& mutable_evaluator_options() { return evaluator_options_; }
+
+  const ParameterValueMap& query_parameter_values() {
+    return query_parameter_values_;
+  }
+  ParameterValueMap& mutable_query_parameter_values() {
+    return query_parameter_values_;
+  }
 
   // Defaults matches SimpleCatalog("").
   SimpleCatalog& mutable_catalog() { return catalog_; }
@@ -122,6 +138,7 @@ class ExecuteQueryConfig {
   AnalyzerOptions analyzer_options_;
   SimpleCatalog catalog_;
   EvaluatorOptions evaluator_options_;
+  ParameterValueMap query_parameter_values_;
   const google::protobuf::DescriptorPool* descriptor_pool_ = nullptr;
   std::unique_ptr<const google::protobuf::DescriptorPool> owned_descriptor_pool_;
   std::unique_ptr<google::protobuf::DescriptorDatabase> descriptor_db_;
@@ -158,6 +175,9 @@ absl::Status SetAnalyzerOptionsFromFlags(ExecuteQueryConfig& config);
 
 absl::Status SetEvaluatorOptionsFromFlags(ExecuteQueryConfig& config);
 
+// Set query parameters in analyzer options as well as for use in the evaluator.
+absl::Status SetQueryParametersFromFlags(ExecuteQueryConfig& config);
+
 // Execute the query according to `config`. `config` is logically const, but due
 // to ZetaSQL calling conventions related to Catalog objects, must be
 // non-const.
@@ -171,10 +191,12 @@ ABSL_DECLARE_FLAG(std::string, mode);
 ABSL_DECLARE_FLAG(zetasql::internal::EnabledAstRewrites,
                   enabled_ast_rewrites);
 ABSL_DECLARE_FLAG(std::string, product_mode);
+ABSL_DECLARE_FLAG(bool, strict_name_resolution_mode);
 ABSL_DECLARE_FLAG(std::string, sql_mode);
 ABSL_DECLARE_FLAG(std::string, table_spec);
 ABSL_DECLARE_FLAG(std::string, descriptor_pool);
 ABSL_DECLARE_FLAG(std::string, output_mode);
+ABSL_DECLARE_FLAG(std::string, parameters);
 ABSL_DECLARE_FLAG(int64_t, evaluator_max_value_byte_size);
 ABSL_DECLARE_FLAG(int64_t, evaluator_max_intermediate_byte_size);
 

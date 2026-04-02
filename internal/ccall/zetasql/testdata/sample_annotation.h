@@ -17,6 +17,8 @@
 #ifndef ZETASQL_TESTDATA_SAMPLE_ANNOTATION_H_
 #define ZETASQL_TESTDATA_SAMPLE_ANNOTATION_H_
 
+#include <vector>
+
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/annotation.h"
 #include "absl/status/status.h"
@@ -65,6 +67,12 @@ class SampleAnnotation : public AnnotationSpec {
 
   absl::Status CheckAndPropagateForSetOperationScan(
       const ResolvedSetOperationScan& set_operation_scan,
+      const std::vector<AnnotationMap*>& result_annotation_maps) override {
+    return absl::OkStatus();
+  }
+
+  absl::Status CheckAndPropagateForRecursiveScan(
+      const ResolvedRecursiveScan& recursive_scan,
       const std::vector<AnnotationMap*>& result_annotation_maps) override {
     return absl::OkStatus();
   }

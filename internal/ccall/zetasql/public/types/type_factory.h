@@ -22,6 +22,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -38,6 +39,7 @@
 #include "zetasql/public/types/struct_type.h"
 #include "zetasql/public/types/type.h"
 #include "absl/base/attributes.h"
+#include "absl/base/macros.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
@@ -91,7 +93,7 @@ namespace internal {  // For internal use only
 // more granular memory management and avoid checks for cycles between
 // TypeStores.
 // TODO: Should TypeStore have a DescriptorPool?
-class TypeStore {
+class TypeStore final {
  public:
 #ifndef SWIG
   TypeStore(const TypeStore&) = delete;
@@ -108,7 +110,7 @@ class TypeStore {
   void Ref() const;
   void Unref() const;
 
-  // Use our own ref counter because zetasql_base::SimpleReferenceCounted uses int32_t for its
+  // Use our own ref counter because SimpleReferenceCounted uses int32_t for its
   // counter, which could be not enough to count references from all values.
   // Ref count is 1 for type factory that creates it.
   mutable std::atomic<int64_t> ref_count_{1};
@@ -150,6 +152,18 @@ struct CatalogName {
   absl::InlinedVector<std::string, 1> path;
   // Backticked path components.
   const std::string* path_string = nullptr;
+};
+
+// Class to keep certain certain functions on TypeFactory internal to zetasql.
+class TypeFactoryHelper {
+ public:
+#ifndef SWIG
+  TypeFactoryHelper() = delete;
+#endif
+  static absl::Status MakeOpaqueEnumType(
+      class zetasql::TypeFactory* type_factory,
+      const google::protobuf::EnumDescriptor* enum_descriptor, const EnumType** result,
+      absl::Span<const std::string> catalog_name_path);
 };
 
 }  // namespace internal
@@ -251,6 +265,8 @@ class TypeFactory {
   absl::Status MakeRangeType(const Type* element_type,
                              const RangeType** result);
   absl::Status MakeRangeType(const Type* element_type, const Type** result);
+  absl::Status MakeRangeType(const google::protobuf::FieldDescriptor* field,
+                             const Type** result);
 
   // Stores the unique copy of an ExtendedType in the TypeFactory. If such
   // extended type already exists in the cache, frees `extended_type` and
@@ -310,25 +326,52 @@ class TypeFactory {
   // and the returned type is that of which ZetaSQL sees before applying any
   // annotations or automatic conversions. This function always ignores (does
   // not unwrap) is_struct and is_wrapper annotations.
+  absl::Status GetProtoFieldType(
+      bool ignore_annotations, const google::protobuf::FieldDescriptor* field_descr,
+      absl::Span<const std::string> catalog_name_path, const Type** type);
+  ABSL_DEPRECATED("Inline me!")
   absl::Status GetProtoFieldType(bool ignore_annotations,
                                  const google::protobuf::FieldDescriptor* field_descr,
-                                 const Type** type);
+                                 const Type** type) {
+    return GetProtoFieldType(ignore_annotations, field_descr,
+                             /*catalog_name_path=*/{}, type);
+  }
 
   // Get the Type for a proto field.
   // This is the same as the above signature with ignore_annotations = false.
   //
   // NOTE: There is a similar method GetProtoFieldTypeAndDefault in proto_util.h
   // that also extracts the default value.
+  absl::Status GetProtoFieldType(
+      const google::protobuf::FieldDescriptor* field_descr,
+      absl::Span<const std::string> catalog_name_path, const Type** type) {
+    return GetProtoFieldType(/*ignore_annotations=*/false, field_descr,
+                             catalog_name_path, type);
+  }
+
+  // Get the Type for a proto field.
+  // This is the same as the above signature with <ignore_annotations> = false
+  // and an empty <catalog_name_path>.
+  ABSL_DEPRECATED("Inline me!")
   absl::Status GetProtoFieldType(const google::protobuf::FieldDescriptor* field_descr,
                                  const Type** type) {
-    return GetProtoFieldType(/*ignore_annotations=*/false, field_descr, type);
+    return GetProtoFieldType(/*ignore_annotations=*/false, field_descr,
+                             /*catalog_name_path=*/{}, type);
   }
+
   // DEPRECATED: Callers should remove their dependencies on obsolete types and
   // move to the method above.
   ABSL_DEPRECATED("Obsolete timestamp types are deprecated")
+  absl::Status GetProtoFieldType(
+      const google::protobuf::FieldDescriptor* field_descr, bool use_obsolete_timestamp,
+      absl::Span<const std::string> catalog_name_path, const Type** type);
+  ABSL_DEPRECATED("Inline me!")
   absl::Status GetProtoFieldType(const google::protobuf::FieldDescriptor* field_descr,
                                  bool use_obsolete_timestamp,
-                                 const Type** type);
+                                 const Type** type) {
+    return GetProtoFieldType(field_descr, use_obsolete_timestamp,
+                             /*catalog_name_path=*/{}, type);
+  }
 
   // Deserializes and creates an instance of AnnotationMap from <proto>.
   absl::Status DeserializeAnnotationMap(const AnnotationMapProto& proto,
@@ -403,6 +446,11 @@ class TypeFactory {
   int64_t GetEstimatedOwnedMemoryBytesSize() const;
 
  private:
+  // This is only for internal uses.
+  absl::Status MakeOpaqueEnumType(
+      const google::protobuf::EnumDescriptor* enum_descriptor, const EnumType** result,
+      absl::Span<const std::string> catalog_name_path = {});
+
   // Add <type> into <owned_types_>.  Templated so it can return the
   // specific subclass of Type.
   template <class TYPE>
@@ -424,15 +472,23 @@ class TypeFactory {
   void AddDependency(const Type* other_type)
       ABSL_LOCKS_EXCLUDED(store_->mutex_);
 
-  // Returns TypeProto or TypeEnum.
-  template <typename Descriptor>
-  const auto* MakeDescribedType(const Descriptor* descriptor,
-                                absl::Span<const std::string> catalog_name_path)
+  const ProtoType* MakeProtoTypeImpl(
+      const google::protobuf::Descriptor* descriptor,
+      absl::Span<const std::string> catalog_name_path)
       ABSL_LOCKS_EXCLUDED(store_->mutex_);
 
-  template <typename Descriptor>
-  const auto*& FindOrCreateCachedType(const Descriptor* descriptor,
-                                      const internal::CatalogName* catalog)
+  const EnumType* MakeEnumTypeImpl(
+      const google::protobuf::EnumDescriptor* descriptor,
+      absl::Span<const std::string> catalog_name_path, bool is_opaque)
+      ABSL_LOCKS_EXCLUDED(store_->mutex_);
+
+  const ProtoType*& FindOrCreateCachedType(const google::protobuf::Descriptor* descriptor,
+                                           const internal::CatalogName* catalog)
+      ABSL_EXCLUSIVE_LOCKS_REQUIRED(store_->mutex_);
+
+  const EnumType*& FindOrCreateCachedType(
+      const google::protobuf::EnumDescriptor* descriptor,
+      const internal::CatalogName* catalog, bool is_opaque)
       ABSL_EXCLUSIVE_LOCKS_REQUIRED(store_->mutex_);
 
   // Find or create cached catalog name.
@@ -446,7 +502,7 @@ class TypeFactory {
   // FieldDescriptorToTypeKindBase().
   absl::Status GetProtoFieldTypeWithKind(
       const google::protobuf::FieldDescriptor* field_descr, TypeKind kind,
-      const Type** type);
+      absl::Span<const std::string> catalog_name_path, const Type** type);
 
   // Returns an ArrayType or RangeType.
   template <class TYPE>
@@ -474,13 +530,16 @@ class TypeFactory {
       std::set<const google::protobuf::Descriptor*>* ancestor_messages);
 
   friend class internal::TypeStoreHelper;
+  friend class internal::TypeFactoryHelper;
 
   absl::flat_hash_map<const Type*, const ArrayType*> cached_array_types_
       ABSL_GUARDED_BY(store_->mutex_);
   absl::flat_hash_map<const google::protobuf::Descriptor*, const ProtoType*>
       cached_proto_types_ ABSL_GUARDED_BY(store_->mutex_);
+
   absl::flat_hash_map<const google::protobuf::EnumDescriptor*, const EnumType*>
       cached_enum_types_ ABSL_GUARDED_BY(store_->mutex_);
+
   absl::flat_hash_map<const Type*, const RangeType*> cached_range_types_
       ABSL_GUARDED_BY(store_->mutex_);
 
@@ -489,10 +548,12 @@ class TypeFactory {
       std::pair<const google::protobuf::Descriptor*, const internal::CatalogName*>,
       const ProtoType*>
       cached_proto_types_with_catalog_name_ ABSL_GUARDED_BY(store_->mutex_);
+
   absl::flat_hash_map<
-      std::pair<const google::protobuf::EnumDescriptor*, const internal::CatalogName*>,
+      std::tuple<const google::protobuf::EnumDescriptor*, const internal::CatalogName*,
+                 bool /*is_opaque*/>,
       const EnumType*>
-      cached_enum_types_with_catalog_name_ ABSL_GUARDED_BY(store_->mutex_);
+      cached_enum_types_with_extra_attributes_ ABSL_GUARDED_BY(store_->mutex_);
 
   // The key is a catalog name path.
   absl::node_hash_map<std::string, internal::CatalogName> cached_catalog_names_
@@ -571,10 +632,24 @@ const EnumType* DatePartEnumType();
 const EnumType* NormalizeModeEnumType();
 
 // Accessor for the ZetaSQL enum Type (functions::RoundingMode)
-// that that represents the rounding mode to be used as the third optional
+// that represents the rounding mode to be used as the third optional
 // argument of the ROUND function, which determines how the input value
 // will be rounded.
+// This is an opaque enum type.
 const EnumType* RoundingModeEnumType();
+
+// Accessor for the ZetaSQL enum Type
+// (functions::ArrayFindEnums::ArrayFindMode) that represents the array find
+// mode to be used as the third optional argument of the ARRAY_OFFSET and
+// ARRAY_FIND function. When there are multiple array elements that satisfy the
+// find condition, the enum controls the behavior of which element to return.
+// This is an opaque enum type.
+const EnumType* ArrayFindModeEnumType();
+
+// Accessor for the ZetaSQL enum Type
+// (differential_privacy::DifferentialPrivacyEnums::ReportFormat) that
+// represents the report output format for differential privacy functions.
+const EnumType* DifferentialPrivacyReportFormatEnumType();
 
 // Return a type of 'type_kind' if 'type_kind' is a simple type, otherwise
 // returns nullptr. This is similar to TypeFactory::MakeSimpleType, but doesn't
@@ -588,6 +663,7 @@ const ArrayType* ArrayTypeFromSimpleTypeKind(TypeKind type_kind);
 // Returns a range type with element type of 'type_kind' if 'type_kind' is a
 // valid range type, otherwise returns nullptr.
 const RangeType* RangeTypeFromSimpleTypeKind(TypeKind type_kind);
+
 }  // namespace types
 
 }  // namespace zetasql

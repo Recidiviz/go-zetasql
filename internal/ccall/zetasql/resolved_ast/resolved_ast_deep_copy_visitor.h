@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "zetasql/base/logging.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_ast_visitor.h"
 #include "zetasql/resolved_ast/resolved_node.h"
@@ -181,7 +182,7 @@ namespace zetasql {
 //   DerivedDeepCopyVisitor copier;
 //   analyzer_output->resolved_statement()->Accept(&copier);
 //   std::unique_ptr<ResolvedNode> copied_root_node =
-//       copier.ConsumeRootNode<zetasql::ResolvedNode>());
+//       copier.ConsumeRootNode<zetasql::ResolvedNode>();
 //   // Do something with copied_root_node.
 //
 // Returns an error on unhandled node types. Reusable as long as no errors are
@@ -204,6 +205,14 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
     return ConsumeTopOfStack<ResolvedNodeType>();
   }
 
+  template <typename ResolvedNodeType>
+  static absl::StatusOr<std::unique_ptr<ResolvedNodeType>> Copy(
+      const ResolvedNodeType* node) {
+    ResolvedASTDeepCopyVisitor visitor;
+    ZETASQL_RETURN_IF_ERROR(node->Accept(&visitor));
+    return visitor.ConsumeRootNode<ResolvedNodeType>();
+  }
+
  protected:
   // Pushes a node onto the top of the stack. Used as an easy way to pass the
   // copied or modified node from the producer to the consumer. This should
@@ -218,7 +227,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   // The top object on the stack must be an instance of 'ResolvedNodeType'
   template <typename ResolvedNodeType>
   ResolvedNodeType* GetUnownedTopOfStack() const {
-    ZETASQL_DCHECK(!stack_.empty());
+    ZETASQL_DCHECK(!stack_.empty()) << "\n" << CurrentStackTrace()
+    ;
     if (stack_.empty() || stack_.top() == nullptr) {
       return nullptr;
     }
@@ -226,7 +236,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
       // When call requires the wrong type of node, try to fail tests helpfully.
       // In production, return nullptr and hope the caller can do better than
       // crash.
-      ZETASQL_LOG(DFATAL) << "Top of stack is not expected type.";
+      ZETASQL_LOG(DFATAL)
+          << "Top of stack is not expected type.\n"
+          << CurrentStackTrace();
       return nullptr;
     }
     return static_cast<ResolvedNodeType*>(stack_.top().get());
@@ -237,7 +249,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   // The top object on the stack must be an instance of 'ResolvedNodeType'
   template <typename ResolvedNodeType>
   std::unique_ptr<ResolvedNodeType> ConsumeTopOfStack() {
-    ZETASQL_DCHECK(!stack_.empty());
+    ZETASQL_DCHECK(!stack_.empty()) << "\n" << CurrentStackTrace();
     if (stack_.empty()) {
       return std::unique_ptr<ResolvedNodeType>();
     }
@@ -249,7 +261,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
       // When call requires the wrong type of node, try to fail tests helpfully.
       // In production, return nullptr and hope the caller can do better than
       // crash.
-      ZETASQL_LOG(DFATAL) << "Top of stack is not expected type.";
+      ZETASQL_LOG(DFATAL) << "Top of stack is not expected type.\n"
+          << CurrentStackTrace();
       return std::unique_ptr<ResolvedNodeType>();
     }
     std::unique_ptr<ResolvedNodeType> node(
@@ -262,7 +275,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   template <typename ResolvedNodeType>
   absl::StatusOr<std::unique_ptr<ResolvedNodeType>> ProcessNode(
       const ResolvedNodeType* node) {
-    ZETASQL_DCHECK(stack_.empty());
+    ZETASQL_DCHECK(stack_.empty()) << "\n" << CurrentStackTrace();
     if (node == nullptr) {
       return std::unique_ptr<ResolvedNodeType>();
     }
@@ -304,6 +317,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedExpressionColumn(
       const ResolvedExpressionColumn* node);
+
+  absl::Status CopyVisitResolvedCatalogColumnRef(
+      const ResolvedCatalogColumnRef* node);
 
   absl::Status CopyVisitResolvedColumnRef(
       const ResolvedColumnRef* node);
@@ -377,6 +393,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedWithExpr(
       const ResolvedWithExpr* node);
 
+  absl::Status CopyVisitResolvedExecuteAsRoleScan(
+      const ResolvedExecuteAsRoleScan* node);
+
   absl::Status CopyVisitResolvedModel(
       const ResolvedModel* node);
 
@@ -412,6 +431,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedAnonymizedAggregateScan(
       const ResolvedAnonymizedAggregateScan* node);
+
+  absl::Status CopyVisitResolvedDifferentialPrivacyAggregateScan(
+      const ResolvedDifferentialPrivacyAggregateScan* node);
 
   absl::Status CopyVisitResolvedSetOperationItem(
       const ResolvedSetOperationItem* node);
@@ -502,6 +524,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedCreateTableAsSelectStmt(
       const ResolvedCreateTableAsSelectStmt* node);
+
+  absl::Status CopyVisitResolvedCreateModelAliasedQuery(
+      const ResolvedCreateModelAliasedQuery* node);
 
   absl::Status CopyVisitResolvedCreateModelStmt(
       const ResolvedCreateModelStmt* node);
@@ -851,6 +876,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAnalyzeStmt(
       const ResolvedAnalyzeStmt* node);
 
+  absl::Status CopyVisitResolvedAuxLoadDataPartitionFilter(
+      const ResolvedAuxLoadDataPartitionFilter* node);
+
   absl::Status CopyVisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node);
 
@@ -866,6 +894,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedExpressionColumn(
       const ResolvedExpressionColumn* node) override;
+
+  absl::Status VisitResolvedCatalogColumnRef(
+      const ResolvedCatalogColumnRef* node) override;
 
   absl::Status VisitResolvedColumnRef(
       const ResolvedColumnRef* node) override;
@@ -939,6 +970,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedWithExpr(
       const ResolvedWithExpr* node) override;
 
+  absl::Status VisitResolvedExecuteAsRoleScan(
+      const ResolvedExecuteAsRoleScan* node) override;
+
   absl::Status VisitResolvedModel(
       const ResolvedModel* node) override;
 
@@ -974,6 +1008,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAnonymizedAggregateScan(
       const ResolvedAnonymizedAggregateScan* node) override;
+
+  absl::Status VisitResolvedDifferentialPrivacyAggregateScan(
+      const ResolvedDifferentialPrivacyAggregateScan* node) override;
 
   absl::Status VisitResolvedSetOperationItem(
       const ResolvedSetOperationItem* node) override;
@@ -1064,6 +1101,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedCreateTableAsSelectStmt(
       const ResolvedCreateTableAsSelectStmt* node) override;
+
+  absl::Status VisitResolvedCreateModelAliasedQuery(
+      const ResolvedCreateModelAliasedQuery* node) override;
 
   absl::Status VisitResolvedCreateModelStmt(
       const ResolvedCreateModelStmt* node) override;
@@ -1413,10 +1453,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAnalyzeStmt(
       const ResolvedAnalyzeStmt* node) override;
 
+  absl::Status VisitResolvedAuxLoadDataPartitionFilter(
+      const ResolvedAuxLoadDataPartitionFilter* node) override;
+
   absl::Status VisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node) override;
 
- private:
   // Copies the hint list from the original node to the copied node. This is
   // required, as hint_list is not a constructor arg, and the only way to
   // transfer ownership is to explicitly set it after constructing the copy.
@@ -1431,6 +1473,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
     return absl::OkStatus();
   }
 
+ private:
   // Copies the WITH GROUP_ROWS parameter list from the original node to the
   // copied node. This is required, as with_group_rows_parameter_list is not a
   // constructor arg, and the only way to transfer ownership is to explicitly

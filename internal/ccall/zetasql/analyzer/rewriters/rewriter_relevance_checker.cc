@@ -16,11 +16,15 @@
 
 #include "zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
 
+#include <optional>
+
 #include "zetasql/public/builtin_function.pb.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/sql_function.h"
 #include "zetasql/public/sql_tvf.h"
+#include "zetasql/public/sql_view.h"
 #include "zetasql/public/templated_sql_function.h"
+#include "zetasql/public/templated_sql_tvf.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_ast_visitor.h"
 #include "absl/status/status.h"
@@ -61,8 +65,23 @@ class RewriteApplicabilityChecker : public ResolvedASTVisitor {
     return DefaultVisit(node);
   }
 
+  absl::Status VisitResolvedDifferentialPrivacyAggregateScan(
+      const ResolvedDifferentialPrivacyAggregateScan* node) override {
+    applicable_rewrites_->insert(REWRITE_ANONYMIZATION);
+    return DefaultVisit(node);
+  }
+
   absl::Status VisitResolvedFunctionCall(
       const ResolvedFunctionCall* node) override {
+    // Identify functions that have rewriting configured in their function
+    // signatures, add those rewriters to the relevant set.
+    const FunctionSignature& signature = node->signature();
+    if (signature.HasEnabledRewriteImplementation()) {
+      applicable_rewrites_->insert(
+          signature.options().rewrite_options()->rewriter());
+      return DefaultVisit(node);
+    }
+
     if (node->function()->Is<SQLFunctionInterface>() ||
         node->function()->Is<TemplatedSQLFunction>()) {
       applicable_rewrites_->insert(REWRITE_INLINE_SQL_FUNCTIONS);
@@ -72,35 +91,14 @@ class RewriteApplicabilityChecker : public ResolvedASTVisitor {
       return DefaultVisit(node);
     }
 
-    // This switch is only for ZetaSQL built-ins.
+    // TODO: Migrate remaining functions (that do not have lambda
+    //     type arguments for now) to use FunctionSignatureRewriteOptions.
     switch (node->signature().context_id()) {
       case FN_PROTO_MAP_AT_KEY:
       case FN_SAFE_PROTO_MAP_AT_KEY:
       case FN_CONTAINS_KEY:
       case FN_MODIFY_MAP:
         applicable_rewrites_->insert(REWRITE_PROTO_MAP_FNS);
-        break;
-      case FN_ARRAY_TRANSFORM:
-      case FN_ARRAY_TRANSFORM_WITH_INDEX:
-      case FN_ARRAY_FILTER:
-      case FN_ARRAY_FILTER_WITH_INDEX:
-        applicable_rewrites_->insert(REWRITE_ARRAY_FILTER_TRANSFORM);
-        break;
-      case FN_ARRAY_INCLUDES:
-      case FN_ARRAY_INCLUDES_LAMBDA:
-      case FN_ARRAY_INCLUDES_ANY:
-      case FN_ARRAY_INCLUDES_ALL:
-        applicable_rewrites_->insert(REWRITE_ARRAY_INCLUDES);
-        break;
-      case FN_ARRAY_FIRST:
-      case FN_ARRAY_LAST:
-        applicable_rewrites_->insert(REWRITE_UNARY_FUNCTIONS);
-        break;
-      case FN_ARRAY_SLICE:
-        applicable_rewrites_->insert(REWRITE_TERNARY_FUNCTIONS);
-        break;
-      case FN_TYPEOF:
-        applicable_rewrites_->insert(REWRITE_TYPEOF_FUNCTION);
         break;
       case FN_ANON_COUNT:
       case FN_ANON_COUNT_STAR:
@@ -118,9 +116,6 @@ class RewriteApplicabilityChecker : public ResolvedASTVisitor {
       case FN_ANON_PERCENTILE_CONT_DOUBLE_ARRAY:
         applicable_rewrites_->insert(REWRITE_ANONYMIZATION);
         break;
-      case FN_NULLIFERROR:
-        applicable_rewrites_->insert(REWRITE_NULLIFERROR_FUNCTION);
-        break;
       case FN_STRING_ARRAY_LIKE_ANY:
       case FN_BYTE_ARRAY_LIKE_ANY:
       case FN_STRING_LIKE_ANY:
@@ -137,8 +132,17 @@ class RewriteApplicabilityChecker : public ResolvedASTVisitor {
     return DefaultVisit(node);
   }
 
+  absl::Status VisitResolvedTableScan(const ResolvedTableScan* node) override {
+    if (node->table()->Is<SQLView>()) {
+      applicable_rewrites_->insert(
+          ResolvedASTRewrite::REWRITE_INLINE_SQL_VIEWS);
+    }
+    return DefaultVisit(node);
+  }
+
   absl::Status VisitResolvedTVFScan(const ResolvedTVFScan* node) override {
-    if (node->tvf()->Is<SQLTableValuedFunction>()) {
+    if (node->tvf()->Is<SQLTableValuedFunction>() ||
+        node->tvf()->Is<TemplatedSQLTVF>()) {
       applicable_rewrites_->insert(ResolvedASTRewrite::REWRITE_INLINE_SQL_TVFS);
     }
     return DefaultVisit(node);
@@ -150,6 +154,7 @@ class RewriteApplicabilityChecker : public ResolvedASTVisitor {
 
 absl::StatusOr<absl::btree_set<ResolvedASTRewrite>> FindRelevantRewriters(
     const ResolvedNode* node) {
+  ZETASQL_RET_CHECK(node != nullptr);
   absl::btree_set<ResolvedASTRewrite> applicable_rewrites_;
   RewriteApplicabilityChecker checker(&applicable_rewrites_);
   ZETASQL_RETURN_IF_ERROR(node->Accept(&checker));

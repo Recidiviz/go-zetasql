@@ -33,12 +33,12 @@
 #include "zetasql/public/constant.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/procedure.h"
+#include "zetasql/public/sql_view.h"
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/annotation.h"
 #include "zetasql/public/types/type_deserializer.h"
 #include "zetasql/public/value.h"
-#include <cstdint>
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
@@ -51,6 +51,7 @@
 
 namespace zetasql {
 
+class ResolvedScan;
 class SimpleCatalogProto;
 class SimpleColumn;
 class SimpleColumnProto;
@@ -87,6 +88,10 @@ class SimpleCatalog : public EnumerableCatalog {
   absl::Status GetConnection(const std::string& name,
                              const Connection** connection,
                              const FindOptions& options) override
+      ABSL_LOCKS_EXCLUDED(mutex_);
+
+  absl::Status GetSequence(const std::string& name, const Sequence** sequence,
+                           const FindOptions& options) override
       ABSL_LOCKS_EXCLUDED(mutex_);
 
   absl::Status GetFunction(const std::string& name, const Function** function,
@@ -126,6 +131,7 @@ class SimpleCatalog : public EnumerableCatalog {
       const absl::Span<const std::string>& mistyped_path) override;
   std::string SuggestConstant(
       const absl::Span<const std::string>& mistyped_path) override;
+
   // TODO: Implement SuggestModel function.
   // TODO: Implement SuggestConnection function.
 
@@ -177,6 +183,11 @@ class SimpleCatalog : public EnumerableCatalog {
   void AddConnection(const std::string& name, const Connection* connection)
       ABSL_LOCKS_EXCLUDED(mutex_);
   void AddConnection(const Connection* connection) ABSL_LOCKS_EXCLUDED(mutex_);
+
+  // Sequences
+  void AddSequence(const std::string& name, const Sequence* sequence)
+      ABSL_LOCKS_EXCLUDED(mutex_);
+  void AddSequence(const Sequence* sequence) ABSL_LOCKS_EXCLUDED(mutex_);
 
   // Types
   void AddType(const std::string& name, const Type* type)
@@ -275,6 +286,10 @@ class SimpleCatalog : public EnumerableCatalog {
                                  ZetaSQLBuiltinFunctionOptions())
       ABSL_LOCKS_EXCLUDED(mutex_);
 
+  absl::Status AddZetaSQLFunctionsAndTypes(
+      const ZetaSQLBuiltinFunctionOptions& options =
+          ZetaSQLBuiltinFunctionOptions()) ABSL_LOCKS_EXCLUDED(mutex_);
+
   // Add ZetaSQL built-in function definitions into this catalog.
   // This can add functions in both the global namespace and more specific
   // namespaces. If any of the selected functions are in namespaces,
@@ -315,6 +330,24 @@ class SimpleCatalog : public EnumerableCatalog {
   // <predicate> are complete so that <predicate> can safely
   // de-reference Function*s it captures from the invoking context.
   int RemoveFunctions(std::function<bool(const Function*)> predicate)
+      ABSL_LOCKS_EXCLUDED(mutex_);
+  // Implements RemoveFunction without de-allocating any owned functions.
+  // Owned functions are insteawd transerred to 'removed' and the invoking
+  // context is responsible for de-allocation.
+  int RemoveFunctions(std::function<bool(const Function*)> predicate,
+                      std::vector<std::unique_ptr<const Function>>& removed)
+      ABSL_LOCKS_EXCLUDED(mutex_) {
+    absl::MutexLock l(&mutex_);
+    return RemoveFunctionsLocked(predicate, removed);
+  }
+
+  // Removes all types that satisfy <predicate> from this catalog and from
+  // all sub-catalogs that are SimpleCatalog. Returns the number of types
+  // removed.
+  //
+  // All types continue to be owned by the TypeFactory, so no deallocation
+  // will occur.
+  int RemoveTypes(std::function<bool(const Type*)> predicate)
       ABSL_LOCKS_EXCLUDED(mutex_);
 
   // Removes all table valued functions that satisfy <predicate> from this
@@ -408,7 +441,8 @@ class SimpleCatalog : public EnumerableCatalog {
 
  protected:
   absl::Status DeserializeImpl(const SimpleCatalogProto& proto,
-                               const TypeDeserializer& type_deserializer);
+                               const TypeDeserializer& type_deserializer,
+                               SimpleCatalog* catalog);
 
  private:
   friend class SimpleCatalogTestFriend;
@@ -442,15 +476,6 @@ class SimpleCatalog : public EnumerableCatalog {
   void AddConstantLocked(const std::string& name, const Constant* constant)
       ABSL_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Implements RemoveFunction without de-allocating any owned functions.
-  // Owned functions are insteawd transerred to 'removed' and the invoking
-  // context is responsible for de-allocation.
-  int RemoveFunctions(std::function<bool(const Function*)> predicate,
-                      std::vector<std::unique_ptr<const Function>>& removed)
-      ABSL_LOCKS_EXCLUDED(mutex_) {
-    absl::MutexLock l(&mutex_);
-    return RemoveFunctionsLocked(predicate, removed);
-  }
   int RemoveFunctionsLocked(
       std::function<bool(const Function*)> predicate,
       std::vector<std::unique_ptr<const Function>>& removed)
@@ -476,6 +501,9 @@ class SimpleCatalog : public EnumerableCatalog {
       bool is_table_valued_function,
       absl::Span<const std::string> mistyped_path);
 
+  absl::Status AddZetaSQLFunctionsAndTypesImpl(
+      const ZetaSQLBuiltinFunctionOptions& options, bool add_types);
+
   const std::string name_;
 
   mutable absl::Mutex mutex_;
@@ -484,9 +512,15 @@ class SimpleCatalog : public EnumerableCatalog {
   TypeFactory* type_factory_ ABSL_GUARDED_BY(mutex_);
   std::unique_ptr<TypeFactory> owned_type_factory_ ABSL_GUARDED_BY(mutex_);
 
+  // global_names_ is to avoid naming conflict of top tier objects including
+  // tables etc. When inserting into tables_, insert into global_names
+  // as well
+  absl::flat_hash_set<std::string> global_names_ ABSL_GUARDED_BY(mutex_);
   absl::flat_hash_map<std::string, const Table*> tables_
       ABSL_GUARDED_BY(mutex_);
   absl::flat_hash_map<std::string, const Connection*> connections_
+      ABSL_GUARDED_BY(mutex_);
+  absl::flat_hash_map<std::string, const Sequence*> sequences_
       ABSL_GUARDED_BY(mutex_);
   absl::flat_hash_map<std::string, const Model*> models_
       ABSL_GUARDED_BY(mutex_);
@@ -508,6 +542,8 @@ class SimpleCatalog : public EnumerableCatalog {
   std::vector<std::unique_ptr<const Model>> owned_models_
       ABSL_GUARDED_BY(mutex_);
   std::vector<std::unique_ptr<const Connection>> owned_connections_
+      ABSL_GUARDED_BY(mutex_);
+  std::vector<std::unique_ptr<const Sequence>> owned_sequences_
       ABSL_GUARDED_BY(mutex_);
   std::vector<std::unique_ptr<const Function>> owned_functions_
       ABSL_GUARDED_BY(mutex_);
@@ -543,16 +579,16 @@ class SimpleTable : public Table {
   typedef std::pair<std::string, const Type*> NameAndType;
   typedef std::pair<std::string, AnnotatedType> NameAndAnnotatedType;
   SimpleTable(absl::string_view name, const std::vector<NameAndType>& columns,
-              const int64_t serialization_id = 0);
+              int64_t serialization_id = 0);
   SimpleTable(absl::string_view name,
               const std::vector<NameAndAnnotatedType>& columns,
-              const int64_t serialization_id = 0);
+              int64_t serialization_id = 0);
 
   // Make a table with the given Columns.
   // Crashes if there are duplicate column names.
   // Takes ownership of elements of <columns> if <take_ownership> is true.
   SimpleTable(absl::string_view name, const std::vector<const Column*>& columns,
-              bool take_ownership = false, const int64_t serialization_id = 0);
+              bool take_ownership = false, int64_t serialization_id = 0);
 
   // Make a value table with row type <row_type>.
   // This constructor inserts a single column of type <row_type> into
@@ -563,10 +599,10 @@ class SimpleTable : public Table {
   // only be able to find the column with name "value", not the top level table
   // columns of this SimpleTable (and the top level table columns of this
   // SimpleTable do not have an associated Column).
-  SimpleTable(absl::string_view, const Type* row_type, const int64_t id = 0);
+  SimpleTable(absl::string_view, const Type* row_type, int64_t id = 0);
 
   // Make a table with no Columns.  (Other constructors are ambiguous for this.)
-  explicit SimpleTable(absl::string_view, const int64_t id = 0);
+  explicit SimpleTable(absl::string_view, int64_t id = 0);
 
   SimpleTable(const SimpleTable&) = delete;
   SimpleTable& operator=(const SimpleTable&) = delete;
@@ -704,19 +740,6 @@ class SimpleTable : public Table {
   static absl::StatusOr<std::unique_ptr<SimpleTable>> Deserialize(
       const SimpleTableProto& proto, const TypeDeserializer& deserializer);
 
-  // Deserialize SimpleTable from proto. Types will be deserialized using
-  // the given TypeFactory and Descriptors from the given DescriptorPools.
-  // The DescriptorPools should have been created by type serialization for
-  // columns, and all proto type are treated as references into these pools.
-  // The TypeFactory and the DescriptorPools must both outlive the result
-  // SimpleTable.
-  ABSL_DEPRECATED("Inline me!")
-  static absl::Status Deserialize(
-      const SimpleTableProto& proto,
-      const std::vector<const google::protobuf::DescriptorPool*>& pools,
-      TypeFactory* factory,
-      std::unique_ptr<SimpleTable>* result);
-
  protected:
   // Returns the current contents (passed to the last call to SetContents()) in
   // column-major order.
@@ -762,6 +785,59 @@ class SimpleTable : public Table {
       const std::string& column_name);
 };
 
+// SimpleSQLView is a concrete implementation of the SQLView interface.
+class SimpleSQLView : public SQLView {
+ public:
+  struct NameAndType {
+    std::string name;
+    const Type* type;
+  };
+
+  // Create a new SQLView object. The lifetime of 'query' must meet or
+  // exceed the liftime of the created SimpleSQLView object. SimpleSQLView does
+  // not take ownership of 'query'.
+  static absl::StatusOr<std::unique_ptr<SimpleSQLView>> Create(
+      absl::string_view name, std::vector<NameAndType> columns,
+      SqlSecurity security, bool is_value_table, const ResolvedScan* query);
+
+  SqlSecurity sql_security() const override { return security_; }
+  const ResolvedScan* view_query() const override { return query_; }
+
+  std::string Name() const override { return name_; }
+  std::string FullName() const override { return name_; }
+
+  int NumColumns() const override {
+    return static_cast<int>(owned_columns_.size());
+  }
+  const Column* GetColumn(int i) const override {
+    return owned_columns_[i].get();
+  }
+  const Column* FindColumnByName(const std::string& name) const override {
+    return columns_map_.at(name);
+  }
+  bool IsValueTable() const override { return is_value_table_; }
+
+ private:
+  std::string name_;
+  SqlSecurity security_;
+  bool is_value_table_;
+  const ResolvedScan* query_;
+  std::vector<std::unique_ptr<const Column>> owned_columns_;
+  absl::flat_hash_map<const std::string, const Column*> columns_map_;
+
+  SimpleSQLView(absl::string_view name, SqlSecurity security,
+                bool is_value_table, const ResolvedScan* query)
+      : name_(name),
+        security_(security),
+        is_value_table_(is_value_table),
+        query_(query) {}
+
+  void AddColumn(std::unique_ptr<const Column> column) {
+    columns_map_[column->Name()] = column.get();
+    owned_columns_.emplace_back(std::move(column));
+  }
+};
+
 // SimpleModel is a concrete implementation of the Model interface.
 class SimpleModel : public Model {
  public:
@@ -769,7 +845,7 @@ class SimpleModel : public Model {
   // Crashes if there are duplicate column names.
   typedef std::pair<std::string, const Type*> NameAndType;
   SimpleModel(const std::string& name, const std::vector<NameAndType>& inputs,
-              const std::vector<NameAndType>& outputs, const int64_t id = 0);
+              const std::vector<NameAndType>& outputs, int64_t id = 0);
 
   // Make a model with the given inputs and outputs.
   // Crashes if there are duplicate column names.
@@ -777,7 +853,7 @@ class SimpleModel : public Model {
   // is true.
   SimpleModel(const std::string& name, const std::vector<const Column*>& inputs,
               const std::vector<const Column*>& outputs,
-              bool take_ownership = false, const int64_t id = 0);
+              bool take_ownership = false, int64_t id = 0);
 
   SimpleModel(const SimpleModel&) = delete;
   SimpleModel& operator=(const SimpleModel&) = delete;
@@ -838,9 +914,30 @@ class SimpleConnection : public Connection {
   const std::string name_;
 };
 
+class SimpleSequence : public Sequence {
+ public:
+  explicit SimpleSequence(absl::string_view name) : name_(name) {}
+  SimpleSequence(const SimpleSequence&) = delete;
+  SimpleSequence& operator=(const Sequence&) = delete;
+
+  std::string Name() const override { return name_; }
+  std::string FullName() const override { return name_; }
+
+ private:
+  const std::string name_;
+};
+
 // SimpleColumn is a concrete implementation of the Column interface.
 class SimpleColumn : public Column {
  public:
+  // Optional column expression attributes.
+  // Used to store the string and ResolvedExpr versions of default value
+  // expressions.
+  struct ExpressionAttributes {
+    std::string expression_string;
+    const ResolvedExpr* resolved_expr = nullptr;
+  };
+
   // Optional column attributes.
   //
   // Example use:
@@ -858,33 +955,39 @@ class SimpleColumn : public Column {
     // Whether an unwritable column can be set to DEFAULT in an UPDATE DML
     // statement.
     bool can_update_unwritable_to_default = false;
+
+    // Whether the column has a default value.
+    bool has_default_value = false;
+
+    // An optional attribute for column expression;
+    std::optional<ExpressionAttributes> column_expression = std::nullopt;
   };
 
   // Constructor.
   // This will soon be replaced by:
-  //   SimpleColumn(const std::string& table_name, const std::string& name,
+  //   SimpleColumn(absl::string_view table_name, absl::string_view name,
   //                const Type* type);
   // Use the Attributes overload below instead of optional args.
-  SimpleColumn(const std::string& table_name, const std::string& name,
+  SimpleColumn(absl::string_view table_name, absl::string_view name,
                const Type* type, bool is_pseudo_column = false,
                bool is_writable_column = true)
       : SimpleColumn(table_name, name, type,
                      {.is_pseudo_column = is_pseudo_column,
                       .is_writable_column = is_writable_column}) {}
-  SimpleColumn(const std::string& table_name, const std::string& name,
+  SimpleColumn(absl::string_view table_name, absl::string_view name,
                const Type* type, const Attributes& attributes);
 
   // This will soon be replaced by:
-  //   SimpleColumn(const std::string& table_name, const std::string& name,
+  //   SimpleColumn(absl::string_view table_name, absl::string_view name,
   //                AnnotatedType annotated_type);
   // Use the Attributes overload below instead of optional args.
-  SimpleColumn(const std::string& table_name, const std::string& name,
+  SimpleColumn(absl::string_view table_name, absl::string_view name,
                AnnotatedType annotated_type, bool is_pseudo_column = false,
                bool is_writable_column = true)
       : SimpleColumn(table_name, name, annotated_type,
                      {.is_pseudo_column = is_pseudo_column,
                       .is_writable_column = is_writable_column}) {}
-  SimpleColumn(const std::string& table_name, const std::string& name,
+  SimpleColumn(absl::string_view table_name, absl::string_view name,
                AnnotatedType annotated_type, const Attributes& attributes);
 
   SimpleColumn(const SimpleColumn&) = delete;
@@ -907,6 +1010,32 @@ class SimpleColumn : public Column {
   }
   bool CanUpdateUnwritableToDefault() const override {
     return attributes_.can_update_unwritable_to_default;
+  }
+
+  bool HasDefaultValue() const override {
+    // The ResolvedExpr may not be analyzed yet.
+    return attributes_.has_default_value &&
+           attributes_.column_expression.has_value();
+  }
+
+  const ResolvedExpr* Expression() const override {
+    if (!attributes_.has_default_value) {
+      return nullptr;
+    }
+    if (attributes_.column_expression == std::nullopt) {
+      return nullptr;
+    }
+    return attributes_.column_expression->resolved_expr;
+  }
+
+  std::optional<std::string> ExpressionString() const override {
+    if (!attributes_.has_default_value) {
+      return std::nullopt;
+    }
+    if (attributes_.column_expression == std::nullopt) {
+      return std::nullopt;
+    }
+    return attributes_.column_expression->expression_string;
   }
 
   // Serialize this column into protobuf, the provided map is used to store
@@ -938,7 +1067,7 @@ class SimpleConstant : public Constant {
                              const Value& value,
                              std::unique_ptr<SimpleConstant>* simple_constant);
 
-  ~SimpleConstant() override {}
+  ~SimpleConstant() override = default;
 
   // This class is neither copyable nor assignable.
   SimpleConstant(const SimpleConstant& other_simple_constant) = delete;
@@ -966,6 +1095,8 @@ class SimpleConstant : public Constant {
   std::string DebugString() const override;
   // Same as the previous, but includes the Type debug string.
   std::string VerboseDebugString() const;
+
+  std::string ConstantValueDebugString() const override;
 
  private:
   SimpleConstant(std::vector<std::string> name_path, Value value)

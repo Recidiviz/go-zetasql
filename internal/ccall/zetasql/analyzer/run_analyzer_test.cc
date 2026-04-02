@@ -27,7 +27,8 @@
 
 #include "zetasql/base/atomic_sequence_num.h"
 #include "zetasql/base/logging.h"
-#include "google/protobuf/descriptor.h"
+#include "zetasql/base/enum_utils.h"
+#include "zetasql/analyzer/analyzer_output_mutator.h"
 #include "zetasql/analyzer/analyzer_test_options.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/base/testing/status_matchers.h"  
@@ -51,9 +52,11 @@
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/templated_sql_function.h"
 #include "zetasql/public/templated_sql_tvf.h"
+#include "zetasql/public/testing/test_case_options_util.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/annotation.h"
 #include "zetasql/public/types/struct_type.h"
+#include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/value.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
@@ -78,9 +81,11 @@
 #include "absl/algorithm/container.h"
 #include "absl/container/btree_map.h"
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/node_hash_set.h"
+#include "absl/flags/commandlineflag.h"
 #include "absl/flags/flag.h"
+#include "absl/flags/reflection.h"
 #include "absl/functional/bind_front.h"
-#include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/ascii.h"
@@ -98,6 +103,8 @@
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
+
+ABSL_DECLARE_FLAG(bool, zetasql_show_function_signature_mismatch_details);
 
 ABSL_FLAG(std::string, test_file, "", "location of test data file.");
 
@@ -241,9 +248,10 @@ namespace {
 absl::StatusOr<std::unique_ptr<AnalyzerOutput>> CopyAnalyzerOutput(
     const AnalyzerOutput& output) {
   ResolvedASTDeepCopyVisitor visitor;
+  std::unique_ptr<AnalyzerOutput> ret;
   if (output.resolved_statement() != nullptr) {
     ZETASQL_RETURN_IF_ERROR(output.resolved_statement()->Accept(&visitor));
-    return std::make_unique<AnalyzerOutput>(
+    ret = std::make_unique<AnalyzerOutput>(
         output.id_string_pool(), output.arena(),
         *visitor.ConsumeRootNode<ResolvedStatement>(),
         output.analyzer_output_properties(),
@@ -252,7 +260,7 @@ absl::StatusOr<std::unique_ptr<AnalyzerOutput>> CopyAnalyzerOutput(
         output.undeclared_positional_parameters(), output.max_column_id());
   } else if (output.resolved_expr() != nullptr) {
     ZETASQL_RETURN_IF_ERROR(output.resolved_expr()->Accept(&visitor));
-    return std::make_unique<AnalyzerOutput>(
+    ret = std::make_unique<AnalyzerOutput>(
         output.id_string_pool(), output.arena(),
         *visitor.ConsumeRootNode<ResolvedExpr>(),
         output.analyzer_output_properties(),
@@ -260,16 +268,20 @@ absl::StatusOr<std::unique_ptr<AnalyzerOutput>> CopyAnalyzerOutput(
         output.undeclared_parameters(),
         output.undeclared_positional_parameters(), output.max_column_id());
   }
-  ZETASQL_RET_CHECK_FAIL() << "No resolved AST in AnalyzerOutput";
+
+  ZETASQL_RET_CHECK(ret) << "No resolved AST in AnalyzerOutput";
+
+  AnalyzerOutputMutator(ret).mutable_runtime_info() = output.runtime_info();
+  return ret;
 }
 
 }  // namespace
 
 namespace {
 // Adds information from 'table_scan_groups' (if not empty) to '*output'.
+template <class NodeType>
 void OutputAnonymizationTableScanGroups(
-    const absl::flat_hash_map<const ResolvedTableScan*,
-                              const ResolvedAnonymizedAggregateScan*>&
+    const absl::flat_hash_map<const ResolvedTableScan*, const NodeType*>&
         table_scan_groups,
     std::string* output) {
   if (table_scan_groups.empty()) return;
@@ -279,7 +291,6 @@ void OutputAnonymizationTableScanGroups(
   // here.
   absl::btree_map<const std::string, std::multiset<std::string>>
       table_scan_string_map;
-
   for (auto resolved_table_scan_map_entry : table_scan_groups) {
     const std::string table_scan =
         resolved_table_scan_map_entry.first->DebugString();
@@ -319,24 +330,39 @@ class AnalyzerTestRunner {
     absl::SetFlag(&FLAGS_file_based_test_driver_insert_leading_blank_lines, 1);
   }
 
+  const std::vector<AnalyzerRuntimeInfo>& runtime_info_list() const {
+    return runtime_info_list_;
+  }
+
   // CatalogHolder is a wrapper of either a sample catalog or a special catalog,
   // depending on the value of catalog_name.
   class CatalogHolder {
    public:
+    // "suppressed_functions" is a comma separated list of built-in function
+    // names to exclude when using "SampleCatalog".
     CatalogHolder(const std::string& catalog_name,
+                  absl::string_view suppressed_functions,
                   const AnalyzerOptions& analyzer_options,
                   TypeFactory* type_factory) {
-      Init(catalog_name, analyzer_options, type_factory);
+      Init(catalog_name, suppressed_functions, analyzer_options, type_factory);
     }
     Catalog* catalog() { return catalog_; }
 
    private:
     void Init(const std::string& catalog_name,
+              absl::string_view suppressed_functions,
               const AnalyzerOptions& analyzer_options,
               TypeFactory* type_factory) {
       if (catalog_name == "SampleCatalog") {
         sample_catalog_ = std::make_unique<SampleCatalog>(
             analyzer_options.language(), type_factory);
+        for (absl::string_view fn_name :
+             absl::StrSplit(suppressed_functions, ',', absl::SkipEmpty())) {
+          sample_catalog_->catalog()->RemoveFunctions(
+              [fn_name](const Function* fn) {
+                return zetasql_base::CaseEqual(fn->Name(), fn_name);
+              });
+        }
         catalog_ = sample_catalog_->catalog();
       } else if (catalog_name == "SpecialCatalog") {
         special_catalog_ = GetSpecialCatalog();
@@ -358,9 +384,19 @@ class AnalyzerTestRunner {
       const AnalyzerOptions& analyzer_options,
       TypeFactory* type_factory) {
     const std::string catalog_name = test_case_options_.GetString(kUseCatalog);
+    absl::string_view suppressed_functions =
+        test_case_options_.GetString(kSuppressBuiltinFunctions);
     auto holder = std::make_unique<CatalogHolder>(
-        catalog_name, analyzer_options, type_factory);
+        catalog_name, suppressed_functions, analyzer_options, type_factory);
     return holder;
+  }
+
+  void InitializeLiteralReplacementOptions() {
+    literal_replacement_options_.ignored_option_names = absl::StrSplit(
+        test_case_options_.GetString(kOptionNamesToIgnoreInLiteralReplacement),
+        ',');
+    literal_replacement_options_.scrub_limit_offset =
+        test_case_options_.GetBool(kScrubLimitOffsetInLiteralReplacement);
   }
 
   void RunTest(absl::string_view test_case_input,
@@ -374,6 +410,9 @@ class AnalyzerTestRunner {
                        internal::StatusToString(options_status)));
       return;
     }
+
+    InitializeLiteralReplacementOptions();
+
     const std::string& mode = test_case_options_.GetString(kModeOption);
 
     TypeFactory type_factory;
@@ -488,6 +527,30 @@ class AnalyzerTestRunner {
     } else {
       FAIL() << "Unsupported error message mode '" << error_message_mode_string
              << "'";
+    }
+
+    absl::FlagSaver saver;
+    if (const std::string flags = test_case_options_.GetString(kSetFlag);
+        !flags.empty()) {
+      if (test_case_options_.GetBool(kRunInJava)) {
+        FAIL() << "Tests with set_flag should also be marked with no_java, "
+               << "because set_flag is not implemented in the Java analyzer "
+               << "test.";
+      }
+      for (const absl::string_view flag : absl::StrSplit(flags, ',')) {
+        const std::pair<absl::string_view, absl::string_view> split =
+            absl::StrSplit(flag, '=');
+        const absl::string_view key = split.first;
+        const absl::string_view value = split.second;
+        absl::CommandLineFlag* const flag_ref = absl::FindCommandLineFlag(key);
+        if (flag_ref == nullptr) {
+          FAIL() << "set_flag: no such flag: " << key;
+        }
+        if (std::string err; !flag_ref->ParseFrom(value, &err)) {
+          FAIL() << "set_flag: error parsing " << key << "=" << value << ": "
+                 << err;
+        }
+      }
     }
 
     const zetasql::Type* proto_type;
@@ -656,6 +719,20 @@ class AnalyzerTestRunner {
     options.set_preserve_unnecessary_cast(
         test_case_options_.GetBool(kPreserveUnnecessaryCast));
 
+    {
+      AllowedHintsAndOptions updated_hints_and_options =
+          options.allowed_hints_and_options();
+      std::string additional_allowed_anonymization_options_string =
+          test_case_options_.GetString(kAdditionalAllowedAnonymizationOptions);
+      for (const auto& option : absl::StrSplit(
+               additional_allowed_anonymization_options_string, ',')) {
+        if (option.empty()) continue;
+        updated_hints_and_options.AddAnonymizationOption(option,
+                                                         /*type=*/nullptr);
+      }
+      options.set_allowed_hints_and_options(updated_hints_and_options);
+    }
+
     SetupSampleSystemVariables(&type_factory, &options);
     auto catalog_holder = CreateCatalog(options, &type_factory);
 
@@ -675,9 +752,25 @@ class AnalyzerTestRunner {
                file_based_test_driver::RunTestCaseResult* test_result) {
     std::unique_ptr<const AnalyzerOutput> output;
     absl::Status status;
+    absl::Status detailed_sig_mismatch_status;
     if (mode == "statement") {
       status = AnalyzeStatement(test_case, options, catalog, type_factory,
                                 &output);
+      if (!status.ok() &&
+          test_case_options_.GetBool(kAlsoShowSignatureMismatchDetails) &&
+          absl::StrContains(status.message(), "No matching signature")) {
+        absl::FlagSaver flag_saver;
+        absl::SetFlag(&FLAGS_zetasql_show_function_signature_mismatch_details,
+                      true);
+        detailed_sig_mismatch_status = AnalyzeStatement(
+            test_case, options, catalog, type_factory, &output);
+        ZETASQL_CHECK(!detailed_sig_mismatch_status.ok())
+            << "Expecting 'No matching signature' error";
+      }
+
+      if (status.ok()) {
+        runtime_info_list_.push_back(output->runtime_info());
+      }
 
       // For AnalyzeStatementFromASTStatement()
       if (!test_case_options_.GetBool(kUseSharedIdSequence)) {
@@ -747,6 +840,17 @@ class AnalyzerTestRunner {
     } else if (mode == "expression") {
       status = AnalyzeExpression(test_case, options, catalog, type_factory,
                                  &output);
+      if (!status.ok() &&
+          test_case_options_.GetBool(kAlsoShowSignatureMismatchDetails) &&
+          absl::StrContains(status.message(), "No matching signature")) {
+        absl::FlagSaver flag_saver;
+        absl::SetFlag(&FLAGS_zetasql_show_function_signature_mismatch_details,
+                      true);
+        detailed_sig_mismatch_status = AnalyzeExpression(
+            test_case, options, catalog, type_factory, &output);
+        ZETASQL_CHECK(!detailed_sig_mismatch_status.ok())
+            << "Expecting 'No matching signature' error";
+      }
     } else if (mode == "type") {
       // Use special-case handler since we don't get a resolved AST.
       HandleOneType(test_case, options, catalog, type_factory, test_result);
@@ -772,7 +876,8 @@ class AnalyzerTestRunner {
         << ResolvedNodeKind_Name(extracted_statement_properties.node_kind);
 
     HandleOneResult(test_case, options, type_factory, catalog, mode, status,
-                    output, extracted_statement_properties, test_result);
+                    detailed_sig_mismatch_status, output,
+                    extracted_statement_properties, test_result);
   }
 
   void TestMulti(const std::string& test_case, const AnalyzerOptions& options,
@@ -807,7 +912,8 @@ class AnalyzerTestRunner {
           &location, options, catalog, type_factory, &output, &at_end_of_input);
 
       HandleOneResult(test_case, options, type_factory, catalog, mode, status,
-                      output, extracted_statement_properties, test_result);
+                      /*detailed_sig_mismatch_status=*/absl::OkStatus(), output,
+                      extracted_statement_properties, test_result);
 
       if (test_case_options_.GetBool(kTestExtractTableNames)) {
         CheckExtractNextTableNames(&location_for_extract_table_names,
@@ -1064,6 +1170,7 @@ class AnalyzerTestRunner {
       const std::string& test_case, const AnalyzerOptions& options,
       TypeFactory* type_factory, Catalog* catalog, const std::string& mode,
       const absl::Status& status,
+      const absl::Status& detailed_sig_mismatch_status,
       const std::unique_ptr<const AnalyzerOutput>& output,
       const StatementProperties& extracted_statement_properties,
       file_based_test_driver::RunTestCaseResult* test_result) {
@@ -1191,7 +1298,8 @@ class AnalyzerTestRunner {
       absl::StripAsciiWhitespace(&test_result_string);
     }
 
-    if (!test_case_options_.GetString(kParseLocationRecordType).empty() &&
+    if (mode == "statement" &&
+        !test_case_options_.GetString(kParseLocationRecordType).empty() &&
         !zetasql_base::CaseEqual(
             test_case_options_.GetString(kParseLocationRecordType),
             ParseLocationRecordType_Name(PARSE_LOCATION_RECORD_NONE)) &&
@@ -1243,6 +1351,7 @@ class AnalyzerTestRunner {
         rewrite_options.set_enabled_rewrites(rewrites);
         outcome.status = RewriteResolvedAst(rewrite_options, test_case, catalog,
                                             type_factory, *rewrite_output);
+
         if (outcome.status.ok() &&
             rewrite_output->resolved_statement() != nullptr) {
           outcome.ast_debug =
@@ -1266,10 +1375,16 @@ class AnalyzerTestRunner {
                           rewrite_output.get(), &outcome.unparsed);
           }
         }
-        OutputAnonymizationTableScanGroups(
-            rewrite_output->analyzer_output_properties()
-                .resolved_table_scan_to_anonymized_aggregate_scan_map,
-            &outcome.anon_table_scan_groups);
+        if (outcome.status.ok()) {
+          OutputAnonymizationTableScanGroups(
+              rewrite_output->analyzer_output_properties()
+                  .resolved_table_scan_to_anonymized_aggregate_scan_map,
+              &outcome.anon_table_scan_groups);
+          OutputAnonymizationTableScanGroups(
+              rewrite_output->analyzer_output_properties()
+                  .resolved_table_scan_to_dp_aggregate_scan_map,
+              &outcome.anon_table_scan_groups);
+        }
         std::string outcome_key = outcome.key();
         size_t outcome_index = 0;
         if (rewrite_group_result_map.contains(outcome_key)) {
@@ -1317,6 +1432,16 @@ class AnalyzerTestRunner {
     // an output string.
     if (!test_result_string.empty() || test_result->test_outputs().empty()) {
       test_result->AddTestOutput(test_result_string);
+    }
+    if (!detailed_sig_mismatch_status.ok()) {
+      std::string detailed_error =
+          absl::StrCat("ERROR: ", FormatError(detailed_sig_mismatch_status));
+      // Avoid printing the detailed error message in case it's the same as the
+      // first.
+      if (detailed_error != test_result_string) {
+        test_result->AddTestOutput(
+            absl::StrCat("Signature Mismatch Details:\n", detailed_error));
+      }
     }
 
     if (test_dumper_callback_ != nullptr) {
@@ -1599,7 +1724,9 @@ class AnalyzerTestRunner {
     if (stmt->node_kind() == RESOLVED_QUERY_STMT) {
       stmt->ClearFieldsAccessed();
 
-      Validator validator(options.language());
+      ValidatorOptions validator_options{
+          .allowed_hints_and_options = options.allowed_hints_and_options()};
+      Validator validator(options.language(), std::move(validator_options));
       ZETASQL_ASSERT_OK(validator.ValidateResolvedStatement(stmt));
 
       ZETASQL_EXPECT_OK(stmt->CheckFieldsAccessed())
@@ -2228,8 +2355,9 @@ class AnalyzerTestRunner {
     LiteralReplacementMap literal_map;
     GeneratedParameterMap generated_parameters;
     absl::Status status = ReplaceLiteralsByParameters(
-        sql, analyzer_options, analyzer_output,
-        &literal_map, &generated_parameters, &new_sql);
+        sql, literal_replacement_options_, analyzer_options,
+        analyzer_output->resolved_statement(), &literal_map,
+        &generated_parameters, &new_sql);
     if (status.ok()) {
       absl::StrAppend(result_string, "[REPLACED_LITERALS]\n", new_sql, "\n\n");
     } else {
@@ -2327,8 +2455,9 @@ class AnalyzerTestRunner {
     LiteralReplacementMap literal_map;
     GeneratedParameterMap generated_parameters;
     absl::Status status = ReplaceLiteralsByParameters(
-        sql, options, analyzer_output.get(),
-        &literal_map, &generated_parameters, &new_sql);
+        sql, literal_replacement_options_, options,
+        analyzer_output->resolved_statement(), &literal_map,
+        &generated_parameters, &new_sql);
     ZETASQL_EXPECT_OK(status) << dbg_info;
     ZETASQL_RETURN_IF_ERROR(status);
 
@@ -2390,8 +2519,9 @@ class AnalyzerTestRunner {
     LiteralReplacementMap new_literal_map;
     GeneratedParameterMap new_generated_parameters;
     status = ReplaceLiteralsByParameters(
-        new_sql, new_options, new_analyzer_output.get(),
-        &new_literal_map, &new_generated_parameters, &new_new_sql);
+        new_sql, literal_replacement_options_, new_options,
+        new_analyzer_output->resolved_statement(), &new_literal_map,
+        &new_generated_parameters, &new_new_sql);
     ZETASQL_EXPECT_OK(status) << dbg_info;
     ZETASQL_RETURN_IF_ERROR(status);
     EXPECT_EQ(new_sql, new_new_sql) << dbg_info;
@@ -2546,13 +2676,46 @@ class AnalyzerTestRunner {
   TestDumperCallback test_dumper_callback_ = nullptr;
   std::vector<std::unique_ptr<AnnotationSpec>>
       engine_specific_annotation_specs_;
+  std::vector<AnalyzerRuntimeInfo> runtime_info_list_;
+  LiteralReplacementOptions literal_replacement_options_;
 };
+
+void ValidateRuntimeInfo(const AnalyzerRuntimeInfo& info) {
+  // We can't really check the absolute values, since timers are weird. But
+  // we should able to check that some relative properties hold.
+  for (ResolvedASTRewrite rewriter :
+       zetasql_base::EnumerateEnumValues<ResolvedASTRewrite>()) {
+    EXPECT_LE(info.rewriters_details(rewriter).elapsed_duration(),
+              info.rewriters_timed_value().elapsed_duration());
+    if (info.rewriters_details(rewriter).elapsed_duration() >
+        absl::Duration{}) {
+      EXPECT_GE(info.rewriters_details(rewriter).count, 0);
+    }
+  }
+  EXPECT_GT(info.sum_elapsed_duration(), absl::ZeroDuration());
+  EXPECT_GT(info.parser_runtime_info().parser_elapsed_duration(),
+            absl::ZeroDuration());
+  EXPECT_GT(info.overall_timed_value().elapsed_duration(),
+            absl::ZeroDuration());
+  EXPECT_GT(info.log_entry().num_lexical_tokens(), 0);
+}
 
 bool RunAllTests(TestDumperCallback callback) {
   AnalyzerTestRunner runner(std::move(callback));
   std::string filename = absl::GetFlag(FLAGS_test_file);
-  return file_based_test_driver::RunTestCasesFromFiles(
+  bool result = file_based_test_driver::RunTestCasesFromFiles(
       filename, absl::bind_front(&AnalyzerTestRunner::RunTest, &runner));
+
+  AnalyzerRuntimeInfo aggregate_info;
+  for (const AnalyzerRuntimeInfo& info : runner.runtime_info_list()) {
+    ValidateRuntimeInfo(info);
+    aggregate_info.AccumulateAll(info);
+  }
+
+  ZETASQL_LOG(INFO) << "Aggregate Runtime Info:\n"
+            << aggregate_info.DebugString(runner.runtime_info_list().size());
+
+  return result;
 }
 
 class RunAnalyzerTest : public ::testing::Test {

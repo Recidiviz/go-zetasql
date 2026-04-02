@@ -19,17 +19,20 @@
 #include <algorithm>
 #include <cstdint>
 #include <functional>
+#include <map>
 #include <memory>
+#include <optional>
+#include <ostream>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "zetasql/base/logging.h"
-#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/common/evaluator_test_table.h"
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/common/testing/testing_proto_util.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/public/evaluator_table_iterator.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/simple_catalog.h"
@@ -58,6 +61,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/time/time.h"
 #include "absl/types/optional.h"
+#include "google/protobuf/wire_format_lite.h"
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
@@ -4285,7 +4289,7 @@ TEST_F(CreateIteratorTest, RootOp) {
 
 // Builds a join between two relations with 'tuple_count' tuples each with
 // matching values and a relation1_tuple < relation2_tuple join condition.
-absl::StatusOr<std::unique_ptr<JoinOp>> BuildTimeoutTestJoin(int tuple_count) {
+absl::StatusOr<std::unique_ptr<JoinOp>> BuildTestJoin(int tuple_count = 1) {
   VariableId x("x"), y("y"), yp("y'");
 
   std::vector<TupleData> input1_tuples;
@@ -4330,6 +4334,31 @@ absl::StatusOr<std::unique_ptr<JoinOp>> BuildTimeoutTestJoin(int tuple_count) {
   return join_op;
 }
 
+TEST(DeepJoinTest, DeeplyJoin) {
+  // Test that a very deep join does not crash
+  ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<RelationalOp> join_op, BuildTestJoin());
+
+  for (int64_t i = 0; i < 1000; ++i) {
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<RelationalOp> rhs_op, BuildTestJoin());
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<ValueExpr> join_expr,
+                         ConstExpr::Create(Value::Bool(true)));
+    ZETASQL_ASSERT_OK_AND_ASSIGN(
+        join_op,
+        JoinOp::Create(JoinOp::kCrossApply, EmptyHashJoinEqualityExprs(),
+                       std::move(join_expr), std::move(join_op),
+                       std::move(rhs_op), {}, {}));
+  }
+
+    EvaluationContext context((EvaluationOptions()));
+    ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<TupleIterator> iter,
+                         join_op->CreateIterator(
+                             EmptyParams(), /*num_extra_slots=*/0, &context));
+    absl::Status result = ReadFromTupleIterator(iter.get()).status();
+    if (!result.ok()) {
+      EXPECT_THAT(result, StatusIs(absl::StatusCode::kResourceExhausted));
+    }
+}
+
 const int kMediumJoinSize = 100;
 const int kLargeJoinSize = 1000;
 const absl::Duration kShortTimeout = absl::Milliseconds(30);
@@ -4339,7 +4368,7 @@ const absl::Duration kLongTimeout = absl::Seconds(10);
 // medium size join.
 TEST(TimeoutTest, NoTimeout) {
   ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<JoinOp> join_op,
-                       BuildTimeoutTestJoin(kMediumJoinSize));
+                       BuildTestJoin(kMediumJoinSize));
   EvaluationContext context((EvaluationOptions()));
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       std::unique_ptr<TupleIterator> iter,
@@ -4351,7 +4380,7 @@ TEST(TimeoutTest, NoTimeout) {
 // timeout error while executing a long join.
 TEST(TimeoutTest, ShortTimeout) {
   ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<JoinOp> join_op,
-                       BuildTimeoutTestJoin(kLargeJoinSize));
+                       BuildTestJoin(kLargeJoinSize));
   EvaluationContext context((EvaluationOptions()));
   context.SetStatementEvaluationDeadlineFromNow(kShortTimeout);
 
@@ -4370,7 +4399,7 @@ TEST(TimeoutTest, ShortTimeout) {
 // join.
 TEST(TimeoutTest, ShortTimeoutToNoDeadline) {
   ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<JoinOp> join_op,
-                       BuildTimeoutTestJoin(kMediumJoinSize));
+                       BuildTestJoin(kMediumJoinSize));
   EvaluationContext context((EvaluationOptions()));
   context.SetStatementEvaluationDeadlineFromNow(kShortTimeout);
   context.SetStatementEvaluationDeadline(absl::InfiniteFuture());
@@ -4384,7 +4413,7 @@ TEST(TimeoutTest, ShortTimeoutToNoDeadline) {
 // size join.
 TEST(TimeoutTest, LongTimeout) {
   ZETASQL_ASSERT_OK_AND_ASSIGN(std::unique_ptr<JoinOp> join_op,
-                       BuildTimeoutTestJoin(kMediumJoinSize));
+                       BuildTestJoin(kMediumJoinSize));
   EvaluationContext context((EvaluationOptions()));
   context.SetStatementEvaluationDeadlineFromNow(kLongTimeout);
   ZETASQL_ASSERT_OK_AND_ASSIGN(

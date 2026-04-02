@@ -17,6 +17,7 @@
 #ifndef ZETASQL_PARSER_PARSER_H_
 #define ZETASQL_PARSER_PARSER_H_
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
@@ -25,9 +26,11 @@
 
 #include "zetasql/base/arena.h"
 #include "zetasql/parser/ast_node_kind.h"
+#include "zetasql/parser/parser_runtime_info.h"
 #include "zetasql/parser/statement_properties.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
+#include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/variant.h"
 #include "zetasql/base/status.h"
@@ -45,6 +48,7 @@ class ParseResumeLocation;
 // ParserOptions contains options that affect parser behavior.
 class ParserOptions {
  public:
+  ABSL_DEPRECATED("Use the overload that accepts LanguageOptions.")
   ParserOptions();
   explicit ParserOptions(LanguageOptions language_options);
 
@@ -130,7 +134,9 @@ class ParserOutput {
       std::vector<std::unique_ptr<ASTNode>> other_allocated_ast_nodes,
       absl::variant<std::unique_ptr<ASTStatement>, std::unique_ptr<ASTScript>,
                     std::unique_ptr<ASTType>, std::unique_ptr<ASTExpression>>
-          node);
+          node,
+      std::unique_ptr<std::vector<absl::Status>> warnings,
+      ParserRuntimeInfo info = {});
   ParserOutput(const ParserOutput&) = delete;
   ParserOutput& operator=(const ParserOutput&) = delete;
   ~ParserOutput();
@@ -168,6 +174,10 @@ class ParserOutput {
   // ParserOptions.
   const std::shared_ptr<zetasql_base::UnsafeArena>& arena() const { return arena_; }
 
+  const std::vector<absl::Status>& warnings() const { return *warnings_; }
+
+  const ParserRuntimeInfo& runtime_info() const { return runtime_info_; }
+
  private:
   template<class T>
       T* GetNodeAs() const {
@@ -186,6 +196,10 @@ class ParserOutput {
   absl::variant<std::unique_ptr<ASTStatement>, std::unique_ptr<ASTScript>,
                 std::unique_ptr<ASTType>, std::unique_ptr<ASTExpression>>
       node_;
+
+  std::unique_ptr<std::vector<absl::Status>> warnings_;
+
+  ParserRuntimeInfo runtime_info_;
 };
 
 // Parses <statement_string> and returns the parser output in <output> upon
@@ -317,6 +331,12 @@ absl::Status ParseNextStatementProperties(
     const ParserOptions& parser_options,
     std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes,
     parser::ASTStatementProperties* ast_statement_properties);
+
+// Process the statement level hints in `ast_hints` and copy their key value
+// pairs into `hints_map`.
+absl::Status ProcessStatementLevelHintsToMap(
+    const ASTHint* ast_hints, absl::string_view sql_input,
+    absl::flat_hash_map<std::string, std::string>& hints_map);
 
 }  // namespace zetasql
 

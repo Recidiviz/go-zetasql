@@ -163,7 +163,15 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
+  - file:   zetasql/public/functions/rounding_mode.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
   - file:   zetasql/public/proto/type_annotation.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   zetasql/public/proto/logging.pb.cc
     symbols:
       - schemas
       - file_default_instances
@@ -292,6 +300,7 @@ protoc:
   - name: zetasql/proto/internal_error_location_cc_proto
     deps:
       - zetasql/public/error_location_cc_proto
+  - name: zetasql/proto/placeholder_descriptor_cc_proto
   - name: zetasql/reference_impl/evaluator_table_iterator_cc_proto
   - name: zetasql/parser/ast_enums_cc_proto
   - name: zetasql/parser/parse_tree_cc_proto

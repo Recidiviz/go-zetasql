@@ -74,12 +74,12 @@ const uint32_t TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::off
   2,
   3,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 7, -1, sizeof(::zetasql::DeprecationWarning)},
   { 8, 18, -1, sizeof(::zetasql::FreestandingDeprecationWarning)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_DeprecationWarning_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FreestandingDeprecationWarning_default_instance_),
 };
@@ -87,27 +87,29 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n(zetasql/public/deprecation_warning.pro"
   "to\022\007zetasql\032#zetasql/public/error_locati"
-  "on.proto\"\344\001\n\022DeprecationWarning\022.\n\004kind\030"
+  "on.proto\"\246\002\n\022DeprecationWarning\022.\n\004kind\030"
   "\001 \001(\0162 .zetasql.DeprecationWarning.Kind\""
-  "\235\001\n\004Kind\0221\n$__Kind__switch_must_have_a_d"
+  "\337\001\n\004Kind\0221\n$__Kind__switch_must_have_a_d"
   "efault__\020\377\377\377\377\377\377\377\377\377\001\022\013\n\007UNKNOWN\020\000\022\027\n\023DEPR"
   "ECATED_FUNCTION\020\001\022!\n\035DEPRECATED_FUNCTION"
-  "_SIGNATURE\020\002\022\031\n\025PROTO3_FIELD_PRESENCE\020\003\""
-  "\261\001\n\036FreestandingDeprecationWarning\022\017\n\007me"
-  "ssage\030\001 \001(\t\022\024\n\014caret_string\030\002 \001(\t\022.\n\016err"
-  "or_location\030\003 \001(\0132\026.zetasql.ErrorLocatio"
-  "n\0228\n\023deprecation_warning\030\004 \001(\0132\033.zetasql"
-  ".DeprecationWarningB.\n\022com.google.zetasq"
-  "lB\030DeprecationWarningProtos"
+  "_SIGNATURE\020\002\022\031\n\025PROTO3_FIELD_PRESENCE\020\003\022"
+  "\025\n\021QUERY_TOO_COMPLEX\020\004\022)\n%DEPRECATED_ANO"
+  "NYMIZATION_OPTION_KAPPA\020\005\"\261\001\n\036Freestandi"
+  "ngDeprecationWarning\022\017\n\007message\030\001 \001(\t\022\024\n"
+  "\014caret_string\030\002 \001(\t\022.\n\016error_location\030\003 "
+  "\001(\0132\026.zetasql.ErrorLocation\0228\n\023deprecati"
+  "on_warning\030\004 \001(\0132\033.zetasql.DeprecationWa"
+  "rningB.\n\022com.google.zetasqlB\030Deprecation"
+  "WarningProtos"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps[1] = {
   &::descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto = {
-  false, false, 547, descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, "zetasql/public/deprecation_warning.proto", 
+  false, false, 613, descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, "zetasql/public/deprecation_warning.proto", 
   &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once, descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps, 1, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::offsets,
+  schemas_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, file_default_instances_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_getter() {
@@ -128,6 +130,8 @@ bool DeprecationWarning_Kind_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -140,6 +144,8 @@ constexpr DeprecationWarning_Kind DeprecationWarning::UNKNOWN;
 constexpr DeprecationWarning_Kind DeprecationWarning::DEPRECATED_FUNCTION;
 constexpr DeprecationWarning_Kind DeprecationWarning::DEPRECATED_FUNCTION_SIGNATURE;
 constexpr DeprecationWarning_Kind DeprecationWarning::PROTO3_FIELD_PRESENCE;
+constexpr DeprecationWarning_Kind DeprecationWarning::QUERY_TOO_COMPLEX;
+constexpr DeprecationWarning_Kind DeprecationWarning::DEPRECATED_ANONYMIZATION_OPTION_KAPPA;
 constexpr DeprecationWarning_Kind DeprecationWarning::Kind_MIN;
 constexpr DeprecationWarning_Kind DeprecationWarning::Kind_MAX;
 constexpr int DeprecationWarning::Kind_ARRAYSIZE;

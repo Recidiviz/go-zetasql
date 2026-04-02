@@ -106,6 +106,9 @@
 #define zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto zetasql_public_value_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto
 #define descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto zetasql_public_value_descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto
 #define TableStruct_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto zetasql_public_value_TableStruct_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto
+#define zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto zetasql_public_value_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto
+#define descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto zetasql_public_value_descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto
+#define TableStruct_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto zetasql_public_value_TableStruct_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto
 #define zetasql_2fpublic_2fbuiltin_5ffunction_2eproto zetasql_public_value_zetasql_2fpublic_2fbuiltin_5ffunction_2eproto
 #define descriptor_table_zetasql_2fpublic_2fbuiltin_5ffunction_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2fbuiltin_5ffunction_2eproto
 #define TableStruct_zetasql_2fpublic_2fbuiltin_5ffunction_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2fbuiltin_5ffunction_2eproto
@@ -169,6 +172,15 @@
 #define zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto zetasql_public_value_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2ffunctions_2frounding_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_public_value_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto zetasql_public_value_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto
+#define zetasql_2fpublic_2fproto_2flogging_2eproto zetasql_public_value_zetasql_2fpublic_2fproto_2flogging_2eproto
+#define descriptor_table_zetasql_2fpublic_2fproto_2flogging_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2fproto_2flogging_2eproto
+#define TableStruct_zetasql_2fpublic_2fproto_2flogging_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2fproto_2flogging_2eproto
 #define zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto zetasql_public_value_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto
@@ -221,22 +233,20 @@
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
-#include "go-zetasql/public/strings/export.inc"
+#include "go-zetasql/public/range_value/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value_cc_proto/export.inc"
 #include "go-zetasql/public/value_content/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/compact_reference_counted/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/refcount/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/float_margin/export.inc"
-#include "go-zetasql/common/string_util/export.inc"
 #include "go-zetasql/public/functions/arithmetics/export.inc"
 #include "go-zetasql/public/functions/comparison/export.inc"
-#include "go-zetasql/public/functions/convert_proto/export.inc"
 #include "go-zetasql/public/functions/convert_string/export.inc"
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
@@ -245,10 +255,10 @@
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/hash/hash/export.inc"
-#include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
@@ -257,6 +267,7 @@
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
 #include "go-absl/types/variant/export.inc"
+#include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #include "bridge.h"

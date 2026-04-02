@@ -85,11 +85,14 @@ enum FieldFormat_Format : int {
   FieldFormat_Format_BIGNUMERIC = 11,
   FieldFormat_Format_JSON = 12,
   FieldFormat_Format_INTERVAL = 14,
+  FieldFormat_Format_RANGE_DATES_ENCODED = 16,
+  FieldFormat_Format_RANGE_DATETIMES_ENCODED = 17,
+  FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED = 18,
   FieldFormat_Format___FieldFormat_Type__switch_must_have_a_default__ = -1
 };
 bool FieldFormat_Format_IsValid(int value);
 constexpr FieldFormat_Format FieldFormat_Format_Format_MIN = FieldFormat_Format___FieldFormat_Type__switch_must_have_a_default__;
-constexpr FieldFormat_Format FieldFormat_Format_Format_MAX = FieldFormat_Format_INTERVAL;
+constexpr FieldFormat_Format FieldFormat_Format_Format_MAX = FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED;
 constexpr int FieldFormat_Format_Format_ARRAYSIZE = FieldFormat_Format_Format_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FieldFormat_Format_descriptor();
@@ -273,6 +276,12 @@ class FieldFormat final :
     FieldFormat_Format_JSON;
   static constexpr Format INTERVAL =
     FieldFormat_Format_INTERVAL;
+  static constexpr Format RANGE_DATES_ENCODED =
+    FieldFormat_Format_RANGE_DATES_ENCODED;
+  static constexpr Format RANGE_DATETIMES_ENCODED =
+    FieldFormat_Format_RANGE_DATETIMES_ENCODED;
+  static constexpr Format RANGE_TIMESTAMPS_ENCODED =
+    FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED;
   static constexpr Format __FieldFormat_Type__switch_must_have_a_default__ =
     FieldFormat_Format___FieldFormat_Type__switch_must_have_a_default__;
   static inline bool Format_IsValid(int value) {

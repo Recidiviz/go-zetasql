@@ -18,7 +18,10 @@
 #define ZETASQL_SCRIPTING_CONTROL_FLOW_GRAPH_H_
 
 #include <memory>
+#include <set>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "zetasql/parser/parse_tree.h"
 #include "absl/container/flat_hash_map.h"
@@ -76,7 +79,6 @@ class ControlFlowEdge {
     int num_for_loops_exited = 0;
   };
 
-  const ControlFlowGraph* graph() const { return graph_; }
   const ControlFlowNode* predecessor() const { return predecessor_; }
   const ControlFlowNode* successor() const { return successor_; }
   Kind kind() const { return kind_; }
@@ -101,8 +103,7 @@ class ControlFlowEdge {
       : predecessor_(predecessor),
         successor_(successor),
         kind_(kind),
-        exit_to_(exit_to),
-        graph_(graph) {}
+        exit_to_(exit_to) {}
 
   // Node which executes prior to this transition (owned by graph_).
   const ControlFlowNode* predecessor_;
@@ -118,9 +119,6 @@ class ControlFlowEdge {
   // calculate the edge's side effects.  A nullptr value indicates that the edge
   // has no side effects.
   const ASTNode* exit_to_;
-
-  // The underlying ControlFlowGraph.
-  ControlFlowGraph* graph_;
 };
 
 // Returns the string-representation of a ControlFlowEdge::Kind enumeration.

@@ -18,9 +18,12 @@
 
 #include <ctype.h>
 
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
@@ -225,8 +228,27 @@ absl::Status TypeToProtoConverter::MakeFieldDescriptor(
       break;
     }
     case TYPE_RANGE: {
-      // TODO: Implement this for RANGE.
-      return absl::UnimplementedError("RANGE type is not fully implemented");
+      proto_field->set_type(google::protobuf::FieldDescriptorProto::TYPE_BYTES);
+      const RangeType* range_type = field_type->AsRange();
+      switch (range_type->element_type()->kind()) {
+        case TYPE_DATE:
+          proto_field->mutable_options()->SetExtension(
+              zetasql::format, FieldFormat::RANGE_DATES_ENCODED);
+          break;
+        case TYPE_DATETIME:
+          proto_field->mutable_options()->SetExtension(
+              zetasql::format, FieldFormat::RANGE_DATETIMES_ENCODED);
+          break;
+        case TYPE_TIMESTAMP:
+          proto_field->mutable_options()->SetExtension(
+              zetasql::format, FieldFormat::RANGE_TIMESTAMPS_ENCODED);
+          break;
+        default:
+          return absl::UnimplementedError(
+              absl::StrCat("Conversion of ", range_type->DebugString(),
+                           " is not supported."));
+      }
+      break;
     }
     case TYPE_ENUM: {
       const EnumType* enum_type = field_type->AsEnum();

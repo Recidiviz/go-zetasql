@@ -74,11 +74,13 @@ enum DeprecationWarning_Kind : int {
   DeprecationWarning_Kind_UNKNOWN = 0,
   DeprecationWarning_Kind_DEPRECATED_FUNCTION = 1,
   DeprecationWarning_Kind_DEPRECATED_FUNCTION_SIGNATURE = 2,
-  DeprecationWarning_Kind_PROTO3_FIELD_PRESENCE = 3
+  DeprecationWarning_Kind_PROTO3_FIELD_PRESENCE = 3,
+  DeprecationWarning_Kind_QUERY_TOO_COMPLEX = 4,
+  DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA = 5
 };
 bool DeprecationWarning_Kind_IsValid(int value);
 constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MIN = DeprecationWarning_Kind___Kind__switch_must_have_a_default__;
-constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MAX = DeprecationWarning_Kind_PROTO3_FIELD_PRESENCE;
+constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MAX = DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA;
 constexpr int DeprecationWarning_Kind_Kind_ARRAYSIZE = DeprecationWarning_Kind_Kind_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DeprecationWarning_Kind_descriptor();
@@ -234,6 +236,10 @@ class DeprecationWarning final :
     DeprecationWarning_Kind_DEPRECATED_FUNCTION_SIGNATURE;
   static constexpr Kind PROTO3_FIELD_PRESENCE =
     DeprecationWarning_Kind_PROTO3_FIELD_PRESENCE;
+  static constexpr Kind QUERY_TOO_COMPLEX =
+    DeprecationWarning_Kind_QUERY_TOO_COMPLEX;
+  static constexpr Kind DEPRECATED_ANONYMIZATION_OPTION_KAPPA =
+    DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA;
   static inline bool Kind_IsValid(int value) {
     return DeprecationWarning_Kind_IsValid(value);
   }

@@ -23,6 +23,7 @@
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/internal_value.h"
+#include "zetasql/common/thread_stack.h"
 #include "zetasql/public/functions/date_time_util.h"
 #include "zetasql/public/functions/datetime.pb.h"
 #include "zetasql/public/type.h"
@@ -48,7 +49,7 @@ ABSL_FLAG(
 namespace zetasql {
 
 absl::Status ValidateFirstColumnPrimaryKey(
-    const std::string& table_name, const Value& array,
+    absl::string_view table_name, const Value& array,
     const LanguageOptions& language_options) {
   ZETASQL_RET_CHECK(array.type()->IsArray());
 
@@ -85,11 +86,12 @@ absl::Status ValidateFirstColumnPrimaryKey(
 
 EvaluationContext::EvaluationContext(const EvaluationOptions& options)
     : options_(options),
-      memory_accountant_(options.max_intermediate_byte_size),
+      memory_accountant_(options.max_intermediate_byte_size,
+                         "max_intermediate_byte_size"),
       deterministic_output_(true) {}
 
 absl::Status EvaluationContext::AddTableAsArray(
-    const std::string& table_name, bool is_value_table, Value array,
+    absl::string_view table_name, bool is_value_table, Value array,
     const LanguageOptions& language_options) {
   ZETASQL_RET_CHECK(array.type()->IsArray());
   if (!is_value_table && options_.emulate_primary_keys) {
@@ -108,6 +110,8 @@ absl::Status EvaluationContext::AddTableAsArray(
 }
 
 absl::Status EvaluationContext::VerifyNotAborted() const {
+  ZETASQL_RETURN_IF_NOT_ENOUGH_STACK(
+      "Out of stack space due to deeply nested evaluation");
   if (cancelled_) {
     return zetasql_base::CancelledErrorBuilder() << "The statement has been cancelled";
   }

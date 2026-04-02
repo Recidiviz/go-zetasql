@@ -18,6 +18,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <limits>
+#include <optional>
 #include <string>
 
 #include "zetasql/base/logging.h"
@@ -47,6 +49,10 @@ static int SpanWellFormedUTF8(const char* s, int length) {
 absl::string_view::size_type SpanWellFormedUTF8(absl::string_view s) {
   return static_cast<absl::string_view::size_type>(
       SpanWellFormedUTF8(s.data(), static_cast<int>(s.length())));
+}
+
+bool IsWellFormedUTF8(absl::string_view s) {
+  return SpanWellFormedUTF8(s) == s.length();
 }
 
 std::string CoerceToWellFormedUTF8(absl::string_view input) {

@@ -16,7 +16,11 @@
 
 #include "zetasql/tools/execute_query/execute_query_tool.h"
 
+#include <memory>
+#include <ostream>
+#include <sstream>
 #include <string>
+#include <vector>
 
 #include "zetasql/base/path.h"
 #include "google/protobuf/descriptor.h"
@@ -76,7 +80,9 @@ TEST(SetToolModeFromFlags, ToolMode) {
     EXPECT_EQ(config.tool_mode(), expected_mode);
   };
   CheckFlag("parse", ToolMode::kParse);
+  CheckFlag("unparse", ToolMode::kUnparse);
   CheckFlag("resolve", ToolMode::kResolve);
+  CheckFlag("unanalyze", ToolMode::kUnAnalyze);
   CheckFlag("explain", ToolMode::kExplain);
   CheckFlag("execute", ToolMode::kExecute);
 }
@@ -123,6 +129,18 @@ TEST(SetLanguageOptionsFromFlags, ProductMode) {
   };
   CheckFlag("internal", PRODUCT_INTERNAL);
   CheckFlag("external", PRODUCT_EXTERNAL);
+}
+
+TEST(SetLanguageOptionsFromFlags, NameResolutionMode) {
+  auto CheckFlag = [](bool flag_value, NameResolutionMode expected_mode) {
+    absl::SetFlag(&FLAGS_strict_name_resolution_mode, flag_value);
+    ExecuteQueryConfig config;
+    ZETASQL_EXPECT_OK(SetLanguageOptionsFromFlags(config));
+    EXPECT_EQ(config.analyzer_options().language().name_resolution_mode(),
+              expected_mode);
+  };
+  CheckFlag(false, NAME_RESOLUTION_DEFAULT);
+  CheckFlag(true, NAME_RESOLUTION_STRICT);
 }
 
 TEST(SetAnalyzerOptionsFromFlags, EnabledAstRewrites) {
@@ -232,6 +250,42 @@ TEST(SetEvaluatorOptionsFromFlagsTest, Options) {
   ZETASQL_EXPECT_OK(SetEvaluatorOptionsFromFlags(config));
   EXPECT_EQ(config.evaluator_options().max_value_byte_size, 5);
   EXPECT_EQ(config.evaluator_options().max_intermediate_byte_size, 6);
+}
+
+TEST(SetQueryParameterValuesFromFlagsTest, NoOp) {
+  ExecuteQueryConfig config;
+  ZETASQL_EXPECT_OK(SetQueryParametersFromFlags(config));
+  EXPECT_THAT(config.analyzer_options().query_parameters(), IsEmpty());
+  EXPECT_THAT(config.query_parameter_values(), IsEmpty());
+}
+
+TEST(SetQueryParameterValuesFromFlagsTest, BadFlag) {
+  absl::FlagSaver fs;
+
+  absl::SetFlag(&FLAGS_parameters, "p1=1;p2=pizza");
+
+  ExecuteQueryConfig config;
+  EXPECT_THAT(SetQueryParametersFromFlags(config),
+              StatusIs(absl::StatusCode::kInvalidArgument,
+                       "Unrecognized name: pizza [at 1:1]"));
+}
+
+TEST(SetQueryParameterValuesFromFlagsTest, Options) {
+  absl::FlagSaver fs;
+
+  absl::SetFlag(&FLAGS_parameters, "p1=1;p2=(select x from (select 'a' as x))");
+
+  ExecuteQueryConfig config;
+  ZETASQL_EXPECT_OK(SetQueryParametersFromFlags(config));
+  EXPECT_THAT(config.analyzer_options().query_parameters(),
+              testing::Contains(std::make_pair("p1", types::Int64Type())));
+  EXPECT_THAT(config.analyzer_options().query_parameters(),
+              testing::Contains(std::make_pair("p2", types::StringType())));
+
+  EXPECT_THAT(config.query_parameter_values(),
+              testing::Contains(std::make_pair("p1", values::Int64(1))));
+  EXPECT_THAT(config.query_parameter_values(),
+              testing::Contains(std::make_pair("p2", values::String("a"))));
 }
 
 void RunWriter(const absl::string_view mode, std::ostream& output) {
@@ -469,6 +523,17 @@ TEST(ExecuteQuery, ParseQuery) {
 )");
 }
 
+TEST(ExecuteQuery, UnparseQuery) {
+  ExecuteQueryConfig config;
+  config.set_tool_mode(ToolMode::kUnparse);
+  std::ostringstream output;
+  ZETASQL_EXPECT_OK(ExecuteQuery("select 1", config, output));
+  EXPECT_EQ(output.str(), R"(SELECT
+  1
+
+)");
+}
+
 TEST(ExecuteQuery, ResolveQuery) {
   ExecuteQueryConfig config;
   config.set_tool_mode(ToolMode::kResolve);
@@ -485,6 +550,15 @@ TEST(ExecuteQuery, ResolveQuery) {
     +-input_scan=
       +-SingleRowScan
 
+)");
+}
+
+TEST(ExecuteQuery, UnAnalyzeQuery) {
+  ExecuteQueryConfig config;
+  config.set_tool_mode(ToolMode::kUnAnalyze);
+  std::ostringstream output;
+  ZETASQL_EXPECT_OK(ExecuteQuery("select 1", config, output));
+  EXPECT_EQ(output.str(), R"(SELECT 1 AS a_1
 )");
 }
 
@@ -611,6 +685,39 @@ TEST(ExecuteQuery, RespectEvaluatorOptionsExpressions) {
     ZETASQL_EXPECT_OK(ExecuteQuery("CURRENT_DATE()", config, output));
     EXPECT_THAT(output.str(), HasSubstr("1066"));
   }
+}
+
+TEST(ExecuteQuery, RespectQueryParameters) {
+  ExecuteQueryConfig config;
+  config.set_tool_mode(ToolMode::kExecute);
+  config.mutable_catalog().AddZetaSQLFunctions(
+      config.analyzer_options().language());
+  ZETASQL_ASSERT_OK(config.mutable_analyzer_options().AddQueryParameter(
+      "p1", types::Int64Type()));
+  config.mutable_query_parameter_values()["p1"] = values::Int64(5);
+  std::ostringstream output;
+  ZETASQL_EXPECT_OK(ExecuteQuery("select @p1", config, output));
+  EXPECT_EQ(output.str(), R"(+---+
+|   |
++---+
+| 5 |
++---+
+
+)");
+}
+
+TEST(ExecuteQuery, RespectQueryParametersExpression) {
+  ExecuteQueryConfig config;
+  config.set_tool_mode(ToolMode::kExecute);
+  config.set_sql_mode(SqlMode::kExpression);
+  config.mutable_catalog().AddZetaSQLFunctions(
+      config.analyzer_options().language());
+  ZETASQL_ASSERT_OK(config.mutable_analyzer_options().AddQueryParameter(
+      "p1", types::Int64Type()));
+  config.mutable_query_parameter_values()["p1"] = values::Int64(5);
+  std::ostringstream output;
+  ZETASQL_EXPECT_OK(ExecuteQuery("@p1", config, output));
+  EXPECT_EQ(output.str(), "5");
 }
 
 TEST(ExecuteQuery, ExamineResolvedASTCallback) {

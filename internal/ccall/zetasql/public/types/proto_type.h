@@ -477,17 +477,19 @@ absl::Status ProtoType::ValidateTypeAnnotations(
         break;
       case google::protobuf::FieldDescriptor::TYPE_BYTES:
         {
-        if (field_format != FieldFormat::ST_GEOGRAPHY_ENCODED &&
-            field_format != FieldFormat::NUMERIC &&
-            field_format != FieldFormat::BIGNUMERIC &&
-            field_format != FieldFormat::INTERVAL) {
-          return MakeSqlError()
-                 << "Proto " << field->containing_type()->full_name()
-                 << " has invalid zetasql.format for BYTES field: "
-                 << field->DebugString();
-        }
-        }
-        break;
+          if (field_format != FieldFormat::ST_GEOGRAPHY_ENCODED &&
+              field_format != FieldFormat::NUMERIC &&
+              field_format != FieldFormat::BIGNUMERIC &&
+              field_format != FieldFormat::RANGE_DATES_ENCODED &&
+              field_format != FieldFormat::RANGE_DATETIMES_ENCODED &&
+              field_format != FieldFormat::RANGE_TIMESTAMPS_ENCODED &&
+              field_format != FieldFormat::INTERVAL) {
+            return MakeSqlError()
+                   << "Proto " << field->containing_type()->full_name()
+                   << " has invalid zetasql.format for BYTES field: "
+                   << field->DebugString();
+          }
+      } break;
       case google::protobuf::FieldDescriptor::TYPE_STRING:
         {
         if (field_format != FieldFormat::JSON) {

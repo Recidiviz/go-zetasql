@@ -17,15 +17,16 @@
 
 #include <stdlib.h>
 
+#include <cstddef>
 #include <fstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/base/internal/scoped_set_env.h"
-#include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
 #include "absl/flags/internal/parse.h"
 #include "absl/flags/internal/usage.h"
@@ -38,6 +39,36 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
+// Define 125 similar flags to test kMaxHints for flag suggestions.
+#define FLAG_MULT(x) F3(x)
+#define TEST_FLAG_HEADER FLAG_HEADER_
+
+#define F(name) ABSL_FLAG(int, name, 0, "");
+
+#define F1(name) \
+  F(name##1);    \
+  F(name##2);    \
+  F(name##3);    \
+  F(name##4);    \
+  F(name##5);
+/**/
+#define F2(name) \
+  F1(name##1);   \
+  F1(name##2);   \
+  F1(name##3);   \
+  F1(name##4);   \
+  F1(name##5);
+/**/
+#define F3(name) \
+  F2(name##1);   \
+  F2(name##2);   \
+  F2(name##3);   \
+  F2(name##4);   \
+  F2(name##5);
+/**/
+
+FLAG_MULT(TEST_FLAG_HEADER)
 
 namespace {
 
@@ -168,7 +199,7 @@ constexpr const char* const ff2_data[] = {
 // Builds flagfile flag in the flagfile_flag buffer and returns it. This
 // function also creates a temporary flagfile based on FlagfileData input.
 // We create a flagfile in a temporary directory with the name specified in
-// FlagfileData and populate it with lines specifed in FlagfileData. If $0 is
+// FlagfileData and populate it with lines specified in FlagfileData. If $0 is
 // referenced in any of the lines in FlagfileData they are replaced with
 // temporary directory location. This way we can test inclusion of one flagfile
 // from another flagfile.
@@ -221,6 +252,17 @@ class ParseTest : public testing::Test {
 template <int N>
 std::vector<char*> InvokeParse(const char* (&in_argv)[N]) {
   return absl::ParseCommandLine(N, const_cast<char**>(in_argv));
+}
+
+// --------------------------------------------------------------------
+
+template <int N>
+bool InvokeParseAbslOnly(const char* (&in_argv)[N]) {
+  std::vector<char*> positional_args;
+  std::vector<absl::UnrecognizedFlag> unrecognized_flags;
+
+  return absl::ParseAbseilFlagsOnly(N, const_cast<char**>(in_argv),
+                                    positional_args, unrecognized_flags);
 }
 
 // --------------------------------------------------------------------
@@ -565,6 +607,49 @@ TEST_F(ParseDeathTest, TestInvalidUDTFlagFormat) {
 
 // --------------------------------------------------------------------
 
+TEST_F(ParseDeathTest, TestFlagSuggestions) {
+  const char* in_args1[] = {
+      "testbin",
+      "--legacy_boo",
+  };
+  EXPECT_DEATH_IF_SUPPORTED(
+      InvokeParse(in_args1),
+      "Unknown command line flag 'legacy_boo'. Did you mean: legacy_bool ?");
+
+  const char* in_args2[] = {"testbin", "--foo", "--undefok=foo1"};
+  EXPECT_DEATH_IF_SUPPORTED(
+      InvokeParse(in_args2),
+      "Unknown command line flag 'foo'. Did you mean: foo1 \\(undefok\\)?");
+
+  const char* in_args3[] = {
+      "testbin",
+      "--nolegacy_ino",
+  };
+  EXPECT_DEATH_IF_SUPPORTED(InvokeParse(in_args3),
+                            "Unknown command line flag 'nolegacy_ino'. Did "
+                            "you mean: nolegacy_bool, legacy_int ?");
+}
+
+// --------------------------------------------------------------------
+
+TEST_F(ParseTest, GetHints) {
+  EXPECT_THAT(absl::flags_internal::GetMisspellingHints("legacy_boo"),
+              testing::ContainerEq(std::vector<std::string>{"legacy_bool"}));
+  EXPECT_THAT(absl::flags_internal::GetMisspellingHints("nolegacy_itn"),
+              testing::ContainerEq(std::vector<std::string>{"legacy_int"}));
+  EXPECT_THAT(absl::flags_internal::GetMisspellingHints("nolegacy_int1"),
+              testing::ContainerEq(std::vector<std::string>{"legacy_int"}));
+  EXPECT_THAT(absl::flags_internal::GetMisspellingHints("nolegacy_int"),
+              testing::ContainerEq(std::vector<std::string>{"legacy_int"}));
+  EXPECT_THAT(absl::flags_internal::GetMisspellingHints("nolegacy_ino"),
+              testing::ContainerEq(
+                  std::vector<std::string>{"nolegacy_bool", "legacy_int"}));
+  EXPECT_THAT(
+      absl::flags_internal::GetMisspellingHints("FLAG_HEADER_000").size(), 100);
+}
+
+// --------------------------------------------------------------------
+
 TEST_F(ParseTest, TestLegacyFlags) {
   const char* in_args1[] = {
       "testbin",
@@ -780,82 +865,6 @@ TEST_F(ParseTest, TestReadingFlagsFromEnvMoxedWithRegularFlags) {
 
 // --------------------------------------------------------------------
 
-TEST_F(ParseTest, TestKeepParsedArgs) {
-  const char* in_args1[] = {
-      "testbin",        "arg1", "--bool_flag",
-      "--int_flag=211", "arg2", "--double_flag=1.1",
-      "--string_flag",  "asd",  "--",
-      "arg3",           "arg4",
-  };
-
-  auto out_args1 = InvokeParse(in_args1);
-
-  EXPECT_THAT(
-      out_args1,
-      ElementsAreArray({absl::string_view("testbin"), absl::string_view("arg1"),
-                        absl::string_view("arg2"), absl::string_view("arg3"),
-                        absl::string_view("arg4")}));
-
-  auto out_args2 = flags::ParseCommandLineImpl(
-      11, const_cast<char**>(in_args1), flags::ArgvListAction::kKeepParsedArgs,
-      flags::UsageFlagsAction::kHandleUsage,
-      flags::OnUndefinedFlag::kAbortIfUndefined);
-
-  EXPECT_THAT(
-      out_args2,
-      ElementsAreArray({absl::string_view("testbin"),
-                        absl::string_view("--bool_flag"),
-                        absl::string_view("--int_flag=211"),
-                        absl::string_view("--double_flag=1.1"),
-                        absl::string_view("--string_flag"),
-                        absl::string_view("asd"), absl::string_view("--"),
-                        absl::string_view("arg1"), absl::string_view("arg2"),
-                        absl::string_view("arg3"), absl::string_view("arg4")}));
-}
-
-// --------------------------------------------------------------------
-
-TEST_F(ParseTest, TestIgnoreUndefinedFlags) {
-  const char* in_args1[] = {
-      "testbin",
-      "arg1",
-      "--undef_flag=aa",
-      "--int_flag=21",
-  };
-
-  auto out_args1 = flags::ParseCommandLineImpl(
-      4, const_cast<char**>(in_args1), flags::ArgvListAction::kRemoveParsedArgs,
-      flags::UsageFlagsAction::kHandleUsage,
-      flags::OnUndefinedFlag::kIgnoreUndefined);
-
-  EXPECT_THAT(out_args1, ElementsAreArray({absl::string_view("testbin"),
-                                           absl::string_view("arg1")}));
-
-  EXPECT_EQ(absl::GetFlag(FLAGS_int_flag), 21);
-
-  const char* in_args2[] = {
-      "testbin",
-      "arg1",
-      "--undef_flag=aa",
-      "--string_flag=AA",
-  };
-
-  auto out_args2 = flags::ParseCommandLineImpl(
-      4, const_cast<char**>(in_args2), flags::ArgvListAction::kKeepParsedArgs,
-      flags::UsageFlagsAction::kHandleUsage,
-      flags::OnUndefinedFlag::kIgnoreUndefined);
-
-  EXPECT_THAT(
-      out_args2,
-      ElementsAreArray(
-          {absl::string_view("testbin"), absl::string_view("--undef_flag=aa"),
-           absl::string_view("--string_flag=AA"), absl::string_view("arg1")}));
-
-  EXPECT_EQ(absl::GetFlag(FLAGS_string_flag), "AA");
-}
-
-// --------------------------------------------------------------------
-
 TEST_F(ParseDeathTest, TestSimpleHelpFlagHandling) {
   const char* in_args1[] = {
       "testbin",
@@ -870,13 +879,16 @@ TEST_F(ParseDeathTest, TestSimpleHelpFlagHandling) {
       "--int_flag=3",
   };
 
-  auto out_args2 = flags::ParseCommandLineImpl(
-      3, const_cast<char**>(in_args2), flags::ArgvListAction::kRemoveParsedArgs,
-      flags::UsageFlagsAction::kIgnoreUsage,
-      flags::OnUndefinedFlag::kAbortIfUndefined);
+  InvokeParseAbslOnly(in_args2);
 
   EXPECT_EQ(flags::GetFlagsHelpMode(), flags::HelpMode::kImportant);
   EXPECT_EQ(absl::GetFlag(FLAGS_int_flag), 3);
+
+  const char* in_args3[] = {"testbin", "--help", "some_positional_arg"};
+
+  InvokeParseAbslOnly(in_args3);
+
+  EXPECT_EQ(flags::GetFlagsHelpMode(), flags::HelpMode::kImportant);
 }
 
 // --------------------------------------------------------------------
@@ -887,22 +899,10 @@ TEST_F(ParseDeathTest, TestSubstringHelpFlagHandling) {
       "--help=abcd",
   };
 
-  auto out_args1 = flags::ParseCommandLineImpl(
-      2, const_cast<char**>(in_args1), flags::ArgvListAction::kRemoveParsedArgs,
-      flags::UsageFlagsAction::kIgnoreUsage,
-      flags::OnUndefinedFlag::kAbortIfUndefined);
+  InvokeParseAbslOnly(in_args1);
 
   EXPECT_EQ(flags::GetFlagsHelpMode(), flags::HelpMode::kMatch);
   EXPECT_EQ(flags::GetFlagsHelpMatchSubstr(), "abcd");
-
-  const char* in_args2[] = {"testbin", "--help", "some_positional_arg"};
-
-  auto out_args2 = flags::ParseCommandLineImpl(
-      3, const_cast<char**>(in_args2), flags::ArgvListAction::kRemoveParsedArgs,
-      flags::UsageFlagsAction::kIgnoreUsage,
-      flags::OnUndefinedFlag::kAbortIfUndefined);
-
-  EXPECT_EQ(flags::GetFlagsHelpMode(), flags::HelpMode::kImportant);
 }
 
 // --------------------------------------------------------------------
@@ -923,6 +923,108 @@ TEST_F(ParseTest, WasPresentOnCommandLine) {
   EXPECT_TRUE(flags::WasPresentOnCommandLine("string_flag"));
   EXPECT_FALSE(flags::WasPresentOnCommandLine("some_flag"));
   EXPECT_FALSE(flags::WasPresentOnCommandLine("another_flag"));
+}
+
+// --------------------------------------------------------------------
+
+TEST_F(ParseTest, ParseAbseilFlagsOnlySuccess) {
+  const char* in_args[] = {
+      "testbin",
+      "arg1",
+      "--bool_flag",
+      "--int_flag=211",
+      "arg2",
+      "--double_flag=1.1",
+      "--undef_flag1",
+      "--undef_flag2=123",
+      "--string_flag",
+      "asd",
+      "--",
+      "--some_flag",
+      "arg4",
+  };
+
+  std::vector<char*> positional_args;
+  std::vector<absl::UnrecognizedFlag> unrecognized_flags;
+
+  EXPECT_TRUE(absl::ParseAbseilFlagsOnly(13, const_cast<char**>(in_args),
+                                         positional_args, unrecognized_flags));
+  EXPECT_THAT(positional_args,
+              ElementsAreArray(
+                  {absl::string_view("testbin"), absl::string_view("arg1"),
+                   absl::string_view("arg2"), absl::string_view("--some_flag"),
+                   absl::string_view("arg4")}));
+  EXPECT_THAT(unrecognized_flags,
+              ElementsAreArray(
+                  {absl::UnrecognizedFlag(absl::UnrecognizedFlag::kFromArgv,
+                                          "undef_flag1"),
+                   absl::UnrecognizedFlag(absl::UnrecognizedFlag::kFromArgv,
+                                          "undef_flag2")}));
+}
+
+// --------------------------------------------------------------------
+
+TEST_F(ParseTest, ParseAbseilFlagsOnlyFailure) {
+  const char* in_args[] = {
+      "testbin",
+      "--int_flag=21.1",
+  };
+
+  std::vector<char*> positional_args;
+  std::vector<absl::UnrecognizedFlag> unrecognized_flags;
+
+  EXPECT_FALSE(absl::ParseAbseilFlagsOnly(2, const_cast<char**>(in_args),
+                                          positional_args, unrecognized_flags));
+}
+
+// --------------------------------------------------------------------
+
+TEST_F(ParseTest, UndefOkFlagsAreIgnored) {
+  const char* in_args[] = {
+      "testbin",           "--undef_flag1",
+      "--undef_flag2=123", "--undefok=undef_flag2",
+      "--undef_flag3",     "value",
+  };
+
+  std::vector<char*> positional_args;
+  std::vector<absl::UnrecognizedFlag> unrecognized_flags;
+
+  EXPECT_TRUE(absl::ParseAbseilFlagsOnly(6, const_cast<char**>(in_args),
+                                         positional_args, unrecognized_flags));
+  EXPECT_THAT(positional_args, ElementsAreArray({absl::string_view("testbin"),
+                                                 absl::string_view("value")}));
+  EXPECT_THAT(unrecognized_flags,
+              ElementsAreArray(
+                  {absl::UnrecognizedFlag(absl::UnrecognizedFlag::kFromArgv,
+                                          "undef_flag1"),
+                   absl::UnrecognizedFlag(absl::UnrecognizedFlag::kFromArgv,
+                                          "undef_flag3")}));
+}
+
+// --------------------------------------------------------------------
+
+TEST_F(ParseTest, AllUndefOkFlagsAreIgnored) {
+  const char* in_args[] = {
+      "testbin",
+      "--undef_flag1",
+      "--undef_flag2=123",
+      "--undefok=undef_flag2,undef_flag1,undef_flag3",
+      "--undef_flag3",
+      "value",
+      "--",
+      "--undef_flag4",
+  };
+
+  std::vector<char*> positional_args;
+  std::vector<absl::UnrecognizedFlag> unrecognized_flags;
+
+  EXPECT_TRUE(absl::ParseAbseilFlagsOnly(8, const_cast<char**>(in_args),
+                                         positional_args, unrecognized_flags));
+  EXPECT_THAT(positional_args,
+              ElementsAreArray({absl::string_view("testbin"),
+                                absl::string_view("value"),
+                                absl::string_view("--undef_flag4")}));
+  EXPECT_THAT(unrecognized_flags, testing::IsEmpty());
 }
 
 // --------------------------------------------------------------------

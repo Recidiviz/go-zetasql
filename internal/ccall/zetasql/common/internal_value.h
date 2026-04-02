@@ -19,6 +19,7 @@
 
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/common/float_margin.h"
 #include "zetasql/public/type.h"
@@ -81,13 +82,6 @@ class InternalValue {
     return std::move(value).value();
   }
 
-  absl::StatusOr<Value> MakeArray(const ArrayType* array_type,
-                                  std::vector<Value> values,
-                                  OrderPreservationKind order_kind) {
-    return Value::MakeArrayInternal(/*already_validated=*/false, array_type,
-                                    order_kind, std::move(values));
-  }
-
   // Checks equality of values. Arrays inside 'x' value with
   // order_kind()=kIgnoresOrder are compared as multisets to respective arrays
   // in 'y' value.
@@ -96,10 +90,7 @@ class InternalValue {
     if (options.reason) {
       options.reason->clear();
     }
-    return Value::EqualsInternal(x, y,
-                                 true,     // allow_bags
-                                 nullptr,  // deep order spec
-                                 options);
+    return Value::EqualsInternal(x, y, /*allow_bags=*/true, options);
   }
 
   static OrderPreservationKind GetOrderKind(const Value& x) {

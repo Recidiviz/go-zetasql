@@ -17,15 +17,16 @@
 #include "zetasql/analyzer/analyzer_test_options.h"
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/options_utils.h"
 #include "zetasql/public/analyzer_options.h"
+#include "zetasql/public/testing/test_case_options_util.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/struct_type.h"
 #include "zetasql/testdata/test_schema.pb.h"
-#include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"
 #include "absl/types/span.h"
 #include "file_based_test_driver/test_case_options.h"
@@ -57,7 +58,6 @@ const char* const kUnparserPositionalParameterMode =
 const char* const kShowUnparsed = "show_unparsed";
 const char* const kShowUnparsedResolvedASTDiff =
     "show_unparsed_resolved_ast_diff";
-const char* const kLanguageFeatures = "language_features";
 const char* const kInScopeExpressionColumnName =
     "in_scope_expression_column_name";
 const char* const kInScopeExpressionColumnType =
@@ -84,6 +84,16 @@ const char* const kPrivilegeRestrictionTableNotScanned =
     "privilege_restriction_table_not_scanned";
 const char* const kPreserveUnnecessaryCast = "preserve_unnecessary_cast";
 const char* const kEnableSampleAnnotation = "enable_sample_annotation";
+const char* const kAdditionalAllowedAnonymizationOptions =
+    "additional_allowed_anonymization_options";
+const char* const kSuppressBuiltinFunctions = "suppress_builtin_functions";
+const char* const kOptionNamesToIgnoreInLiteralReplacement =
+    "option_names_to_ignore_in_literal_replacement";
+const char* const kScrubLimitOffsetInLiteralReplacement =
+    "scrub_limit_offset_in_literal_replacement";
+const char* const kSetFlag = "set_flag";
+const char* const kAlsoShowSignatureMismatchDetails =
+    "also_show_signature_mismatch_details";
 
 void RegisterAnalyzerTestOptions(
     file_based_test_driver::TestCaseOptions* test_case_options) {
@@ -133,6 +143,13 @@ void RegisterAnalyzerTestOptions(
   test_case_options->RegisterBool(kCreateTableLikeNotScanned, false);
   test_case_options->RegisterBool(kPrivilegeRestrictionTableNotScanned, false);
   test_case_options->RegisterBool(kPreserveUnnecessaryCast, false);
+  test_case_options->RegisterString(kAdditionalAllowedAnonymizationOptions, "");
+  test_case_options->RegisterString(kSuppressBuiltinFunctions, "");
+  test_case_options->RegisterString(kOptionNamesToIgnoreInLiteralReplacement,
+                                    "");
+  test_case_options->RegisterBool(kScrubLimitOffsetInLiteralReplacement, true);
+  test_case_options->RegisterString(kSetFlag, "");
+  test_case_options->RegisterBool(kAlsoShowSignatureMismatchDetails, false);
 }
 
 std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
@@ -143,6 +160,10 @@ std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
   const zetasql::Type* array_int64_type;
   ZETASQL_CHECK_OK(type_factory->MakeArrayType(type_factory->get_int64(),
                                        &array_int64_type));
+
+  const zetasql::Type* array_double_type;
+  ZETASQL_CHECK_OK(type_factory->MakeArrayType(type_factory->get_double(),
+                                       &array_double_type));
 
   const zetasql::Type* array_string_type;
   ZETASQL_CHECK_OK(type_factory->MakeArrayType(type_factory->get_string(),
@@ -156,13 +177,18 @@ std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
   const zetasql::Type* empty_struct_type;
   ZETASQL_CHECK_OK(type_factory->MakeStructType({}, &empty_struct_type));
 
+  const zetasql::Type* struct_two_int64_type;
+  ZETASQL_CHECK_OK(type_factory->MakeStructType(
+      {{"", type_factory->get_int64()}, {"", type_factory->get_int64()}},
+      &struct_two_int64_type));
+
   const zetasql::Type* proto_type;
   ZETASQL_CHECK_OK(type_factory->MakeProtoType(
       zetasql_test__::KitchenSinkPB::descriptor(), &proto_type));
 
   const zetasql::Type* enum_type;
-  ZETASQL_CHECK_OK(type_factory->MakeEnumType(
-      zetasql_test__::TestEnum_descriptor(), &enum_type));
+  ZETASQL_CHECK_OK(type_factory->MakeEnumType(zetasql_test__::TestEnum_descriptor(),
+                                      &enum_type));
 
   const zetasql::Type* array_enum_type;
   ZETASQL_CHECK_OK(type_factory->MakeArrayType(enum_type, &array_enum_type));
@@ -181,6 +207,7 @@ std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
       {"test_param_int64", type_factory->get_int64()},
       {"test_param_uint32", type_factory->get_uint32()},
       {"test_param_uint64", type_factory->get_uint64()},
+      {"test_param_float", type_factory->get_float()},
       {"test_param_double", type_factory->get_double()},
       {"test_param_numeric", type_factory->get_numeric()},
       {"test_param_bignumeric", type_factory->get_bignumeric()},
@@ -190,9 +217,11 @@ std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
       {"test_param_proto", proto_type},
       {"test_param_struct", struct_type},
       {"test_param_empty_struct", empty_struct_type},
+      {"test_param_struct_two_int64", struct_two_int64_type},
       {"test_param_enum", enum_type},
       {"test_param_array", array_type},
       {"test_param_array_int64", array_int64_type},
+      {"test_param_array_double", array_double_type},
       {"test_param_array_string", array_string_type},
       {"test_param_array_enum", array_enum_type},
       {"test_param_array_struct_int64", array_struct_int64_type},
@@ -203,24 +232,6 @@ std::vector<std::pair<std::string, const zetasql::Type*>> GetQueryParameters(
       {"_p3_StrinG", type_factory->get_string()},
       {"_P4_string", type_factory->get_string()},
   };
-}
-
-absl::StatusOr<LanguageOptions::LanguageFeatureSet> GetRequiredLanguageFeatures(
-    const file_based_test_driver::TestCaseOptions& test_case_options) {
-  LanguageOptions::LanguageFeatureSet enabled_set;
-  if (!test_case_options.GetString(kLanguageFeatures).empty()) {
-    const std::vector<std::string> feature_list =
-        absl::StrSplit(test_case_options.GetString(kLanguageFeatures), ',');
-    for (const std::string& feature_name : feature_list) {
-      const std::string full_feature_name =
-          absl::StrCat("FEATURE_", feature_name);
-      LanguageFeature feature;
-      ZETASQL_RET_CHECK(LanguageFeature_Parse(full_feature_name, &feature))
-          << full_feature_name;
-      enabled_set.insert(feature);
-    }
-  }
-  return enabled_set;
 }
 
 static AnalyzerOptions::ASTRewriteSet GetAllRewrites() {

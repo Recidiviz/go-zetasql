@@ -30,6 +30,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 #include "zetasql/public/builtin_function.pb.h"
 #include "zetasql/public/options.pb.h"
@@ -50,7 +51,7 @@ struct TableStruct_zetasql_2fproto_2foptions_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -76,6 +77,9 @@ extern AnalyzerOptionsProto_QueryParameterProtoDefaultTypeInternal _AnalyzerOpti
 class AnalyzerOptionsProto_SystemVariableProto;
 struct AnalyzerOptionsProto_SystemVariableProtoDefaultTypeInternal;
 extern AnalyzerOptionsProto_SystemVariableProtoDefaultTypeInternal _AnalyzerOptionsProto_SystemVariableProto_default_instance_;
+class EnabledRewriteProto;
+struct EnabledRewriteProtoDefaultTypeInternal;
+extern EnabledRewriteProtoDefaultTypeInternal _EnabledRewriteProto_default_instance_;
 class LanguageOptionsProto;
 struct LanguageOptionsProtoDefaultTypeInternal;
 extern LanguageOptionsProtoDefaultTypeInternal _LanguageOptionsProto_default_instance_;
@@ -90,11 +94,35 @@ template<> ::zetasql::AllowedHintsAndOptionsProto_OptionProto* Arena::CreateMayb
 template<> ::zetasql::AnalyzerOptionsProto* Arena::CreateMaybeMessage<::zetasql::AnalyzerOptionsProto>(Arena*);
 template<> ::zetasql::AnalyzerOptionsProto_QueryParameterProto* Arena::CreateMaybeMessage<::zetasql::AnalyzerOptionsProto_QueryParameterProto>(Arena*);
 template<> ::zetasql::AnalyzerOptionsProto_SystemVariableProto* Arena::CreateMaybeMessage<::zetasql::AnalyzerOptionsProto_SystemVariableProto>(Arena*);
+template<> ::zetasql::EnabledRewriteProto* Arena::CreateMaybeMessage<::zetasql::EnabledRewriteProto>(Arena*);
 template<> ::zetasql::LanguageOptionsProto* Arena::CreateMaybeMessage<::zetasql::LanguageOptionsProto>(Arena*);
 template<> ::zetasql::ZetaSQLBuiltinFunctionOptionsProto* Arena::CreateMaybeMessage<::zetasql::ZetaSQLBuiltinFunctionOptionsProto>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace zetasql {
 
+enum AllowedHintsAndOptionsProto_OptionProto_ResolvingKind : int {
+  AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER = 0,
+  AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_FROM_NAME_SCOPE_IDENTIFIER = 1
+};
+bool AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_IsValid(int value);
+constexpr AllowedHintsAndOptionsProto_OptionProto_ResolvingKind AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_MIN = AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER;
+constexpr AllowedHintsAndOptionsProto_OptionProto_ResolvingKind AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_MAX = AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_FROM_NAME_SCOPE_IDENTIFIER;
+constexpr int AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_ARRAYSIZE = AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_descriptor();
+template<typename T>
+inline const std::string& AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, AllowedHintsAndOptionsProto_OptionProto_ResolvingKind>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_descriptor(), enum_t_value);
+}
+inline bool AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, AllowedHintsAndOptionsProto_OptionProto_ResolvingKind* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<AllowedHintsAndOptionsProto_OptionProto_ResolvingKind>(
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_descriptor(), name, value);
+}
 // ===================================================================
 
 class ZetaSQLBuiltinFunctionOptionsProto final :
@@ -228,6 +256,7 @@ class ZetaSQLBuiltinFunctionOptionsProto final :
   enum : int {
     kIncludeFunctionIdsFieldNumber = 2,
     kExcludeFunctionIdsFieldNumber = 3,
+    kEnabledRewritesMapEntryFieldNumber = 4,
     kLanguageOptionsFieldNumber = 1,
   };
   // repeated .zetasql.FunctionSignatureId include_function_ids = 2;
@@ -264,6 +293,24 @@ class ZetaSQLBuiltinFunctionOptionsProto final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& exclude_function_ids() const;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_exclude_function_ids();
 
+  // repeated .zetasql.EnabledRewriteProto enabled_rewrites_map_entry = 4;
+  int enabled_rewrites_map_entry_size() const;
+  private:
+  int _internal_enabled_rewrites_map_entry_size() const;
+  public:
+  void clear_enabled_rewrites_map_entry();
+  ::zetasql::EnabledRewriteProto* mutable_enabled_rewrites_map_entry(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::EnabledRewriteProto >*
+      mutable_enabled_rewrites_map_entry();
+  private:
+  const ::zetasql::EnabledRewriteProto& _internal_enabled_rewrites_map_entry(int index) const;
+  ::zetasql::EnabledRewriteProto* _internal_add_enabled_rewrites_map_entry();
+  public:
+  const ::zetasql::EnabledRewriteProto& enabled_rewrites_map_entry(int index) const;
+  ::zetasql::EnabledRewriteProto* add_enabled_rewrites_map_entry();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::EnabledRewriteProto >&
+      enabled_rewrites_map_entry() const;
+
   // optional .zetasql.LanguageOptionsProto language_options = 1;
   bool has_language_options() const;
   private:
@@ -293,7 +340,181 @@ class ZetaSQLBuiltinFunctionOptionsProto final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> include_function_ids_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> exclude_function_ids_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::EnabledRewriteProto > enabled_rewrites_map_entry_;
   ::zetasql::LanguageOptionsProto* language_options_;
+  friend struct ::TableStruct_zetasql_2fproto_2foptions_2eproto;
+};
+// -------------------------------------------------------------------
+
+class EnabledRewriteProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.EnabledRewriteProto) */ {
+ public:
+  inline EnabledRewriteProto() : EnabledRewriteProto(nullptr) {}
+  ~EnabledRewriteProto() override;
+  explicit constexpr EnabledRewriteProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  EnabledRewriteProto(const EnabledRewriteProto& from);
+  EnabledRewriteProto(EnabledRewriteProto&& from) noexcept
+    : EnabledRewriteProto() {
+    *this = ::std::move(from);
+  }
+
+  inline EnabledRewriteProto& operator=(const EnabledRewriteProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline EnabledRewriteProto& operator=(EnabledRewriteProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const EnabledRewriteProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const EnabledRewriteProto* internal_default_instance() {
+    return reinterpret_cast<const EnabledRewriteProto*>(
+               &_EnabledRewriteProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(EnabledRewriteProto& a, EnabledRewriteProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(EnabledRewriteProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(EnabledRewriteProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  EnabledRewriteProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<EnabledRewriteProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const EnabledRewriteProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const EnabledRewriteProto& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(EnabledRewriteProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.EnabledRewriteProto";
+  }
+  protected:
+  explicit EnabledRewriteProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kValueFieldNumber = 2,
+    kKeyFieldNumber = 1,
+  };
+  // optional bool value = 2;
+  bool has_value() const;
+  private:
+  bool _internal_has_value() const;
+  public:
+  void clear_value();
+  bool value() const;
+  void set_value(bool value);
+  private:
+  bool _internal_value() const;
+  void _internal_set_value(bool value);
+  public:
+
+  // optional .zetasql.FunctionSignatureId key = 1;
+  bool has_key() const;
+  private:
+  bool _internal_has_key() const;
+  public:
+  void clear_key();
+  ::zetasql::FunctionSignatureId key() const;
+  void set_key(::zetasql::FunctionSignatureId value);
+  private:
+  ::zetasql::FunctionSignatureId _internal_key() const;
+  void _internal_set_key(::zetasql::FunctionSignatureId value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:zetasql.EnabledRewriteProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  bool value_;
+  int key_;
   friend struct ::TableStruct_zetasql_2fproto_2foptions_2eproto;
 };
 // -------------------------------------------------------------------
@@ -353,7 +574,7 @@ class LanguageOptionsProto final :
                &_LanguageOptionsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(LanguageOptionsProto& a, LanguageOptionsProto& b) {
     a.Swap(&b);
@@ -657,7 +878,7 @@ class AllowedHintsAndOptionsProto_HintProto final :
                &_AllowedHintsAndOptionsProto_HintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(AllowedHintsAndOptionsProto_HintProto& a, AllowedHintsAndOptionsProto_HintProto& b) {
     a.Swap(&b);
@@ -875,7 +1096,7 @@ class AllowedHintsAndOptionsProto_OptionProto final :
                &_AllowedHintsAndOptionsProto_OptionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(AllowedHintsAndOptionsProto_OptionProto& a, AllowedHintsAndOptionsProto_OptionProto& b) {
     a.Swap(&b);
@@ -946,11 +1167,42 @@ class AllowedHintsAndOptionsProto_OptionProto final :
 
   // nested types ----------------------------------------------------
 
+  typedef AllowedHintsAndOptionsProto_OptionProto_ResolvingKind ResolvingKind;
+  static constexpr ResolvingKind CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER =
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER;
+  static constexpr ResolvingKind FROM_NAME_SCOPE_IDENTIFIER =
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_FROM_NAME_SCOPE_IDENTIFIER;
+  static inline bool ResolvingKind_IsValid(int value) {
+    return AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_IsValid(value);
+  }
+  static constexpr ResolvingKind ResolvingKind_MIN =
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_MIN;
+  static constexpr ResolvingKind ResolvingKind_MAX =
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_MAX;
+  static constexpr int ResolvingKind_ARRAYSIZE =
+    AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_ResolvingKind_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  ResolvingKind_descriptor() {
+    return AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& ResolvingKind_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, ResolvingKind>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function ResolvingKind_Name.");
+    return AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_Name(enum_t_value);
+  }
+  static inline bool ResolvingKind_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      ResolvingKind* value) {
+    return AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   enum : int {
     kNameFieldNumber = 1,
     kTypeFieldNumber = 2,
+    kResolvingKindFieldNumber = 3,
   };
   // optional string name = 1;
   bool has_name() const;
@@ -988,6 +1240,19 @@ class AllowedHintsAndOptionsProto_OptionProto final :
       ::zetasql::TypeProto* type);
   ::zetasql::TypeProto* unsafe_arena_release_type();
 
+  // optional .zetasql.AllowedHintsAndOptionsProto.OptionProto.ResolvingKind resolving_kind = 3;
+  bool has_resolving_kind() const;
+  private:
+  bool _internal_has_resolving_kind() const;
+  public:
+  void clear_resolving_kind();
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind resolving_kind() const;
+  void set_resolving_kind(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind value);
+  private:
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind _internal_resolving_kind() const;
+  void _internal_set_resolving_kind(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind value);
+  public:
+
   // @@protoc_insertion_point(class_scope:zetasql.AllowedHintsAndOptionsProto.OptionProto)
  private:
   class _Internal;
@@ -999,6 +1264,7 @@ class AllowedHintsAndOptionsProto_OptionProto final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
   ::zetasql::TypeProto* type_;
+  int resolving_kind_;
   friend struct ::TableStruct_zetasql_2fproto_2foptions_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1058,7 +1324,7 @@ class AllowedHintsAndOptionsProto final :
                &_AllowedHintsAndOptionsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(AllowedHintsAndOptionsProto& a, AllowedHintsAndOptionsProto& b) {
     a.Swap(&b);
@@ -1138,6 +1404,8 @@ class AllowedHintsAndOptionsProto final :
     kDisallowUnknownHintsWithQualifierFieldNumber = 2,
     kHintFieldNumber = 3,
     kOptionFieldNumber = 4,
+    kAnonymizationOptionFieldNumber = 5,
+    kDifferentialPrivacyOptionFieldNumber = 6,
     kDisallowUnknownOptionsFieldNumber = 1,
   };
   // repeated string disallow_unknown_hints_with_qualifier = 2;
@@ -1200,6 +1468,42 @@ class AllowedHintsAndOptionsProto final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >&
       option() const;
 
+  // repeated .zetasql.AllowedHintsAndOptionsProto.OptionProto anonymization_option = 5;
+  int anonymization_option_size() const;
+  private:
+  int _internal_anonymization_option_size() const;
+  public:
+  void clear_anonymization_option();
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* mutable_anonymization_option(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >*
+      mutable_anonymization_option();
+  private:
+  const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& _internal_anonymization_option(int index) const;
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* _internal_add_anonymization_option();
+  public:
+  const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& anonymization_option(int index) const;
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* add_anonymization_option();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >&
+      anonymization_option() const;
+
+  // repeated .zetasql.AllowedHintsAndOptionsProto.OptionProto differential_privacy_option = 6;
+  int differential_privacy_option_size() const;
+  private:
+  int _internal_differential_privacy_option_size() const;
+  public:
+  void clear_differential_privacy_option();
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* mutable_differential_privacy_option(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >*
+      mutable_differential_privacy_option();
+  private:
+  const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& _internal_differential_privacy_option(int index) const;
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* _internal_add_differential_privacy_option();
+  public:
+  const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& differential_privacy_option(int index) const;
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* add_differential_privacy_option();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >&
+      differential_privacy_option() const;
+
   // optional bool disallow_unknown_options = 1;
   bool has_disallow_unknown_options() const;
   private:
@@ -1225,6 +1529,8 @@ class AllowedHintsAndOptionsProto final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> disallow_unknown_hints_with_qualifier_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_HintProto > hint_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto > option_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto > anonymization_option_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto > differential_privacy_option_;
   bool disallow_unknown_options_;
   friend struct ::TableStruct_zetasql_2fproto_2foptions_2eproto;
 };
@@ -1285,7 +1591,7 @@ class AnalyzerOptionsProto_QueryParameterProto final :
                &_AnalyzerOptionsProto_QueryParameterProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(AnalyzerOptionsProto_QueryParameterProto& a, AnalyzerOptionsProto_QueryParameterProto& b) {
     a.Swap(&b);
@@ -1468,7 +1774,7 @@ class AnalyzerOptionsProto_SystemVariableProto final :
                &_AnalyzerOptionsProto_SystemVariableProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(AnalyzerOptionsProto_SystemVariableProto& a, AnalyzerOptionsProto_SystemVariableProto& b) {
     a.Swap(&b);
@@ -1657,7 +1963,7 @@ class AnalyzerOptionsProto final :
                &_AnalyzerOptionsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(AnalyzerOptionsProto& a, AnalyzerOptionsProto& b) {
     a.Swap(&b);
@@ -2324,6 +2630,107 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
 ZetaSQLBuiltinFunctionOptionsProto::mutable_exclude_function_ids() {
   // @@protoc_insertion_point(field_mutable_list:zetasql.ZetaSQLBuiltinFunctionOptionsProto.exclude_function_ids)
   return _internal_mutable_exclude_function_ids();
+}
+
+// repeated .zetasql.EnabledRewriteProto enabled_rewrites_map_entry = 4;
+inline int ZetaSQLBuiltinFunctionOptionsProto::_internal_enabled_rewrites_map_entry_size() const {
+  return enabled_rewrites_map_entry_.size();
+}
+inline int ZetaSQLBuiltinFunctionOptionsProto::enabled_rewrites_map_entry_size() const {
+  return _internal_enabled_rewrites_map_entry_size();
+}
+inline void ZetaSQLBuiltinFunctionOptionsProto::clear_enabled_rewrites_map_entry() {
+  enabled_rewrites_map_entry_.Clear();
+}
+inline ::zetasql::EnabledRewriteProto* ZetaSQLBuiltinFunctionOptionsProto::mutable_enabled_rewrites_map_entry(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ZetaSQLBuiltinFunctionOptionsProto.enabled_rewrites_map_entry)
+  return enabled_rewrites_map_entry_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::EnabledRewriteProto >*
+ZetaSQLBuiltinFunctionOptionsProto::mutable_enabled_rewrites_map_entry() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ZetaSQLBuiltinFunctionOptionsProto.enabled_rewrites_map_entry)
+  return &enabled_rewrites_map_entry_;
+}
+inline const ::zetasql::EnabledRewriteProto& ZetaSQLBuiltinFunctionOptionsProto::_internal_enabled_rewrites_map_entry(int index) const {
+  return enabled_rewrites_map_entry_.Get(index);
+}
+inline const ::zetasql::EnabledRewriteProto& ZetaSQLBuiltinFunctionOptionsProto::enabled_rewrites_map_entry(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ZetaSQLBuiltinFunctionOptionsProto.enabled_rewrites_map_entry)
+  return _internal_enabled_rewrites_map_entry(index);
+}
+inline ::zetasql::EnabledRewriteProto* ZetaSQLBuiltinFunctionOptionsProto::_internal_add_enabled_rewrites_map_entry() {
+  return enabled_rewrites_map_entry_.Add();
+}
+inline ::zetasql::EnabledRewriteProto* ZetaSQLBuiltinFunctionOptionsProto::add_enabled_rewrites_map_entry() {
+  ::zetasql::EnabledRewriteProto* _add = _internal_add_enabled_rewrites_map_entry();
+  // @@protoc_insertion_point(field_add:zetasql.ZetaSQLBuiltinFunctionOptionsProto.enabled_rewrites_map_entry)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::EnabledRewriteProto >&
+ZetaSQLBuiltinFunctionOptionsProto::enabled_rewrites_map_entry() const {
+  // @@protoc_insertion_point(field_list:zetasql.ZetaSQLBuiltinFunctionOptionsProto.enabled_rewrites_map_entry)
+  return enabled_rewrites_map_entry_;
+}
+
+// -------------------------------------------------------------------
+
+// EnabledRewriteProto
+
+// optional .zetasql.FunctionSignatureId key = 1;
+inline bool EnabledRewriteProto::_internal_has_key() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool EnabledRewriteProto::has_key() const {
+  return _internal_has_key();
+}
+inline void EnabledRewriteProto::clear_key() {
+  key_ = -1;
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline ::zetasql::FunctionSignatureId EnabledRewriteProto::_internal_key() const {
+  return static_cast< ::zetasql::FunctionSignatureId >(key_);
+}
+inline ::zetasql::FunctionSignatureId EnabledRewriteProto::key() const {
+  // @@protoc_insertion_point(field_get:zetasql.EnabledRewriteProto.key)
+  return _internal_key();
+}
+inline void EnabledRewriteProto::_internal_set_key(::zetasql::FunctionSignatureId value) {
+  assert(::zetasql::FunctionSignatureId_IsValid(value));
+  _has_bits_[0] |= 0x00000002u;
+  key_ = value;
+}
+inline void EnabledRewriteProto::set_key(::zetasql::FunctionSignatureId value) {
+  _internal_set_key(value);
+  // @@protoc_insertion_point(field_set:zetasql.EnabledRewriteProto.key)
+}
+
+// optional bool value = 2;
+inline bool EnabledRewriteProto::_internal_has_value() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool EnabledRewriteProto::has_value() const {
+  return _internal_has_value();
+}
+inline void EnabledRewriteProto::clear_value() {
+  value_ = false;
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline bool EnabledRewriteProto::_internal_value() const {
+  return value_;
+}
+inline bool EnabledRewriteProto::value() const {
+  // @@protoc_insertion_point(field_get:zetasql.EnabledRewriteProto.value)
+  return _internal_value();
+}
+inline void EnabledRewriteProto::_internal_set_value(bool value) {
+  _has_bits_[0] |= 0x00000001u;
+  value_ = value;
+}
+inline void EnabledRewriteProto::set_value(bool value) {
+  _internal_set_value(value);
+  // @@protoc_insertion_point(field_set:zetasql.EnabledRewriteProto.value)
 }
 
 // -------------------------------------------------------------------
@@ -3150,6 +3557,35 @@ inline void AllowedHintsAndOptionsProto_OptionProto::set_allocated_type(::zetasq
   // @@protoc_insertion_point(field_set_allocated:zetasql.AllowedHintsAndOptionsProto.OptionProto.type)
 }
 
+// optional .zetasql.AllowedHintsAndOptionsProto.OptionProto.ResolvingKind resolving_kind = 3;
+inline bool AllowedHintsAndOptionsProto_OptionProto::_internal_has_resolving_kind() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool AllowedHintsAndOptionsProto_OptionProto::has_resolving_kind() const {
+  return _internal_has_resolving_kind();
+}
+inline void AllowedHintsAndOptionsProto_OptionProto::clear_resolving_kind() {
+  resolving_kind_ = 0;
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind AllowedHintsAndOptionsProto_OptionProto::_internal_resolving_kind() const {
+  return static_cast< ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind >(resolving_kind_);
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind AllowedHintsAndOptionsProto_OptionProto::resolving_kind() const {
+  // @@protoc_insertion_point(field_get:zetasql.AllowedHintsAndOptionsProto.OptionProto.resolving_kind)
+  return _internal_resolving_kind();
+}
+inline void AllowedHintsAndOptionsProto_OptionProto::_internal_set_resolving_kind(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind value) {
+  assert(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_IsValid(value));
+  _has_bits_[0] |= 0x00000004u;
+  resolving_kind_ = value;
+}
+inline void AllowedHintsAndOptionsProto_OptionProto::set_resolving_kind(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind value) {
+  _internal_set_resolving_kind(value);
+  // @@protoc_insertion_point(field_set:zetasql.AllowedHintsAndOptionsProto.OptionProto.resolving_kind)
+}
+
 // -------------------------------------------------------------------
 
 // AllowedHintsAndOptionsProto
@@ -3335,6 +3771,86 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsA
 AllowedHintsAndOptionsProto::option() const {
   // @@protoc_insertion_point(field_list:zetasql.AllowedHintsAndOptionsProto.option)
   return option_;
+}
+
+// repeated .zetasql.AllowedHintsAndOptionsProto.OptionProto anonymization_option = 5;
+inline int AllowedHintsAndOptionsProto::_internal_anonymization_option_size() const {
+  return anonymization_option_.size();
+}
+inline int AllowedHintsAndOptionsProto::anonymization_option_size() const {
+  return _internal_anonymization_option_size();
+}
+inline void AllowedHintsAndOptionsProto::clear_anonymization_option() {
+  anonymization_option_.Clear();
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto* AllowedHintsAndOptionsProto::mutable_anonymization_option(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.AllowedHintsAndOptionsProto.anonymization_option)
+  return anonymization_option_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >*
+AllowedHintsAndOptionsProto::mutable_anonymization_option() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.AllowedHintsAndOptionsProto.anonymization_option)
+  return &anonymization_option_;
+}
+inline const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& AllowedHintsAndOptionsProto::_internal_anonymization_option(int index) const {
+  return anonymization_option_.Get(index);
+}
+inline const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& AllowedHintsAndOptionsProto::anonymization_option(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.AllowedHintsAndOptionsProto.anonymization_option)
+  return _internal_anonymization_option(index);
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto* AllowedHintsAndOptionsProto::_internal_add_anonymization_option() {
+  return anonymization_option_.Add();
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto* AllowedHintsAndOptionsProto::add_anonymization_option() {
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* _add = _internal_add_anonymization_option();
+  // @@protoc_insertion_point(field_add:zetasql.AllowedHintsAndOptionsProto.anonymization_option)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >&
+AllowedHintsAndOptionsProto::anonymization_option() const {
+  // @@protoc_insertion_point(field_list:zetasql.AllowedHintsAndOptionsProto.anonymization_option)
+  return anonymization_option_;
+}
+
+// repeated .zetasql.AllowedHintsAndOptionsProto.OptionProto differential_privacy_option = 6;
+inline int AllowedHintsAndOptionsProto::_internal_differential_privacy_option_size() const {
+  return differential_privacy_option_.size();
+}
+inline int AllowedHintsAndOptionsProto::differential_privacy_option_size() const {
+  return _internal_differential_privacy_option_size();
+}
+inline void AllowedHintsAndOptionsProto::clear_differential_privacy_option() {
+  differential_privacy_option_.Clear();
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto* AllowedHintsAndOptionsProto::mutable_differential_privacy_option(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.AllowedHintsAndOptionsProto.differential_privacy_option)
+  return differential_privacy_option_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >*
+AllowedHintsAndOptionsProto::mutable_differential_privacy_option() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.AllowedHintsAndOptionsProto.differential_privacy_option)
+  return &differential_privacy_option_;
+}
+inline const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& AllowedHintsAndOptionsProto::_internal_differential_privacy_option(int index) const {
+  return differential_privacy_option_.Get(index);
+}
+inline const ::zetasql::AllowedHintsAndOptionsProto_OptionProto& AllowedHintsAndOptionsProto::differential_privacy_option(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.AllowedHintsAndOptionsProto.differential_privacy_option)
+  return _internal_differential_privacy_option(index);
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto* AllowedHintsAndOptionsProto::_internal_add_differential_privacy_option() {
+  return differential_privacy_option_.Add();
+}
+inline ::zetasql::AllowedHintsAndOptionsProto_OptionProto* AllowedHintsAndOptionsProto::add_differential_privacy_option() {
+  ::zetasql::AllowedHintsAndOptionsProto_OptionProto* _add = _internal_add_differential_privacy_option();
+  // @@protoc_insertion_point(field_add:zetasql.AllowedHintsAndOptionsProto.differential_privacy_option)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AllowedHintsAndOptionsProto_OptionProto >&
+AllowedHintsAndOptionsProto::differential_privacy_option() const {
+  // @@protoc_insertion_point(field_list:zetasql.AllowedHintsAndOptionsProto.differential_privacy_option)
+  return differential_privacy_option_;
 }
 
 // -------------------------------------------------------------------
@@ -4657,10 +5173,22 @@ inline void AnalyzerOptionsProto::set_default_anon_kappa_value(int64_t value) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace zetasql
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind>() {
+  return ::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

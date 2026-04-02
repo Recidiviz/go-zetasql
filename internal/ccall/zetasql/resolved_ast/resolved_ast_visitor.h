@@ -58,6 +58,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedExpressionColumn(const ResolvedExpressionColumn* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedCatalogColumnRef(const ResolvedCatalogColumnRef* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedColumnRef(const ResolvedColumnRef* node) {
     return DefaultVisit(node);
   }
@@ -139,6 +142,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedScan(const ResolvedScan* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedExecuteAsRoleScan(const ResolvedExecuteAsRoleScan* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedModel(const ResolvedModel* node) {
     return DefaultVisit(node);
   }
@@ -176,6 +182,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAnonymizedAggregateScan(const ResolvedAnonymizedAggregateScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDifferentialPrivacyAggregateScan(const ResolvedDifferentialPrivacyAggregateScan* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedSetOperationItem(const ResolvedSetOperationItem* node) {
@@ -278,6 +287,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedCreateTableAsSelectStmt(const ResolvedCreateTableAsSelectStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateModelAliasedQuery(const ResolvedCreateModelAliasedQuery* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedCreateModelStmt(const ResolvedCreateModelStmt* node) {
@@ -641,6 +653,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAnalyzeStmt(const ResolvedAnalyzeStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAuxLoadDataPartitionFilter(const ResolvedAuxLoadDataPartitionFilter* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAuxLoadDataStmt(const ResolvedAuxLoadDataStmt* node) {

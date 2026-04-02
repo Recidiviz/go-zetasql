@@ -17,9 +17,12 @@
 #include "zetasql/public/templated_sql_tvf.h"
 
 #include <algorithm>
+#include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "zetasql/analyzer/name_scope.h"
 #include "zetasql/analyzer/resolver.h"
@@ -30,7 +33,6 @@
 #include "zetasql/parser/parser.h"
 #include "zetasql/proto/function.pb.h"
 #include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/analyzer.h"
 #include "zetasql/public/cycle_detector.h"
 #include "zetasql/public/deprecation_warning.pb.h"
 #include "zetasql/public/error_helpers.h"
@@ -45,14 +47,12 @@
 #include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "zetasql/resolved_ast/resolved_column.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "absl/memory/memory.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
-#include "zetasql/base/status_payload.h"
 
 namespace zetasql {
 
@@ -77,8 +77,10 @@ absl::Status TemplatedSQLTVF::Deserialize(
     path.push_back(name);
   }
   std::unique_ptr<FunctionSignature> signature;
-  ZETASQL_RETURN_IF_ERROR(FunctionSignature::Deserialize(proto.signature(), pools,
-                                                 factory, &signature));
+  ZETASQL_ASSIGN_OR_RETURN(signature,
+                   FunctionSignature::Deserialize(
+                       proto.signature(), TypeDeserializer(factory, pools)));
+
   std::vector<std::string> arg_name_list;
   arg_name_list.reserve(proto.argument_name_size());
   for (const std::string& arg_name : proto.argument_name()) {
@@ -156,7 +158,8 @@ absl::Status TemplatedSQLTVF::Resolve(
   // Create a separate new parser and parse the templated TVFs SQL query body.
   // Use the same ID string pool from the original parser.
   ParserOptions parser_options(analyzer_options->id_string_pool(),
-                               analyzer_options->arena());
+                               analyzer_options->arena(),
+                               analyzer_options->language());
   std::unique_ptr<ParserOutput> parser_output;
   bool at_end_of_input = false;
   ParseResumeLocation this_parse_resume_location(parse_resume_location_);
@@ -203,7 +206,7 @@ absl::Status TemplatedSQLTVF::Resolve(
     // TODO: Attach proper error locations to the returned Status.
     ZETASQL_RET_CHECK_EQ(1, tvf_body_name_list->num_columns());
     return_tvf_relation = TVFRelation::ValueTable(
-        tvf_body_name_list->column(0).column.type());
+        tvf_body_name_list->column(0).column.annotated_type());
   } else {
     std::vector<TVFRelation::Column> output_schema_columns;
     output_schema_columns.reserve(tvf_body_name_list->num_columns());
@@ -222,7 +225,7 @@ absl::Status TemplatedSQLTVF::Resolve(
       }
       output_schema_columns.emplace_back(
           tvf_body_name_list_column.name.ToString(),
-          tvf_body_name_list_column.column.type());
+          tvf_body_name_list_column.column.annotated_type());
     }
     return_tvf_relation = TVFRelation(output_schema_columns);
   }
@@ -236,7 +239,7 @@ absl::Status TemplatedSQLTVF::Resolve(
       static_cast<const ResolvedQueryStmt*>(resolved_sql_body.release()));
   tvf_signature->reset(new TemplatedSQLTVFSignature(
       input_arguments, return_tvf_relation, tvf_signature_options,
-      resolved_templated_query.release(), GetArgumentNames()));
+      std::move(resolved_templated_query), GetArgumentNames()));
   if (anonymization_info_ != nullptr) {
     auto anonymization_info =
         std::make_unique<AnonymizationInfo>(*anonymization_info_);
@@ -267,10 +270,9 @@ absl::Status TemplatedSQLTVF::ForwardNestedResolutionAnalysisError(
   } else if (HasErrorLocation(status)) {
     new_status = MakeTVFQueryAnalysisError();
     zetasql::internal::AttachPayload(
-        &new_status,
-        SetErrorSourcesFromStatus(
-            zetasql::internal::GetPayload<ErrorLocation>(status), status,
-            mode, std::string(parse_resume_location_.input())));
+        &new_status, SetErrorSourcesFromStatus(
+                         zetasql::internal::GetPayload<ErrorLocation>(status),
+                         status, mode, parse_resume_location_.input()));
   } else {
     new_status = StatusWithInternalErrorLocation(
         MakeTVFQueryAnalysisError(),
@@ -281,7 +283,7 @@ absl::Status TemplatedSQLTVF::ForwardNestedResolutionAnalysisError(
         &new_status,
         SetErrorSourcesFromStatus(
             zetasql::internal::GetPayload<InternalErrorLocation>(new_status),
-            status, mode, std::string(parse_resume_location_.input())));
+            status, mode, parse_resume_location_.input()));
   }
   // Update the <new_status> based on <mode>.
   return MaybeUpdateErrorFromPayload(
@@ -300,12 +302,8 @@ absl::Status TemplatedSQLTVF::MakeTVFQueryAnalysisError(
   return MakeSqlError() << result;
 }
 
-TemplatedSQLTVFSignature::~TemplatedSQLTVFSignature() {
-  delete resolved_templated_query_;
-}
-
 namespace {
-static bool module_initialization_complete = []() {
+static bool templated_sql_tvf_module_init = []() {
   TableValuedFunction::RegisterDeserializer(
       FunctionEnums::TEMPLATED_SQL_TVF,
       TemplatedSQLTVF::Deserialize);

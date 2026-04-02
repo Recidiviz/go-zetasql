@@ -17,8 +17,10 @@
 #include "zetasql/tools/execute_query/execute_query_prompt.h"
 
 #include <limits>
+#include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "zetasql/common/testing/proto_matchers.h"
 #include "zetasql/base/testing/status_matchers.h"
@@ -61,7 +63,7 @@ struct CompletionReq {
   size_t want_prefix_start = 0;
   ::testing::Matcher<std::vector<std::string>> matcher = IsEmpty();
 
-  void Check(ExecuteQueryStatementPrompt& prompt, const std::string body) const;
+  void Check(ExecuteQueryStatementPrompt& prompt, std::string body) const;
 };
 
 void CompletionReq::Check(ExecuteQueryStatementPrompt& prompt,

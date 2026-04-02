@@ -182,7 +182,7 @@ const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2epro
   3,
   1,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 12, -1, sizeof(::zetasql::ScriptExecutorStateProto_ProcedureDefinition)},
   { 18, 26, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters)},
   { 28, 40, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame)},
@@ -190,7 +190,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 58, 71, -1, sizeof(::zetasql::ScriptExecutorStateProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_ProcedureDefinition_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_StackFrame_Parameters_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_StackFrame_default_instance_),
@@ -250,7 +250,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fs
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = {
   false, false, 1559, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, "zetasql/scripting/script_executor_state.proto", 
   &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once, descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps, 5, 5,
-  schemas, file_default_instances, TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets,
+  schemas_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_default_instances_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets,
   file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter() {
@@ -2099,6 +2099,8 @@ void ScriptExecutorStateProto::CopyFrom(const ScriptExecutorStateProto& from) {
 
 bool ScriptExecutorStateProto::IsInitialized() const {
   if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(callstack_))
+    return false;
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(pending_exceptions_))
     return false;
   return true;
 }

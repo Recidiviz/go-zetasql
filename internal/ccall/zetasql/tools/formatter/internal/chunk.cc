@@ -16,8 +16,11 @@
 
 #include "zetasql/tools/formatter/internal/chunk.h"
 
+#include <stddef.h>
+
 #include <algorithm>
 #include <iterator>
+#include <map>
 #include <memory>
 #include <ostream>
 #include <queue>
@@ -25,15 +28,22 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "zetasql/public/builtin_function.h"
 #include "zetasql/public/formatter_options.h"
+#include "zetasql/public/function.h"
+#include "zetasql/public/language_options.h"
+#include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_location.h"
 #include "zetasql/public/parse_tokens.h"
 #include "zetasql/public/type.pb.h"
+#include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/value.h"
 #include "zetasql/tools/formatter/internal/fusible_tokens.h"
 #include "zetasql/tools/formatter/internal/token.h"
 #include "absl/algorithm/container.h"
+#include "absl/container/flat_hash_set.h"
+#include "zetasql/base/check.h"
+#include "absl/log/log.h"
 #include "absl/memory/memory.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/ascii.h"
@@ -190,8 +200,8 @@ bool CanBeUnaryOperator(absl::string_view keyword) {
 // "max + min + offset" or "date AND time").
 bool CanBePartOfExpression(const Token& token) {
   static const auto* forbidden = new zetasql_base::flat_set<absl::string_view>(
-      {";", ",", "BY", "DEFINE", "CASE", "ELSE", "INTERVAL", "ON", "THEN",
-       "WHEN"});
+      {";", ",", "BY", "DEFAULT", "DEFINE", "CASE", "ELSE", "INTERVAL", "ON",
+       "THEN", "WHEN"});
   return !IsTopLevelClauseKeyword(token) &&
          !forbidden->contains(token.GetKeyword());
 }
@@ -207,7 +217,7 @@ bool CanFollowTypeDeclaration(absl::string_view keyword) {
 // Returns true if the given keyword can start a type declaration.
 bool CanBeTypeDeclarationStart(absl::string_view keyword) {
   static const auto* allowed = new zetasql_base::flat_set<absl::string_view>(
-      {"ARRAY", "PROTO", "STRUCT", "TABLE"});
+      {"ARRAY", "ENUM", "PROTO", "STRUCT", "TABLE"});
   return allowed->contains(keyword);
 }
 
@@ -290,6 +300,10 @@ bool Chunk::SpaceBetweenTokens(const Token& token_before,
   if (token_after.IsEndOfLineComment()) {
     return true;
   }
+  if (token_before.Is(Token::Type::CLOSE_BRACKET) &&
+      token_after.GetKeyword() == "DEFAULT") {
+    return true;
+  }
   if (token_before.IsOneOf({Token::Type::UNARY_OPERATOR,
                             Token::Type::OPEN_BRACKET,
                             Token::Type::CLOSE_BRACKET})) {
@@ -303,6 +317,12 @@ bool Chunk::SpaceBetweenTokens(const Token& token_before,
   }
   if (token_before.Is(Token::Type::TABLE_NAME_IN_DEFINE_STMT) &&
       token_after.Is(Token::Type::TABLE_NAME_IN_DEFINE_STMT)) {
+    return false;
+  }
+  if (token_before.Is(Token::Type::BRACED_CONSTR_COLON)) {
+    return true;
+  }
+  if (token_after.Is(Token::Type::STARTS_BRACED_CONSTR)) {
     return false;
   }
 
@@ -382,7 +402,6 @@ std::string Chunk::PrintableString(const FormatterOptions& options, int column,
     absl::StrAppend(&t, tokens[i]->ImageForPrinting(options, i == 0, column,
                                                     original_column_));
   }
-
   return t;
 }
 
@@ -638,6 +657,7 @@ bool Chunk::IsTypeDeclarationEnd() const {
 
 bool Chunk::CanBePartOfExpression() const {
   return !Empty() && LastKeyword() != "," &&
+         !LastToken().Is(Token::Type::BRACED_CONSTR_COLON) &&
          zetasql::formatter::internal::CanBePartOfExpression(FirstToken());
 }
 
@@ -708,10 +728,10 @@ bool ShouldNeverBeFollowedByNewline(const Token& token) {
   //   -- "<" and ">" are missing, because the formatting is different when
   //      these are part of type declaration, e.g., "STRUCT<INT64>".
   static const auto* allowed = new zetasql_base::flat_set<absl::string_view>({
-      "!=",   "&",    "+",       "-",       ".",      "/",     ":",     "<<",
-      "<=",   ">=",   ">>",      "@",       "@@",     "^",     "|",     "||",
-      "~",    "AND",  "BETWEEN", "CROSS",   "DEFINE", "FULL",  "IN",    "INNER",
-      "LEFT", "LIKE", "NOT",     "OPTIONS", "OR",     "OUTER", "RIGHT",
+      "!=",   "&",       "+",       "-",      ".",     "/",     "<<",    "<=",
+      ">=",   ">>",      "@",       "@@",     "^",     "|",     "||",    "~",
+      "AND",  "BETWEEN", "CROSS",   "DEFINE", "FULL",  "IN",    "INNER", "LEFT",
+      "LIKE", "NOT",     "OPTIONS", "OR",     "OUTER", "RIGHT",
   });
 
   // Some tokens should not be followed by a line break only if they are used
@@ -747,6 +767,10 @@ void Chunk::UpdateUnaryOperatorTypeIfNeeded(const Chunk* const previous_chunk,
   }
   const int current_token_idx = static_cast<int>(tokens.size()) - 1;
   Token& current_token = *tokens[current_token_idx];
+  if (current_token.Is(Token::Type::COMPLEX_TOKEN_CONTINUATION)) {
+    return;
+  }
+
   if (current_token_idx > 0 &&
       tokens[current_token_idx - 1]->Is(Token::Type::UNARY_OPERATOR) &&
       !zetasql::formatter::internal::CanBePartOfExpression(current_token)) {
@@ -774,7 +798,8 @@ void Chunk::UpdateUnaryOperatorTypeIfNeeded(const Chunk* const previous_chunk,
                                                            : *previous_chunk;
   if (!chunk_with_previous_token.CanBePartOfExpression() ||
       IsChainableOperator(*previous_token) ||
-      IsOpenParenOrBracket(previous_keyword) || previous_keyword == "~") {
+      IsOpenParenOrBracket(previous_keyword) || previous_keyword == "~" ||
+      previous_keyword == "=>" || previous_keyword == "->") {
     current_token.SetType(Token::Type::UNARY_OPERATOR);
   }
 }
@@ -991,6 +1016,18 @@ bool IsPartOfSameChunk(const Chunk& chunk, const std::vector<Token*>& tokens,
     return false;
   }
 
+  // In proto constructors colon acts similar to the assignment operator:
+  // field_name: value
+  if (previous_token->Is(Token::Type::BRACED_CONSTR_COLON)) {
+    return false;
+  } else if (current_token->Is(Token::Type::BRACED_CONSTR_COLON)) {
+    return true;
+  }
+  // Otherwise, colons normally appear inside identifiers.
+  if (previous_token->GetKeyword() == ":") {
+    return true;
+  }
+
   // For module declaration statements, we basically ignore the line
   // length limit, so everything between an "MODULE" and ";" is a single chunk.
   if (chunk.IsModuleDeclaration() && previous != ";") {
@@ -1083,6 +1120,12 @@ bool IsPartOfSameChunk(const Chunk& chunk, const std::vector<Token*>& tokens,
   }
   if (current == "}") {
     return false;
+  }
+  if (current == "{" && current_token->Is(Token::Type::UNKNOWN) &&
+      chunk.FirstKeyword() == "NEW") {
+    // Fuse { with previous token if it is a braced proto constructor.
+    current_token->SetType(Token::Type::STARTS_BRACED_CONSTR);
+    return true;
   }
 
   // * is tricky. It's the multiplication operator, but it can also be part of
@@ -1359,15 +1402,19 @@ void MarkAllMacroAndTableDefinitions(const TokensView& tokens_view) {
     if (tokens[t - 2]->GetKeyword() == "DEFINE" &&
         tokens[t]->MayBeIdentifier()) {
       const absl::string_view define_type = tokens[t - 1]->GetKeyword();
+      Token::Type type = Token::Type::UNKNOWN;
       if (define_type == "TABLE") {
-        tokens[t]->SetType(Token::Type::TABLE_NAME_IN_DEFINE_STMT);
+        type = Token::Type::TABLE_NAME_IN_DEFINE_STMT;
+      } else if (define_type == "MACRO") {
+        type = Token::Type::MACRO_NAME_IN_DEFINE_STMT;
+      }
+      if (type != Token::Type::UNKNOWN) {
+        tokens[t]->SetType(type);
         while (++t < tokens.size() &&
                tokens[t]->MayBeIdentifierContinuation(*tokens[t - 1]) &&
                !SpaceBetweenTokensInInput(*tokens[t - 1], *tokens[t])) {
-          tokens[t]->SetType(Token::Type::TABLE_NAME_IN_DEFINE_STMT);
+          tokens[t]->SetType(type);
         }
-      } else if (define_type == "MACRO") {
-        tokens[t]->SetType(Token::Type::MACRO_NAME_IN_DEFINE_STMT);
       }
       t += 2;
     }
@@ -1400,7 +1447,7 @@ int FindNextParamList(const std::vector<Token*>& tokens, int index) {
     if (index >= 3 &&
         tokens[index - 1]->Is(Token::Type::TABLE_NAME_IN_DEFINE_STMT)) {
       // We've already consumed 'DEFINE TABLE'; now, we need to consume all
-      // tokens in <identifier> (which may be dot-delimited e.g 'foo.bar').
+      // tokens in <identifier> (which may be dot-delimited e.g. 'foo.bar').
       while (tokens[index]->MayBeIdentifierContinuation(*tokens[index - 1])) {
         if (++index >= tokens.size()) {
           return index;
@@ -1425,6 +1472,12 @@ int FindNextParamList(const std::vector<Token*>& tokens, int index) {
       if (tokens[index]->GetKeyword() == "(") {
         return index;
       }
+    }
+
+    // CASE: '[sqltest_option = a]' and '[DEFAULT sqltest_option = a]'.
+    if (index + 1 < tokens.size() && tokens[index - 1]->GetKeyword() == "[") {
+      if (tokens[index + 1]->GetKeyword() == "=") return --index;
+      if (tokens[index]->GetKeyword() == "DEFAULT") return index;
     }
   }
 
@@ -1483,7 +1536,7 @@ void MarkAllProtoExtensionParentheses(const TokensView& tokens_view) {
     absl::string_view current_kwd = tokens[i]->GetKeyword();
     if (previous_kwd != "." || current_kwd != "(") continue;
     // We've found a ".(" sequence which potentially introduces an inline proto
-    // extension.  Only mark the "(" as an proto extension opening parenthesis
+    // extension.  Only mark the "(" as a proto extension opening parenthesis
     // if we can find the corresponding closing parenthesis.
     for (int j = i + 1; j < tokens.size(); ++j) {
       current_kwd = tokens[j]->GetKeyword();
@@ -1544,6 +1597,11 @@ void MarkAllKeywordsInComplexIdentifiers(const TokensView& tokens_view) {
         prev->SetType(Token::Type::KEYWORD_AS_IDENTIFIER_FRAGMENT);
       }
       Token* next = tokens[t + 1];
+      if (current_token->GetKeyword() == ":" && next->GetKeyword() != ":" &&
+          prev->GetKeyword() != ":") {
+        continue;
+      }
+
       if (next->IsReservedKeyword()) {
         next->SetType(Token::Type::KEYWORD_AS_IDENTIFIER_FRAGMENT);
       } else if (!SpaceBetweenTokensInInput(*current_token, *next) &&
@@ -1632,7 +1690,8 @@ void MarkAllTokensStartingAList(const TokensView& tokens_view) {
         list_starters.back()->GetKeyword() == "SELECT") {
       list_starters.pop_back();
       continue;
-    } else if (IsCloseParenOrBracket(keyword)) {
+    } else if (IsCloseParenOrBracket(keyword) &&
+               !token->Is(Token::Type::CLOSE_PROTO_EXTENSION_PARENTHESIS)) {
       const absl::string_view matching_open_bracket =
           CorrespondingOpenBracket(keyword);
       while (!list_starters.empty() &&
@@ -1874,7 +1933,24 @@ void MarkNonSqlTokensThatArePartOfComplexToken(const TokensView& tokens_view) {
         // "${param}" or "%{param}" - fuse "${" and "%{" and find the token
         // after '}'.
         tokens[next_token]->SetType(Token::Type::COMPLEX_TOKEN_CONTINUATION);
-        next_token = FindMatchingClosingParenthesis(tokens, next_token) + 1;
+        size_t end_of_param =
+            std::min(static_cast<int>(tokens.size()) - 1,
+                     FindMatchingClosingParenthesis(tokens, next_token));
+        // Check if there are any spaces between curly braces {}. If no - fuse
+        // all tokens inside.
+        bool no_spaces = true;
+        for (int i = next_token + 1; i <= end_of_param; ++i) {
+          if (SpaceBetweenTokensInInput(*tokens[i - 1], *tokens[i])) {
+            no_spaces = false;
+            break;
+          }
+        }
+        if (no_spaces) {
+          while (++next_token <= end_of_param) {
+            tokens[next_token]->SetType(
+                Token::Type::COMPLEX_TOKEN_CONTINUATION);
+          }
+        }
       } else if (tokens[t]->IsMacroCall() &&
                  tokens[next_token]->GetKeyword() == "(") {
         // "$FOO(args)" - find the token after ')'.
@@ -1940,14 +2016,31 @@ void MarkUnquotedPaths(const TokensView& tokens_view) {
         break;
       }
     }
+    // [sql_test_option = some/path]
+  } else if (tokens[statement_start]->GetKeyword() == "[") {
+    int t = statement_start + 1;
+    if (tokens[t]->GetKeyword() == "DEFAULT") {
+      ++t;
+    }
+    if (tokens[t + 1]->GetKeyword() == "=") {
+      path_start = t + 2;
+    }
   }
 
   if (path_start >= tokens.size()) {
     return;
   }
   tokens[path_start]->SetType(Token::Type::INVALID_TOKEN);
+  static const auto* statement_terminators =
+      new zetasql_base::flat_set<absl::string_view>({";", "]"});
   for (int i = path_start + 1; i < tokens.size(); ++i) {
-    if (tokens[i]->GetKeyword() == ";" ||
+    if (i + 1 < tokens.size() && tokens[i]->GetKeyword() == "," &&
+        tokens[i + 1]->MayBeStartOfIdentifier()) {
+      tokens[i + 1]->SetType(Token::Type::INVALID_TOKEN);
+      ++i;
+      continue;
+    }
+    if (statement_terminators->contains(tokens[i]->GetKeyword()) ||
         SpaceBetweenTokensInInput(*tokens[i - 1], *tokens[i])) {
       break;
     }
@@ -2059,8 +2152,121 @@ void MarkAllCaseKeywords(const TokensView& tokens_view) {
   }
 }
 
+// Marks all slashed identifiers supported by ZetaSQL grammar for table names.
+// The slashed identifier always starts with '/' and may contain dashes ('-'),
+// colons (':') and dots.
+void MarkAllSlashedIdentifiers(const TokensView& tokens_view) {
+  const std::vector<Token*>& tokens = tokens_view.WithoutComments();
+  // We consider a slashed identifier something that has at least 4 tokens:
+  // '/a/b', '/a-b', '/a:b', '/a.b'. ZetaSQL grammar doesn't have such
+  // limitation but we add it to avoid false positives and assuming that real
+  // SQL would contain long paths.
+  if (tokens.size() < 4) {
+    return;
+  }
+  static const auto* allowed_separators =
+      new zetasql_base::flat_set<absl::string_view>({":", "-", "/", "."});
+  for (int t = 0; t < tokens.size() - 3; ++t) {
+    // The identifier should start with '/' and there should be some other
+    // separator after the first path part.
+    if (tokens[t]->GetKeyword() == "/" &&
+        allowed_separators->contains(tokens[t + 2]->GetKeyword()) &&
+        // Previous token shouldn't be something that could have been lhs
+        // operand of the divide operator at tokens[t].
+        (t == 0 || !CanBePartOfExpression(*tokens[t - 1]) ||
+         tokens[t - 1]->GetKeyword() == "(")) {
+      // Find the end of identifier. Look only for tokens that don't have any
+      // spaces in between in the original input.
+      int end = t + 1;
+      while (end < tokens.size() &&
+             !SpaceBetweenTokensInInput(*tokens[end - 1], *tokens[end]) &&
+             (tokens[end]->MayBeIdentifier() ||
+              tokens[end]->IsNonPunctuationKeyword() ||
+              // A part of path expression could be an integer, e.g. '/path-1'.
+              (tokens[end]->IsValue() &&
+               tokens[end]->GetValue().type_kind() != zetasql::TYPE_STRING) ||
+              allowed_separators->contains(tokens[end]->GetKeyword()))) {
+        ++end;
+      }
+      if (end >= t + 3) {
+        for (int i = t + 1; i < end; ++i) {
+          tokens[i]->SetType(Token::Type::COMPLEX_TOKEN_CONTINUATION);
+        }
+      }
+    }
+  }
+}
+
+// Marks all colons inside braced constructors - these act similar to assignment
+// operators.
+void MarkAllColonsInBracedConstructors(const TokensView& tokens_view) {
+  const std::vector<Token*>& tokens = tokens_view.WithoutComments();
+
+  for (int t = 0; t < tokens.size(); ++t) {
+    if (tokens[t]->GetKeyword() == "{" &&
+        // Skip various templates like ${param} or %{template}.
+        (t == 0 || (tokens[t - 1]->GetKeyword() != "$" &&
+                    tokens[t - 1]->GetKeyword() != "%)"))) {
+      int end = FindMatchingClosingParenthesis(tokens, t);
+      while (++t < end) {
+        if (tokens[t]->GetKeyword() == ":" &&
+            tokens[t]->Is(Token::Type::UNKNOWN)) {
+          tokens[t]->SetType(Token::Type::BRACED_CONSTR_COLON);
+        }
+      }
+    }
+  }
+}
+
+// Builds a hash-set of built-in function names within ZetaSQL.
+absl::flat_hash_set<std::string>* GetBuiltinFunctions() {
+  static absl::flat_hash_set<std::string>* function_names = []() {
+    TypeFactory type_factory;
+    LanguageOptions options;
+    options.EnableMaximumLanguageFeaturesForDevelopment();
+    options.set_product_mode(PRODUCT_INTERNAL);
+    std::map<std::string, std::unique_ptr<Function>> functions;
+    GetZetaSQLFunctions(&type_factory, options, &functions);
+    absl::flat_hash_set<std::string>* function_names =
+        new absl::flat_hash_set<std::string>();
+    function_names->reserve(functions.size());
+    for (const auto& function_mapping : functions) {
+      function_names->insert(absl::AsciiStrToUpper(function_mapping.first));
+    }
+    return function_names;
+  }();
+  return function_names;
+}
+
+// Annotates all tokens which are a part of a Builtin Function call.
+void MarkAllBuiltinFunctions(const TokensView& tokens_view) {
+  const std::vector<Token*>& tokens = tokens_view.WithoutComments();
+  if (tokens.empty()) {
+    return;
+  }
+  absl::flat_hash_set<std::string>* builtin_function_names =
+      GetBuiltinFunctions();
+  for (int i = 0; i < tokens.size() - 1; ++i) {
+    // Function call should be followed by an open-parenthesis.
+    if (tokens[i + 1]->GetKeyword() == "(") {
+      int start = i;
+      std::string s = "";
+      while (start > 0 &&
+             !SpaceBetweenTokensInInput(*tokens[start], *tokens[start + 1])) {
+        s = absl::StrCat(tokens[start--]->GetKeyword(), s);
+      }
+      if (builtin_function_names->contains(s)) {
+        for (; start <= i; ++start) {
+          tokens[start]->SetType(Token::Type::BUILTIN_FUNCTION);
+        }
+      }
+    }
+  }
+}
+
 void AnnotateTokens(const TokensView& tokens,
-                    const ParseLocationTranslator& location_translator) {
+                    const ParseLocationTranslator& location_translator,
+                    const FormatterOptions& formatter_options) {
   MarkAllKeywordsInComplexIdentifiers(tokens);
   MarkAllTypeDeclarations(tokens);
   MarkNonSqlTokensThatArePartOfComplexToken(tokens);
@@ -2081,6 +2287,11 @@ void AnnotateTokens(const TokensView& tokens,
   MarkAllCaseKeywords(tokens);
   MarkAllKeywordsUsedAsParams(tokens);
   MarkAllProtoBrackets(tokens);
+  MarkAllSlashedIdentifiers(tokens);
+  MarkAllColonsInBracedConstructors(tokens);
+  if (formatter_options.IsCapitalizeFunctions()) {
+    MarkAllBuiltinFunctions(tokens);
+  }
 }
 
 void MarkAllAngleBracketPairs(std::vector<Chunk>* chunks) {
@@ -2114,8 +2325,9 @@ void MarkAllAngleBracketPairs(std::vector<Chunk>* chunks) {
 
 absl::StatusOr<std::vector<Chunk>> ChunksFromTokens(
     const TokensView& tokens_view,
-    const ParseLocationTranslator& location_translator) {
-  AnnotateTokens(tokens_view, location_translator);
+    const ParseLocationTranslator& location_translator,
+    const FormatterOptions& formatter_options) {
+  AnnotateTokens(tokens_view, location_translator, formatter_options);
 
   std::vector<Chunk> chunks;
 

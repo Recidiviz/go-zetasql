@@ -17,9 +17,11 @@
 #ifndef ZETASQL_PUBLIC_NUMERIC_PARSER_H_
 #define ZETASQL_PUBLIC_NUMERIC_PARSER_H_
 
+#include <array>
 #include <cstdint>
 
 #include "zetasql/common/multiprecision_int.h"
+#include "zetasql/public/numeric_constants.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 
@@ -37,6 +39,29 @@ struct FixedPointRepresentation {
   FixedUint<64, word_count> output;
 };
 
+// PowersAsc<Word, first_value, base, size>() returns a std::array<Word, size>
+// {first_value, first_value * base, ..., first_value * pow(base, size - 1)}.
+template <typename Word, Word first_value, Word base, int size, typename... T>
+constexpr std::array<Word, size> PowersAsc(T... v) {
+  if constexpr (sizeof...(T) < size) {
+    return PowersAsc<Word, first_value, base, size>(first_value, v * base...);
+  } else {
+    return std::array<Word, size>{v...};
+  }
+}
+
+// PowersDesc<Word, last_value, base, size>() returns a std::array<Word, size>
+// {last_value * pow(base, size - 1), last_value * pow(base, size - 2), ...,
+//  last_value}.
+template <typename Word, Word last_value, Word base, int size, typename... T>
+constexpr std::array<Word, size> PowersDesc(T... v) {
+  if constexpr (sizeof...(T) < size) {
+    return PowersDesc<Word, last_value, base, size>(v * base..., last_value);
+  } else {
+    return std::array<Word, size>{v...};
+  }
+}
+
 // The following methods parse an input string representing a number value. The
 // input string is expected to be in either an ASCII decimal format or an ASCII
 // scientific notation format. The scale associated with each method is
@@ -46,19 +71,51 @@ struct FixedPointRepresentation {
 // significant fractional digits exist. Else, the number is rounded to have
 // 'scale' significant fractional digits at most.
 
-// Parses a NUMERIC value. Scale is 9.
-template <bool strict_parsing>
-absl::Status ParseNumeric(absl::string_view str,
-                          FixedPointRepresentation<2>& parsed);
+// Parses a NUMERIC value to a desired scale and using a specific
+// trim_mode.
+template <internal::DigitTrimMode trim_mode>
+absl::Status ParseNumericWithRounding(absl::string_view str,
+                                      int64_t decimal_places,
+                                      FixedPointRepresentation<2>& parsed);
 
-// Parses a BIGNUMERIC value. Scale is 38.
-template <bool strict_parsing>
-absl::Status ParseBigNumeric(absl::string_view str,
-                             FixedPointRepresentation<4>& parsed);
+// Parses a BIGNUMERIC value to a desired scale and using a specific
+// trim_mode.
+template <internal::DigitTrimMode trim_mode>
+absl::Status ParseBigNumericWithRounding(absl::string_view str,
+                                         int64_t decimal_places,
+                                         FixedPointRepresentation<4>& parsed);
 
 // Parses a number value in a JSON document. Scale is 1074. Uses strict_parsing.
 absl::Status ParseJSONNumber(absl::string_view str,
                              FixedPointRepresentation<79>& parsed);
+
+// Explicit template instantiations for NUMERIC
+extern template absl::Status
+ParseNumericWithRounding<internal::DigitTrimMode::kError>(
+    absl::string_view str, int64_t decimal_places,
+    FixedPointRepresentation<2>& parsed);
+extern template absl::Status
+ParseNumericWithRounding<internal::DigitTrimMode::kTrimRoundHalfAwayFromZero>(
+    absl::string_view str, int64_t decimal_places,
+    FixedPointRepresentation<2>& parsed);
+extern template absl::Status
+ParseNumericWithRounding<internal::DigitTrimMode::kTrimRoundHalfEven>(
+    absl::string_view str, int64_t decimal_places,
+    FixedPointRepresentation<2>& parsed);
+
+// Explicit template instantiations for BIGNUMERIC
+extern template absl::Status
+ParseBigNumericWithRounding<internal::DigitTrimMode::kError>(
+    absl::string_view str, int64_t decimal_places,
+    FixedPointRepresentation<4>& parsed);
+extern template absl::Status ParseBigNumericWithRounding<
+    internal::DigitTrimMode::kTrimRoundHalfAwayFromZero>(
+    absl::string_view str, int64_t decimal_places,
+    FixedPointRepresentation<4>& parsed);
+extern template absl::Status
+ParseBigNumericWithRounding<internal::DigitTrimMode::kTrimRoundHalfEven>(
+    absl::string_view str, int64_t decimal_places,
+    FixedPointRepresentation<4>& parsed);
 
 }  // namespace zetasql
 

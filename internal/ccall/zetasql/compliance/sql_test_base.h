@@ -75,6 +75,7 @@
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/float_margin.h"
+#include "zetasql/compliance/compliance_label.pb.h"
 #include "zetasql/compliance/known_error.pb.h"
 #include "zetasql/compliance/matchers.h"
 #include "zetasql/compliance/test_driver.h"
@@ -90,6 +91,7 @@
 #include "absl/container/btree_map.h"
 #include "absl/container/btree_set.h"
 #include "absl/container/node_hash_set.h"
+#include "absl/functional/bind_front.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "file_based_test_driver/file_based_test_driver.h"  
@@ -98,10 +100,9 @@
 #include "re2/re2.h"
 #include "zetasql/base/status.h"
 
-ABSL_DECLARE_FLAG(
-    bool,
-    zetasql_compliance_fail_reference_if_unneeded_required_feature_declared);
+ABSL_DECLARE_FLAG(bool, zetasql_detect_falsly_required_features);
 ABSL_DECLARE_FLAG(bool, zetasql_compliance_write_labels_to_file);
+ABSL_DECLARE_FLAG(bool, zetasql_compliance_accept_all_test_output);
 
 namespace zetasql {
 class Stats;  // Defined in implementation file.
@@ -241,7 +242,7 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   ::testing::Matcher<const absl::StatusOr<ComplianceTestCaseResult>&> Returns(
       const std::string& result);
   ::testing::Matcher<const absl::StatusOr<ComplianceTestCaseResult>&> Returns(
-      const ::testing::Matcher<const absl::StatusOr<ComplianceTestCaseResult>&>
+      ::testing::Matcher<const absl::StatusOr<ComplianceTestCaseResult>&>
           matcher);
   // A googletest matcher that only checks if the result has OK status.
   ::testing::Matcher<const absl::StatusOr<ComplianceTestCaseResult>&>
@@ -261,6 +262,15 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   absl::StatusOr<ComplianceTestCaseResult> RunSQL(
       absl::string_view sql, const SQLTestCase::ParamsMap& params = {},
       bool permit_compile_failure = true);
+
+  // Run and validate a "codebased" compliance test with parameters and
+  // feature requiments.
+  void RunSQLOnFeaturesAndValidateResult(
+      absl::string_view sql, const std::map<std::string, Value>& params,
+      const std::set<LanguageFeature>& required_features,
+      const std::set<LanguageFeature>& forbidden_features,
+      const Value& expected_value, const absl::Status& expected_status,
+      const FloatMargin& float_margin);
 
   // Returns a Catalog that includes the tables specified in the active
   // TestDatabase. Owned by the reference driver internal to this class.
@@ -332,7 +342,25 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   virtual void InitFileState();
 
   // Internal state that controls the statement-level workflow.
-  enum StatementWorkflow { NORMAL, CANCELLED, KNOWN_ERROR, SKIPPED };
+  enum StatementWorkflow {
+    // NORMAL means proceed to running the test against the engine.
+    NORMAL,
+    // CANCELLED means something went wrong in the test driver, like when
+    // interperting the test options.
+    CANCELLED,
+    // KNOWN_CRASH means the test should not be run on the engine driver because
+    // its skiplisted with "CRASHES_DO_NOT_RUN"
+    KNOWN_CRASH,
+    // SKIPPED means this isn't part of the subset of tests that we are
+    // interested in running.
+    SKIPPED,
+    // FEATURE_MISMATCH means the test driver either does not set a required
+    // LanguageFeature or does set a prohibited language feature.
+    FEATURE_MISMATCH,
+    // NOT_A_TEST means the file section being processed is database setup or
+    // otherwise doesn't contain a test statement.
+    NOT_A_TEST,
+  };
   StatementWorkflow statement_workflow() { return statement_workflow_; }
   const std::string& sql() const { return sql_; }
 
@@ -491,6 +519,17 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   // Returns NULL if we are testing the reference implementation.
   ReferenceDriver* reference_driver() const { return reference_driver_; }
 
+  // Returns the reference driver. When not testing the reference impl this
+  // is the same as reference_driver().  When testing the reference impl this
+  // is driver().
+  ReferenceDriver* GetReferenceDriver() const {
+    if (IsTestingReferenceImpl()) {
+      return static_cast<ReferenceDriver*>(driver());
+    } else {
+      return reference_driver();
+    }
+  }
+
   // Generates failure report. A subclass can override to add more information.
   virtual std::string GenerateFailureReport(const std::string& expected,
                                             const std::string& actual,
@@ -513,9 +552,31 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   SQLTestBase& operator=(const SQLTestBase&) = delete;
   ~SQLTestBase() override;
 
-  const absl::btree_set<std::string>& compliance_labels() {
-    return compliance_labels_;
-  }
+  //////
+  // The TESTONLY_ functions below are used to give the unit test limited
+  // access to the internal state of this class. Needing access to the internal
+  // state is already a symptom of poorly factored code, but the cost to
+  // clean up the testing framework appears quite high. The TESTONLY_ accessors
+  // protect encapsulation better than making the entire unit test harness a
+  // friend.
+  //
+  // These functions should only be used by SqlTestBaseTest and any other code
+  // accessing them risks breakage when these functions go away.
+  //////
+
+  // Get the compliance test labels proto computed for the most recently
+  // compiled test case.
+  const ComplianceTestCaseLabels& TESTONLY_ComplianceTestCaseLabels();
+
+  // There is different behavior when "testing the reference impl" because we
+  // validate against the files and not against the reference impl. This lets
+  // the unit test of SqlTestBase access both codepaths.
+  void TESTONLY_ForceDisableIsTestingReferenceImpl(bool value);
+
+  // Allows unit test to set `test_file_options_` so that it can exercise
+  // filebased test code paths from a non-file driven unit test.
+  void TESTONLY_SetTestFileOptions(
+      std::unique_ptr<FilebasedSQLTestFileOptions> test_file_options);
 
   void ClearParameters() { parameters_.clear(); }
 
@@ -584,19 +645,35 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   // it applies to all TestCases even when the test makes multiple instances of
   // SQLTestBase.
   using TestCaseInspectorFn =
-      std::function<void(const SQLTestCase& sql_test_case)>;
+      std::function<absl::Status(const SQLTestCase& sql_test_case)>;
   static void RegisterTestCaseInspector(TestCaseInspectorFn* inspector) {
     test_case_inspector_ = inspector;
   }
 
   // Apply a registered inspector to the test case.
-  void InspectTestCase() {
+  absl::Status InspectTestCase() {
     if (test_case_inspector_ != nullptr) {
-      (*test_case_inspector_)(SQLTestCase(full_name(), sql(), parameters()));
+      return (*test_case_inspector_)(
+          SQLTestCase(full_name(), sql(), parameters()));
     }
+    return absl::OkStatus();
   }
 
   ReferenceDriver* test_setup_driver() { return test_setup_driver_.get(); }
+
+  // Check 'feature' to ensure that it is required for evaluating the test case.
+  // This is useful for codebased tests that have an expected result instead of
+  // an expected golden file output. When 'require_inclusive' is false we are
+  // checking if the feature is falsly prohibited. When checking for falsely
+  // prohibited features we make sure adding that feature causes the test to
+  // fail.
+  bool IsFeatureFalselyRequired(
+      LanguageFeature feature, bool require_inclusive, absl::string_view sql,
+      const std::map<std::string, Value>& param_map,
+      const std::set<LanguageFeature>& required_features,
+      const absl::Status& initial_run_status,
+      const absl::StatusOr<ComplianceTestCaseResult>& expected_result,
+      const FloatMargin& expected_float_margin);
 
  private:
   // Accesses ValidateFirstColumnPrimaryKey
@@ -641,6 +718,11 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   // If true, queries are executed as scripts, rather than standalone
   // statements.
   bool script_mode_ = false;
+
+  // Used by unit tests to force SqlTestBase into the mode it uses for
+  // non-reference tests even when the driver is the reference driver. This lets
+  // the unit test access code paths it otherwise couldn't.
+  bool force_disabled_is_testing_reference_impl_ = false;
 
   // NULL if this object does not own 'test_driver_'.
   std::unique_ptr<TestDriver> test_driver_owner_;
@@ -689,11 +771,6 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   // properly initialized in StepCreateDatabase function.
   bool is_catalog_initialized_ = false;
 
-  // When true, we fail the test if a test statement fails in the resolver. This
-  // helps preserve the property that compliance tests test engine code, and
-  // analyzer tests test resolver code.
-  bool require_resolver_success_ = false;
-
   // Known Errors
   //
   // Contains known errors labels and statements. Statements are referred by
@@ -713,7 +790,7 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   std::map<std::string, LabelInfo> label_info_map_;
 
   // Known Error mode for the current statement.
-  KnownErrorMode known_error_mode_;
+  KnownErrorMode known_error_mode_ = KnownErrorMode::NONE;
 
   // Set of labels in known_error files that affect current statement.
   absl::btree_set<std::string> by_set_;
@@ -825,22 +902,7 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   // The prefix is in the format: code:<name_prefix>[<result_type_name>].
   std::string GetNamePrefix() const;
 
-  // Compute the set of sets of LanguageFeatures that are interesting to test.
-  // For each collection of features that are required or required to be unset,
-  // we'll try the statement with those features on or off.
-  absl::btree_set<std::set<LanguageFeature>> ExtractFeatureSets(
-      const std::set<LanguageFeature>& test_features1,
-      const std::set<LanguageFeature>& test_features2,
-      const std::set<LanguageFeature>& required_features);
-
   struct TestResults {
-    // We run the test for each of the features_sets, generating the result and
-    // collecting the list of feature set which produce the same output.
-
-    // TODO : Remove RequiredFeatures from this list.
-    // Each entry of this vector is a comma separated list of LanguageFeature
-    // names with the FEATURE_ prefix removed.
-    std::vector<std::string> enabled_features;
     // We need the result status to honor the known error filters.
     absl::StatusOr<ComplianceTestCaseResult> driver_output;
   };
@@ -856,10 +918,6 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   absl::StatusOr<ComplianceTestCaseResult> RunTestWithFeaturesEnabled(
       const std::set<LanguageFeature>& features_set);
 
-  // Runs the test for each of features_set
-  absl::btree_map<std::string, TestResults> RunTestAndCollectResults(
-      const absl::btree_set<std::set<LanguageFeature>>& features_sets);
-
   // For each required feature, re-runs each iteration of the test with that
   // feature removed.  Then compares the output with the feature removed to the
   // same run with the feature included.  If the result is unchanged, fails the
@@ -870,26 +928,15 @@ class SQLTestBase : public ::testing::TestWithParam<std::string> {
   // specific to the reference implementation.
   void RunAndCompareTestWithoutEachRequiredFeatures(
       const std::set<LanguageFeature>& required_features,
-      const absl::btree_set<std::set<LanguageFeature>>& features_sets,
-      const absl::btree_map<std::string, TestResults>& test_results);
+      TestResults& test_result);
 
-  bool IsFeatureRequired(
-      LanguageFeature feature_to_check,
-      const absl::btree_set<std::set<LanguageFeature>>& features_sets,
-      const absl::btree_map<std::string, TestResults>& test_results);
+  // True if running the query with the required features except
+  // `feature_to_check` returns a result other than `test_result`.
+  bool IsFeatureRequired(LanguageFeature feature_to_check,
+                         TestResults& test_result);
 
-  // enabled_features is passed by value to allow removing elements without
-  // modifying the input collection.
-  bool RemovingFeatureChangesResult(
-      LanguageFeature feature_to_check,
-      std::set<LanguageFeature> enabled_features,
-      const absl::btree_map<std::string, TestResults>& original_test_results);
-
-  // Parses the expected results and compares them against the tests results in
-  // result_to_feature_map
-  void ParseAndCompareExpectedResults(
-      const absl::btree_set<std::set<LanguageFeature>>& features_sets,
-      const absl::btree_map<std::string, TestResults>& test_results);
+  // Parses the expected results and compares them against `test_result`
+  void ParseAndCompareExpectedResults(TestResults& test_result);
 };
 
 }  // namespace zetasql

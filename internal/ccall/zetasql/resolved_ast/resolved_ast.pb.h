@@ -34,6 +34,7 @@
 #include "zetasql/public/annotation.pb.h"
 #include "zetasql/public/proto/type_annotation.pb.h"
 #include "zetasql/public/type.pb.h"
+#include "zetasql/public/type_modifiers.pb.h"
 #include "zetasql/public/type_parameters.pb.h"
 #include "zetasql/proto/function.pb.h"
 #include "zetasql/resolved_ast/serialization.pb.h"
@@ -53,7 +54,7 @@ struct TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[217]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[222]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -235,6 +236,9 @@ extern ResolvedAssertStmtProtoDefaultTypeInternal _ResolvedAssertStmtProto_defau
 class ResolvedAssignmentStmtProto;
 struct ResolvedAssignmentStmtProtoDefaultTypeInternal;
 extern ResolvedAssignmentStmtProtoDefaultTypeInternal _ResolvedAssignmentStmtProto_default_instance_;
+class ResolvedAuxLoadDataPartitionFilterProto;
+struct ResolvedAuxLoadDataPartitionFilterProtoDefaultTypeInternal;
+extern ResolvedAuxLoadDataPartitionFilterProtoDefaultTypeInternal _ResolvedAuxLoadDataPartitionFilterProto_default_instance_;
 class ResolvedAuxLoadDataStmtProto;
 struct ResolvedAuxLoadDataStmtProtoDefaultTypeInternal;
 extern ResolvedAuxLoadDataStmtProtoDefaultTypeInternal _ResolvedAuxLoadDataStmtProto_default_instance_;
@@ -247,6 +251,9 @@ extern ResolvedCallStmtProtoDefaultTypeInternal _ResolvedCallStmtProto_default_i
 class ResolvedCastProto;
 struct ResolvedCastProtoDefaultTypeInternal;
 extern ResolvedCastProtoDefaultTypeInternal _ResolvedCastProto_default_instance_;
+class ResolvedCatalogColumnRefProto;
+struct ResolvedCatalogColumnRefProtoDefaultTypeInternal;
+extern ResolvedCatalogColumnRefProtoDefaultTypeInternal _ResolvedCatalogColumnRefProto_default_instance_;
 class ResolvedCheckConstraintProto;
 struct ResolvedCheckConstraintProtoDefaultTypeInternal;
 extern ResolvedCheckConstraintProtoDefaultTypeInternal _ResolvedCheckConstraintProto_default_instance_;
@@ -304,6 +311,9 @@ extern ResolvedCreateIndexStmtProtoDefaultTypeInternal _ResolvedCreateIndexStmtP
 class ResolvedCreateMaterializedViewStmtProto;
 struct ResolvedCreateMaterializedViewStmtProtoDefaultTypeInternal;
 extern ResolvedCreateMaterializedViewStmtProtoDefaultTypeInternal _ResolvedCreateMaterializedViewStmtProto_default_instance_;
+class ResolvedCreateModelAliasedQueryProto;
+struct ResolvedCreateModelAliasedQueryProtoDefaultTypeInternal;
+extern ResolvedCreateModelAliasedQueryProtoDefaultTypeInternal _ResolvedCreateModelAliasedQueryProto_default_instance_;
 class ResolvedCreateModelStmtProto;
 struct ResolvedCreateModelStmtProtoDefaultTypeInternal;
 extern ResolvedCreateModelStmtProtoDefaultTypeInternal _ResolvedCreateModelStmtProto_default_instance_;
@@ -361,6 +371,9 @@ extern ResolvedDescribeStmtProtoDefaultTypeInternal _ResolvedDescribeStmtProto_d
 class ResolvedDescriptorProto;
 struct ResolvedDescriptorProtoDefaultTypeInternal;
 extern ResolvedDescriptorProtoDefaultTypeInternal _ResolvedDescriptorProto_default_instance_;
+class ResolvedDifferentialPrivacyAggregateScanProto;
+struct ResolvedDifferentialPrivacyAggregateScanProtoDefaultTypeInternal;
+extern ResolvedDifferentialPrivacyAggregateScanProtoDefaultTypeInternal _ResolvedDifferentialPrivacyAggregateScanProto_default_instance_;
 class ResolvedDropColumnActionProto;
 struct ResolvedDropColumnActionProtoDefaultTypeInternal;
 extern ResolvedDropColumnActionProtoDefaultTypeInternal _ResolvedDropColumnActionProto_default_instance_;
@@ -397,6 +410,9 @@ extern ResolvedDropSubEntityActionProtoDefaultTypeInternal _ResolvedDropSubEntit
 class ResolvedDropTableFunctionStmtProto;
 struct ResolvedDropTableFunctionStmtProtoDefaultTypeInternal;
 extern ResolvedDropTableFunctionStmtProtoDefaultTypeInternal _ResolvedDropTableFunctionStmtProto_default_instance_;
+class ResolvedExecuteAsRoleScanProto;
+struct ResolvedExecuteAsRoleScanProtoDefaultTypeInternal;
+extern ResolvedExecuteAsRoleScanProtoDefaultTypeInternal _ResolvedExecuteAsRoleScanProto_default_instance_;
 class ResolvedExecuteImmediateArgumentProto;
 struct ResolvedExecuteImmediateArgumentProtoDefaultTypeInternal;
 extern ResolvedExecuteImmediateArgumentProtoDefaultTypeInternal _ResolvedExecuteImmediateArgumentProto_default_instance_;
@@ -772,10 +788,12 @@ template<> ::zetasql::ResolvedArrayScanProto* Arena::CreateMaybeMessage<::zetasq
 template<> ::zetasql::ResolvedAssertRowsModifiedProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAssertRowsModifiedProto>(Arena*);
 template<> ::zetasql::ResolvedAssertStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAssertStmtProto>(Arena*);
 template<> ::zetasql::ResolvedAssignmentStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAssignmentStmtProto>(Arena*);
+template<> ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAuxLoadDataPartitionFilterProto>(Arena*);
 template<> ::zetasql::ResolvedAuxLoadDataStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAuxLoadDataStmtProto>(Arena*);
 template<> ::zetasql::ResolvedBeginStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedBeginStmtProto>(Arena*);
 template<> ::zetasql::ResolvedCallStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCallStmtProto>(Arena*);
 template<> ::zetasql::ResolvedCastProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCastProto>(Arena*);
+template<> ::zetasql::ResolvedCatalogColumnRefProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCatalogColumnRefProto>(Arena*);
 template<> ::zetasql::ResolvedCheckConstraintProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCheckConstraintProto>(Arena*);
 template<> ::zetasql::ResolvedCloneDataStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCloneDataStmtProto>(Arena*);
 template<> ::zetasql::ResolvedColumnAnnotationsProto* Arena::CreateMaybeMessage<::zetasql::ResolvedColumnAnnotationsProto>(Arena*);
@@ -795,6 +813,7 @@ template<> ::zetasql::ResolvedCreateExternalTableStmtProto* Arena::CreateMaybeMe
 template<> ::zetasql::ResolvedCreateFunctionStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreateFunctionStmtProto>(Arena*);
 template<> ::zetasql::ResolvedCreateIndexStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreateIndexStmtProto>(Arena*);
 template<> ::zetasql::ResolvedCreateMaterializedViewStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreateMaterializedViewStmtProto>(Arena*);
+template<> ::zetasql::ResolvedCreateModelAliasedQueryProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreateModelAliasedQueryProto>(Arena*);
 template<> ::zetasql::ResolvedCreateModelStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreateModelStmtProto>(Arena*);
 template<> ::zetasql::ResolvedCreatePrivilegeRestrictionStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreatePrivilegeRestrictionStmtProto>(Arena*);
 template<> ::zetasql::ResolvedCreateProcedureStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedCreateProcedureStmtProto>(Arena*);
@@ -814,6 +833,7 @@ template<> ::zetasql::ResolvedDefineTableStmtProto* Arena::CreateMaybeMessage<::
 template<> ::zetasql::ResolvedDeleteStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDeleteStmtProto>(Arena*);
 template<> ::zetasql::ResolvedDescribeStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDescribeStmtProto>(Arena*);
 template<> ::zetasql::ResolvedDescriptorProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDescriptorProto>(Arena*);
+template<> ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDifferentialPrivacyAggregateScanProto>(Arena*);
 template<> ::zetasql::ResolvedDropColumnActionProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDropColumnActionProto>(Arena*);
 template<> ::zetasql::ResolvedDropConstraintActionProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDropConstraintActionProto>(Arena*);
 template<> ::zetasql::ResolvedDropFunctionStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDropFunctionStmtProto>(Arena*);
@@ -826,6 +846,7 @@ template<> ::zetasql::ResolvedDropSnapshotTableStmtProto* Arena::CreateMaybeMess
 template<> ::zetasql::ResolvedDropStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDropStmtProto>(Arena*);
 template<> ::zetasql::ResolvedDropSubEntityActionProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDropSubEntityActionProto>(Arena*);
 template<> ::zetasql::ResolvedDropTableFunctionStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedDropTableFunctionStmtProto>(Arena*);
+template<> ::zetasql::ResolvedExecuteAsRoleScanProto* Arena::CreateMaybeMessage<::zetasql::ResolvedExecuteAsRoleScanProto>(Arena*);
 template<> ::zetasql::ResolvedExecuteImmediateArgumentProto* Arena::CreateMaybeMessage<::zetasql::ResolvedExecuteImmediateArgumentProto>(Arena*);
 template<> ::zetasql::ResolvedExecuteImmediateStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedExecuteImmediateStmtProto>(Arena*);
 template<> ::zetasql::ResolvedExplainStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedExplainStmtProto>(Arena*);
@@ -1264,6 +1285,8 @@ class AnyResolvedArgumentProto final :
     kResolvedTableAndColumnInfoNode = 179,
     kResolvedColumnDefaultValueNode = 188,
     kResolvedObjectUnitNode = 200,
+    kResolvedAuxLoadDataPartitionFilterNode = 222,
+    kResolvedCreateModelAliasedQueryNode = 226,
     NODE_NOT_SET = 0,
   };
 
@@ -1378,6 +1401,8 @@ class AnyResolvedArgumentProto final :
     kResolvedTableAndColumnInfoNodeFieldNumber = 179,
     kResolvedColumnDefaultValueNodeFieldNumber = 188,
     kResolvedObjectUnitNodeFieldNumber = 200,
+    kResolvedAuxLoadDataPartitionFilterNodeFieldNumber = 222,
+    kResolvedCreateModelAliasedQueryNodeFieldNumber = 226,
   };
   // .zetasql.ResolvedMakeProtoFieldProto resolved_make_proto_field_node = 14;
   bool has_resolved_make_proto_field_node() const;
@@ -2261,6 +2286,42 @@ class AnyResolvedArgumentProto final :
       ::zetasql::ResolvedObjectUnitProto* resolved_object_unit_node);
   ::zetasql::ResolvedObjectUnitProto* unsafe_arena_release_resolved_object_unit_node();
 
+  // .zetasql.ResolvedAuxLoadDataPartitionFilterProto resolved_aux_load_data_partition_filter_node = 222;
+  bool has_resolved_aux_load_data_partition_filter_node() const;
+  private:
+  bool _internal_has_resolved_aux_load_data_partition_filter_node() const;
+  public:
+  void clear_resolved_aux_load_data_partition_filter_node();
+  const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& resolved_aux_load_data_partition_filter_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* release_resolved_aux_load_data_partition_filter_node();
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* mutable_resolved_aux_load_data_partition_filter_node();
+  void set_allocated_resolved_aux_load_data_partition_filter_node(::zetasql::ResolvedAuxLoadDataPartitionFilterProto* resolved_aux_load_data_partition_filter_node);
+  private:
+  const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& _internal_resolved_aux_load_data_partition_filter_node() const;
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* _internal_mutable_resolved_aux_load_data_partition_filter_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_aux_load_data_partition_filter_node(
+      ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* resolved_aux_load_data_partition_filter_node);
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* unsafe_arena_release_resolved_aux_load_data_partition_filter_node();
+
+  // .zetasql.ResolvedCreateModelAliasedQueryProto resolved_create_model_aliased_query_node = 226;
+  bool has_resolved_create_model_aliased_query_node() const;
+  private:
+  bool _internal_has_resolved_create_model_aliased_query_node() const;
+  public:
+  void clear_resolved_create_model_aliased_query_node();
+  const ::zetasql::ResolvedCreateModelAliasedQueryProto& resolved_create_model_aliased_query_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedCreateModelAliasedQueryProto* release_resolved_create_model_aliased_query_node();
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* mutable_resolved_create_model_aliased_query_node();
+  void set_allocated_resolved_create_model_aliased_query_node(::zetasql::ResolvedCreateModelAliasedQueryProto* resolved_create_model_aliased_query_node);
+  private:
+  const ::zetasql::ResolvedCreateModelAliasedQueryProto& _internal_resolved_create_model_aliased_query_node() const;
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* _internal_mutable_resolved_create_model_aliased_query_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_create_model_aliased_query_node(
+      ::zetasql::ResolvedCreateModelAliasedQueryProto* resolved_create_model_aliased_query_node);
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* unsafe_arena_release_resolved_create_model_aliased_query_node();
+
   void clear_node();
   NodeCase node_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.AnyResolvedArgumentProto)
@@ -2315,6 +2376,8 @@ class AnyResolvedArgumentProto final :
   void set_has_resolved_table_and_column_info_node();
   void set_has_resolved_column_default_value_node();
   void set_has_resolved_object_unit_node();
+  void set_has_resolved_aux_load_data_partition_filter_node();
+  void set_has_resolved_create_model_aliased_query_node();
 
   inline bool has_node() const;
   inline void clear_has_node();
@@ -2374,6 +2437,8 @@ class AnyResolvedArgumentProto final :
     ::zetasql::ResolvedTableAndColumnInfoProto* resolved_table_and_column_info_node_;
     ::zetasql::ResolvedColumnDefaultValueProto* resolved_column_default_value_node_;
     ::zetasql::ResolvedObjectUnitProto* resolved_object_unit_node_;
+    ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* resolved_aux_load_data_partition_filter_node_;
+    ::zetasql::ResolvedCreateModelAliasedQueryProto* resolved_create_model_aliased_query_node_;
   } node_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   uint32_t _oneof_case_[1];
@@ -2600,6 +2665,7 @@ class AnyResolvedExprProto final :
     kResolvedGetJsonFieldNode = 165,
     kResolvedFilterFieldNode = 174,
     kResolvedWithExprNode = 197,
+    kResolvedCatalogColumnRefNode = 206,
     NODE_NOT_SET = 0,
   };
 
@@ -2686,6 +2752,7 @@ class AnyResolvedExprProto final :
     kResolvedGetJsonFieldNodeFieldNumber = 165,
     kResolvedFilterFieldNodeFieldNumber = 174,
     kResolvedWithExprNodeFieldNumber = 197,
+    kResolvedCatalogColumnRefNodeFieldNumber = 206,
   };
   // .zetasql.ResolvedLiteralProto resolved_literal_node = 3;
   bool has_resolved_literal_node() const;
@@ -3065,6 +3132,24 @@ class AnyResolvedExprProto final :
       ::zetasql::ResolvedWithExprProto* resolved_with_expr_node);
   ::zetasql::ResolvedWithExprProto* unsafe_arena_release_resolved_with_expr_node();
 
+  // .zetasql.ResolvedCatalogColumnRefProto resolved_catalog_column_ref_node = 206;
+  bool has_resolved_catalog_column_ref_node() const;
+  private:
+  bool _internal_has_resolved_catalog_column_ref_node() const;
+  public:
+  void clear_resolved_catalog_column_ref_node();
+  const ::zetasql::ResolvedCatalogColumnRefProto& resolved_catalog_column_ref_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedCatalogColumnRefProto* release_resolved_catalog_column_ref_node();
+  ::zetasql::ResolvedCatalogColumnRefProto* mutable_resolved_catalog_column_ref_node();
+  void set_allocated_resolved_catalog_column_ref_node(::zetasql::ResolvedCatalogColumnRefProto* resolved_catalog_column_ref_node);
+  private:
+  const ::zetasql::ResolvedCatalogColumnRefProto& _internal_resolved_catalog_column_ref_node() const;
+  ::zetasql::ResolvedCatalogColumnRefProto* _internal_mutable_resolved_catalog_column_ref_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_catalog_column_ref_node(
+      ::zetasql::ResolvedCatalogColumnRefProto* resolved_catalog_column_ref_node);
+  ::zetasql::ResolvedCatalogColumnRefProto* unsafe_arena_release_resolved_catalog_column_ref_node();
+
   void clear_node();
   NodeCase node_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.AnyResolvedExprProto)
@@ -3091,6 +3176,7 @@ class AnyResolvedExprProto final :
   void set_has_resolved_get_json_field_node();
   void set_has_resolved_filter_field_node();
   void set_has_resolved_with_expr_node();
+  void set_has_resolved_catalog_column_ref_node();
 
   inline bool has_node() const;
   inline void clear_has_node();
@@ -3122,6 +3208,7 @@ class AnyResolvedExprProto final :
     ::zetasql::ResolvedGetJsonFieldProto* resolved_get_json_field_node_;
     ::zetasql::ResolvedFilterFieldProto* resolved_filter_field_node_;
     ::zetasql::ResolvedWithExprProto* resolved_with_expr_node_;
+    ::zetasql::ResolvedCatalogColumnRefProto* resolved_catalog_column_ref_node_;
   } node_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   uint32_t _oneof_case_[1];
@@ -3889,6 +3976,172 @@ class ResolvedExpressionColumnProto final :
 };
 // -------------------------------------------------------------------
 
+class ResolvedCatalogColumnRefProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedCatalogColumnRefProto) */ {
+ public:
+  inline ResolvedCatalogColumnRefProto() : ResolvedCatalogColumnRefProto(nullptr) {}
+  ~ResolvedCatalogColumnRefProto() override;
+  explicit constexpr ResolvedCatalogColumnRefProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedCatalogColumnRefProto(const ResolvedCatalogColumnRefProto& from);
+  ResolvedCatalogColumnRefProto(ResolvedCatalogColumnRefProto&& from) noexcept
+    : ResolvedCatalogColumnRefProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedCatalogColumnRefProto& operator=(const ResolvedCatalogColumnRefProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedCatalogColumnRefProto& operator=(ResolvedCatalogColumnRefProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedCatalogColumnRefProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedCatalogColumnRefProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedCatalogColumnRefProto*>(
+               &_ResolvedCatalogColumnRefProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  friend void swap(ResolvedCatalogColumnRefProto& a, ResolvedCatalogColumnRefProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedCatalogColumnRefProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedCatalogColumnRefProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedCatalogColumnRefProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedCatalogColumnRefProto>(arena);
+  }
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedCatalogColumnRefProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.ResolvedCatalogColumnRefProto";
+  }
+  protected:
+  explicit ResolvedCatalogColumnRefProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kParentFieldNumber = 1,
+    kColumnFieldNumber = 2,
+  };
+  // optional .zetasql.ResolvedExprProto parent = 1;
+  bool has_parent() const;
+  private:
+  bool _internal_has_parent() const;
+  public:
+  void clear_parent();
+  const ::zetasql::ResolvedExprProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedExprProto* release_parent();
+  ::zetasql::ResolvedExprProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedExprProto* parent);
+  private:
+  const ::zetasql::ResolvedExprProto& _internal_parent() const;
+  ::zetasql::ResolvedExprProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedExprProto* parent);
+  ::zetasql::ResolvedExprProto* unsafe_arena_release_parent();
+
+  // optional .zetasql.ColumnRefProto column = 2;
+  bool has_column() const;
+  private:
+  bool _internal_has_column() const;
+  public:
+  void clear_column();
+  const ::zetasql::ColumnRefProto& column() const;
+  PROTOBUF_NODISCARD ::zetasql::ColumnRefProto* release_column();
+  ::zetasql::ColumnRefProto* mutable_column();
+  void set_allocated_column(::zetasql::ColumnRefProto* column);
+  private:
+  const ::zetasql::ColumnRefProto& _internal_column() const;
+  ::zetasql::ColumnRefProto* _internal_mutable_column();
+  public:
+  void unsafe_arena_set_allocated_column(
+      ::zetasql::ColumnRefProto* column);
+  ::zetasql::ColumnRefProto* unsafe_arena_release_column();
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedCatalogColumnRefProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::zetasql::ResolvedExprProto* parent_;
+  ::zetasql::ColumnRefProto* column_;
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ResolvedColumnRefProto final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedColumnRefProto) */ {
  public:
@@ -3944,7 +4197,7 @@ class ResolvedColumnRefProto final :
                &_ResolvedColumnRefProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(ResolvedColumnRefProto& a, ResolvedColumnRefProto& b) {
     a.Swap(&b);
@@ -4125,7 +4378,7 @@ class ResolvedConstantProto final :
                &_ResolvedConstantProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(ResolvedConstantProto& a, ResolvedConstantProto& b) {
     a.Swap(&b);
@@ -4291,7 +4544,7 @@ class ResolvedSystemVariableProto final :
                &_ResolvedSystemVariableProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(ResolvedSystemVariableProto& a, ResolvedSystemVariableProto& b) {
     a.Swap(&b);
@@ -4463,7 +4716,7 @@ class ResolvedInlineLambdaProto final :
                &_ResolvedInlineLambdaProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(ResolvedInlineLambdaProto& a, ResolvedInlineLambdaProto& b) {
     a.Swap(&b);
@@ -4669,7 +4922,7 @@ class ResolvedFilterFieldArgProto final :
                &_ResolvedFilterFieldArgProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(ResolvedFilterFieldArgProto& a, ResolvedFilterFieldArgProto& b) {
     a.Swap(&b);
@@ -4850,7 +5103,7 @@ class ResolvedFilterFieldProto final :
                &_ResolvedFilterFieldProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(ResolvedFilterFieldProto& a, ResolvedFilterFieldProto& b) {
     a.Swap(&b);
@@ -5057,7 +5310,7 @@ class AnyResolvedFunctionCallBaseProto final :
                &_AnyResolvedFunctionCallBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(AnyResolvedFunctionCallBaseProto& a, AnyResolvedFunctionCallBaseProto& b) {
     a.Swap(&b);
@@ -5235,7 +5488,7 @@ class ResolvedFunctionCallBaseProto final :
                &_ResolvedFunctionCallBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(ResolvedFunctionCallBaseProto& a, ResolvedFunctionCallBaseProto& b) {
     a.Swap(&b);
@@ -5516,7 +5769,7 @@ class ResolvedFunctionCallProto final :
                &_ResolvedFunctionCallProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(ResolvedFunctionCallProto& a, ResolvedFunctionCallProto& b) {
     a.Swap(&b);
@@ -5688,7 +5941,7 @@ class AnyResolvedNonScalarFunctionCallBaseProto final :
                &_AnyResolvedNonScalarFunctionCallBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(AnyResolvedNonScalarFunctionCallBaseProto& a, AnyResolvedNonScalarFunctionCallBaseProto& b) {
     a.Swap(&b);
@@ -5866,7 +6119,7 @@ class ResolvedNonScalarFunctionCallBaseProto final :
                &_ResolvedNonScalarFunctionCallBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(ResolvedNonScalarFunctionCallBaseProto& a, ResolvedNonScalarFunctionCallBaseProto& b) {
     a.Swap(&b);
@@ -6082,7 +6335,7 @@ class ResolvedAggregateFunctionCallProto final :
                &_ResolvedAggregateFunctionCallProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(ResolvedAggregateFunctionCallProto& a, ResolvedAggregateFunctionCallProto& b) {
     a.Swap(&b);
@@ -6308,7 +6561,7 @@ class ResolvedAnalyticFunctionCallProto final :
                &_ResolvedAnalyticFunctionCallProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(ResolvedAnalyticFunctionCallProto& a, ResolvedAnalyticFunctionCallProto& b) {
     a.Swap(&b);
@@ -6474,7 +6727,7 @@ class ResolvedExtendedCastElementProto final :
                &_ResolvedExtendedCastElementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(ResolvedExtendedCastElementProto& a, ResolvedExtendedCastElementProto& b) {
     a.Swap(&b);
@@ -6680,7 +6933,7 @@ class ResolvedExtendedCastProto final :
                &_ResolvedExtendedCastProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    23;
 
   friend void swap(ResolvedExtendedCastProto& a, ResolvedExtendedCastProto& b) {
     a.Swap(&b);
@@ -6846,7 +7099,7 @@ class ResolvedCastProto final :
                &_ResolvedCastProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    24;
 
   friend void swap(ResolvedCastProto& a, ResolvedCastProto& b) {
     a.Swap(&b);
@@ -6908,7 +7161,7 @@ class ResolvedCastProto final :
     kExtendedCastFieldNumber = 4,
     kFormatFieldNumber = 5,
     kTimeZoneFieldNumber = 6,
-    kTypeParametersFieldNumber = 7,
+    kTypeModifiersFieldNumber = 8,
     kReturnNullOnErrorFieldNumber = 3,
   };
   // optional .zetasql.ResolvedExprProto parent = 1;
@@ -7001,23 +7254,23 @@ class ResolvedCastProto final :
       ::zetasql::AnyResolvedExprProto* time_zone);
   ::zetasql::AnyResolvedExprProto* unsafe_arena_release_time_zone();
 
-  // optional .zetasql.TypeParametersProto type_parameters = 7;
-  bool has_type_parameters() const;
+  // optional .zetasql.TypeModifiersProto type_modifiers = 8;
+  bool has_type_modifiers() const;
   private:
-  bool _internal_has_type_parameters() const;
+  bool _internal_has_type_modifiers() const;
   public:
-  void clear_type_parameters();
-  const ::zetasql::TypeParametersProto& type_parameters() const;
-  PROTOBUF_NODISCARD ::zetasql::TypeParametersProto* release_type_parameters();
-  ::zetasql::TypeParametersProto* mutable_type_parameters();
-  void set_allocated_type_parameters(::zetasql::TypeParametersProto* type_parameters);
+  void clear_type_modifiers();
+  const ::zetasql::TypeModifiersProto& type_modifiers() const;
+  PROTOBUF_NODISCARD ::zetasql::TypeModifiersProto* release_type_modifiers();
+  ::zetasql::TypeModifiersProto* mutable_type_modifiers();
+  void set_allocated_type_modifiers(::zetasql::TypeModifiersProto* type_modifiers);
   private:
-  const ::zetasql::TypeParametersProto& _internal_type_parameters() const;
-  ::zetasql::TypeParametersProto* _internal_mutable_type_parameters();
+  const ::zetasql::TypeModifiersProto& _internal_type_modifiers() const;
+  ::zetasql::TypeModifiersProto* _internal_mutable_type_modifiers();
   public:
-  void unsafe_arena_set_allocated_type_parameters(
-      ::zetasql::TypeParametersProto* type_parameters);
-  ::zetasql::TypeParametersProto* unsafe_arena_release_type_parameters();
+  void unsafe_arena_set_allocated_type_modifiers(
+      ::zetasql::TypeModifiersProto* type_modifiers);
+  ::zetasql::TypeModifiersProto* unsafe_arena_release_type_modifiers();
 
   // optional bool return_null_on_error = 3;
   bool has_return_null_on_error() const;
@@ -7046,7 +7299,7 @@ class ResolvedCastProto final :
   ::zetasql::ResolvedExtendedCastProto* extended_cast_;
   ::zetasql::AnyResolvedExprProto* format_;
   ::zetasql::AnyResolvedExprProto* time_zone_;
-  ::zetasql::TypeParametersProto* type_parameters_;
+  ::zetasql::TypeModifiersProto* type_modifiers_;
   bool return_null_on_error_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
@@ -7107,7 +7360,7 @@ class ResolvedMakeStructProto final :
                &_ResolvedMakeStructProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    25;
 
   friend void swap(ResolvedMakeStructProto& a, ResolvedMakeStructProto& b) {
     a.Swap(&b);
@@ -7273,7 +7526,7 @@ class ResolvedMakeProtoProto final :
                &_ResolvedMakeProtoProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    26;
 
   friend void swap(ResolvedMakeProtoProto& a, ResolvedMakeProtoProto& b) {
     a.Swap(&b);
@@ -7439,7 +7692,7 @@ class ResolvedMakeProtoFieldProto final :
                &_ResolvedMakeProtoFieldProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    27;
 
   friend void swap(ResolvedMakeProtoFieldProto& a, ResolvedMakeProtoFieldProto& b) {
     a.Swap(&b);
@@ -7640,7 +7893,7 @@ class ResolvedGetStructFieldProto final :
                &_ResolvedGetStructFieldProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    28;
 
   friend void swap(ResolvedGetStructFieldProto& a, ResolvedGetStructFieldProto& b) {
     a.Swap(&b);
@@ -7700,6 +7953,7 @@ class ResolvedGetStructFieldProto final :
     kParentFieldNumber = 1,
     kExprFieldNumber = 2,
     kFieldIdxFieldNumber = 3,
+    kFieldExprIsPositionalFieldNumber = 4,
   };
   // optional .zetasql.ResolvedExprProto parent = 1;
   bool has_parent() const;
@@ -7750,6 +8004,19 @@ class ResolvedGetStructFieldProto final :
   void _internal_set_field_idx(int64_t value);
   public:
 
+  // optional bool field_expr_is_positional = 4;
+  bool has_field_expr_is_positional() const;
+  private:
+  bool _internal_has_field_expr_is_positional() const;
+  public:
+  void clear_field_expr_is_positional();
+  bool field_expr_is_positional() const;
+  void set_field_expr_is_positional(bool value);
+  private:
+  bool _internal_field_expr_is_positional() const;
+  void _internal_set_field_expr_is_positional(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:zetasql.ResolvedGetStructFieldProto)
  private:
   class _Internal;
@@ -7762,6 +8029,7 @@ class ResolvedGetStructFieldProto final :
   ::zetasql::ResolvedExprProto* parent_;
   ::zetasql::AnyResolvedExprProto* expr_;
   int64_t field_idx_;
+  bool field_expr_is_positional_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
 // -------------------------------------------------------------------
@@ -7821,7 +8089,7 @@ class ResolvedGetProtoFieldProto final :
                &_ResolvedGetProtoFieldProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    29;
 
   friend void swap(ResolvedGetProtoFieldProto& a, ResolvedGetProtoFieldProto& b) {
     a.Swap(&b);
@@ -8072,7 +8340,7 @@ class ResolvedGetJsonFieldProto final :
                &_ResolvedGetJsonFieldProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    30;
 
   friend void swap(ResolvedGetJsonFieldProto& a, ResolvedGetJsonFieldProto& b) {
     a.Swap(&b);
@@ -8258,7 +8526,7 @@ class ResolvedFlattenProto final :
                &_ResolvedFlattenProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    31;
 
   friend void swap(ResolvedFlattenProto& a, ResolvedFlattenProto& b) {
     a.Swap(&b);
@@ -8444,7 +8712,7 @@ class ResolvedFlattenedArgProto final :
                &_ResolvedFlattenedArgProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    32;
 
   friend void swap(ResolvedFlattenedArgProto& a, ResolvedFlattenedArgProto& b) {
     a.Swap(&b);
@@ -8590,7 +8858,7 @@ class ResolvedReplaceFieldItemProto final :
                &_ResolvedReplaceFieldItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    33;
 
   friend void swap(ResolvedReplaceFieldItemProto& a, ResolvedReplaceFieldItemProto& b) {
     a.Swap(&b);
@@ -8800,7 +9068,7 @@ class ResolvedReplaceFieldProto final :
                &_ResolvedReplaceFieldProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    34;
 
   friend void swap(ResolvedReplaceFieldProto& a, ResolvedReplaceFieldProto& b) {
     a.Swap(&b);
@@ -8986,7 +9254,7 @@ class ResolvedSubqueryExprProto final :
                &_ResolvedSubqueryExprProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    35;
 
   friend void swap(ResolvedSubqueryExprProto& a, ResolvedSubqueryExprProto& b) {
     a.Swap(&b);
@@ -9247,7 +9515,7 @@ class ResolvedWithExprProto final :
                &_ResolvedWithExprProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    36;
 
   friend void swap(ResolvedWithExprProto& a, ResolvedWithExprProto& b) {
     a.Swap(&b);
@@ -9450,6 +9718,7 @@ class AnyResolvedScanProto final :
     kResolvedPivotScanNode = 161,
     kResolvedUnpivotScanNode = 172,
     kResolvedGroupRowsScanNode = 176,
+    kResolvedExecuteAsRoleScanNode = 207,
     NODE_NOT_SET = 0,
   };
 
@@ -9458,7 +9727,7 @@ class AnyResolvedScanProto final :
                &_AnyResolvedScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    37;
 
   friend void swap(AnyResolvedScanProto& a, AnyResolvedScanProto& b) {
     a.Swap(&b);
@@ -9536,6 +9805,7 @@ class AnyResolvedScanProto final :
     kResolvedPivotScanNodeFieldNumber = 161,
     kResolvedUnpivotScanNodeFieldNumber = 172,
     kResolvedGroupRowsScanNodeFieldNumber = 176,
+    kResolvedExecuteAsRoleScanNodeFieldNumber = 207,
   };
   // .zetasql.ResolvedSingleRowScanProto resolved_single_row_scan_node = 19;
   bool has_resolved_single_row_scan_node() const;
@@ -9915,6 +10185,24 @@ class AnyResolvedScanProto final :
       ::zetasql::ResolvedGroupRowsScanProto* resolved_group_rows_scan_node);
   ::zetasql::ResolvedGroupRowsScanProto* unsafe_arena_release_resolved_group_rows_scan_node();
 
+  // .zetasql.ResolvedExecuteAsRoleScanProto resolved_execute_as_role_scan_node = 207;
+  bool has_resolved_execute_as_role_scan_node() const;
+  private:
+  bool _internal_has_resolved_execute_as_role_scan_node() const;
+  public:
+  void clear_resolved_execute_as_role_scan_node();
+  const ::zetasql::ResolvedExecuteAsRoleScanProto& resolved_execute_as_role_scan_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedExecuteAsRoleScanProto* release_resolved_execute_as_role_scan_node();
+  ::zetasql::ResolvedExecuteAsRoleScanProto* mutable_resolved_execute_as_role_scan_node();
+  void set_allocated_resolved_execute_as_role_scan_node(::zetasql::ResolvedExecuteAsRoleScanProto* resolved_execute_as_role_scan_node);
+  private:
+  const ::zetasql::ResolvedExecuteAsRoleScanProto& _internal_resolved_execute_as_role_scan_node() const;
+  ::zetasql::ResolvedExecuteAsRoleScanProto* _internal_mutable_resolved_execute_as_role_scan_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_execute_as_role_scan_node(
+      ::zetasql::ResolvedExecuteAsRoleScanProto* resolved_execute_as_role_scan_node);
+  ::zetasql::ResolvedExecuteAsRoleScanProto* unsafe_arena_release_resolved_execute_as_role_scan_node();
+
   void clear_node();
   NodeCase node_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.AnyResolvedScanProto)
@@ -9941,6 +10229,7 @@ class AnyResolvedScanProto final :
   void set_has_resolved_pivot_scan_node();
   void set_has_resolved_unpivot_scan_node();
   void set_has_resolved_group_rows_scan_node();
+  void set_has_resolved_execute_as_role_scan_node();
 
   inline bool has_node() const;
   inline void clear_has_node();
@@ -9972,6 +10261,7 @@ class AnyResolvedScanProto final :
     ::zetasql::ResolvedPivotScanProto* resolved_pivot_scan_node_;
     ::zetasql::ResolvedUnpivotScanProto* resolved_unpivot_scan_node_;
     ::zetasql::ResolvedGroupRowsScanProto* resolved_group_rows_scan_node_;
+    ::zetasql::ResolvedExecuteAsRoleScanProto* resolved_execute_as_role_scan_node_;
   } node_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   uint32_t _oneof_case_[1];
@@ -10035,7 +10325,7 @@ class ResolvedScanProto final :
                &_ResolvedScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    38;
 
   friend void swap(ResolvedScanProto& a, ResolvedScanProto& b) {
     a.Swap(&b);
@@ -10181,6 +10471,212 @@ class ResolvedScanProto final :
 };
 // -------------------------------------------------------------------
 
+class ResolvedExecuteAsRoleScanProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedExecuteAsRoleScanProto) */ {
+ public:
+  inline ResolvedExecuteAsRoleScanProto() : ResolvedExecuteAsRoleScanProto(nullptr) {}
+  ~ResolvedExecuteAsRoleScanProto() override;
+  explicit constexpr ResolvedExecuteAsRoleScanProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedExecuteAsRoleScanProto(const ResolvedExecuteAsRoleScanProto& from);
+  ResolvedExecuteAsRoleScanProto(ResolvedExecuteAsRoleScanProto&& from) noexcept
+    : ResolvedExecuteAsRoleScanProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedExecuteAsRoleScanProto& operator=(const ResolvedExecuteAsRoleScanProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedExecuteAsRoleScanProto& operator=(ResolvedExecuteAsRoleScanProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedExecuteAsRoleScanProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedExecuteAsRoleScanProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedExecuteAsRoleScanProto*>(
+               &_ResolvedExecuteAsRoleScanProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    39;
+
+  friend void swap(ResolvedExecuteAsRoleScanProto& a, ResolvedExecuteAsRoleScanProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedExecuteAsRoleScanProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedExecuteAsRoleScanProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedExecuteAsRoleScanProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedExecuteAsRoleScanProto>(arena);
+  }
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedExecuteAsRoleScanProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.ResolvedExecuteAsRoleScanProto";
+  }
+  protected:
+  explicit ResolvedExecuteAsRoleScanProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kParentFieldNumber = 1,
+    kInputScanFieldNumber = 2,
+    kOriginalInlinedViewFieldNumber = 3,
+    kOriginalInlinedTvfFieldNumber = 4,
+  };
+  // optional .zetasql.ResolvedScanProto parent = 1;
+  bool has_parent() const;
+  private:
+  bool _internal_has_parent() const;
+  public:
+  void clear_parent();
+  const ::zetasql::ResolvedScanProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedScanProto* release_parent();
+  ::zetasql::ResolvedScanProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedScanProto* parent);
+  private:
+  const ::zetasql::ResolvedScanProto& _internal_parent() const;
+  ::zetasql::ResolvedScanProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedScanProto* parent);
+  ::zetasql::ResolvedScanProto* unsafe_arena_release_parent();
+
+  // optional .zetasql.AnyResolvedScanProto input_scan = 2;
+  bool has_input_scan() const;
+  private:
+  bool _internal_has_input_scan() const;
+  public:
+  void clear_input_scan();
+  const ::zetasql::AnyResolvedScanProto& input_scan() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedScanProto* release_input_scan();
+  ::zetasql::AnyResolvedScanProto* mutable_input_scan();
+  void set_allocated_input_scan(::zetasql::AnyResolvedScanProto* input_scan);
+  private:
+  const ::zetasql::AnyResolvedScanProto& _internal_input_scan() const;
+  ::zetasql::AnyResolvedScanProto* _internal_mutable_input_scan();
+  public:
+  void unsafe_arena_set_allocated_input_scan(
+      ::zetasql::AnyResolvedScanProto* input_scan);
+  ::zetasql::AnyResolvedScanProto* unsafe_arena_release_input_scan();
+
+  // optional .zetasql.TableRefProto original_inlined_view = 3;
+  bool has_original_inlined_view() const;
+  private:
+  bool _internal_has_original_inlined_view() const;
+  public:
+  void clear_original_inlined_view();
+  const ::zetasql::TableRefProto& original_inlined_view() const;
+  PROTOBUF_NODISCARD ::zetasql::TableRefProto* release_original_inlined_view();
+  ::zetasql::TableRefProto* mutable_original_inlined_view();
+  void set_allocated_original_inlined_view(::zetasql::TableRefProto* original_inlined_view);
+  private:
+  const ::zetasql::TableRefProto& _internal_original_inlined_view() const;
+  ::zetasql::TableRefProto* _internal_mutable_original_inlined_view();
+  public:
+  void unsafe_arena_set_allocated_original_inlined_view(
+      ::zetasql::TableRefProto* original_inlined_view);
+  ::zetasql::TableRefProto* unsafe_arena_release_original_inlined_view();
+
+  // optional .zetasql.TableValuedFunctionRefProto original_inlined_tvf = 4;
+  bool has_original_inlined_tvf() const;
+  private:
+  bool _internal_has_original_inlined_tvf() const;
+  public:
+  void clear_original_inlined_tvf();
+  const ::zetasql::TableValuedFunctionRefProto& original_inlined_tvf() const;
+  PROTOBUF_NODISCARD ::zetasql::TableValuedFunctionRefProto* release_original_inlined_tvf();
+  ::zetasql::TableValuedFunctionRefProto* mutable_original_inlined_tvf();
+  void set_allocated_original_inlined_tvf(::zetasql::TableValuedFunctionRefProto* original_inlined_tvf);
+  private:
+  const ::zetasql::TableValuedFunctionRefProto& _internal_original_inlined_tvf() const;
+  ::zetasql::TableValuedFunctionRefProto* _internal_mutable_original_inlined_tvf();
+  public:
+  void unsafe_arena_set_allocated_original_inlined_tvf(
+      ::zetasql::TableValuedFunctionRefProto* original_inlined_tvf);
+  ::zetasql::TableValuedFunctionRefProto* unsafe_arena_release_original_inlined_tvf();
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedExecuteAsRoleScanProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::zetasql::ResolvedScanProto* parent_;
+  ::zetasql::AnyResolvedScanProto* input_scan_;
+  ::zetasql::TableRefProto* original_inlined_view_;
+  ::zetasql::TableValuedFunctionRefProto* original_inlined_tvf_;
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ResolvedModelProto final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedModelProto) */ {
  public:
@@ -10236,7 +10732,7 @@ class ResolvedModelProto final :
                &_ResolvedModelProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    40;
 
   friend void swap(ResolvedModelProto& a, ResolvedModelProto& b) {
     a.Swap(&b);
@@ -10402,7 +10898,7 @@ class ResolvedConnectionProto final :
                &_ResolvedConnectionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    41;
 
   friend void swap(ResolvedConnectionProto& a, ResolvedConnectionProto& b) {
     a.Swap(&b);
@@ -10568,7 +11064,7 @@ class ResolvedDescriptorProto final :
                &_ResolvedDescriptorProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    42;
 
   friend void swap(ResolvedDescriptorProto& a, ResolvedDescriptorProto& b) {
     a.Swap(&b);
@@ -10760,7 +11256,7 @@ class ResolvedSingleRowScanProto final :
                &_ResolvedSingleRowScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    43;
 
   friend void swap(ResolvedSingleRowScanProto& a, ResolvedSingleRowScanProto& b) {
     a.Swap(&b);
@@ -10906,7 +11402,7 @@ class ResolvedTableScanProto final :
                &_ResolvedTableScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    44;
 
   friend void swap(ResolvedTableScanProto& a, ResolvedTableScanProto& b) {
     a.Swap(&b);
@@ -11136,7 +11632,7 @@ class ResolvedJoinScanProto final :
                &_ResolvedJoinScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    45;
 
   friend void swap(ResolvedJoinScanProto& a, ResolvedJoinScanProto& b) {
     a.Swap(&b);
@@ -11357,7 +11853,7 @@ class ResolvedArrayScanProto final :
                &_ResolvedArrayScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    46;
 
   friend void swap(ResolvedArrayScanProto& a, ResolvedArrayScanProto& b) {
     a.Swap(&b);
@@ -11618,7 +12114,7 @@ class ResolvedColumnHolderProto final :
                &_ResolvedColumnHolderProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    47;
 
   friend void swap(ResolvedColumnHolderProto& a, ResolvedColumnHolderProto& b) {
     a.Swap(&b);
@@ -11784,7 +12280,7 @@ class ResolvedFilterScanProto final :
                &_ResolvedFilterScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    46;
+    48;
 
   friend void swap(ResolvedFilterScanProto& a, ResolvedFilterScanProto& b) {
     a.Swap(&b);
@@ -11970,7 +12466,7 @@ class ResolvedGroupingSetProto final :
                &_ResolvedGroupingSetProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    47;
+    49;
 
   friend void swap(ResolvedGroupingSetProto& a, ResolvedGroupingSetProto& b) {
     a.Swap(&b);
@@ -12134,6 +12630,7 @@ class AnyResolvedAggregateScanBaseProto final :
   enum NodeCase {
     kResolvedAggregateScanNode = 25,
     kResolvedAnonymizedAggregateScanNode = 112,
+    kResolvedDifferentialPrivacyAggregateScanNode = 221,
     NODE_NOT_SET = 0,
   };
 
@@ -12142,7 +12639,7 @@ class AnyResolvedAggregateScanBaseProto final :
                &_AnyResolvedAggregateScanBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    48;
+    50;
 
   friend void swap(AnyResolvedAggregateScanBaseProto& a, AnyResolvedAggregateScanBaseProto& b) {
     a.Swap(&b);
@@ -12201,6 +12698,7 @@ class AnyResolvedAggregateScanBaseProto final :
   enum : int {
     kResolvedAggregateScanNodeFieldNumber = 25,
     kResolvedAnonymizedAggregateScanNodeFieldNumber = 112,
+    kResolvedDifferentialPrivacyAggregateScanNodeFieldNumber = 221,
   };
   // .zetasql.ResolvedAggregateScanProto resolved_aggregate_scan_node = 25;
   bool has_resolved_aggregate_scan_node() const;
@@ -12238,6 +12736,24 @@ class AnyResolvedAggregateScanBaseProto final :
       ::zetasql::ResolvedAnonymizedAggregateScanProto* resolved_anonymized_aggregate_scan_node);
   ::zetasql::ResolvedAnonymizedAggregateScanProto* unsafe_arena_release_resolved_anonymized_aggregate_scan_node();
 
+  // .zetasql.ResolvedDifferentialPrivacyAggregateScanProto resolved_differential_privacy_aggregate_scan_node = 221;
+  bool has_resolved_differential_privacy_aggregate_scan_node() const;
+  private:
+  bool _internal_has_resolved_differential_privacy_aggregate_scan_node() const;
+  public:
+  void clear_resolved_differential_privacy_aggregate_scan_node();
+  const ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto& resolved_differential_privacy_aggregate_scan_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* release_resolved_differential_privacy_aggregate_scan_node();
+  ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* mutable_resolved_differential_privacy_aggregate_scan_node();
+  void set_allocated_resolved_differential_privacy_aggregate_scan_node(::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* resolved_differential_privacy_aggregate_scan_node);
+  private:
+  const ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto& _internal_resolved_differential_privacy_aggregate_scan_node() const;
+  ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* _internal_mutable_resolved_differential_privacy_aggregate_scan_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_differential_privacy_aggregate_scan_node(
+      ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* resolved_differential_privacy_aggregate_scan_node);
+  ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* unsafe_arena_release_resolved_differential_privacy_aggregate_scan_node();
+
   void clear_node();
   NodeCase node_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.AnyResolvedAggregateScanBaseProto)
@@ -12245,6 +12761,7 @@ class AnyResolvedAggregateScanBaseProto final :
   class _Internal;
   void set_has_resolved_aggregate_scan_node();
   void set_has_resolved_anonymized_aggregate_scan_node();
+  void set_has_resolved_differential_privacy_aggregate_scan_node();
 
   inline bool has_node() const;
   inline void clear_has_node();
@@ -12257,6 +12774,7 @@ class AnyResolvedAggregateScanBaseProto final :
       ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
     ::zetasql::ResolvedAggregateScanProto* resolved_aggregate_scan_node_;
     ::zetasql::ResolvedAnonymizedAggregateScanProto* resolved_anonymized_aggregate_scan_node_;
+    ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* resolved_differential_privacy_aggregate_scan_node_;
   } node_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   uint32_t _oneof_case_[1];
@@ -12320,7 +12838,7 @@ class ResolvedAggregateScanBaseProto final :
                &_ResolvedAggregateScanBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    49;
+    51;
 
   friend void swap(ResolvedAggregateScanBaseProto& a, ResolvedAggregateScanBaseProto& b) {
     a.Swap(&b);
@@ -12546,7 +13064,7 @@ class ResolvedAggregateScanProto final :
                &_ResolvedAggregateScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    50;
+    52;
 
   friend void swap(ResolvedAggregateScanProto& a, ResolvedAggregateScanProto& b) {
     a.Swap(&b);
@@ -12732,7 +13250,7 @@ class ResolvedAnonymizedAggregateScanProto final :
                &_ResolvedAnonymizedAggregateScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    51;
+    53;
 
   friend void swap(ResolvedAnonymizedAggregateScanProto& a, ResolvedAnonymizedAggregateScanProto& b) {
     a.Swap(&b);
@@ -12829,23 +13347,23 @@ class ResolvedAnonymizedAggregateScanProto final :
       ::zetasql::ResolvedAggregateScanBaseProto* parent);
   ::zetasql::ResolvedAggregateScanBaseProto* unsafe_arena_release_parent();
 
-  // optional .zetasql.ResolvedColumnRefProto k_threshold_expr = 5;
+  // optional .zetasql.AnyResolvedExprProto k_threshold_expr = 5;
   bool has_k_threshold_expr() const;
   private:
   bool _internal_has_k_threshold_expr() const;
   public:
   void clear_k_threshold_expr();
-  const ::zetasql::ResolvedColumnRefProto& k_threshold_expr() const;
-  PROTOBUF_NODISCARD ::zetasql::ResolvedColumnRefProto* release_k_threshold_expr();
-  ::zetasql::ResolvedColumnRefProto* mutable_k_threshold_expr();
-  void set_allocated_k_threshold_expr(::zetasql::ResolvedColumnRefProto* k_threshold_expr);
+  const ::zetasql::AnyResolvedExprProto& k_threshold_expr() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedExprProto* release_k_threshold_expr();
+  ::zetasql::AnyResolvedExprProto* mutable_k_threshold_expr();
+  void set_allocated_k_threshold_expr(::zetasql::AnyResolvedExprProto* k_threshold_expr);
   private:
-  const ::zetasql::ResolvedColumnRefProto& _internal_k_threshold_expr() const;
-  ::zetasql::ResolvedColumnRefProto* _internal_mutable_k_threshold_expr();
+  const ::zetasql::AnyResolvedExprProto& _internal_k_threshold_expr() const;
+  ::zetasql::AnyResolvedExprProto* _internal_mutable_k_threshold_expr();
   public:
   void unsafe_arena_set_allocated_k_threshold_expr(
-      ::zetasql::ResolvedColumnRefProto* k_threshold_expr);
-  ::zetasql::ResolvedColumnRefProto* unsafe_arena_release_k_threshold_expr();
+      ::zetasql::AnyResolvedExprProto* k_threshold_expr);
+  ::zetasql::AnyResolvedExprProto* unsafe_arena_release_k_threshold_expr();
 
   // @@protoc_insertion_point(class_scope:zetasql.ResolvedAnonymizedAggregateScanProto)
  private:
@@ -12858,7 +13376,193 @@ class ResolvedAnonymizedAggregateScanProto final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto > anonymization_option_list_;
   ::zetasql::ResolvedAggregateScanBaseProto* parent_;
-  ::zetasql::ResolvedColumnRefProto* k_threshold_expr_;
+  ::zetasql::AnyResolvedExprProto* k_threshold_expr_;
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ResolvedDifferentialPrivacyAggregateScanProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedDifferentialPrivacyAggregateScanProto) */ {
+ public:
+  inline ResolvedDifferentialPrivacyAggregateScanProto() : ResolvedDifferentialPrivacyAggregateScanProto(nullptr) {}
+  ~ResolvedDifferentialPrivacyAggregateScanProto() override;
+  explicit constexpr ResolvedDifferentialPrivacyAggregateScanProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedDifferentialPrivacyAggregateScanProto(const ResolvedDifferentialPrivacyAggregateScanProto& from);
+  ResolvedDifferentialPrivacyAggregateScanProto(ResolvedDifferentialPrivacyAggregateScanProto&& from) noexcept
+    : ResolvedDifferentialPrivacyAggregateScanProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedDifferentialPrivacyAggregateScanProto& operator=(const ResolvedDifferentialPrivacyAggregateScanProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedDifferentialPrivacyAggregateScanProto& operator=(ResolvedDifferentialPrivacyAggregateScanProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedDifferentialPrivacyAggregateScanProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedDifferentialPrivacyAggregateScanProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedDifferentialPrivacyAggregateScanProto*>(
+               &_ResolvedDifferentialPrivacyAggregateScanProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    54;
+
+  friend void swap(ResolvedDifferentialPrivacyAggregateScanProto& a, ResolvedDifferentialPrivacyAggregateScanProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedDifferentialPrivacyAggregateScanProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedDifferentialPrivacyAggregateScanProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedDifferentialPrivacyAggregateScanProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedDifferentialPrivacyAggregateScanProto>(arena);
+  }
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedDifferentialPrivacyAggregateScanProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.ResolvedDifferentialPrivacyAggregateScanProto";
+  }
+  protected:
+  explicit ResolvedDifferentialPrivacyAggregateScanProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOptionListFieldNumber = 6,
+    kParentFieldNumber = 1,
+    kGroupSelectionThresholdExprFieldNumber = 5,
+  };
+  // repeated .zetasql.ResolvedOptionProto option_list = 6;
+  int option_list_size() const;
+  private:
+  int _internal_option_list_size() const;
+  public:
+  void clear_option_list();
+  ::zetasql::ResolvedOptionProto* mutable_option_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto >*
+      mutable_option_list();
+  private:
+  const ::zetasql::ResolvedOptionProto& _internal_option_list(int index) const;
+  ::zetasql::ResolvedOptionProto* _internal_add_option_list();
+  public:
+  const ::zetasql::ResolvedOptionProto& option_list(int index) const;
+  ::zetasql::ResolvedOptionProto* add_option_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto >&
+      option_list() const;
+
+  // optional .zetasql.ResolvedAggregateScanBaseProto parent = 1;
+  bool has_parent() const;
+  private:
+  bool _internal_has_parent() const;
+  public:
+  void clear_parent();
+  const ::zetasql::ResolvedAggregateScanBaseProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedAggregateScanBaseProto* release_parent();
+  ::zetasql::ResolvedAggregateScanBaseProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedAggregateScanBaseProto* parent);
+  private:
+  const ::zetasql::ResolvedAggregateScanBaseProto& _internal_parent() const;
+  ::zetasql::ResolvedAggregateScanBaseProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedAggregateScanBaseProto* parent);
+  ::zetasql::ResolvedAggregateScanBaseProto* unsafe_arena_release_parent();
+
+  // optional .zetasql.AnyResolvedExprProto group_selection_threshold_expr = 5;
+  bool has_group_selection_threshold_expr() const;
+  private:
+  bool _internal_has_group_selection_threshold_expr() const;
+  public:
+  void clear_group_selection_threshold_expr();
+  const ::zetasql::AnyResolvedExprProto& group_selection_threshold_expr() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedExprProto* release_group_selection_threshold_expr();
+  ::zetasql::AnyResolvedExprProto* mutable_group_selection_threshold_expr();
+  void set_allocated_group_selection_threshold_expr(::zetasql::AnyResolvedExprProto* group_selection_threshold_expr);
+  private:
+  const ::zetasql::AnyResolvedExprProto& _internal_group_selection_threshold_expr() const;
+  ::zetasql::AnyResolvedExprProto* _internal_mutable_group_selection_threshold_expr();
+  public:
+  void unsafe_arena_set_allocated_group_selection_threshold_expr(
+      ::zetasql::AnyResolvedExprProto* group_selection_threshold_expr);
+  ::zetasql::AnyResolvedExprProto* unsafe_arena_release_group_selection_threshold_expr();
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedDifferentialPrivacyAggregateScanProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto > option_list_;
+  ::zetasql::ResolvedAggregateScanBaseProto* parent_;
+  ::zetasql::AnyResolvedExprProto* group_selection_threshold_expr_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
 // -------------------------------------------------------------------
@@ -12918,7 +13622,7 @@ class ResolvedSetOperationItemProto final :
                &_ResolvedSetOperationItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    52;
+    55;
 
   friend void swap(ResolvedSetOperationItemProto& a, ResolvedSetOperationItemProto& b) {
     a.Swap(&b);
@@ -13104,7 +13808,7 @@ class ResolvedSetOperationScanProto final :
                &_ResolvedSetOperationScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    53;
+    56;
 
   friend void swap(ResolvedSetOperationScanProto& a, ResolvedSetOperationScanProto& b) {
     a.Swap(&b);
@@ -13285,7 +13989,7 @@ class ResolvedOrderByScanProto final :
                &_ResolvedOrderByScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    54;
+    57;
 
   friend void swap(ResolvedOrderByScanProto& a, ResolvedOrderByScanProto& b) {
     a.Swap(&b);
@@ -13471,7 +14175,7 @@ class ResolvedLimitOffsetScanProto final :
                &_ResolvedLimitOffsetScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    55;
+    58;
 
   friend void swap(ResolvedLimitOffsetScanProto& a, ResolvedLimitOffsetScanProto& b) {
     a.Swap(&b);
@@ -13677,7 +14381,7 @@ class ResolvedWithRefScanProto final :
                &_ResolvedWithRefScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    56;
+    59;
 
   friend void swap(ResolvedWithRefScanProto& a, ResolvedWithRefScanProto& b) {
     a.Swap(&b);
@@ -13843,7 +14547,7 @@ class ResolvedAnalyticScanProto final :
                &_ResolvedAnalyticScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    57;
+    60;
 
   friend void swap(ResolvedAnalyticScanProto& a, ResolvedAnalyticScanProto& b) {
     a.Swap(&b);
@@ -14029,7 +14733,7 @@ class ResolvedSampleScanProto final :
                &_ResolvedSampleScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    58;
+    61;
 
   friend void swap(ResolvedSampleScanProto& a, ResolvedSampleScanProto& b) {
     a.Swap(&b);
@@ -14310,7 +15014,7 @@ class ResolvedComputedColumnProto final :
                &_ResolvedComputedColumnProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    59;
+    62;
 
   friend void swap(ResolvedComputedColumnProto& a, ResolvedComputedColumnProto& b) {
     a.Swap(&b);
@@ -14496,7 +15200,7 @@ class ResolvedOrderByItemProto final :
                &_ResolvedOrderByItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    60;
+    63;
 
   friend void swap(ResolvedOrderByItemProto& a, ResolvedOrderByItemProto& b) {
     a.Swap(&b);
@@ -14732,7 +15436,7 @@ class ResolvedColumnAnnotationsProto final :
                &_ResolvedColumnAnnotationsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    61;
+    64;
 
   friend void swap(ResolvedColumnAnnotationsProto& a, ResolvedColumnAnnotationsProto& b) {
     a.Swap(&b);
@@ -14973,7 +15677,7 @@ class ResolvedGeneratedColumnInfoProto final :
                &_ResolvedGeneratedColumnInfoProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    62;
+    65;
 
   friend void swap(ResolvedGeneratedColumnInfoProto& a, ResolvedGeneratedColumnInfoProto& b) {
     a.Swap(&b);
@@ -15154,7 +15858,7 @@ class ResolvedColumnDefaultValueProto final :
                &_ResolvedColumnDefaultValueProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    63;
+    66;
 
   friend void swap(ResolvedColumnDefaultValueProto& a, ResolvedColumnDefaultValueProto& b) {
     a.Swap(&b);
@@ -15340,7 +16044,7 @@ class ResolvedColumnDefinitionProto final :
                &_ResolvedColumnDefinitionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    64;
+    67;
 
   friend void swap(ResolvedColumnDefinitionProto& a, ResolvedColumnDefinitionProto& b) {
     a.Swap(&b);
@@ -15628,7 +16332,7 @@ class AnyResolvedConstraintProto final :
                &_AnyResolvedConstraintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    65;
+    68;
 
   friend void swap(AnyResolvedConstraintProto& a, AnyResolvedConstraintProto& b) {
     a.Swap(&b);
@@ -15827,7 +16531,7 @@ class ResolvedConstraintProto final :
                &_ResolvedConstraintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    66;
+    69;
 
   friend void swap(ResolvedConstraintProto& a, ResolvedConstraintProto& b) {
     a.Swap(&b);
@@ -15973,7 +16677,7 @@ class ResolvedPrimaryKeyProto final :
                &_ResolvedPrimaryKeyProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    67;
+    70;
 
   friend void swap(ResolvedPrimaryKeyProto& a, ResolvedPrimaryKeyProto& b) {
     a.Swap(&b);
@@ -16224,7 +16928,7 @@ class ResolvedForeignKeyProto final :
                &_ResolvedForeignKeyProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    68;
+    71;
 
   friend void swap(ResolvedForeignKeyProto& a, ResolvedForeignKeyProto& b) {
     a.Swap(&b);
@@ -16564,7 +17268,7 @@ class ResolvedCheckConstraintProto final :
                &_ResolvedCheckConstraintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    69;
+    72;
 
   friend void swap(ResolvedCheckConstraintProto& a, ResolvedCheckConstraintProto& b) {
     a.Swap(&b);
@@ -16785,7 +17489,7 @@ class ResolvedOutputColumnProto final :
                &_ResolvedOutputColumnProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    70;
+    73;
 
   friend void swap(ResolvedOutputColumnProto& a, ResolvedOutputColumnProto& b) {
     a.Swap(&b);
@@ -16971,7 +17675,7 @@ class ResolvedProjectScanProto final :
                &_ResolvedProjectScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    71;
+    74;
 
   friend void swap(ResolvedProjectScanProto& a, ResolvedProjectScanProto& b) {
     a.Swap(&b);
@@ -17157,7 +17861,7 @@ class ResolvedTVFScanProto final :
                &_ResolvedTVFScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    72;
+    75;
 
   friend void swap(ResolvedTVFScanProto& a, ResolvedTVFScanProto& b) {
     a.Swap(&b);
@@ -17427,7 +18131,7 @@ class ResolvedGroupRowsScanProto final :
                &_ResolvedGroupRowsScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    73;
+    76;
 
   friend void swap(ResolvedGroupRowsScanProto& a, ResolvedGroupRowsScanProto& b) {
     a.Swap(&b);
@@ -17613,7 +18317,7 @@ class ResolvedFunctionArgumentProto final :
                &_ResolvedFunctionArgumentProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    74;
+    77;
 
   friend void swap(ResolvedFunctionArgumentProto& a, ResolvedFunctionArgumentProto& b) {
     a.Swap(&b);
@@ -17946,7 +18650,7 @@ class AnyResolvedStatementProto final :
                &_AnyResolvedStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    75;
+    78;
 
   friend void swap(AnyResolvedStatementProto& a, AnyResolvedStatementProto& b) {
     a.Swap(&b);
@@ -18985,7 +19689,7 @@ class ResolvedStatementProto final :
                &_ResolvedStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    76;
+    79;
 
   friend void swap(ResolvedStatementProto& a, ResolvedStatementProto& b) {
     a.Swap(&b);
@@ -19151,7 +19855,7 @@ class ResolvedExplainStmtProto final :
                &_ResolvedExplainStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    77;
+    80;
 
   friend void swap(ResolvedExplainStmtProto& a, ResolvedExplainStmtProto& b) {
     a.Swap(&b);
@@ -19317,7 +20021,7 @@ class ResolvedQueryStmtProto final :
                &_ResolvedQueryStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    78;
+    81;
 
   friend void swap(ResolvedQueryStmtProto& a, ResolvedQueryStmtProto& b) {
     a.Swap(&b);
@@ -19518,7 +20222,7 @@ class ResolvedCreateDatabaseStmtProto final :
                &_ResolvedCreateDatabaseStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    79;
+    82;
 
   friend void swap(ResolvedCreateDatabaseStmtProto& a, ResolvedCreateDatabaseStmtProto& b) {
     a.Swap(&b);
@@ -19726,7 +20430,7 @@ class AnyResolvedCreateStatementProto final :
                &_AnyResolvedCreateStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    80;
+    83;
 
   friend void swap(AnyResolvedCreateStatementProto& a, AnyResolvedCreateStatementProto& b) {
     a.Swap(&b);
@@ -20114,7 +20818,7 @@ class ResolvedCreateStatementProto final :
                &_ResolvedCreateStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    81;
+    84;
 
   friend void swap(ResolvedCreateStatementProto& a, ResolvedCreateStatementProto& b) {
     a.Swap(&b);
@@ -20316,7 +21020,7 @@ class ResolvedIndexItemProto final :
                &_ResolvedIndexItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    82;
+    85;
 
   friend void swap(ResolvedIndexItemProto& a, ResolvedIndexItemProto& b) {
     a.Swap(&b);
@@ -20497,7 +21201,7 @@ class ResolvedUnnestItemProto final :
                &_ResolvedUnnestItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    83;
+    86;
 
   friend void swap(ResolvedUnnestItemProto& a, ResolvedUnnestItemProto& b) {
     a.Swap(&b);
@@ -20703,7 +21407,7 @@ class ResolvedCreateIndexStmtProto final :
                &_ResolvedCreateIndexStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    84;
+    87;
 
   friend void swap(ResolvedCreateIndexStmtProto& a, ResolvedCreateIndexStmtProto& b) {
     a.Swap(&b);
@@ -21040,7 +21744,7 @@ class ResolvedCreateSchemaStmtProto final :
                &_ResolvedCreateSchemaStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    85;
+    88;
 
   friend void swap(ResolvedCreateSchemaStmtProto& a, ResolvedCreateSchemaStmtProto& b) {
     a.Swap(&b);
@@ -21233,7 +21937,7 @@ class AnyResolvedCreateTableStmtBaseProto final :
                &_AnyResolvedCreateTableStmtBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    86;
+    89;
 
   friend void swap(AnyResolvedCreateTableStmtBaseProto& a, AnyResolvedCreateTableStmtBaseProto& b) {
     a.Swap(&b);
@@ -21432,7 +22136,7 @@ class ResolvedCreateTableStmtBaseProto final :
                &_ResolvedCreateTableStmtBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    87;
+    90;
 
   friend void swap(ResolvedCreateTableStmtBaseProto& a, ResolvedCreateTableStmtBaseProto& b) {
     a.Swap(&b);
@@ -21498,6 +22202,7 @@ class ResolvedCreateTableStmtBaseProto final :
     kPrimaryKeyFieldNumber = 4,
     kLikeTableFieldNumber = 11,
     kCollationNameFieldNumber = 12,
+    kConnectionFieldNumber = 13,
     kIsValueTableFieldNumber = 8,
   };
   // repeated .zetasql.ResolvedOptionProto option_list = 2;
@@ -21662,6 +22367,24 @@ class ResolvedCreateTableStmtBaseProto final :
       ::zetasql::AnyResolvedExprProto* collation_name);
   ::zetasql::AnyResolvedExprProto* unsafe_arena_release_collation_name();
 
+  // optional .zetasql.ResolvedConnectionProto connection = 13;
+  bool has_connection() const;
+  private:
+  bool _internal_has_connection() const;
+  public:
+  void clear_connection();
+  const ::zetasql::ResolvedConnectionProto& connection() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedConnectionProto* release_connection();
+  ::zetasql::ResolvedConnectionProto* mutable_connection();
+  void set_allocated_connection(::zetasql::ResolvedConnectionProto* connection);
+  private:
+  const ::zetasql::ResolvedConnectionProto& _internal_connection() const;
+  ::zetasql::ResolvedConnectionProto* _internal_mutable_connection();
+  public:
+  void unsafe_arena_set_allocated_connection(
+      ::zetasql::ResolvedConnectionProto* connection);
+  ::zetasql::ResolvedConnectionProto* unsafe_arena_release_connection();
+
   // optional bool is_value_table = 8;
   bool has_is_value_table() const;
   private:
@@ -21693,6 +22416,7 @@ class ResolvedCreateTableStmtBaseProto final :
   ::zetasql::ResolvedPrimaryKeyProto* primary_key_;
   ::zetasql::TableRefProto* like_table_;
   ::zetasql::AnyResolvedExprProto* collation_name_;
+  ::zetasql::ResolvedConnectionProto* connection_;
   bool is_value_table_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
@@ -21753,7 +22477,7 @@ class ResolvedCreateTableStmtProto final :
                &_ResolvedCreateTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    88;
+    91;
 
   friend void swap(ResolvedCreateTableStmtProto& a, ResolvedCreateTableStmtProto& b) {
     a.Swap(&b);
@@ -21979,7 +22703,7 @@ class ResolvedCreateTableAsSelectStmtProto final :
                &_ResolvedCreateTableAsSelectStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    89;
+    92;
 
   friend void swap(ResolvedCreateTableAsSelectStmtProto& a, ResolvedCreateTableAsSelectStmtProto& b) {
     a.Swap(&b);
@@ -22150,6 +22874,212 @@ class ResolvedCreateTableAsSelectStmtProto final :
 };
 // -------------------------------------------------------------------
 
+class ResolvedCreateModelAliasedQueryProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedCreateModelAliasedQueryProto) */ {
+ public:
+  inline ResolvedCreateModelAliasedQueryProto() : ResolvedCreateModelAliasedQueryProto(nullptr) {}
+  ~ResolvedCreateModelAliasedQueryProto() override;
+  explicit constexpr ResolvedCreateModelAliasedQueryProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedCreateModelAliasedQueryProto(const ResolvedCreateModelAliasedQueryProto& from);
+  ResolvedCreateModelAliasedQueryProto(ResolvedCreateModelAliasedQueryProto&& from) noexcept
+    : ResolvedCreateModelAliasedQueryProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedCreateModelAliasedQueryProto& operator=(const ResolvedCreateModelAliasedQueryProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedCreateModelAliasedQueryProto& operator=(ResolvedCreateModelAliasedQueryProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedCreateModelAliasedQueryProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedCreateModelAliasedQueryProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedCreateModelAliasedQueryProto*>(
+               &_ResolvedCreateModelAliasedQueryProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    93;
+
+  friend void swap(ResolvedCreateModelAliasedQueryProto& a, ResolvedCreateModelAliasedQueryProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedCreateModelAliasedQueryProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedCreateModelAliasedQueryProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedCreateModelAliasedQueryProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedCreateModelAliasedQueryProto>(arena);
+  }
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedCreateModelAliasedQueryProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.ResolvedCreateModelAliasedQueryProto";
+  }
+  protected:
+  explicit ResolvedCreateModelAliasedQueryProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOutputColumnListFieldNumber = 4,
+    kAliasFieldNumber = 2,
+    kParentFieldNumber = 1,
+    kQueryFieldNumber = 3,
+  };
+  // repeated .zetasql.ResolvedOutputColumnProto output_column_list = 4;
+  int output_column_list_size() const;
+  private:
+  int _internal_output_column_list_size() const;
+  public:
+  void clear_output_column_list();
+  ::zetasql::ResolvedOutputColumnProto* mutable_output_column_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto >*
+      mutable_output_column_list();
+  private:
+  const ::zetasql::ResolvedOutputColumnProto& _internal_output_column_list(int index) const;
+  ::zetasql::ResolvedOutputColumnProto* _internal_add_output_column_list();
+  public:
+  const ::zetasql::ResolvedOutputColumnProto& output_column_list(int index) const;
+  ::zetasql::ResolvedOutputColumnProto* add_output_column_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto >&
+      output_column_list() const;
+
+  // optional string alias = 2;
+  bool has_alias() const;
+  private:
+  bool _internal_has_alias() const;
+  public:
+  void clear_alias();
+  const std::string& alias() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_alias(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_alias();
+  PROTOBUF_NODISCARD std::string* release_alias();
+  void set_allocated_alias(std::string* alias);
+  private:
+  const std::string& _internal_alias() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_alias(const std::string& value);
+  std::string* _internal_mutable_alias();
+  public:
+
+  // optional .zetasql.ResolvedArgumentProto parent = 1;
+  bool has_parent() const;
+  private:
+  bool _internal_has_parent() const;
+  public:
+  void clear_parent();
+  const ::zetasql::ResolvedArgumentProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedArgumentProto* release_parent();
+  ::zetasql::ResolvedArgumentProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedArgumentProto* parent);
+  private:
+  const ::zetasql::ResolvedArgumentProto& _internal_parent() const;
+  ::zetasql::ResolvedArgumentProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedArgumentProto* parent);
+  ::zetasql::ResolvedArgumentProto* unsafe_arena_release_parent();
+
+  // optional .zetasql.AnyResolvedScanProto query = 3;
+  bool has_query() const;
+  private:
+  bool _internal_has_query() const;
+  public:
+  void clear_query();
+  const ::zetasql::AnyResolvedScanProto& query() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedScanProto* release_query();
+  ::zetasql::AnyResolvedScanProto* mutable_query();
+  void set_allocated_query(::zetasql::AnyResolvedScanProto* query);
+  private:
+  const ::zetasql::AnyResolvedScanProto& _internal_query() const;
+  ::zetasql::AnyResolvedScanProto* _internal_mutable_query();
+  public:
+  void unsafe_arena_set_allocated_query(
+      ::zetasql::AnyResolvedScanProto* query);
+  ::zetasql::AnyResolvedScanProto* unsafe_arena_release_query();
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedCreateModelAliasedQueryProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto > output_column_list_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr alias_;
+  ::zetasql::ResolvedArgumentProto* parent_;
+  ::zetasql::AnyResolvedScanProto* query_;
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ResolvedCreateModelStmtProto final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedCreateModelStmtProto) */ {
  public:
@@ -22205,7 +23135,7 @@ class ResolvedCreateModelStmtProto final :
                &_ResolvedCreateModelStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    90;
+    94;
 
   friend void swap(ResolvedCreateModelStmtProto& a, ResolvedCreateModelStmtProto& b) {
     a.Swap(&b);
@@ -22268,8 +23198,13 @@ class ResolvedCreateModelStmtProto final :
     kTransformOutputColumnListFieldNumber = 6,
     kTransformAnalyticFunctionGroupListFieldNumber = 7,
     kTransformInputColumnListFieldNumber = 8,
+    kInputColumnDefinitionListFieldNumber = 9,
+    kOutputColumnDefinitionListFieldNumber = 10,
+    kAliasedQueryListFieldNumber = 13,
     kParentFieldNumber = 1,
     kQueryFieldNumber = 4,
+    kConnectionFieldNumber = 12,
+    kIsRemoteFieldNumber = 11,
   };
   // repeated .zetasql.ResolvedOptionProto option_list = 2;
   int option_list_size() const;
@@ -22379,6 +23314,60 @@ class ResolvedCreateModelStmtProto final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
       transform_input_column_list() const;
 
+  // repeated .zetasql.ResolvedColumnDefinitionProto input_column_definition_list = 9;
+  int input_column_definition_list_size() const;
+  private:
+  int _internal_input_column_definition_list_size() const;
+  public:
+  void clear_input_column_definition_list();
+  ::zetasql::ResolvedColumnDefinitionProto* mutable_input_column_definition_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
+      mutable_input_column_definition_list();
+  private:
+  const ::zetasql::ResolvedColumnDefinitionProto& _internal_input_column_definition_list(int index) const;
+  ::zetasql::ResolvedColumnDefinitionProto* _internal_add_input_column_definition_list();
+  public:
+  const ::zetasql::ResolvedColumnDefinitionProto& input_column_definition_list(int index) const;
+  ::zetasql::ResolvedColumnDefinitionProto* add_input_column_definition_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
+      input_column_definition_list() const;
+
+  // repeated .zetasql.ResolvedColumnDefinitionProto output_column_definition_list = 10;
+  int output_column_definition_list_size() const;
+  private:
+  int _internal_output_column_definition_list_size() const;
+  public:
+  void clear_output_column_definition_list();
+  ::zetasql::ResolvedColumnDefinitionProto* mutable_output_column_definition_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
+      mutable_output_column_definition_list();
+  private:
+  const ::zetasql::ResolvedColumnDefinitionProto& _internal_output_column_definition_list(int index) const;
+  ::zetasql::ResolvedColumnDefinitionProto* _internal_add_output_column_definition_list();
+  public:
+  const ::zetasql::ResolvedColumnDefinitionProto& output_column_definition_list(int index) const;
+  ::zetasql::ResolvedColumnDefinitionProto* add_output_column_definition_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
+      output_column_definition_list() const;
+
+  // repeated .zetasql.ResolvedCreateModelAliasedQueryProto aliased_query_list = 13;
+  int aliased_query_list_size() const;
+  private:
+  int _internal_aliased_query_list_size() const;
+  public:
+  void clear_aliased_query_list();
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* mutable_aliased_query_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedCreateModelAliasedQueryProto >*
+      mutable_aliased_query_list();
+  private:
+  const ::zetasql::ResolvedCreateModelAliasedQueryProto& _internal_aliased_query_list(int index) const;
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* _internal_add_aliased_query_list();
+  public:
+  const ::zetasql::ResolvedCreateModelAliasedQueryProto& aliased_query_list(int index) const;
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* add_aliased_query_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedCreateModelAliasedQueryProto >&
+      aliased_query_list() const;
+
   // optional .zetasql.ResolvedCreateStatementProto parent = 1;
   bool has_parent() const;
   private:
@@ -22415,6 +23404,37 @@ class ResolvedCreateModelStmtProto final :
       ::zetasql::AnyResolvedScanProto* query);
   ::zetasql::AnyResolvedScanProto* unsafe_arena_release_query();
 
+  // optional .zetasql.ResolvedConnectionProto connection = 12;
+  bool has_connection() const;
+  private:
+  bool _internal_has_connection() const;
+  public:
+  void clear_connection();
+  const ::zetasql::ResolvedConnectionProto& connection() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedConnectionProto* release_connection();
+  ::zetasql::ResolvedConnectionProto* mutable_connection();
+  void set_allocated_connection(::zetasql::ResolvedConnectionProto* connection);
+  private:
+  const ::zetasql::ResolvedConnectionProto& _internal_connection() const;
+  ::zetasql::ResolvedConnectionProto* _internal_mutable_connection();
+  public:
+  void unsafe_arena_set_allocated_connection(
+      ::zetasql::ResolvedConnectionProto* connection);
+  ::zetasql::ResolvedConnectionProto* unsafe_arena_release_connection();
+
+  // optional bool is_remote = 11;
+  bool has_is_remote() const;
+  private:
+  bool _internal_has_is_remote() const;
+  public:
+  void clear_is_remote();
+  bool is_remote() const;
+  void set_is_remote(bool value);
+  private:
+  bool _internal_is_remote() const;
+  void _internal_set_is_remote(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:zetasql.ResolvedCreateModelStmtProto)
  private:
   class _Internal;
@@ -22430,8 +23450,13 @@ class ResolvedCreateModelStmtProto final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto > transform_output_column_list_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedAnalyticFunctionGroupProto > transform_analytic_function_group_list_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto > transform_input_column_list_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto > input_column_definition_list_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto > output_column_definition_list_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedCreateModelAliasedQueryProto > aliased_query_list_;
   ::zetasql::ResolvedCreateStatementProto* parent_;
   ::zetasql::AnyResolvedScanProto* query_;
+  ::zetasql::ResolvedConnectionProto* connection_;
+  bool is_remote_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
 // -------------------------------------------------------------------
@@ -22497,7 +23522,7 @@ class AnyResolvedCreateViewBaseProto final :
                &_AnyResolvedCreateViewBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    91;
+    95;
 
   friend void swap(AnyResolvedCreateViewBaseProto& a, AnyResolvedCreateViewBaseProto& b) {
     a.Swap(&b);
@@ -22675,7 +23700,7 @@ class ResolvedCreateViewBaseProto final :
                &_ResolvedCreateViewBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    92;
+    96;
 
   friend void swap(ResolvedCreateViewBaseProto& a, ResolvedCreateViewBaseProto& b) {
     a.Swap(&b);
@@ -22734,6 +23759,7 @@ class ResolvedCreateViewBaseProto final :
   enum : int {
     kOptionListFieldNumber = 2,
     kOutputColumnListFieldNumber = 3,
+    kColumnDefinitionListFieldNumber = 10,
     kSqlFieldNumber = 6,
     kParentFieldNumber = 1,
     kQueryFieldNumber = 5,
@@ -22777,6 +23803,24 @@ class ResolvedCreateViewBaseProto final :
   ::zetasql::ResolvedOutputColumnProto* add_output_column_list();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto >&
       output_column_list() const;
+
+  // repeated .zetasql.ResolvedColumnDefinitionProto column_definition_list = 10;
+  int column_definition_list_size() const;
+  private:
+  int _internal_column_definition_list_size() const;
+  public:
+  void clear_column_definition_list();
+  ::zetasql::ResolvedColumnDefinitionProto* mutable_column_definition_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
+      mutable_column_definition_list();
+  private:
+  const ::zetasql::ResolvedColumnDefinitionProto& _internal_column_definition_list(int index) const;
+  ::zetasql::ResolvedColumnDefinitionProto* _internal_add_column_definition_list();
+  public:
+  const ::zetasql::ResolvedColumnDefinitionProto& column_definition_list(int index) const;
+  ::zetasql::ResolvedColumnDefinitionProto* add_column_definition_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
+      column_definition_list() const;
 
   // optional string sql = 6;
   bool has_sql() const;
@@ -22895,6 +23939,7 @@ class ResolvedCreateViewBaseProto final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto > option_list_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto > output_column_list_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto > column_definition_list_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sql_;
   ::zetasql::ResolvedCreateStatementProto* parent_;
   ::zetasql::AnyResolvedScanProto* query_;
@@ -22961,7 +24006,7 @@ class ResolvedCreateViewStmtProto final :
                &_ResolvedCreateViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    93;
+    97;
 
   friend void swap(ResolvedCreateViewStmtProto& a, ResolvedCreateViewStmtProto& b) {
     a.Swap(&b);
@@ -23107,7 +24152,7 @@ class ResolvedWithPartitionColumnsProto final :
                &_ResolvedWithPartitionColumnsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    94;
+    98;
 
   friend void swap(ResolvedWithPartitionColumnsProto& a, ResolvedWithPartitionColumnsProto& b) {
     a.Swap(&b);
@@ -23273,7 +24318,7 @@ class ResolvedCreateSnapshotTableStmtProto final :
                &_ResolvedCreateSnapshotTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    95;
+    99;
 
   friend void swap(ResolvedCreateSnapshotTableStmtProto& a, ResolvedCreateSnapshotTableStmtProto& b) {
     a.Swap(&b);
@@ -23459,7 +24504,7 @@ class ResolvedCreateExternalTableStmtProto final :
                &_ResolvedCreateExternalTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    96;
+    100;
 
   friend void swap(ResolvedCreateExternalTableStmtProto& a, ResolvedCreateExternalTableStmtProto& b) {
     a.Swap(&b);
@@ -23518,7 +24563,6 @@ class ResolvedCreateExternalTableStmtProto final :
   enum : int {
     kParentFieldNumber = 1,
     kWithPartitionColumnsFieldNumber = 2,
-    kConnectionFieldNumber = 3,
   };
   // optional .zetasql.ResolvedCreateTableStmtBaseProto parent = 1;
   bool has_parent() const;
@@ -23556,24 +24600,6 @@ class ResolvedCreateExternalTableStmtProto final :
       ::zetasql::ResolvedWithPartitionColumnsProto* with_partition_columns);
   ::zetasql::ResolvedWithPartitionColumnsProto* unsafe_arena_release_with_partition_columns();
 
-  // optional .zetasql.ResolvedConnectionProto connection = 3;
-  bool has_connection() const;
-  private:
-  bool _internal_has_connection() const;
-  public:
-  void clear_connection();
-  const ::zetasql::ResolvedConnectionProto& connection() const;
-  PROTOBUF_NODISCARD ::zetasql::ResolvedConnectionProto* release_connection();
-  ::zetasql::ResolvedConnectionProto* mutable_connection();
-  void set_allocated_connection(::zetasql::ResolvedConnectionProto* connection);
-  private:
-  const ::zetasql::ResolvedConnectionProto& _internal_connection() const;
-  ::zetasql::ResolvedConnectionProto* _internal_mutable_connection();
-  public:
-  void unsafe_arena_set_allocated_connection(
-      ::zetasql::ResolvedConnectionProto* connection);
-  ::zetasql::ResolvedConnectionProto* unsafe_arena_release_connection();
-
   // @@protoc_insertion_point(class_scope:zetasql.ResolvedCreateExternalTableStmtProto)
  private:
   class _Internal;
@@ -23585,7 +24611,6 @@ class ResolvedCreateExternalTableStmtProto final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::zetasql::ResolvedCreateTableStmtBaseProto* parent_;
   ::zetasql::ResolvedWithPartitionColumnsProto* with_partition_columns_;
-  ::zetasql::ResolvedConnectionProto* connection_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
 // -------------------------------------------------------------------
@@ -23645,7 +24670,7 @@ class ResolvedExportModelStmtProto final :
                &_ResolvedExportModelStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    97;
+    101;
 
   friend void swap(ResolvedExportModelStmtProto& a, ResolvedExportModelStmtProto& b) {
     a.Swap(&b);
@@ -23857,7 +24882,7 @@ class ResolvedExportDataStmtProto final :
                &_ResolvedExportDataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    98;
+    102;
 
   friend void swap(ResolvedExportDataStmtProto& a, ResolvedExportDataStmtProto& b) {
     a.Swap(&b);
@@ -24098,7 +25123,7 @@ class ResolvedDefineTableStmtProto final :
                &_ResolvedDefineTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    99;
+    103;
 
   friend void swap(ResolvedDefineTableStmtProto& a, ResolvedDefineTableStmtProto& b) {
     a.Swap(&b);
@@ -24290,7 +25315,7 @@ class ResolvedDescribeStmtProto final :
                &_ResolvedDescribeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    100;
+    104;
 
   friend void swap(ResolvedDescribeStmtProto& a, ResolvedDescribeStmtProto& b) {
     a.Swap(&b);
@@ -24508,7 +25533,7 @@ class ResolvedShowStmtProto final :
                &_ResolvedShowStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    101;
+    105;
 
   friend void swap(ResolvedShowStmtProto& a, ResolvedShowStmtProto& b) {
     a.Swap(&b);
@@ -24720,7 +25745,7 @@ class ResolvedBeginStmtProto final :
                &_ResolvedBeginStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    102;
+    106;
 
   friend void swap(ResolvedBeginStmtProto& a, ResolvedBeginStmtProto& b) {
     a.Swap(&b);
@@ -24907,7 +25932,7 @@ class ResolvedSetTransactionStmtProto final :
                &_ResolvedSetTransactionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    103;
+    107;
 
   friend void swap(ResolvedSetTransactionStmtProto& a, ResolvedSetTransactionStmtProto& b) {
     a.Swap(&b);
@@ -25094,7 +26119,7 @@ class ResolvedCommitStmtProto final :
                &_ResolvedCommitStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    104;
+    108;
 
   friend void swap(ResolvedCommitStmtProto& a, ResolvedCommitStmtProto& b) {
     a.Swap(&b);
@@ -25240,7 +26265,7 @@ class ResolvedRollbackStmtProto final :
                &_ResolvedRollbackStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    105;
+    109;
 
   friend void swap(ResolvedRollbackStmtProto& a, ResolvedRollbackStmtProto& b) {
     a.Swap(&b);
@@ -25386,7 +26411,7 @@ class ResolvedStartBatchStmtProto final :
                &_ResolvedStartBatchStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    106;
+    110;
 
   friend void swap(ResolvedStartBatchStmtProto& a, ResolvedStartBatchStmtProto& b) {
     a.Swap(&b);
@@ -25552,7 +26577,7 @@ class ResolvedRunBatchStmtProto final :
                &_ResolvedRunBatchStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    107;
+    111;
 
   friend void swap(ResolvedRunBatchStmtProto& a, ResolvedRunBatchStmtProto& b) {
     a.Swap(&b);
@@ -25698,7 +26723,7 @@ class ResolvedAbortBatchStmtProto final :
                &_ResolvedAbortBatchStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    108;
+    112;
 
   friend void swap(ResolvedAbortBatchStmtProto& a, ResolvedAbortBatchStmtProto& b) {
     a.Swap(&b);
@@ -25844,7 +26869,7 @@ class ResolvedDropStmtProto final :
                &_ResolvedDropStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    109;
+    113;
 
   friend void swap(ResolvedDropStmtProto& a, ResolvedDropStmtProto& b) {
     a.Swap(&b);
@@ -26066,7 +27091,7 @@ class ResolvedDropMaterializedViewStmtProto final :
                &_ResolvedDropMaterializedViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    110;
+    114;
 
   friend void swap(ResolvedDropMaterializedViewStmtProto& a, ResolvedDropMaterializedViewStmtProto& b) {
     a.Swap(&b);
@@ -26253,7 +27278,7 @@ class ResolvedDropSnapshotTableStmtProto final :
                &_ResolvedDropSnapshotTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    111;
+    115;
 
   friend void swap(ResolvedDropSnapshotTableStmtProto& a, ResolvedDropSnapshotTableStmtProto& b) {
     a.Swap(&b);
@@ -26440,7 +27465,7 @@ class ResolvedRecursiveRefScanProto final :
                &_ResolvedRecursiveRefScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    112;
+    116;
 
   friend void swap(ResolvedRecursiveRefScanProto& a, ResolvedRecursiveRefScanProto& b) {
     a.Swap(&b);
@@ -26586,7 +27611,7 @@ class ResolvedRecursiveScanProto final :
                &_ResolvedRecursiveScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    113;
+    117;
 
   friend void swap(ResolvedRecursiveScanProto& a, ResolvedRecursiveScanProto& b) {
     a.Swap(&b);
@@ -26787,7 +27812,7 @@ class ResolvedWithScanProto final :
                &_ResolvedWithScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    114;
+    118;
 
   friend void swap(ResolvedWithScanProto& a, ResolvedWithScanProto& b) {
     a.Swap(&b);
@@ -26988,7 +28013,7 @@ class ResolvedWithEntryProto final :
                &_ResolvedWithEntryProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    115;
+    119;
 
   friend void swap(ResolvedWithEntryProto& a, ResolvedWithEntryProto& b) {
     a.Swap(&b);
@@ -27174,7 +28199,7 @@ class ResolvedOptionProto final :
                &_ResolvedOptionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    116;
+    120;
 
   friend void swap(ResolvedOptionProto& a, ResolvedOptionProto& b) {
     a.Swap(&b);
@@ -27380,7 +28405,7 @@ class ResolvedWindowPartitioningProto final :
                &_ResolvedWindowPartitioningProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    117;
+    121;
 
   friend void swap(ResolvedWindowPartitioningProto& a, ResolvedWindowPartitioningProto& b) {
     a.Swap(&b);
@@ -27566,7 +28591,7 @@ class ResolvedWindowOrderingProto final :
                &_ResolvedWindowOrderingProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    118;
+    122;
 
   friend void swap(ResolvedWindowOrderingProto& a, ResolvedWindowOrderingProto& b) {
     a.Swap(&b);
@@ -27752,7 +28777,7 @@ class ResolvedWindowFrameProto final :
                &_ResolvedWindowFrameProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    119;
+    123;
 
   friend void swap(ResolvedWindowFrameProto& a, ResolvedWindowFrameProto& b) {
     a.Swap(&b);
@@ -27953,7 +28978,7 @@ class ResolvedAnalyticFunctionGroupProto final :
                &_ResolvedAnalyticFunctionGroupProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    120;
+    124;
 
   friend void swap(ResolvedAnalyticFunctionGroupProto& a, ResolvedAnalyticFunctionGroupProto& b) {
     a.Swap(&b);
@@ -28159,7 +29184,7 @@ class ResolvedWindowFrameExprProto final :
                &_ResolvedWindowFrameExprProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    121;
+    125;
 
   friend void swap(ResolvedWindowFrameExprProto& a, ResolvedWindowFrameExprProto& b) {
     a.Swap(&b);
@@ -28340,7 +29365,7 @@ class ResolvedDMLValueProto final :
                &_ResolvedDMLValueProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    122;
+    126;
 
   friend void swap(ResolvedDMLValueProto& a, ResolvedDMLValueProto& b) {
     a.Swap(&b);
@@ -28506,7 +29531,7 @@ class ResolvedDMLDefaultProto final :
                &_ResolvedDMLDefaultProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    123;
+    127;
 
   friend void swap(ResolvedDMLDefaultProto& a, ResolvedDMLDefaultProto& b) {
     a.Swap(&b);
@@ -28652,7 +29677,7 @@ class ResolvedAssertStmtProto final :
                &_ResolvedAssertStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    124;
+    128;
 
   friend void swap(ResolvedAssertStmtProto& a, ResolvedAssertStmtProto& b) {
     a.Swap(&b);
@@ -28838,7 +29863,7 @@ class ResolvedAssertRowsModifiedProto final :
                &_ResolvedAssertRowsModifiedProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    125;
+    129;
 
   friend void swap(ResolvedAssertRowsModifiedProto& a, ResolvedAssertRowsModifiedProto& b) {
     a.Swap(&b);
@@ -29004,7 +30029,7 @@ class ResolvedInsertRowProto final :
                &_ResolvedInsertRowProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    126;
+    130;
 
   friend void swap(ResolvedInsertRowProto& a, ResolvedInsertRowProto& b) {
     a.Swap(&b);
@@ -29170,7 +30195,7 @@ class ResolvedInsertStmtProto final :
                &_ResolvedInsertStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    127;
+    131;
 
   friend void swap(ResolvedInsertStmtProto& a, ResolvedInsertStmtProto& b) {
     a.Swap(&b);
@@ -29510,7 +30535,7 @@ class ResolvedDeleteStmtProto final :
                &_ResolvedDeleteStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    128;
+    132;
 
   friend void swap(ResolvedDeleteStmtProto& a, ResolvedDeleteStmtProto& b) {
     a.Swap(&b);
@@ -29775,7 +30800,7 @@ class ResolvedUpdateItemProto final :
                &_ResolvedUpdateItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    129;
+    133;
 
   friend void swap(ResolvedUpdateItemProto& a, ResolvedUpdateItemProto& b) {
     a.Swap(&b);
@@ -30061,7 +31086,7 @@ class ResolvedUpdateArrayItemProto final :
                &_ResolvedUpdateArrayItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    130;
+    134;
 
   friend void swap(ResolvedUpdateArrayItemProto& a, ResolvedUpdateArrayItemProto& b) {
     a.Swap(&b);
@@ -30247,7 +31272,7 @@ class ResolvedUpdateStmtProto final :
                &_ResolvedUpdateStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    131;
+    135;
 
   friend void swap(ResolvedUpdateStmtProto& a, ResolvedUpdateStmtProto& b) {
     a.Swap(&b);
@@ -30552,7 +31577,7 @@ class ResolvedMergeWhenProto final :
                &_ResolvedMergeWhenProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    132;
+    136;
 
   friend void swap(ResolvedMergeWhenProto& a, ResolvedMergeWhenProto& b) {
     a.Swap(&b);
@@ -30808,7 +31833,7 @@ class ResolvedMergeStmtProto final :
                &_ResolvedMergeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    133;
+    137;
 
   friend void swap(ResolvedMergeStmtProto& a, ResolvedMergeStmtProto& b) {
     a.Swap(&b);
@@ -31053,7 +32078,7 @@ class ResolvedTruncateStmtProto final :
                &_ResolvedTruncateStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    134;
+    138;
 
   friend void swap(ResolvedTruncateStmtProto& a, ResolvedTruncateStmtProto& b) {
     a.Swap(&b);
@@ -31239,7 +32264,7 @@ class ResolvedObjectUnitProto final :
                &_ResolvedObjectUnitProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    135;
+    139;
 
   friend void swap(ResolvedObjectUnitProto& a, ResolvedObjectUnitProto& b) {
     a.Swap(&b);
@@ -31411,7 +32436,7 @@ class ResolvedPrivilegeProto final :
                &_ResolvedPrivilegeProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    136;
+    140;
 
   friend void swap(ResolvedPrivilegeProto& a, ResolvedPrivilegeProto& b) {
     a.Swap(&b);
@@ -31603,7 +32628,7 @@ class AnyResolvedGrantOrRevokeStmtProto final :
                &_AnyResolvedGrantOrRevokeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    137;
+    141;
 
   friend void swap(AnyResolvedGrantOrRevokeStmtProto& a, AnyResolvedGrantOrRevokeStmtProto& b) {
     a.Swap(&b);
@@ -31781,7 +32806,7 @@ class ResolvedGrantOrRevokeStmtProto final :
                &_ResolvedGrantOrRevokeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    138;
+    142;
 
   friend void swap(ResolvedGrantOrRevokeStmtProto& a, ResolvedGrantOrRevokeStmtProto& b) {
     a.Swap(&b);
@@ -32039,7 +33064,7 @@ class ResolvedGrantStmtProto final :
                &_ResolvedGrantStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    139;
+    143;
 
   friend void swap(ResolvedGrantStmtProto& a, ResolvedGrantStmtProto& b) {
     a.Swap(&b);
@@ -32185,7 +33210,7 @@ class ResolvedRevokeStmtProto final :
                &_ResolvedRevokeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    140;
+    144;
 
   friend void swap(ResolvedRevokeStmtProto& a, ResolvedRevokeStmtProto& b) {
     a.Swap(&b);
@@ -32345,7 +33370,7 @@ class AnyResolvedAlterObjectStmtProto final :
                &_AnyResolvedAlterObjectStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    141;
+    145;
 
   friend void swap(AnyResolvedAlterObjectStmtProto& a, AnyResolvedAlterObjectStmtProto& b) {
     a.Swap(&b);
@@ -32691,7 +33716,7 @@ class ResolvedAlterObjectStmtProto final :
                &_ResolvedAlterObjectStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    142;
+    146;
 
   friend void swap(ResolvedAlterObjectStmtProto& a, ResolvedAlterObjectStmtProto& b) {
     a.Swap(&b);
@@ -32898,7 +33923,7 @@ class ResolvedAlterDatabaseStmtProto final :
                &_ResolvedAlterDatabaseStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    143;
+    147;
 
   friend void swap(ResolvedAlterDatabaseStmtProto& a, ResolvedAlterDatabaseStmtProto& b) {
     a.Swap(&b);
@@ -33044,7 +34069,7 @@ class ResolvedAlterMaterializedViewStmtProto final :
                &_ResolvedAlterMaterializedViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    144;
+    148;
 
   friend void swap(ResolvedAlterMaterializedViewStmtProto& a, ResolvedAlterMaterializedViewStmtProto& b) {
     a.Swap(&b);
@@ -33190,7 +34215,7 @@ class ResolvedAlterSchemaStmtProto final :
                &_ResolvedAlterSchemaStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    145;
+    149;
 
   friend void swap(ResolvedAlterSchemaStmtProto& a, ResolvedAlterSchemaStmtProto& b) {
     a.Swap(&b);
@@ -33336,7 +34361,7 @@ class ResolvedAlterModelStmtProto final :
                &_ResolvedAlterModelStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    146;
+    150;
 
   friend void swap(ResolvedAlterModelStmtProto& a, ResolvedAlterModelStmtProto& b) {
     a.Swap(&b);
@@ -33482,7 +34507,7 @@ class ResolvedAlterTableStmtProto final :
                &_ResolvedAlterTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    147;
+    151;
 
   friend void swap(ResolvedAlterTableStmtProto& a, ResolvedAlterTableStmtProto& b) {
     a.Swap(&b);
@@ -33628,7 +34653,7 @@ class ResolvedAlterViewStmtProto final :
                &_ResolvedAlterViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    148;
+    152;
 
   friend void swap(ResolvedAlterViewStmtProto& a, ResolvedAlterViewStmtProto& b) {
     a.Swap(&b);
@@ -33798,7 +34823,7 @@ class AnyResolvedAlterActionProto final :
                &_AnyResolvedAlterActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    149;
+    153;
 
   friend void swap(AnyResolvedAlterActionProto& a, AnyResolvedAlterActionProto& b) {
     a.Swap(&b);
@@ -34354,7 +35379,7 @@ class ResolvedAlterActionProto final :
                &_ResolvedAlterActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    150;
+    154;
 
   friend void swap(ResolvedAlterActionProto& a, ResolvedAlterActionProto& b) {
     a.Swap(&b);
@@ -34509,7 +35534,7 @@ class AnyResolvedAlterColumnActionProto final :
                &_AnyResolvedAlterColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    151;
+    155;
 
   friend void swap(AnyResolvedAlterColumnActionProto& a, AnyResolvedAlterColumnActionProto& b) {
     a.Swap(&b);
@@ -34750,7 +35775,7 @@ class ResolvedAlterColumnActionProto final :
                &_ResolvedAlterColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    152;
+    156;
 
   friend void swap(ResolvedAlterColumnActionProto& a, ResolvedAlterColumnActionProto& b) {
     a.Swap(&b);
@@ -34931,7 +35956,7 @@ class ResolvedSetOptionsActionProto final :
                &_ResolvedSetOptionsActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    153;
+    157;
 
   friend void swap(ResolvedSetOptionsActionProto& a, ResolvedSetOptionsActionProto& b) {
     a.Swap(&b);
@@ -35097,7 +36122,7 @@ class ResolvedAlterSubEntityActionProto final :
                &_ResolvedAlterSubEntityActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    154;
+    158;
 
   friend void swap(ResolvedAlterSubEntityActionProto& a, ResolvedAlterSubEntityActionProto& b) {
     a.Swap(&b);
@@ -35318,7 +36343,7 @@ class ResolvedAddSubEntityActionProto final :
                &_ResolvedAddSubEntityActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    155;
+    159;
 
   friend void swap(ResolvedAddSubEntityActionProto& a, ResolvedAddSubEntityActionProto& b) {
     a.Swap(&b);
@@ -35539,7 +36564,7 @@ class ResolvedDropSubEntityActionProto final :
                &_ResolvedDropSubEntityActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    156;
+    160;
 
   friend void swap(ResolvedDropSubEntityActionProto& a, ResolvedDropSubEntityActionProto& b) {
     a.Swap(&b);
@@ -35740,7 +36765,7 @@ class ResolvedAddColumnActionProto final :
                &_ResolvedAddColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    157;
+    161;
 
   friend void swap(ResolvedAddColumnActionProto& a, ResolvedAddColumnActionProto& b) {
     a.Swap(&b);
@@ -35921,7 +36946,7 @@ class ResolvedAddConstraintActionProto final :
                &_ResolvedAddConstraintActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    158;
+    162;
 
   friend void swap(ResolvedAddConstraintActionProto& a, ResolvedAddConstraintActionProto& b) {
     a.Swap(&b);
@@ -36122,7 +37147,7 @@ class ResolvedDropConstraintActionProto final :
                &_ResolvedDropConstraintActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    159;
+    163;
 
   friend void swap(ResolvedDropConstraintActionProto& a, ResolvedDropConstraintActionProto& b) {
     a.Swap(&b);
@@ -36303,7 +37328,7 @@ class ResolvedDropPrimaryKeyActionProto final :
                &_ResolvedDropPrimaryKeyActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    160;
+    164;
 
   friend void swap(ResolvedDropPrimaryKeyActionProto& a, ResolvedDropPrimaryKeyActionProto& b) {
     a.Swap(&b);
@@ -36464,7 +37489,7 @@ class ResolvedAlterColumnOptionsActionProto final :
                &_ResolvedAlterColumnOptionsActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    161;
+    165;
 
   friend void swap(ResolvedAlterColumnOptionsActionProto& a, ResolvedAlterColumnOptionsActionProto& b) {
     a.Swap(&b);
@@ -36630,7 +37655,7 @@ class ResolvedAlterColumnDropNotNullActionProto final :
                &_ResolvedAlterColumnDropNotNullActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    162;
+    166;
 
   friend void swap(ResolvedAlterColumnDropNotNullActionProto& a, ResolvedAlterColumnDropNotNullActionProto& b) {
     a.Swap(&b);
@@ -36776,7 +37801,7 @@ class ResolvedAlterColumnSetDataTypeActionProto final :
                &_ResolvedAlterColumnSetDataTypeActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    163;
+    167;
 
   friend void swap(ResolvedAlterColumnSetDataTypeActionProto& a, ResolvedAlterColumnSetDataTypeActionProto& b) {
     a.Swap(&b);
@@ -36982,7 +38007,7 @@ class ResolvedAlterColumnSetDefaultActionProto final :
                &_ResolvedAlterColumnSetDefaultActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    164;
+    168;
 
   friend void swap(ResolvedAlterColumnSetDefaultActionProto& a, ResolvedAlterColumnSetDefaultActionProto& b) {
     a.Swap(&b);
@@ -37148,7 +38173,7 @@ class ResolvedAlterColumnDropDefaultActionProto final :
                &_ResolvedAlterColumnDropDefaultActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    165;
+    169;
 
   friend void swap(ResolvedAlterColumnDropDefaultActionProto& a, ResolvedAlterColumnDropDefaultActionProto& b) {
     a.Swap(&b);
@@ -37294,7 +38319,7 @@ class ResolvedDropColumnActionProto final :
                &_ResolvedDropColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    166;
+    170;
 
   friend void swap(ResolvedDropColumnActionProto& a, ResolvedDropColumnActionProto& b) {
     a.Swap(&b);
@@ -37475,7 +38500,7 @@ class ResolvedRenameColumnActionProto final :
                &_ResolvedRenameColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    167;
+    171;
 
   friend void swap(ResolvedRenameColumnActionProto& a, ResolvedRenameColumnActionProto& b) {
     a.Swap(&b);
@@ -37676,7 +38701,7 @@ class ResolvedSetAsActionProto final :
                &_ResolvedSetAsActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    168;
+    172;
 
   friend void swap(ResolvedSetAsActionProto& a, ResolvedSetAsActionProto& b) {
     a.Swap(&b);
@@ -37862,7 +38887,7 @@ class ResolvedSetCollateClauseProto final :
                &_ResolvedSetCollateClauseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    169;
+    173;
 
   friend void swap(ResolvedSetCollateClauseProto& a, ResolvedSetCollateClauseProto& b) {
     a.Swap(&b);
@@ -38028,7 +39053,7 @@ class ResolvedAlterTableSetOptionsStmtProto final :
                &_ResolvedAlterTableSetOptionsStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    170;
+    174;
 
   friend void swap(ResolvedAlterTableSetOptionsStmtProto& a, ResolvedAlterTableSetOptionsStmtProto& b) {
     a.Swap(&b);
@@ -38235,7 +39260,7 @@ class ResolvedRenameStmtProto final :
                &_ResolvedRenameStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    171;
+    175;
 
   friend void swap(ResolvedRenameStmtProto& a, ResolvedRenameStmtProto& b) {
     a.Swap(&b);
@@ -38453,7 +39478,7 @@ class ResolvedCreatePrivilegeRestrictionStmtProto final :
                &_ResolvedCreatePrivilegeRestrictionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    172;
+    176;
 
   friend void swap(ResolvedCreatePrivilegeRestrictionStmtProto& a, ResolvedCreatePrivilegeRestrictionStmtProto& b) {
     a.Swap(&b);
@@ -38659,7 +39684,7 @@ class ResolvedCreateRowAccessPolicyStmtProto final :
                &_ResolvedCreateRowAccessPolicyStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    173;
+    177;
 
   friend void swap(ResolvedCreateRowAccessPolicyStmtProto& a, ResolvedCreateRowAccessPolicyStmtProto& b) {
     a.Swap(&b);
@@ -38972,7 +39997,7 @@ class ResolvedDropPrivilegeRestrictionStmtProto final :
                &_ResolvedDropPrivilegeRestrictionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    174;
+    178;
 
   friend void swap(ResolvedDropPrivilegeRestrictionStmtProto& a, ResolvedDropPrivilegeRestrictionStmtProto& b) {
     a.Swap(&b);
@@ -39199,7 +40224,7 @@ class ResolvedDropRowAccessPolicyStmtProto final :
                &_ResolvedDropRowAccessPolicyStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    175;
+    179;
 
   friend void swap(ResolvedDropRowAccessPolicyStmtProto& a, ResolvedDropRowAccessPolicyStmtProto& b) {
     a.Swap(&b);
@@ -39421,7 +40446,7 @@ class ResolvedDropSearchIndexStmtProto final :
                &_ResolvedDropSearchIndexStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    176;
+    180;
 
   friend void swap(ResolvedDropSearchIndexStmtProto& a, ResolvedDropSearchIndexStmtProto& b) {
     a.Swap(&b);
@@ -39628,7 +40653,7 @@ class ResolvedGrantToActionProto final :
                &_ResolvedGrantToActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    177;
+    181;
 
   friend void swap(ResolvedGrantToActionProto& a, ResolvedGrantToActionProto& b) {
     a.Swap(&b);
@@ -39794,7 +40819,7 @@ class ResolvedRestrictToActionProto final :
                &_ResolvedRestrictToActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    178;
+    182;
 
   friend void swap(ResolvedRestrictToActionProto& a, ResolvedRestrictToActionProto& b) {
     a.Swap(&b);
@@ -39960,7 +40985,7 @@ class ResolvedAddToRestricteeListActionProto final :
                &_ResolvedAddToRestricteeListActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    179;
+    183;
 
   friend void swap(ResolvedAddToRestricteeListActionProto& a, ResolvedAddToRestricteeListActionProto& b) {
     a.Swap(&b);
@@ -40141,7 +41166,7 @@ class ResolvedRemoveFromRestricteeListActionProto final :
                &_ResolvedRemoveFromRestricteeListActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    180;
+    184;
 
   friend void swap(ResolvedRemoveFromRestricteeListActionProto& a, ResolvedRemoveFromRestricteeListActionProto& b) {
     a.Swap(&b);
@@ -40322,7 +41347,7 @@ class ResolvedFilterUsingActionProto final :
                &_ResolvedFilterUsingActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    181;
+    185;
 
   friend void swap(ResolvedFilterUsingActionProto& a, ResolvedFilterUsingActionProto& b) {
     a.Swap(&b);
@@ -40508,7 +41533,7 @@ class ResolvedRevokeFromActionProto final :
                &_ResolvedRevokeFromActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    182;
+    186;
 
   friend void swap(ResolvedRevokeFromActionProto& a, ResolvedRevokeFromActionProto& b) {
     a.Swap(&b);
@@ -40689,7 +41714,7 @@ class ResolvedRenameToActionProto final :
                &_ResolvedRenameToActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    183;
+    187;
 
   friend void swap(ResolvedRenameToActionProto& a, ResolvedRenameToActionProto& b) {
     a.Swap(&b);
@@ -40861,7 +41886,7 @@ class ResolvedAlterPrivilegeRestrictionStmtProto final :
                &_ResolvedAlterPrivilegeRestrictionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    184;
+    188;
 
   friend void swap(ResolvedAlterPrivilegeRestrictionStmtProto& a, ResolvedAlterPrivilegeRestrictionStmtProto& b) {
     a.Swap(&b);
@@ -41047,7 +42072,7 @@ class ResolvedAlterRowAccessPolicyStmtProto final :
                &_ResolvedAlterRowAccessPolicyStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    185;
+    189;
 
   friend void swap(ResolvedAlterRowAccessPolicyStmtProto& a, ResolvedAlterRowAccessPolicyStmtProto& b) {
     a.Swap(&b);
@@ -41233,7 +42258,7 @@ class ResolvedAlterAllRowAccessPoliciesStmtProto final :
                &_ResolvedAlterAllRowAccessPoliciesStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    186;
+    190;
 
   friend void swap(ResolvedAlterAllRowAccessPoliciesStmtProto& a, ResolvedAlterAllRowAccessPoliciesStmtProto& b) {
     a.Swap(&b);
@@ -41399,7 +42424,7 @@ class ResolvedCreateConstantStmtProto final :
                &_ResolvedCreateConstantStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    187;
+    191;
 
   friend void swap(ResolvedCreateConstantStmtProto& a, ResolvedCreateConstantStmtProto& b) {
     a.Swap(&b);
@@ -41565,7 +42590,7 @@ class ResolvedCreateFunctionStmtProto final :
                &_ResolvedCreateFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    188;
+    192;
 
   friend void swap(ResolvedCreateFunctionStmtProto& a, ResolvedCreateFunctionStmtProto& b) {
     a.Swap(&b);
@@ -41972,7 +42997,7 @@ class ResolvedArgumentDefProto final :
                &_ResolvedArgumentDefProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    189;
+    193;
 
   friend void swap(ResolvedArgumentDefProto& a, ResolvedArgumentDefProto& b) {
     a.Swap(&b);
@@ -42173,7 +43198,7 @@ class ResolvedArgumentRefProto final :
                &_ResolvedArgumentRefProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    190;
+    194;
 
   friend void swap(ResolvedArgumentRefProto& a, ResolvedArgumentRefProto& b) {
     a.Swap(&b);
@@ -42354,7 +43379,7 @@ class ResolvedCreateTableFunctionStmtProto final :
                &_ResolvedCreateTableFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    191;
+    195;
 
   friend void swap(ResolvedCreateTableFunctionStmtProto& a, ResolvedCreateTableFunctionStmtProto& b) {
     a.Swap(&b);
@@ -42691,7 +43716,7 @@ class ResolvedRelationArgumentScanProto final :
                &_ResolvedRelationArgumentScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    192;
+    196;
 
   friend void swap(ResolvedRelationArgumentScanProto& a, ResolvedRelationArgumentScanProto& b) {
     a.Swap(&b);
@@ -42872,7 +43897,7 @@ class ResolvedArgumentListProto final :
                &_ResolvedArgumentListProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    193;
+    197;
 
   friend void swap(ResolvedArgumentListProto& a, ResolvedArgumentListProto& b) {
     a.Swap(&b);
@@ -43038,7 +44063,7 @@ class ResolvedFunctionSignatureHolderProto final :
                &_ResolvedFunctionSignatureHolderProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    194;
+    198;
 
   friend void swap(ResolvedFunctionSignatureHolderProto& a, ResolvedFunctionSignatureHolderProto& b) {
     a.Swap(&b);
@@ -43204,7 +44229,7 @@ class ResolvedDropFunctionStmtProto final :
                &_ResolvedDropFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    195;
+    199;
 
   friend void swap(ResolvedDropFunctionStmtProto& a, ResolvedDropFunctionStmtProto& b) {
     a.Swap(&b);
@@ -43431,7 +44456,7 @@ class ResolvedDropTableFunctionStmtProto final :
                &_ResolvedDropTableFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    196;
+    200;
 
   friend void swap(ResolvedDropTableFunctionStmtProto& a, ResolvedDropTableFunctionStmtProto& b) {
     a.Swap(&b);
@@ -43618,7 +44643,7 @@ class ResolvedCallStmtProto final :
                &_ResolvedCallStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    197;
+    201;
 
   friend void swap(ResolvedCallStmtProto& a, ResolvedCallStmtProto& b) {
     a.Swap(&b);
@@ -43824,7 +44849,7 @@ class ResolvedImportStmtProto final :
                &_ResolvedImportStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    198;
+    202;
 
   friend void swap(ResolvedImportStmtProto& a, ResolvedImportStmtProto& b) {
     a.Swap(&b);
@@ -44103,7 +45128,7 @@ class ResolvedModuleStmtProto final :
                &_ResolvedModuleStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    199;
+    203;
 
   friend void swap(ResolvedModuleStmtProto& a, ResolvedModuleStmtProto& b) {
     a.Swap(&b);
@@ -44295,7 +45320,7 @@ class ResolvedAggregateHavingModifierProto final :
                &_ResolvedAggregateHavingModifierProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    200;
+    204;
 
   friend void swap(ResolvedAggregateHavingModifierProto& a, ResolvedAggregateHavingModifierProto& b) {
     a.Swap(&b);
@@ -44476,7 +45501,7 @@ class ResolvedCreateMaterializedViewStmtProto final :
                &_ResolvedCreateMaterializedViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    201;
+    205;
 
   friend void swap(ResolvedCreateMaterializedViewStmtProto& a, ResolvedCreateMaterializedViewStmtProto& b) {
     a.Swap(&b);
@@ -44533,29 +45558,10 @@ class ResolvedCreateMaterializedViewStmtProto final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kColumnDefinitionListFieldNumber = 2,
     kPartitionByListFieldNumber = 3,
     kClusterByListFieldNumber = 4,
     kParentFieldNumber = 1,
   };
-  // repeated .zetasql.ResolvedColumnDefinitionProto column_definition_list = 2;
-  int column_definition_list_size() const;
-  private:
-  int _internal_column_definition_list_size() const;
-  public:
-  void clear_column_definition_list();
-  ::zetasql::ResolvedColumnDefinitionProto* mutable_column_definition_list(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
-      mutable_column_definition_list();
-  private:
-  const ::zetasql::ResolvedColumnDefinitionProto& _internal_column_definition_list(int index) const;
-  ::zetasql::ResolvedColumnDefinitionProto* _internal_add_column_definition_list();
-  public:
-  const ::zetasql::ResolvedColumnDefinitionProto& column_definition_list(int index) const;
-  ::zetasql::ResolvedColumnDefinitionProto* add_column_definition_list();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
-      column_definition_list() const;
-
   // repeated .zetasql.AnyResolvedExprProto partition_by_list = 3;
   int partition_by_list_size() const;
   private:
@@ -44619,7 +45625,6 @@ class ResolvedCreateMaterializedViewStmtProto final :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto > column_definition_list_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedExprProto > partition_by_list_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedExprProto > cluster_by_list_;
   ::zetasql::ResolvedCreateViewBaseProto* parent_;
@@ -44682,7 +45687,7 @@ class ResolvedCreateProcedureStmtProto final :
                &_ResolvedCreateProcedureStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    202;
+    206;
 
   friend void swap(ResolvedCreateProcedureStmtProto& a, ResolvedCreateProcedureStmtProto& b) {
     a.Swap(&b);
@@ -44974,7 +45979,7 @@ class ResolvedExecuteImmediateArgumentProto final :
                &_ResolvedExecuteImmediateArgumentProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    203;
+    207;
 
   friend void swap(ResolvedExecuteImmediateArgumentProto& a, ResolvedExecuteImmediateArgumentProto& b) {
     a.Swap(&b);
@@ -45160,7 +46165,7 @@ class ResolvedExecuteImmediateStmtProto final :
                &_ResolvedExecuteImmediateStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    204;
+    208;
 
   friend void swap(ResolvedExecuteImmediateStmtProto& a, ResolvedExecuteImmediateStmtProto& b) {
     a.Swap(&b);
@@ -45372,7 +46377,7 @@ class ResolvedAssignmentStmtProto final :
                &_ResolvedAssignmentStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    205;
+    209;
 
   friend void swap(ResolvedAssignmentStmtProto& a, ResolvedAssignmentStmtProto& b) {
     a.Swap(&b);
@@ -45558,7 +46563,7 @@ class ResolvedCreateEntityStmtProto final :
                &_ResolvedCreateEntityStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    206;
+    210;
 
   friend void swap(ResolvedCreateEntityStmtProto& a, ResolvedCreateEntityStmtProto& b) {
     a.Swap(&b);
@@ -45784,7 +46789,7 @@ class ResolvedAlterEntityStmtProto final :
                &_ResolvedAlterEntityStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    207;
+    211;
 
   friend void swap(ResolvedAlterEntityStmtProto& a, ResolvedAlterEntityStmtProto& b) {
     a.Swap(&b);
@@ -45950,7 +46955,7 @@ class ResolvedPivotColumnProto final :
                &_ResolvedPivotColumnProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    208;
+    212;
 
   friend void swap(ResolvedPivotColumnProto& a, ResolvedPivotColumnProto& b) {
     a.Swap(&b);
@@ -46146,7 +47151,7 @@ class ResolvedPivotScanProto final :
                &_ResolvedPivotScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    209;
+    213;
 
   friend void swap(ResolvedPivotScanProto& a, ResolvedPivotScanProto& b) {
     a.Swap(&b);
@@ -46412,7 +47417,7 @@ class ResolvedReturningClauseProto final :
                &_ResolvedReturningClauseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    210;
+    214;
 
   friend void swap(ResolvedReturningClauseProto& a, ResolvedReturningClauseProto& b) {
     a.Swap(&b);
@@ -46618,7 +47623,7 @@ class ResolvedUnpivotArgProto final :
                &_ResolvedUnpivotArgProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    211;
+    215;
 
   friend void swap(ResolvedUnpivotArgProto& a, ResolvedUnpivotArgProto& b) {
     a.Swap(&b);
@@ -46784,7 +47789,7 @@ class ResolvedUnpivotScanProto final :
                &_ResolvedUnpivotScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    212;
+    216;
 
   friend void swap(ResolvedUnpivotScanProto& a, ResolvedUnpivotScanProto& b) {
     a.Swap(&b);
@@ -47065,7 +48070,7 @@ class ResolvedCloneDataStmtProto final :
                &_ResolvedCloneDataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    213;
+    217;
 
   friend void swap(ResolvedCloneDataStmtProto& a, ResolvedCloneDataStmtProto& b) {
     a.Swap(&b);
@@ -47251,7 +48256,7 @@ class ResolvedTableAndColumnInfoProto final :
                &_ResolvedTableAndColumnInfoProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    214;
+    218;
 
   friend void swap(ResolvedTableAndColumnInfoProto& a, ResolvedTableAndColumnInfoProto& b) {
     a.Swap(&b);
@@ -47441,7 +48446,7 @@ class ResolvedAnalyzeStmtProto final :
                &_ResolvedAnalyzeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    215;
+    219;
 
   friend void swap(ResolvedAnalyzeStmtProto& a, ResolvedAnalyzeStmtProto& b) {
     a.Swap(&b);
@@ -47572,6 +48577,187 @@ class ResolvedAnalyzeStmtProto final :
 };
 // -------------------------------------------------------------------
 
+class ResolvedAuxLoadDataPartitionFilterProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedAuxLoadDataPartitionFilterProto) */ {
+ public:
+  inline ResolvedAuxLoadDataPartitionFilterProto() : ResolvedAuxLoadDataPartitionFilterProto(nullptr) {}
+  ~ResolvedAuxLoadDataPartitionFilterProto() override;
+  explicit constexpr ResolvedAuxLoadDataPartitionFilterProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedAuxLoadDataPartitionFilterProto(const ResolvedAuxLoadDataPartitionFilterProto& from);
+  ResolvedAuxLoadDataPartitionFilterProto(ResolvedAuxLoadDataPartitionFilterProto&& from) noexcept
+    : ResolvedAuxLoadDataPartitionFilterProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedAuxLoadDataPartitionFilterProto& operator=(const ResolvedAuxLoadDataPartitionFilterProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedAuxLoadDataPartitionFilterProto& operator=(ResolvedAuxLoadDataPartitionFilterProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedAuxLoadDataPartitionFilterProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedAuxLoadDataPartitionFilterProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedAuxLoadDataPartitionFilterProto*>(
+               &_ResolvedAuxLoadDataPartitionFilterProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    220;
+
+  friend void swap(ResolvedAuxLoadDataPartitionFilterProto& a, ResolvedAuxLoadDataPartitionFilterProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedAuxLoadDataPartitionFilterProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedAuxLoadDataPartitionFilterProto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedAuxLoadDataPartitionFilterProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedAuxLoadDataPartitionFilterProto>(arena);
+  }
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedAuxLoadDataPartitionFilterProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "zetasql.ResolvedAuxLoadDataPartitionFilterProto";
+  }
+  protected:
+  explicit ResolvedAuxLoadDataPartitionFilterProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kParentFieldNumber = 1,
+    kFilterFieldNumber = 2,
+    kIsOverwriteFieldNumber = 3,
+  };
+  // optional .zetasql.ResolvedArgumentProto parent = 1;
+  bool has_parent() const;
+  private:
+  bool _internal_has_parent() const;
+  public:
+  void clear_parent();
+  const ::zetasql::ResolvedArgumentProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedArgumentProto* release_parent();
+  ::zetasql::ResolvedArgumentProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedArgumentProto* parent);
+  private:
+  const ::zetasql::ResolvedArgumentProto& _internal_parent() const;
+  ::zetasql::ResolvedArgumentProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedArgumentProto* parent);
+  ::zetasql::ResolvedArgumentProto* unsafe_arena_release_parent();
+
+  // optional .zetasql.AnyResolvedExprProto filter = 2;
+  bool has_filter() const;
+  private:
+  bool _internal_has_filter() const;
+  public:
+  void clear_filter();
+  const ::zetasql::AnyResolvedExprProto& filter() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedExprProto* release_filter();
+  ::zetasql::AnyResolvedExprProto* mutable_filter();
+  void set_allocated_filter(::zetasql::AnyResolvedExprProto* filter);
+  private:
+  const ::zetasql::AnyResolvedExprProto& _internal_filter() const;
+  ::zetasql::AnyResolvedExprProto* _internal_mutable_filter();
+  public:
+  void unsafe_arena_set_allocated_filter(
+      ::zetasql::AnyResolvedExprProto* filter);
+  ::zetasql::AnyResolvedExprProto* unsafe_arena_release_filter();
+
+  // optional bool is_overwrite = 3;
+  bool has_is_overwrite() const;
+  private:
+  bool _internal_has_is_overwrite() const;
+  public:
+  void clear_is_overwrite();
+  bool is_overwrite() const;
+  void set_is_overwrite(bool value);
+  private:
+  bool _internal_is_overwrite() const;
+  void _internal_set_is_overwrite(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedAuxLoadDataPartitionFilterProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::zetasql::ResolvedArgumentProto* parent_;
+  ::zetasql::AnyResolvedExprProto* filter_;
+  bool is_overwrite_;
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ResolvedAuxLoadDataStmtProto final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedAuxLoadDataStmtProto) */ {
  public:
@@ -47627,7 +48813,7 @@ class ResolvedAuxLoadDataStmtProto final :
                &_ResolvedAuxLoadDataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    216;
+    221;
 
   friend void swap(ResolvedAuxLoadDataStmtProto& a, ResolvedAuxLoadDataStmtProto& b) {
     a.Swap(&b);
@@ -47698,7 +48884,9 @@ class ResolvedAuxLoadDataStmtProto final :
     kPrimaryKeyFieldNumber = 7,
     kWithPartitionColumnsFieldNumber = 13,
     kConnectionFieldNumber = 14,
+    kPartitionFilterFieldNumber = 16,
     kInsertionModeFieldNumber = 2,
+    kIsTempTableFieldNumber = 17,
   };
   // repeated string name_path = 3;
   int name_path_size() const;
@@ -47958,6 +49146,24 @@ class ResolvedAuxLoadDataStmtProto final :
       ::zetasql::ResolvedConnectionProto* connection);
   ::zetasql::ResolvedConnectionProto* unsafe_arena_release_connection();
 
+  // optional .zetasql.ResolvedAuxLoadDataPartitionFilterProto partition_filter = 16;
+  bool has_partition_filter() const;
+  private:
+  bool _internal_has_partition_filter() const;
+  public:
+  void clear_partition_filter();
+  const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& partition_filter() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* release_partition_filter();
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* mutable_partition_filter();
+  void set_allocated_partition_filter(::zetasql::ResolvedAuxLoadDataPartitionFilterProto* partition_filter);
+  private:
+  const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& _internal_partition_filter() const;
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* _internal_mutable_partition_filter();
+  public:
+  void unsafe_arena_set_allocated_partition_filter(
+      ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* partition_filter);
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* unsafe_arena_release_partition_filter();
+
   // optional .zetasql.ResolvedAuxLoadDataStmtEnums.InsertionMode insertion_mode = 2;
   bool has_insertion_mode() const;
   private:
@@ -47969,6 +49175,19 @@ class ResolvedAuxLoadDataStmtProto final :
   private:
   ::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode _internal_insertion_mode() const;
   void _internal_set_insertion_mode(::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode value);
+  public:
+
+  // optional bool is_temp_table = 17;
+  bool has_is_temp_table() const;
+  private:
+  bool _internal_has_is_temp_table() const;
+  public:
+  void clear_is_temp_table();
+  bool is_temp_table() const;
+  void set_is_temp_table(bool value);
+  private:
+  bool _internal_is_temp_table() const;
+  void _internal_set_is_temp_table(bool value);
   public:
 
   // @@protoc_insertion_point(class_scope:zetasql.ResolvedAuxLoadDataStmtProto)
@@ -47994,7 +49213,9 @@ class ResolvedAuxLoadDataStmtProto final :
   ::zetasql::ResolvedPrimaryKeyProto* primary_key_;
   ::zetasql::ResolvedWithPartitionColumnsProto* with_partition_columns_;
   ::zetasql::ResolvedConnectionProto* connection_;
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* partition_filter_;
   int insertion_mode_;
+  bool is_temp_table_;
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
 // ===================================================================
@@ -51943,6 +53164,154 @@ inline ::zetasql::ResolvedObjectUnitProto* AnyResolvedArgumentProto::mutable_res
   return _msg;
 }
 
+// .zetasql.ResolvedAuxLoadDataPartitionFilterProto resolved_aux_load_data_partition_filter_node = 222;
+inline bool AnyResolvedArgumentProto::_internal_has_resolved_aux_load_data_partition_filter_node() const {
+  return node_case() == kResolvedAuxLoadDataPartitionFilterNode;
+}
+inline bool AnyResolvedArgumentProto::has_resolved_aux_load_data_partition_filter_node() const {
+  return _internal_has_resolved_aux_load_data_partition_filter_node();
+}
+inline void AnyResolvedArgumentProto::set_has_resolved_aux_load_data_partition_filter_node() {
+  _oneof_case_[0] = kResolvedAuxLoadDataPartitionFilterNode;
+}
+inline void AnyResolvedArgumentProto::clear_resolved_aux_load_data_partition_filter_node() {
+  if (_internal_has_resolved_aux_load_data_partition_filter_node()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete node_.resolved_aux_load_data_partition_filter_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* AnyResolvedArgumentProto::release_resolved_aux_load_data_partition_filter_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedArgumentProto.resolved_aux_load_data_partition_filter_node)
+  if (_internal_has_resolved_aux_load_data_partition_filter_node()) {
+    clear_has_node();
+      ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* temp = node_.resolved_aux_load_data_partition_filter_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    node_.resolved_aux_load_data_partition_filter_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& AnyResolvedArgumentProto::_internal_resolved_aux_load_data_partition_filter_node() const {
+  return _internal_has_resolved_aux_load_data_partition_filter_node()
+      ? *node_.resolved_aux_load_data_partition_filter_node_
+      : reinterpret_cast< ::zetasql::ResolvedAuxLoadDataPartitionFilterProto&>(::zetasql::_ResolvedAuxLoadDataPartitionFilterProto_default_instance_);
+}
+inline const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& AnyResolvedArgumentProto::resolved_aux_load_data_partition_filter_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedArgumentProto.resolved_aux_load_data_partition_filter_node)
+  return _internal_resolved_aux_load_data_partition_filter_node();
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* AnyResolvedArgumentProto::unsafe_arena_release_resolved_aux_load_data_partition_filter_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedArgumentProto.resolved_aux_load_data_partition_filter_node)
+  if (_internal_has_resolved_aux_load_data_partition_filter_node()) {
+    clear_has_node();
+    ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* temp = node_.resolved_aux_load_data_partition_filter_node_;
+    node_.resolved_aux_load_data_partition_filter_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedArgumentProto::unsafe_arena_set_allocated_resolved_aux_load_data_partition_filter_node(::zetasql::ResolvedAuxLoadDataPartitionFilterProto* resolved_aux_load_data_partition_filter_node) {
+  clear_node();
+  if (resolved_aux_load_data_partition_filter_node) {
+    set_has_resolved_aux_load_data_partition_filter_node();
+    node_.resolved_aux_load_data_partition_filter_node_ = resolved_aux_load_data_partition_filter_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedArgumentProto.resolved_aux_load_data_partition_filter_node)
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* AnyResolvedArgumentProto::_internal_mutable_resolved_aux_load_data_partition_filter_node() {
+  if (!_internal_has_resolved_aux_load_data_partition_filter_node()) {
+    clear_node();
+    set_has_resolved_aux_load_data_partition_filter_node();
+    node_.resolved_aux_load_data_partition_filter_node_ = CreateMaybeMessage< ::zetasql::ResolvedAuxLoadDataPartitionFilterProto >(GetArenaForAllocation());
+  }
+  return node_.resolved_aux_load_data_partition_filter_node_;
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* AnyResolvedArgumentProto::mutable_resolved_aux_load_data_partition_filter_node() {
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* _msg = _internal_mutable_resolved_aux_load_data_partition_filter_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedArgumentProto.resolved_aux_load_data_partition_filter_node)
+  return _msg;
+}
+
+// .zetasql.ResolvedCreateModelAliasedQueryProto resolved_create_model_aliased_query_node = 226;
+inline bool AnyResolvedArgumentProto::_internal_has_resolved_create_model_aliased_query_node() const {
+  return node_case() == kResolvedCreateModelAliasedQueryNode;
+}
+inline bool AnyResolvedArgumentProto::has_resolved_create_model_aliased_query_node() const {
+  return _internal_has_resolved_create_model_aliased_query_node();
+}
+inline void AnyResolvedArgumentProto::set_has_resolved_create_model_aliased_query_node() {
+  _oneof_case_[0] = kResolvedCreateModelAliasedQueryNode;
+}
+inline void AnyResolvedArgumentProto::clear_resolved_create_model_aliased_query_node() {
+  if (_internal_has_resolved_create_model_aliased_query_node()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete node_.resolved_create_model_aliased_query_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* AnyResolvedArgumentProto::release_resolved_create_model_aliased_query_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedArgumentProto.resolved_create_model_aliased_query_node)
+  if (_internal_has_resolved_create_model_aliased_query_node()) {
+    clear_has_node();
+      ::zetasql::ResolvedCreateModelAliasedQueryProto* temp = node_.resolved_create_model_aliased_query_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    node_.resolved_create_model_aliased_query_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedCreateModelAliasedQueryProto& AnyResolvedArgumentProto::_internal_resolved_create_model_aliased_query_node() const {
+  return _internal_has_resolved_create_model_aliased_query_node()
+      ? *node_.resolved_create_model_aliased_query_node_
+      : reinterpret_cast< ::zetasql::ResolvedCreateModelAliasedQueryProto&>(::zetasql::_ResolvedCreateModelAliasedQueryProto_default_instance_);
+}
+inline const ::zetasql::ResolvedCreateModelAliasedQueryProto& AnyResolvedArgumentProto::resolved_create_model_aliased_query_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedArgumentProto.resolved_create_model_aliased_query_node)
+  return _internal_resolved_create_model_aliased_query_node();
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* AnyResolvedArgumentProto::unsafe_arena_release_resolved_create_model_aliased_query_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedArgumentProto.resolved_create_model_aliased_query_node)
+  if (_internal_has_resolved_create_model_aliased_query_node()) {
+    clear_has_node();
+    ::zetasql::ResolvedCreateModelAliasedQueryProto* temp = node_.resolved_create_model_aliased_query_node_;
+    node_.resolved_create_model_aliased_query_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedArgumentProto::unsafe_arena_set_allocated_resolved_create_model_aliased_query_node(::zetasql::ResolvedCreateModelAliasedQueryProto* resolved_create_model_aliased_query_node) {
+  clear_node();
+  if (resolved_create_model_aliased_query_node) {
+    set_has_resolved_create_model_aliased_query_node();
+    node_.resolved_create_model_aliased_query_node_ = resolved_create_model_aliased_query_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedArgumentProto.resolved_create_model_aliased_query_node)
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* AnyResolvedArgumentProto::_internal_mutable_resolved_create_model_aliased_query_node() {
+  if (!_internal_has_resolved_create_model_aliased_query_node()) {
+    clear_node();
+    set_has_resolved_create_model_aliased_query_node();
+    node_.resolved_create_model_aliased_query_node_ = CreateMaybeMessage< ::zetasql::ResolvedCreateModelAliasedQueryProto >(GetArenaForAllocation());
+  }
+  return node_.resolved_create_model_aliased_query_node_;
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* AnyResolvedArgumentProto::mutable_resolved_create_model_aliased_query_node() {
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* _msg = _internal_mutable_resolved_create_model_aliased_query_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedArgumentProto.resolved_create_model_aliased_query_node)
+  return _msg;
+}
+
 inline bool AnyResolvedArgumentProto::has_node() const {
   return node_case() != NODE_NOT_SET;
 }
@@ -53602,6 +54971,80 @@ inline ::zetasql::ResolvedWithExprProto* AnyResolvedExprProto::mutable_resolved_
   return _msg;
 }
 
+// .zetasql.ResolvedCatalogColumnRefProto resolved_catalog_column_ref_node = 206;
+inline bool AnyResolvedExprProto::_internal_has_resolved_catalog_column_ref_node() const {
+  return node_case() == kResolvedCatalogColumnRefNode;
+}
+inline bool AnyResolvedExprProto::has_resolved_catalog_column_ref_node() const {
+  return _internal_has_resolved_catalog_column_ref_node();
+}
+inline void AnyResolvedExprProto::set_has_resolved_catalog_column_ref_node() {
+  _oneof_case_[0] = kResolvedCatalogColumnRefNode;
+}
+inline void AnyResolvedExprProto::clear_resolved_catalog_column_ref_node() {
+  if (_internal_has_resolved_catalog_column_ref_node()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete node_.resolved_catalog_column_ref_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedCatalogColumnRefProto* AnyResolvedExprProto::release_resolved_catalog_column_ref_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedExprProto.resolved_catalog_column_ref_node)
+  if (_internal_has_resolved_catalog_column_ref_node()) {
+    clear_has_node();
+      ::zetasql::ResolvedCatalogColumnRefProto* temp = node_.resolved_catalog_column_ref_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    node_.resolved_catalog_column_ref_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedCatalogColumnRefProto& AnyResolvedExprProto::_internal_resolved_catalog_column_ref_node() const {
+  return _internal_has_resolved_catalog_column_ref_node()
+      ? *node_.resolved_catalog_column_ref_node_
+      : reinterpret_cast< ::zetasql::ResolvedCatalogColumnRefProto&>(::zetasql::_ResolvedCatalogColumnRefProto_default_instance_);
+}
+inline const ::zetasql::ResolvedCatalogColumnRefProto& AnyResolvedExprProto::resolved_catalog_column_ref_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedExprProto.resolved_catalog_column_ref_node)
+  return _internal_resolved_catalog_column_ref_node();
+}
+inline ::zetasql::ResolvedCatalogColumnRefProto* AnyResolvedExprProto::unsafe_arena_release_resolved_catalog_column_ref_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedExprProto.resolved_catalog_column_ref_node)
+  if (_internal_has_resolved_catalog_column_ref_node()) {
+    clear_has_node();
+    ::zetasql::ResolvedCatalogColumnRefProto* temp = node_.resolved_catalog_column_ref_node_;
+    node_.resolved_catalog_column_ref_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedExprProto::unsafe_arena_set_allocated_resolved_catalog_column_ref_node(::zetasql::ResolvedCatalogColumnRefProto* resolved_catalog_column_ref_node) {
+  clear_node();
+  if (resolved_catalog_column_ref_node) {
+    set_has_resolved_catalog_column_ref_node();
+    node_.resolved_catalog_column_ref_node_ = resolved_catalog_column_ref_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedExprProto.resolved_catalog_column_ref_node)
+}
+inline ::zetasql::ResolvedCatalogColumnRefProto* AnyResolvedExprProto::_internal_mutable_resolved_catalog_column_ref_node() {
+  if (!_internal_has_resolved_catalog_column_ref_node()) {
+    clear_node();
+    set_has_resolved_catalog_column_ref_node();
+    node_.resolved_catalog_column_ref_node_ = CreateMaybeMessage< ::zetasql::ResolvedCatalogColumnRefProto >(GetArenaForAllocation());
+  }
+  return node_.resolved_catalog_column_ref_node_;
+}
+inline ::zetasql::ResolvedCatalogColumnRefProto* AnyResolvedExprProto::mutable_resolved_catalog_column_ref_node() {
+  ::zetasql::ResolvedCatalogColumnRefProto* _msg = _internal_mutable_resolved_catalog_column_ref_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedExprProto.resolved_catalog_column_ref_node)
+  return _msg;
+}
+
 inline bool AnyResolvedExprProto::has_node() const {
   return node_case() != NODE_NOT_SET;
 }
@@ -54525,6 +55968,188 @@ inline void ResolvedExpressionColumnProto::set_allocated_name(std::string* name)
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedExpressionColumnProto.name)
+}
+
+// -------------------------------------------------------------------
+
+// ResolvedCatalogColumnRefProto
+
+// optional .zetasql.ResolvedExprProto parent = 1;
+inline bool ResolvedCatalogColumnRefProto::_internal_has_parent() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || parent_ != nullptr);
+  return value;
+}
+inline bool ResolvedCatalogColumnRefProto::has_parent() const {
+  return _internal_has_parent();
+}
+inline void ResolvedCatalogColumnRefProto::clear_parent() {
+  if (parent_ != nullptr) parent_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::ResolvedExprProto& ResolvedCatalogColumnRefProto::_internal_parent() const {
+  const ::zetasql::ResolvedExprProto* p = parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedExprProto&>(
+      ::zetasql::_ResolvedExprProto_default_instance_);
+}
+inline const ::zetasql::ResolvedExprProto& ResolvedCatalogColumnRefProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCatalogColumnRefProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedCatalogColumnRefProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedExprProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(parent_);
+  }
+  parent_ = parent;
+  if (parent) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCatalogColumnRefProto.parent)
+}
+inline ::zetasql::ResolvedExprProto* ResolvedCatalogColumnRefProto::release_parent() {
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedExprProto* temp = parent_;
+  parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedExprProto* ResolvedCatalogColumnRefProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCatalogColumnRefProto.parent)
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedExprProto* temp = parent_;
+  parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedExprProto* ResolvedCatalogColumnRefProto::_internal_mutable_parent() {
+  _has_bits_[0] |= 0x00000001u;
+  if (parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedExprProto>(GetArenaForAllocation());
+    parent_ = p;
+  }
+  return parent_;
+}
+inline ::zetasql::ResolvedExprProto* ResolvedCatalogColumnRefProto::mutable_parent() {
+  ::zetasql::ResolvedExprProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCatalogColumnRefProto.parent)
+  return _msg;
+}
+inline void ResolvedCatalogColumnRefProto::set_allocated_parent(::zetasql::ResolvedExprProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedExprProto>::GetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCatalogColumnRefProto.parent)
+}
+
+// optional .zetasql.ColumnRefProto column = 2;
+inline bool ResolvedCatalogColumnRefProto::_internal_has_column() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || column_ != nullptr);
+  return value;
+}
+inline bool ResolvedCatalogColumnRefProto::has_column() const {
+  return _internal_has_column();
+}
+inline const ::zetasql::ColumnRefProto& ResolvedCatalogColumnRefProto::_internal_column() const {
+  const ::zetasql::ColumnRefProto* p = column_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ColumnRefProto&>(
+      ::zetasql::_ColumnRefProto_default_instance_);
+}
+inline const ::zetasql::ColumnRefProto& ResolvedCatalogColumnRefProto::column() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCatalogColumnRefProto.column)
+  return _internal_column();
+}
+inline void ResolvedCatalogColumnRefProto::unsafe_arena_set_allocated_column(
+    ::zetasql::ColumnRefProto* column) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(column_);
+  }
+  column_ = column;
+  if (column) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCatalogColumnRefProto.column)
+}
+inline ::zetasql::ColumnRefProto* ResolvedCatalogColumnRefProto::release_column() {
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::ColumnRefProto* temp = column_;
+  column_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ColumnRefProto* ResolvedCatalogColumnRefProto::unsafe_arena_release_column() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCatalogColumnRefProto.column)
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::ColumnRefProto* temp = column_;
+  column_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ColumnRefProto* ResolvedCatalogColumnRefProto::_internal_mutable_column() {
+  _has_bits_[0] |= 0x00000002u;
+  if (column_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ColumnRefProto>(GetArenaForAllocation());
+    column_ = p;
+  }
+  return column_;
+}
+inline ::zetasql::ColumnRefProto* ResolvedCatalogColumnRefProto::mutable_column() {
+  ::zetasql::ColumnRefProto* _msg = _internal_mutable_column();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCatalogColumnRefProto.column)
+  return _msg;
+}
+inline void ResolvedCatalogColumnRefProto::set_allocated_column(::zetasql::ColumnRefProto* column) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(column_);
+  }
+  if (column) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(column));
+    if (message_arena != submessage_arena) {
+      column = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, column, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  column_ = column;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCatalogColumnRefProto.column)
 }
 
 // -------------------------------------------------------------------
@@ -58561,41 +60186,41 @@ inline void ResolvedCastProto::set_allocated_time_zone(::zetasql::AnyResolvedExp
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCastProto.time_zone)
 }
 
-// optional .zetasql.TypeParametersProto type_parameters = 7;
-inline bool ResolvedCastProto::_internal_has_type_parameters() const {
+// optional .zetasql.TypeModifiersProto type_modifiers = 8;
+inline bool ResolvedCastProto::_internal_has_type_modifiers() const {
   bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  PROTOBUF_ASSUME(!value || type_parameters_ != nullptr);
+  PROTOBUF_ASSUME(!value || type_modifiers_ != nullptr);
   return value;
 }
-inline bool ResolvedCastProto::has_type_parameters() const {
-  return _internal_has_type_parameters();
+inline bool ResolvedCastProto::has_type_modifiers() const {
+  return _internal_has_type_modifiers();
 }
-inline const ::zetasql::TypeParametersProto& ResolvedCastProto::_internal_type_parameters() const {
-  const ::zetasql::TypeParametersProto* p = type_parameters_;
-  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TypeParametersProto&>(
-      ::zetasql::_TypeParametersProto_default_instance_);
+inline const ::zetasql::TypeModifiersProto& ResolvedCastProto::_internal_type_modifiers() const {
+  const ::zetasql::TypeModifiersProto* p = type_modifiers_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TypeModifiersProto&>(
+      ::zetasql::_TypeModifiersProto_default_instance_);
 }
-inline const ::zetasql::TypeParametersProto& ResolvedCastProto::type_parameters() const {
-  // @@protoc_insertion_point(field_get:zetasql.ResolvedCastProto.type_parameters)
-  return _internal_type_parameters();
+inline const ::zetasql::TypeModifiersProto& ResolvedCastProto::type_modifiers() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCastProto.type_modifiers)
+  return _internal_type_modifiers();
 }
-inline void ResolvedCastProto::unsafe_arena_set_allocated_type_parameters(
-    ::zetasql::TypeParametersProto* type_parameters) {
+inline void ResolvedCastProto::unsafe_arena_set_allocated_type_modifiers(
+    ::zetasql::TypeModifiersProto* type_modifiers) {
   if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_parameters_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_modifiers_);
   }
-  type_parameters_ = type_parameters;
-  if (type_parameters) {
+  type_modifiers_ = type_modifiers;
+  if (type_modifiers) {
     _has_bits_[0] |= 0x00000020u;
   } else {
     _has_bits_[0] &= ~0x00000020u;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCastProto.type_parameters)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCastProto.type_modifiers)
 }
-inline ::zetasql::TypeParametersProto* ResolvedCastProto::release_type_parameters() {
+inline ::zetasql::TypeModifiersProto* ResolvedCastProto::release_type_modifiers() {
   _has_bits_[0] &= ~0x00000020u;
-  ::zetasql::TypeParametersProto* temp = type_parameters_;
-  type_parameters_ = nullptr;
+  ::zetasql::TypeModifiersProto* temp = type_modifiers_;
+  type_modifiers_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
   temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
@@ -58607,46 +60232,46 @@ inline ::zetasql::TypeParametersProto* ResolvedCastProto::release_type_parameter
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::zetasql::TypeParametersProto* ResolvedCastProto::unsafe_arena_release_type_parameters() {
-  // @@protoc_insertion_point(field_release:zetasql.ResolvedCastProto.type_parameters)
+inline ::zetasql::TypeModifiersProto* ResolvedCastProto::unsafe_arena_release_type_modifiers() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCastProto.type_modifiers)
   _has_bits_[0] &= ~0x00000020u;
-  ::zetasql::TypeParametersProto* temp = type_parameters_;
-  type_parameters_ = nullptr;
+  ::zetasql::TypeModifiersProto* temp = type_modifiers_;
+  type_modifiers_ = nullptr;
   return temp;
 }
-inline ::zetasql::TypeParametersProto* ResolvedCastProto::_internal_mutable_type_parameters() {
+inline ::zetasql::TypeModifiersProto* ResolvedCastProto::_internal_mutable_type_modifiers() {
   _has_bits_[0] |= 0x00000020u;
-  if (type_parameters_ == nullptr) {
-    auto* p = CreateMaybeMessage<::zetasql::TypeParametersProto>(GetArenaForAllocation());
-    type_parameters_ = p;
+  if (type_modifiers_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::TypeModifiersProto>(GetArenaForAllocation());
+    type_modifiers_ = p;
   }
-  return type_parameters_;
+  return type_modifiers_;
 }
-inline ::zetasql::TypeParametersProto* ResolvedCastProto::mutable_type_parameters() {
-  ::zetasql::TypeParametersProto* _msg = _internal_mutable_type_parameters();
-  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCastProto.type_parameters)
+inline ::zetasql::TypeModifiersProto* ResolvedCastProto::mutable_type_modifiers() {
+  ::zetasql::TypeModifiersProto* _msg = _internal_mutable_type_modifiers();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCastProto.type_modifiers)
   return _msg;
 }
-inline void ResolvedCastProto::set_allocated_type_parameters(::zetasql::TypeParametersProto* type_parameters) {
+inline void ResolvedCastProto::set_allocated_type_modifiers(::zetasql::TypeModifiersProto* type_modifiers) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_parameters_);
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_modifiers_);
   }
-  if (type_parameters) {
+  if (type_modifiers) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
         ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
             ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_parameters));
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(type_modifiers));
     if (message_arena != submessage_arena) {
-      type_parameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, type_parameters, submessage_arena);
+      type_modifiers = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, type_modifiers, submessage_arena);
     }
     _has_bits_[0] |= 0x00000020u;
   } else {
     _has_bits_[0] &= ~0x00000020u;
   }
-  type_parameters_ = type_parameters;
-  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCastProto.type_parameters)
+  type_modifiers_ = type_modifiers;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCastProto.type_modifiers)
 }
 
 // -------------------------------------------------------------------
@@ -59428,6 +61053,34 @@ inline void ResolvedGetStructFieldProto::_internal_set_field_idx(int64_t value) 
 inline void ResolvedGetStructFieldProto::set_field_idx(int64_t value) {
   _internal_set_field_idx(value);
   // @@protoc_insertion_point(field_set:zetasql.ResolvedGetStructFieldProto.field_idx)
+}
+
+// optional bool field_expr_is_positional = 4;
+inline bool ResolvedGetStructFieldProto::_internal_has_field_expr_is_positional() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool ResolvedGetStructFieldProto::has_field_expr_is_positional() const {
+  return _internal_has_field_expr_is_positional();
+}
+inline void ResolvedGetStructFieldProto::clear_field_expr_is_positional() {
+  field_expr_is_positional_ = false;
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline bool ResolvedGetStructFieldProto::_internal_field_expr_is_positional() const {
+  return field_expr_is_positional_;
+}
+inline bool ResolvedGetStructFieldProto::field_expr_is_positional() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedGetStructFieldProto.field_expr_is_positional)
+  return _internal_field_expr_is_positional();
+}
+inline void ResolvedGetStructFieldProto::_internal_set_field_expr_is_positional(bool value) {
+  _has_bits_[0] |= 0x00000008u;
+  field_expr_is_positional_ = value;
+}
+inline void ResolvedGetStructFieldProto::set_field_expr_is_positional(bool value) {
+  _internal_set_field_expr_is_positional(value);
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedGetStructFieldProto.field_expr_is_positional)
 }
 
 // -------------------------------------------------------------------
@@ -63191,6 +64844,80 @@ inline ::zetasql::ResolvedGroupRowsScanProto* AnyResolvedScanProto::mutable_reso
   return _msg;
 }
 
+// .zetasql.ResolvedExecuteAsRoleScanProto resolved_execute_as_role_scan_node = 207;
+inline bool AnyResolvedScanProto::_internal_has_resolved_execute_as_role_scan_node() const {
+  return node_case() == kResolvedExecuteAsRoleScanNode;
+}
+inline bool AnyResolvedScanProto::has_resolved_execute_as_role_scan_node() const {
+  return _internal_has_resolved_execute_as_role_scan_node();
+}
+inline void AnyResolvedScanProto::set_has_resolved_execute_as_role_scan_node() {
+  _oneof_case_[0] = kResolvedExecuteAsRoleScanNode;
+}
+inline void AnyResolvedScanProto::clear_resolved_execute_as_role_scan_node() {
+  if (_internal_has_resolved_execute_as_role_scan_node()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete node_.resolved_execute_as_role_scan_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedExecuteAsRoleScanProto* AnyResolvedScanProto::release_resolved_execute_as_role_scan_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedScanProto.resolved_execute_as_role_scan_node)
+  if (_internal_has_resolved_execute_as_role_scan_node()) {
+    clear_has_node();
+      ::zetasql::ResolvedExecuteAsRoleScanProto* temp = node_.resolved_execute_as_role_scan_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    node_.resolved_execute_as_role_scan_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedExecuteAsRoleScanProto& AnyResolvedScanProto::_internal_resolved_execute_as_role_scan_node() const {
+  return _internal_has_resolved_execute_as_role_scan_node()
+      ? *node_.resolved_execute_as_role_scan_node_
+      : reinterpret_cast< ::zetasql::ResolvedExecuteAsRoleScanProto&>(::zetasql::_ResolvedExecuteAsRoleScanProto_default_instance_);
+}
+inline const ::zetasql::ResolvedExecuteAsRoleScanProto& AnyResolvedScanProto::resolved_execute_as_role_scan_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedScanProto.resolved_execute_as_role_scan_node)
+  return _internal_resolved_execute_as_role_scan_node();
+}
+inline ::zetasql::ResolvedExecuteAsRoleScanProto* AnyResolvedScanProto::unsafe_arena_release_resolved_execute_as_role_scan_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedScanProto.resolved_execute_as_role_scan_node)
+  if (_internal_has_resolved_execute_as_role_scan_node()) {
+    clear_has_node();
+    ::zetasql::ResolvedExecuteAsRoleScanProto* temp = node_.resolved_execute_as_role_scan_node_;
+    node_.resolved_execute_as_role_scan_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedScanProto::unsafe_arena_set_allocated_resolved_execute_as_role_scan_node(::zetasql::ResolvedExecuteAsRoleScanProto* resolved_execute_as_role_scan_node) {
+  clear_node();
+  if (resolved_execute_as_role_scan_node) {
+    set_has_resolved_execute_as_role_scan_node();
+    node_.resolved_execute_as_role_scan_node_ = resolved_execute_as_role_scan_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedScanProto.resolved_execute_as_role_scan_node)
+}
+inline ::zetasql::ResolvedExecuteAsRoleScanProto* AnyResolvedScanProto::_internal_mutable_resolved_execute_as_role_scan_node() {
+  if (!_internal_has_resolved_execute_as_role_scan_node()) {
+    clear_node();
+    set_has_resolved_execute_as_role_scan_node();
+    node_.resolved_execute_as_role_scan_node_ = CreateMaybeMessage< ::zetasql::ResolvedExecuteAsRoleScanProto >(GetArenaForAllocation());
+  }
+  return node_.resolved_execute_as_role_scan_node_;
+}
+inline ::zetasql::ResolvedExecuteAsRoleScanProto* AnyResolvedScanProto::mutable_resolved_execute_as_role_scan_node() {
+  ::zetasql::ResolvedExecuteAsRoleScanProto* _msg = _internal_mutable_resolved_execute_as_role_scan_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedScanProto.resolved_execute_as_role_scan_node)
+  return _msg;
+}
+
 inline bool AnyResolvedScanProto::has_node() const {
   return node_case() != NODE_NOT_SET;
 }
@@ -63395,6 +65122,366 @@ inline void ResolvedScanProto::_internal_set_is_ordered(bool value) {
 inline void ResolvedScanProto::set_is_ordered(bool value) {
   _internal_set_is_ordered(value);
   // @@protoc_insertion_point(field_set:zetasql.ResolvedScanProto.is_ordered)
+}
+
+// -------------------------------------------------------------------
+
+// ResolvedExecuteAsRoleScanProto
+
+// optional .zetasql.ResolvedScanProto parent = 1;
+inline bool ResolvedExecuteAsRoleScanProto::_internal_has_parent() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || parent_ != nullptr);
+  return value;
+}
+inline bool ResolvedExecuteAsRoleScanProto::has_parent() const {
+  return _internal_has_parent();
+}
+inline void ResolvedExecuteAsRoleScanProto::clear_parent() {
+  if (parent_ != nullptr) parent_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::ResolvedScanProto& ResolvedExecuteAsRoleScanProto::_internal_parent() const {
+  const ::zetasql::ResolvedScanProto* p = parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedScanProto&>(
+      ::zetasql::_ResolvedScanProto_default_instance_);
+}
+inline const ::zetasql::ResolvedScanProto& ResolvedExecuteAsRoleScanProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedExecuteAsRoleScanProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedExecuteAsRoleScanProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedScanProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(parent_);
+  }
+  parent_ = parent;
+  if (parent) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.parent)
+}
+inline ::zetasql::ResolvedScanProto* ResolvedExecuteAsRoleScanProto::release_parent() {
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedScanProto* temp = parent_;
+  parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedScanProto* ResolvedExecuteAsRoleScanProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedExecuteAsRoleScanProto.parent)
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedScanProto* temp = parent_;
+  parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedScanProto* ResolvedExecuteAsRoleScanProto::_internal_mutable_parent() {
+  _has_bits_[0] |= 0x00000001u;
+  if (parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedScanProto>(GetArenaForAllocation());
+    parent_ = p;
+  }
+  return parent_;
+}
+inline ::zetasql::ResolvedScanProto* ResolvedExecuteAsRoleScanProto::mutable_parent() {
+  ::zetasql::ResolvedScanProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedExecuteAsRoleScanProto.parent)
+  return _msg;
+}
+inline void ResolvedExecuteAsRoleScanProto::set_allocated_parent(::zetasql::ResolvedScanProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedScanProto>::GetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.parent)
+}
+
+// optional .zetasql.AnyResolvedScanProto input_scan = 2;
+inline bool ResolvedExecuteAsRoleScanProto::_internal_has_input_scan() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || input_scan_ != nullptr);
+  return value;
+}
+inline bool ResolvedExecuteAsRoleScanProto::has_input_scan() const {
+  return _internal_has_input_scan();
+}
+inline void ResolvedExecuteAsRoleScanProto::clear_input_scan() {
+  if (input_scan_ != nullptr) input_scan_->Clear();
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::AnyResolvedScanProto& ResolvedExecuteAsRoleScanProto::_internal_input_scan() const {
+  const ::zetasql::AnyResolvedScanProto* p = input_scan_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedScanProto&>(
+      ::zetasql::_AnyResolvedScanProto_default_instance_);
+}
+inline const ::zetasql::AnyResolvedScanProto& ResolvedExecuteAsRoleScanProto::input_scan() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedExecuteAsRoleScanProto.input_scan)
+  return _internal_input_scan();
+}
+inline void ResolvedExecuteAsRoleScanProto::unsafe_arena_set_allocated_input_scan(
+    ::zetasql::AnyResolvedScanProto* input_scan) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(input_scan_);
+  }
+  input_scan_ = input_scan;
+  if (input_scan) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.input_scan)
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedExecuteAsRoleScanProto::release_input_scan() {
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedScanProto* temp = input_scan_;
+  input_scan_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedExecuteAsRoleScanProto::unsafe_arena_release_input_scan() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedExecuteAsRoleScanProto.input_scan)
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedScanProto* temp = input_scan_;
+  input_scan_ = nullptr;
+  return temp;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedExecuteAsRoleScanProto::_internal_mutable_input_scan() {
+  _has_bits_[0] |= 0x00000002u;
+  if (input_scan_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedScanProto>(GetArenaForAllocation());
+    input_scan_ = p;
+  }
+  return input_scan_;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedExecuteAsRoleScanProto::mutable_input_scan() {
+  ::zetasql::AnyResolvedScanProto* _msg = _internal_mutable_input_scan();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedExecuteAsRoleScanProto.input_scan)
+  return _msg;
+}
+inline void ResolvedExecuteAsRoleScanProto::set_allocated_input_scan(::zetasql::AnyResolvedScanProto* input_scan) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete input_scan_;
+  }
+  if (input_scan) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnyResolvedScanProto>::GetOwningArena(input_scan);
+    if (message_arena != submessage_arena) {
+      input_scan = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, input_scan, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  input_scan_ = input_scan;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.input_scan)
+}
+
+// optional .zetasql.TableRefProto original_inlined_view = 3;
+inline bool ResolvedExecuteAsRoleScanProto::_internal_has_original_inlined_view() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || original_inlined_view_ != nullptr);
+  return value;
+}
+inline bool ResolvedExecuteAsRoleScanProto::has_original_inlined_view() const {
+  return _internal_has_original_inlined_view();
+}
+inline const ::zetasql::TableRefProto& ResolvedExecuteAsRoleScanProto::_internal_original_inlined_view() const {
+  const ::zetasql::TableRefProto* p = original_inlined_view_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TableRefProto&>(
+      ::zetasql::_TableRefProto_default_instance_);
+}
+inline const ::zetasql::TableRefProto& ResolvedExecuteAsRoleScanProto::original_inlined_view() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_view)
+  return _internal_original_inlined_view();
+}
+inline void ResolvedExecuteAsRoleScanProto::unsafe_arena_set_allocated_original_inlined_view(
+    ::zetasql::TableRefProto* original_inlined_view) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(original_inlined_view_);
+  }
+  original_inlined_view_ = original_inlined_view;
+  if (original_inlined_view) {
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_view)
+}
+inline ::zetasql::TableRefProto* ResolvedExecuteAsRoleScanProto::release_original_inlined_view() {
+  _has_bits_[0] &= ~0x00000004u;
+  ::zetasql::TableRefProto* temp = original_inlined_view_;
+  original_inlined_view_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::TableRefProto* ResolvedExecuteAsRoleScanProto::unsafe_arena_release_original_inlined_view() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_view)
+  _has_bits_[0] &= ~0x00000004u;
+  ::zetasql::TableRefProto* temp = original_inlined_view_;
+  original_inlined_view_ = nullptr;
+  return temp;
+}
+inline ::zetasql::TableRefProto* ResolvedExecuteAsRoleScanProto::_internal_mutable_original_inlined_view() {
+  _has_bits_[0] |= 0x00000004u;
+  if (original_inlined_view_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::TableRefProto>(GetArenaForAllocation());
+    original_inlined_view_ = p;
+  }
+  return original_inlined_view_;
+}
+inline ::zetasql::TableRefProto* ResolvedExecuteAsRoleScanProto::mutable_original_inlined_view() {
+  ::zetasql::TableRefProto* _msg = _internal_mutable_original_inlined_view();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_view)
+  return _msg;
+}
+inline void ResolvedExecuteAsRoleScanProto::set_allocated_original_inlined_view(::zetasql::TableRefProto* original_inlined_view) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(original_inlined_view_);
+  }
+  if (original_inlined_view) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(original_inlined_view));
+    if (message_arena != submessage_arena) {
+      original_inlined_view = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, original_inlined_view, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  original_inlined_view_ = original_inlined_view;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_view)
+}
+
+// optional .zetasql.TableValuedFunctionRefProto original_inlined_tvf = 4;
+inline bool ResolvedExecuteAsRoleScanProto::_internal_has_original_inlined_tvf() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  PROTOBUF_ASSUME(!value || original_inlined_tvf_ != nullptr);
+  return value;
+}
+inline bool ResolvedExecuteAsRoleScanProto::has_original_inlined_tvf() const {
+  return _internal_has_original_inlined_tvf();
+}
+inline const ::zetasql::TableValuedFunctionRefProto& ResolvedExecuteAsRoleScanProto::_internal_original_inlined_tvf() const {
+  const ::zetasql::TableValuedFunctionRefProto* p = original_inlined_tvf_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TableValuedFunctionRefProto&>(
+      ::zetasql::_TableValuedFunctionRefProto_default_instance_);
+}
+inline const ::zetasql::TableValuedFunctionRefProto& ResolvedExecuteAsRoleScanProto::original_inlined_tvf() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_tvf)
+  return _internal_original_inlined_tvf();
+}
+inline void ResolvedExecuteAsRoleScanProto::unsafe_arena_set_allocated_original_inlined_tvf(
+    ::zetasql::TableValuedFunctionRefProto* original_inlined_tvf) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(original_inlined_tvf_);
+  }
+  original_inlined_tvf_ = original_inlined_tvf;
+  if (original_inlined_tvf) {
+    _has_bits_[0] |= 0x00000008u;
+  } else {
+    _has_bits_[0] &= ~0x00000008u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_tvf)
+}
+inline ::zetasql::TableValuedFunctionRefProto* ResolvedExecuteAsRoleScanProto::release_original_inlined_tvf() {
+  _has_bits_[0] &= ~0x00000008u;
+  ::zetasql::TableValuedFunctionRefProto* temp = original_inlined_tvf_;
+  original_inlined_tvf_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::TableValuedFunctionRefProto* ResolvedExecuteAsRoleScanProto::unsafe_arena_release_original_inlined_tvf() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_tvf)
+  _has_bits_[0] &= ~0x00000008u;
+  ::zetasql::TableValuedFunctionRefProto* temp = original_inlined_tvf_;
+  original_inlined_tvf_ = nullptr;
+  return temp;
+}
+inline ::zetasql::TableValuedFunctionRefProto* ResolvedExecuteAsRoleScanProto::_internal_mutable_original_inlined_tvf() {
+  _has_bits_[0] |= 0x00000008u;
+  if (original_inlined_tvf_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::TableValuedFunctionRefProto>(GetArenaForAllocation());
+    original_inlined_tvf_ = p;
+  }
+  return original_inlined_tvf_;
+}
+inline ::zetasql::TableValuedFunctionRefProto* ResolvedExecuteAsRoleScanProto::mutable_original_inlined_tvf() {
+  ::zetasql::TableValuedFunctionRefProto* _msg = _internal_mutable_original_inlined_tvf();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_tvf)
+  return _msg;
+}
+inline void ResolvedExecuteAsRoleScanProto::set_allocated_original_inlined_tvf(::zetasql::TableValuedFunctionRefProto* original_inlined_tvf) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(original_inlined_tvf_);
+  }
+  if (original_inlined_tvf) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(original_inlined_tvf));
+    if (message_arena != submessage_arena) {
+      original_inlined_tvf = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, original_inlined_tvf, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000008u;
+  } else {
+    _has_bits_[0] &= ~0x00000008u;
+  }
+  original_inlined_tvf_ = original_inlined_tvf;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedExecuteAsRoleScanProto.original_inlined_tvf)
 }
 
 // -------------------------------------------------------------------
@@ -66154,6 +68241,80 @@ inline ::zetasql::ResolvedAnonymizedAggregateScanProto* AnyResolvedAggregateScan
   return _msg;
 }
 
+// .zetasql.ResolvedDifferentialPrivacyAggregateScanProto resolved_differential_privacy_aggregate_scan_node = 221;
+inline bool AnyResolvedAggregateScanBaseProto::_internal_has_resolved_differential_privacy_aggregate_scan_node() const {
+  return node_case() == kResolvedDifferentialPrivacyAggregateScanNode;
+}
+inline bool AnyResolvedAggregateScanBaseProto::has_resolved_differential_privacy_aggregate_scan_node() const {
+  return _internal_has_resolved_differential_privacy_aggregate_scan_node();
+}
+inline void AnyResolvedAggregateScanBaseProto::set_has_resolved_differential_privacy_aggregate_scan_node() {
+  _oneof_case_[0] = kResolvedDifferentialPrivacyAggregateScanNode;
+}
+inline void AnyResolvedAggregateScanBaseProto::clear_resolved_differential_privacy_aggregate_scan_node() {
+  if (_internal_has_resolved_differential_privacy_aggregate_scan_node()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete node_.resolved_differential_privacy_aggregate_scan_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* AnyResolvedAggregateScanBaseProto::release_resolved_differential_privacy_aggregate_scan_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedAggregateScanBaseProto.resolved_differential_privacy_aggregate_scan_node)
+  if (_internal_has_resolved_differential_privacy_aggregate_scan_node()) {
+    clear_has_node();
+      ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* temp = node_.resolved_differential_privacy_aggregate_scan_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    node_.resolved_differential_privacy_aggregate_scan_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto& AnyResolvedAggregateScanBaseProto::_internal_resolved_differential_privacy_aggregate_scan_node() const {
+  return _internal_has_resolved_differential_privacy_aggregate_scan_node()
+      ? *node_.resolved_differential_privacy_aggregate_scan_node_
+      : reinterpret_cast< ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto&>(::zetasql::_ResolvedDifferentialPrivacyAggregateScanProto_default_instance_);
+}
+inline const ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto& AnyResolvedAggregateScanBaseProto::resolved_differential_privacy_aggregate_scan_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedAggregateScanBaseProto.resolved_differential_privacy_aggregate_scan_node)
+  return _internal_resolved_differential_privacy_aggregate_scan_node();
+}
+inline ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* AnyResolvedAggregateScanBaseProto::unsafe_arena_release_resolved_differential_privacy_aggregate_scan_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedAggregateScanBaseProto.resolved_differential_privacy_aggregate_scan_node)
+  if (_internal_has_resolved_differential_privacy_aggregate_scan_node()) {
+    clear_has_node();
+    ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* temp = node_.resolved_differential_privacy_aggregate_scan_node_;
+    node_.resolved_differential_privacy_aggregate_scan_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedAggregateScanBaseProto::unsafe_arena_set_allocated_resolved_differential_privacy_aggregate_scan_node(::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* resolved_differential_privacy_aggregate_scan_node) {
+  clear_node();
+  if (resolved_differential_privacy_aggregate_scan_node) {
+    set_has_resolved_differential_privacy_aggregate_scan_node();
+    node_.resolved_differential_privacy_aggregate_scan_node_ = resolved_differential_privacy_aggregate_scan_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedAggregateScanBaseProto.resolved_differential_privacy_aggregate_scan_node)
+}
+inline ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* AnyResolvedAggregateScanBaseProto::_internal_mutable_resolved_differential_privacy_aggregate_scan_node() {
+  if (!_internal_has_resolved_differential_privacy_aggregate_scan_node()) {
+    clear_node();
+    set_has_resolved_differential_privacy_aggregate_scan_node();
+    node_.resolved_differential_privacy_aggregate_scan_node_ = CreateMaybeMessage< ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto >(GetArenaForAllocation());
+  }
+  return node_.resolved_differential_privacy_aggregate_scan_node_;
+}
+inline ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* AnyResolvedAggregateScanBaseProto::mutable_resolved_differential_privacy_aggregate_scan_node() {
+  ::zetasql::ResolvedDifferentialPrivacyAggregateScanProto* _msg = _internal_mutable_resolved_differential_privacy_aggregate_scan_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedAggregateScanBaseProto.resolved_differential_privacy_aggregate_scan_node)
+  return _msg;
+}
+
 inline bool AnyResolvedAggregateScanBaseProto::has_node() const {
   return node_case() != NODE_NOT_SET;
 }
@@ -66732,7 +68893,7 @@ inline void ResolvedAnonymizedAggregateScanProto::set_allocated_parent(::zetasql
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedAnonymizedAggregateScanProto.parent)
 }
 
-// optional .zetasql.ResolvedColumnRefProto k_threshold_expr = 5;
+// optional .zetasql.AnyResolvedExprProto k_threshold_expr = 5;
 inline bool ResolvedAnonymizedAggregateScanProto::_internal_has_k_threshold_expr() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   PROTOBUF_ASSUME(!value || k_threshold_expr_ != nullptr);
@@ -66745,17 +68906,17 @@ inline void ResolvedAnonymizedAggregateScanProto::clear_k_threshold_expr() {
   if (k_threshold_expr_ != nullptr) k_threshold_expr_->Clear();
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const ::zetasql::ResolvedColumnRefProto& ResolvedAnonymizedAggregateScanProto::_internal_k_threshold_expr() const {
-  const ::zetasql::ResolvedColumnRefProto* p = k_threshold_expr_;
-  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedColumnRefProto&>(
-      ::zetasql::_ResolvedColumnRefProto_default_instance_);
+inline const ::zetasql::AnyResolvedExprProto& ResolvedAnonymizedAggregateScanProto::_internal_k_threshold_expr() const {
+  const ::zetasql::AnyResolvedExprProto* p = k_threshold_expr_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedExprProto&>(
+      ::zetasql::_AnyResolvedExprProto_default_instance_);
 }
-inline const ::zetasql::ResolvedColumnRefProto& ResolvedAnonymizedAggregateScanProto::k_threshold_expr() const {
+inline const ::zetasql::AnyResolvedExprProto& ResolvedAnonymizedAggregateScanProto::k_threshold_expr() const {
   // @@protoc_insertion_point(field_get:zetasql.ResolvedAnonymizedAggregateScanProto.k_threshold_expr)
   return _internal_k_threshold_expr();
 }
 inline void ResolvedAnonymizedAggregateScanProto::unsafe_arena_set_allocated_k_threshold_expr(
-    ::zetasql::ResolvedColumnRefProto* k_threshold_expr) {
+    ::zetasql::AnyResolvedExprProto* k_threshold_expr) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(k_threshold_expr_);
   }
@@ -66767,9 +68928,9 @@ inline void ResolvedAnonymizedAggregateScanProto::unsafe_arena_set_allocated_k_t
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedAnonymizedAggregateScanProto.k_threshold_expr)
 }
-inline ::zetasql::ResolvedColumnRefProto* ResolvedAnonymizedAggregateScanProto::release_k_threshold_expr() {
+inline ::zetasql::AnyResolvedExprProto* ResolvedAnonymizedAggregateScanProto::release_k_threshold_expr() {
   _has_bits_[0] &= ~0x00000002u;
-  ::zetasql::ResolvedColumnRefProto* temp = k_threshold_expr_;
+  ::zetasql::AnyResolvedExprProto* temp = k_threshold_expr_;
   k_threshold_expr_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -66782,34 +68943,34 @@ inline ::zetasql::ResolvedColumnRefProto* ResolvedAnonymizedAggregateScanProto::
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::zetasql::ResolvedColumnRefProto* ResolvedAnonymizedAggregateScanProto::unsafe_arena_release_k_threshold_expr() {
+inline ::zetasql::AnyResolvedExprProto* ResolvedAnonymizedAggregateScanProto::unsafe_arena_release_k_threshold_expr() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedAnonymizedAggregateScanProto.k_threshold_expr)
   _has_bits_[0] &= ~0x00000002u;
-  ::zetasql::ResolvedColumnRefProto* temp = k_threshold_expr_;
+  ::zetasql::AnyResolvedExprProto* temp = k_threshold_expr_;
   k_threshold_expr_ = nullptr;
   return temp;
 }
-inline ::zetasql::ResolvedColumnRefProto* ResolvedAnonymizedAggregateScanProto::_internal_mutable_k_threshold_expr() {
+inline ::zetasql::AnyResolvedExprProto* ResolvedAnonymizedAggregateScanProto::_internal_mutable_k_threshold_expr() {
   _has_bits_[0] |= 0x00000002u;
   if (k_threshold_expr_ == nullptr) {
-    auto* p = CreateMaybeMessage<::zetasql::ResolvedColumnRefProto>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedExprProto>(GetArenaForAllocation());
     k_threshold_expr_ = p;
   }
   return k_threshold_expr_;
 }
-inline ::zetasql::ResolvedColumnRefProto* ResolvedAnonymizedAggregateScanProto::mutable_k_threshold_expr() {
-  ::zetasql::ResolvedColumnRefProto* _msg = _internal_mutable_k_threshold_expr();
+inline ::zetasql::AnyResolvedExprProto* ResolvedAnonymizedAggregateScanProto::mutable_k_threshold_expr() {
+  ::zetasql::AnyResolvedExprProto* _msg = _internal_mutable_k_threshold_expr();
   // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAnonymizedAggregateScanProto.k_threshold_expr)
   return _msg;
 }
-inline void ResolvedAnonymizedAggregateScanProto::set_allocated_k_threshold_expr(::zetasql::ResolvedColumnRefProto* k_threshold_expr) {
+inline void ResolvedAnonymizedAggregateScanProto::set_allocated_k_threshold_expr(::zetasql::AnyResolvedExprProto* k_threshold_expr) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete k_threshold_expr_;
   }
   if (k_threshold_expr) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedColumnRefProto>::GetOwningArena(k_threshold_expr);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnyResolvedExprProto>::GetOwningArena(k_threshold_expr);
     if (message_arena != submessage_arena) {
       k_threshold_expr = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, k_threshold_expr, submessage_arena);
@@ -66860,6 +69021,230 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptio
 ResolvedAnonymizedAggregateScanProto::anonymization_option_list() const {
   // @@protoc_insertion_point(field_list:zetasql.ResolvedAnonymizedAggregateScanProto.anonymization_option_list)
   return anonymization_option_list_;
+}
+
+// -------------------------------------------------------------------
+
+// ResolvedDifferentialPrivacyAggregateScanProto
+
+// optional .zetasql.ResolvedAggregateScanBaseProto parent = 1;
+inline bool ResolvedDifferentialPrivacyAggregateScanProto::_internal_has_parent() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || parent_ != nullptr);
+  return value;
+}
+inline bool ResolvedDifferentialPrivacyAggregateScanProto::has_parent() const {
+  return _internal_has_parent();
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::clear_parent() {
+  if (parent_ != nullptr) parent_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::ResolvedAggregateScanBaseProto& ResolvedDifferentialPrivacyAggregateScanProto::_internal_parent() const {
+  const ::zetasql::ResolvedAggregateScanBaseProto* p = parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedAggregateScanBaseProto&>(
+      ::zetasql::_ResolvedAggregateScanBaseProto_default_instance_);
+}
+inline const ::zetasql::ResolvedAggregateScanBaseProto& ResolvedDifferentialPrivacyAggregateScanProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedAggregateScanBaseProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(parent_);
+  }
+  parent_ = parent;
+  if (parent) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.parent)
+}
+inline ::zetasql::ResolvedAggregateScanBaseProto* ResolvedDifferentialPrivacyAggregateScanProto::release_parent() {
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedAggregateScanBaseProto* temp = parent_;
+  parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedAggregateScanBaseProto* ResolvedDifferentialPrivacyAggregateScanProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.parent)
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedAggregateScanBaseProto* temp = parent_;
+  parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedAggregateScanBaseProto* ResolvedDifferentialPrivacyAggregateScanProto::_internal_mutable_parent() {
+  _has_bits_[0] |= 0x00000001u;
+  if (parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedAggregateScanBaseProto>(GetArenaForAllocation());
+    parent_ = p;
+  }
+  return parent_;
+}
+inline ::zetasql::ResolvedAggregateScanBaseProto* ResolvedDifferentialPrivacyAggregateScanProto::mutable_parent() {
+  ::zetasql::ResolvedAggregateScanBaseProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.parent)
+  return _msg;
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::set_allocated_parent(::zetasql::ResolvedAggregateScanBaseProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedAggregateScanBaseProto>::GetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.parent)
+}
+
+// optional .zetasql.AnyResolvedExprProto group_selection_threshold_expr = 5;
+inline bool ResolvedDifferentialPrivacyAggregateScanProto::_internal_has_group_selection_threshold_expr() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || group_selection_threshold_expr_ != nullptr);
+  return value;
+}
+inline bool ResolvedDifferentialPrivacyAggregateScanProto::has_group_selection_threshold_expr() const {
+  return _internal_has_group_selection_threshold_expr();
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::clear_group_selection_threshold_expr() {
+  if (group_selection_threshold_expr_ != nullptr) group_selection_threshold_expr_->Clear();
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::AnyResolvedExprProto& ResolvedDifferentialPrivacyAggregateScanProto::_internal_group_selection_threshold_expr() const {
+  const ::zetasql::AnyResolvedExprProto* p = group_selection_threshold_expr_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedExprProto&>(
+      ::zetasql::_AnyResolvedExprProto_default_instance_);
+}
+inline const ::zetasql::AnyResolvedExprProto& ResolvedDifferentialPrivacyAggregateScanProto::group_selection_threshold_expr() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.group_selection_threshold_expr)
+  return _internal_group_selection_threshold_expr();
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::unsafe_arena_set_allocated_group_selection_threshold_expr(
+    ::zetasql::AnyResolvedExprProto* group_selection_threshold_expr) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(group_selection_threshold_expr_);
+  }
+  group_selection_threshold_expr_ = group_selection_threshold_expr;
+  if (group_selection_threshold_expr) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.group_selection_threshold_expr)
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedDifferentialPrivacyAggregateScanProto::release_group_selection_threshold_expr() {
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedExprProto* temp = group_selection_threshold_expr_;
+  group_selection_threshold_expr_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedDifferentialPrivacyAggregateScanProto::unsafe_arena_release_group_selection_threshold_expr() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.group_selection_threshold_expr)
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedExprProto* temp = group_selection_threshold_expr_;
+  group_selection_threshold_expr_ = nullptr;
+  return temp;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedDifferentialPrivacyAggregateScanProto::_internal_mutable_group_selection_threshold_expr() {
+  _has_bits_[0] |= 0x00000002u;
+  if (group_selection_threshold_expr_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedExprProto>(GetArenaForAllocation());
+    group_selection_threshold_expr_ = p;
+  }
+  return group_selection_threshold_expr_;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedDifferentialPrivacyAggregateScanProto::mutable_group_selection_threshold_expr() {
+  ::zetasql::AnyResolvedExprProto* _msg = _internal_mutable_group_selection_threshold_expr();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.group_selection_threshold_expr)
+  return _msg;
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::set_allocated_group_selection_threshold_expr(::zetasql::AnyResolvedExprProto* group_selection_threshold_expr) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete group_selection_threshold_expr_;
+  }
+  if (group_selection_threshold_expr) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnyResolvedExprProto>::GetOwningArena(group_selection_threshold_expr);
+    if (message_arena != submessage_arena) {
+      group_selection_threshold_expr = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, group_selection_threshold_expr, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  group_selection_threshold_expr_ = group_selection_threshold_expr;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.group_selection_threshold_expr)
+}
+
+// repeated .zetasql.ResolvedOptionProto option_list = 6;
+inline int ResolvedDifferentialPrivacyAggregateScanProto::_internal_option_list_size() const {
+  return option_list_.size();
+}
+inline int ResolvedDifferentialPrivacyAggregateScanProto::option_list_size() const {
+  return _internal_option_list_size();
+}
+inline void ResolvedDifferentialPrivacyAggregateScanProto::clear_option_list() {
+  option_list_.Clear();
+}
+inline ::zetasql::ResolvedOptionProto* ResolvedDifferentialPrivacyAggregateScanProto::mutable_option_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.option_list)
+  return option_list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto >*
+ResolvedDifferentialPrivacyAggregateScanProto::mutable_option_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.option_list)
+  return &option_list_;
+}
+inline const ::zetasql::ResolvedOptionProto& ResolvedDifferentialPrivacyAggregateScanProto::_internal_option_list(int index) const {
+  return option_list_.Get(index);
+}
+inline const ::zetasql::ResolvedOptionProto& ResolvedDifferentialPrivacyAggregateScanProto::option_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.option_list)
+  return _internal_option_list(index);
+}
+inline ::zetasql::ResolvedOptionProto* ResolvedDifferentialPrivacyAggregateScanProto::_internal_add_option_list() {
+  return option_list_.Add();
+}
+inline ::zetasql::ResolvedOptionProto* ResolvedDifferentialPrivacyAggregateScanProto::add_option_list() {
+  ::zetasql::ResolvedOptionProto* _add = _internal_add_option_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.option_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOptionProto >&
+ResolvedDifferentialPrivacyAggregateScanProto::option_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedDifferentialPrivacyAggregateScanProto.option_list)
+  return option_list_;
 }
 
 // -------------------------------------------------------------------
@@ -81487,7 +83872,7 @@ ResolvedCreateTableStmtBaseProto::check_constraint_list() const {
 
 // optional bool is_value_table = 8;
 inline bool ResolvedCreateTableStmtBaseProto::_internal_has_is_value_table() const {
-  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
 inline bool ResolvedCreateTableStmtBaseProto::has_is_value_table() const {
@@ -81495,7 +83880,7 @@ inline bool ResolvedCreateTableStmtBaseProto::has_is_value_table() const {
 }
 inline void ResolvedCreateTableStmtBaseProto::clear_is_value_table() {
   is_value_table_ = false;
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline bool ResolvedCreateTableStmtBaseProto::_internal_is_value_table() const {
   return is_value_table_;
@@ -81505,7 +83890,7 @@ inline bool ResolvedCreateTableStmtBaseProto::is_value_table() const {
   return _internal_is_value_table();
 }
 inline void ResolvedCreateTableStmtBaseProto::_internal_set_is_value_table(bool value) {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
   is_value_table_ = value;
 }
 inline void ResolvedCreateTableStmtBaseProto::set_is_value_table(bool value) {
@@ -81689,6 +84074,96 @@ inline void ResolvedCreateTableStmtBaseProto::set_allocated_collation_name(::zet
   }
   collation_name_ = collation_name;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateTableStmtBaseProto.collation_name)
+}
+
+// optional .zetasql.ResolvedConnectionProto connection = 13;
+inline bool ResolvedCreateTableStmtBaseProto::_internal_has_connection() const {
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  PROTOBUF_ASSUME(!value || connection_ != nullptr);
+  return value;
+}
+inline bool ResolvedCreateTableStmtBaseProto::has_connection() const {
+  return _internal_has_connection();
+}
+inline void ResolvedCreateTableStmtBaseProto::clear_connection() {
+  if (connection_ != nullptr) connection_->Clear();
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline const ::zetasql::ResolvedConnectionProto& ResolvedCreateTableStmtBaseProto::_internal_connection() const {
+  const ::zetasql::ResolvedConnectionProto* p = connection_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedConnectionProto&>(
+      ::zetasql::_ResolvedConnectionProto_default_instance_);
+}
+inline const ::zetasql::ResolvedConnectionProto& ResolvedCreateTableStmtBaseProto::connection() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateTableStmtBaseProto.connection)
+  return _internal_connection();
+}
+inline void ResolvedCreateTableStmtBaseProto::unsafe_arena_set_allocated_connection(
+    ::zetasql::ResolvedConnectionProto* connection) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(connection_);
+  }
+  connection_ = connection;
+  if (connection) {
+    _has_bits_[0] |= 0x00000010u;
+  } else {
+    _has_bits_[0] &= ~0x00000010u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCreateTableStmtBaseProto.connection)
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateTableStmtBaseProto::release_connection() {
+  _has_bits_[0] &= ~0x00000010u;
+  ::zetasql::ResolvedConnectionProto* temp = connection_;
+  connection_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateTableStmtBaseProto::unsafe_arena_release_connection() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCreateTableStmtBaseProto.connection)
+  _has_bits_[0] &= ~0x00000010u;
+  ::zetasql::ResolvedConnectionProto* temp = connection_;
+  connection_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateTableStmtBaseProto::_internal_mutable_connection() {
+  _has_bits_[0] |= 0x00000010u;
+  if (connection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedConnectionProto>(GetArenaForAllocation());
+    connection_ = p;
+  }
+  return connection_;
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateTableStmtBaseProto::mutable_connection() {
+  ::zetasql::ResolvedConnectionProto* _msg = _internal_mutable_connection();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateTableStmtBaseProto.connection)
+  return _msg;
+}
+inline void ResolvedCreateTableStmtBaseProto::set_allocated_connection(::zetasql::ResolvedConnectionProto* connection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete connection_;
+  }
+  if (connection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedConnectionProto>::GetOwningArena(connection);
+    if (message_arena != submessage_arena) {
+      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, connection, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000010u;
+  } else {
+    _has_bits_[0] &= ~0x00000010u;
+  }
+  connection_ = connection;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateTableStmtBaseProto.connection)
 }
 
 // -------------------------------------------------------------------
@@ -82351,6 +84826,299 @@ inline void ResolvedCreateTableAsSelectStmtProto::set_allocated_query(::zetasql:
 
 // -------------------------------------------------------------------
 
+// ResolvedCreateModelAliasedQueryProto
+
+// optional .zetasql.ResolvedArgumentProto parent = 1;
+inline bool ResolvedCreateModelAliasedQueryProto::_internal_has_parent() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || parent_ != nullptr);
+  return value;
+}
+inline bool ResolvedCreateModelAliasedQueryProto::has_parent() const {
+  return _internal_has_parent();
+}
+inline void ResolvedCreateModelAliasedQueryProto::clear_parent() {
+  if (parent_ != nullptr) parent_->Clear();
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::ResolvedArgumentProto& ResolvedCreateModelAliasedQueryProto::_internal_parent() const {
+  const ::zetasql::ResolvedArgumentProto* p = parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedArgumentProto&>(
+      ::zetasql::_ResolvedArgumentProto_default_instance_);
+}
+inline const ::zetasql::ResolvedArgumentProto& ResolvedCreateModelAliasedQueryProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelAliasedQueryProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedCreateModelAliasedQueryProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedArgumentProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(parent_);
+  }
+  parent_ = parent;
+  if (parent) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCreateModelAliasedQueryProto.parent)
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedCreateModelAliasedQueryProto::release_parent() {
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::ResolvedArgumentProto* temp = parent_;
+  parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedCreateModelAliasedQueryProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCreateModelAliasedQueryProto.parent)
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::ResolvedArgumentProto* temp = parent_;
+  parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedCreateModelAliasedQueryProto::_internal_mutable_parent() {
+  _has_bits_[0] |= 0x00000002u;
+  if (parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedArgumentProto>(GetArenaForAllocation());
+    parent_ = p;
+  }
+  return parent_;
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedCreateModelAliasedQueryProto::mutable_parent() {
+  ::zetasql::ResolvedArgumentProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelAliasedQueryProto.parent)
+  return _msg;
+}
+inline void ResolvedCreateModelAliasedQueryProto::set_allocated_parent(::zetasql::ResolvedArgumentProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedArgumentProto>::GetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateModelAliasedQueryProto.parent)
+}
+
+// optional string alias = 2;
+inline bool ResolvedCreateModelAliasedQueryProto::_internal_has_alias() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ResolvedCreateModelAliasedQueryProto::has_alias() const {
+  return _internal_has_alias();
+}
+inline void ResolvedCreateModelAliasedQueryProto::clear_alias() {
+  alias_.ClearToEmpty();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& ResolvedCreateModelAliasedQueryProto::alias() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelAliasedQueryProto.alias)
+  return _internal_alias();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ResolvedCreateModelAliasedQueryProto::set_alias(ArgT0&& arg0, ArgT... args) {
+ _has_bits_[0] |= 0x00000001u;
+ alias_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedCreateModelAliasedQueryProto.alias)
+}
+inline std::string* ResolvedCreateModelAliasedQueryProto::mutable_alias() {
+  std::string* _s = _internal_mutable_alias();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelAliasedQueryProto.alias)
+  return _s;
+}
+inline const std::string& ResolvedCreateModelAliasedQueryProto::_internal_alias() const {
+  return alias_.Get();
+}
+inline void ResolvedCreateModelAliasedQueryProto::_internal_set_alias(const std::string& value) {
+  _has_bits_[0] |= 0x00000001u;
+  alias_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ResolvedCreateModelAliasedQueryProto::_internal_mutable_alias() {
+  _has_bits_[0] |= 0x00000001u;
+  return alias_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ResolvedCreateModelAliasedQueryProto::release_alias() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCreateModelAliasedQueryProto.alias)
+  if (!_internal_has_alias()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000001u;
+  auto* p = alias_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (alias_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    alias_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void ResolvedCreateModelAliasedQueryProto::set_allocated_alias(std::string* alias) {
+  if (alias != nullptr) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  alias_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), alias,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (alias_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    alias_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateModelAliasedQueryProto.alias)
+}
+
+// optional .zetasql.AnyResolvedScanProto query = 3;
+inline bool ResolvedCreateModelAliasedQueryProto::_internal_has_query() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || query_ != nullptr);
+  return value;
+}
+inline bool ResolvedCreateModelAliasedQueryProto::has_query() const {
+  return _internal_has_query();
+}
+inline void ResolvedCreateModelAliasedQueryProto::clear_query() {
+  if (query_ != nullptr) query_->Clear();
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline const ::zetasql::AnyResolvedScanProto& ResolvedCreateModelAliasedQueryProto::_internal_query() const {
+  const ::zetasql::AnyResolvedScanProto* p = query_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedScanProto&>(
+      ::zetasql::_AnyResolvedScanProto_default_instance_);
+}
+inline const ::zetasql::AnyResolvedScanProto& ResolvedCreateModelAliasedQueryProto::query() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelAliasedQueryProto.query)
+  return _internal_query();
+}
+inline void ResolvedCreateModelAliasedQueryProto::unsafe_arena_set_allocated_query(
+    ::zetasql::AnyResolvedScanProto* query) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(query_);
+  }
+  query_ = query;
+  if (query) {
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCreateModelAliasedQueryProto.query)
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedCreateModelAliasedQueryProto::release_query() {
+  _has_bits_[0] &= ~0x00000004u;
+  ::zetasql::AnyResolvedScanProto* temp = query_;
+  query_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedCreateModelAliasedQueryProto::unsafe_arena_release_query() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCreateModelAliasedQueryProto.query)
+  _has_bits_[0] &= ~0x00000004u;
+  ::zetasql::AnyResolvedScanProto* temp = query_;
+  query_ = nullptr;
+  return temp;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedCreateModelAliasedQueryProto::_internal_mutable_query() {
+  _has_bits_[0] |= 0x00000004u;
+  if (query_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedScanProto>(GetArenaForAllocation());
+    query_ = p;
+  }
+  return query_;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedCreateModelAliasedQueryProto::mutable_query() {
+  ::zetasql::AnyResolvedScanProto* _msg = _internal_mutable_query();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelAliasedQueryProto.query)
+  return _msg;
+}
+inline void ResolvedCreateModelAliasedQueryProto::set_allocated_query(::zetasql::AnyResolvedScanProto* query) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete query_;
+  }
+  if (query) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnyResolvedScanProto>::GetOwningArena(query);
+    if (message_arena != submessage_arena) {
+      query = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, query, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  query_ = query;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateModelAliasedQueryProto.query)
+}
+
+// repeated .zetasql.ResolvedOutputColumnProto output_column_list = 4;
+inline int ResolvedCreateModelAliasedQueryProto::_internal_output_column_list_size() const {
+  return output_column_list_.size();
+}
+inline int ResolvedCreateModelAliasedQueryProto::output_column_list_size() const {
+  return _internal_output_column_list_size();
+}
+inline void ResolvedCreateModelAliasedQueryProto::clear_output_column_list() {
+  output_column_list_.Clear();
+}
+inline ::zetasql::ResolvedOutputColumnProto* ResolvedCreateModelAliasedQueryProto::mutable_output_column_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelAliasedQueryProto.output_column_list)
+  return output_column_list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto >*
+ResolvedCreateModelAliasedQueryProto::mutable_output_column_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedCreateModelAliasedQueryProto.output_column_list)
+  return &output_column_list_;
+}
+inline const ::zetasql::ResolvedOutputColumnProto& ResolvedCreateModelAliasedQueryProto::_internal_output_column_list(int index) const {
+  return output_column_list_.Get(index);
+}
+inline const ::zetasql::ResolvedOutputColumnProto& ResolvedCreateModelAliasedQueryProto::output_column_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelAliasedQueryProto.output_column_list)
+  return _internal_output_column_list(index);
+}
+inline ::zetasql::ResolvedOutputColumnProto* ResolvedCreateModelAliasedQueryProto::_internal_add_output_column_list() {
+  return output_column_list_.Add();
+}
+inline ::zetasql::ResolvedOutputColumnProto* ResolvedCreateModelAliasedQueryProto::add_output_column_list() {
+  ::zetasql::ResolvedOutputColumnProto* _add = _internal_add_output_column_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedCreateModelAliasedQueryProto.output_column_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOutputColumnProto >&
+ResolvedCreateModelAliasedQueryProto::output_column_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateModelAliasedQueryProto.output_column_list)
+  return output_column_list_;
+}
+
+// -------------------------------------------------------------------
+
 // ResolvedCreateModelStmtProto
 
 // optional .zetasql.ResolvedCreateStatementProto parent = 1;
@@ -82613,6 +85381,46 @@ inline void ResolvedCreateModelStmtProto::set_allocated_query(::zetasql::AnyReso
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateModelStmtProto.query)
 }
 
+// repeated .zetasql.ResolvedCreateModelAliasedQueryProto aliased_query_list = 13;
+inline int ResolvedCreateModelStmtProto::_internal_aliased_query_list_size() const {
+  return aliased_query_list_.size();
+}
+inline int ResolvedCreateModelStmtProto::aliased_query_list_size() const {
+  return _internal_aliased_query_list_size();
+}
+inline void ResolvedCreateModelStmtProto::clear_aliased_query_list() {
+  aliased_query_list_.Clear();
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* ResolvedCreateModelStmtProto::mutable_aliased_query_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelStmtProto.aliased_query_list)
+  return aliased_query_list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedCreateModelAliasedQueryProto >*
+ResolvedCreateModelStmtProto::mutable_aliased_query_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedCreateModelStmtProto.aliased_query_list)
+  return &aliased_query_list_;
+}
+inline const ::zetasql::ResolvedCreateModelAliasedQueryProto& ResolvedCreateModelStmtProto::_internal_aliased_query_list(int index) const {
+  return aliased_query_list_.Get(index);
+}
+inline const ::zetasql::ResolvedCreateModelAliasedQueryProto& ResolvedCreateModelStmtProto::aliased_query_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelStmtProto.aliased_query_list)
+  return _internal_aliased_query_list(index);
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* ResolvedCreateModelStmtProto::_internal_add_aliased_query_list() {
+  return aliased_query_list_.Add();
+}
+inline ::zetasql::ResolvedCreateModelAliasedQueryProto* ResolvedCreateModelStmtProto::add_aliased_query_list() {
+  ::zetasql::ResolvedCreateModelAliasedQueryProto* _add = _internal_add_aliased_query_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedCreateModelStmtProto.aliased_query_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedCreateModelAliasedQueryProto >&
+ResolvedCreateModelStmtProto::aliased_query_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateModelStmtProto.aliased_query_list)
+  return aliased_query_list_;
+}
+
 // repeated .zetasql.ResolvedColumnDefinitionProto transform_input_column_list = 8;
 inline int ResolvedCreateModelStmtProto::_internal_transform_input_column_list_size() const {
   return transform_input_column_list_.size();
@@ -82771,6 +85579,204 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedAnaly
 ResolvedCreateModelStmtProto::transform_analytic_function_group_list() const {
   // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateModelStmtProto.transform_analytic_function_group_list)
   return transform_analytic_function_group_list_;
+}
+
+// repeated .zetasql.ResolvedColumnDefinitionProto input_column_definition_list = 9;
+inline int ResolvedCreateModelStmtProto::_internal_input_column_definition_list_size() const {
+  return input_column_definition_list_.size();
+}
+inline int ResolvedCreateModelStmtProto::input_column_definition_list_size() const {
+  return _internal_input_column_definition_list_size();
+}
+inline void ResolvedCreateModelStmtProto::clear_input_column_definition_list() {
+  input_column_definition_list_.Clear();
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateModelStmtProto::mutable_input_column_definition_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelStmtProto.input_column_definition_list)
+  return input_column_definition_list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
+ResolvedCreateModelStmtProto::mutable_input_column_definition_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedCreateModelStmtProto.input_column_definition_list)
+  return &input_column_definition_list_;
+}
+inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateModelStmtProto::_internal_input_column_definition_list(int index) const {
+  return input_column_definition_list_.Get(index);
+}
+inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateModelStmtProto::input_column_definition_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelStmtProto.input_column_definition_list)
+  return _internal_input_column_definition_list(index);
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateModelStmtProto::_internal_add_input_column_definition_list() {
+  return input_column_definition_list_.Add();
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateModelStmtProto::add_input_column_definition_list() {
+  ::zetasql::ResolvedColumnDefinitionProto* _add = _internal_add_input_column_definition_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedCreateModelStmtProto.input_column_definition_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
+ResolvedCreateModelStmtProto::input_column_definition_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateModelStmtProto.input_column_definition_list)
+  return input_column_definition_list_;
+}
+
+// repeated .zetasql.ResolvedColumnDefinitionProto output_column_definition_list = 10;
+inline int ResolvedCreateModelStmtProto::_internal_output_column_definition_list_size() const {
+  return output_column_definition_list_.size();
+}
+inline int ResolvedCreateModelStmtProto::output_column_definition_list_size() const {
+  return _internal_output_column_definition_list_size();
+}
+inline void ResolvedCreateModelStmtProto::clear_output_column_definition_list() {
+  output_column_definition_list_.Clear();
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateModelStmtProto::mutable_output_column_definition_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelStmtProto.output_column_definition_list)
+  return output_column_definition_list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
+ResolvedCreateModelStmtProto::mutable_output_column_definition_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedCreateModelStmtProto.output_column_definition_list)
+  return &output_column_definition_list_;
+}
+inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateModelStmtProto::_internal_output_column_definition_list(int index) const {
+  return output_column_definition_list_.Get(index);
+}
+inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateModelStmtProto::output_column_definition_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelStmtProto.output_column_definition_list)
+  return _internal_output_column_definition_list(index);
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateModelStmtProto::_internal_add_output_column_definition_list() {
+  return output_column_definition_list_.Add();
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateModelStmtProto::add_output_column_definition_list() {
+  ::zetasql::ResolvedColumnDefinitionProto* _add = _internal_add_output_column_definition_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedCreateModelStmtProto.output_column_definition_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
+ResolvedCreateModelStmtProto::output_column_definition_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateModelStmtProto.output_column_definition_list)
+  return output_column_definition_list_;
+}
+
+// optional bool is_remote = 11;
+inline bool ResolvedCreateModelStmtProto::_internal_has_is_remote() const {
+  bool value = (_has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool ResolvedCreateModelStmtProto::has_is_remote() const {
+  return _internal_has_is_remote();
+}
+inline void ResolvedCreateModelStmtProto::clear_is_remote() {
+  is_remote_ = false;
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline bool ResolvedCreateModelStmtProto::_internal_is_remote() const {
+  return is_remote_;
+}
+inline bool ResolvedCreateModelStmtProto::is_remote() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelStmtProto.is_remote)
+  return _internal_is_remote();
+}
+inline void ResolvedCreateModelStmtProto::_internal_set_is_remote(bool value) {
+  _has_bits_[0] |= 0x00000008u;
+  is_remote_ = value;
+}
+inline void ResolvedCreateModelStmtProto::set_is_remote(bool value) {
+  _internal_set_is_remote(value);
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedCreateModelStmtProto.is_remote)
+}
+
+// optional .zetasql.ResolvedConnectionProto connection = 12;
+inline bool ResolvedCreateModelStmtProto::_internal_has_connection() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || connection_ != nullptr);
+  return value;
+}
+inline bool ResolvedCreateModelStmtProto::has_connection() const {
+  return _internal_has_connection();
+}
+inline void ResolvedCreateModelStmtProto::clear_connection() {
+  if (connection_ != nullptr) connection_->Clear();
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline const ::zetasql::ResolvedConnectionProto& ResolvedCreateModelStmtProto::_internal_connection() const {
+  const ::zetasql::ResolvedConnectionProto* p = connection_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedConnectionProto&>(
+      ::zetasql::_ResolvedConnectionProto_default_instance_);
+}
+inline const ::zetasql::ResolvedConnectionProto& ResolvedCreateModelStmtProto::connection() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateModelStmtProto.connection)
+  return _internal_connection();
+}
+inline void ResolvedCreateModelStmtProto::unsafe_arena_set_allocated_connection(
+    ::zetasql::ResolvedConnectionProto* connection) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(connection_);
+  }
+  connection_ = connection;
+  if (connection) {
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCreateModelStmtProto.connection)
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateModelStmtProto::release_connection() {
+  _has_bits_[0] &= ~0x00000004u;
+  ::zetasql::ResolvedConnectionProto* temp = connection_;
+  connection_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateModelStmtProto::unsafe_arena_release_connection() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedCreateModelStmtProto.connection)
+  _has_bits_[0] &= ~0x00000004u;
+  ::zetasql::ResolvedConnectionProto* temp = connection_;
+  connection_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateModelStmtProto::_internal_mutable_connection() {
+  _has_bits_[0] |= 0x00000004u;
+  if (connection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedConnectionProto>(GetArenaForAllocation());
+    connection_ = p;
+  }
+  return connection_;
+}
+inline ::zetasql::ResolvedConnectionProto* ResolvedCreateModelStmtProto::mutable_connection() {
+  ::zetasql::ResolvedConnectionProto* _msg = _internal_mutable_connection();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateModelStmtProto.connection)
+  return _msg;
+}
+inline void ResolvedCreateModelStmtProto::set_allocated_connection(::zetasql::ResolvedConnectionProto* connection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete connection_;
+  }
+  if (connection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedConnectionProto>::GetOwningArena(connection);
+    if (message_arena != submessage_arena) {
+      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, connection, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  connection_ = connection;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateModelStmtProto.connection)
 }
 
 // -------------------------------------------------------------------
@@ -83378,6 +86384,46 @@ inline void ResolvedCreateViewBaseProto::_internal_set_recursive(bool value) {
 inline void ResolvedCreateViewBaseProto::set_recursive(bool value) {
   _internal_set_recursive(value);
   // @@protoc_insertion_point(field_set:zetasql.ResolvedCreateViewBaseProto.recursive)
+}
+
+// repeated .zetasql.ResolvedColumnDefinitionProto column_definition_list = 10;
+inline int ResolvedCreateViewBaseProto::_internal_column_definition_list_size() const {
+  return column_definition_list_.size();
+}
+inline int ResolvedCreateViewBaseProto::column_definition_list_size() const {
+  return _internal_column_definition_list_size();
+}
+inline void ResolvedCreateViewBaseProto::clear_column_definition_list() {
+  column_definition_list_.Clear();
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateViewBaseProto::mutable_column_definition_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateViewBaseProto.column_definition_list)
+  return column_definition_list_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
+ResolvedCreateViewBaseProto::mutable_column_definition_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedCreateViewBaseProto.column_definition_list)
+  return &column_definition_list_;
+}
+inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateViewBaseProto::_internal_column_definition_list(int index) const {
+  return column_definition_list_.Get(index);
+}
+inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateViewBaseProto::column_definition_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateViewBaseProto.column_definition_list)
+  return _internal_column_definition_list(index);
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateViewBaseProto::_internal_add_column_definition_list() {
+  return column_definition_list_.Add();
+}
+inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateViewBaseProto::add_column_definition_list() {
+  ::zetasql::ResolvedColumnDefinitionProto* _add = _internal_add_column_definition_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedCreateViewBaseProto.column_definition_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
+ResolvedCreateViewBaseProto::column_definition_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateViewBaseProto.column_definition_list)
+  return column_definition_list_;
 }
 
 // -------------------------------------------------------------------
@@ -84014,96 +87060,6 @@ inline void ResolvedCreateExternalTableStmtProto::set_allocated_with_partition_c
   }
   with_partition_columns_ = with_partition_columns;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateExternalTableStmtProto.with_partition_columns)
-}
-
-// optional .zetasql.ResolvedConnectionProto connection = 3;
-inline bool ResolvedCreateExternalTableStmtProto::_internal_has_connection() const {
-  bool value = (_has_bits_[0] & 0x00000004u) != 0;
-  PROTOBUF_ASSUME(!value || connection_ != nullptr);
-  return value;
-}
-inline bool ResolvedCreateExternalTableStmtProto::has_connection() const {
-  return _internal_has_connection();
-}
-inline void ResolvedCreateExternalTableStmtProto::clear_connection() {
-  if (connection_ != nullptr) connection_->Clear();
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline const ::zetasql::ResolvedConnectionProto& ResolvedCreateExternalTableStmtProto::_internal_connection() const {
-  const ::zetasql::ResolvedConnectionProto* p = connection_;
-  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedConnectionProto&>(
-      ::zetasql::_ResolvedConnectionProto_default_instance_);
-}
-inline const ::zetasql::ResolvedConnectionProto& ResolvedCreateExternalTableStmtProto::connection() const {
-  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateExternalTableStmtProto.connection)
-  return _internal_connection();
-}
-inline void ResolvedCreateExternalTableStmtProto::unsafe_arena_set_allocated_connection(
-    ::zetasql::ResolvedConnectionProto* connection) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(connection_);
-  }
-  connection_ = connection;
-  if (connection) {
-    _has_bits_[0] |= 0x00000004u;
-  } else {
-    _has_bits_[0] &= ~0x00000004u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedCreateExternalTableStmtProto.connection)
-}
-inline ::zetasql::ResolvedConnectionProto* ResolvedCreateExternalTableStmtProto::release_connection() {
-  _has_bits_[0] &= ~0x00000004u;
-  ::zetasql::ResolvedConnectionProto* temp = connection_;
-  connection_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::zetasql::ResolvedConnectionProto* ResolvedCreateExternalTableStmtProto::unsafe_arena_release_connection() {
-  // @@protoc_insertion_point(field_release:zetasql.ResolvedCreateExternalTableStmtProto.connection)
-  _has_bits_[0] &= ~0x00000004u;
-  ::zetasql::ResolvedConnectionProto* temp = connection_;
-  connection_ = nullptr;
-  return temp;
-}
-inline ::zetasql::ResolvedConnectionProto* ResolvedCreateExternalTableStmtProto::_internal_mutable_connection() {
-  _has_bits_[0] |= 0x00000004u;
-  if (connection_ == nullptr) {
-    auto* p = CreateMaybeMessage<::zetasql::ResolvedConnectionProto>(GetArenaForAllocation());
-    connection_ = p;
-  }
-  return connection_;
-}
-inline ::zetasql::ResolvedConnectionProto* ResolvedCreateExternalTableStmtProto::mutable_connection() {
-  ::zetasql::ResolvedConnectionProto* _msg = _internal_mutable_connection();
-  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateExternalTableStmtProto.connection)
-  return _msg;
-}
-inline void ResolvedCreateExternalTableStmtProto::set_allocated_connection(::zetasql::ResolvedConnectionProto* connection) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete connection_;
-  }
-  if (connection) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedConnectionProto>::GetOwningArena(connection);
-    if (message_arena != submessage_arena) {
-      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, connection, submessage_arena);
-    }
-    _has_bits_[0] |= 0x00000004u;
-  } else {
-    _has_bits_[0] &= ~0x00000004u;
-  }
-  connection_ = connection;
-  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateExternalTableStmtProto.connection)
 }
 
 // -------------------------------------------------------------------
@@ -111524,46 +114480,6 @@ inline void ResolvedCreateMaterializedViewStmtProto::set_allocated_parent(::zeta
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedCreateMaterializedViewStmtProto.parent)
 }
 
-// repeated .zetasql.ResolvedColumnDefinitionProto column_definition_list = 2;
-inline int ResolvedCreateMaterializedViewStmtProto::_internal_column_definition_list_size() const {
-  return column_definition_list_.size();
-}
-inline int ResolvedCreateMaterializedViewStmtProto::column_definition_list_size() const {
-  return _internal_column_definition_list_size();
-}
-inline void ResolvedCreateMaterializedViewStmtProto::clear_column_definition_list() {
-  column_definition_list_.Clear();
-}
-inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateMaterializedViewStmtProto::mutable_column_definition_list(int index) {
-  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedCreateMaterializedViewStmtProto.column_definition_list)
-  return column_definition_list_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >*
-ResolvedCreateMaterializedViewStmtProto::mutable_column_definition_list() {
-  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedCreateMaterializedViewStmtProto.column_definition_list)
-  return &column_definition_list_;
-}
-inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateMaterializedViewStmtProto::_internal_column_definition_list(int index) const {
-  return column_definition_list_.Get(index);
-}
-inline const ::zetasql::ResolvedColumnDefinitionProto& ResolvedCreateMaterializedViewStmtProto::column_definition_list(int index) const {
-  // @@protoc_insertion_point(field_get:zetasql.ResolvedCreateMaterializedViewStmtProto.column_definition_list)
-  return _internal_column_definition_list(index);
-}
-inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateMaterializedViewStmtProto::_internal_add_column_definition_list() {
-  return column_definition_list_.Add();
-}
-inline ::zetasql::ResolvedColumnDefinitionProto* ResolvedCreateMaterializedViewStmtProto::add_column_definition_list() {
-  ::zetasql::ResolvedColumnDefinitionProto* _add = _internal_add_column_definition_list();
-  // @@protoc_insertion_point(field_add:zetasql.ResolvedCreateMaterializedViewStmtProto.column_definition_list)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnDefinitionProto >&
-ResolvedCreateMaterializedViewStmtProto::column_definition_list() const {
-  // @@protoc_insertion_point(field_list:zetasql.ResolvedCreateMaterializedViewStmtProto.column_definition_list)
-  return column_definition_list_;
-}
-
 // repeated .zetasql.AnyResolvedExprProto partition_by_list = 3;
 inline int ResolvedCreateMaterializedViewStmtProto::_internal_partition_by_list_size() const {
   return partition_by_list_.size();
@@ -115774,6 +118690,218 @@ ResolvedAnalyzeStmtProto::table_and_column_index_list() const {
 
 // -------------------------------------------------------------------
 
+// ResolvedAuxLoadDataPartitionFilterProto
+
+// optional .zetasql.ResolvedArgumentProto parent = 1;
+inline bool ResolvedAuxLoadDataPartitionFilterProto::_internal_has_parent() const {
+  bool value = (_has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || parent_ != nullptr);
+  return value;
+}
+inline bool ResolvedAuxLoadDataPartitionFilterProto::has_parent() const {
+  return _internal_has_parent();
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::clear_parent() {
+  if (parent_ != nullptr) parent_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::ResolvedArgumentProto& ResolvedAuxLoadDataPartitionFilterProto::_internal_parent() const {
+  const ::zetasql::ResolvedArgumentProto* p = parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedArgumentProto&>(
+      ::zetasql::_ResolvedArgumentProto_default_instance_);
+}
+inline const ::zetasql::ResolvedArgumentProto& ResolvedAuxLoadDataPartitionFilterProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAuxLoadDataPartitionFilterProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedArgumentProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(parent_);
+  }
+  parent_ = parent;
+  if (parent) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedAuxLoadDataPartitionFilterProto.parent)
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedAuxLoadDataPartitionFilterProto::release_parent() {
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedArgumentProto* temp = parent_;
+  parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedAuxLoadDataPartitionFilterProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedAuxLoadDataPartitionFilterProto.parent)
+  _has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedArgumentProto* temp = parent_;
+  parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedAuxLoadDataPartitionFilterProto::_internal_mutable_parent() {
+  _has_bits_[0] |= 0x00000001u;
+  if (parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedArgumentProto>(GetArenaForAllocation());
+    parent_ = p;
+  }
+  return parent_;
+}
+inline ::zetasql::ResolvedArgumentProto* ResolvedAuxLoadDataPartitionFilterProto::mutable_parent() {
+  ::zetasql::ResolvedArgumentProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAuxLoadDataPartitionFilterProto.parent)
+  return _msg;
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::set_allocated_parent(::zetasql::ResolvedArgumentProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedArgumentProto>::GetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedAuxLoadDataPartitionFilterProto.parent)
+}
+
+// optional .zetasql.AnyResolvedExprProto filter = 2;
+inline bool ResolvedAuxLoadDataPartitionFilterProto::_internal_has_filter() const {
+  bool value = (_has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || filter_ != nullptr);
+  return value;
+}
+inline bool ResolvedAuxLoadDataPartitionFilterProto::has_filter() const {
+  return _internal_has_filter();
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::clear_filter() {
+  if (filter_ != nullptr) filter_->Clear();
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::AnyResolvedExprProto& ResolvedAuxLoadDataPartitionFilterProto::_internal_filter() const {
+  const ::zetasql::AnyResolvedExprProto* p = filter_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedExprProto&>(
+      ::zetasql::_AnyResolvedExprProto_default_instance_);
+}
+inline const ::zetasql::AnyResolvedExprProto& ResolvedAuxLoadDataPartitionFilterProto::filter() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAuxLoadDataPartitionFilterProto.filter)
+  return _internal_filter();
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::unsafe_arena_set_allocated_filter(
+    ::zetasql::AnyResolvedExprProto* filter) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(filter_);
+  }
+  filter_ = filter;
+  if (filter) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedAuxLoadDataPartitionFilterProto.filter)
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedAuxLoadDataPartitionFilterProto::release_filter() {
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedExprProto* temp = filter_;
+  filter_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedAuxLoadDataPartitionFilterProto::unsafe_arena_release_filter() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedAuxLoadDataPartitionFilterProto.filter)
+  _has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedExprProto* temp = filter_;
+  filter_ = nullptr;
+  return temp;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedAuxLoadDataPartitionFilterProto::_internal_mutable_filter() {
+  _has_bits_[0] |= 0x00000002u;
+  if (filter_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedExprProto>(GetArenaForAllocation());
+    filter_ = p;
+  }
+  return filter_;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedAuxLoadDataPartitionFilterProto::mutable_filter() {
+  ::zetasql::AnyResolvedExprProto* _msg = _internal_mutable_filter();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAuxLoadDataPartitionFilterProto.filter)
+  return _msg;
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::set_allocated_filter(::zetasql::AnyResolvedExprProto* filter) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete filter_;
+  }
+  if (filter) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnyResolvedExprProto>::GetOwningArena(filter);
+    if (message_arena != submessage_arena) {
+      filter = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, filter, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  filter_ = filter;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedAuxLoadDataPartitionFilterProto.filter)
+}
+
+// optional bool is_overwrite = 3;
+inline bool ResolvedAuxLoadDataPartitionFilterProto::_internal_has_is_overwrite() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool ResolvedAuxLoadDataPartitionFilterProto::has_is_overwrite() const {
+  return _internal_has_is_overwrite();
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::clear_is_overwrite() {
+  is_overwrite_ = false;
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline bool ResolvedAuxLoadDataPartitionFilterProto::_internal_is_overwrite() const {
+  return is_overwrite_;
+}
+inline bool ResolvedAuxLoadDataPartitionFilterProto::is_overwrite() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAuxLoadDataPartitionFilterProto.is_overwrite)
+  return _internal_is_overwrite();
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::_internal_set_is_overwrite(bool value) {
+  _has_bits_[0] |= 0x00000004u;
+  is_overwrite_ = value;
+}
+inline void ResolvedAuxLoadDataPartitionFilterProto::set_is_overwrite(bool value) {
+  _internal_set_is_overwrite(value);
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedAuxLoadDataPartitionFilterProto.is_overwrite)
+}
+
+// -------------------------------------------------------------------
+
 // ResolvedAuxLoadDataStmtProto
 
 // optional .zetasql.ResolvedStatementProto parent = 1;
@@ -115868,7 +118996,7 @@ inline void ResolvedAuxLoadDataStmtProto::set_allocated_parent(::zetasql::Resolv
 
 // optional .zetasql.ResolvedAuxLoadDataStmtEnums.InsertionMode insertion_mode = 2;
 inline bool ResolvedAuxLoadDataStmtProto::_internal_has_insertion_mode() const {
-  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
 inline bool ResolvedAuxLoadDataStmtProto::has_insertion_mode() const {
@@ -115876,7 +119004,7 @@ inline bool ResolvedAuxLoadDataStmtProto::has_insertion_mode() const {
 }
 inline void ResolvedAuxLoadDataStmtProto::clear_insertion_mode() {
   insertion_mode_ = 0;
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline ::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadDataStmtProto::_internal_insertion_mode() const {
   return static_cast< ::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode >(insertion_mode_);
@@ -115887,12 +119015,40 @@ inline ::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadData
 }
 inline void ResolvedAuxLoadDataStmtProto::_internal_set_insertion_mode(::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode value) {
   assert(::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode_IsValid(value));
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
   insertion_mode_ = value;
 }
 inline void ResolvedAuxLoadDataStmtProto::set_insertion_mode(::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode value) {
   _internal_set_insertion_mode(value);
   // @@protoc_insertion_point(field_set:zetasql.ResolvedAuxLoadDataStmtProto.insertion_mode)
+}
+
+// optional bool is_temp_table = 17;
+inline bool ResolvedAuxLoadDataStmtProto::_internal_has_is_temp_table() const {
+  bool value = (_has_bits_[0] & 0x00000040u) != 0;
+  return value;
+}
+inline bool ResolvedAuxLoadDataStmtProto::has_is_temp_table() const {
+  return _internal_has_is_temp_table();
+}
+inline void ResolvedAuxLoadDataStmtProto::clear_is_temp_table() {
+  is_temp_table_ = false;
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline bool ResolvedAuxLoadDataStmtProto::_internal_is_temp_table() const {
+  return is_temp_table_;
+}
+inline bool ResolvedAuxLoadDataStmtProto::is_temp_table() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAuxLoadDataStmtProto.is_temp_table)
+  return _internal_is_temp_table();
+}
+inline void ResolvedAuxLoadDataStmtProto::_internal_set_is_temp_table(bool value) {
+  _has_bits_[0] |= 0x00000040u;
+  is_temp_table_ = value;
+}
+inline void ResolvedAuxLoadDataStmtProto::set_is_temp_table(bool value) {
+  _internal_set_is_temp_table(value);
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedAuxLoadDataStmtProto.is_temp_table)
 }
 
 // repeated string name_path = 3;
@@ -115968,6 +119124,96 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 ResolvedAuxLoadDataStmtProto::mutable_name_path() {
   // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedAuxLoadDataStmtProto.name_path)
   return &name_path_;
+}
+
+// optional .zetasql.ResolvedAuxLoadDataPartitionFilterProto partition_filter = 16;
+inline bool ResolvedAuxLoadDataStmtProto::_internal_has_partition_filter() const {
+  bool value = (_has_bits_[0] & 0x00000010u) != 0;
+  PROTOBUF_ASSUME(!value || partition_filter_ != nullptr);
+  return value;
+}
+inline bool ResolvedAuxLoadDataStmtProto::has_partition_filter() const {
+  return _internal_has_partition_filter();
+}
+inline void ResolvedAuxLoadDataStmtProto::clear_partition_filter() {
+  if (partition_filter_ != nullptr) partition_filter_->Clear();
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& ResolvedAuxLoadDataStmtProto::_internal_partition_filter() const {
+  const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* p = partition_filter_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto&>(
+      ::zetasql::_ResolvedAuxLoadDataPartitionFilterProto_default_instance_);
+}
+inline const ::zetasql::ResolvedAuxLoadDataPartitionFilterProto& ResolvedAuxLoadDataStmtProto::partition_filter() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAuxLoadDataStmtProto.partition_filter)
+  return _internal_partition_filter();
+}
+inline void ResolvedAuxLoadDataStmtProto::unsafe_arena_set_allocated_partition_filter(
+    ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* partition_filter) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(partition_filter_);
+  }
+  partition_filter_ = partition_filter;
+  if (partition_filter) {
+    _has_bits_[0] |= 0x00000010u;
+  } else {
+    _has_bits_[0] &= ~0x00000010u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedAuxLoadDataStmtProto.partition_filter)
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* ResolvedAuxLoadDataStmtProto::release_partition_filter() {
+  _has_bits_[0] &= ~0x00000010u;
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* temp = partition_filter_;
+  partition_filter_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* ResolvedAuxLoadDataStmtProto::unsafe_arena_release_partition_filter() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedAuxLoadDataStmtProto.partition_filter)
+  _has_bits_[0] &= ~0x00000010u;
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* temp = partition_filter_;
+  partition_filter_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* ResolvedAuxLoadDataStmtProto::_internal_mutable_partition_filter() {
+  _has_bits_[0] |= 0x00000010u;
+  if (partition_filter_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedAuxLoadDataPartitionFilterProto>(GetArenaForAllocation());
+    partition_filter_ = p;
+  }
+  return partition_filter_;
+}
+inline ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* ResolvedAuxLoadDataStmtProto::mutable_partition_filter() {
+  ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* _msg = _internal_mutable_partition_filter();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAuxLoadDataStmtProto.partition_filter)
+  return _msg;
+}
+inline void ResolvedAuxLoadDataStmtProto::set_allocated_partition_filter(::zetasql::ResolvedAuxLoadDataPartitionFilterProto* partition_filter) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete partition_filter_;
+  }
+  if (partition_filter) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ResolvedAuxLoadDataPartitionFilterProto>::GetOwningArena(partition_filter);
+    if (message_arena != submessage_arena) {
+      partition_filter = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, partition_filter, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000010u;
+  } else {
+    _has_bits_[0] &= ~0x00000010u;
+  }
+  partition_filter_ = partition_filter;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedAuxLoadDataStmtProto.partition_filter)
 }
 
 // repeated .zetasql.ResolvedOutputColumnProto output_column_list = 4;
@@ -116600,6 +119846,16 @@ ResolvedAuxLoadDataStmtProto::from_files_option_list() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

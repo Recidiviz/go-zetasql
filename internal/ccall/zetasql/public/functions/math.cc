@@ -16,8 +16,10 @@
 
 #include "zetasql/public/functions/math.h"
 
+#include <array>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <type_traits>
 
 #include "zetasql/public/functions/rounding_mode.pb.h"
@@ -99,7 +101,7 @@ void InitExponents() {
 }
 
 namespace {
-static bool module_initialization_complete = []() {
+static bool functions_math_module_init = []() {
   InitExponents();
   return true;
 } ();

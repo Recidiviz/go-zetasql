@@ -428,6 +428,79 @@ inline bool ASTSetOperationEnums_OperationType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTSetOperationEnums_OperationType>(
     ASTSetOperationEnums_OperationType_descriptor(), name, value);
 }
+enum ASTSetOperationEnums_AllOrDistinct : int {
+  ASTSetOperationEnums_AllOrDistinct_ALL_OR_DISTINCT_NOT_SET = 0,
+  ASTSetOperationEnums_AllOrDistinct_ALL = 1,
+  ASTSetOperationEnums_AllOrDistinct_DISTINCT = 2
+};
+bool ASTSetOperationEnums_AllOrDistinct_IsValid(int value);
+constexpr ASTSetOperationEnums_AllOrDistinct ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_MIN = ASTSetOperationEnums_AllOrDistinct_ALL_OR_DISTINCT_NOT_SET;
+constexpr ASTSetOperationEnums_AllOrDistinct ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_MAX = ASTSetOperationEnums_AllOrDistinct_DISTINCT;
+constexpr int ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_ARRAYSIZE = ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTSetOperationEnums_AllOrDistinct_descriptor();
+template<typename T>
+inline const std::string& ASTSetOperationEnums_AllOrDistinct_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ASTSetOperationEnums_AllOrDistinct>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ASTSetOperationEnums_AllOrDistinct_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ASTSetOperationEnums_AllOrDistinct_descriptor(), enum_t_value);
+}
+inline bool ASTSetOperationEnums_AllOrDistinct_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ASTSetOperationEnums_AllOrDistinct* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTSetOperationEnums_AllOrDistinct>(
+    ASTSetOperationEnums_AllOrDistinct_descriptor(), name, value);
+}
+enum ASTSetOperationEnums_ColumnMatchMode : int {
+  ASTSetOperationEnums_ColumnMatchMode_BY_POSITION = 1,
+  ASTSetOperationEnums_ColumnMatchMode_CORRESPONDING = 2,
+  ASTSetOperationEnums_ColumnMatchMode_CORRESPONDING_BY = 3
+};
+bool ASTSetOperationEnums_ColumnMatchMode_IsValid(int value);
+constexpr ASTSetOperationEnums_ColumnMatchMode ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_MIN = ASTSetOperationEnums_ColumnMatchMode_BY_POSITION;
+constexpr ASTSetOperationEnums_ColumnMatchMode ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_MAX = ASTSetOperationEnums_ColumnMatchMode_CORRESPONDING_BY;
+constexpr int ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_ARRAYSIZE = ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTSetOperationEnums_ColumnMatchMode_descriptor();
+template<typename T>
+inline const std::string& ASTSetOperationEnums_ColumnMatchMode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ASTSetOperationEnums_ColumnMatchMode>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ASTSetOperationEnums_ColumnMatchMode_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ASTSetOperationEnums_ColumnMatchMode_descriptor(), enum_t_value);
+}
+inline bool ASTSetOperationEnums_ColumnMatchMode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ASTSetOperationEnums_ColumnMatchMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTSetOperationEnums_ColumnMatchMode>(
+    ASTSetOperationEnums_ColumnMatchMode_descriptor(), name, value);
+}
+enum ASTSetOperationEnums_ColumnPropagationMode : int {
+  ASTSetOperationEnums_ColumnPropagationMode_INNER = 1,
+  ASTSetOperationEnums_ColumnPropagationMode_LEFT = 2,
+  ASTSetOperationEnums_ColumnPropagationMode_FULL = 3,
+  ASTSetOperationEnums_ColumnPropagationMode_STRICT = 4
+};
+bool ASTSetOperationEnums_ColumnPropagationMode_IsValid(int value);
+constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MIN = ASTSetOperationEnums_ColumnPropagationMode_INNER;
+constexpr ASTSetOperationEnums_ColumnPropagationMode ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MAX = ASTSetOperationEnums_ColumnPropagationMode_STRICT;
+constexpr int ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_ARRAYSIZE = ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTSetOperationEnums_ColumnPropagationMode_descriptor();
+template<typename T>
+inline const std::string& ASTSetOperationEnums_ColumnPropagationMode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ASTSetOperationEnums_ColumnPropagationMode>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ASTSetOperationEnums_ColumnPropagationMode_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ASTSetOperationEnums_ColumnPropagationMode_descriptor(), enum_t_value);
+}
+inline bool ASTSetOperationEnums_ColumnPropagationMode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ASTSetOperationEnums_ColumnPropagationMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTSetOperationEnums_ColumnPropagationMode>(
+    ASTSetOperationEnums_ColumnPropagationMode_descriptor(), name, value);
+}
 enum ASTUnaryExpressionEnums_Op : int {
   ASTUnaryExpressionEnums_Op_NOT_SET = 0,
   ASTUnaryExpressionEnums_Op_NOT = 1,
@@ -2429,6 +2502,104 @@ class ASTSetOperationEnums final :
   static inline bool OperationType_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       OperationType* value) {
     return ASTSetOperationEnums_OperationType_Parse(name, value);
+  }
+
+  typedef ASTSetOperationEnums_AllOrDistinct AllOrDistinct;
+  static constexpr AllOrDistinct ALL_OR_DISTINCT_NOT_SET =
+    ASTSetOperationEnums_AllOrDistinct_ALL_OR_DISTINCT_NOT_SET;
+  static constexpr AllOrDistinct ALL =
+    ASTSetOperationEnums_AllOrDistinct_ALL;
+  static constexpr AllOrDistinct DISTINCT =
+    ASTSetOperationEnums_AllOrDistinct_DISTINCT;
+  static inline bool AllOrDistinct_IsValid(int value) {
+    return ASTSetOperationEnums_AllOrDistinct_IsValid(value);
+  }
+  static constexpr AllOrDistinct AllOrDistinct_MIN =
+    ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_MIN;
+  static constexpr AllOrDistinct AllOrDistinct_MAX =
+    ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_MAX;
+  static constexpr int AllOrDistinct_ARRAYSIZE =
+    ASTSetOperationEnums_AllOrDistinct_AllOrDistinct_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  AllOrDistinct_descriptor() {
+    return ASTSetOperationEnums_AllOrDistinct_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& AllOrDistinct_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, AllOrDistinct>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function AllOrDistinct_Name.");
+    return ASTSetOperationEnums_AllOrDistinct_Name(enum_t_value);
+  }
+  static inline bool AllOrDistinct_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      AllOrDistinct* value) {
+    return ASTSetOperationEnums_AllOrDistinct_Parse(name, value);
+  }
+
+  typedef ASTSetOperationEnums_ColumnMatchMode ColumnMatchMode;
+  static constexpr ColumnMatchMode BY_POSITION =
+    ASTSetOperationEnums_ColumnMatchMode_BY_POSITION;
+  static constexpr ColumnMatchMode CORRESPONDING =
+    ASTSetOperationEnums_ColumnMatchMode_CORRESPONDING;
+  static constexpr ColumnMatchMode CORRESPONDING_BY =
+    ASTSetOperationEnums_ColumnMatchMode_CORRESPONDING_BY;
+  static inline bool ColumnMatchMode_IsValid(int value) {
+    return ASTSetOperationEnums_ColumnMatchMode_IsValid(value);
+  }
+  static constexpr ColumnMatchMode ColumnMatchMode_MIN =
+    ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_MIN;
+  static constexpr ColumnMatchMode ColumnMatchMode_MAX =
+    ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_MAX;
+  static constexpr int ColumnMatchMode_ARRAYSIZE =
+    ASTSetOperationEnums_ColumnMatchMode_ColumnMatchMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  ColumnMatchMode_descriptor() {
+    return ASTSetOperationEnums_ColumnMatchMode_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& ColumnMatchMode_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, ColumnMatchMode>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function ColumnMatchMode_Name.");
+    return ASTSetOperationEnums_ColumnMatchMode_Name(enum_t_value);
+  }
+  static inline bool ColumnMatchMode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      ColumnMatchMode* value) {
+    return ASTSetOperationEnums_ColumnMatchMode_Parse(name, value);
+  }
+
+  typedef ASTSetOperationEnums_ColumnPropagationMode ColumnPropagationMode;
+  static constexpr ColumnPropagationMode INNER =
+    ASTSetOperationEnums_ColumnPropagationMode_INNER;
+  static constexpr ColumnPropagationMode LEFT =
+    ASTSetOperationEnums_ColumnPropagationMode_LEFT;
+  static constexpr ColumnPropagationMode FULL =
+    ASTSetOperationEnums_ColumnPropagationMode_FULL;
+  static constexpr ColumnPropagationMode STRICT =
+    ASTSetOperationEnums_ColumnPropagationMode_STRICT;
+  static inline bool ColumnPropagationMode_IsValid(int value) {
+    return ASTSetOperationEnums_ColumnPropagationMode_IsValid(value);
+  }
+  static constexpr ColumnPropagationMode ColumnPropagationMode_MIN =
+    ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MIN;
+  static constexpr ColumnPropagationMode ColumnPropagationMode_MAX =
+    ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_MAX;
+  static constexpr int ColumnPropagationMode_ARRAYSIZE =
+    ASTSetOperationEnums_ColumnPropagationMode_ColumnPropagationMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  ColumnPropagationMode_descriptor() {
+    return ASTSetOperationEnums_ColumnPropagationMode_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& ColumnPropagationMode_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, ColumnPropagationMode>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function ColumnPropagationMode_Name.");
+    return ASTSetOperationEnums_ColumnPropagationMode_Name(enum_t_value);
+  }
+  static inline bool ColumnPropagationMode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      ColumnPropagationMode* value) {
+    return ASTSetOperationEnums_ColumnPropagationMode_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -6566,6 +6737,21 @@ template <> struct is_proto_enum< ::zetasql::ASTSetOperationEnums_OperationType>
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ASTSetOperationEnums_OperationType>() {
   return ::zetasql::ASTSetOperationEnums_OperationType_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::ASTSetOperationEnums_AllOrDistinct> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ASTSetOperationEnums_AllOrDistinct>() {
+  return ::zetasql::ASTSetOperationEnums_AllOrDistinct_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::ASTSetOperationEnums_ColumnMatchMode> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ASTSetOperationEnums_ColumnMatchMode>() {
+  return ::zetasql::ASTSetOperationEnums_ColumnMatchMode_descriptor();
+}
+template <> struct is_proto_enum< ::zetasql::ASTSetOperationEnums_ColumnPropagationMode> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::zetasql::ASTSetOperationEnums_ColumnPropagationMode>() {
+  return ::zetasql::ASTSetOperationEnums_ColumnPropagationMode_descriptor();
 }
 template <> struct is_proto_enum< ::zetasql::ASTUnaryExpressionEnums_Op> : ::std::true_type {};
 template <>

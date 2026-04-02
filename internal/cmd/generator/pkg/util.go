@@ -34,20 +34,39 @@ func existsFile(path string) bool {
 	return err == nil
 }
 
+// stripBazelExternalPrefix removes a leading '@' from a single Bazel external
+// workspace segment (e.g. "@json" -> "json"). See build_file_parser.go handling
+// of deps that are only "@xyz".
+func stripBazelExternalPrefix(seg string) string {
+	return strings.TrimPrefix(seg, "@")
+}
+
 func goPkgPath(base, pkg string) string {
 	newPath := []string{}
 	for _, path := range strings.Split(base, "/") {
+		path = stripBazelExternalPrefix(path)
+		if path == "" {
+			continue
+		}
 		if path == "internal" {
 			newPath = append(newPath, "go_internal")
 		} else {
 			newPath = append(newPath, path)
 		}
 	}
-	return "go-" + filepath.Join(filepath.Join(newPath...), pkg)
+	pkg = stripBazelExternalPrefix(pkg)
+	baseJoined := filepath.Join(newPath...)
+	if baseJoined == "" {
+		return "go-" + pkg
+	}
+	return "go-" + filepath.Join(baseJoined, pkg)
 }
 
 func normalizeGoPkgPath(name string) string {
 	splitted := strings.Split(name, "/")
+	for i := range splitted {
+		splitted[i] = stripBazelExternalPrefix(splitted[i])
+	}
 	base := filepath.Join(splitted[:len(splitted)-1]...)
 	pkg := splitted[len(splitted)-1]
 	return goPkgPath(base, pkg)

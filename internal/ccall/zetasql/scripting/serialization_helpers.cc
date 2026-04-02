@@ -16,8 +16,12 @@
 
 #include "zetasql/scripting/serialization_helpers.h"
 
+#include <memory>
+#include <optional>
 #include <string>
 #include <utility>
+#include <variant>
+#include <vector>
 
 #include "zetasql/scripting/procedure_extension.pb.h"
 #include "absl/status/statusor.h"
@@ -80,8 +84,10 @@ DeserializeProcedureDefinitionProto(
     const std::vector<const google::protobuf::DescriptorPool*>& pools,
     TypeFactory* factory) {
   std::unique_ptr<FunctionSignature> function_signature;
-  ZETASQL_RETURN_IF_ERROR(FunctionSignature::Deserialize(proto.signature(), pools,
-                                                 factory, &function_signature));
+  ZETASQL_ASSIGN_OR_RETURN(function_signature,
+                   FunctionSignature::Deserialize(
+                       proto.signature(), TypeDeserializer(factory, pools)));
+
   if (proto.is_dynamic_sql()) {
     return std::make_unique<ProcedureDefinition>(*function_signature,
                                                  proto.body());

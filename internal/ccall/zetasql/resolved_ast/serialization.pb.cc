@@ -186,8 +186,21 @@ struct ResolvedCollationProtoDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedCollationProtoDefaultTypeInternal _ResolvedCollationProto_default_instance_;
+constexpr ColumnRefProto::ColumnRefProto(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , table_ref_(nullptr){}
+struct ColumnRefProtoDefaultTypeInternal {
+  constexpr ColumnRefProtoDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ColumnRefProtoDefaultTypeInternal() {}
+  union {
+    ColumnRefProto _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ColumnRefProtoDefaultTypeInternal _ColumnRefProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fresolved_5fast_2fserialization_2eproto[13];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fresolved_5fast_2fserialization_2eproto[14];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fresolved_5fast_2fserialization_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fresolved_5fast_2fserialization_2eproto = nullptr;
 
@@ -322,8 +335,18 @@ const uint32_t TableStruct_zetasql_2fresolved_5fast_2fserialization_2eproto::off
   PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedCollationProto, child_list_),
   0,
   ~0u,
+  PROTOBUF_FIELD_OFFSET(::zetasql::ColumnRefProto, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ColumnRefProto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::zetasql::ColumnRefProto, table_ref_),
+  PROTOBUF_FIELD_OFFSET(::zetasql::ColumnRefProto, name_),
+  1,
+  0,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fresolved_5fast_2fserialization_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 11, -1, sizeof(::zetasql::ResolvedColumnProto)},
   { 16, 24, -1, sizeof(::zetasql::ValueWithTypeProto)},
   { 26, 35, -1, sizeof(::zetasql::TableRefProto)},
@@ -337,9 +360,10 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 102, 110, -1, sizeof(::zetasql::OneofDescriptorRefProto)},
   { 112, 119, -1, sizeof(::zetasql::ProcedureRefProto)},
   { 120, 128, -1, sizeof(::zetasql::ResolvedCollationProto)},
+  { 130, 138, -1, sizeof(::zetasql::ColumnRefProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fresolved_5fast_2fserialization_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedColumnProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ValueWithTypeProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_TableRefProto_default_instance_),
@@ -353,6 +377,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_OneofDescriptorRefProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ProcedureRefProto_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedCollationProto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ColumnRefProto_default_instance_),
 };
 
 const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fserialization_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -385,8 +410,10 @@ const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fserialization_2e
   "ureRefProto\022\014\n\004name\030\001 \001(\t\"e\n\026ResolvedCol"
   "lationProto\022\026\n\016collation_name\030\001 \001(\t\0223\n\nc"
   "hild_list\030\002 \003(\0132\037.zetasql.ResolvedCollat"
-  "ionProtoB,\n\022com.google.zetasqlB\024ZetaSQLS"
-  "erializationP\001"
+  "ionProto\"I\n\016ColumnRefProto\022)\n\ttable_ref\030"
+  "\001 \001(\0132\026.zetasql.TableRefProto\022\014\n\004name\030\002 "
+  "\001(\tB,\n\022com.google.zetasqlB\024ZetaSQLSerial"
+  "izationP\001"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_deps[4] = {
   &::descriptor_table_zetasql_2fpublic_2fannotation_2eproto,
@@ -396,9 +423,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto = {
-  false, false, 1214, descriptor_table_protodef_zetasql_2fresolved_5fast_2fserialization_2eproto, "zetasql/resolved_ast/serialization.proto", 
-  &descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_once, descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_deps, 4, 13,
-  schemas, file_default_instances, TableStruct_zetasql_2fresolved_5fast_2fserialization_2eproto::offsets,
+  false, false, 1289, descriptor_table_protodef_zetasql_2fresolved_5fast_2fserialization_2eproto, "zetasql/resolved_ast/serialization.proto", 
+  &descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_once, descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_deps, 4, 14,
+  schemas_zetasql_2fresolved_5fast_2fserialization_2eproto, file_default_instances_zetasql_2fresolved_5fast_2fserialization_2eproto, TableStruct_zetasql_2fresolved_5fast_2fserialization_2eproto::offsets,
   file_level_metadata_zetasql_2fresolved_5fast_2fserialization_2eproto, file_level_enum_descriptors_zetasql_2fresolved_5fast_2fserialization_2eproto, file_level_service_descriptors_zetasql_2fresolved_5fast_2fserialization_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_getter() {
@@ -3859,6 +3886,278 @@ void ResolvedCollationProto::InternalSwap(ResolvedCollationProto* other) {
       file_level_metadata_zetasql_2fresolved_5fast_2fserialization_2eproto[12]);
 }
 
+// ===================================================================
+
+class ColumnRefProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ColumnRefProto>()._has_bits_);
+  static const ::zetasql::TableRefProto& table_ref(const ColumnRefProto* msg);
+  static void set_has_table_ref(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_name(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+const ::zetasql::TableRefProto&
+ColumnRefProto::_Internal::table_ref(const ColumnRefProto* msg) {
+  return *msg->table_ref_;
+}
+ColumnRefProto::ColumnRefProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:zetasql.ColumnRefProto)
+}
+ColumnRefProto::ColumnRefProto(const ColumnRefProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_name()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  if (from._internal_has_table_ref()) {
+    table_ref_ = new ::zetasql::TableRefProto(*from.table_ref_);
+  } else {
+    table_ref_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.ColumnRefProto)
+}
+
+inline void ColumnRefProto::SharedCtor() {
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+table_ref_ = nullptr;
+}
+
+ColumnRefProto::~ColumnRefProto() {
+  // @@protoc_insertion_point(destructor:zetasql.ColumnRefProto)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void ColumnRefProto::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete table_ref_;
+}
+
+void ColumnRefProto::ArenaDtor(void* object) {
+  ColumnRefProto* _this = reinterpret_cast< ColumnRefProto* >(object);
+  (void)_this;
+}
+void ColumnRefProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void ColumnRefProto::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void ColumnRefProto::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.ColumnRefProto)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      name_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      GOOGLE_DCHECK(table_ref_ != nullptr);
+      table_ref_->Clear();
+    }
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ColumnRefProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional .zetasql.TableRefProto table_ref = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_table_ref(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional string name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ColumnRefProto.name");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ColumnRefProto::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.ColumnRefProto)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // optional .zetasql.TableRefProto table_ref = 1;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        1, _Internal::table_ref(this), target, stream);
+  }
+
+  // optional string name = 2;
+  if (cached_has_bits & 0x00000001u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "zetasql.ColumnRefProto.name");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.ColumnRefProto)
+  return target;
+}
+
+size_t ColumnRefProto::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.ColumnRefProto)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // optional string name = 2;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_name());
+    }
+
+    // optional .zetasql.TableRefProto table_ref = 1;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *table_ref_);
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ColumnRefProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ColumnRefProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ColumnRefProto::GetClassData() const { return &_class_data_; }
+
+void ColumnRefProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<ColumnRefProto *>(to)->MergeFrom(
+      static_cast<const ColumnRefProto &>(from));
+}
+
+
+void ColumnRefProto::MergeFrom(const ColumnRefProto& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ColumnRefProto)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _internal_set_name(from._internal_name());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _internal_mutable_table_ref()->::zetasql::TableRefProto::MergeFrom(from._internal_table_ref());
+    }
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ColumnRefProto::CopyFrom(const ColumnRefProto& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.ColumnRefProto)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ColumnRefProto::IsInitialized() const {
+  return true;
+}
+
+void ColumnRefProto::InternalSwap(ColumnRefProto* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, lhs_arena,
+      &other->name_, rhs_arena
+  );
+  swap(table_ref_, other->table_ref_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ColumnRefProto::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fserialization_2eproto_once,
+      file_level_metadata_zetasql_2fresolved_5fast_2fserialization_2eproto[13]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
@@ -3900,6 +4199,9 @@ template<> PROTOBUF_NOINLINE ::zetasql::ProcedureRefProto* Arena::CreateMaybeMes
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ResolvedCollationProto* Arena::CreateMaybeMessage< ::zetasql::ResolvedCollationProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedCollationProto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ColumnRefProto* Arena::CreateMaybeMessage< ::zetasql::ColumnRefProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ColumnRefProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

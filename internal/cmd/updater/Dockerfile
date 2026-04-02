@@ -3,7 +3,7 @@ FROM golang:1.24-bullseye
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 RUN echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-RUN apt-get update && apt-get install --no-install-recommends -y make g++ git python3 openjdk-11-jdk unzip
+RUN apt-get update && apt-get install --no-install-recommends -y make g++ clang git python3 openjdk-11-jdk unzip
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 100
 RUN GOBIN=/usr/local/bin go install github.com/bazelbuild/bazelisk@latest
 
@@ -11,10 +11,15 @@ COPY zetasql /zetasql
 
 WORKDIR /zetasql
 
+ENV CC=clang
+ENV CXX=clang++
+
 RUN bazelisk build \
   --jobs=2 \
   --local_ram_resources=8192 \
   --local_cpu_resources=4 \
+  --cxxopt=-std=c++17 \
+  --host_cxxopt=-std=c++17 \
   '//zetasql/public:sql_formatter' \
   '//zetasql/resolved_ast:serialization_cc_proto' \
   '//zetasql/resolved_ast:resolved_ast_enums_cc_proto' \
@@ -28,6 +33,7 @@ RUN bazelisk build \
   '//zetasql/proto:simple_catalog_cc_proto' \
   '//zetasql/proto:internal_error_location_cc_proto' \
   '//zetasql/proto:anon_output_with_report_cc_proto' \
+  '//zetasql/proto:placeholder_descriptor_cc_proto' \
   '//zetasql/parser:ast_enums_cc_proto' \
   '//zetasql/parser:parse_tree_cc_proto' \
   '//zetasql/public:parse_location_range_cc_proto' \

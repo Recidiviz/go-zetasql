@@ -50,11 +50,11 @@ const uint32_t TableStruct_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto
   0,
   ~0u,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, -1, sizeof(::zetasql::InternalErrorLocation)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_InternalErrorLocation_default_instance_),
 };
 
@@ -74,7 +74,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fp
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto = {
   false, false, 250, descriptor_table_protodef_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto, "zetasql/proto/internal_error_location.proto", 
   &descriptor_table_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto_once, descriptor_table_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto_deps, 1, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto::offsets,
+  schemas_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto, file_default_instances_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto, TableStruct_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto::offsets,
   file_level_metadata_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto, file_level_enum_descriptors_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto, file_level_service_descriptors_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fproto_2finternal_5ferror_5flocation_2eproto_getter() {

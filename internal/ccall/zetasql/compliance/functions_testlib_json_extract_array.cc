@@ -18,6 +18,7 @@
 #include <numeric>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "zetasql/compliance/functions_testlib.h"
 #include "zetasql/compliance/functions_testlib_common.h"
@@ -294,6 +295,12 @@ const std::vector<FunctionTestCall> GetJsonArrayTestsCommon(
         {function_name,
          {json2, String("$.y")},
          from_array({{"{\"a\":\"bar\"}", "{\"b\":\"baz\"}"}})});
+    // Special character in object key. Regression test for b/265948860
+    test_cases.push_back(
+        {function_name,
+         {from_json(R"({"foo": [{"b\"ar":"q\"w"}, {"b\"\"ar":"q\"w"}]})"),
+          String("$.foo")},
+         from_array({{R"({"b\"ar":"q\"w"})", R"({"b\"\"ar":"q\"w"})"}})});
     // Not scalar array - nested array
     test_cases.push_back({function_name,
                           {json5, String("$.a")},
@@ -373,6 +380,13 @@ const std::vector<FunctionTestCall> GetStringJsonArrayTests(
                      StringArray({"1", "null", "\"foo\""})});
   }
 
+  for (auto& test : tests) {
+    // All but one of these functions requires this feature.
+    if (test.function_name != "json_extract_array") {
+      test.params.AddRequiredFeature(FEATURE_JSON_ARRAY_FUNCTIONS);
+    }
+  }
+
   return tests;
 }
 
@@ -407,15 +421,6 @@ std::vector<FunctionTestCall> GetNativeJsonArrayTests(bool sql_standard_mode,
         scalar_test_cases ? "json_extract_string_array" : "json_extract_array";
   }
 
-  // Malformed JSON.
-  tests.push_back(
-      {function_name,
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString(R"({"a": )"), String("$")},
-           from_array(std::nullopt), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_ARRAY_FUNCTIONS,
-                                FEATURE_JSON_NO_VALIDATION})});
-
   const Value json_array_with_wide_numbers = from_json(
       R"([ 1111111111111111111111111, 123456789012345678901234567890 ])");
 
@@ -442,6 +447,14 @@ std::vector<FunctionTestCall> GetNativeJsonArrayTests(bool sql_standard_mode,
                      {array_with_null, String("$.a")},
                      from_array({{"1", "null", "\"foo\""}})});
   }
+
+  for (auto& test : tests) {
+    // All but one of these functions requires this feature.
+    if (test.function_name != "json_extract_array") {
+      test.params.AddRequiredFeature(FEATURE_JSON_ARRAY_FUNCTIONS);
+    }
+  }
+
   return tests;
 }
 

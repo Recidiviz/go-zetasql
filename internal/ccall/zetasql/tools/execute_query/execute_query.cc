@@ -19,8 +19,11 @@
 
 #include <iostream>
 #include <memory>
+#include <optional>
+#include <ostream>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/public/analyzer_options.h"
@@ -60,6 +63,14 @@ absl::Status InitializeExecuteQueryConfig(ExecuteQueryConfig& config) {
   config.mutable_analyzer_options()
       .mutable_language()
       ->EnableMaximumLanguageFeaturesForDevelopment();
+  config.mutable_analyzer_options()
+      .mutable_language()
+      ->SetSupportsAllStatementKinds();
+
+  // Used to pretty print error message in tandem with
+  // ExecuteQueryLoopPrintErrorHandler.
+  config.mutable_analyzer_options().set_error_message_mode(
+      ERROR_MESSAGE_WITH_PAYLOAD);
 
   ZETASQL_RETURN_IF_ERROR(SetDescriptorPoolFromFlags(config));
   ZETASQL_RETURN_IF_ERROR(SetToolModeFromFlags(config));
@@ -69,8 +80,10 @@ absl::Status InitializeExecuteQueryConfig(ExecuteQueryConfig& config) {
   ZETASQL_RETURN_IF_ERROR(SetEvaluatorOptionsFromFlags(config));
   ZETASQL_RETURN_IF_ERROR(AddTablesFromFlags(config));
 
-  config.mutable_catalog().AddZetaSQLFunctions(
-      config.analyzer_options().language());
+  ZETASQL_RETURN_IF_ERROR(config.mutable_catalog().AddZetaSQLFunctionsAndTypes(
+      config.analyzer_options().language()));
+  ZETASQL_RETURN_IF_ERROR(SetQueryParametersFromFlags(config));
+
   return absl::OkStatus();
 }
 
@@ -90,7 +103,8 @@ absl::Status RunTool(const std::vector<std::string>& args) {
 
   ExecuteQuerySingleInput prompt{sql};
 
-  return ExecuteQueryLoop(prompt, config, *writer);
+  return ExecuteQueryLoop(prompt, config, *writer,
+                          &ExecuteQueryLoopPrintErrorHandler);
 }
 }  // namespace
 }  // namespace zetasql
@@ -113,7 +127,7 @@ int main(int argc, char* argv[]) {
   if (const absl::Status status = zetasql::RunTool(args); status.ok()) {
     return 0;
   } else {
-    std::cout << "ERROR: " << status << std::endl;
+    std::cerr << status.message() << std::endl;
     return 1;
   }
 }

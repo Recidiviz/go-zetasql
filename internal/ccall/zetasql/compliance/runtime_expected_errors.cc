@@ -168,6 +168,9 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
   error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
       absl::StatusCode::kOutOfRange,
       "ARRAY_LAST cannot get the last element of an empty array"));
+  error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "Occurrence in STRPOS cannot be less than 1"));
 
   // REPLACE_FIELDS() specific
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
@@ -306,29 +309,33 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       absl::StatusCode::kOutOfRange, "Timezone is not allowed in (.+)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "TIMESTAMP_BUCKET doesn't support bucket width INTERVAL with nanoseconds "
-      "precision"));
+      "Bucket width INTERVAL with nanoseconds precision is not allowed"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "TIMESTAMP_BUCKET doesn't support bucket width INTERVAL with non-zero "
-      "MONTH part"));
+      "Zero bucket width INTERVAL is not allowed"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "TIMESTAMP_BUCKET doesn't support bucket width INTERVAL with mixed DAY "
-      "and MICROSECOND parts"));
+      "Negative bucket width INTERVAL is not allowed"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "TIMESTAMP_BUCKET doesn't support bucket width INTERVAL with mixed DAY "
-      "and NANOSECOND parts"));
+      "Bucket for .* is outside of (timestamp|datetime) range"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "TIMESTAMP_BUCKET doesn't support zero bucket width INTERVAL"));
+      "Bucket width INTERVAL with non-zero MONTH part is not allowed"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "TIMESTAMP_BUCKET doesn't support negative bucket width INTERVAL"));
+      "Bucket width INTERVAL with mixed DAY and MICROSECOND parts is not "
+      "allowed"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
-      "Bucket for .* is outside of timestamp range"));
+      "Bucket width INTERVAL with mixed DAY and NANOSECOND parts is not "
+      "allowed"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "Exactly one non-zero INTERVAL part in bucket width is required"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "Only MONTH and DAY parts are allowed in bucket width INTERVAL"));
 
   // Interval Errors
   //
@@ -422,14 +429,6 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       absl::StatusCode::kInvalidArgument,
       "ARRAY_IS_DISTINCT cannot be used on argument of type .* because the "
       "array's element type does not support grouping"));
-  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kInvalidArgument,
-      "ARRAY_INCLUDES(_ANY|_ALL)? cannot be used on argument of type .* "
-      "because the array's element type does not support equality"));
-  // TODO: Remove after randomized compat test is happy.
-  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kInvalidArgument,
-      "Argument 2 to ARRAY_INCLUDES must support equality"));
 
   // TODO: Remove after the bug is fixed.
   // Due to the above expected errors, rqg could generate invalid expressions.
@@ -455,7 +454,9 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
   // D3A weight overflow errors
   //
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kInvalidArgument, "Grid gounters overflowed.*"));
+      absl::StatusCode::kInvalidArgument, "Grid counters overflowed.*"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kInvalidArgument, "Invalid weight value.*"));
 
   // GEOGRAPHY related errors
   //
@@ -538,6 +539,10 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       "DISTINCT"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
+      "Collation conflict: \"(.+)\" vs. \"(.+)\"; in column (.+), item (.+) of "
+      "set operation scan"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kInvalidArgument,
       "Collation mismatch is found for output column (.+) of set operation: "
       "(.+) vs (.+)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
@@ -551,15 +556,25 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       "Collation (.+) is not supported on argument (.+) of aggregate function "
       "in a PIVOT clause"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kInvalidArgument,
+      absl::StatusCode::kUnimplemented,
       "Order by item ((.|\\n)+) with collation (.+) in function (.+) is not "
       "supported"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kInvalidArgument,
+      absl::StatusCode::kUnimplemented,
       "Analytic function (.+) with collation (.+) is not supported"));
+  // TODO Remove this exemption once we have figured out why it
+  //                   happens.
+  error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
+      absl::StatusCode::kInternal,
+      "group_boundary.end_tuple_id < static_cast<int>"));
 
-  // TODO PARSE_JSON sometimes is generated with invalid string
-  // inputs.
+  // LIKE with collation does not support '_' in the pattern.
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "LIKE pattern has '_' which is not allowed when its operands have "
+      "collation:(.+)"));
+
+  // TODO Remove this after code is updated to kOutOfRange
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
       "syntax error while parsing (value|array|object|object key|object "
@@ -583,6 +598,12 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
       "The provided JSON number: .+ cannot be converted to an integer"));
+  // TODO PARSE_JSON sometimes is generated with invalid string
+  // inputs.
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "syntax error while parsing (value|array|object|object key|object "
+      "separator)"));
 
   return std::make_unique<MatcherCollection<absl::Status>>(
       matcher_name, std::move(error_matchers));
@@ -635,19 +656,20 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeDMLExpectedErrorMatcher(
   error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
       absl::StatusCode::kNotFound, "Parent row is missing"));
 
-  // Aggregate values can overflow in large queries.
-  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kOutOfRange, "Aggregate values are limited to .*"));
-
   // TODO: Not yet implemented/supported.
   error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
       absl::StatusCode::kUnimplemented,
       "does not yet implement use_spheroid=true"));
 
+  // TODO Remove this after code is updated to kOutOfRange
+  error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
+      absl::StatusCode::kInvalidArgument,
+      "syntax error while parsing (value|array|object|object key|object "
+      "separator) - "));
   // TODO PARSE_JSON sometimes is generated with invalid string
   // inputs.
   error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
-      absl::StatusCode::kInvalidArgument,
+      absl::StatusCode::kOutOfRange,
       "syntax error while parsing (value|array|object|object key|object "
       "separator) - "));
 

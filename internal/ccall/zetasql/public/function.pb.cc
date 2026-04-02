@@ -30,7 +30,7 @@ struct FunctionEnumsDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FunctionEnumsDefaultTypeInternal _FunctionEnums_default_instance_;
 }  // namespace zetasql
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ffunction_2eproto[1];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[8];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[9];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto = nullptr;
 
 const uint32_t TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -41,17 +41,17 @@ const uint32_t TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets[] PROTOB
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas_zetasql_2fpublic_2ffunction_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::zetasql::FunctionEnums)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances_zetasql_2fpublic_2ffunction_2eproto[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FunctionEnums_default_instance_),
 };
 
 const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\035zetasql/public/function.proto\022\007zetasql"
-  "\"\237\005\n\rFunctionEnums\"\?\n\023ArgumentCardinalit"
+  "\"\227\006\n\rFunctionEnums\"\?\n\023ArgumentCardinalit"
   "y\022\014\n\010REQUIRED\020\000\022\014\n\010REPEATED\020\001\022\014\n\010OPTIONA"
   "L\020\002\"@\n\025ProcedureArgumentMode\022\013\n\007NOT_SET\020"
   "\000\022\006\n\002IN\020\001\022\007\n\003OUT\020\002\022\t\n\005INOUT\020\003\"S\n\022WindowO"
@@ -67,7 +67,10 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTO
   "WITH_APPENDED_COLUMNS\020\007\"\200\001\n\025ArgumentColl"
   "ationMode\022\020\n\014AFFECTS_NONE\020\000\022\025\n\021AFFECTS_O"
   "PERATION\020\001\022\027\n\023AFFECTS_PROPAGATION\020\002\022%\n!A"
-  "FFECTS_OPERATION_AND_PROPAGATION\020\003*\360\003\n\025S"
+  "FFECTS_OPERATION_AND_PROPAGATION\020\003\"v\n\021Na"
+  "medArgumentKind\022#\n\037NAMED_ARGUMENT_KIND_U"
+  "NSPECIFIED\020\000\022\023\n\017POSITIONAL_ONLY\020\001\022\027\n\023POS"
+  "ITIONAL_OR_NAMED\020\002\022\016\n\nNAMED_ONLY\020\003*\210\004\n\025S"
   "ignatureArgumentKind\022\022\n\016ARG_TYPE_FIXED\020\000"
   "\022\022\n\016ARG_TYPE_ANY_1\020\001\022\022\n\016ARG_TYPE_ANY_2\020\002"
   "\022\030\n\024ARG_ARRAY_TYPE_ANY_1\020\003\022\030\n\024ARG_ARRAY_"
@@ -78,16 +81,16 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTO
   "_ARBITRARY\020\010\022\025\n\021ARG_TYPE_RELATION\020\t\022\021\n\rA"
   "RG_TYPE_VOID\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027\n\023AR"
   "G_TYPE_CONNECTION\020\014\022\027\n\023ARG_TYPE_DESCRIPT"
-  "OR\020\r\022\023\n\017ARG_TYPE_LAMBDA\020\021\022B\n5__Signature"
-  "ArgumentKind__switch_must_have_a_default"
-  "__\020\377\377\377\377\377\377\377\377\377\001B&\n\022com.google.zetasqlB\020Zet"
-  "aSQLFunctions"
+  "OR\020\r\022\023\n\017ARG_TYPE_LAMBDA\020\021\022\026\n\022ARG_RANGE_T"
+  "YPE_ANY\020\022\022B\n5__SignatureArgumentKind__sw"
+  "itch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001B&\n"
+  "\022com.google.zetasqlB\020ZetaSQLFunctions"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunction_2eproto = {
-  false, false, 1253, descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto, "zetasql/public/function.proto", 
+  false, false, 1397, descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto, "zetasql/public/function.proto", 
   &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets,
+  schemas_zetasql_2fpublic_2ffunction_2eproto, file_default_instances_zetasql_2fpublic_2ffunction_2eproto, TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets,
   file_level_metadata_zetasql_2fpublic_2ffunction_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto,
 };
 PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunction_2eproto_getter() {
@@ -266,9 +269,34 @@ constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::ArgumentCollationMo
 constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::ArgumentCollationMode_MAX;
 constexpr int FunctionEnums::ArgumentCollationMode_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignatureArgumentKind_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_NamedArgumentKind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[7];
+}
+bool FunctionEnums_NamedArgumentKind_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NAMED_ARGUMENT_KIND_UNSPECIFIED;
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums::POSITIONAL_ONLY;
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums::POSITIONAL_OR_NAMED;
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NAMED_ONLY;
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NamedArgumentKind_MIN;
+constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NamedArgumentKind_MAX;
+constexpr int FunctionEnums::NamedArgumentKind_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignatureArgumentKind_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[8];
 }
 bool SignatureArgumentKind_IsValid(int value) {
   switch (value) {
@@ -291,6 +319,7 @@ bool SignatureArgumentKind_IsValid(int value) {
     case 15:
     case 16:
     case 17:
+    case 18:
       return true;
     default:
       return false;

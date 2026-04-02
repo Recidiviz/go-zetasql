@@ -125,7 +125,8 @@ class TokenizedStmt : public FilePart {
  private:
   // Groups tokens into chunks and chunks into block tree.
   absl::Status BuildChunksAndBlocks(
-      const ParseLocationTranslator& location_translator);
+      const ParseLocationTranslator& location_translator,
+      const FormatterOptions& otions);
 
   std::vector<Token> tokens_;
   TokensView tokens_view_;
@@ -265,13 +266,6 @@ class ParsedFileVisitor {
 absl::StatusOr<std::vector<FormatterRange>> ValidateAndSortByteRanges(
     const std::vector<FormatterRange>& byte_ranges, absl::string_view sql,
     const FormatterOptions& options);
-
-// Converts the given `line_ranges` into sorted byte ranges and makes sure that:
-// * each range is not empty and within `sql`;
-// * there are no overlapping ranges.
-absl::StatusOr<std::vector<FormatterRange>> ConvertLineRangesToSortedByteRanges(
-    const std::vector<FormatterRange>& line_ranges, absl::string_view sql,
-    const ParseLocationTranslator& location_translator);
 
 }  // namespace zetasql::formatter::internal
 

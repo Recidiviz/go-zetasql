@@ -16,7 +16,10 @@
 
 #include "zetasql/public/non_sql_function.h"
 
+#include <memory>
+#include <optional>
 #include <string>
+#include <vector>
 
 #include "zetasql/public/error_helpers.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
@@ -40,8 +43,7 @@ NonSqlFunction::NonSqlFunction(
                function_options),
       resolved_create_function_statement_(resolved_create_function_statement),
       argument_names_(argument_names),
-      parse_resume_location_(parse_resume_location),
-      aggregate_expression_list_(aggregate_expression_list) {}
+      parse_resume_location_(parse_resume_location) {}
 
 absl::Status NonSqlFunction::Create(
     const std::string& name, Mode mode,

@@ -50,10 +50,11 @@ static int32_t GetEnumValue(const ValueContent& value) {
 
 EnumType::EnumType(const TypeFactory* factory,
                    const google::protobuf::EnumDescriptor* enum_descr,
-                   const internal::CatalogName* catalog_name)
+                   const internal::CatalogName* catalog_name, bool is_opaque)
     : Type(factory, TYPE_ENUM),
       enum_descriptor_(enum_descr),
-      catalog_name_(catalog_name) {
+      catalog_name_(catalog_name),
+      is_opaque_(is_opaque) {
   ZETASQL_CHECK(enum_descriptor_ != nullptr);
 }
 
@@ -72,11 +73,14 @@ void EnumType::DebugStringImpl(bool details, TypeOrStringVector* stack,
     absl::StrAppend(debug_string, *catalog_name_->path_string, ".");
   }
 
-  absl::StrAppend(debug_string, "ENUM<", enum_descriptor_->full_name());
+  absl::StrAppend(debug_string, "ENUM<", RawEnumName());
   if (details) {
     absl::StrAppend(debug_string,
                     ", file name: ", enum_descriptor_->file()->name(), ", <",
                     enum_descriptor_->DebugString(), ">");
+    if (is_opaque_) {
+      absl::StrAppend(debug_string, ", opaque: ", is_opaque_);
+    }
   }
   absl::StrAppend(debug_string, ">");
 }
@@ -107,8 +111,21 @@ absl::Status EnumType::SerializeToProtoAndDistinctFileDescriptorsImpl(
                  google::protobuf::RepeatedFieldBackInserter(
                      enum_type_proto->mutable_catalog_name_path()));
   }
-
+  if (is_opaque_) {
+    enum_type_proto->set_is_opaque(true);
+  }
   return absl::OkStatus();
+}
+
+absl::string_view EnumType::RawEnumName() const {
+  if (is_opaque_) {
+    const OpaqueEnumTypeOptions& options =
+        enum_descriptor()->options().GetExtension(opaque_enum_type_options);
+    if (!options.sql_opaque_enum_name().empty()) {
+      return options.sql_opaque_enum_name();
+    }
+  }
+  return enum_descriptor()->full_name();
 }
 
 std::string EnumType::TypeName() const {
@@ -116,15 +133,15 @@ std::string EnumType::TypeName() const {
   if (catalog_name_ != nullptr) {
     absl::StrAppend(&catalog_name_path, *catalog_name_->path_string, ".");
   }
-
-  return absl::StrCat(catalog_name_path,
-                      ToIdentifierLiteral(enum_descriptor_->full_name()));
+  return absl::StrCat(catalog_name_path, ToIdentifierLiteral(RawEnumName()));
 }
 
 std::string EnumType::ShortTypeName(ProductMode mode_unused) const {
   // Special case for built-in zetasql enums. Since ShortTypeName is used in
   // the user facing error messages, we need to make these enum names look
   // as special language elements.
+  // These represent a legacy pseudo-opaque naming scheme that has been
+  // used in some cases.
   if (enum_descriptor()->full_name() ==
       "zetasql.functions.DateTimestampPart") {
     return "DATE_TIME_PART";
@@ -138,7 +155,7 @@ std::string EnumType::ShortTypeName(ProductMode mode_unused) const {
     absl::StrAppend(&catalog_name_path, *catalog_name_->path_string, ".");
   }
 
-  absl::StrAppend(&catalog_name_path, enum_descriptor_->full_name());
+  absl::StrAppend(&catalog_name_path, RawEnumName());
 
   return catalog_name_path;
 }
@@ -153,6 +170,10 @@ bool EnumType::FindName(int number, const std::string** name) const {
       enum_descriptor_->FindValueByNumber(number);
   if (value_descr == nullptr) {
     return false;
+  } else if (is_opaque_ && value_descr->options()
+                               .GetExtension(opaque_enum_value_options)
+                               .invalid_enum_value()) {
+    return false;
   }
   *name = &value_descr->name();
   return true;
@@ -166,10 +187,25 @@ absl::Span<const std::string> EnumType::CatalogNamePath() const {
   }
 }
 
+bool EnumType::IsValidEnumValue(
+    const google::protobuf::EnumValueDescriptor* value_descriptor) const {
+  if (value_descriptor == nullptr) {
+    return false;
+  }
+  if (IsOpaque()) {
+    // Opaque enum may mark some values as invalid, even though the exist
+    // in the proto enum.
+    return !value_descriptor->options()
+                .GetExtension(opaque_enum_value_options)
+                .invalid_enum_value();
+  }
+  return true;
+}
+
 bool EnumType::FindNumber(const std::string& name, int* number) const {
   const google::protobuf::EnumValueDescriptor* value_descr =
       enum_descriptor_->FindValueByName(name);
-  if (value_descr == nullptr) {
+  if (!IsValidEnumValue(value_descr)) {
     *number = std::numeric_limits<int32_t>::min();
     return false;
   }
@@ -186,38 +222,44 @@ bool EnumType::EqualsImpl(const EnumType* const type1,
   const bool catalogs_are_equal =
       catalog_name1 != nullptr && catalog_name2 != nullptr &&
       *catalog_name1->path_string == *catalog_name2->path_string;
-
+  const bool opaque_are_equal = type1->IsOpaque() == type2->IsOpaque();
   if (type1->enum_descriptor() == type2->enum_descriptor() &&
-      (catalogs_are_empty || catalogs_are_equal)) {
+      opaque_are_equal && (catalogs_are_empty || catalogs_are_equal)) {
     return true;
   }
 
-  if (equivalent &&
+  if (equivalent && opaque_are_equal &&
       type1->enum_descriptor()->full_name() ==
-      type2->enum_descriptor()->full_name()) {
+          type2->enum_descriptor()->full_name()) {
     return true;
   }
   return false;
 }
 
 bool EnumType::IsSupportedType(const LanguageOptions& language_options) const {
-  // Enums are generally unsupported in EXTERNAL mode, except for builtin enums
-  // such as the DateTimestampPart enum that is used in many of the date/time
-  // related functions.
-  //
+  if (Equivalent(types::DifferentialPrivacyReportFormatEnumType())) {
+    return language_options.LanguageFeatureEnabled(
+        FEATURE_DIFFERENTIAL_PRIVACY_REPORT_FUNCTIONS);
+  }
+
+  if (language_options.LanguageFeatureEnabled(FEATURE_PROTO_BASE)) {
+    return true;
+  }
+
   if (language_options.product_mode() == ProductMode::PRODUCT_EXTERNAL &&
       !Equivalent(types::DatePartEnumType()) &&
       !Equivalent(types::NormalizeModeEnumType()) &&
       !Equivalent(types::RoundingModeEnumType())) {
     return false;
   }
+
   return true;
 }
 
 absl::HashState EnumType::HashTypeParameter(absl::HashState state) const {
   // Enum types are equivalent if they have the same full name, so hash it.
   return absl::HashState::combine(std::move(state),
-                                  enum_descriptor()->full_name());
+                                  enum_descriptor()->full_name(), is_opaque_);
 }
 
 absl::HashState EnumType::HashValueContent(const ValueContent& value,
@@ -240,9 +282,14 @@ std::string EnumType::FormatValueContent(
     const ValueContent& value, const FormatValueContentOptions& options) const {
   const std::string* enum_name = nullptr;
   int32_t enum_value = GetEnumValue(value);
-  ZETASQL_CHECK(FindName(enum_value, &enum_name))
-      << "Value " << enum_value << " not in "
-      << enum_descriptor()->DebugString();
+  if (!FindName(enum_value, &enum_name)) {
+    if (options.mode == FormatValueContentOptions::Mode::kDebug ||
+        options.as_literal()) {
+      return absl::StrCat(enum_value);
+    }
+    return internal::GetCastExpressionString(absl::StrCat(enum_value), this,
+                                             options.product_mode);
+  }
 
   if (options.mode == FormatValueContentOptions::Mode::kDebug) {
     return options.verbose ? absl::StrCat(*enum_name, ":", enum_value)
@@ -267,8 +314,10 @@ absl::Status EnumType::DeserializeValueContent(const ValueProto& value_proto,
     return TypeMismatchError(value_proto);
   }
 
-  if (enum_descriptor()->FindValueByNumber(value_proto.enum_value()) ==
-      nullptr) {
+  const google::protobuf::EnumValueDescriptor* value_descriptor =
+      enum_descriptor()->FindValueByNumber(value_proto.enum_value());
+
+  if (!IsValidEnumValue(value_descriptor)) {
     return absl::Status(absl::StatusCode::kOutOfRange,
                         absl::StrCat("Invalid value for ", DebugString(), ": ",
                                      value_proto.enum_value()));

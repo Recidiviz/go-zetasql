@@ -19,6 +19,7 @@
 #include <ctype.h>
 
 #include <algorithm>
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
@@ -27,22 +28,15 @@
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/builtin_function_internal.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/cycle_detector.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/value.h"
-#include "zetasql/base/case.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
 
@@ -96,10 +90,20 @@ const std::string FunctionSignatureIdToName(FunctionSignatureId id) {
 }
 
 using NameToFunctionMap = std::map<std::string, std::unique_ptr<Function>>;
+using NameToTypeMap = absl::flat_hash_map<std::string, const Type*>;
 
 void GetZetaSQLFunctions(TypeFactory* type_factory,
                            const ZetaSQLBuiltinFunctionOptions& options,
                            NameToFunctionMap* functions) {
+  NameToTypeMap types_ignored;
+  absl::Status status = GetZetaSQLFunctionsAndTypes(
+      type_factory, options, functions, &types_ignored);
+  ZETASQL_DCHECK_OK(status);
+}
+
+absl::Status GetZetaSQLFunctionsAndTypes(
+    TypeFactory* type_factory, const ZetaSQLBuiltinFunctionOptions& options,
+    NameToFunctionMap* functions, NameToTypeMap* types) {
   GetDatetimeFunctions(type_factory, options, functions);
   GetIntervalFunctions(type_factory, options, functions);
   GetArithmeticFunctions(type_factory, options, functions);
@@ -111,10 +115,14 @@ void GetZetaSQLFunctions(TypeFactory* type_factory,
   GetLogicFunctions(type_factory, options, functions);
   GetStringFunctions(type_factory, options, functions);
   GetRegexFunctions(type_factory, options, functions);
+  GetErrorHandlingFunctions(type_factory, options, functions);
+  GetConditionalFunctions(type_factory, options, functions);
   GetMiscellaneousFunctions(type_factory, options, functions);
+  GetArrayMiscFunctions(type_factory, options, functions);
+  GetArrayAggregationFunctions(type_factory, options, functions);
   GetSubscriptFunctions(type_factory, options, functions);
   GetJSONFunctions(type_factory, options, functions);
-  GetMathFunctions(type_factory, options, functions);
+  ZETASQL_RETURN_IF_ERROR(GetMathFunctions(type_factory, options, functions, types));
   GetHllCountFunctions(type_factory, options, functions);
   GetD3ACountFunctions(type_factory, options, functions);
   GetKllQuantilesFunctions(type_factory, options, functions);
@@ -134,8 +142,25 @@ void GetZetaSQLFunctions(TypeFactory* type_factory,
   if (options.language_options.LanguageFeatureEnabled(FEATURE_ANONYMIZATION)) {
     GetAnonFunctions(type_factory, options, functions);
   }
+  if (options.language_options.LanguageFeatureEnabled(
+          FEATURE_DIFFERENTIAL_PRIVACY)) {
+    GetDifferentialPrivacyFunctions(type_factory, options, functions, types);
+  }
   GetTypeOfFunction(type_factory, options, functions);
   GetFilterFieldsFunction(type_factory, options, functions);
+  if (options.language_options.LanguageFeatureEnabled(FEATURE_RANGE_TYPE)) {
+    GetRangeFunctions(type_factory, options, functions);
+  }
+  GetArraySlicingFunctions(type_factory, options, functions);
+  GetArrayFilteringFunctions(type_factory, options, functions);
+  GetArrayTransformFunctions(type_factory, options, functions);
+  GetArrayIncludesFunctions(type_factory, options, functions);
+  if (options.language_options.LanguageFeatureEnabled(
+          FEATURE_V_1_4_ARRAY_FIND_FUNCTIONS)) {
+    ZETASQL_RETURN_IF_ERROR(
+        GetArrayFindFunctions(type_factory, options, functions, types));
+  }
+  return absl::OkStatus();
 }
 
 bool FunctionMayHaveUnintendedArgumentCoercion(const Function* function) {

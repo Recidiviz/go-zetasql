@@ -48,7 +48,6 @@
 #include "absl/base/optimization.h"
 #include "absl/synchronization/internal/kernel_timeout.h"
 
-
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace synchronization_internal {
@@ -67,11 +66,7 @@ static void MaybeBecomeIdle() {
 
 #if ABSL_WAITER_MODE == ABSL_WAITER_MODE_FUTEX
 
-Waiter::Waiter() {
-  futex_.store(0, std::memory_order_relaxed);
-}
-
-Waiter::~Waiter() = default;
+Waiter::Waiter() : futex_(0) {}
 
 bool Waiter::Wait(KernelTimeout t) {
   // Loop until we can atomically decrement futex from a positive
@@ -161,18 +156,6 @@ Waiter::Waiter() {
   wakeup_count_ = 0;
 }
 
-Waiter::~Waiter() {
-  const int err = pthread_mutex_destroy(&mu_);
-  if (err != 0) {
-    ABSL_RAW_LOG(FATAL, "pthread_mutex_destroy failed: %d", err);
-  }
-
-  const int err2 = pthread_cond_destroy(&cv_);
-  if (err2 != 0) {
-    ABSL_RAW_LOG(FATAL, "pthread_cond_destroy failed: %d", err2);
-  }
-}
-
 bool Waiter::Wait(KernelTimeout t) {
   struct timespec abs_timeout;
   if (t.has_timeout()) {
@@ -238,12 +221,6 @@ Waiter::Waiter() {
     ABSL_RAW_LOG(FATAL, "sem_init failed with errno %d\n", errno);
   }
   wakeups_.store(0, std::memory_order_relaxed);
-}
-
-Waiter::~Waiter() {
-  if (sem_destroy(&sem_) != 0) {
-    ABSL_RAW_LOG(FATAL, "sem_destroy failed with errno %d\n", errno);
-  }
 }
 
 bool Waiter::Wait(KernelTimeout t) {
@@ -362,11 +339,6 @@ Waiter::Waiter() {
   waiter_count_ = 0;
   wakeup_count_ = 0;
 }
-
-// SRW locks and condition variables do not need to be explicitly destroyed.
-// https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initializesrwlock
-// https://stackoverflow.com/questions/28975958/why-does-windows-have-no-deleteconditionvariable-function-to-go-together-with
-Waiter::~Waiter() = default;
 
 bool Waiter::Wait(KernelTimeout t) {
   SRWLOCK *mu = WinHelper::GetLock(this);

@@ -96,13 +96,6 @@ inline bool IsValidDivisor(double d) {
   return d != 0.0;
 }
 
-// Can't use std::round() because it is only available in C++11.
-// Note that we ignore the possibility of floating-point over/underflow.
-template <typename Double>
-inline double Round(Double d) {
-  return d < 0 ? std::ceil(d - 0.5) : std::floor(d + 0.5);
-}
-
 // *sec may be positive or negative.  *ticks must be in the range
 // -kTicksPerSecond < *ticks < kTicksPerSecond.  If *ticks is negative it
 // will be normalized to a positive value by adjusting *sec accordingly.
@@ -260,7 +253,7 @@ inline Duration ScaleDouble(Duration d, double r) {
   double lo_frac = std::modf(lo_doub, &lo_int);
 
   // Rolls lo into hi if necessary.
-  int64_t lo64 = Round(lo_frac * kTicksPerSecond);
+  int64_t lo64 = std::round(lo_frac * kTicksPerSecond);
 
   Duration ans;
   if (!SafeAddRepHi(hi_int, lo_int, &ans)) return ans;
@@ -617,7 +610,7 @@ timespec ToTimespec(Duration d) {
         rep_lo -= kTicksPerSecond;
       }
     }
-    ts.tv_sec = rep_hi;
+    ts.tv_sec = static_cast<decltype(ts.tv_sec)>(rep_hi);
     if (ts.tv_sec == rep_hi) {  // no time_t narrowing
       ts.tv_nsec = rep_lo / kTicksPerNanosecond;
       return ts;
@@ -645,7 +638,7 @@ timeval ToTimeval(Duration d) {
       ts.tv_nsec -= 1000 * 1000 * 1000;
     }
   }
-  tv.tv_sec = ts.tv_sec;
+  tv.tv_sec = static_cast<decltype(tv.tv_sec)>(ts.tv_sec);
   if (tv.tv_sec != ts.tv_sec) {  // narrowing
     if (ts.tv_sec < 0) {
       tv.tv_sec = std::numeric_limits<decltype(tv.tv_sec)>::min();
@@ -691,7 +684,7 @@ namespace {
 char* Format64(char* ep, int width, int64_t v) {
   do {
     --width;
-    *--ep = '0' + (v % 10);  // contiguous digits
+    *--ep = static_cast<char>('0' + (v % 10));  // contiguous digits
   } while (v /= 10);
   while (--width >= 0) *--ep = '0';  // zero pad
   return ep;
@@ -728,7 +721,7 @@ void AppendNumberUnit(std::string* out, int64_t n, DisplayUnit unit) {
   char* const ep = buf + sizeof(buf);
   char* bp = Format64(ep, 0, n);
   if (*bp != '0' || bp + 1 != ep) {
-    out->append(bp, ep - bp);
+    out->append(bp, static_cast<size_t>(ep - bp));
     out->append(unit.abbr.data(), unit.abbr.size());
   }
 }
@@ -741,16 +734,16 @@ void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
   char buf[kBufferSize];  // also large enough to hold integer part
   char* ep = buf + sizeof(buf);
   double d = 0;
-  int64_t frac_part = Round(std::modf(n, &d) * unit.pow10);
+  int64_t frac_part = std::round(std::modf(n, &d) * unit.pow10);
   int64_t int_part = d;
   if (int_part != 0 || frac_part != 0) {
     char* bp = Format64(ep, 0, int_part);  // always < 1000
-    out->append(bp, ep - bp);
+    out->append(bp, static_cast<size_t>(ep - bp));
     if (frac_part != 0) {
       out->push_back('.');
       bp = Format64(ep, prec, frac_part);
       while (ep[-1] == '0') --ep;
-      out->append(bp, ep - bp);
+      out->append(bp, static_cast<size_t>(ep - bp));
     }
     out->append(unit.abbr.data(), unit.abbr.size());
   }
@@ -766,13 +759,14 @@ void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
 //   is non-zero.
 // Unlike Go, we format the zero duration as 0, with no unit.
 std::string FormatDuration(Duration d) {
-  const Duration min_duration = Seconds(kint64min);
-  if (d == min_duration) {
+  constexpr Duration kMinDuration = Seconds(kint64min);
+  std::string s;
+  if (d == kMinDuration) {
     // Avoid needing to negate kint64min by directly returning what the
     // following code should produce in that case.
-    return "-2562047788015215h30m8s";
+    s = "-2562047788015215h30m8s";
+    return s;
   }
-  std::string s;
   if (d < ZeroDuration()) {
     s.append("-");
     d = -d;
@@ -840,7 +834,7 @@ bool ConsumeDurationNumber(const char** dpp, const char* ep, int64_t* int_part,
 // in "*unit".  The given string pointer is modified to point to the first
 // unconsumed char.
 bool ConsumeDurationUnit(const char** start, const char* end, Duration* unit) {
-  size_t size = end - *start;
+  size_t size = static_cast<size_t>(end - *start);
   switch (size) {
     case 0:
       return false;

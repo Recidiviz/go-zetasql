@@ -27,6 +27,7 @@
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "absl/memory/memory.h"
 #include "absl/status/statusor.h"
+#include "zetasql/base/status_builder.h"
 #include "zetasql/base/status_macros.h"
 
 namespace zetasql {
@@ -139,7 +140,7 @@ using ColumnReplacementMap =
     absl::flat_hash_map</*column_in_input=*/ResolvedColumn,
                         /*column_in_output=*/ResolvedColumn>;
 
-// Prforms a deep copy of 'input_tree' replacing all of the ResolvedColumns in
+// Performs a deep copy of 'input_tree' replacing all of the ResolvedColumns in
 // that tree either with ResolvedColumns as specified by 'column_map' or by new
 // columns allocated from 'column_factory' for any column not found in
 // 'column_map'.
@@ -165,12 +166,68 @@ CopyResolvedASTAndRemapColumnsImpl(const ResolvedNode& input_tree,
                                    ColumnFactory& column_factory,
                                    ColumnReplacementMap& column_map);
 
+// Helper function used when deep copying a plan. Takes a 'scan' and
+// replaces all of its ResolvedColumns, including in child scans recursively.
+// Some columns produced by the 'scan' are remapped to new columns based on
+// 'target_column_indices' and 'replacement_columns_to_use'. All other columns
+// in the 'scan' and its descendants are replaced by new columns allocated by
+// 'column_factory'.
+//
+// 'target_column_indices' corresponds 1:1 with 'replacement_columns_to_use',
+// and maps entries in the 'scan' 'column_list()' to the appropriate
+// replacement columns.
+//
+// Columns in 'replacement_columns_to_use' must have been allocated from
+// 'column_factory'.
+//
+// Ultimately, the copied/returned plan will have all column references
+// allocated by 'column_factory', either through the explicit remapping or via
+// new allocations.
+absl::StatusOr<std::unique_ptr<ResolvedScan>> ReplaceScanColumns(
+    ColumnFactory& column_factory, const ResolvedScan& scan,
+    const std::vector<int>& target_column_indices,
+    const std::vector<ResolvedColumn>& replacement_columns_to_use);
+
+// Creates a new set of replacement columns to the given list.
+// Useful when replacing columns for a ResolvedExecuteAsRole node.
+std::vector<ResolvedColumn> CreateReplacementColumns(
+    ColumnFactory& column_factory,
+    const std::vector<ResolvedColumn>& column_list);
+
+// Helper for rewriters to check whether a needed built-in function is part
+// of the catalog. This is useful to generate good error messages when a
+// needed function is not found.
+absl::StatusOr<bool> CatalogSupportsBuiltinFunction(
+    absl::string_view function_name, const AnalyzerOptions& analyzer_options,
+    Catalog& catalog);
+
+// Helper to check that engines support the required IFERROR and NULLIFERROR
+// functions that are used to implement SAFE mode in rewriters. If the required
+// built-in function signatures are located, this returns ok. If they are not
+// found, or found but not built-in, then this returns kUnimplemented. If the
+// catalog returns any error code other than kNotFound that error is returned to
+// the caller.
+absl::Status CheckCatalogSupportsSafeMode(
+    absl::string_view function_name, const AnalyzerOptions& analyzer_options,
+    Catalog& catalog);
+
 // Contains helper functions that reduce boilerplate in rewriting rules logic
 // related to constructing new ResolvedFunctionCall instances.
 class FunctionCallBuilder {
  public:
   FunctionCallBuilder(const AnalyzerOptions& analyzer_options, Catalog& catalog)
       : analyzer_options_(analyzer_options), catalog_(catalog) {}
+
+  // Helper to check that engines support the required IFERROR and NULLIFERROR
+  // functions that are used to implement SAFE mode in rewriters. If the
+  // required built-in function signatures are located, this returns ok. If they
+  // are not found, or found but not built-in, then this returns kUnimplemented.
+  // If the catalog returns any error code other than kNotFound that error is
+  // returned to the caller.
+  absl::Status CheckCatalogSupportsSafeMode(absl::string_view fn_name) {
+    return zetasql::CheckCatalogSupportsSafeMode(fn_name, analyzer_options_,
+                                                   catalog_);
+  }
 
   // Construct ResolvedFunctionCall for IF(<condition>, <then_case>,
   // <else_case>)
@@ -257,7 +314,58 @@ class FunctionCallBuilder {
   absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Not(
       std::unique_ptr<const ResolvedExpr> expression);
 
+  // Construct a ResolvedFunctionCall for <left_expr> = <right_expr>.
+  //
+  // Requires: <left_expr> and <right_expr> must return equal types AND
+  //           the type supports equality.
+  //
+  // The signature for the built-in function "$equal" must be available in
+  // <catalog> or an error status is returned.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Equal(
+      std::unique_ptr<const ResolvedExpr> left_expr,
+      std::unique_ptr<const ResolvedExpr> right_expr);
+
+  // Construct a ResolvedFunctionCall for
+  //  expressions[0] AND expressions[1] AND ... AND expressions[N-1]
+  // where N is the number of expressions.
+  //
+  // Requires: N >= 2 and all expressions return BOOL.
+  //
+  // The signature for the built-in function "$and" must be available in
+  // <catalog> or an error status is returned.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> And(
+      std::vector<std::unique_ptr<const ResolvedExpr>> expressions);
+
+  // Construct a ResolvedFunctionCall for
+  //  expressions[0] OR expressions[1] OR ... OR expressions[N-1]
+  // where N is the number of expressions.
+  //
+  // Requires: N >= 2 and all expressions return BOOL.
+  //
+  // The signature for the built-in function "$or" must be available in
+  // <catalog> or an error status is returned.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Or(
+      std::vector<std::unique_ptr<const ResolvedExpr>> expressions);
+
  private:
+  // Construct a ResolvedFunctionCall for
+  //  expressions[0] OP expressions[1] OP ... OP expressions[N-1]
+  // where N is the number of expressions.
+  //
+  // Requires: N >= 2 AND all expressions return BOOL AND
+  //           the nary logic function returns BOOL.
+  //
+  // The signature for the built-in function `op_catalog_name` must be available
+  // in `catalog` or an error status is returned.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> NaryLogic(
+      absl::string_view op_catalog_name, FunctionSignatureId op_function_id,
+      std::vector<std::unique_ptr<const ResolvedExpr>> expressions);
+
+  // Helper that controls the error message when built-in functions are not
+  // found in the catalog.
+  absl::Status GetBuiltinFunctionFromCatalog(absl::string_view function_name,
+                                             const Function** fn_out);
+
   const AnalyzerOptions& analyzer_options_;
   Catalog& catalog_;
 };
@@ -310,6 +418,12 @@ class LikeAnyAllSubqueryScanBuilder {
 
 bool IsBuiltInFunctionIdEq(const ResolvedFunctionCall* function_call,
                            FunctionSignatureId function_signature_id);
+
+// Generate an Unimplemented error message - if possible, attach a location.
+// Note, Rewriters uniquely need this ability, the resolver generally
+// has access to parser ASTNode objects, which more reliably have a
+// location.
+zetasql_base::StatusBuilder MakeUnimplementedErrorAtNode(const ResolvedNode* node);
 
 }  // namespace zetasql
 

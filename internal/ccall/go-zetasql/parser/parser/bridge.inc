@@ -445,8 +445,8 @@ void GO_EXPORT(ASTSelect_hint)(void * arg0,void ** arg1)
 
 void GO_EXPORT(ASTSelect_anonymization_options)(void * arg0,void ** arg1)
 {
-  zetasql::ASTSelect *select = (zetasql::ASTSelect *)arg0;
-  *arg1 = (void *)select->anonymization_options();
+  (void)arg0;
+  *arg1 = nullptr;
 }
 
 void GO_EXPORT(ASTSelect_select_as)(void * arg0,void ** arg1)
@@ -833,13 +833,23 @@ void GO_EXPORT(ASTOnClause_expression)(void * arg0,void ** arg1){
   *arg1 = (void *)node->expression();
 }
 
+void GO_EXPORT(ASTAliasedQuery_alias)(void * arg0,void ** arg1){
+  zetasql::ASTAliasedQuery *node = (zetasql::ASTAliasedQuery *)arg0;
+  *arg1 = (void *)node->alias();
+}
+
+void GO_EXPORT(ASTAliasedQuery_query)(void * arg0,void ** arg1){
+  zetasql::ASTAliasedQuery *node = (zetasql::ASTAliasedQuery *)arg0;
+  *arg1 = (void *)node->query();
+}
+
 void GO_EXPORT(ASTWithClauseEntry_alias)(void * arg0,void ** arg1){
-  zetasql::ASTWithClauseEntry *node = (zetasql::ASTWithClauseEntry *)arg0;
+  zetasql::ASTAliasedQuery *node = (zetasql::ASTAliasedQuery *)arg0;
   *arg1 = (void *)node->alias();
 }
 
 void GO_EXPORT(ASTWithClauseEntry_query)(void * arg0,void ** arg1){
-  zetasql::ASTWithClauseEntry *node = (zetasql::ASTWithClauseEntry *)arg0;
+  zetasql::ASTAliasedQuery *node = (zetasql::ASTAliasedQuery *)arg0;
   *arg1 = (void *)node->query();
 }
 
@@ -4609,7 +4619,7 @@ void GO_EXPORT(ASTCreateViewStatementBase_name)(void * arg0,void ** arg1){
 
 void GO_EXPORT(ASTCreateViewStatementBase_column_list)(void * arg0,void ** arg1){
   zetasql::ASTCreateViewStatementBase *node = (zetasql::ASTCreateViewStatementBase *)arg0;
-  *arg1 = (void *)node->column_list();
+  *arg1 = (void *)node->column_with_options_list();
 }
 
 void GO_EXPORT(ASTCreateViewStatementBase_options_list)(void * arg0,void ** arg1){

@@ -14,11 +14,16 @@
 // limitations under the License.
 //
 
+#include <cmath>
+#include <cstdint>
 #include <functional>
+#include <limits>
+#include <map>
 #include <numeric>
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/compliance/functions_testlib.h"
 #include "zetasql/compliance/functions_testlib_common.h"
@@ -27,6 +32,7 @@
 #include "zetasql/public/value.h"
 #include "zetasql/testing/test_function.h"
 #include "zetasql/testing/using_test_value.cc"
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 
@@ -358,6 +364,10 @@ const std::vector<FunctionTestCall> GetJsonTestsCommon(
          {json_constructor(R"({"Моша_öá5ホバークラフト鰻鰻" : "x"})"),
           String("$")},
          json_constructor(R"({"Моша_öá5ホバークラフト鰻鰻":"x"})")},
+        // Special character in object key. Regression test for b/265948860
+        {query_fn_name,
+         {json_constructor(R"({"foo":{"b\"ar":"q\"w"}})"), String("$.foo")},
+         json_constructor(R"({"b\"ar":"q\"w"})")},
         // Unsupported/unimplemented JSONPath features.
         {query_fn_name,
          {json1, String("$.a.*")},
@@ -558,14 +568,6 @@ const std::vector<FunctionTestCall> GetNativeJsonTests(bool sql_standard_mode,
                    .value()),
           String("$.a.b[0].f")},
          Json(std::move(null_json_value))});
-    // Malformed JSON.
-    tests.push_back(
-        {query_fn_name,
-         QueryParamsWithResult(
-             {Value::UnvalidatedJsonString(R"({"a": )"), String("$")},
-             NullJson(), OUT_OF_RANGE)
-             .WrapWithFeatureSet(
-                 {FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION})});
     tests.push_back(
         {query_fn_name,
          {json_with_wide_numbers, String("$")},
@@ -722,7 +724,8 @@ std::vector<FunctionTestCall> GetFunctionTestsParseJson() {
                {test.json_to_parse},
                Json(JSONValue::ParseJSONString(
                         test.json_to_parse,
-                        {.legacy_mode = false, .strict_number_parsing = true})
+                        {.wide_number_mode =
+                             JSONParsingOptions::WideNumberMode::kExact})
                         .value()))
                .WrapWithFeature(FEATURE_JSON_TYPE)});
       v.push_back(
@@ -731,7 +734,8 @@ std::vector<FunctionTestCall> GetFunctionTestsParseJson() {
                {test.json_to_parse, "exact"},
                Json(JSONValue::ParseJSONString(
                         test.json_to_parse,
-                        {.legacy_mode = false, .strict_number_parsing = true})
+                        {.wide_number_mode =
+                             JSONParsingOptions::WideNumberMode::kExact})
                         .value()))
                .WrapWithFeatureSet(
                    {FEATURE_NAMED_ARGUMENTS, FEATURE_JSON_TYPE})});
@@ -791,15 +795,6 @@ std::vector<FunctionTestCall> GetFunctionTestsParseJson() {
       {"parse_json",
        QueryParamsWithResult({"25", NullString()}, NullJson())
            .WrapWithFeatureSet({FEATURE_NAMED_ARGUMENTS, FEATURE_JSON_TYPE})});
-  // Legacy parsing
-  v.push_back(
-      {"parse_json",
-       QueryParamsWithResult(
-           {"'str'", "round"},
-           Json(JSONValue::ParseJSONString("'str'", {.legacy_mode = true})
-                    .value()))
-           .WrapWithFeatureSet({FEATURE_NAMED_ARGUMENTS, FEATURE_JSON_TYPE,
-                                FEATURE_JSON_LEGACY_PARSE})});
   v.push_back({"parse_json", QueryParamsWithResult({NullString()}, NullJson())
                                  .WrapWithFeature(FEATURE_JSON_TYPE)});
   return v;
@@ -828,24 +823,15 @@ std::vector<FunctionTestCall> GetFunctionTestsConvertJson() {
        NullInt64(),
        OUT_OF_RANGE},
       {"int64",
-       QueryParamsWithResult({Value::UnvalidatedJsonString("[10,3")},
-                             NullInt64(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      {"int64",
-       QueryParamsWithResult({Value::UnvalidatedJsonString("123")}, Int64(123))
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
+       QueryParamsWithResult({Json(*JSONValue::ParseJSONString("123"))},
+                             Int64(123))
+           .WrapWithFeatureSet(
+               {FEATURE_JSON_TYPE, FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
       {"int64", {Json(JSONValue(10.1))}, NullInt64(), OUT_OF_RANGE},
       // BOOL
       {"bool", {NullJson()}, NullBool()},
       {"bool", {Json(JSONValue(false))}, Value::Bool(false)},
       {"bool", {Json(JSONValue(true))}, Value::Bool(true)},
-      {"bool",
-       QueryParamsWithResult({Value::UnvalidatedJsonString("[true")},
-                             NullBool(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
       // DOUBLE
       // Null input
       {"double", {NullJson()}, NullDouble()},
@@ -876,50 +862,6 @@ std::vector<FunctionTestCall> GetFunctionTestsConvertJson() {
                              OUT_OF_RANGE)
            .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_NAMED_ARGUMENTS,
                                 FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      // Fails in "exact" and "round" due to number overflow parsing of json
-      {"double",
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString("-1.79769313486232e+309"), "exact"},
-           NullDouble(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_NAMED_ARGUMENTS,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      {"double",
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString("-1.79769313486232e+309"), "round"},
-           NullDouble(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_NAMED_ARGUMENTS,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      {"double",
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString("-1.79769313486232e+309")},
-           NullDouble(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      // Fails in "exact" but succeeds in "round"
-      {"double",
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString("-0.0000002414214151379150123"),
-            "exact"},
-           NullDouble(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_NAMED_ARGUMENTS,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      {"double",
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString("-0.0000002414214151379150123"),
-            "round"},
-           Double(-0.000000241421415137915))
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_NAMED_ARGUMENTS,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      {"double",
-       QueryParamsWithResult(
-           {Value::UnvalidatedJsonString("-0.0000002414214151379150123")},
-           Double(-0.000000241421415137915))
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
 
       {"double",
        QueryParamsWithResult(
@@ -936,12 +878,6 @@ std::vector<FunctionTestCall> GetFunctionTestsConvertJson() {
       {"double",
        QueryParamsWithResult({Json(JSONValue(1.0)), NullString()}, NullDouble())
            .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_NAMED_ARGUMENTS,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
-      {"double",
-       QueryParamsWithResult({Value::UnvalidatedJsonString(std::to_string(
-                                 std::numeric_limits<uint64_t>::max()))},
-                             Double(1.8446744073709552e+19))
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
                                 FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
       // Other types should return an error
       {"double",
@@ -972,11 +908,6 @@ std::vector<FunctionTestCall> GetFunctionTestsConvertJson() {
       {"string", {Json(JSONValue(std::string{"1"}))}, "1"},
       {"string", {Json(JSONValue(std::string{"abc123"}))}, "abc123"},
       {"string", {Json(JSONValue(std::string{"12¿©?Æ"}))}, "12¿©?Æ"},
-      {"string",
-       QueryParamsWithResult({Value::UnvalidatedJsonString("[string")},
-                             NullString(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})},
       // TYPE
       {"json_type", {NullJson()}, NullString()},
       {"json_type", {Json(JSONValue())}, Value::String("null")},
@@ -1004,12 +935,7 @@ std::vector<FunctionTestCall> GetFunctionTestsConvertJson() {
                  R"([{"a": {"b": {"c": 1}}, "d": 4}, {"e": 1}])")
                  .value())},
        "array"},
-
-      {"json_type",
-       QueryParamsWithResult({Value::UnvalidatedJsonString("[10,3")},
-                             NullString(), OUT_OF_RANGE)
-           .WrapWithFeatureSet({FEATURE_JSON_TYPE, FEATURE_JSON_NO_VALIDATION,
-                                FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS})}};
+  };
   return tests;
 }
 
@@ -1046,4 +972,198 @@ std::vector<FunctionTestCall> GetFunctionTestsConvertJsonIncompatibleTypes() {
   }
   return tests;
 }
+
+std::vector<FunctionTestCall> GetFunctionTestConvertJsonLaxBool() {
+  std::vector<FunctionTestCall> tests = {
+      // BOOL
+      {"lax_bool", {Json(JSONValue(true))}, Value::Bool(true)},
+      {"lax_bool", {Json(JSONValue(false))}, Value::Bool(false)},
+      // STRINGS
+      {"lax_bool", {Json(JSONValue(std::string{"TRue"}))}, Value::Bool(true)},
+      {"lax_bool", {Json(JSONValue(std::string{"false"}))}, Value::Bool(false)},
+      {"lax_bool", {Json(JSONValue(std::string{"foo"}))}, NullBool()},
+      // NUMERIC. Note that -inf, inf, and NaN are not valid JSON numeric
+      // values.
+      {"lax_bool", {Json(JSONValue(int64_t{0}))}, Value::Bool(false)},
+      {"lax_bool", {Json(JSONValue(int64_t{-1}))}, Value::Bool(true)},
+      {"lax_bool",
+       {Json(JSONValue(int64_t{std::numeric_limits<int64_t>::min()}))},
+       Value::Bool(true)},
+      {"lax_bool",
+       {Json(JSONValue(uint64_t{std::numeric_limits<uint64_t>::max()}))},
+       Value::Bool(true)},
+      {"lax_bool", {Json(JSONValue(double{1.1}))}, Value::Bool(true)},
+      {"lax_bool", {Json(JSONValue(double{-1.1}))}, Value::Bool(true)},
+      {"lax_bool",
+       {Json(JSONValue::ParseJSONString("-0.0e2").value())},
+       Value::Bool(false)},
+      // Object/Array/Null
+      {"lax_bool", {Json(JSONValue())}, NullBool()},
+      {"lax_bool",
+       {Json(JSONValue::ParseJSONString(R"({"a": 1})").value())},
+       NullBool()},
+      {"lax_bool",
+       {Json(JSONValue::ParseJSONString(R"([1])").value())},
+       NullBool()},
+      {"lax_bool", {NullJson()}, NullBool()}};
+  return tests;
+}
+
+std::vector<FunctionTestCall> GetFunctionTestConvertJsonLaxInt64() {
+  std::vector<FunctionTestCall> tests = {
+      // BOOLS
+      {"lax_int64", {Json(JSONValue(true))}, Value::Int64(1)},
+      {"lax_int64", {Json(JSONValue(false))}, Value::Int64(0)},
+      // STRINGS
+      {"lax_int64", {Json(JSONValue(std::string{"10"}))}, Value::Int64(10)},
+      {"lax_int64", {Json(JSONValue(std::string{"1.1"}))}, Value::Int64(1)},
+      {"lax_int64", {Json(JSONValue(std::string{"1.1e2"}))}, Value::Int64(110)},
+      {"lax_int64", {Json(JSONValue(std::string{"+1.5"}))}, Value::Int64(2)},
+      {"lax_int64",
+       {Json(JSONValue(std::string{"123456789012345678.0"}))},
+       Value::Int64(123456789012345678)},
+      {"lax_int64", {Json(JSONValue(std::string{"foo"}))}, NullInt64()},
+      {"lax_int64", {Json(JSONValue(std::string{"1e100"}))}, NullInt64()},
+      // NUMERIC. Note that -inf, inf, and NaN are not valid JSON numeric
+      // values.
+      {"lax_int64", {Json(JSONValue(int64_t{-10}))}, Value::Int64(-10)},
+      {"lax_int64",
+       {Json(JSONValue(int64_t{std::numeric_limits<int64_t>::min()}))},
+       Value::Int64(std::numeric_limits<int64_t>::min())},
+      {"lax_int64",
+       {Json(JSONValue(uint64_t{std::numeric_limits<uint64_t>::max()}))},
+       NullInt64()},
+      {"lax_int64", {Json(JSONValue(double{1.1}))}, Value::Int64(1)},
+      {"lax_int64", {Json(JSONValue(double{1.1e2}))}, Value::Int64(110)},
+      {"lax_int64",
+       {Json(JSONValue(double{123456789012345678.0}))},
+       Value::Int64(123456789012345680)},
+      {"lax_int64",
+       {Json(JSONValue(double{std::numeric_limits<double>::lowest()}))},
+       Value::NullInt64()},
+      {"lax_int64",
+       {Json(JSONValue(double{std::numeric_limits<double>::max()}))},
+       Value::NullInt64()},
+      // Object/Array/Null
+      {"lax_int64", {Json(JSONValue())}, NullInt64()},
+      {"lax_int64",
+       {Json(JSONValue::ParseJSONString(R"({"a": 1})").value())},
+       NullInt64()},
+      {"lax_int64",
+       {Json(JSONValue::ParseJSONString(R"([1])").value())},
+       NullInt64()},
+      {"lax_int64", {NullJson()}, NullInt64()}};
+  return tests;
+}
+
+std::vector<FunctionTestCall> GetFunctionTestConvertJsonLaxDouble() {
+  std::vector<FunctionTestCall> tests = {
+      // BOOLS
+      {"lax_double", {Json(JSONValue(true))}, NullDouble()},
+      {"lax_double", {Json(JSONValue(false))}, NullDouble()},
+      // STRING
+      {"lax_double", {Json(JSONValue(std::string("10")))}, Value::Double(10.0)},
+      {"lax_double",
+       {Json(JSONValue(std::string("-10")))},
+       Value::Double(-10.0)},
+      {"lax_double", {Json(JSONValue(std::string("1.1")))}, Value::Double(1.1)},
+      {"lax_double",
+       {Json(JSONValue(std::string("1.1e2")))},
+       Value::Double(110.0)},
+      {"lax_double",
+       {Json(JSONValue(std::string("-10")))},
+       Value::Double(-10.0)},
+      {"lax_double",
+       {Json(JSONValue(std::string("9007199254740993")))},
+       Value::Double(9007199254740992.0)},
+      {"lax_double", {Json(JSONValue(std::string("foo")))}, NullDouble()},
+      {"lax_double",
+       {Json(JSONValue(std::string("NaN")))},
+       Value::Double(std::nan(""))},
+      {"lax_double",
+       {Json(JSONValue(std::string("inf")))},
+       Value::Double(std::numeric_limits<double>::infinity())},
+      {"lax_double",
+       {Json(JSONValue(std::string("-inf")))},
+       Value::Double(-1 * std::numeric_limits<double>::infinity())},
+      // NUMBERS. Note that -inf, inf, and NaN are not valid JSON numeric
+      // values.
+      {"lax_double", {Json(JSONValue(int64_t{-10}))}, Value::Double(-10.0)},
+      {"lax_double",
+       {Json(JSONValue(int64_t{9007199254740993}))},
+       Value::Double(9007199254740992)},
+      {"lax_double",
+       {Json(JSONValue(int64_t{std::numeric_limits<int64_t>::min()}))},
+       Value::Double(std::numeric_limits<int64_t>::min())},
+      {"lax_double",
+       {Json(JSONValue(uint64_t{std::numeric_limits<uint64_t>::max()}))},
+       Value::Double(std::numeric_limits<uint64_t>::max())},
+      {"lax_double", {Json(JSONValue(double{1.1}))}, Value::Double(1.1)},
+      {"lax_double", {Json(JSONValue(double{-1.1}))}, Value::Double(-1.1)},
+      {"lax_double",
+       {Json(JSONValue(double{std::numeric_limits<double>::max()}))},
+       Value::Double(std::numeric_limits<double>::max())},
+      // Object/Array/Null
+      {"lax_double", {Json(JSONValue())}, NullDouble()},
+      {"lax_double",
+       {Json(JSONValue::ParseJSONString(R"({"a": 1})").value())},
+       NullDouble()},
+      {"lax_double",
+       {Json(JSONValue::ParseJSONString(R"([1])").value())},
+       NullDouble()},
+      {"lax_double", {NullJson()}, NullDouble()}};
+  return tests;
+}
+
+std::vector<FunctionTestCall> GetFunctionTestConvertJsonLaxString() {
+  std::vector<FunctionTestCall> tests = {
+      // BOOLS
+      {"lax_string", {Json(JSONValue(true))}, Value::String("true")},
+      {"lax_string", {Json(JSONValue(false))}, Value::String("false")},
+      // STRINGS
+      {"lax_string",
+       {Json(JSONValue(std::string{"foo"}))},
+       Value::String("foo")},
+      {"lax_string", {Json(JSONValue(std::string{"10"}))}, Value::String("10")},
+      // NUMERIC. Note that -inf, inf, and NaN are not valid JSON numeric
+      // values.
+      {"lax_string", {Json(JSONValue(int64_t{-10}))}, Value::String("-10")},
+      {"lax_string", {Json(JSONValue(int64_t{0}))}, Value::String("0")},
+      {"lax_string", {Json(JSONValue(int64_t{-0}))}, Value::String("0")},
+      {"lax_string",
+       {Json(JSONValue(int64_t{std::numeric_limits<int64_t>::min()}))},
+       Value::String(absl::StrCat(std::numeric_limits<int64_t>::min()))},
+      {"lax_string",
+       {Json(JSONValue(int64_t{std::numeric_limits<int64_t>::max()}))},
+       Value::String(absl::StrCat(std::numeric_limits<int64_t>::max()))},
+      {"lax_string",
+       {Json(JSONValue(uint64_t{std::numeric_limits<uint64_t>::max()}))},
+       Value::String(absl::StrCat(std::numeric_limits<uint64_t>::max()))},
+      {"lax_string", {Json(JSONValue(double{0.0}))}, Value::String("0")},
+      {"lax_string", {Json(JSONValue(double{-0.0}))}, Value::String("0")},
+      {"lax_string", {Json(JSONValue(double{1.1}))}, Value::String("1.1")},
+      {"lax_string",
+       {Json(JSONValue(double{std::numeric_limits<double>::min()}))},
+       Value::String("2.2250738585072014e-308")},
+      {"lax_string",
+       {Json(JSONValue(double{std::numeric_limits<double>::lowest()}))},
+       Value::String("-1.7976931348623157e+308")},
+      {"lax_string",
+       {Json(JSONValue(double{std::numeric_limits<double>::max()}))},
+       Value::String("1.7976931348623157e+308")},
+      {"lax_string",
+       {Json(JSONValue::ParseJSONString("1e100").value())},
+       Value::String("1e+100")},
+      // Object/Array/Null
+      {"lax_string", {Json(JSONValue())}, NullString()},
+      {"lax_string",
+       {Json(JSONValue::ParseJSONString(R"({"a": 1})").value())},
+       NullString()},
+      {"lax_string",
+       {Json(JSONValue::ParseJSONString(R"([1])").value())},
+       NullString()},
+      {"lax_string", {NullJson()}, NullString()}};
+  return tests;
+}
+
 }  // namespace zetasql

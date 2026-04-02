@@ -20,8 +20,10 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/common/errors.h"
@@ -31,6 +33,7 @@
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/types/type_deserializer.h"
+#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "zetasql/base/case.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
@@ -231,8 +234,10 @@ absl::StatusOr<std::unique_ptr<Function>> Function::Deserialize(
   std::unique_ptr<FunctionOptions> options;
   ZETASQL_RETURN_IF_ERROR(FunctionOptions::Deserialize(proto.options(), &options));
 
-  return std::make_unique<Function>(name_path, proto.group(), proto.mode(),
-                                    function_signatures, *options);
+  auto function = std::make_unique<Function>(
+      name_path, proto.group(), proto.mode(), function_signatures, *options);
+  function->set_sql_security(proto.sql_security());
+  return function;
 }
 
 absl::Status Function::Serialize(
@@ -251,6 +256,10 @@ absl::Status Function::Serialize(
 
   proto->set_mode(mode());
   proto->set_group(GetGroup());
+  if (sql_security() !=
+      ResolvedCreateStatementEnums::SQL_SECURITY_UNSPECIFIED) {
+    proto->set_sql_security(sql_security());
+  }
   function_options().Serialize(proto->mutable_options());
 
   return absl::OkStatus();
@@ -361,7 +370,7 @@ static bool SignaturesWithLambdaCouldMatchOneFunctionCall(
 // the same function call. An example is a function with following signatures:
 //     Func(T1, T1->BOOL)
 //     Func(INT64, INT64->BOOL);
-// for funcation call: Func(1, e->e>0); The two signatures both match the call.
+// for function call: Func(1, e->e>0); The two signatures both match the call.
 static absl::Status CheckLambdaSignatures(
     const absl::Span<const FunctionSignature> current_signatures,
     const FunctionSignature& new_signature) {
@@ -433,6 +442,13 @@ const FunctionSignature* Function::GetSignature(int idx) const {
   return &(function_signatures_[idx]);
 }
 
+FunctionSignature* Function::GetMutableSignature(int idx) {
+  if (idx < 0 || idx >= NumSignatures()) {
+    return nullptr;
+  }
+  return &(function_signatures_[idx]);
+}
+
 std::string Function::DebugString(bool verbose) const {
   if (verbose) {
     return absl::StrCat(
@@ -446,25 +462,26 @@ std::string Function::DebugString(bool verbose) const {
 
 std::string Function::GetSQL(std::vector<std::string> inputs,
                              const FunctionSignature* signature) const {
-  if (GetSQLCallback() != nullptr) {
-    return GetSQLCallback()(inputs);
-  }
-  std::string name = FullName(/*include_group=*/false);
-  if (function_options_.uses_upper_case_sql_name) {
-    absl::AsciiStrToUpper(&name);
-  }
   if (signature != nullptr) {
     // If the argument is mandatory-named, we have to use that name.
     for (int i = 0; i < signature->arguments().size(); ++i) {
       if (i >= inputs.size() || signature->argument(i).repeated()) {
         break;
       }
-      if (signature->argument(i).options().argument_name_is_mandatory()) {
+      if (signature->argument(i).options().named_argument_kind() ==
+          kNamedOnly) {
         ZETASQL_DCHECK(!signature->argument(i).argument_name().empty());
         inputs[i] = absl::StrCat(signature->argument(i).argument_name(), " => ",
                                  inputs[i]);
       }
     }
+  }
+  if (GetSQLCallback() != nullptr) {
+    return GetSQLCallback()(inputs);
+  }
+  std::string name = FullName(/*include_group=*/false);
+  if (function_options_.uses_upper_case_sql_name) {
+    absl::AsciiStrToUpper(&name);
   }
   return absl::StrCat(name, "(", absl::StrJoin(inputs, ", "), ")");
 }
@@ -498,32 +515,35 @@ absl::Status Function::CheckPostResolutionArgumentConstraints(
 // static
 const std::string Function::GetGenericNoMatchingFunctionSignatureErrorMessage(
     const std::string& qualified_function_name,
-    const std::vector<InputArgumentType>& arguments, ProductMode product_mode) {
+    const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
+    absl::Span<const absl::string_view> argument_names) {
   return absl::StrCat(
       "No matching signature for ", qualified_function_name,
-      (arguments.empty() ? " with no arguments"
-                         : absl::StrCat(" for argument types: ",
-                                        InputArgumentType::ArgumentsToString(
-                                            arguments, product_mode))));
+      (arguments.empty()
+           ? " with no arguments"
+           : absl::StrCat(" for argument types: ",
+                          InputArgumentType::ArgumentsToString(
+                              arguments, product_mode, argument_names))));
 }
 
-const std::string Function::GetNoMatchingFunctionSignatureErrorMessage(
-    const std::vector<InputArgumentType>& arguments,
-    ProductMode product_mode) const {
+std::string Function::GetNoMatchingFunctionSignatureErrorMessage(
+    const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
+    absl::Span<const absl::string_view> argument_names) const {
   if (GetNoMatchingSignatureCallback() != nullptr) {
     return GetNoMatchingSignatureCallback()(QualifiedSQLName(), arguments,
                                             product_mode);
   }
-  return GetGenericNoMatchingFunctionSignatureErrorMessage(QualifiedSQLName(),
-                                                           arguments,
-                                                           product_mode);
+  return GetGenericNoMatchingFunctionSignatureErrorMessage(
+      QualifiedSQLName(), arguments, product_mode, argument_names);
 }
 
 // TODO: When we use this to make error messages for signatures that
 // take templated args like ANY, the error messages aren't very good.  Fix
 // this.
-const std::string Function::GetSupportedSignaturesUserFacingText(
-    const LanguageOptions& language_options, int* num_signatures) const {
+std::string Function::GetSupportedSignaturesUserFacingText(
+    const LanguageOptions& language_options,
+    FunctionArgumentType::NamePrintingStyle print_style,
+    int* num_signatures) const {
   // Make a good guess
   *num_signatures = NumSignatures();
   if (GetSupportedSignaturesCallback() != nullptr) {
@@ -546,7 +566,7 @@ const std::string Function::GetSupportedSignaturesUserFacingText(
     std::vector<std::string> argument_texts;
     for (const FunctionArgumentType& argument : signature.arguments()) {
       argument_texts.push_back(argument.UserFacingNameWithCardinality(
-          language_options.product_mode()));
+          language_options.product_mode(), print_style));
     }
     (*num_signatures)++;
     absl::StrAppend(&supported_signatures, GetSQL(argument_texts));

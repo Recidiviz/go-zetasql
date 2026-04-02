@@ -34,6 +34,7 @@ namespace zetasql {
 class ResolvedLiteralBuilder;
 class ResolvedParameterBuilder;
 class ResolvedExpressionColumnBuilder;
+class ResolvedCatalogColumnRefBuilder;
 class ResolvedColumnRefBuilder;
 class ResolvedConstantBuilder;
 class ResolvedSystemVariableBuilder;
@@ -58,6 +59,7 @@ class ResolvedReplaceFieldItemBuilder;
 class ResolvedReplaceFieldBuilder;
 class ResolvedSubqueryExprBuilder;
 class ResolvedWithExprBuilder;
+class ResolvedExecuteAsRoleScanBuilder;
 class ResolvedModelBuilder;
 class ResolvedConnectionBuilder;
 class ResolvedDescriptorBuilder;
@@ -70,6 +72,7 @@ class ResolvedFilterScanBuilder;
 class ResolvedGroupingSetBuilder;
 class ResolvedAggregateScanBuilder;
 class ResolvedAnonymizedAggregateScanBuilder;
+class ResolvedDifferentialPrivacyAggregateScanBuilder;
 class ResolvedSetOperationItemBuilder;
 class ResolvedSetOperationScanBuilder;
 class ResolvedOrderByScanBuilder;
@@ -100,6 +103,7 @@ class ResolvedCreateIndexStmtBuilder;
 class ResolvedCreateSchemaStmtBuilder;
 class ResolvedCreateTableStmtBuilder;
 class ResolvedCreateTableAsSelectStmtBuilder;
+class ResolvedCreateModelAliasedQueryBuilder;
 class ResolvedCreateModelStmtBuilder;
 class ResolvedCreateViewStmtBuilder;
 class ResolvedWithPartitionColumnsBuilder;
@@ -216,6 +220,7 @@ class ResolvedUnpivotScanBuilder;
 class ResolvedCloneDataStmtBuilder;
 class ResolvedTableAndColumnInfoBuilder;
 class ResolvedAnalyzeStmtBuilder;
+class ResolvedAuxLoadDataPartitionFilterBuilder;
 class ResolvedAuxLoadDataStmtBuilder;
 
 class ResolvedLiteralBuilder final {
@@ -241,8 +246,9 @@ class ResolvedLiteralBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedLiteral>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -429,8 +435,9 @@ class ResolvedParameterBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedParameter>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -590,8 +597,9 @@ class ResolvedExpressionColumnBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExpressionColumn>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -691,6 +699,131 @@ inline ResolvedExpressionColumnBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedCatalogColumnRefBuilder final {
+ public:
+  ResolvedCatalogColumnRefBuilder() : ResolvedCatalogColumnRefBuilder(absl::WrapUnique(new ResolvedCatalogColumnRef)) {}
+
+  ResolvedCatalogColumnRefBuilder(const ResolvedCatalogColumnRefBuilder&) = delete;
+  ResolvedCatalogColumnRefBuilder& operator=(const ResolvedCatalogColumnRefBuilder&) = delete;
+  ResolvedCatalogColumnRefBuilder(ResolvedCatalogColumnRefBuilder&& other)
+      : ResolvedCatalogColumnRefBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedCatalogColumnRefBuilder& operator=(ResolvedCatalogColumnRefBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedCatalogColumnRef>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedCatalogColumnRef::type was not set on the builder");
+    }
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedCatalogColumnRef::column was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const Column* column() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column();
+  }
+
+  ResolvedCatalogColumnRefBuilder&& set_column(const Column* v) && {
+    node_->set_column(v);
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedCatalogColumnRefBuilder& set_column(const Column* v) & {
+    node_->set_column(v);
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  const Type* type() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->type();
+  }
+
+  ResolvedCatalogColumnRefBuilder&& set_type(const Type* v) && {
+    node_->set_type(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedCatalogColumnRefBuilder& set_type(const Type* v) & {
+    node_->set_type(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const AnnotationMap* type_annotation_map() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->type_annotation_map();
+  }
+
+  ResolvedCatalogColumnRefBuilder&& set_type_annotation_map(const AnnotationMap* v) && {
+    node_->set_type_annotation_map(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCatalogColumnRefBuilder& set_type_annotation_map(const AnnotationMap* v) & {
+    node_->set_type_annotation_map(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedCatalogColumnRef> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<3> field_is_set_ = {0};
+  friend ResolvedCatalogColumnRefBuilder ToBuilder(
+      std::unique_ptr<const ResolvedCatalogColumnRef> node);
+
+  ResolvedCatalogColumnRefBuilder(std::unique_ptr<ResolvedCatalogColumnRef> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedCatalogColumnRefBuilder ToBuilder(
+    std::unique_ptr<const ResolvedCatalogColumnRef> node) {
+  ResolvedCatalogColumnRefBuilder builder(absl::WrapUnique<ResolvedCatalogColumnRef>(
+      const_cast<ResolvedCatalogColumnRef*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(2, true);
+  return builder;
+}
+
 class ResolvedColumnRefBuilder final {
  public:
   ResolvedColumnRefBuilder() : ResolvedColumnRefBuilder(absl::WrapUnique(new ResolvedColumnRef)) {}
@@ -714,8 +847,9 @@ class ResolvedColumnRefBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedColumnRef>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -864,8 +998,9 @@ class ResolvedConstantBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedConstant>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -989,8 +1124,9 @@ class ResolvedSystemVariableBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSystemVariable>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -1127,8 +1263,9 @@ class ResolvedInlineLambdaBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedInlineLambda>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -1255,32 +1392,6 @@ class ResolvedInlineLambdaBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedInlineLambdaBuilder&& set_parameter_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedInlineLambdaBuilder& set_parameter_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedExpr* body() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->body();
@@ -1380,8 +1491,9 @@ class ResolvedFilterFieldArgBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFilterFieldArg>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -1506,8 +1618,9 @@ class ResolvedFilterFieldBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFilterField>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -1663,32 +1776,6 @@ class ResolvedFilterFieldBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFilterFieldArg>>>::value>>
-  ResolvedFilterFieldBuilder&& set_filter_field_arg_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_filter_field_arg_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFilterFieldArg>>>::value>>
-  ResolvedFilterFieldBuilder& set_filter_field_arg_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_filter_field_arg_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   // If true, will reset cleared required fields into a
   // default value.
   bool reset_cleared_required_fields() const {
@@ -1794,8 +1881,9 @@ class ResolvedFunctionCallBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -2004,32 +2092,6 @@ class ResolvedFunctionCallBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedFunctionCallBuilder&& set_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedFunctionCallBuilder& set_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& generic_argument_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list();
@@ -2099,32 +2161,6 @@ class ResolvedFunctionCallBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
   ResolvedFunctionCallBuilder& set_generic_argument_list(T v) & {
     node_->set_generic_argument_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedFunctionCallBuilder&& set_generic_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_generic_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedFunctionCallBuilder& set_generic_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_generic_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -2224,32 +2260,6 @@ class ResolvedFunctionCallBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedFunctionCallBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedFunctionCallBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedCollation>& collation_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->collation_list();
@@ -2337,8 +2347,9 @@ class ResolvedAggregateFunctionCallBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAggregateFunctionCall>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -2486,32 +2497,6 @@ class ResolvedAggregateFunctionCallBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
   ResolvedAggregateFunctionCallBuilder& set_order_by_item_list(T v) & {
     node_->set_order_by_item_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
-  ResolvedAggregateFunctionCallBuilder&& set_order_by_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_order_by_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
-  ResolvedAggregateFunctionCallBuilder& set_order_by_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_order_by_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -2747,32 +2732,6 @@ class ResolvedAggregateFunctionCallBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAggregateFunctionCallBuilder&& set_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAggregateFunctionCallBuilder& set_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& generic_argument_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list();
@@ -2842,32 +2801,6 @@ class ResolvedAggregateFunctionCallBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
   ResolvedAggregateFunctionCallBuilder& set_generic_argument_list(T v) & {
     node_->set_generic_argument_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedAggregateFunctionCallBuilder&& set_generic_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_generic_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedAggregateFunctionCallBuilder& set_generic_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_generic_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -2963,32 +2896,6 @@ class ResolvedAggregateFunctionCallBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAggregateFunctionCallBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAggregateFunctionCallBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAggregateFunctionCallBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -3218,32 +3125,6 @@ class ResolvedAggregateFunctionCallBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAggregateFunctionCallBuilder&& set_with_group_rows_parameter_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_with_group_rows_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAggregateFunctionCallBuilder& set_with_group_rows_parameter_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_with_group_rows_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAggregateFunctionCall> node_;
 
@@ -3292,8 +3173,9 @@ class ResolvedAnalyticFunctionCallBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAnalyticFunctionCall>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -3532,32 +3414,6 @@ class ResolvedAnalyticFunctionCallBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder&& set_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder& set_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& generic_argument_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list();
@@ -3627,32 +3483,6 @@ class ResolvedAnalyticFunctionCallBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
   ResolvedAnalyticFunctionCallBuilder& set_generic_argument_list(T v) & {
     node_->set_generic_argument_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder&& set_generic_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_generic_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder& set_generic_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_generic_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -3748,32 +3578,6 @@ class ResolvedAnalyticFunctionCallBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAnalyticFunctionCallBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -4003,32 +3807,6 @@ class ResolvedAnalyticFunctionCallBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder&& set_with_group_rows_parameter_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_with_group_rows_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAnalyticFunctionCallBuilder& set_with_group_rows_parameter_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_with_group_rows_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAnalyticFunctionCall> node_;
 
@@ -4078,8 +3856,9 @@ class ResolvedExtendedCastElementBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExtendedCastElement>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -4209,8 +3988,9 @@ class ResolvedExtendedCastBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExtendedCast>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -4298,32 +4078,6 @@ class ResolvedExtendedCastBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExtendedCastElement>>>::value>>
-  ResolvedExtendedCastBuilder&& set_element_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_element_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExtendedCastElement>>>::value>>
-  ResolvedExtendedCastBuilder& set_element_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_element_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedExtendedCast> node_;
 
@@ -4347,6 +4101,18 @@ inline ResolvedExtendedCastBuilder ToBuilder(
 
 class ResolvedCastBuilder final {
  public:
+    // Helper getter, setter of <type_parameters> field for backward
+  // compatibility.
+  // TODO: We could consider dropping this after we clean up
+  // all references.
+  ABSL_DEPRECATED("use type_modifiers().type_parameters() instead.")
+  const TypeParameters& type_parameters() const {
+    return type_modifiers().type_parameters();
+  }
+
+  ABSL_DEPRECATED("use set_type_modifiers() instead.")
+  void set_type_parameters(const TypeParameters& v);
+
   ResolvedCastBuilder() : ResolvedCastBuilder(absl::WrapUnique(new ResolvedCast)) {}
 
   ResolvedCastBuilder(const ResolvedCastBuilder&) = delete;
@@ -4368,8 +4134,9 @@ class ResolvedCastBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCast>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -4616,34 +4383,47 @@ class ResolvedCastBuilder final {
     return *this;
   }
 
-  // Contains the TypeParametersProto, which stores the type parameters
-  // if specified in a cast. If there are no type parameters, this
-  // proto will be empty.
+  // Contains the TypeModifiers object which wraps all modifiers
+  // following the type name in a type string (e.g. type parameters,
+  // collation) in a cast. If there are no type modifiers specified,
+  // this object will be empty.
   //
-  // If type parameters are specified, the result of the cast should
-  // conform to the type parameters. Engines are expected to enforce
-  // type parameter constraints by erroring out or truncating the cast
-  // result, depending on the output type.
+  // Type parameters can be specified inside parentheses following the
+  // type name (e.g. STRING(2)). If specified, the result of the cast
+  // should conform to the type parameters. Engines are expected to
+  // enforce type parameter constraints by erroring out or truncating
+  // the cast result, depending on the output type. See
+  // (broken link) for more details.
   //
   // For example:
   //   CAST("ABC" as STRING(2)) should error out
   //   CAST(1234 as NUMERIC(2)) should error out
   //   CAST(1.234 as NUMERIC(2,1)) should return a NumericValue of 1.2
   //
-  // See (broken link) for more details.
-  const TypeParameters& type_parameters() const {
+  // Collation can be specified with the COLLATE keyword on a string
+  // type, e.g. STRING COLLATE 'und:ci'. If specified, the
+  // <type_annotation_map> of the ResolvedCast node will have equal
+  // collation annotations. See
+  // (broken link) for more details.
+  //
+  // For example:
+  //   CAST("abc" AS STRING COLLATE "und:ci") should return value "abc"
+  //     in STRING type with collation "und:ci".
+  //   CAST(["abc"] AS ARRAY<STRING COLLATE "und:ci">) should return
+  //     the array ["abc"] with collation "und:ci" at the element type.
+  const TypeModifiers& type_modifiers() const {
     ZETASQL_DCHECK(node_ != nullptr);
-    return node_->type_parameters();
+    return node_->type_modifiers();
   }
 
-  ResolvedCastBuilder&& set_type_parameters(const TypeParameters& v) && {
-    node_->set_type_parameters(v);
+  ResolvedCastBuilder&& set_type_modifiers(const TypeModifiers& v) && {
+    node_->set_type_modifiers(v);
 
     return std::move(*this);
   }
 
-  ResolvedCastBuilder& set_type_parameters(const TypeParameters& v) & {
-    node_->set_type_parameters(v);
+  ResolvedCastBuilder& set_type_modifiers(const TypeModifiers& v) & {
+    node_->set_type_modifiers(v);
 
     return *this;
   }
@@ -4731,8 +4511,9 @@ class ResolvedMakeStructBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedMakeStruct>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -4820,32 +4601,6 @@ class ResolvedMakeStructBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedMakeStructBuilder&& set_field_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_field_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedMakeStructBuilder& set_field_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_field_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const Type* type() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->type();
@@ -4928,8 +4683,9 @@ class ResolvedMakeProtoBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedMakeProto>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -5017,32 +4773,6 @@ class ResolvedMakeProtoBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedMakeProtoField>>>::value>>
-  ResolvedMakeProtoBuilder&& set_field_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_field_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedMakeProtoField>>>::value>>
-  ResolvedMakeProtoBuilder& set_field_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_field_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const Type* type() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->type();
@@ -5125,8 +4855,9 @@ class ResolvedMakeProtoFieldBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedMakeProtoField>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -5286,8 +5017,9 @@ class ResolvedGetStructFieldBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGetStructField>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -5386,6 +5118,26 @@ class ResolvedGetStructFieldBuilder final {
     return *this;
   }
 
+  // True if using s[OFFSET(0)] syntax rather than
+  // specifying field name, Only for preserving user intent; no
+  // semantic consequences
+  bool field_expr_is_positional() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->field_expr_is_positional();
+  }
+
+  ResolvedGetStructFieldBuilder&& set_field_expr_is_positional(bool v) && {
+    node_->set_field_expr_is_positional(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetStructFieldBuilder& set_field_expr_is_positional(bool v) & {
+    node_->set_field_expr_is_positional(v);
+
+    return *this;
+  }
+
   const Type* type() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->type();
@@ -5426,7 +5178,7 @@ class ResolvedGetStructFieldBuilder final {
   std::unique_ptr<ResolvedGetStructField> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<4> field_is_set_ = {0};
+  std::bitset<5> field_is_set_ = {0};
   friend ResolvedGetStructFieldBuilder ToBuilder(
       std::unique_ptr<const ResolvedGetStructField> node);
 
@@ -5470,8 +5222,9 @@ class ResolvedGetProtoFieldBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGetProtoField>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -5780,8 +5533,9 @@ class ResolvedGetJsonFieldBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGetJsonField>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -5964,8 +5718,9 @@ class ResolvedFlattenBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFlatten>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -6120,32 +5875,6 @@ class ResolvedFlattenBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedFlattenBuilder&& set_get_field_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_get_field_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedFlattenBuilder& set_get_field_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_get_field_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const Type* type() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->type();
@@ -6229,8 +5958,8 @@ class ResolvedFlattenedArgBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFlattenedArg>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -6327,8 +6056,9 @@ class ResolvedReplaceFieldItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedReplaceFieldItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -6536,8 +6266,9 @@ class ResolvedReplaceFieldBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedReplaceField>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -6694,32 +6425,6 @@ class ResolvedReplaceFieldBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedReplaceFieldItem>>>::value>>
-  ResolvedReplaceFieldBuilder&& set_replace_field_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_replace_field_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedReplaceFieldItem>>>::value>>
-  ResolvedReplaceFieldBuilder& set_replace_field_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_replace_field_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const Type* type() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->type();
@@ -6811,8 +6516,9 @@ class ResolvedSubqueryExprBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSubqueryExpr>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -6927,32 +6633,6 @@ class ResolvedSubqueryExprBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
   ResolvedSubqueryExprBuilder& set_parameter_list(T v) & {
     node_->set_parameter_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedSubqueryExprBuilder&& set_parameter_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedSubqueryExprBuilder& set_parameter_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -7156,32 +6836,6 @@ class ResolvedSubqueryExprBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSubqueryExprBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSubqueryExprBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const Type* type() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->type();
@@ -7266,8 +6920,9 @@ class ResolvedWithExprBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWithExpr>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -7357,32 +7012,6 @@ class ResolvedWithExprBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
   ResolvedWithExprBuilder& set_assignment_list(T v) & {
     node_->set_assignment_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedWithExprBuilder&& set_assignment_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_assignment_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedWithExprBuilder& set_assignment_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_assignment_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -7500,6 +7129,310 @@ inline ResolvedWithExprBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedExecuteAsRoleScanBuilder final {
+ public:
+  ResolvedExecuteAsRoleScanBuilder() : ResolvedExecuteAsRoleScanBuilder(absl::WrapUnique(new ResolvedExecuteAsRoleScan)) {}
+
+  ResolvedExecuteAsRoleScanBuilder(const ResolvedExecuteAsRoleScanBuilder&) = delete;
+  ResolvedExecuteAsRoleScanBuilder& operator=(const ResolvedExecuteAsRoleScanBuilder&) = delete;
+  ResolvedExecuteAsRoleScanBuilder(ResolvedExecuteAsRoleScanBuilder&& other)
+      : ResolvedExecuteAsRoleScanBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& operator=(ResolvedExecuteAsRoleScanBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedExecuteAsRoleScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(3)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedExecuteAsRoleScan::input_scan was not set on the builder");
+    }
+    if (!field_is_set_.test(4)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedExecuteAsRoleScan::original_inlined_view was not set on the builder");
+    }
+    if (!field_is_set_.test(5)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedExecuteAsRoleScan::original_inlined_tvf was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  // The input scan whose subtree is to be encompassed by the current
+  // role context.
+  const ResolvedScan* input_scan() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->input_scan();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return node_->release_input_scan();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedExecuteAsRoleScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
+    node_->set_input_scan(std::move(v), propagate_order);
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedExecuteAsRoleScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
+    node_->set_input_scan(std::move(v), propagate_order);
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedExecuteAsRoleScanBuilder&& set_input_scan(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedExecuteAsRoleScanBuilder& set_input_scan(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  // The original view that was inlined. If set, then
+  // 'original_inlined_tvf' is null. The validator checks that this
+  // table is indeed a SqlView, not some other subclass of Table.
+  const Table* original_inlined_view() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->original_inlined_view();
+  }
+
+  ResolvedExecuteAsRoleScanBuilder&& set_original_inlined_view(const Table* v) && {
+    node_->set_original_inlined_view(v);
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& set_original_inlined_view(const Table* v) & {
+    node_->set_original_inlined_view(v);
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  // The original TVF that was inlined. If set, then
+  // 'original_inlined_view' is null.
+  const TableValuedFunction* original_inlined_tvf() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->original_inlined_tvf();
+  }
+
+  ResolvedExecuteAsRoleScanBuilder&& set_original_inlined_tvf(const TableValuedFunction* v) && {
+    node_->set_original_inlined_tvf(v);
+    field_is_set_.set(5, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& set_original_inlined_tvf(const TableValuedFunction* v) & {
+    node_->set_original_inlined_tvf(v);
+    field_is_set_.set(5, true);
+
+    return *this;
+  }
+
+  const std::vector<ResolvedColumn>& column_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list();
+  }
+
+  int column_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list_size();
+  }
+
+  const ResolvedColumn& column_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list(i);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder&& add_column_list(ResolvedColumn v) && {
+    node_->add_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& add_column_list(ResolvedColumn v) & {
+    node_->add_column_list(v);
+
+    return *this;
+  }
+
+  ResolvedExecuteAsRoleScanBuilder&& set_column_list(const std::vector<ResolvedColumn>& v) && {
+    node_->set_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& set_column_list(const std::vector<ResolvedColumn>& v) & {
+    node_->set_column_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExecuteAsRoleScanBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExecuteAsRoleScanBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExecuteAsRoleScanBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExecuteAsRoleScanBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedExecuteAsRoleScanBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedExecuteAsRoleScanBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_ordered() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_ordered();
+  }
+
+  ResolvedExecuteAsRoleScanBuilder&& set_is_ordered(bool v) && {
+    node_->set_is_ordered(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& set_is_ordered(bool v) & {
+    node_->set_is_ordered(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedExecuteAsRoleScan> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<6> field_is_set_ = {0};
+  friend ResolvedExecuteAsRoleScanBuilder ToBuilder(
+      std::unique_ptr<const ResolvedExecuteAsRoleScan> node);
+
+  ResolvedExecuteAsRoleScanBuilder(std::unique_ptr<ResolvedExecuteAsRoleScan> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedExecuteAsRoleScanBuilder ToBuilder(
+    std::unique_ptr<const ResolvedExecuteAsRoleScan> node) {
+  ResolvedExecuteAsRoleScanBuilder builder(absl::WrapUnique<ResolvedExecuteAsRoleScan>(
+      const_cast<ResolvedExecuteAsRoleScan*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(5, true);
+  return builder;
+}
+
 class ResolvedModelBuilder final {
  public:
   ResolvedModelBuilder() : ResolvedModelBuilder(absl::WrapUnique(new ResolvedModel)) {}
@@ -7523,8 +7456,9 @@ class ResolvedModelBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedModel>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -7604,8 +7538,9 @@ class ResolvedConnectionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedConnection>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -7683,8 +7618,9 @@ class ResolvedDescriptorBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDescriptor>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -7813,8 +7749,8 @@ class ResolvedSingleRowScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSingleRowScan>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -7935,32 +7871,6 @@ class ResolvedSingleRowScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSingleRowScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSingleRowScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -8022,8 +7932,9 @@ class ResolvedTableScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedTableScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -8274,32 +8185,6 @@ class ResolvedTableScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedTableScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedTableScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -8369,8 +8254,9 @@ class ResolvedJoinScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedJoinScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -8675,32 +8561,6 @@ class ResolvedJoinScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedJoinScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedJoinScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -8765,8 +8625,9 @@ class ResolvedArrayScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedArrayScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -9135,32 +8996,6 @@ class ResolvedArrayScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedArrayScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedArrayScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -9225,8 +9060,9 @@ class ResolvedColumnHolderBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedColumnHolder>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -9306,8 +9142,9 @@ class ResolvedFilterScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFilterScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -9546,32 +9383,6 @@ class ResolvedFilterScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedFilterScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedFilterScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -9634,8 +9445,9 @@ class ResolvedGroupingSetBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGroupingSet>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -9717,32 +9529,6 @@ class ResolvedGroupingSetBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedGroupingSetBuilder&& set_group_by_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedGroupingSetBuilder& set_group_by_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedGroupingSet> node_;
 
@@ -9787,8 +9573,9 @@ class ResolvedAggregateScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAggregateScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -9876,32 +9663,6 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedGroupingSet>>>::value>>
-  ResolvedAggregateScanBuilder&& set_grouping_set_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grouping_set_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedGroupingSet>>>::value>>
-  ResolvedAggregateScanBuilder& set_grouping_set_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grouping_set_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& rollup_column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->rollup_column_list();
@@ -9971,32 +9732,6 @@ class ResolvedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
   ResolvedAggregateScanBuilder& set_rollup_column_list(T v) & {
     node_->set_rollup_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAggregateScanBuilder&& set_rollup_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_rollup_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAggregateScanBuilder& set_rollup_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_rollup_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -10109,32 +9844,6 @@ class ResolvedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAggregateScanBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAggregateScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAggregateScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -10282,32 +9991,6 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAggregateScanBuilder&& set_group_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAggregateScanBuilder& set_group_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedCollation>& collation_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->collation_list();
@@ -10420,32 +10103,6 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAggregateScanBuilder&& set_aggregate_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_aggregate_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAggregateScanBuilder& set_aggregate_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_aggregate_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAggregateScan> node_;
 
@@ -10492,8 +10149,9 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAnonymizedAggregateScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -10514,16 +10172,16 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   }
 
   // Getters and chained setters
-  const ResolvedColumnRef* k_threshold_expr() const {
+  const ResolvedExpr* k_threshold_expr() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->k_threshold_expr();
   }
 
-  std::unique_ptr<const ResolvedColumnRef> release_k_threshold_expr() {
+  std::unique_ptr<const ResolvedExpr> release_k_threshold_expr() {
     return node_->release_k_threshold_expr();
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& set_k_threshold_expr(T v) && {
     node_->set_k_threshold_expr(std::move(v));
     field_is_set_.set(7, true);
@@ -10531,7 +10189,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_k_threshold_expr(T v) & {
     node_->set_k_threshold_expr(std::move(v));
     field_is_set_.set(7, true);
@@ -10539,7 +10197,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& set_k_threshold_expr(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -10553,7 +10211,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return std::move(*this);
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_k_threshold_expr(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -10636,32 +10294,6 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_anonymization_option_list(T v) & {
     node_->set_anonymization_option_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder&& set_anonymization_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_anonymization_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder& set_anonymization_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_anonymization_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -10774,32 +10406,6 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -10947,32 +10553,6 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder&& set_group_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder& set_group_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedCollation>& collation_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->collation_list();
@@ -11085,32 +10665,6 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder&& set_aggregate_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_aggregate_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAnonymizedAggregateScanBuilder& set_aggregate_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_aggregate_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAnonymizedAggregateScan> node_;
 
@@ -11129,6 +10683,569 @@ inline ResolvedAnonymizedAggregateScanBuilder ToBuilder(
     std::unique_ptr<const ResolvedAnonymizedAggregateScan> node) {
   ResolvedAnonymizedAggregateScanBuilder builder(absl::WrapUnique<ResolvedAnonymizedAggregateScan>(
       const_cast<ResolvedAnonymizedAggregateScan*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(7, true);
+  return builder;
+}
+
+class ResolvedDifferentialPrivacyAggregateScanBuilder final {
+ public:
+  ResolvedDifferentialPrivacyAggregateScanBuilder() : ResolvedDifferentialPrivacyAggregateScanBuilder(absl::WrapUnique(new ResolvedDifferentialPrivacyAggregateScan)) {}
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder(const ResolvedDifferentialPrivacyAggregateScanBuilder&) = delete;
+  ResolvedDifferentialPrivacyAggregateScanBuilder& operator=(const ResolvedDifferentialPrivacyAggregateScanBuilder&) = delete;
+  ResolvedDifferentialPrivacyAggregateScanBuilder(ResolvedDifferentialPrivacyAggregateScanBuilder&& other)
+      : ResolvedDifferentialPrivacyAggregateScanBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& operator=(ResolvedDifferentialPrivacyAggregateScanBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(3)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedDifferentialPrivacyAggregateScan::input_scan was not set on the builder");
+    }
+    if (!field_is_set_.test(7)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedDifferentialPrivacyAggregateScan::group_selection_threshold_expr was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const ResolvedExpr* group_selection_threshold_expr() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_selection_threshold_expr();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_group_selection_threshold_expr() {
+    return node_->release_group_selection_threshold_expr();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_group_selection_threshold_expr(T v) && {
+    node_->set_group_selection_threshold_expr(std::move(v));
+    field_is_set_.set(7, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_group_selection_threshold_expr(T v) & {
+    node_->set_group_selection_threshold_expr(std::move(v));
+    field_is_set_.set(7, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_group_selection_threshold_expr(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_group_selection_threshold_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(7, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_group_selection_threshold_expr(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_group_selection_threshold_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(7, true);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<ResolvedColumn>& column_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list();
+  }
+
+  int column_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list_size();
+  }
+
+  const ResolvedColumn& column_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_list(i);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_column_list(ResolvedColumn v) && {
+    node_->add_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_column_list(ResolvedColumn v) & {
+    node_->add_column_list(v);
+
+    return *this;
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_column_list(const std::vector<ResolvedColumn>& v) && {
+    node_->set_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_column_list(const std::vector<ResolvedColumn>& v) & {
+    node_->set_column_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_ordered() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_ordered();
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_is_ordered(bool v) && {
+    node_->set_is_ordered(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_is_ordered(bool v) & {
+    node_->set_is_ordered(v);
+
+    return *this;
+  }
+
+  const ResolvedScan* input_scan() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->input_scan();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return node_->release_input_scan();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_input_scan(T v) && {
+    node_->set_input_scan(std::move(v));
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_input_scan(T v) & {
+    node_->set_input_scan(std::move(v));
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_input_scan(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_input_scan(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_by_list();
+  }
+
+  int group_by_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_by_list_size();
+  }
+
+  const ResolvedComputedColumn* group_by_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->group_by_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_group_by_list(T v) && {
+    node_->add_group_by_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_group_by_list(T v) & {
+    node_->add_group_by_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_group_by_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_group_by_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_group_by_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_group_by_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_group_by_list() {
+    return node_->release_group_by_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_group_by_list(T v) && {
+    node_->set_group_by_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_group_by_list(T v) & {
+    node_->set_group_by_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<ResolvedCollation>& collation_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->collation_list();
+  }
+
+  int collation_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->collation_list_size();
+  }
+
+  const ResolvedCollation& collation_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->collation_list(i);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_collation_list(ResolvedCollation v) && {
+    node_->add_collation_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_collation_list(ResolvedCollation v) & {
+    node_->add_collation_list(v);
+
+    return *this;
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_collation_list(const std::vector<ResolvedCollation>& v) && {
+    node_->set_collation_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_collation_list(const std::vector<ResolvedCollation>& v) & {
+    node_->set_collation_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aggregate_list();
+  }
+
+  int aggregate_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aggregate_list_size();
+  }
+
+  const ResolvedComputedColumn* aggregate_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aggregate_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_aggregate_list(T v) && {
+    node_->add_aggregate_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_aggregate_list(T v) & {
+    node_->add_aggregate_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_aggregate_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_aggregate_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_aggregate_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_aggregate_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_aggregate_list() {
+    return node_->release_aggregate_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_aggregate_list(T v) && {
+    node_->set_aggregate_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_aggregate_list(T v) & {
+    node_->set_aggregate_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedDifferentialPrivacyAggregateScan> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<9> field_is_set_ = {0};
+  friend ResolvedDifferentialPrivacyAggregateScanBuilder ToBuilder(
+      std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan> node);
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder(std::unique_ptr<ResolvedDifferentialPrivacyAggregateScan> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedDifferentialPrivacyAggregateScanBuilder ToBuilder(
+    std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan> node) {
+  ResolvedDifferentialPrivacyAggregateScanBuilder builder(absl::WrapUnique<ResolvedDifferentialPrivacyAggregateScan>(
+      const_cast<ResolvedDifferentialPrivacyAggregateScan*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(7, true);
@@ -11158,8 +11275,9 @@ class ResolvedSetOperationItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSetOperationItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -11320,8 +11438,9 @@ class ResolvedSetOperationScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSetOperationScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -11424,32 +11543,6 @@ class ResolvedSetOperationScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedSetOperationItem>>>::value>>
   ResolvedSetOperationScanBuilder& set_input_item_list(T v) & {
     node_->set_input_item_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedSetOperationItem>>>::value>>
-  ResolvedSetOperationScanBuilder&& set_input_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_input_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedSetOperationItem>>>::value>>
-  ResolvedSetOperationScanBuilder& set_input_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_input_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -11566,32 +11659,6 @@ class ResolvedSetOperationScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSetOperationScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSetOperationScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -11655,8 +11722,9 @@ class ResolvedOrderByScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedOrderByScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -11797,32 +11865,6 @@ class ResolvedOrderByScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
-  ResolvedOrderByScanBuilder&& set_order_by_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_order_by_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
-  ResolvedOrderByScanBuilder& set_order_by_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_order_by_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedColumn>& column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_list();
@@ -11935,32 +11977,6 @@ class ResolvedOrderByScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedOrderByScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedOrderByScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -12024,8 +12040,9 @@ class ResolvedLimitOffsetScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedLimitOffsetScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -12062,16 +12079,16 @@ class ResolvedLimitOffsetScanBuilder final {
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
-  ResolvedLimitOffsetScanBuilder&& set_input_scan(T v) && {
-    node_->set_input_scan(std::move(v));
+  ResolvedLimitOffsetScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
+    node_->set_input_scan(std::move(v), propagate_order);
     field_is_set_.set(3, true);
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
-  ResolvedLimitOffsetScanBuilder& set_input_scan(T v) & {
-    node_->set_input_scan(std::move(v));
+  ResolvedLimitOffsetScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
+    node_->set_input_scan(std::move(v), propagate_order);
     field_is_set_.set(3, true);
 
     return *this;
@@ -12323,32 +12340,6 @@ class ResolvedLimitOffsetScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedLimitOffsetScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedLimitOffsetScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -12414,8 +12405,9 @@ class ResolvedWithRefScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWithRefScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -12561,32 +12553,6 @@ class ResolvedWithRefScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWithRefScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWithRefScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -12650,8 +12616,9 @@ class ResolvedAnalyticScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAnalyticScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -12792,32 +12759,6 @@ class ResolvedAnalyticScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>>::value>>
-  ResolvedAnalyticScanBuilder&& set_function_group_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_function_group_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>>::value>>
-  ResolvedAnalyticScanBuilder& set_function_group_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_function_group_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedColumn>& column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_list();
@@ -12930,32 +12871,6 @@ class ResolvedAnalyticScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyticScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyticScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -13023,8 +12938,9 @@ class ResolvedSampleScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSampleScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -13382,32 +13298,6 @@ class ResolvedSampleScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedSampleScanBuilder&& set_partition_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedSampleScanBuilder& set_partition_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedColumn>& column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_list();
@@ -13520,32 +13410,6 @@ class ResolvedSampleScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSampleScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSampleScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -13613,8 +13477,9 @@ class ResolvedComputedColumnBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedComputedColumn>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -13759,8 +13624,9 @@ class ResolvedOrderByItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedOrderByItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -13977,8 +13843,9 @@ class ResolvedColumnAnnotationsBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedColumnAnnotations>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -14129,32 +13996,6 @@ class ResolvedColumnAnnotationsBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedColumnAnnotationsBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedColumnAnnotationsBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedColumnAnnotations>>& child_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->child_list();
@@ -14224,32 +14065,6 @@ class ResolvedColumnAnnotationsBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnAnnotations>>>::value>>
   ResolvedColumnAnnotationsBuilder& set_child_list(T v) & {
     node_->set_child_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnAnnotations>>>::value>>
-  ResolvedColumnAnnotationsBuilder&& set_child_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_child_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnAnnotations>>>::value>>
-  ResolvedColumnAnnotationsBuilder& set_child_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_child_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -14325,8 +14140,9 @@ class ResolvedGeneratedColumnInfoBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGeneratedColumnInfo>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -14466,8 +14282,9 @@ class ResolvedColumnDefaultValueBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedColumnDefaultValue>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -14612,8 +14429,9 @@ class ResolvedColumnDefinitionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedColumnDefinition>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -14907,8 +14725,9 @@ class ResolvedPrimaryKeyBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedPrimaryKey>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -15025,32 +14844,6 @@ class ResolvedPrimaryKeyBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedPrimaryKeyBuilder& set_option_list(T v) & {
     node_->set_option_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedPrimaryKeyBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedPrimaryKeyBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -15182,8 +14975,9 @@ class ResolvedForeignKeyBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedForeignKey>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -15493,32 +15287,6 @@ class ResolvedForeignKeyBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedForeignKeyBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedForeignKeyBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& referencing_column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->referencing_column_list();
@@ -15609,8 +15377,9 @@ class ResolvedCheckConstraintBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCheckConstraint>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -15801,32 +15570,6 @@ class ResolvedCheckConstraintBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCheckConstraintBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCheckConstraintBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedCheckConstraint> node_;
 
@@ -15875,8 +15618,9 @@ class ResolvedOutputColumnBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedOutputColumn>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -15982,8 +15726,9 @@ class ResolvedProjectScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedProjectScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -16071,32 +15816,6 @@ class ResolvedProjectScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedProjectScanBuilder&& set_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedProjectScanBuilder& set_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedScan* input_scan() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->input_scan();
@@ -16107,16 +15826,16 @@ class ResolvedProjectScanBuilder final {
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
-  ResolvedProjectScanBuilder&& set_input_scan(T v) && {
-    node_->set_input_scan(std::move(v));
+  ResolvedProjectScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
+    node_->set_input_scan(std::move(v), propagate_order);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
-  ResolvedProjectScanBuilder& set_input_scan(T v) & {
-    node_->set_input_scan(std::move(v));
+  ResolvedProjectScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
+    node_->set_input_scan(std::move(v), propagate_order);
     field_is_set_.set(4, true);
 
     return *this;
@@ -16262,32 +15981,6 @@ class ResolvedProjectScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedProjectScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedProjectScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -16351,8 +16044,9 @@ class ResolvedTVFScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedTVFScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -16486,32 +16180,6 @@ class ResolvedTVFScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
   ResolvedTVFScanBuilder& set_argument_list(T v) & {
     node_->set_argument_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedTVFScanBuilder&& set_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedFunctionArgument>>>::value>>
-  ResolvedTVFScanBuilder& set_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -16703,32 +16371,6 @@ class ResolvedTVFScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedTVFScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedTVFScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -16794,8 +16436,9 @@ class ResolvedGroupRowsScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGroupRowsScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -16879,32 +16522,6 @@ class ResolvedGroupRowsScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
   ResolvedGroupRowsScanBuilder& set_input_column_list(T v) & {
     node_->set_input_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedGroupRowsScanBuilder&& set_input_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_input_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedGroupRowsScanBuilder& set_input_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_input_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -17040,32 +16657,6 @@ class ResolvedGroupRowsScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedGroupRowsScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedGroupRowsScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -17127,8 +16718,9 @@ class ResolvedFunctionArgumentBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFunctionArgument>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -17514,8 +17106,9 @@ class ResolvedExplainStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExplainStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -17656,32 +17249,6 @@ class ResolvedExplainStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExplainStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExplainStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedExplainStmt> node_;
 
@@ -17728,8 +17295,9 @@ class ResolvedQueryStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedQueryStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -17813,32 +17381,6 @@ class ResolvedQueryStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
   ResolvedQueryStmtBuilder& set_output_column_list(T v) & {
     node_->set_output_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedQueryStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedQueryStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -17990,32 +17532,6 @@ class ResolvedQueryStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedQueryStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedQueryStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedQueryStmt> node_;
 
@@ -18060,8 +17576,9 @@ class ResolvedCreateDatabaseStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateDatabaseStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -18182,32 +17699,6 @@ class ResolvedCreateDatabaseStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateDatabaseStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateDatabaseStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -18281,32 +17772,6 @@ class ResolvedCreateDatabaseStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateDatabaseStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateDatabaseStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedCreateDatabaseStmt> node_;
 
@@ -18351,8 +17816,9 @@ class ResolvedIndexItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedIndexItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -18492,8 +17958,9 @@ class ResolvedUnnestItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedUnnestItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -18682,8 +18149,9 @@ class ResolvedCreateIndexStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateIndexStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -18922,32 +18390,6 @@ class ResolvedCreateIndexStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedIndexItem>>>::value>>
-  ResolvedCreateIndexStmtBuilder&& set_index_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_index_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedIndexItem>>>::value>>
-  ResolvedCreateIndexStmtBuilder& set_index_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_index_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedExpr>>& storing_expression_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->storing_expression_list();
@@ -19017,32 +18459,6 @@ class ResolvedCreateIndexStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
   ResolvedCreateIndexStmtBuilder& set_storing_expression_list(T v) & {
     node_->set_storing_expression_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateIndexStmtBuilder&& set_storing_expression_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_storing_expression_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateIndexStmtBuilder& set_storing_expression_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_storing_expression_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -19120,32 +18536,6 @@ class ResolvedCreateIndexStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateIndexStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateIndexStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& computed_columns_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->computed_columns_list();
@@ -19215,32 +18605,6 @@ class ResolvedCreateIndexStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
   ResolvedCreateIndexStmtBuilder& set_computed_columns_list(T v) & {
     node_->set_computed_columns_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedCreateIndexStmtBuilder&& set_computed_columns_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_computed_columns_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedCreateIndexStmtBuilder& set_computed_columns_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_computed_columns_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -19318,32 +18682,6 @@ class ResolvedCreateIndexStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUnnestItem>>>::value>>
-  ResolvedCreateIndexStmtBuilder&& set_unnest_expressions_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_unnest_expressions_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUnnestItem>>>::value>>
-  ResolvedCreateIndexStmtBuilder& set_unnest_expressions_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_unnest_expressions_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -19413,32 +18751,6 @@ class ResolvedCreateIndexStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateIndexStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateIndexStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateIndexStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -19561,8 +18873,9 @@ class ResolvedCreateSchemaStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateSchemaStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -19693,32 +19006,6 @@ class ResolvedCreateSchemaStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSchemaStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSchemaStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -19788,32 +19075,6 @@ class ResolvedCreateSchemaStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateSchemaStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSchemaStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSchemaStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -19933,8 +19194,9 @@ class ResolvedCreateTableStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateTableStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -20114,32 +19376,6 @@ class ResolvedCreateTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_partition_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_partition_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
@@ -20213,32 +19449,6 @@ class ResolvedCreateTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_cluster_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_cluster_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -20308,32 +19518,6 @@ class ResolvedCreateTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateTableStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -20484,32 +19668,6 @@ class ResolvedCreateTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
@@ -20579,32 +19737,6 @@ class ResolvedCreateTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
   ResolvedCreateTableStmtBuilder& set_column_definition_list(T v) & {
     node_->set_column_definition_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -20770,32 +19902,6 @@ class ResolvedCreateTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_foreign_key_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_foreign_key_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
@@ -20865,32 +19971,6 @@ class ResolvedCreateTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
   ResolvedCreateTableStmtBuilder& set_check_constraint_list(T v) & {
     node_->set_check_constraint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedCreateTableStmtBuilder&& set_check_constraint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedCreateTableStmtBuilder& set_check_constraint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -20978,6 +20058,55 @@ class ResolvedCreateTableStmtBuilder final {
     return *this;
   }
 
+  const ResolvedConnection* connection() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->connection();
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return node_->release_connection();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableStmtBuilder&& set_connection(T v) && {
+    node_->set_connection(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableStmtBuilder& set_connection(T v) & {
+    node_->set_connection(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableStmtBuilder&& set_connection(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableStmtBuilder& set_connection(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedCreateTableStmt> node_;
 
@@ -21022,9 +20151,10 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateTableAsSelectStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
-    if (!field_is_set_.test(16)) {
+    if (!field_is_set_.test(17)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
           ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
@@ -21111,32 +20241,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_partition_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_partition_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
@@ -21206,32 +20310,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
   ResolvedCreateTableAsSelectStmtBuilder& set_cluster_by_list(T v) & {
     node_->set_cluster_by_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_cluster_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_cluster_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -21309,32 +20387,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedScan* query() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->query();
@@ -21347,7 +20399,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedCreateTableAsSelectStmtBuilder&& set_query(T v) && {
     node_->set_query(std::move(v));
-    field_is_set_.set(16, true);
+    field_is_set_.set(17, true);
 
     return std::move(*this);
   }
@@ -21355,7 +20407,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedCreateTableAsSelectStmtBuilder& set_query(T v) & {
     node_->set_query(std::move(v));
-    field_is_set_.set(16, true);
+    field_is_set_.set(17, true);
 
     return *this;
   }
@@ -21369,7 +20421,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(16, true);
+    field_is_set_.set(17, true);
 
     return std::move(*this);
   }
@@ -21383,7 +20435,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(16, true);
+    field_is_set_.set(17, true);
 
     return *this;
   }
@@ -21457,32 +20509,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateTableAsSelectStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -21633,32 +20659,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
@@ -21728,32 +20728,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
   ResolvedCreateTableAsSelectStmtBuilder& set_column_definition_list(T v) & {
     node_->set_column_definition_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -21919,32 +20893,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_foreign_key_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_foreign_key_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
@@ -22014,32 +20962,6 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
   ResolvedCreateTableAsSelectStmtBuilder& set_check_constraint_list(T v) & {
     node_->set_check_constraint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder&& set_check_constraint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedCreateTableAsSelectStmtBuilder& set_check_constraint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -22127,11 +21049,60 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     return *this;
   }
 
+  const ResolvedConnection* connection() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->connection();
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return node_->release_connection();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableAsSelectStmtBuilder&& set_connection(T v) && {
+    node_->set_connection(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableAsSelectStmtBuilder& set_connection(T v) & {
+    node_->set_connection(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableAsSelectStmtBuilder&& set_connection(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateTableAsSelectStmtBuilder& set_connection(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedCreateTableAsSelectStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<17> field_is_set_ = {0};
+  std::bitset<18> field_is_set_ = {0};
   friend ResolvedCreateTableAsSelectStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateTableAsSelectStmt> node);
 
@@ -22146,7 +21117,222 @@ inline ResolvedCreateTableAsSelectStmtBuilder ToBuilder(
   ResolvedCreateTableAsSelectStmtBuilder builder(absl::WrapUnique<ResolvedCreateTableAsSelectStmt>(
       const_cast<ResolvedCreateTableAsSelectStmt*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(16, true);
+  builder.field_is_set_.set(17, true);
+  return builder;
+}
+
+class ResolvedCreateModelAliasedQueryBuilder final {
+ public:
+  ResolvedCreateModelAliasedQueryBuilder() : ResolvedCreateModelAliasedQueryBuilder(absl::WrapUnique(new ResolvedCreateModelAliasedQuery)) {}
+
+  ResolvedCreateModelAliasedQueryBuilder(const ResolvedCreateModelAliasedQueryBuilder&) = delete;
+  ResolvedCreateModelAliasedQueryBuilder& operator=(const ResolvedCreateModelAliasedQueryBuilder&) = delete;
+  ResolvedCreateModelAliasedQueryBuilder(ResolvedCreateModelAliasedQueryBuilder&& other)
+      : ResolvedCreateModelAliasedQueryBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedCreateModelAliasedQueryBuilder& operator=(ResolvedCreateModelAliasedQueryBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateModelAliasedQuery>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedCreateModelAliasedQuery::alias was not set on the builder");
+    }
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedCreateModelAliasedQuery::query was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::string& alias() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->alias();
+  }
+
+  ResolvedCreateModelAliasedQueryBuilder&& set_alias(const std::string& v) && {
+    node_->set_alias(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateModelAliasedQueryBuilder& set_alias(const std::string& v) & {
+    node_->set_alias(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const ResolvedScan* query() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->query();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_query() {
+    return node_->release_query();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder&& set_query(T v) && {
+    node_->set_query(std::move(v));
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder& set_query(T v) & {
+    node_->set_query(std::move(v));
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder&& set_query(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_query(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder& set_query(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_query(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->output_column_list();
+  }
+
+  int output_column_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->output_column_list_size();
+  }
+
+  const ResolvedOutputColumn* output_column_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->output_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder&& add_output_column_list(T v) && {
+    node_->add_output_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder& add_output_column_list(T v) & {
+    node_->add_output_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder&& add_output_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_output_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder& add_output_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_output_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOutputColumn>> release_output_column_list() {
+    return node_->release_output_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder&& set_output_column_list(T v) && {
+    node_->set_output_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
+  ResolvedCreateModelAliasedQueryBuilder& set_output_column_list(T v) & {
+    node_->set_output_column_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedCreateModelAliasedQuery> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<3> field_is_set_ = {0};
+  friend ResolvedCreateModelAliasedQueryBuilder ToBuilder(
+      std::unique_ptr<const ResolvedCreateModelAliasedQuery> node);
+
+  ResolvedCreateModelAliasedQueryBuilder(std::unique_ptr<ResolvedCreateModelAliasedQuery> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedCreateModelAliasedQueryBuilder ToBuilder(
+    std::unique_ptr<const ResolvedCreateModelAliasedQuery> node) {
+  ResolvedCreateModelAliasedQueryBuilder builder(absl::WrapUnique<ResolvedCreateModelAliasedQuery>(
+      const_cast<ResolvedCreateModelAliasedQuery*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(1, true);
   return builder;
 }
 
@@ -22173,8 +21359,9 @@ class ResolvedCreateModelStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateModelStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -22262,32 +21449,6 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
@@ -22361,32 +21522,6 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedScan* query() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->query();
@@ -22436,6 +21571,79 @@ class ResolvedCreateModelStmtBuilder final {
                                         status_or_node.status());
     }
     field_is_set_.set(6, true);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedCreateModelAliasedQuery>>& aliased_query_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aliased_query_list();
+  }
+
+  int aliased_query_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aliased_query_list_size();
+  }
+
+  const ResolvedCreateModelAliasedQuery* aliased_query_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->aliased_query_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedCreateModelAliasedQuery>>::value>>
+  ResolvedCreateModelStmtBuilder&& add_aliased_query_list(T v) && {
+    node_->add_aliased_query_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedCreateModelAliasedQuery>>::value>>
+  ResolvedCreateModelStmtBuilder& add_aliased_query_list(T v) & {
+    node_->add_aliased_query_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedCreateModelAliasedQuery>>::value>>
+  ResolvedCreateModelStmtBuilder&& add_aliased_query_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_aliased_query_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedCreateModelAliasedQuery>>::value>>
+  ResolvedCreateModelStmtBuilder& add_aliased_query_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_aliased_query_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedCreateModelAliasedQuery>> release_aliased_query_list() {
+    return node_->release_aliased_query_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedCreateModelAliasedQuery>>>::value>>
+  ResolvedCreateModelStmtBuilder&& set_aliased_query_list(T v) && {
+    node_->set_aliased_query_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedCreateModelAliasedQuery>>>::value>>
+  ResolvedCreateModelStmtBuilder& set_aliased_query_list(T v) & {
+    node_->set_aliased_query_list(std::move(v));
 
     return *this;
   }
@@ -22513,32 +21721,6 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_transform_input_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_transform_input_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_transform_input_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_transform_input_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& transform_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->transform_list();
@@ -22608,32 +21790,6 @@ class ResolvedCreateModelStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
   ResolvedCreateModelStmtBuilder& set_transform_list(T v) & {
     node_->set_transform_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_transform_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_transform_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_transform_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_transform_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -22711,32 +21867,6 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_transform_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_transform_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_transform_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_transform_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>& transform_analytic_function_group_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->transform_analytic_function_group_list();
@@ -22810,11 +21940,40 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_transform_analytic_function_group_list(TBuilder&& b) && {
+  const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& input_column_definition_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->input_column_definition_list();
+  }
+
+  int input_column_definition_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->input_column_definition_list_size();
+  }
+
+  const ResolvedColumnDefinition* input_column_definition_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->input_column_definition_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder&& add_input_column_definition_list(T v) && {
+    node_->add_input_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder& add_input_column_definition_list(T v) & {
+    node_->add_input_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder&& add_input_column_definition_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
-      set_transform_analytic_function_group_list(std::move(*status_or_node));
+      add_input_column_definition_list(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
@@ -22823,11 +21982,168 @@ class ResolvedCreateModelStmtBuilder final {
     return std::move(*this);
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_transform_analytic_function_group_list(TBuilder&& b) & {
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder& add_input_column_definition_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
-      set_transform_analytic_function_group_list(std::move(*status_or_node));
+      add_input_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnDefinition>> release_input_column_definition_list() {
+    return node_->release_input_column_definition_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateModelStmtBuilder&& set_input_column_definition_list(T v) && {
+    node_->set_input_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateModelStmtBuilder& set_input_column_definition_list(T v) & {
+    node_->set_input_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& output_column_definition_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->output_column_definition_list();
+  }
+
+  int output_column_definition_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->output_column_definition_list_size();
+  }
+
+  const ResolvedColumnDefinition* output_column_definition_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->output_column_definition_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder&& add_output_column_definition_list(T v) && {
+    node_->add_output_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder& add_output_column_definition_list(T v) & {
+    node_->add_output_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder&& add_output_column_definition_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_output_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateModelStmtBuilder& add_output_column_definition_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_output_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnDefinition>> release_output_column_definition_list() {
+    return node_->release_output_column_definition_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateModelStmtBuilder&& set_output_column_definition_list(T v) && {
+    node_->set_output_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateModelStmtBuilder& set_output_column_definition_list(T v) & {
+    node_->set_output_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_remote() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_remote();
+  }
+
+  ResolvedCreateModelStmtBuilder&& set_is_remote(bool v) && {
+    node_->set_is_remote(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateModelStmtBuilder& set_is_remote(bool v) & {
+    node_->set_is_remote(v);
+
+    return *this;
+  }
+
+  const ResolvedConnection* connection() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->connection();
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return node_->release_connection();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateModelStmtBuilder&& set_connection(T v) && {
+    node_->set_connection(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateModelStmtBuilder& set_connection(T v) & {
+    node_->set_connection(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateModelStmtBuilder&& set_connection(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateModelStmtBuilder& set_connection(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
@@ -22909,32 +22225,6 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateModelStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateModelStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& name_path() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->name_path();
@@ -23012,7 +22302,7 @@ class ResolvedCreateModelStmtBuilder final {
   std::unique_ptr<ResolvedCreateModelStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<11> field_is_set_ = {0};
+  std::bitset<16> field_is_set_ = {0};
   friend ResolvedCreateModelStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateModelStmt> node);
 
@@ -23054,8 +22344,8 @@ class ResolvedCreateViewStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateViewStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -23151,32 +22441,6 @@ class ResolvedCreateViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateViewStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateViewStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateViewStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -23327,32 +22591,6 @@ class ResolvedCreateViewStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateViewStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateViewStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
@@ -23422,32 +22660,6 @@ class ResolvedCreateViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
   ResolvedCreateViewStmtBuilder& set_output_column_list(T v) & {
     node_->set_output_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateViewStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateViewStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -23600,11 +22812,84 @@ class ResolvedCreateViewStmtBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list();
+  }
+
+  int column_definition_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list_size();
+  }
+
+  const ResolvedColumnDefinition* column_definition_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateViewStmtBuilder&& add_column_definition_list(T v) && {
+    node_->add_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateViewStmtBuilder& add_column_definition_list(T v) & {
+    node_->add_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateViewStmtBuilder&& add_column_definition_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateViewStmtBuilder& add_column_definition_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnDefinition>> release_column_definition_list() {
+    return node_->release_column_definition_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateViewStmtBuilder&& set_column_definition_list(T v) && {
+    node_->set_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateViewStmtBuilder& set_column_definition_list(T v) & {
+    node_->set_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedCreateViewStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<12> field_is_set_ = {0};
+  std::bitset<13> field_is_set_ = {0};
   friend ResolvedCreateViewStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateViewStmt> node);
 
@@ -23646,8 +22931,9 @@ class ResolvedWithPartitionColumnsBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWithPartitionColumns>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -23729,32 +23015,6 @@ class ResolvedWithPartitionColumnsBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedWithPartitionColumnsBuilder&& set_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedWithPartitionColumnsBuilder& set_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedWithPartitionColumns> node_;
 
@@ -23799,8 +23059,9 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateSnapshotTableStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -23941,32 +23202,6 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSnapshotTableStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSnapshotTableStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -24036,32 +23271,6 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateSnapshotTableStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSnapshotTableStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSnapshotTableStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -24183,8 +23392,9 @@ class ResolvedCreateExternalTableStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateExternalTableStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -24234,55 +23444,6 @@ class ResolvedCreateExternalTableStmtBuilder final {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
       set_with_partition_columns(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->connection();
-  }
-
-  std::unique_ptr<const ResolvedConnection> release_connection() {
-    return node_->release_connection();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_connection(T v) && {
-    node_->set_connection(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_connection(T v) & {
-    node_->set_connection(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_connection(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_connection(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_connection(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_connection(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
@@ -24360,32 +23521,6 @@ class ResolvedCreateExternalTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateExternalTableStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -24536,32 +23671,6 @@ class ResolvedCreateExternalTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
@@ -24631,32 +23740,6 @@ class ResolvedCreateExternalTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
   ResolvedCreateExternalTableStmtBuilder& set_column_definition_list(T v) & {
     node_->set_column_definition_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -24822,32 +23905,6 @@ class ResolvedCreateExternalTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_foreign_key_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_foreign_key_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
@@ -24917,32 +23974,6 @@ class ResolvedCreateExternalTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
   ResolvedCreateExternalTableStmtBuilder& set_check_constraint_list(T v) & {
     node_->set_check_constraint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder&& set_check_constraint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedCreateExternalTableStmtBuilder& set_check_constraint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -25030,6 +24061,55 @@ class ResolvedCreateExternalTableStmtBuilder final {
     return *this;
   }
 
+  const ResolvedConnection* connection() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->connection();
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return node_->release_connection();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalTableStmtBuilder&& set_connection(T v) && {
+    node_->set_connection(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalTableStmtBuilder& set_connection(T v) & {
+    node_->set_connection(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalTableStmtBuilder&& set_connection(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalTableStmtBuilder& set_connection(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedCreateExternalTableStmt> node_;
 
@@ -25072,8 +24152,9 @@ class ResolvedExportModelStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExportModelStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -25243,32 +24324,6 @@ class ResolvedExportModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportModelStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportModelStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -25342,32 +24397,6 @@ class ResolvedExportModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportModelStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportModelStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedExportModelStmt> node_;
 
@@ -25412,8 +24441,9 @@ class ResolvedExportDataStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExportDataStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -25550,32 +24580,6 @@ class ResolvedExportDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportDataStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportDataStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
@@ -25645,32 +24649,6 @@ class ResolvedExportDataStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
   ResolvedExportDataStmtBuilder& set_output_column_list(T v) & {
     node_->set_output_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedExportDataStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedExportDataStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -25822,32 +24800,6 @@ class ResolvedExportDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportDataStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExportDataStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedExportDataStmt> node_;
 
@@ -25892,8 +24844,9 @@ class ResolvedDefineTableStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDefineTableStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -26014,32 +24967,6 @@ class ResolvedDefineTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDefineTableStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDefineTableStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -26113,32 +25040,6 @@ class ResolvedDefineTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDefineTableStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDefineTableStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDefineTableStmt> node_;
 
@@ -26183,8 +25084,9 @@ class ResolvedDescribeStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDescribeStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -26369,32 +25271,6 @@ class ResolvedDescribeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDescribeStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDescribeStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDescribeStmt> node_;
 
@@ -26441,8 +25317,9 @@ class ResolvedShowStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedShowStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -26637,32 +25514,6 @@ class ResolvedShowStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedShowStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedShowStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedShowStmt> node_;
 
@@ -26712,8 +25563,9 @@ class ResolvedBeginStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedBeginStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -26851,32 +25703,6 @@ class ResolvedBeginStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedBeginStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedBeginStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedBeginStmt> node_;
 
@@ -26921,8 +25747,9 @@ class ResolvedSetTransactionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSetTransactionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -27060,32 +25887,6 @@ class ResolvedSetTransactionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSetTransactionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSetTransactionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedSetTransactionStmt> node_;
 
@@ -27128,8 +25929,8 @@ class ResolvedCommitStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCommitStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -27211,32 +26012,6 @@ class ResolvedCommitStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCommitStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCommitStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedCommitStmt> node_;
 
@@ -27279,8 +26054,8 @@ class ResolvedRollbackStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRollbackStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -27362,32 +26137,6 @@ class ResolvedRollbackStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRollbackStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRollbackStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedRollbackStmt> node_;
 
@@ -27430,8 +26179,9 @@ class ResolvedStartBatchStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedStartBatchStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -27530,32 +26280,6 @@ class ResolvedStartBatchStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedStartBatchStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedStartBatchStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedStartBatchStmt> node_;
 
@@ -27598,8 +26322,8 @@ class ResolvedRunBatchStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRunBatchStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -27681,32 +26405,6 @@ class ResolvedRunBatchStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRunBatchStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRunBatchStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedRunBatchStmt> node_;
 
@@ -27749,8 +26447,8 @@ class ResolvedAbortBatchStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAbortBatchStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -27832,32 +26530,6 @@ class ResolvedAbortBatchStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAbortBatchStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAbortBatchStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAbortBatchStmt> node_;
 
@@ -27907,8 +26579,9 @@ class ResolvedDropStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -28096,32 +26769,6 @@ class ResolvedDropStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropStmt> node_;
 
@@ -28169,8 +26816,9 @@ class ResolvedDropMaterializedViewStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropMaterializedViewStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -28316,32 +26964,6 @@ class ResolvedDropMaterializedViewStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropMaterializedViewStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropMaterializedViewStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropMaterializedViewStmt> node_;
 
@@ -28388,8 +27010,9 @@ class ResolvedDropSnapshotTableStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropSnapshotTableStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -28535,32 +27158,6 @@ class ResolvedDropSnapshotTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropSnapshotTableStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropSnapshotTableStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropSnapshotTableStmt> node_;
 
@@ -28605,8 +27202,8 @@ class ResolvedRecursiveRefScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRecursiveRefScan>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -28727,32 +27324,6 @@ class ResolvedRecursiveRefScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRecursiveRefScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRecursiveRefScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -28818,8 +27389,9 @@ class ResolvedRecursiveScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRecursiveScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -29083,32 +27655,6 @@ class ResolvedRecursiveScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRecursiveScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRecursiveScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -29174,8 +27720,9 @@ class ResolvedWithScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWithScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -29269,32 +27816,6 @@ class ResolvedWithScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedWithEntry>>>::value>>
-  ResolvedWithScanBuilder&& set_with_entry_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_with_entry_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedWithEntry>>>::value>>
-  ResolvedWithScanBuilder& set_with_entry_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_with_entry_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedScan* query() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->query();
@@ -29305,16 +27826,16 @@ class ResolvedWithScanBuilder final {
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
-  ResolvedWithScanBuilder&& set_query(T v) && {
-    node_->set_query(std::move(v));
+  ResolvedWithScanBuilder&& set_query(T v, bool propagate_order=true) && {
+    node_->set_query(std::move(v), propagate_order);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
-  ResolvedWithScanBuilder& set_query(T v) & {
-    node_->set_query(std::move(v));
+  ResolvedWithScanBuilder& set_query(T v, bool propagate_order=true) & {
+    node_->set_query(std::move(v), propagate_order);
     field_is_set_.set(4, true);
 
     return *this;
@@ -29480,32 +28001,6 @@ class ResolvedWithScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWithScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWithScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -29570,8 +28065,9 @@ class ResolvedWithEntryBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWithEntry>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -29711,8 +28207,9 @@ class ResolvedOptionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedOption>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -29867,8 +28364,9 @@ class ResolvedWindowPartitioningBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWindowPartitioning>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -29950,32 +28448,6 @@ class ResolvedWindowPartitioningBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedWindowPartitioningBuilder&& set_partition_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedWindowPartitioningBuilder& set_partition_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -30049,32 +28521,6 @@ class ResolvedWindowPartitioningBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWindowPartitioningBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWindowPartitioningBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedWindowPartitioning> node_;
 
@@ -30117,8 +28563,9 @@ class ResolvedWindowOrderingBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWindowOrdering>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -30200,32 +28647,6 @@ class ResolvedWindowOrderingBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
-  ResolvedWindowOrderingBuilder&& set_order_by_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_order_by_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOrderByItem>>>::value>>
-  ResolvedWindowOrderingBuilder& set_order_by_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_order_by_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -30299,32 +28720,6 @@ class ResolvedWindowOrderingBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWindowOrderingBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedWindowOrderingBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedWindowOrdering> node_;
 
@@ -30376,8 +28771,9 @@ class ResolvedWindowFrameBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWindowFrame>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -30577,8 +28973,9 @@ class ResolvedAnalyticFunctionGroupBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAnalyticFunctionGroup>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -30778,32 +29175,6 @@ class ResolvedAnalyticFunctionGroupBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAnalyticFunctionGroupBuilder&& set_analytic_function_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_analytic_function_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedAnalyticFunctionGroupBuilder& set_analytic_function_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_analytic_function_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAnalyticFunctionGroup> node_;
 
@@ -30861,8 +29232,9 @@ class ResolvedWindowFrameExprBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedWindowFrameExpr>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -31002,8 +29374,9 @@ class ResolvedDMLValueBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDMLValue>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -31117,8 +29490,8 @@ class ResolvedDMLDefaultBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDMLDefault>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -31215,8 +29588,9 @@ class ResolvedAssertStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAssertStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -31374,32 +29748,6 @@ class ResolvedAssertStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAssertStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAssertStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAssertStmt> node_;
 
@@ -31446,8 +29794,9 @@ class ResolvedAssertRowsModifiedBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAssertRowsModified>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -31559,8 +29908,9 @@ class ResolvedInsertRowBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedInsertRow>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -31642,32 +29992,6 @@ class ResolvedInsertRowBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedDMLValue>>>::value>>
-  ResolvedInsertRowBuilder&& set_value_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_value_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedDMLValue>>>::value>>
-  ResolvedInsertRowBuilder& set_value_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_value_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedInsertRow> node_;
 
@@ -31719,8 +30043,9 @@ class ResolvedInsertStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedInsertStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -32007,32 +30332,6 @@ class ResolvedInsertStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedInsertStmtBuilder&& set_query_parameter_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_query_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedInsertStmtBuilder& set_query_parameter_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_query_parameter_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedScan* query() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->query();
@@ -32194,32 +30493,6 @@ class ResolvedInsertStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedInsertRow>>>::value>>
-  ResolvedInsertStmtBuilder&& set_row_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_row_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedInsertRow>>>::value>>
-  ResolvedInsertStmtBuilder& set_row_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_row_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_access_list();
@@ -32332,32 +30605,6 @@ class ResolvedInsertStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedInsertStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedInsertStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedInsertStmt> node_;
 
@@ -32402,8 +30649,9 @@ class ResolvedDeleteStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDeleteStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -32779,32 +31027,6 @@ class ResolvedDeleteStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDeleteStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDeleteStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDeleteStmt> node_;
 
@@ -32851,8 +31073,9 @@ class ResolvedUpdateItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedUpdateItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -33156,32 +31379,6 @@ class ResolvedUpdateItemBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateArrayItem>>>::value>>
-  ResolvedUpdateItemBuilder&& set_array_update_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_array_update_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateArrayItem>>>::value>>
-  ResolvedUpdateItemBuilder& set_array_update_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_array_update_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   // Nested DELETE statements to apply.  Each delete runs on one value
   // of <element_column> and may choose to delete that array element.
   //
@@ -33261,32 +31458,6 @@ class ResolvedUpdateItemBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedDeleteStmt>>>::value>>
-  ResolvedUpdateItemBuilder&& set_delete_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_delete_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedDeleteStmt>>>::value>>
-  ResolvedUpdateItemBuilder& set_delete_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_delete_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   // Nested UPDATE statements to apply.  Each update runs on one value
   // of <element_column> and may choose to update that array element.
   //
@@ -33362,32 +31533,6 @@ class ResolvedUpdateItemBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedUpdateStmt>>>::value>>
   ResolvedUpdateItemBuilder& set_update_list(T v) & {
     node_->set_update_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateStmt>>>::value>>
-  ResolvedUpdateItemBuilder&& set_update_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_update_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateStmt>>>::value>>
-  ResolvedUpdateItemBuilder& set_update_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_update_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -33472,32 +31617,6 @@ class ResolvedUpdateItemBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedInsertStmt>>>::value>>
-  ResolvedUpdateItemBuilder&& set_insert_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_insert_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedInsertStmt>>>::value>>
-  ResolvedUpdateItemBuilder& set_insert_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_insert_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedUpdateItem> node_;
 
@@ -33545,8 +31664,9 @@ class ResolvedUpdateArrayItemBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedUpdateArrayItem>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -33722,8 +31842,9 @@ class ResolvedUpdateStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedUpdateStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -34099,32 +32220,6 @@ class ResolvedUpdateStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateItem>>>::value>>
-  ResolvedUpdateStmtBuilder&& set_update_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_update_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateItem>>>::value>>
-  ResolvedUpdateStmtBuilder& set_update_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_update_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedScan* from_scan() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->from_scan();
@@ -34247,32 +32342,6 @@ class ResolvedUpdateStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedUpdateStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedUpdateStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedUpdateStmt> node_;
 
@@ -34328,8 +32397,9 @@ class ResolvedMergeWhenBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedMergeWhen>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -34608,32 +32678,6 @@ class ResolvedMergeWhenBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateItem>>>::value>>
-  ResolvedMergeWhenBuilder&& set_update_item_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_update_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUpdateItem>>>::value>>
-  ResolvedMergeWhenBuilder& set_update_item_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_update_item_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedMergeWhen> node_;
 
@@ -34682,8 +32726,9 @@ class ResolvedMergeStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedMergeStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -34981,32 +33026,6 @@ class ResolvedMergeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedMergeWhen>>>::value>>
-  ResolvedMergeStmtBuilder&& set_when_clause_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_when_clause_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedMergeWhen>>>::value>>
-  ResolvedMergeStmtBuilder& set_when_clause_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_when_clause_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -35080,32 +33099,6 @@ class ResolvedMergeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedMergeStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedMergeStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedMergeStmt> node_;
 
@@ -35154,8 +33147,9 @@ class ResolvedTruncateStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedTruncateStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -35355,32 +33349,6 @@ class ResolvedTruncateStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedTruncateStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedTruncateStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedTruncateStmt> node_;
 
@@ -35426,8 +33394,9 @@ class ResolvedObjectUnitBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedObjectUnit>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -35519,8 +33488,9 @@ class ResolvedPrivilegeBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedPrivilege>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -35627,32 +33597,6 @@ class ResolvedPrivilegeBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedObjectUnit>>>::value>>
-  ResolvedPrivilegeBuilder&& set_unit_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_unit_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedObjectUnit>>>::value>>
-  ResolvedPrivilegeBuilder& set_unit_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_unit_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedPrivilege> node_;
 
@@ -35699,8 +33643,8 @@ class ResolvedGrantStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGrantStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -35788,32 +33732,6 @@ class ResolvedGrantStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedGrantStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedGrantStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& privilege_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->privilege_list();
@@ -35883,32 +33801,6 @@ class ResolvedGrantStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
   ResolvedGrantStmtBuilder& set_privilege_list(T v) & {
     node_->set_privilege_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedGrantStmtBuilder&& set_privilege_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedGrantStmtBuilder& set_privilege_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -36083,32 +33975,6 @@ class ResolvedGrantStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedGrantStmtBuilder&& set_grantee_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedGrantStmtBuilder& set_grantee_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedGrantStmt> node_;
 
@@ -36155,8 +34021,8 @@ class ResolvedRevokeStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRevokeStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -36244,32 +34110,6 @@ class ResolvedRevokeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRevokeStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRevokeStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& privilege_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->privilege_list();
@@ -36339,32 +34179,6 @@ class ResolvedRevokeStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
   ResolvedRevokeStmtBuilder& set_privilege_list(T v) & {
     node_->set_privilege_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedRevokeStmtBuilder&& set_privilege_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedRevokeStmtBuilder& set_privilege_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -36539,32 +34353,6 @@ class ResolvedRevokeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRevokeStmtBuilder&& set_grantee_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRevokeStmtBuilder& set_grantee_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedRevokeStmt> node_;
 
@@ -36609,8 +34397,8 @@ class ResolvedAlterDatabaseStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterDatabaseStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -36688,32 +34476,6 @@ class ResolvedAlterDatabaseStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterDatabaseStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterDatabaseStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterDatabaseStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -36830,32 +34592,6 @@ class ResolvedAlterDatabaseStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterDatabaseStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterDatabaseStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -36915,8 +34651,8 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterMaterializedViewStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -36994,32 +34730,6 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterMaterializedViewStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterMaterializedViewStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterMaterializedViewStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -37136,32 +34846,6 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterMaterializedViewStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterMaterializedViewStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -37221,8 +34905,8 @@ class ResolvedAlterSchemaStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterSchemaStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -37300,32 +34984,6 @@ class ResolvedAlterSchemaStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterSchemaStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterSchemaStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterSchemaStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -37442,32 +35100,6 @@ class ResolvedAlterSchemaStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterSchemaStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterSchemaStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -37527,8 +35159,8 @@ class ResolvedAlterModelStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterModelStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -37606,32 +35238,6 @@ class ResolvedAlterModelStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterModelStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterModelStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterModelStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -37748,32 +35354,6 @@ class ResolvedAlterModelStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterModelStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterModelStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -37833,8 +35413,8 @@ class ResolvedAlterTableStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterTableStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -37912,32 +35492,6 @@ class ResolvedAlterTableStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterTableStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterTableStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterTableStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -38054,32 +35608,6 @@ class ResolvedAlterTableStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterTableStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterTableStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -38139,8 +35667,8 @@ class ResolvedAlterViewStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterViewStmt>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -38218,32 +35746,6 @@ class ResolvedAlterViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterViewStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterViewStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterViewStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -38360,32 +35862,6 @@ class ResolvedAlterViewStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterViewStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterViewStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -38445,8 +35921,9 @@ class ResolvedSetOptionsActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSetOptionsAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -38528,32 +36005,6 @@ class ResolvedSetOptionsActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSetOptionsActionBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedSetOptionsActionBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedSetOptionsAction> node_;
 
@@ -38598,8 +36049,9 @@ class ResolvedAlterSubEntityActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterSubEntityAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -38782,8 +36234,9 @@ class ResolvedAddSubEntityActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAddSubEntityAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -38915,32 +36368,6 @@ class ResolvedAddSubEntityActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAddSubEntityActionBuilder&& set_options_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_options_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAddSubEntityActionBuilder& set_options_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_options_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_not_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_not_exists();
@@ -39005,8 +36432,9 @@ class ResolvedDropSubEntityActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropSubEntityAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39129,8 +36557,9 @@ class ResolvedAddColumnActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAddColumnAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39270,8 +36699,9 @@ class ResolvedAddConstraintActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAddConstraintAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39428,8 +36858,9 @@ class ResolvedDropConstraintActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropConstraintAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39535,8 +36966,9 @@ class ResolvedDropPrimaryKeyActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropPrimaryKeyAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39616,8 +37048,9 @@ class ResolvedAlterColumnOptionsActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnOptionsAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39705,32 +37138,6 @@ class ResolvedAlterColumnOptionsActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterColumnOptionsActionBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterColumnOptionsActionBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -39813,8 +37220,8 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropNotNullAction>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -39911,8 +37318,9 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40120,8 +37528,9 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnSetDefaultAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40278,8 +37687,8 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropDefaultAction>> Build() && {
-    node_->accessed_ = 0;
-
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40376,8 +37785,9 @@ class ResolvedDropColumnActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropColumnAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40483,8 +37893,9 @@ class ResolvedRenameColumnActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRenameColumnAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40605,8 +38016,9 @@ class ResolvedSetAsActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSetAsAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -40693,8 +38105,9 @@ class ResolvedSetCollateClauseBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedSetCollateClause>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40806,8 +38219,9 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterTableSetOptionsStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -40928,32 +38342,6 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterTableSetOptionsStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterTableSetOptionsStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -41044,32 +38432,6 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterTableSetOptionsStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterTableSetOptionsStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAlterTableSetOptionsStmt> node_;
 
@@ -41114,8 +38476,9 @@ class ResolvedRenameStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRenameStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -41300,32 +38663,6 @@ class ResolvedRenameStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRenameStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRenameStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedRenameStmt> node_;
 
@@ -41372,8 +38709,9 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreatePrivilegeRestrictionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -41457,32 +38795,6 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
   ResolvedCreatePrivilegeRestrictionStmtBuilder& set_column_privilege_list(T v) & {
     node_->set_column_privilege_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedCreatePrivilegeRestrictionStmtBuilder&& set_column_privilege_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedCreatePrivilegeRestrictionStmtBuilder& set_column_privilege_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -41579,32 +38891,6 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreatePrivilegeRestrictionStmtBuilder&& set_restrictee_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreatePrivilegeRestrictionStmtBuilder& set_restrictee_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -41674,32 +38960,6 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreatePrivilegeRestrictionStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreatePrivilegeRestrictionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreatePrivilegeRestrictionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -41825,8 +39085,9 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateRowAccessPolicyStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -42038,32 +39299,6 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateRowAccessPolicyStmtBuilder&& set_grantee_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateRowAccessPolicyStmtBuilder& set_grantee_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedTableScan* table_scan() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->table_scan();
@@ -42262,32 +39497,6 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateRowAccessPolicyStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateRowAccessPolicyStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedCreateRowAccessPolicyStmt> node_;
 
@@ -42336,8 +39545,9 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropPrivilegeRestrictionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -42500,32 +39710,6 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedDropPrivilegeRestrictionStmtBuilder&& set_column_privilege_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedDropPrivilegeRestrictionStmtBuilder& set_column_privilege_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -42599,32 +39783,6 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropPrivilegeRestrictionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropPrivilegeRestrictionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropPrivilegeRestrictionStmt> node_;
 
@@ -42669,8 +39827,9 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropRowAccessPolicyStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -42842,32 +40001,6 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropRowAccessPolicyStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropRowAccessPolicyStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropRowAccessPolicyStmt> node_;
 
@@ -42912,8 +40045,9 @@ class ResolvedDropSearchIndexStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropSearchIndexStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -43084,32 +40218,6 @@ class ResolvedDropSearchIndexStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropSearchIndexStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropSearchIndexStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropSearchIndexStmt> node_;
 
@@ -43155,8 +40263,9 @@ class ResolvedGrantToActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedGrantToAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -43238,32 +40347,6 @@ class ResolvedGrantToActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedGrantToActionBuilder&& set_grantee_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedGrantToActionBuilder& set_grantee_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_grantee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedGrantToAction> node_;
 
@@ -43306,8 +40389,9 @@ class ResolvedRestrictToActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRestrictToAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -43389,32 +40473,6 @@ class ResolvedRestrictToActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRestrictToActionBuilder&& set_restrictee_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRestrictToActionBuilder& set_restrictee_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedRestrictToAction> node_;
 
@@ -43457,8 +40515,9 @@ class ResolvedAddToRestricteeListActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAddToRestricteeListAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -43557,32 +40616,6 @@ class ResolvedAddToRestricteeListActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAddToRestricteeListActionBuilder&& set_restrictee_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAddToRestricteeListActionBuilder& set_restrictee_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAddToRestricteeListAction> node_;
 
@@ -43625,8 +40658,9 @@ class ResolvedRemoveFromRestricteeListActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRemoveFromRestricteeListAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -43725,32 +40759,6 @@ class ResolvedRemoveFromRestricteeListActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRemoveFromRestricteeListActionBuilder&& set_restrictee_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRemoveFromRestricteeListActionBuilder& set_restrictee_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_restrictee_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedRemoveFromRestricteeListAction> node_;
 
@@ -43795,8 +40803,9 @@ class ResolvedFilterUsingActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFilterUsingAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -43934,8 +40943,9 @@ class ResolvedRevokeFromActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRevokeFromAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -44017,32 +41027,6 @@ class ResolvedRevokeFromActionBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRevokeFromActionBuilder&& set_revokee_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_revokee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedRevokeFromActionBuilder& set_revokee_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_revokee_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_revoke_from_all() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_revoke_from_all();
@@ -44102,8 +41086,9 @@ class ResolvedRenameToActionBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRenameToAction>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -44195,8 +41180,9 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterPrivilegeRestrictionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -44280,32 +41266,6 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
   ResolvedAlterPrivilegeRestrictionStmtBuilder& set_column_privilege_list(T v) & {
     node_->set_column_privilege_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedAlterPrivilegeRestrictionStmtBuilder&& set_column_privilege_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPrivilege>>>::value>>
-  ResolvedAlterPrivilegeRestrictionStmtBuilder& set_column_privilege_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_privilege_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -44398,32 +41358,6 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterPrivilegeRestrictionStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterPrivilegeRestrictionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterPrivilegeRestrictionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -44540,32 +41474,6 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterPrivilegeRestrictionStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterPrivilegeRestrictionStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -44629,8 +41537,9 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterRowAccessPolicyStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -44796,32 +41705,6 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterRowAccessPolicyStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterRowAccessPolicyStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& name_path() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->name_path();
@@ -44934,32 +41817,6 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterRowAccessPolicyStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterRowAccessPolicyStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -45024,8 +41881,9 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterAllRowAccessPoliciesStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -45166,32 +42024,6 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterAllRowAccessPoliciesStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterAllRowAccessPoliciesStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& name_path() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->name_path();
@@ -45304,32 +42136,6 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterAllRowAccessPoliciesStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterAllRowAccessPoliciesStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -45393,8 +42199,9 @@ class ResolvedCreateConstantStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateConstantStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -45535,32 +42342,6 @@ class ResolvedCreateConstantStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateConstantStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateConstantStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& name_path() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->name_path();
@@ -45687,8 +42468,9 @@ class ResolvedCreateFunctionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateFunctionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -45947,32 +42729,6 @@ class ResolvedCreateFunctionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedCreateFunctionStmtBuilder&& set_aggregate_expression_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_aggregate_expression_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedCreateFunctionStmtBuilder& set_aggregate_expression_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_aggregate_expression_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const ResolvedExpr* function_expression() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->function_expression();
@@ -46095,32 +42851,6 @@ class ResolvedCreateFunctionStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateFunctionStmtBuilder& set_option_list(T v) & {
     node_->set_option_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateFunctionStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateFunctionStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -46300,32 +43030,6 @@ class ResolvedCreateFunctionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateFunctionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateFunctionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& name_path() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->name_path();
@@ -46454,8 +43158,9 @@ class ResolvedArgumentDefBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedArgumentDef>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -46583,8 +43288,9 @@ class ResolvedArgumentRefBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedArgumentRef>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -46733,8 +43439,9 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateTableFunctionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -46911,32 +43618,6 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableFunctionStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableFunctionStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::string& language() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->language();
@@ -47095,32 +43776,6 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateTableFunctionStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateTableFunctionStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_value_table() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
@@ -47224,32 +43879,6 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateTableFunctionStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableFunctionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateTableFunctionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -47375,8 +44004,9 @@ class ResolvedRelationArgumentScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedRelationArgumentScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -47546,32 +44176,6 @@ class ResolvedRelationArgumentScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRelationArgumentScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedRelationArgumentScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -47633,8 +44237,9 @@ class ResolvedArgumentListBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedArgumentList>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -47716,32 +44321,6 @@ class ResolvedArgumentListBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedArgumentDef>>>::value>>
-  ResolvedArgumentListBuilder&& set_arg_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_arg_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedArgumentDef>>>::value>>
-  ResolvedArgumentListBuilder& set_arg_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_arg_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedArgumentList> node_;
 
@@ -47786,8 +44365,9 @@ class ResolvedFunctionSignatureHolderBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedFunctionSignatureHolder>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -47867,8 +44447,9 @@ class ResolvedDropFunctionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropFunctionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -48140,32 +44721,6 @@ class ResolvedDropFunctionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropFunctionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropFunctionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropFunctionStmt> node_;
 
@@ -48214,8 +44769,9 @@ class ResolvedDropTableFunctionStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedDropTableFunctionStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -48361,32 +44917,6 @@ class ResolvedDropTableFunctionStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropTableFunctionStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropTableFunctionStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedDropTableFunctionStmt> node_;
 
@@ -48433,8 +44963,9 @@ class ResolvedCallStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCallStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -48566,32 +45097,6 @@ class ResolvedCallStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCallStmtBuilder&& set_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCallStmtBuilder& set_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -48665,32 +45170,6 @@ class ResolvedCallStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCallStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCallStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedCallStmt> node_;
 
@@ -48746,8 +45225,9 @@ class ResolvedImportStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedImportStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -48988,32 +45468,6 @@ class ResolvedImportStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedImportStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedImportStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -49087,32 +45541,6 @@ class ResolvedImportStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedImportStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedImportStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedImportStmt> node_;
 
@@ -49157,8 +45585,9 @@ class ResolvedModuleStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedModuleStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -49279,32 +45708,6 @@ class ResolvedModuleStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedModuleStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedModuleStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -49378,32 +45781,6 @@ class ResolvedModuleStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedModuleStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedModuleStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedModuleStmt> node_;
 
@@ -49456,8 +45833,9 @@ class ResolvedAggregateHavingModifierBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAggregateHavingModifier>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -49597,8 +45975,9 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateMaterializedViewStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -49625,105 +46004,6 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   // Getters and chained setters
-  const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->column_definition_list();
-  }
-
-  int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->column_definition_list_size();
-  }
-
-  const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->column_definition_list(i);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& add_column_definition_list(T v) && {
-    node_->add_column_definition_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& add_column_definition_list(T v) & {
-    node_->add_column_definition_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& add_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& add_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  std::vector<std::unique_ptr<const ResolvedColumnDefinition>> release_column_definition_list() {
-    return node_->release_column_definition_list();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_column_definition_list(T v) && {
-    node_->set_column_definition_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_column_definition_list(T v) & {
-    node_->set_column_definition_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
@@ -49793,32 +46073,6 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
   ResolvedCreateMaterializedViewStmtBuilder& set_partition_by_list(T v) & {
     node_->set_partition_by_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_partition_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_partition_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -49896,32 +46150,6 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_cluster_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_cluster_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -49991,32 +46219,6 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateMaterializedViewStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -50167,32 +46369,6 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
@@ -50262,32 +46438,6 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
   ResolvedCreateMaterializedViewStmtBuilder& set_output_column_list(T v) & {
     node_->set_output_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedCreateMaterializedViewStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -50440,6 +46590,79 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list();
+  }
+
+  int column_definition_list_size() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list_size();
+  }
+
+  const ResolvedColumnDefinition* column_definition_list(int i) const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder&& add_column_definition_list(T v) && {
+    node_->add_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder& add_column_definition_list(T v) & {
+    node_->add_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder&& add_column_definition_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder& add_column_definition_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnDefinition>> release_column_definition_list() {
+    return node_->release_column_definition_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder&& set_column_definition_list(T v) && {
+    node_->set_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder& set_column_definition_list(T v) & {
+    node_->set_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedCreateMaterializedViewStmt> node_;
 
@@ -50488,8 +46711,9 @@ class ResolvedCreateProcedureStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateProcedureStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -50631,32 +46855,6 @@ class ResolvedCreateProcedureStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateProcedureStmtBuilder& set_option_list(T v) & {
     node_->set_option_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateProcedureStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateProcedureStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -50834,32 +47032,6 @@ class ResolvedCreateProcedureStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateProcedureStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateProcedureStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::string>& name_path() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->name_path();
@@ -50979,8 +47151,9 @@ class ResolvedExecuteImmediateArgumentBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExecuteImmediateArgument>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -51120,8 +47293,9 @@ class ResolvedExecuteImmediateStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedExecuteImmediateStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -51301,32 +47475,6 @@ class ResolvedExecuteImmediateStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExecuteImmediateArgument>>>::value>>
-  ResolvedExecuteImmediateStmtBuilder&& set_using_argument_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_using_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExecuteImmediateArgument>>>::value>>
-  ResolvedExecuteImmediateStmtBuilder& set_using_argument_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_using_argument_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -51400,32 +47548,6 @@ class ResolvedExecuteImmediateStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExecuteImmediateStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedExecuteImmediateStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedExecuteImmediateStmt> node_;
 
@@ -51472,8 +47594,9 @@ class ResolvedAssignmentStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAssignmentStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -51675,32 +47798,6 @@ class ResolvedAssignmentStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAssignmentStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAssignmentStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAssignmentStmt> node_;
 
@@ -51748,8 +47845,9 @@ class ResolvedCreateEntityStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCreateEntityStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -51890,32 +47988,6 @@ class ResolvedCreateEntityStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateEntityStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateEntityStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -51985,32 +48057,6 @@ class ResolvedCreateEntityStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedCreateEntityStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateEntityStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateEntityStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -52134,8 +48180,9 @@ class ResolvedAlterEntityStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAlterEntityStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -52238,32 +48285,6 @@ class ResolvedAlterEntityStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAlterEntityStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterEntityStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAlterEntityStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -52380,32 +48401,6 @@ class ResolvedAlterEntityStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterEntityStmtBuilder&& set_alter_action_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
-  ResolvedAlterEntityStmtBuilder& set_alter_action_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_alter_action_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_if_exists() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
@@ -52469,8 +48464,9 @@ class ResolvedPivotColumnBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedPivotColumn>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -52610,8 +48606,9 @@ class ResolvedPivotScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedPivotScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -52766,32 +48763,6 @@ class ResolvedPivotScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedPivotScanBuilder&& set_group_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedPivotScanBuilder& set_group_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_group_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   // Pivot expressions which aggregate over the subset of <input_scan>
   // where <for_expr> matches each value in <pivot_value_list>, plus
   // all columns in <group_by_list>.
@@ -52864,32 +48835,6 @@ class ResolvedPivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
   ResolvedPivotScanBuilder& set_pivot_expr_list(T v) & {
     node_->set_pivot_expr_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedPivotScanBuilder&& set_pivot_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_pivot_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedPivotScanBuilder& set_pivot_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_pivot_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -53033,32 +48978,6 @@ class ResolvedPivotScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedPivotScanBuilder&& set_pivot_value_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_pivot_value_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedPivotScanBuilder& set_pivot_value_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_pivot_value_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   // List of columns created to store the output pivot columns.
   // Each is computed using one of pivot_expr_list and one of
   // pivot_value_list.
@@ -53131,32 +49050,6 @@ class ResolvedPivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedPivotColumn>>>::value>>
   ResolvedPivotScanBuilder& set_pivot_column_list(T v) & {
     node_->set_pivot_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPivotColumn>>>::value>>
-  ResolvedPivotScanBuilder&& set_pivot_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_pivot_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedPivotColumn>>>::value>>
-  ResolvedPivotScanBuilder& set_pivot_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_pivot_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -53273,32 +49166,6 @@ class ResolvedPivotScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedPivotScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedPivotScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -53363,8 +49230,9 @@ class ResolvedReturningClauseBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedReturningClause>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -53453,32 +49321,6 @@ class ResolvedReturningClauseBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
   ResolvedReturningClauseBuilder& set_output_column_list(T v) & {
     node_->set_output_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedReturningClauseBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedReturningClauseBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -53615,32 +49457,6 @@ class ResolvedReturningClauseBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedReturningClauseBuilder&& set_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedReturningClauseBuilder& set_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedReturningClause> node_;
 
@@ -53685,8 +49501,9 @@ class ResolvedUnpivotArgBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedUnpivotArg>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -53771,32 +49588,6 @@ class ResolvedUnpivotArgBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedUnpivotArgBuilder&& set_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedUnpivotArgBuilder& set_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedUnpivotArg> node_;
 
@@ -53841,8 +49632,9 @@ class ResolvedUnpivotScanBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedUnpivotScan>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -54061,32 +49853,6 @@ class ResolvedUnpivotScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedLiteral>>>::value>>
-  ResolvedUnpivotScanBuilder&& set_label_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_label_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedLiteral>>>::value>>
-  ResolvedUnpivotScanBuilder& set_label_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_label_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   // The list of groups of columns in the UNPIVOT IN list. Each group
   // contains references to the output columns of <input_scan> of the
   // ResolvedUnpivotScan. The values of these columns are stored in the
@@ -54161,32 +49927,6 @@ class ResolvedUnpivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedUnpivotArg>>>::value>>
   ResolvedUnpivotScanBuilder& set_unpivot_arg_list(T v) & {
     node_->set_unpivot_arg_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUnpivotArg>>>::value>>
-  ResolvedUnpivotScanBuilder&& set_unpivot_arg_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_unpivot_arg_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedUnpivotArg>>>::value>>
-  ResolvedUnpivotScanBuilder& set_unpivot_arg_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_unpivot_arg_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -54267,32 +50007,6 @@ class ResolvedUnpivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
   ResolvedUnpivotScanBuilder& set_projected_input_column_list(T v) & {
     node_->set_projected_input_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedUnpivotScanBuilder&& set_projected_input_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_projected_input_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
-  ResolvedUnpivotScanBuilder& set_projected_input_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_projected_input_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -54430,32 +50144,6 @@ class ResolvedUnpivotScanBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedUnpivotScanBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedUnpivotScanBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   bool is_ordered() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
@@ -54521,8 +50209,9 @@ class ResolvedCloneDataStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedCloneDataStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -54722,32 +50411,6 @@ class ResolvedCloneDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCloneDataStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCloneDataStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedCloneDataStmt> node_;
 
@@ -54793,8 +50456,9 @@ class ResolvedTableAndColumnInfoBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedTableAndColumnInfo>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -54901,8 +50565,9 @@ class ResolvedAnalyzeStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAnalyzeStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -54984,32 +50649,6 @@ class ResolvedAnalyzeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyzeStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyzeStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedTableAndColumnInfo>>& table_and_column_index_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->table_and_column_index_list();
@@ -55079,32 +50718,6 @@ class ResolvedAnalyzeStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedTableAndColumnInfo>>>::value>>
   ResolvedAnalyzeStmtBuilder& set_table_and_column_index_list(T v) & {
     node_->set_table_and_column_index_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedTableAndColumnInfo>>>::value>>
-  ResolvedAnalyzeStmtBuilder&& set_table_and_column_index_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_table_and_column_index_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedTableAndColumnInfo>>>::value>>
-  ResolvedAnalyzeStmtBuilder& set_table_and_column_index_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_table_and_column_index_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -55182,32 +50795,6 @@ class ResolvedAnalyzeStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyzeStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAnalyzeStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAnalyzeStmt> node_;
 
@@ -55226,6 +50813,146 @@ inline ResolvedAnalyzeStmtBuilder ToBuilder(
   ResolvedAnalyzeStmtBuilder builder(absl::WrapUnique<ResolvedAnalyzeStmt>(
       const_cast<ResolvedAnalyzeStmt*>(node.release())));
   // All required nodes are evidently already set
+  return builder;
+}
+
+class ResolvedAuxLoadDataPartitionFilterBuilder final {
+ public:
+  ResolvedAuxLoadDataPartitionFilterBuilder() : ResolvedAuxLoadDataPartitionFilterBuilder(absl::WrapUnique(new ResolvedAuxLoadDataPartitionFilter)) {}
+
+  ResolvedAuxLoadDataPartitionFilterBuilder(const ResolvedAuxLoadDataPartitionFilterBuilder&) = delete;
+  ResolvedAuxLoadDataPartitionFilterBuilder& operator=(const ResolvedAuxLoadDataPartitionFilterBuilder&) = delete;
+  ResolvedAuxLoadDataPartitionFilterBuilder(ResolvedAuxLoadDataPartitionFilterBuilder&& other)
+      : ResolvedAuxLoadDataPartitionFilterBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedAuxLoadDataPartitionFilterBuilder& operator=(ResolvedAuxLoadDataPartitionFilterBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedAuxLoadDataPartitionFilter::filter was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  // Expression to find the partitions to load.
+  // Scan rows from source file, and fail the query if filter
+  // evaluates some rows to false.
+  // <filter> is always of type bool.
+  // When this expression produces NULL, the query should fail.
+  const ResolvedExpr* filter() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->filter();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_filter() {
+    return node_->release_filter();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedAuxLoadDataPartitionFilterBuilder&& set_filter(T v) && {
+    node_->set_filter(std::move(v));
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedAuxLoadDataPartitionFilterBuilder& set_filter(T v) & {
+    node_->set_filter(std::move(v));
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedAuxLoadDataPartitionFilterBuilder&& set_filter(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_filter(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedAuxLoadDataPartitionFilterBuilder& set_filter(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_filter(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  // Indicates whether the load data will append to or overwrite the
+  // selected partition.
+  bool is_overwrite() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_overwrite();
+  }
+
+  ResolvedAuxLoadDataPartitionFilterBuilder&& set_is_overwrite(bool v) && {
+    node_->set_is_overwrite(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAuxLoadDataPartitionFilterBuilder& set_is_overwrite(bool v) & {
+    node_->set_is_overwrite(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAuxLoadDataPartitionFilter> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<2> field_is_set_ = {0};
+  friend ResolvedAuxLoadDataPartitionFilterBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter> node);
+
+  ResolvedAuxLoadDataPartitionFilterBuilder(std::unique_ptr<ResolvedAuxLoadDataPartitionFilter> node)
+      : node_(std::move(node)) {
+    ZETASQL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAuxLoadDataPartitionFilterBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter> node) {
+  ResolvedAuxLoadDataPartitionFilterBuilder builder(absl::WrapUnique<ResolvedAuxLoadDataPartitionFilter>(
+      const_cast<ResolvedAuxLoadDataPartitionFilter*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
   return builder;
 }
 
@@ -55257,13 +50984,20 @@ class ResolvedAuxLoadDataStmtBuilder final {
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
   absl::StatusOr<std::unique_ptr<const ResolvedAuxLoadDataStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
           ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
             << "ResolvedAuxLoadDataStmt::insertion_mode was not set on the builder");
+    }
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+            << "ResolvedAuxLoadDataStmt::is_temp_table was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
@@ -55288,6 +51022,25 @@ class ResolvedAuxLoadDataStmtBuilder final {
   ResolvedAuxLoadDataStmtBuilder& set_insertion_mode(ResolvedAuxLoadDataStmt::InsertionMode v) & {
     node_->set_insertion_mode(v);
     field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  bool is_temp_table() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->is_temp_table();
+  }
+
+  ResolvedAuxLoadDataStmtBuilder&& set_is_temp_table(bool v) && {
+    node_->set_is_temp_table(v);
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedAuxLoadDataStmtBuilder& set_is_temp_table(bool v) & {
+    node_->set_is_temp_table(v);
+    field_is_set_.set(2, true);
 
     return *this;
   }
@@ -55327,6 +51080,55 @@ class ResolvedAuxLoadDataStmtBuilder final {
 
   ResolvedAuxLoadDataStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
     node_->set_name_path(v);
+
+    return *this;
+  }
+
+  const ResolvedAuxLoadDataPartitionFilter* partition_filter() const {
+    ZETASQL_DCHECK(node_ != nullptr);
+    return node_->partition_filter();
+  }
+
+  std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter> release_partition_filter() {
+    return node_->release_partition_filter();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>>::value>>
+  ResolvedAuxLoadDataStmtBuilder&& set_partition_filter(T v) && {
+    node_->set_partition_filter(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>>::value>>
+  ResolvedAuxLoadDataStmtBuilder& set_partition_filter(T v) & {
+    node_->set_partition_filter(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>>::value>>
+  ResolvedAuxLoadDataStmtBuilder&& set_partition_filter(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_partition_filter(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>>::value>>
+  ResolvedAuxLoadDataStmtBuilder& set_partition_filter(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_partition_filter(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
 
     return *this;
   }
@@ -55404,32 +51206,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_output_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_output_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_output_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
@@ -55499,32 +51275,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
   ResolvedAuxLoadDataStmtBuilder& set_column_definition_list(T v) & {
     node_->set_column_definition_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_column_definition_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_column_definition_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_column_definition_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -55690,32 +51440,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_foreign_key_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedForeignKey>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_foreign_key_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_foreign_key_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
@@ -55785,32 +51509,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
   ResolvedAuxLoadDataStmtBuilder& set_check_constraint_list(T v) & {
     node_->set_check_constraint_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_check_constraint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedCheckConstraint>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_check_constraint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_check_constraint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -55888,32 +51586,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_partition_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_partition_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_partition_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
@@ -55987,32 +51659,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_cluster_by_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_cluster_by_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_cluster_by_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->option_list();
@@ -56082,32 +51728,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
   ResolvedAuxLoadDataStmtBuilder& set_option_list(T v) & {
     node_->set_option_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -56283,32 +51903,6 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_from_files_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_from_files_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_from_files_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_from_files_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ZETASQL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -56382,37 +51976,11 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder&& set_hint_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedAuxLoadDataStmtBuilder& set_hint_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_hint_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedAuxLoadDataStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<15> field_is_set_ = {0};
+  std::bitset<17> field_is_set_ = {0};
   friend ResolvedAuxLoadDataStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedAuxLoadDataStmt> node);
 
@@ -56428,6 +51996,7 @@ inline ResolvedAuxLoadDataStmtBuilder ToBuilder(
       const_cast<ResolvedAuxLoadDataStmt*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(1, true);
+  builder.field_is_set_.set(2, true);
   return builder;
 }
 

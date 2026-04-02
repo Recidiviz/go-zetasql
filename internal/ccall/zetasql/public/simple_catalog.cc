@@ -20,17 +20,21 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
 #include "zetasql/base/logging.h"
 #include "zetasql/proto/simple_catalog.pb.h"
+#include "zetasql/public/catalog.h"
 #include "zetasql/public/catalog_helper.h"
 #include "zetasql/public/constant.h"
 #include "zetasql/public/procedure.h"
 #include "zetasql/public/simple_constant.pb.h"
 #include "zetasql/public/simple_table.pb.h"
+#include "zetasql/public/sql_view.h"
 #include "zetasql/public/strings.h"
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/types/annotation.h"
@@ -45,6 +49,7 @@
 #include "zetasql/base/source_location.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
+#include "zetasql/base/status_builder.h"
 #include "zetasql/base/status_macros.h"
 
 namespace zetasql {
@@ -73,6 +78,14 @@ absl::Status SimpleCatalog::GetConnection(const std::string& name,
                                           const FindOptions& options) {
   absl::MutexLock l(&mutex_);
   *connection = zetasql_base::FindPtrOrNull(connections_, absl::AsciiStrToLower(name));
+  return absl::OkStatus();
+}
+
+absl::Status SimpleCatalog::GetSequence(const std::string& name,
+                                        const Sequence** sequence,
+                                        const FindOptions& options) {
+  absl::MutexLock l(&mutex_);
+  *sequence = zetasql_base::FindPtrOrNull(sequences_, absl::AsciiStrToLower(name));
   return absl::OkStatus();
 }
 
@@ -297,7 +310,9 @@ std::string SimpleCatalog::SuggestConstant(
 
 void SimpleCatalog::AddTable(absl::string_view name, const Table* table) {
   absl::MutexLock l(&mutex_);
-  zetasql_base::InsertOrDie(&tables_, absl::AsciiStrToLower(name), table);
+  const std::string canonical_name = absl::AsciiStrToLower(name);
+  zetasql_base::InsertOrDie(&global_names_, canonical_name);
+  zetasql_base::InsertOrDie(&tables_, canonical_name, table);
 }
 
 void SimpleCatalog::AddModel(const std::string& name, const Model* model) {
@@ -309,6 +324,12 @@ void SimpleCatalog::AddConnection(const std::string& name,
                                   const Connection* connection) {
   absl::MutexLock l(&mutex_);
   zetasql_base::InsertOrDie(&connections_, absl::AsciiStrToLower(name), connection);
+}
+
+void SimpleCatalog::AddSequence(const std::string& name,
+                                const Sequence* sequence) {
+  absl::MutexLock l(&mutex_);
+  zetasql_base::InsertOrDie(&sequences_, absl::AsciiStrToLower(name), sequence);
 }
 
 void SimpleCatalog::AddType(const std::string& name, const Type* type) {
@@ -381,8 +402,9 @@ void SimpleCatalog::AddOwnedTable(absl::string_view name,
 bool SimpleCatalog::AddOwnedTableIfNotPresent(
     absl::string_view name, std::unique_ptr<const Table> table) {
   absl::MutexLock l(&mutex_);
-  if (!zetasql_base::InsertIfNotPresent(&tables_, absl::AsciiStrToLower(name),
-                               table.get())) {
+  const std::string canonical_name = absl::AsciiStrToLower(name);
+  if (!zetasql_base::InsertIfNotPresent(&global_names_, canonical_name) ||
+      !zetasql_base::InsertIfNotPresent(&tables_, canonical_name, table.get())) {
     return false;
   }
   owned_tables_.emplace_back(std::move(table));
@@ -498,6 +520,10 @@ void SimpleCatalog::AddModel(const Model* model) {
 
 void SimpleCatalog::AddConnection(const Connection* connection) {
   AddConnection(connection->Name(), connection);
+}
+
+void SimpleCatalog::AddSequence(const Sequence* sequence) {
+  AddSequence(sequence->Name(), sequence);
 }
 
 void SimpleCatalog::AddCatalog(Catalog* catalog) {
@@ -725,36 +751,77 @@ void SimpleCatalog::AddZetaSQLFunctions(
   }
 }
 
-void SimpleCatalog::AddZetaSQLFunctions(
-    const ZetaSQLBuiltinFunctionOptions& options) {
+absl::Status SimpleCatalog::AddZetaSQLFunctionsAndTypesImpl(
+    const ZetaSQLBuiltinFunctionOptions& options, bool add_types) {
   std::map<std::string, std::unique_ptr<Function>> function_map;
   // We have to call type_factory() while not holding mutex_.
   TypeFactory* type_factory = this->type_factory();
-  GetZetaSQLFunctions(type_factory, options, &function_map);
+  absl::flat_hash_map<std::string, const Type*> type_map;
+
+  ZETASQL_RETURN_IF_ERROR(GetZetaSQLFunctionsAndTypes(type_factory, options,
+                                                &function_map, &type_map));
   for (auto& function_pair : function_map) {
     const std::vector<std::string>& path =
         function_pair.second->FunctionNamePath();
     SimpleCatalog* catalog = this;
     if (path.size() > 1) {
-      ZETASQL_CHECK_LE(path.size(), 2);
+      ZETASQL_RET_CHECK_LE(path.size(), 2);
       absl::MutexLock l(&mutex_);
       const std::string& space = path[0];
       auto sub_entry = owned_zetasql_subcatalogs_.find(space);
       if (sub_entry != owned_zetasql_subcatalogs_.end()) {
         catalog = sub_entry->second.get();
-        ZETASQL_CHECK(catalog != nullptr) << "internal state corrupt: " << space;
+        ZETASQL_RET_CHECK(catalog != nullptr) << "internal state corrupt: " << space;
       } else {
         auto new_catalog = std::make_unique<SimpleCatalog>(space, type_factory);
         AddCatalogLocked(space, new_catalog.get());
         catalog = new_catalog.get();
-        ZETASQL_CHECK(
+        ZETASQL_RET_CHECK(
             owned_zetasql_subcatalogs_.emplace(space, std::move(new_catalog))
                 .second);
       }
     }
     catalog->AddOwnedFunction(path.back(), std::move(function_pair.second));
   }
+  if (add_types) {
+    for (const auto& [name, type] : type_map) {
+      AddTypeIfNotPresent(name, type);
+    }
+  }
+  return absl::OkStatus();
 }
+
+void SimpleCatalog::AddZetaSQLFunctions(
+    const ZetaSQLBuiltinFunctionOptions& options) {
+  absl::Status status =
+      this->AddZetaSQLFunctionsAndTypesImpl(options, /*add_types=*/false);
+  ZETASQL_DCHECK_OK(status);
+}
+
+absl::Status SimpleCatalog::AddZetaSQLFunctionsAndTypes(
+    const ZetaSQLBuiltinFunctionOptions& options) {
+  return this->AddZetaSQLFunctionsAndTypesImpl(options, /*add_types=*/true);
+}
+
+int SimpleCatalog::RemoveTypes(std::function<bool(const Type*)> predicate) {
+  absl::MutexLock l(&mutex_);
+  int num_removed = 0;
+  for (const auto& [_, sub_catalog] : owned_zetasql_subcatalogs_) {
+    num_removed += sub_catalog->RemoveTypes(predicate);
+  }
+  for (auto& [_, sub_catalog] : catalogs_) {
+    if (sub_catalog->Is<SimpleCatalog>()) {
+      num_removed +=
+          sub_catalog->GetAs<SimpleCatalog>()->RemoveTypes(predicate);
+    }
+  }
+  num_removed += absl::erase_if(
+      types_, [predicate](std::pair<const std::string, const Type*> pair) {
+        return predicate(pair.second);
+      });
+  return num_removed;
+}
+
 int SimpleCatalog::RemoveFunctionsLocked(
     std::function<bool(const Function*)> predicate,
     std::vector<std::unique_ptr<const Function>>& removed) {
@@ -763,6 +830,12 @@ int SimpleCatalog::RemoveFunctionsLocked(
     num_removed += sub_catalog->RemoveFunctions(predicate, removed);
   }
   for (auto& [_, sub_catalog] : catalogs_) {
+    if (sub_catalog == this) {
+      // This avoids deadlock for recursive simple catalogs.
+      // TODO: Support a indirectly recursive example in
+      //     SampleCatalog and improve this to detect indirect recursion.
+      continue;
+    }
     if (sub_catalog->Is<SimpleCatalog>()) {
       num_removed += sub_catalog->GetAs<SimpleCatalog>()->RemoveFunctions(
           predicate, removed);
@@ -877,8 +950,8 @@ void InsertValuesFromMap(const M& m, ValueContainer* value_container) {
 }  // namespace
 
 absl::Status SimpleCatalog::DeserializeImpl(
-    const SimpleCatalogProto& proto,
-    const TypeDeserializer& type_deserializer) {
+    const SimpleCatalogProto& proto, const TypeDeserializer& type_deserializer,
+    SimpleCatalog* catalog) {
   for (const SimpleTableProto& table_proto : proto.table()) {
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<SimpleTable> table,
                      SimpleTable::Deserialize(table_proto, type_deserializer));
@@ -905,8 +978,8 @@ absl::Status SimpleCatalog::DeserializeImpl(
   for (const SimpleCatalogProto& catalog_proto : proto.catalog()) {
     std::unique_ptr<SimpleCatalog> sub_catalog(
         new SimpleCatalog(catalog_proto.name(), type_factory()));
-    ZETASQL_RETURN_IF_ERROR(
-        sub_catalog->DeserializeImpl(catalog_proto, type_deserializer));
+    ZETASQL_RETURN_IF_ERROR(sub_catalog->DeserializeImpl(catalog_proto,
+                                                 type_deserializer, catalog));
     if (!AddOwnedCatalogIfNotPresent(catalog_proto.name(),
                                      std::move(sub_catalog))) {
       return ::zetasql_base::InvalidArgumentErrorBuilder()
@@ -937,19 +1010,14 @@ absl::Status SimpleCatalog::DeserializeImpl(
 
   if (proto.has_builtin_function_options()) {
     ZetaSQLBuiltinFunctionOptions options(proto.builtin_function_options());
-    AddZetaSQLFunctions(options);
+    ZETASQL_RETURN_IF_ERROR(AddZetaSQLFunctionsAndTypes(options));
   }
 
   for (const TableValuedFunctionProto& tvf_proto : proto.custom_tvf()) {
-    // TODO: propagate TypeDeserializer through
     // TableValuedFunction::Deserialize.
     std::unique_ptr<TableValuedFunction> tvf;
-    ZETASQL_RETURN_IF_ERROR(TableValuedFunction::Deserialize(
-        tvf_proto,
-        std::vector<const google::protobuf::DescriptorPool*>(
-            type_deserializer.descriptor_pools().begin(),
-            type_deserializer.descriptor_pools().end()),
-        type_deserializer.type_factory(), &tvf));
+    ZETASQL_RETURN_IF_ERROR(
+        TableValuedFunction::Deserialize(tvf_proto, type_deserializer, &tvf));
     const std::string name = tvf->Name();
     if (!AddOwnedTableValuedFunctionIfNotPresent(&tvf)) {
       return ::zetasql_base::InvalidArgumentErrorBuilder()
@@ -973,7 +1041,6 @@ absl::Status SimpleCatalog::DeserializeImpl(
         type_deserializer
             .descriptor_pools()[proto.file_descriptor_set_index()]);
   }
-
   return absl::OkStatus();
 }
 
@@ -991,9 +1058,12 @@ absl::StatusOr<std::unique_ptr<SimpleCatalog>> SimpleCatalog::Deserialize(
     const ExtendedTypeDeserializer* extended_type_deserializer) {
   // Create a top level catalog that owns the TypeFactory.
   std::unique_ptr<SimpleCatalog> catalog(new SimpleCatalog(proto.name()));
-  ZETASQL_RETURN_IF_ERROR(catalog->DeserializeImpl(
-      proto, TypeDeserializer(catalog->type_factory(), pools,
-                              extended_type_deserializer)));
+
+  ZETASQL_RETURN_IF_ERROR(
+      catalog->DeserializeImpl(proto,
+                               TypeDeserializer(catalog->type_factory(), pools,
+                                                extended_type_deserializer),
+                               catalog.get()));
   return catalog;
 }
 
@@ -1041,6 +1111,10 @@ absl::Status SimpleCatalog::SerializeImpl(
   for (const auto& entry : tables) {
     const std::string& table_name = entry.first;
     const Table* const table = entry.second;
+    if (table->Is<SimpleSQLView>()) {
+      // TODO: Serialize these too.
+      continue;
+    }
     if (!table->Is<SimpleTable>()) {
       return ::zetasql_base::UnknownErrorBuilder()
              << "Cannot serialize non-SimpleTable " << table_name;
@@ -1459,16 +1533,6 @@ absl::Status SimpleTable::Serialize(
   return absl::OkStatus();
 }
 
-absl::Status SimpleTable::Deserialize(
-      const SimpleTableProto& proto,
-      const std::vector<const google::protobuf::DescriptorPool*>& pools,
-      TypeFactory* factory,
-      std::unique_ptr<SimpleTable>* result) {
-  ZETASQL_ASSIGN_OR_RETURN(*result,
-                   Deserialize(proto, TypeDeserializer(factory, pools)));
-  return absl::OkStatus();
-}
-
 absl::StatusOr<std::unique_ptr<SimpleTable>> SimpleTable::Deserialize(
     const SimpleTableProto& proto, const TypeDeserializer& type_deserializer) {
   std::unique_ptr<SimpleTable> table(
@@ -1484,7 +1548,7 @@ absl::StatusOr<std::unique_ptr<SimpleTable>> SimpleTable::Deserialize(
 
   for (const SimpleColumnProto& column_proto : proto.column()) {
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<SimpleColumn> column,
-                     SimpleColumn::Deserialize(column_proto, table->Name(),
+                     SimpleColumn::Deserialize(column_proto, table->FullName(),
                                                type_deserializer));
     ZETASQL_RETURN_IF_ERROR(table->AddColumn(column.release(), /*is_owned=*/true));
   }
@@ -1508,15 +1572,14 @@ absl::StatusOr<std::unique_ptr<SimpleTable>> SimpleTable::Deserialize(
   return table;
 }
 
-SimpleColumn::SimpleColumn(const std::string& table_name,
-                           const std::string& name, const Type* type,
+SimpleColumn::SimpleColumn(absl::string_view table_name, absl::string_view name,
+                           const Type* type,
                            const SimpleColumn::Attributes& attributes)
     : SimpleColumn(table_name, name,
                    AnnotatedType(type, /*annotation_map=*/nullptr),
                    attributes) {}
 
-SimpleColumn::SimpleColumn(const std::string& table_name,
-                           const std::string& name,
+SimpleColumn::SimpleColumn(absl::string_view table_name, absl::string_view name,
                            AnnotatedType annotated_type,
                            const SimpleColumn::Attributes& attributes)
     : name_(name),
@@ -1545,6 +1608,13 @@ absl::Status SimpleColumn::Serialize(
   if (CanUpdateUnwritableToDefault()) {
     proto->set_can_update_unwritable_to_default(true);
   }
+
+  proto->set_has_default_value(HasDefaultValue());
+  if (HasDefaultValue()) {
+    // The ResolvedExpr form of the expression is not serialized.
+    proto->mutable_column_expression()->set_expression_string(
+        ExpressionString().value());
+  }
   return absl::OkStatus();
 }
 
@@ -1558,12 +1628,36 @@ absl::StatusOr<std::unique_ptr<SimpleColumn>> SimpleColumn::Deserialize(
     ZETASQL_RETURN_IF_ERROR(type_deserializer.type_factory()->DeserializeAnnotationMap(
         proto.annotation_map(), &annotation_map));
   }
-  return std::make_unique<SimpleColumn>(
-      table_name, proto.name(), AnnotatedType(type, annotation_map),
-      SimpleColumn::Attributes{.is_pseudo_column = proto.is_pseudo_column(),
-                               .is_writable_column = proto.is_writable_column(),
-                               .can_update_unwritable_to_default =
-                                   proto.can_update_unwritable_to_default()});
+  SimpleColumn::ExpressionAttributes expression_attributes;
+  if (proto.has_default_value()) {
+    expression_attributes.expression_string =
+        proto.column_expression().expression_string();
+  }
+
+  SimpleColumn::Attributes attributes{
+      .is_pseudo_column = proto.is_pseudo_column(),
+      .is_writable_column = proto.is_writable_column(),
+      .can_update_unwritable_to_default =
+          proto.can_update_unwritable_to_default(),
+      .has_default_value = proto.has_default_value(),
+      .column_expression = expression_attributes};
+
+  return std::make_unique<SimpleColumn>(table_name, proto.name(),
+                                        AnnotatedType(type, annotation_map),
+                                        attributes);
+}
+
+// static
+absl::StatusOr<std::unique_ptr<SimpleSQLView>> SimpleSQLView::Create(
+    absl::string_view name, std::vector<NameAndType> columns,
+    SqlSecurity security, bool is_value_table, const ResolvedScan* query) {
+  auto view = absl::WrapUnique(
+      new SimpleSQLView(name, security, is_value_table, query));
+  for (int i = 0; i < columns.size(); ++i) {
+    view->AddColumn(std::make_unique<SimpleColumn>(
+        std::string(name), columns[i].name, columns[i].type));
+  }
+  return view;
 }
 
 // static
@@ -1577,11 +1671,15 @@ absl::Status SimpleConstant::Create(
 }
 
 std::string SimpleConstant::DebugString() const {
-  return absl::StrCat(FullName(), "=", value().DebugString());
+  return absl::StrCat(FullName(), "=", ConstantValueDebugString());
 }
 
 std::string SimpleConstant::VerboseDebugString() const {
   return absl::StrCat(DebugString(), " (", type()->DebugString(), ")");
+}
+
+std::string SimpleConstant::ConstantValueDebugString() const {
+  return value().DebugString();
 }
 
 absl::Status SimpleConstant::Serialize(
