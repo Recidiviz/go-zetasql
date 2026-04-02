@@ -103,6 +103,7 @@ func replaceIfMissing(path string, old string, new string) error {
 	return os.WriteFile(path, []byte(content), 0o644)
 }
 
+// Maintainer notes on vendored protobuf/third-party patches: docs/protobuf-vendoring.md
 func applyPostCopyOverlays() error {
 	if err := replaceIfMissing(
 		filepath.Join(ccallDir(), "zetasql", "public", "functions", "date_time_util.cc"),
