@@ -42,11 +42,11 @@ This file is **not** copied from upstream; treat it as part of the go-zetasql em
 | ZetaSQL | `internal/ccall/zetasql/public/types/BUILD` | Appends a missing proto dependency line if absent. |
 | ZetaSQL | `internal/ccall/zetasql/public/functions/date_time_util.cc` | Restores an `#undef FCT` after a specific `MakeEvalError` block when missing. |
 
-**Protobuf amalgamation:** after `applyPostCopyOverlays()`, the updater runs **`go run ./internal/cmd/vendorpatch`** from the repository root (the nested updater module cannot import [`internal/vendorpatch`](../internal/vendorpatch/amalgamation.go) directly). That applies [`ApplyProtobufAmalgamationPatches()`](../internal/vendorpatch/amalgamation.go) to [`port_def.inc`](../internal/ccall/protobuf/google/protobuf/port_def.inc) and [`port_undef.inc`](../internal/ccall/protobuf/google/protobuf/port_undef.inc), restoring the `GO_ZETASQL_PROTOBUF_AMALGAMATION_*` guards when a full copy has removed them. The patch is **idempotent** (if the markers are already present, files are unchanged). Anchors rely on stable upstream comment lines; if a future protobuf release rewrites those headers, update the anchors in [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go) (and the tests).
+**Protobuf amalgamation:** after `applyPostCopyOverlays()`, the updater runs **`go run ./internal/cmd/vendorpatch`** from the repository root (the nested updater module cannot import [`internal/vendorpatch`](../internal/vendorpatch/) directly). That first applies [`ApplyProtobufAmalgamationPatches()`](../internal/vendorpatch/amalgamation.go) to [`port_def.inc`](../internal/ccall/protobuf/google/protobuf/port_def.inc) and [`port_undef.inc`](../internal/ccall/protobuf/google/protobuf/port_undef.inc), then [`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) (sorted `*.patch` files under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md), if any). Amalgamation is **idempotent** (if the markers are already present, files are unchanged). Git patches require **`git` on `PATH`** and unified diffs with paths relative to the repo root. Anchors for amalgamation live in [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go) (and tests); git patches must be **rebased or regenerated** when upstream edits the same lines.
 
 **Standalone:** after a manual protobuf tree copy (without running the full updater), from the repo root run **`go run ./internal/cmd/vendorpatch`** or **[`scripts/apply-vendor-patches.sh`](../scripts/apply-vendor-patches.sh)** to apply the same logic.
 
-**Still manual:** larger protobuf deltas (e.g. `ExtensionSet` / table-driven compatibility) remain a review-and-merge checklist—see **Local deltas that may track upstream over time** below and the runbook section.
+**Layered edits:** capture repeatable deltas beyond amalgamation as committed **`*.patch`** files (see [Git patches](#git-patches-beyond-amalgamation) and [**Local deltas**](#local-deltas-that-may-track-upstream-over-time) below). You still reconcile large API changes with the pinned protobuf revision when upstream diverges.
 
 ## Local deltas that may track upstream over time
 
@@ -54,7 +54,7 @@ Some files under `internal/ccall/protobuf/` may carry **additional** edits beyon
 
 - `GO_ZETASQL`, `ExtensionFinder`, `CodedInputStream`-based `ParseField` overloads in [`extension_set.h`](../internal/ccall/protobuf/google/protobuf/extension_set.h) / [`extension_set.cc`](../internal/ccall/protobuf/google/protobuf/extension_set.cc) / [`extension_set_heavy.cc`](../internal/ccall/protobuf/google/protobuf/extension_set_heavy.cc).
 
-Treat large or overlapping overload sets as **candidates to reconcile** with the exact protobuf revision pinned for your ZetaSQL upgrade: sometimes the durable fix is a **clean vendor snapshot** rather than preserving every local edit. After a refresh, **diff** these files against the new upstream and fold in only what amalgamation still requires.
+Treat large or overlapping overload sets as **candidates to reconcile** with the exact protobuf revision pinned for your ZetaSQL upgrade: sometimes the durable fix is a **clean vendor snapshot** rather than preserving every local edit. After a refresh, **diff** these files against the new upstream and fold in only what amalgamation still requires. Prefer recording stable layers as patches under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md) so `go run ./internal/cmd/vendorpatch` reapplies them automatically after each copy.
 
 ## Symptoms of version skew (not “random compiler bugs”)
 
@@ -74,9 +74,9 @@ assume **mixed revisions or incomplete post-copy patching** first. Re-copy a sin
 4. Run `CGO_ENABLED=1 go test -count=1 ./internal/ccall/go-protobuf/protobuf/`, then broader tests as needed.
 5. Inspect `extension_set*` and any other files previously touched for merge duplication or API drift.
 
-## Future automation options (optional)
+## Git patches (beyond amalgamation)
 
-For edits **beyond** `port_def.inc` / `port_undef.inc` guards, maintainers may still use explicit **`git apply`** patches under e.g. `internal/ccall/protobuf/patches/` for reviewable diffs, at the cost of rebasing when upstream context shifts.
+Optional unified diffs live under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md). [`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) runs **`git apply`** on each `*.patch` in **sorted filename order** (use numeric prefixes, e.g. `01-extension-set.patch`) **after** amalgamation guards are applied. Patches must use paths relative to the **repository root** (as in `git diff` from the repo root). If a patch no longer applies after a protobuf refresh, refresh the hunk from your edited tree or remove the patch if upstream absorbed the change—context drift is expected occasionally.
 
 ---
 
@@ -143,7 +143,7 @@ After go-zetasql is green:
 
 ---
 
-**Related code**: updater [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`copyExternalLibMapForRun`, `applyPostCopyOverlays`, `runVendorpatchCLI`, `copyExternalLibMap`); patch helpers [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go), CLI [`internal/cmd/vendorpatch`](../internal/cmd/vendorpatch/main.go).
+**Related code**: updater [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`copyExternalLibMapForRun`, `applyPostCopyOverlays`, `runVendorpatchCLI`, `copyExternalLibMap`); patch helpers [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go), [`internal/vendorpatch/git_patch.go`](../internal/vendorpatch/git_patch.go), CLI [`internal/cmd/vendorpatch`](../internal/cmd/vendorpatch/main.go).
 
 ---
 

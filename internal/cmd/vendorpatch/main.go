@@ -1,5 +1,6 @@
 // Command vendorpatch applies mechanical post-copy patches to vendored trees under
-// internal/ccall (protobuf amalgamation guards; see docs/protobuf-vendoring.md).
+// internal/ccall: protobuf amalgamation (port_def/port_undef) then optional git patches
+// (see docs/protobuf-vendoring.md).
 //
 // Usage: from repository root,
 //
@@ -22,8 +23,13 @@ func repoRoot() string {
 }
 
 func main() {
-	ccall := filepath.Join(repoRoot(), "internal", "ccall")
+	root := repoRoot()
+	ccall := filepath.Join(root, "internal", "ccall")
 	if err := vendorpatch.ApplyProtobufAmalgamationPatches(ccall); err != nil {
+		fmt.Fprintf(os.Stderr, "vendorpatch: %v\n", err)
+		os.Exit(1)
+	}
+	if err := vendorpatch.ApplyProtobufGitPatches(root); err != nil {
 		fmt.Fprintf(os.Stderr, "vendorpatch: %v\n", err)
 		os.Exit(1)
 	}
