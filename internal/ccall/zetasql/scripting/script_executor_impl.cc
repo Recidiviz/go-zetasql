@@ -91,10 +91,10 @@ absl::Status CheckConstraintStatus(const absl::Status& constraint_status,
 }
 
 ParsedScript::QueryParameters GetQueryParameters(
-    const std::optional<absl::variant<ParameterValueList, ParameterValueMap>>&
+    const std::optional<std::variant<ParameterValueList, ParameterValueMap>>&
         params) {
   if (!params.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   if (std::holds_alternative<ParameterValueMap>(*params)) {
     ParsedScript::StringSet parameter_names;
@@ -184,7 +184,7 @@ void ScriptExecutorImpl::SetSystemVariablesForPendingException() {
     if (stack_trace_value.ok()) {
       system_variables_[{"error", "stack_trace"}] = stack_trace_value.value();
     } else {
-      ZETASQL_LOG(ERROR) << "Unable to get value for @@error.stack_trace: "
+      ABSL_LOG(ERROR) << "Unable to get value for @@error.stack_trace: "
                  << stack_trace_value.status();
     }
     system_variables_[{"error", "formatted_stack_trace"}] =
@@ -196,7 +196,7 @@ void ScriptExecutorImpl::SetSystemVariablesForPendingException() {
       system_variables_[{"error", "stack_trace"}] =
           Value::Null(stack_trace_type.value());
     } else {
-      ZETASQL_LOG(ERROR) << "Unable to get type for @@error.stack_trace: "
+      ABSL_LOG(ERROR) << "Unable to get type for @@error.stack_trace: "
                  << stack_trace_type.status();
     }
     system_variables_[{"error", "formatted_stack_trace"}] = Value::NullString();
@@ -316,12 +316,12 @@ ScriptExecutorImpl::GenerateStatementTextSystemVariable() const {
 
 absl::StatusOr<ScriptException> ScriptExecutorImpl::SetupNewException(
     const absl::Status& status) {
-  ZETASQL_DCHECK(!status.ok() && internal::HasPayloadWithType<ScriptException>(status));
-  ZETASQL_DCHECK(!options_.dry_run());
+  ABSL_DCHECK(!status.ok() && internal::HasPayloadWithType<ScriptException>(status));
+  ABSL_DCHECK(!options_.dry_run());
 
   // Should not get here when rethrowing a prior exception.
   const ASTNode* curr_node = callstack_.back().current_node()->ast_node();
-  ZETASQL_DCHECK(curr_node->node_kind() != AST_RAISE_STATEMENT ||
+  ABSL_DCHECK(curr_node->node_kind() != AST_RAISE_STATEMENT ||
          !curr_node->GetAsOrDie<ASTRaiseStatement>()->is_rethrow());
 
   ScriptException exception = internal::GetPayload<ScriptException>(status);
@@ -346,7 +346,7 @@ absl::StatusOr<ScriptException> ScriptExecutorImpl::SetupNewException(
 
 absl::Status ScriptExecutorImpl::EnterExceptionHandler(
     const ScriptException& exception) {
-  ZETASQL_DCHECK(!options_.dry_run());
+  ABSL_DCHECK(!options_.dry_run());
   sql_feature_usage_.set_exception(sql_feature_usage_.exception() + 1);
   triggered_features_.insert(ScriptExecutorStateProto::EXCEPTION_CAUGHT);
   pending_exceptions_.push_back(exception);
@@ -356,7 +356,7 @@ absl::Status ScriptExecutorImpl::EnterExceptionHandler(
 }
 
 absl::Status ScriptExecutorImpl::ExitExceptionHandler() {
-  ZETASQL_DCHECK(!options_.dry_run());
+  ABSL_DCHECK(!options_.dry_run());
   ZETASQL_RET_CHECK(!pending_exceptions_.empty());
   pending_exceptions_.pop_back();
   SetSystemVariablesForPendingException();
@@ -407,7 +407,10 @@ bool ScriptExecutorImpl::IsComplete() const {
 absl::Status ScriptExecutorImpl::ExecuteNext() {
   absl::Status status = ExecuteNextImpl();
   return ConvertInternalErrorLocationAndAdjustErrorString(
-      options_.error_message_mode(), CurrentScript()->script_text(), status);
+      options_.error_message_mode(),
+      /*keep_error_location_payload=*/options_.error_message_mode() ==
+          ERROR_MESSAGE_WITH_PAYLOAD,
+      CurrentScript()->script_text(), status);
 }
 
 absl::Status ScriptExecutorImpl::ExecuteNextImpl() {
@@ -1365,9 +1368,10 @@ absl::Status ScriptExecutorImpl::ExecuteCallStatement() {
           .With([path_node](zetasql_base::StatusBuilder builder) {
             // Attach location to error thrown by native procedure.
             if (!builder.ok()) {
-              builder.Attach(GetErrorLocationPoint(
-                                 path_node, /*include_leftmost_child*/ true)
-                                 .ToInternalErrorLocation());
+              builder.AttachPayload(
+                  GetErrorLocationPoint(path_node,
+                                        /*include_leftmost_child*/ true)
+                      .ToInternalErrorLocation());
             }
             return builder;
           });
@@ -1461,13 +1465,13 @@ absl::Status ScriptExecutorImpl::UpdateAnalyzerOptionParameters(
 }
 
 absl::StatusOr<
-    std::optional<absl::variant<ParameterValueList, ParameterValueMap>>>
+    std::optional<std::variant<ParameterValueList, ParameterValueMap>>>
 ScriptExecutorImpl::EvaluateDynamicParams(
     const ASTExecuteUsingClause* using_clause,
     VariableSizesMap* variable_sizes_map) {
   // TODO: Refactor this into parsed_script.cc
   const ASTNode* curr_ast_node = callstack_.back().current_node()->ast_node();
-  std::optional<absl::variant<ParameterValueList, ParameterValueMap>>
+  std::optional<std::variant<ParameterValueList, ParameterValueMap>>
       stack_params;
   if (using_clause == nullptr) {
     return stack_params;
@@ -1564,7 +1568,7 @@ absl::Status ScriptExecutorImpl::ExecuteDynamicIntoStatement(
     ZETASQL_RET_CHECK(it != variables->end());
     Value* value = &it->second;
     if (has_row) {
-      Coercer coercer(type_factory_, time_zone_, &options_.language_options());
+      Coercer coercer(type_factory_, &options_.language_options());
       SignatureMatchResult unused;
       if (coercer.AssignableTo(InputArgumentType(iterator->GetValue(i).type()),
                                value->type(),
@@ -1864,7 +1868,7 @@ absl::Status ScriptExecutorImpl::SetState(
     // Unable to load timezone from state proto - fall back to default time
     // zone.  This can happen if we are restoring from an older version of
     // ScriptExecutorStateProto, which did not persist timezone values.
-    ZETASQL_LOG_IF(WARNING, !state.timezone().empty())
+    ABSL_LOG_IF(WARNING, !state.timezone().empty())
         << "Unable to load timezone '" << state.timezone()
         << "' from state proto; using default timezone instead: "
         << options_.default_time_zone().name();
@@ -1985,7 +1989,7 @@ absl::Status ScriptExecutorImpl::SetState(
           ResetIteratorSizes(next_node, for_loop_stack));
     }
 
-    std::optional<absl::variant<ParameterValueList, ParameterValueMap>>
+    std::optional<std::variant<ParameterValueList, ParameterValueMap>>
         new_parameters;
     ZETASQL_RETURN_IF_ERROR(DeserializeParametersProto(
         stack_frame_state.parameters(), &new_parameters, &descriptor_pool_,
@@ -2138,8 +2142,9 @@ std::string ScriptExecutorImpl::VariablesDebugString() const {
     if (it != GetCurrentVariableTypeParameters().end() &&
         !it->second.IsEmpty()) {
       type_name = variable.second.type()
-                      ->TypeNameWithParameters(it->second,
-                                               LanguageOptions().product_mode())
+                      ->TypeNameWithModifiers(TypeModifiers::MakeTypeModifiers(
+                                                  it->second, Collation()),
+                                              LanguageOptions().product_mode())
                       .value();
     } else {
       type_name = variable.second.type()->DebugString();
@@ -2325,7 +2330,7 @@ absl::Status ScriptExecutorImpl::ExitFromProcedure(
   for (const auto& pair : frame_exit_from->variable_sizes()) {
     int64_t variable_size = pair.second;
     total_memory_usage_ -= variable_size;
-    ZETASQL_DCHECK_GE(total_memory_usage_, 0) << "Total size should never be negative";
+    ABSL_DCHECK_GE(total_memory_usage_, 0) << "Total size should never be negative";
   }
 
   if (normal_return) {
@@ -2339,7 +2344,7 @@ bool ScriptExecutorImpl::CoercesTo(const Type* from_type,
                                    const Type* to_type) const {
   TypeFactory type_factory;
   SignatureMatchResult unused;
-  Coercer coercer(&type_factory, time_zone_, &options_.language_options());
+  Coercer coercer(&type_factory, &options_.language_options());
   return coercer.CoercesTo(InputArgumentType(from_type), to_type,
                            /*is_explicit=*/false, &unused);
 }
@@ -2474,7 +2479,7 @@ absl::Status ScriptExecutorImpl::AdvanceInternal(
         return ExitProcedure(true).status();
       }
     }
-    ZETASQL_RETURN_IF_ERROR(ExecuteSideEffects(edge, absl::nullopt));
+    ZETASQL_RETURN_IF_ERROR(ExecuteSideEffects(edge, std::nullopt));
     ZETASQL_ASSIGN_OR_RETURN(keep_going, UpdateCurrentLocation(edge));
 
     // Even if we had a condition initially, the next iteration of the loop

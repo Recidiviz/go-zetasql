@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <iterator>
 #include <limits>
 #include <map>
 #include <set>
@@ -119,7 +120,7 @@ static Value MakeProtoValue(const google::protobuf::Message* msg) {
 }
 
 static std::string ParametersWithSeparator(int num_parameters,
-                                           const std::string& separator) {
+                                           absl::string_view separator) {
   std::vector<std::string> arg_str;
   arg_str.reserve(num_parameters);
   for (int i = 0; i < num_parameters; i++) {
@@ -157,7 +158,7 @@ static std::vector<std::string> GetTypeLabels(
 
 // Returns a SQL literal for the value.
 static std::string MakeLiteral(const Value& value) {
-  ZETASQL_LOG_IF(FATAL, value.is_null()) << "Null value " << value.DebugString();
+  ABSL_LOG_IF(FATAL, value.is_null()) << "Null value " << value.DebugString();
 
   switch (value.type_kind()) {
     case TYPE_STRING:
@@ -165,7 +166,7 @@ static std::string MakeLiteral(const Value& value) {
     case TYPE_BYTES:
       return ToBytesLiteral(value.bytes_value());
     default:
-      ZETASQL_LOG(FATAL) << "Not supported type " << value.DebugString();
+      ABSL_LOG(FATAL) << "Not supported type " << value.DebugString();
   }
 }
 
@@ -277,17 +278,17 @@ bool CodebasedTestsEnvironment::skip_codebased_tests() {
 
 // static
 void ComplianceCodebasedTests::SetUpTestSuite() {
-  ZETASQL_CHECK(GetCodeBasedTestsEnvironment() != nullptr);
+  ABSL_CHECK(GetCodeBasedTestsEnvironment() != nullptr);
 }
 
 void CodebasedTestsEnvironment::SetUp() {
   // The advantage of skipping codebased tests is to skip this potentially
   // very expensive setup.
   if (skip_codebased_tests()) {
-    ZETASQL_LOG(INFO) << "Skipping codebased tests.";
+    ABSL_LOG(INFO) << "Skipping codebased tests.";
     return;
   }
-  ZETASQL_LOG(INFO) << "Setting up codebased tests environment.";
+  ABSL_LOG(INFO) << "Setting up codebased tests environment.";
   // Create a test driver, reference driver (if necessary), and
   // default test database to use for all the code-based tests.
   Value table_empty;
@@ -412,11 +413,9 @@ void CodebasedTestsEnvironment::SetUp() {
       test_db, code_based_test_driver->GetSupportedLanguageOptions()));
   ZETASQL_CHECK_OK(code_based_test_driver->CreateDatabase(test_db));
 
-  if (!code_based_test_driver->IsReferenceImplementation()) {
-    code_based_reference_driver = new ReferenceDriver(
-        code_based_test_driver->GetSupportedLanguageOptions());
-    ZETASQL_EXPECT_OK(code_based_reference_driver->CreateDatabase(test_db));
-  }
+  code_based_reference_driver = new ReferenceDriver(
+      code_based_test_driver->GetSupportedLanguageOptions());
+  ZETASQL_EXPECT_OK(code_based_reference_driver->CreateDatabase(test_db));
 }
 
 void CodebasedTestsEnvironment::TearDown() {
@@ -429,14 +428,14 @@ ComplianceCodebasedTests::ComplianceCodebasedTests()
   // Sanity check the initialization of the test driver. The superclass
   // constructor will sanity check that 'code_based_reference_driver' is
   // consistent with 'code_based_test_driver'.
-  ZETASQL_CHECK_EQ(GetCodeBasedTestsEnvironment()->skip_codebased_tests(),
+  ABSL_CHECK_EQ(GetCodeBasedTestsEnvironment()->skip_codebased_tests(),
            code_based_test_driver == nullptr);
 
   if (code_based_test_driver == nullptr) {
     // Sanity check that any subclass that overrides DriverCanRunTests() also
     // calls the superclass method
     // ComplianceCodebasedTests::DriverCanRunTests().
-    ZETASQL_CHECK(!DriverCanRunTests());
+    ABSL_CHECK(!DriverCanRunTests());
   }
 }
 
@@ -444,17 +443,20 @@ ComplianceCodebasedTests::~ComplianceCodebasedTests() {}
 
 void ComplianceCodebasedTests::RunStatementTests(
     const std::vector<QueryParamsWithResult>& statement_tests,
-    const std::string& sql_string) {
+    absl::string_view sql_string) {
   return RunStatementTestsCustom(
       statement_tests,
-      [sql_string](const QueryParamsWithResult& p) { return sql_string; });
+      [sql_string = std::string(sql_string)](const QueryParamsWithResult& p) {
+        return sql_string;
+      });
 }
 
 void ComplianceCodebasedTests::RunFunctionTestsInfix(
     const std::vector<QueryParamsWithResult>& function_tests,
-    const std::string& operator_name) {
+    absl::string_view operator_name) {
   return RunStatementTestsCustom(
-      function_tests, [operator_name](const QueryParamsWithResult& p) {
+      function_tests, [operator_name = std::string(operator_name)](
+                          const QueryParamsWithResult& p) {
         return ParametersWithSeparator(p.num_params(),
                                        absl::StrCat(" ", operator_name, " "));
       });
@@ -487,9 +489,10 @@ void ComplianceCodebasedTests::RunFunctionTestsInOperatorUnnestArray(
 
 void ComplianceCodebasedTests::RunFunctionTestsPrefix(
     const std::vector<QueryParamsWithResult>& function_tests,
-    const std::string& function_name) {
+    absl::string_view function_name) {
   return RunStatementTestsCustom(
-      function_tests, [function_name](const QueryParamsWithResult& p) {
+      function_tests, [function_name = std::string(function_name)](
+                          const QueryParamsWithResult& p) {
         return absl::StrCat(function_name, "(",
                             ParametersWithSeparator(p.num_params(), ", "), ")");
       });
@@ -542,11 +545,11 @@ std::vector<FunctionTestCall> ComplianceCodebasedTests::AddSafeFunctionCalls(
 // "safe_error_mode__.*" without excluding tests for function that actually
 // start with "SAFE_".
 static std::string AddPrefixForSafeFunctionCalls(
-    const std::string& function_name) {
+    absl::string_view function_name) {
   if (absl::StartsWith(function_name, "safe.")) {
     return absl::StrCat("safe_error_mode__", function_name);
   }
-  return function_name;
+  return std::string(function_name);
 }
 
 void ComplianceCodebasedTests::RunFunctionCalls(
@@ -565,7 +568,7 @@ void ComplianceCodebasedTests::RunFunctionCalls(
 
 void ComplianceCodebasedTests::RunFunctionCalls(
     const std::vector<QueryParamsWithResult>& test_cases,
-    const std::string& function_name) {
+    absl::string_view function_name) {
   std::vector<FunctionTestCall> function_test_calls;
   function_test_calls.reserve(test_cases.size());
   for (const QueryParamsWithResult& test_case : test_cases) {
@@ -581,7 +584,7 @@ void ComplianceCodebasedTests::RunNormalizeFunctionCalls(
         "SELECT $0(@p0$1) AS $2", call.function_name,
         call.params.num_params() <= 1
             ? ""
-            : absl::StrCat(", ", call.params.param(1).enum_name()),
+            : absl::StrCat(", ", call.params.param(1).EnumDisplayName()),
         kColA);
     QueryParamsWithResult new_params = call.params;
     ConvertResultsToSingletons(&new_params);
@@ -626,7 +629,7 @@ void ComplianceCodebasedTests::RunStatementTestsCustom(
 }
 
 void ComplianceCodebasedTests::RunStatementOnFeatures(
-    const std::string& sql, const QueryParamsWithResult& params) {
+    absl::string_view sql, const QueryParamsWithResult& params) {
   if (!DriverCanRunTests()) {
     return;
   }
@@ -679,7 +682,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDepthLimitDetectorTestCases, 12) {
       driver_enables_right_features &= DriverSupportsFeature(feature);
     }
     if (!driver_enables_right_features) {
-      ZETASQL_LOG(INFO) << "Skipping " << depth_case
+      ABSL_LOG(INFO) << "Skipping " << depth_case
                 << " as not all features supported";
       continue;
     }
@@ -690,7 +693,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDepthLimitDetectorTestCases, 12) {
     absl::Status run_small =
         RunSQL(DepthLimitDetectorTemplateToString(depth_case, 3)).status();
     if (!run_small.ok()) {
-      ZETASQL_LOG(INFO) << "Skipping " << depth_case << " as small example returned "
+      ABSL_LOG(INFO) << "Skipping " << depth_case << " as small example returned "
                 << run_small;
       continue;
     }
@@ -702,7 +705,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDepthLimitDetectorTestCases, 12) {
                                  execute_statement_type_factory())
               .status();
         });
-    ZETASQL_LOG(INFO) << "Depth limit disection finished: " << result;
+    ABSL_LOG(INFO) << "Depth limit disection finished: " << result;
   }
 }
 
@@ -852,6 +855,59 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestSafeArraySliceFunctions, 2) {
   SetNamePrefix("SafeArraySlice");
   RunFunctionTestsPrefix(Shard(GetFunctionTestsArraySlice(/*is_safe=*/true)),
                          "SAFE.ARRAY_SLICE");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestArrayFirstNFunctions, 1) {
+  SetNamePrefix("ArrayFirstN");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsArrayFirstN(/*is_safe=*/false)),
+                         "ARRAY_FIRST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestSafeArrayFirstNFunctions, 1) {
+  SetNamePrefix("SafeArrayFirstN");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsArrayFirstN(/*is_safe=*/true)),
+                         "SAFE.ARRAY_FIRST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestArrayLastNFunctions, 1) {
+  SetNamePrefix("ArrayLastN");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsArrayLastN(/*is_safe=*/false)),
+                         "ARRAY_LAST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestSafeArrayLastNFunctions, 1) {
+  SetNamePrefix("SafeArrayLastN");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsArrayLastN(/*is_safe=*/true)),
+                         "SAFE.ARRAY_LAST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestArrayRemoveFirstNFunctions, 1) {
+  SetNamePrefix("ArrayRemoveFirstN");
+  RunFunctionTestsPrefix(
+      Shard(GetFunctionTestsArrayRemoveFirstN(/*is_safe=*/false)),
+      "ARRAY_REMOVE_FIRST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestSafeArrayRemoveFirstNFunctions,
+               1) {
+  SetNamePrefix("SafeArrayRemoveFirstN");
+  RunFunctionTestsPrefix(
+      Shard(GetFunctionTestsArrayRemoveFirstN(/*is_safe=*/true)),
+      "SAFE.ARRAY_REMOVE_FIRST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestArrayRemoveLastNFunctions, 1) {
+  SetNamePrefix("ArrayRemoveLastN");
+  RunFunctionTestsPrefix(
+      Shard(GetFunctionTestsArrayRemoveLastN(/*is_safe=*/false)),
+      "ARRAY_REMOVE_LAST_N");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestSafeArrayRemoveLastNFunctions, 1) {
+  SetNamePrefix("SafeArrayRemoveLastN");
+  RunFunctionTestsPrefix(
+      Shard(GetFunctionTestsArrayRemoveLastN(/*is_safe=*/true)),
+      "SAFE.ARRAY_REMOVE_LAST_N");
 }
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestArrayMinFunctions, 1) {
@@ -1284,6 +1340,17 @@ std::vector<FunctionTestCall> EnableJsonConstructorFunctionsForTest(
   return tests;
 }
 
+// Wraps test cases with FEATURE_JSON_MUTATOR_FUNCTIONS and
+// FEATURE_JSON_TYPE.
+std::vector<FunctionTestCall> EnableJsonMutatorFunctionsForTest(
+    std::vector<FunctionTestCall> tests) {
+  for (auto& test_case : tests) {
+    test_case.params = test_case.params.AddRequiredFeatures(
+        {FEATURE_JSON_TYPE, FEATURE_JSON_MUTATOR_FUNCTIONS});
+  }
+  return tests;
+}
+
 }  // namespace
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestNativeJsonQuery, 1) {
@@ -1381,6 +1448,26 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestConvertJson, 1) {
                          convert_json_fn_expr);
 }
 
+SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonStripNulls, 1) {
+  SetNamePrefix("JsonStripNulls");
+
+  auto strip_nulls_json_fn_expr = [](const FunctionTestCall& f) {
+    auto size = f.params.params().size();
+    if (size == 1) {
+      return "json_strip_nulls(@p0)";
+    } else if (size == 2) {
+      return "json_strip_nulls(@p0, @p1)";
+    } else if (size == 3) {
+      return "json_strip_nulls(@p0, @p1, include_arrays=>@p2)";
+    }
+    return "json_strip_nulls(@p0, @p1, include_arrays=>@p2, remove_empty=>@p3)";
+  };
+
+  RunFunctionTestsCustom(Shard(EnableJsonMutatorFunctionsForTest(
+                             GetFunctionTestsJsonStripNulls())),
+                         strip_nulls_json_fn_expr);
+}
+
 SHARDED_TEST_F(ComplianceCodebasedTests, TestConvertJsonLaxBool, 1) {
   SetNamePrefix("ConvertJsonLaxBool");
   RunFunctionCalls(Shard(EnableJsonLaxValueExtractionFunctionsForTest(
@@ -1391,6 +1478,12 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestConvertJsonLaxInt64, 1) {
   SetNamePrefix("ConvertJsonLaxInt64");
   RunFunctionCalls(Shard(EnableJsonLaxValueExtractionFunctionsForTest(
       GetFunctionTestsConvertJsonLaxInt64())));
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestConvertJsonLaxFloat64, 1) {
+  SetNamePrefix("ConvertJsonLaxFloat64");
+  RunFunctionCalls(Shard(EnableJsonLaxValueExtractionFunctionsForTest(
+      GetFunctionTestsConvertJsonLaxFloat64())));
 }
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestConvertJsonLaxDouble, 1) {
@@ -1409,6 +1502,78 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonArray, 1) {
   SetNamePrefix("JsonArray");
   RunFunctionCalls(Shard(
       EnableJsonConstructorFunctionsForTest(GetFunctionTestsJsonArray())));
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonObject, 5) {
+  SetNamePrefix("JsonObject");
+  std::vector<FunctionTestCall> tests = GetFunctionTestsJsonObject();
+  std::vector<FunctionTestCall> tests2 = GetFunctionTestsJsonObjectArrays();
+  tests.insert(tests.end(), std::make_move_iterator(tests2.begin()),
+               std::make_move_iterator(tests2.end()));
+
+  RunFunctionCalls(Shard(EnableJsonConstructorFunctionsForTest(tests)));
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonRemove, 1) {
+  SetNamePrefix("JsonRemove");
+  RunFunctionCalls(
+      Shard(EnableJsonMutatorFunctionsForTest(GetFunctionTestsJsonRemove())));
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonSet, 1) {
+  SetNamePrefix("JsonSet");
+  RunFunctionCalls(
+      Shard(EnableJsonMutatorFunctionsForTest(GetFunctionTestsJsonSet())));
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonArrayInsert, 1) {
+  SetNamePrefix("JsonArrayInsert");
+
+  auto fn_expr = [](const FunctionTestCall& f) {
+    std::string arguments;
+    size_t size = f.params.params().size();
+
+    if (size % 2 == 0) {
+      for (int i = 0; i < f.params.params().size() - 1; ++i) {
+        absl::StrAppend(&arguments, "@p", i, ", ");
+      }
+      absl::StrAppend(&arguments, "insert_each_element=>@p", size - 1);
+    } else {
+      for (int i = 0; i < f.params.params().size(); ++i) {
+        absl::StrAppend(&arguments, "@p", i, ", ");
+      }
+      arguments.resize(arguments.size() - 2);
+    }
+    return absl::Substitute("$0($1)", f.function_name, arguments);
+  };
+  RunFunctionTestsCustom(Shard(EnableJsonMutatorFunctionsForTest(
+                             GetFunctionTestsJsonArrayInsert())),
+                         fn_expr);
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonArrayAppend, 1) {
+  SetNamePrefix("JsonArrayAppend");
+
+  auto fn_expr = [](const FunctionTestCall& f) {
+    std::string arguments;
+    size_t size = f.params.params().size();
+
+    if (size % 2 == 0) {
+      for (int i = 0; i < f.params.params().size() - 1; ++i) {
+        absl::StrAppend(&arguments, "@p", i, ", ");
+      }
+      absl::StrAppend(&arguments, "append_each_element=>@p", size - 1);
+    } else {
+      for (int i = 0; i < f.params.params().size(); ++i) {
+        absl::StrAppend(&arguments, "@p", i, ", ");
+      }
+      arguments.resize(arguments.size() - 2);
+    }
+    return absl::Substitute("$0($1)", f.function_name, arguments);
+  };
+  RunFunctionTestsCustom(Shard(EnableJsonMutatorFunctionsForTest(
+                             GetFunctionTestsJsonArrayAppend())),
+                         fn_expr);
 }
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestHash, 1) {
@@ -1650,6 +1815,34 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestConditionals_NullIf, 1) {
   RunFunctionTestsPrefix(Shard(GetFunctionTestsNullIf()), "NullIf");
 }
 
+SHARDED_TEST_F(ComplianceCodebasedTests, TestConditionals_ZeroIfNull, 1) {
+  SetNamePrefix("ZeroIfNull");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsZeroIfNull_NullIfZero(
+                             /*is_zero_if_null=*/true, /*is_safe=*/false)),
+                         "ZEROIFNULL");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestConditionals_NullIfZero, 1) {
+  SetNamePrefix("NullIfZero");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsZeroIfNull_NullIfZero(
+                             /*is_zero_if_null=*/false, /*is_safe=*/false)),
+                         "NULLIFZERO");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestConditionals_SafeZeroIfNull, 1) {
+  SetNamePrefix("SafeZeroIfNull");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsZeroIfNull_NullIfZero(
+                             /*is_zero_if_null=*/true, /*is_safe=*/true)),
+                         "SAFE.ZEROIFNULL");
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, TestConditionals_SafeNullIfZero, 1) {
+  SetNamePrefix("SafeNullIfZero");
+  RunFunctionTestsPrefix(Shard(GetFunctionTestsZeroIfNull_NullIfZero(
+                             /*is_zero_if_null=*/false, /*is_safe=*/true)),
+                         "SAFE.NULLIFZERO");
+}
+
 SHARDED_TEST_F(ComplianceCodebasedTests, TestConditionals_Coalesce, 1) {
   SetNamePrefix("Coalesce");
   RunFunctionTestsPrefix(Shard(GetFunctionTestsCoalesce()), "Coalesce");
@@ -1794,6 +1987,11 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestMathFunctions_InverseTrigonometric,
   RunFunctionCalls(Shard(GetFunctionTestsInverseTrigonometric()));
 }
 
+SHARDED_TEST_F(ComplianceCodebasedTests, TestMathFunctions_Pi, 1) {
+  // No need to set PREFIX, RunFunctionCalls() will do it.
+  RunFunctionCalls(Shard(GetFunctionTestsPi(/*include_safe_calls=*/true)));
+}
+
 SHARDED_TEST_F(ComplianceCodebasedTests, TestMathFunctions_Cbrt, 1) {
   // No need to set PREFIX, RunFunctionCalls() will do it.
   RunFunctionCalls(Shard(GetFunctionTestsCbrt()));
@@ -1812,7 +2010,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDateTimeFunctionsDateDiffFormat,
   // generate function calls with date part arguments must handle them
   // specially.
   auto date_diff_format_fct = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, @p1, $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -1829,7 +2027,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDateTimeFunctionsExtractFormat,
                100) {
   auto extract_format_fct = [](const FunctionTestCall& f) {
     if (f.params.num_params() != 2 && f.params.num_params() != 3) {
-      ZETASQL_LOG(FATAL) << "Unexpected number of parameters: "
+      ABSL_LOG(FATAL) << "Unexpected number of parameters: "
                  << f.params.num_params();
     } else {
       const std::string& date_part_sql = f.params.param(1).string_value();
@@ -1837,7 +2035,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDateTimeFunctionsExtractFormat,
         return absl::Substitute("$0($1 FROM @p0)", f.function_name,
                                 date_part_sql);
       } else {
-        ZETASQL_CHECK_EQ(f.params.num_params(), 3);
+        ABSL_CHECK_EQ(f.params.num_params(), 3);
         return absl::Substitute("$0($1 FROM @p0 AT TIME ZONE @p2)",
                                 f.function_name, date_part_sql);
       }
@@ -1868,7 +2066,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestTimestampFromDate, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestDateAddSubFunctions, 1) {
   auto date_diff_format_fct = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, INTERVAL @p1 $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -1911,7 +2109,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestToProto3TimeOfDay, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestDatetimeAddSubFunctions, 2) {
   auto datetime_add_sub = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, INTERVAL @p1 $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -1923,7 +2121,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDatetimeAddSubFunctions, 2) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestDatetimeDiffFunctions, 1) {
   auto datetime_diff = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, @p1, $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -1935,7 +2133,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDatetimeDiffFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestLastDayFunctions, 1) {
   auto last_day = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ("last_day", f.function_name);
+    ABSL_CHECK_EQ("last_day", f.function_name);
     return absl::Substitute(
         "$0(@p0, $1)", f.function_name,
         functions::DateTimestampPartToSQL(f.params.param(1).enum_value()));
@@ -1946,10 +2144,10 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestLastDayFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestDateTruncFunctions, 1) {
   auto date_trunc = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ("date_trunc", f.function_name);
-    ZETASQL_CHECK_EQ(2, f.params.num_params());
+    ABSL_CHECK_EQ("date_trunc", f.function_name);
+    ABSL_CHECK_EQ(2, f.params.num_params());
     // We can't have a null DatePart.
-    ZETASQL_CHECK(!f.params.param(1).is_null());
+    ABSL_CHECK(!f.params.param(1).is_null());
     return absl::Substitute("date_trunc(@p0, $0)",
                             f.params.param(1).string_value());
   };
@@ -1961,7 +2159,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDateTruncFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestDatetimeTruncFunctions, 1) {
   auto datetime_trunc = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(2, f.params.num_params());
+    ABSL_CHECK_EQ(2, f.params.num_params());
     return absl::Substitute("$0(@p0, $1)", f.function_name,
                             f.params.param(1).string_value());
   };
@@ -1973,7 +2171,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestDatetimeTruncFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestTimeAddSubFunctions, 1) {
   auto time_add_sub = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, INTERVAL @p1 $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -1985,7 +2183,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestTimeAddSubFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestTimeDiffFunctions, 1) {
   auto time_diff = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, @p1, $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -1997,7 +2195,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestTimeDiffFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestTimeTruncFunctions, 1) {
   auto time_trunc = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(2, f.params.num_params());
+    ABSL_CHECK_EQ(2, f.params.num_params());
     return absl::Substitute("$0(@p0, $1)", f.function_name,
                             f.params.param(1).string_value());
   };
@@ -2009,7 +2207,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestTimeTruncFunctions, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestTimestampAddSubFunctions, 1) {
   auto timestamp_diff_format_fct = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK_EQ(3, f.params.num_params());
+    ABSL_CHECK_EQ(3, f.params.num_params());
     return absl::Substitute("$0(@p0, INTERVAL @p1 $1)", f.function_name,
                             f.params.param(2).string_value());
   };
@@ -2022,14 +2220,14 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestTimestampAddSubFunctions, 1) {
 SHARDED_TEST_F(ComplianceCodebasedTests, TestTimestampTruncFunctions, 1) {
   auto timestamp_trunc_format_fct = [](const FunctionTestCall& f) {
     if (f.params.num_params() != 2 && f.params.num_params() != 3) {
-      ZETASQL_LOG(FATAL) << "Unexpected number of parameters: "
+      ABSL_LOG(FATAL) << "Unexpected number of parameters: "
                  << f.params.num_params();
     } else {
       absl::string_view date_part_sql = f.params.param(1).string_value();
       if (f.params.num_params() == 2) {
         return absl::Substitute("$0(@p0, $1)", f.function_name, date_part_sql);
       } else {
-        ZETASQL_CHECK_EQ(f.params.num_params(), 3);
+        ABSL_CHECK_EQ(f.params.num_params(), 3);
         return absl::Substitute("$0(@p0, $1, @p2)", f.function_name,
                                 date_part_sql);
       }
@@ -2199,7 +2397,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestCodePointsFunctions, 1) {
 SHARDED_TEST_F(ComplianceCodebasedTests, IntervalCtor, 1) {
   SetNamePrefix("IntervalConstructor");
   auto interval_ctor = [](const FunctionTestCall& f) {
-    ZETASQL_CHECK(f.function_name.empty());
+    ABSL_CHECK(f.function_name.empty());
     return absl::Substitute("INTERVAL @p0 $0",
                             f.params.param(1).string_value());
   };
@@ -2219,7 +2417,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, IntervalComparisons, 1) {
       return "@p0 < @p1 AND @p1 > @p0 AND @p0 <= @p1 AND @p0 != @p1 AND "
              "NOT(@p0 > @p1) AND NOT(@p0 >= @p1) AND NOT(@p0 = @p1)";
     } else {
-      ZETASQL_LOG(FATAL) << f.function_name;
+      ABSL_LOG(FATAL) << f.function_name;
     }
   };
   RunFunctionTestsCustom(Shard(GetFunctionTestsIntervalComparisons()), cmp);
@@ -2237,7 +2435,7 @@ SHARDED_TEST_F(ComplianceCodebasedTests, RangeComparisons, 1) {
       return "@p0 < @p1 AND @p1 > @p0 AND @p0 <= @p1 AND @p0 != @p1 AND "
              "NOT(@p0 > @p1) AND NOT(@p0 >= @p1) AND NOT(@p0 = @p1)";
     } else {
-      ZETASQL_LOG(FATAL) << f.function_name;
+      ABSL_LOG(FATAL) << f.function_name;
     }
   };
   RunFunctionTestsCustom(Shard(GetFunctionTestsRangeComparisons()), cmp);
@@ -2255,6 +2453,28 @@ SHARDED_TEST_F(ComplianceCodebasedTests, RangeIntersect, 1) {
   RunFunctionTestsCustom(
       Shard(GetFunctionTestsRangeIntersect()),
       [](const FunctionTestCall& f) { return "range_intersect(@p0, @p1)"; });
+}
+
+SHARDED_TEST_F(ComplianceCodebasedTests, GenerateRangeArray, 1) {
+  SetNamePrefix("GenerateRangeArray");
+  auto sql_string_fn = [](const FunctionTestCall& f) {
+    ABSL_CHECK_GE(f.params.num_params(), 2);
+    return (f.params.num_params() == 2) ? "generate_range_array(@p0, @p1)"
+                                        : "generate_range_array(@p0, @p1, @p2)";
+  };
+  RunFunctionTestsCustom(Shard(GetFunctionTestsGenerateTimestampRangeArray()),
+                         sql_string_fn);
+  RunFunctionTestsCustom(
+      Shard(GetFunctionTestsGenerateTimestampRangeArrayExtras()),
+      sql_string_fn);
+  RunFunctionTestsCustom(Shard(GetFunctionTestsGenerateDateRangeArray()),
+                         sql_string_fn);
+  RunFunctionTestsCustom(Shard(GetFunctionTestsGenerateDateRangeArrayExtras()),
+                         sql_string_fn);
+  RunFunctionTestsCustom(Shard(GetFunctionTestsGenerateDatetimeRangeArray()),
+                         sql_string_fn);
+  RunFunctionTestsCustom(
+      Shard(GetFunctionTestsGenerateDatetimeRangeArrayExtras()), sql_string_fn);
 }
 
 SHARDED_TEST_F(ComplianceCodebasedTests, IntervalUnaryMinus, 1) {
@@ -2352,7 +2572,7 @@ WrapProtoFieldTestCasesForCivilTime(
   std::vector<QueryParamsWithResult> results(original_results);
   for (auto& each : results) {
     // There's only one parameter for each ProtoField test case.
-    ZETASQL_CHECK_EQ(1, each.num_params());
+    ABSL_CHECK_EQ(1, each.num_params());
     // Wrap the result when the required feature set is empty.
     if (each.required_features().empty()) {
       if (each.param(0).type()->UsingFeatureV12CivilTimeType() ||
@@ -2366,11 +2586,11 @@ WrapProtoFieldTestCasesForCivilTime(
 
 void ComplianceCodebasedTests::TestProtoFieldImpl(
     const Value& null_value, const Value& empty_value,
-    const Value& filled_value, const std::string& proto_name,
+    const Value& filled_value, absl::string_view proto_name,
     const std::string& field_name, const ValueConstructor& expected_default,
     const ValueConstructor& expected_filled_value,
     const absl::Status& expected_status, const TestProtoFieldOptions& options) {
-  ZETASQL_LOG(INFO) << "TestProtoFieldImpl " << field_name;
+  ABSL_LOG(INFO) << "TestProtoFieldImpl " << field_name;
   const std::string type_for_prefix =
       absl::StrCat(Type::TypeKindToString(expected_filled_value.type()->kind(),
                                           PRODUCT_INTERNAL),
@@ -2440,7 +2660,7 @@ ComplianceCodebasedTests::GetProtoFieldTests() {
 
   // Options to TestProtoFieldImpl.  Because COLLECT_TEST() converts TEST_*()
   // macros to lambda functions, and the lambda functions capture 'options' by
-  // value, changes of options inside a TEST_*() are confined within the lamdba
+  // value, changes of options inside a TEST_*() are confined within the lambda
   // function.
   TestProtoFieldOptions options;
 
@@ -3103,7 +3323,7 @@ TEST_F(ComplianceCodebasedTests, TablesampleRepeatableTests) {
     return;
   }
 
-  auto test_query_is_repeatable = [&](const std::string& query) {
+  auto test_query_is_repeatable = [&](absl::string_view query) {
     constexpr int kNumIterations = 10;
     std::vector<absl::StatusOr<ComplianceTestCaseResult>> results;
     results.reserve(kNumIterations);
@@ -3256,7 +3476,7 @@ class ComplianceFilebasedTests : public SQLTestBase {
         getenv("TEST_SRCDIR"), "com_google_zetasql/zetasql/compliance/testdata",
         absl::GetFlag(FLAGS_file_pattern));
     ZETASQL_CHECK_OK(zetasql::internal::Match(file_path, &test_filenames));
-    ZETASQL_CHECK(!test_filenames.empty()) << "No test files found at " << file_path;
+    ABSL_CHECK(!test_filenames.empty()) << "No test files found at " << file_path;
     return test_filenames;
   }
 

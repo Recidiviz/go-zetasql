@@ -442,7 +442,7 @@ absl::Status DerefExpr::SetSchemasForEvaluation(
 bool DerefExpr::Eval(absl::Span<const TupleData* const> params,
                      EvaluationContext* context, VirtualTupleSlot* result,
                      absl::Status* /* status */) const {
-  ZETASQL_DCHECK(idx_in_params_ >= 0 && slot_ >= 0)
+  ABSL_DCHECK(idx_in_params_ >= 0 && slot_ >= 0)
       << "You forgot to call SetSchemasForEvaluation() " << name_;
   result->CopyFromSlot(params[idx_in_params_]->slot(slot_));
   return true;
@@ -1328,7 +1328,7 @@ bool IfErrorExpr::Eval(absl::Span<const TupleData* const> params,
   // We are handling this error. Do not forget to reset the status back to OK
   // to reflect the result of the evaluation of handle_expr
   // TODO: Change this logging to ZETASQL_VLOG(2).
-  ZETASQL_LOG(INFO) << "IFERROR is suprressing error: " << *status;
+  ABSL_LOG(INFO) << "IFERROR is suprressing error: " << *status;
   *status = absl::OkStatus();
   return handle_value()->Eval(params, context, result, status);
 }
@@ -1387,7 +1387,7 @@ bool IsErrorExpr::Eval(absl::Span<const TupleData* const> params,
     return status->ok();
   }
 
-  ZETASQL_DCHECK(!status->ok()) << "try_expr.Eval() returned false but status is OK";
+  ABSL_DCHECK(!status->ok()) << "try_expr.Eval() returned false but status is OK";
   if (!ShouldSuppressError(*status,
                            ResolvedFunctionCallBase::SAFE_ERROR_MODE)) {
     // The error is not convertible to NULL in SAFE mode, so we must propagate
@@ -1399,7 +1399,7 @@ bool IsErrorExpr::Eval(absl::Span<const TupleData* const> params,
   // to reflect that ISERROR() itself successfully finished and return true as
   // the result.
   // TODO: Change this logging to ZETASQL_VLOG(2).
-  ZETASQL_LOG(INFO) << "ISERROR is suprressing error: " << *status;
+  ABSL_LOG(INFO) << "ISERROR is suprressing error: " << *status;
   *status = absl::OkStatus();
   result->SetValue(Value::Bool(true));
   return true;
@@ -1512,7 +1512,7 @@ class NullIfErrorExpr final : public ValueExpr {
     }
 
     // TODO: Change this logging to ZETASQL_VLOG(2).
-    ZETASQL_LOG(INFO) << "NULLIFERROR is suprressing error: " << *status;
+    ABSL_LOG(INFO) << "NULLIFERROR is suprressing error: " << *status;
     *status = absl::OkStatus();
     result->SetValue(Value::Null(output_type()));
     return true;
@@ -2018,7 +2018,7 @@ DMLValueExpr::GetPrimaryKeyColumnIndexes(EvaluationContext* context) const {
   // The algebrizer can opt out of using primary key from the catalog.
   if (primary_key_type_ == nullptr) {
     return context->options().emulate_primary_keys
-               ? absl::make_optional(std::vector<int>{0})
+               ? std::make_optional(std::vector<int>{0})
                : std::optional<std::vector<int>>();
   }
   ZETASQL_RET_CHECK(!context->options().emulate_primary_keys)
@@ -3664,7 +3664,7 @@ absl::StatusOr<int64_t> DMLInsertValueExpr::InsertRows(
     const std::vector<std::vector<Value>>& rows_to_insert,
     std::vector<std::vector<Value>>& dml_returning_rows,
     EvaluationContext* context, PrimaryKeyRowMap* row_map) const {
-  absl::node_hash_map<Value, int, ValueHasher> modified_primary_keys;
+  absl::flat_hash_map<Value, int, ValueHasher> modified_primary_keys;
   const int64_t max_original_row_number = row_map->size() - 1;
   bool found_primary_key_collision = false;
   bool has_returning = stmt()->returning() != nullptr;

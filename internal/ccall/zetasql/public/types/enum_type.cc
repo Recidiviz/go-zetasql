@@ -55,7 +55,7 @@ EnumType::EnumType(const TypeFactory* factory,
       enum_descriptor_(enum_descr),
       catalog_name_(catalog_name),
       is_opaque_(is_opaque) {
-  ZETASQL_CHECK(enum_descriptor_ != nullptr);
+  ABSL_CHECK(enum_descriptor_ != nullptr);
 }
 
 EnumType::~EnumType() {
@@ -63,7 +63,7 @@ EnumType::~EnumType() {
 
 bool EnumType::EqualsForSameKind(const Type* that, bool equivalent) const {
   const EnumType* other = that->AsEnum();
-  ZETASQL_DCHECK(other);
+  ABSL_DCHECK(other);
   return EnumType::EqualsImpl(this, other, equivalent);
 }
 
@@ -242,6 +242,10 @@ bool EnumType::IsSupportedType(const LanguageOptions& language_options) const {
         FEATURE_DIFFERENTIAL_PRIVACY_REPORT_FUNCTIONS);
   }
 
+  if (Equivalent(types::RangeSessionizeModeEnumType())) {
+    return language_options.LanguageFeatureEnabled(FEATURE_RANGE_TYPE);
+  }
+
   if (language_options.LanguageFeatureEnabled(FEATURE_PROTO_BASE)) {
     return true;
   }
@@ -317,7 +321,7 @@ absl::Status EnumType::DeserializeValueContent(const ValueProto& value_proto,
   const google::protobuf::EnumValueDescriptor* value_descriptor =
       enum_descriptor()->FindValueByNumber(value_proto.enum_value());
 
-  if (!IsValidEnumValue(value_descriptor)) {
+  if (!EnumAllowsUnnamedValues() && !IsValidEnumValue(value_descriptor)) {
     return absl::Status(absl::StatusCode::kOutOfRange,
                         absl::StrCat("Invalid value for ", DebugString(), ": ",
                                      value_proto.enum_value()));

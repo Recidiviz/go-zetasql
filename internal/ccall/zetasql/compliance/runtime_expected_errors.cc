@@ -171,6 +171,9 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
   error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
       absl::StatusCode::kOutOfRange,
       "Occurrence in STRPOS cannot be less than 1"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "The n argument to ARRAY_(|REMOVE_)(FIRST|LAST)_N must not be negative"));
 
   // REPLACE_FIELDS() specific
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
@@ -192,7 +195,7 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange,
       "Floating point error in function: "
-      "(ACOS|ACOSH|ASIN|ATANH|COT|COTH|CSC|CSCH|EXP|LN|ZETASQL_LOG|LOG10|POW|SEC)"));
+      "(ACOS|ACOSH|ASIN|ATANH|COT|COTH|CSC|CSCH|EXP|LN|ABSL_LOG|LOG10|POW|SEC)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange, "Argument to SQRT cannot be negative"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
@@ -436,7 +439,8 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
       "No matching signature for function "
-      "(ARRAY_FILTER|ARRAY_TRANSFORM|ARRAY_INCLUDES) .*"));
+      "(ARRAY_FILTER|ARRAY_TRANSFORM|ARRAY_INCLUDES|ARRAY_FIND|ARRAY_FIND_ALL|"
+      "ARRAY_OFFSET|ARRAY_OFFSETS) .*"));
 
   // HLL sketch format errors
   //
@@ -522,14 +526,15 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       "Collation is not supported for function: (.+)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
-      "Collation for (.+) is different on argument (.+) and argument (.+)"));
+      "Collation conflict: \"(.+)\" vs. \"(.+)\". Collation on argument (.+) "
+      "(.+) in function (.+) is not compatible with other arguments"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
       "Collation is not allowed on input array to FLATTEN (.+)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
-      "Collation for IN operator is different on input expr (.+) and subquery "
-      "column (.+)"));
+      "Collation conflict: \"(.+)\" vs. \"(.+)\". Collation for IN operator is "
+      "different on input expr (.+) and subquery column (.+)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
       "Collation is not allowed on argument (.+) (.+)"));
@@ -541,10 +546,6 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       absl::StatusCode::kInvalidArgument,
       "Collation conflict: \"(.+)\" vs. \"(.+)\"; in column (.+), item (.+) of "
       "set operation scan"));
-  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
-      absl::StatusCode::kInvalidArgument,
-      "Collation mismatch is found for output column (.+) of set operation: "
-      "(.+) vs (.+)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kInvalidArgument,
       "Collation is not supported in recursive queries"));
@@ -606,6 +607,13 @@ std::unique_ptr<MatcherCollection<absl::Status>> RuntimeExpectedErrorMatcher(
       "separator)"));
   error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
       absl::StatusCode::kOutOfRange, "Invalid `wide_number_mode` specified"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange, "Invalid input to JSON_(REMOVE|SET)"));
+  error_matchers.emplace_back(std::make_unique<StatusSubstringMatcher>(
+      absl::StatusCode::kOutOfRange, "Invalid input to JSON_STRIP_NULLS"));
+  error_matchers.emplace_back(std::make_unique<StatusRegexMatcher>(
+      absl::StatusCode::kOutOfRange,
+      "Invalid input to JSON_ARRAY_(INSERT|APPEND)"));
 
   return std::make_unique<MatcherCollection<absl::Status>>(
       matcher_name, std::move(error_matchers));

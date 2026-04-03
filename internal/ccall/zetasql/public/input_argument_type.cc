@@ -105,7 +105,7 @@ InputArgumentType::InputArgumentType(const Value& literal_value,
 InputArgumentType::InputArgumentType(const Type* type, bool is_query_parameter)
     : category_(is_query_parameter ? kTypedParameter : kTypedExpression),
       type_(type) {
-  ZETASQL_DCHECK(type != nullptr);
+  ABSL_DCHECK(type != nullptr);
   if (type->IsStruct()) {
     for (const StructType::StructField& struct_field :
              type->AsStruct()->fields()) {
@@ -246,6 +246,13 @@ InputArgumentType InputArgumentType::LambdaInputArgumentType() {
   return type;
 }
 
+InputArgumentType InputArgumentType::SequenceInputArgumentType() {
+  InputArgumentType type;
+  type.category_ = kSequence;
+  type.type_ = nullptr;
+  return type;
+}
+
 bool InputArgumentTypeSet::Insert(
     const InputArgumentType& argument, bool set_dominant) {
   if (set_dominant) {
@@ -266,7 +273,7 @@ bool InputArgumentTypeSet::Insert(
     if (inserted) {
       arguments_vector_.push_back(argument);
     }
-    ZETASQL_DCHECK_EQ(arguments_set_->size(), arguments_vector_.size());
+    ABSL_DCHECK_EQ(arguments_set_->size(), arguments_vector_.size());
     return inserted;
   } else {
     for (const InputArgumentType& arg : arguments_vector_) {

@@ -111,7 +111,7 @@ absl::Time ParseTimeWithFormat(absl::string_view format,
   absl::Time time;
   std::string error;
   const bool successful = absl::ParseTime(format, time_literal, &time, &error);
-  ZETASQL_CHECK(successful) << error;
+  ABSL_QCHECK(successful) << error;
   return time;
 }
 
@@ -274,27 +274,27 @@ class ValueTest : public ::testing::Test {
     const EnumType* enum_type;
     const google::protobuf::EnumDescriptor* enum_descriptor =
         zetasql_test__::TestEnum_descriptor();
-    ZETASQL_CHECK_OK(type_factory_.MakeEnumType(enum_descriptor, &enum_type));
+    ZETASQL_QCHECK_OK(type_factory_.MakeEnumType(enum_descriptor, &enum_type));
     return enum_type;
   }
   const EnumType* GetTestProto3EnumType() {
     const EnumType* enum_type;
     const google::protobuf::EnumDescriptor* enum_descriptor =
         zetasql_test__::TestProto3Enum_descriptor();
-    ZETASQL_CHECK_OK(type_factory_.MakeEnumType(enum_descriptor, &enum_type));
+    ZETASQL_QCHECK_OK(type_factory_.MakeEnumType(enum_descriptor, &enum_type));
     return enum_type;
   }
   const EnumType* GetOtherTestEnumType() {
     const EnumType* enum_type;
     const google::protobuf::EnumDescriptor* enum_descriptor =
         zetasql_test__::AnotherTestEnum_descriptor();
-    ZETASQL_CHECK_OK(type_factory_.MakeEnumType(enum_descriptor, &enum_type));
+    ZETASQL_QCHECK_OK(type_factory_.MakeEnumType(enum_descriptor, &enum_type));
     return enum_type;
   }
 
   const ArrayType* GetTestArrayType(const Type* element_type) {
     const ArrayType* array_type;
-    ZETASQL_CHECK_OK(type_factory_.MakeArrayType(element_type, &array_type));
+    ZETASQL_QCHECK_OK(type_factory_.MakeArrayType(element_type, &array_type));
     return array_type;
   }
 
@@ -1989,7 +1989,7 @@ TEST_F(ValueTest, NestedArrayBag) {
   EXPECT_FALSE(InternalValue::Equals(
       array_x, array_z, ValueEqualityCheckOptions{.reason = &reason}));
   EXPECT_FALSE(reason.empty());
-  ZETASQL_LOG(INFO) << "Reason: " << reason;
+  ABSL_LOG(INFO) << "Reason: " << reason;
 }
 
 // This tests that InternalValue::Equals takes a wholeistic view of
@@ -2188,15 +2188,10 @@ TEST_F(ValueTest, Enum) {
   EXPECT_DEATH(Value::Uint32(12345).enum_value(), "Not an enum value");
   EXPECT_DEATH(Value::Uint32(12345).EnumDisplayName(), "Not an enum value");
   EXPECT_DEATH(Value::Enum(enum_type, 12345).enum_value(), "Not an enum value");
-  EXPECT_TRUE(
-      Value::Enum(proto3_enum_type, 2544, /*allow_unknown_enum_values=*/true)
-          .is_valid());
-  EXPECT_TRUE(
-      Value::Enum(proto3_enum_type, 2544, /*allow_unknown_enum_values=*/true)
-          .is_valid());
+  EXPECT_TRUE(Value::Enum(proto3_enum_type, 2544).is_valid());
+  EXPECT_TRUE(Value::Enum(proto3_enum_type, 2544).is_valid());
   // proto2 enums cannot contain unnamed values, even if we ask for them.
-  EXPECT_FALSE(Value::Enum(enum_type, 2550, /*allow_unknown_enum_values=*/true)
-                   .is_valid());
+  EXPECT_FALSE(Value::Enum(enum_type, 2550).is_valid());
   EXPECT_EQ(2147483647, Value::Enum(enum_type, 2147483647).enum_value());
   EXPECT_EQ(2147483647, Value::Enum(enum_type, 2147483647).ToInt64());
   EXPECT_EQ(2147483647.0, Value::Enum(enum_type, 2147483647).ToDouble());
@@ -2244,8 +2239,7 @@ TEST_F(ValueTest, EnumName) {
                        HasSubstr("Not an enum value")));
   EXPECT_THAT(Value::Enum(enum_type, 1).EnumName(),
               ::zetasql_base::testing::IsOkAndHolds("ENUM1"));
-  Value unnamed_enum =
-      Value::Enum(enum_type, 2593, /*allow_unknown_enum_values=*/true);
+  Value unnamed_enum = Value::Enum(enum_type, 2593);
   EXPECT_THAT(unnamed_enum.EnumName(),
               StatusIs(absl::StatusCode::kInvalidArgument,
                        HasSubstr("Value 2593 not in")));
@@ -2267,8 +2261,7 @@ TEST_F(ValueTest, EnumFormatting) {
 
 TEST_F(ValueTest, EnumFormattingUnknownEnum) {
   const EnumType* enum_type = GetTestProto3EnumType();
-  const Value enum_value =
-      Value::Enum(enum_type, 2586, /*allow_unknown_enum_values=*/true);
+  const Value enum_value = Value::Enum(enum_type, 2586);
   EXPECT_EQ(enum_value.DebugString(/*verbose=*/true),
             "Enum<zetasql_test__.TestProto3Enum>(2586)");
   EXPECT_EQ(enum_value.DebugString(), "2586");
@@ -2497,9 +2490,6 @@ TEST_F(ValueTest, Proto) {
   // Empty proto.
   EXPECT_EQ(0, bytes.size());
   EXPECT_TRUE(Value::Proto(proto_type, bytes).type()->Equals(proto_type));
-  if (ZETASQL_DEBUG_MODE) {
-    EXPECT_THROW(Proto(proto_type, k), std::exception);
-  }
   zetasql_test__::KitchenSinkPB kvalid;
   kvalid.set_int64_key_1(1);
   kvalid.set_int64_key_2(2);
@@ -2581,7 +2571,7 @@ TEST_F(ValueTest, Proto) {
       proto1, proto4, ValueEqualityCheckOptions{.reason = &reason}));
   // We test that get a reason but don't compare the actual reason string.
   EXPECT_FALSE(reason.empty());
-  ZETASQL_LOG(INFO) << "Reason: " << reason;
+  ABSL_LOG(INFO) << "Reason: " << reason;
 
   // Proto with an unknown tag.
   bytes = "";  // clear bytes;
@@ -2841,13 +2831,13 @@ TEST_F(ValueTest, RangeConstructionUnequalTypesFail) {
   EXPECT_THAT(
       Value::MakeRange(Date(1), Date(1)),
       StatusIs(
-          absl::StatusCode::kInternal,
+          absl::StatusCode::kInvalidArgument,
           HasSubstr(
               "Range start element must be smaller than range end element")));
   EXPECT_THAT(
       Value::MakeRange(Date(2), Date(1)),
       StatusIs(
-          absl::StatusCode::kInternal,
+          absl::StatusCode::kInvalidArgument,
           HasSubstr(
               "Range start element must be smaller than range end element")));
 }
@@ -3873,7 +3863,7 @@ void ValueTest::TestParameterizedValueAfterReleaseOfTypeFactory(
         // We don't keep track of references under release mode (NDEBUG) when
         // keep_alive_while_referenced_from_value is disabled. Thus, just
         // emulate an error message.
-        ZETASQL_LOG(FATAL) << "Type factory is released while there are still some "
+        ABSL_LOG(FATAL) << "Type factory is released while there are still some "
                       "objects that reference it";
       }
 #endif
@@ -3898,10 +3888,12 @@ void ValueTest::TestParameterizedValueAfterReleaseOfTypeFactory(
 }
 
 TEST_F(ValueTest, ValueIsLifeAfterTypeFactoryRelease) {
+#ifdef NDEBUG
   EXPECT_DEATH(TestParameterizedValueAfterReleaseOfTypeFactory(
                    /*keep_type_alive_while_referenced_from_value=*/false),
                "Type factory is released while there are still some objects "
                "that reference it");
+#endif
 
   TestParameterizedValueAfterReleaseOfTypeFactory(
       /*keep_type_alive_while_referenced_from_value=*/true);
@@ -4058,7 +4050,7 @@ static void SerializeDeserialize(const Value& value) {
 static void DeserializeSerialize(const std::string& value_proto_str,
                                  const Type* type) {
   ValueProto value_proto;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(value_proto_str, &value_proto))
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(value_proto_str, &value_proto))
       << value_proto_str;
   auto status_or_value = Value::Deserialize(value_proto, type);
   ZETASQL_ASSERT_OK(status_or_value.status()) << value_proto.DebugString();
@@ -4281,7 +4273,7 @@ TEST_F(ValueTest, Serialize) {
   const ProtoType* proto_type = GetTestProtoType();
 
   zetasql_test__::KitchenSinkPB ks;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(R"(
       int64_key_1: 1
       int64_key_2: 2
       )",
@@ -4484,20 +4476,20 @@ TEST_F(ValueTest, Deserialize) {
   absl::StatusOr<Value> status_or_value;
 
   // Timestamp value.
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString("timestamp_value: <seconds: 5>",
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString("timestamp_value: <seconds: 5>",
                                              &value_proto));
   status_or_value = Value::Deserialize(value_proto, TimestampType());
   ZETASQL_EXPECT_OK(status_or_value.status());
   EXPECT_EQ(5000000, status_or_value.value().ToUnixMicros());
 
   // Invalid values for DATE/TIMESTAMP
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       absl::StrCat("date_value: ", zetasql::types::kDateMin - 1),
       &value_proto));
   status_or_value = Value::Deserialize(value_proto, DateType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       absl::StrCat("date_value: ", zetasql::types::kDateMax + 1),
       &value_proto));
   status_or_value = Value::Deserialize(value_proto, DateType());
@@ -4507,14 +4499,14 @@ TEST_F(ValueTest, Deserialize) {
       zetasql::types::kTimestampMin / 1000000;
   const int64_t kTimestampSecondsMax =
       zetasql::types::kTimestampMax / 1000000;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       absl::StrCat("timestamp_value: <seconds: ", kTimestampSecondsMin - 1,
                    " nanos: 999999999>"),
       &value_proto));
   status_or_value = Value::Deserialize(value_proto, TimestampType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       absl::StrCat("timestamp_value: <seconds: ", kTimestampSecondsMax + 1,
                    ">"),
       &value_proto));
@@ -4522,16 +4514,16 @@ TEST_F(ValueTest, Deserialize) {
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
   // Invalid ENUM value.
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString("enum_value: -10", &value_proto));
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString("enum_value: -10", &value_proto));
   status_or_value = Value::Deserialize(value_proto, GetTestEnumType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString("enum_value: 100", &value_proto));
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString("enum_value: 100", &value_proto));
   status_or_value = Value::Deserialize(value_proto, GetTestEnumType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
   // Type mismatch errors.
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString("int32_value: 1", &value_proto));
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString("int32_value: 1", &value_proto));
   status_or_value = Value::Deserialize(value_proto, Int64Type());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kInternal));
   status_or_value = Value::Deserialize(value_proto, DateType());
@@ -4539,7 +4531,7 @@ TEST_F(ValueTest, Deserialize) {
   status_or_value = Value::Deserialize(value_proto, GetTestEnumType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kInternal));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(R"(
     array_value: <
       element: <uint32_value: 1>
       element: <int32_value: 1>>  # wrong type!
@@ -4549,7 +4541,7 @@ TEST_F(ValueTest, Deserialize) {
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kInternal));
 
   // simple_struct_type: STRUCT<ARRAY<INT64>> a, TIMESTAMP t>
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(R"(
     struct_value: <
       field: <array_value: <element: <int32_value: 1>>>  # wrong type!
       field: <timestamp_value: <seconds: 935573798>>
@@ -4559,7 +4551,7 @@ TEST_F(ValueTest, Deserialize) {
   status_or_value = Value::Deserialize(value_proto, simple_struct_type);
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kInternal));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(R"(
     struct_value: <
       field: <array_value: <element: <int64_value: 1>>>
       field: <int64_value: 935573798000000>  # wrong type!
@@ -4570,7 +4562,7 @@ TEST_F(ValueTest, Deserialize) {
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kInternal));
 
   // Mismatch in number of fields in struct.
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(R"(
     struct_value: <
       field: <timestamp_value: <seconds: 935573798>>
     >
@@ -4777,7 +4769,7 @@ TEST_P(DateRangesWithInvalidValues, DateRangesWithOutOfRangeValuesFail) {
   absl::StatusOr<Value> status_or_value;
 
   // Invalid (out of range) DATE elements.
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
         range_value: <
           start: <date_value: %d>
           end: <>
@@ -4787,7 +4779,7 @@ TEST_P(DateRangesWithInvalidValues, DateRangesWithOutOfRangeValuesFail) {
   status_or_value = Value::Deserialize(value_proto, types::DateRangeType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
         range_value: <
           start: <>
           end: <date_value: %d>
@@ -4816,7 +4808,7 @@ TEST_P(DatetimeRangesWithInvalidValues,
   ValueProto value_proto;
   absl::StatusOr<Value> status_or_value;
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
         range_value: <
           start: <datetime_value: <bit_field_datetime_seconds: %d
                                    nanos: 0>>
@@ -4827,7 +4819,7 @@ TEST_P(DatetimeRangesWithInvalidValues,
   status_or_value = Value::Deserialize(value_proto, types::DatetimeRangeType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
         range_value: <
           start: <>
           end: <datetime_value: <bit_field_datetime_seconds: %d
@@ -4852,7 +4844,7 @@ TEST_P(TimestampRangesWithInvalidValues,
   ValueProto value_proto;
   absl::StatusOr<Value> status_or_value;
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
         range_value: <
           start: <timestamp_value: <seconds: %d
                                     nanos: 999999999>>
@@ -4864,7 +4856,7 @@ TEST_P(TimestampRangesWithInvalidValues,
       Value::Deserialize(value_proto, types::TimestampRangeType());
   EXPECT_THAT(status_or_value, StatusIs(absl::StatusCode::kOutOfRange));
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(absl::StrFormat(R"(
         range_value: <
           start: <>
           end: <timestamp_value: <seconds: %d
@@ -4885,6 +4877,8 @@ struct InvalidRangeTestCase {
   const Type* range_type;
   // Expected error message substring.
   absl::string_view expected_error_message;
+  // Expected error status code
+  absl::StatusCode expected_error_status_code;
 };
 
 class DeserializeInvalidRangesTest
@@ -4897,42 +4891,49 @@ std::vector<InvalidRangeTestCase> GetInvalidRangeTestCases() {
           "range_value: <start: <> end: <date_value: 2>>",
           /*range_type=*/types::DateArrayType(),
           /*expected_error_message=*/"Type mismatch",
+          /*expected_error_status_code=*/absl::StatusCode::kInternal,
       },
       {
           // Wrong range element type.
           "range_value: <start: <> end: <date_value: 2>>",
           /*range_type=*/types::TimestampRangeType(),
           /*expected_error_message=*/"Type mismatch",
+          /*expected_error_status_code=*/absl::StatusCode::kInternal,
       },
       {
           // Omitted start values are invalid.
           "range_value: <start: <date_value: 1>>",
           /*range_type=*/types::DateRangeType(),
           /*expected_error_message=*/"Type mismatch",
+          /*expected_error_status_code=*/absl::StatusCode::kInternal,
       },
       {
           // Omitted end values are invalid.
           "range_value: <end: <date_value: 2>>",
           /*range_type=*/types::DateRangeType(),
           /*expected_error_message=*/"Type mismatch",
+          /*expected_error_status_code=*/absl::StatusCode::kInternal,
       },
       {
           // Omitted start and end values fails.
           "range_value: <>",
           /*range_type=*/types::DateRangeType(),
           /*expected_error_message=*/"Type mismatch",
+          /*expected_error_status_code=*/absl::StatusCode::kInternal,
       },
       {
           // start == end fails.
           "range_value: <start: <date_value: 1> end: <date_value: 1>>",
           /*range_type=*/types::DateRangeType(),
           /*expected_error_message=*/"Range start element must be smaller",
+          /*expected_error_status_code=*/absl::StatusCode::kInvalidArgument,
       },
       {
           // start > end fails.
           "range_value: <start: <date_value: 2> end: <date_value: 1>>",
           /*range_type=*/types::DateRangeType(),
           /*expected_error_message=*/"Range start element must be smaller",
+          /*expected_error_status_code=*/absl::StatusCode::kInvalidArgument,
       },
   };
 }
@@ -4947,10 +4948,10 @@ TEST_P(DeserializeInvalidRangesTest, InvalidRangeValuesFail) {
   // Convert to std::string. ZetaSQL doesn't like if we pass absl::string_view
   // into ParseFromString directly.
   const std::string value_text_proto(param.value_text_proto);
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(value_text_proto, &value_proto));
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(value_text_proto, &value_proto));
   status_or_value = Value::Deserialize(value_proto, param.range_type);
   EXPECT_THAT(status_or_value,
-              StatusIs(absl::StatusCode::kInternal,
+              StatusIs(param.expected_error_status_code,
                        HasSubstr(param.expected_error_message)));
 }
 
@@ -4983,14 +4984,14 @@ static void StackOverflowTest() {
     LOG_EVERY_N_SEC(INFO, 10) << "Depth " << i << " " << v;
   }
   std::string s = v.DebugString();
-  ZETASQL_LOG(INFO) << s;
+  ABSL_LOG(INFO) << s;
   EXPECT_GT(s.size(), 100) << s;
   if (ZETASQL_DEBUG_MODE) {
     EXPECT_THAT(s, HasSubstr("[{field:[{field:[{field:[{field:5}]}]}]}]"));
   }
 
   s = v.DebugString(true /* verbose */);
-  ZETASQL_LOG(INFO) << s;
+  ABSL_LOG(INFO) << s;
   EXPECT_GT(s.size(), 200) << s;
   if (ZETASQL_DEBUG_MODE) {
     EXPECT_THAT(

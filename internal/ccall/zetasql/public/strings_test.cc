@@ -31,6 +31,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/macros.h"
+#include "absl/container/btree_set.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/match.h"
@@ -61,6 +62,20 @@ constexpr char kUnicodeNotAllowedInBytes2[] =
 
 static void TestIdentifier(const std::string& orig) {
   const std::string quoted = ToIdentifierLiteral(orig);
+  std::string unquoted;
+  std::string error_string;
+  int error_offset;
+  ZETASQL_EXPECT_OK(ParseIdentifier(quoted, LanguageOptions(), &unquoted, &error_string,
+                            &error_offset))
+      << orig << "\nERROR: " << error_string << " (at offset " << error_offset
+      << ")";
+  EXPECT_EQ(orig, unquoted) << "quoted: " << quoted;
+}
+
+static void TestAlwaysQuotedIdentifier(const std::string& orig) {
+  const std::string quoted = ToAlwaysQuotedIdentifierLiteral(orig);
+  EXPECT_THAT(quoted, testing::StartsWith("`"));
+  EXPECT_THAT(quoted, testing::EndsWith("`"));
   std::string unquoted;
   std::string error_string;
   int error_offset;
@@ -203,6 +218,7 @@ static void TestValue(const std::string& orig) {
   TestStringEscaping(orig);
   TestString(orig);
   TestIdentifier(orig);
+  TestAlwaysQuotedIdentifier(orig);
 }
 
 // Test that <str> is treated as invalid, with error offset
@@ -271,12 +287,13 @@ static void TestInvalidBytes(const std::string& str,
 
 TEST(StringsTest, TestParsingOfAllEscapeCharacters) {
   // All the valid escapes.
-  const std::set<char> valid_escapes = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\',
-                                   '?', '"', '\'', '`', 'u', 'U', 'x', 'X'};
+  const absl::btree_set<char> valid_escapes = {'a', 'b',  'f', 'n', 'r',  't',
+                                               'v', '\\', '?', '"', '\'', '`',
+                                               'u', 'U',  'x', 'X'};
   for (int escape_char_int = 0; escape_char_int < 255; ++escape_char_int) {
     char escape_char = static_cast<char>(escape_char_int);
     absl::string_view escape_piece(&escape_char, 1);
-    if (zetasql_base::ContainsKey(valid_escapes, escape_char)) {
+    if (valid_escapes.contains(escape_char)) {
       if (escape_char == '\'') {
         TestParseString(absl::StrCat("\"a\\", escape_piece, "0010ffff\""));
       }
@@ -794,6 +811,26 @@ TEST(StringsTest, QuotedForms) {
   // Non-reserved SQL keywords do get quoted if they can be used in an
   // identifier context and take on special meaning there.
   EXPECT_EQ("`safe_cAst`", ToIdentifierLiteral("safe_cAst"));
+
+  // ToAlwaysQuotedIdentifierLiteral always back quote.
+  EXPECT_EQ("``", ToAlwaysQuotedIdentifierLiteral(
+                      ""));  // Not actually a valid identifier.
+  EXPECT_EQ("`abc`", ToAlwaysQuotedIdentifierLiteral("abc"));
+  EXPECT_EQ("`abc'def`", ToAlwaysQuotedIdentifierLiteral("abc'def"));
+  EXPECT_EQ("`abc\"def`", ToAlwaysQuotedIdentifierLiteral("abc\"def"));
+  EXPECT_EQ("`abc\\`def`", ToAlwaysQuotedIdentifierLiteral("abc`def"));
+  EXPECT_EQ("`123`", ToAlwaysQuotedIdentifierLiteral("123"));
+  EXPECT_EQ("`_123`", ToAlwaysQuotedIdentifierLiteral("_123"));
+  EXPECT_EQ("`a12_3`", ToAlwaysQuotedIdentifierLiteral("a12_3"));
+  EXPECT_EQ("`a1`", ToAlwaysQuotedIdentifierLiteral("a1"));
+  EXPECT_EQ("`1a`", ToAlwaysQuotedIdentifierLiteral("1a"));
+  // Reserved SQL keywords get quoted.
+  EXPECT_EQ("`selECT`", ToAlwaysQuotedIdentifierLiteral("selECT"));
+  // Non-reserved SQL keywords normally don't get quoted.
+  EXPECT_EQ("`optIONS`", ToAlwaysQuotedIdentifierLiteral("optIONS"));
+  // Non-reserved SQL keywords do get quoted if they can be used in an
+  // identifier context and take on special meaning there.
+  EXPECT_EQ("`safe_cAst`", ToAlwaysQuotedIdentifierLiteral("safe_cAst"));
 }
 
 static void ExpectParsedString(const std::string& expected,

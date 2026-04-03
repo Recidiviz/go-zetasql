@@ -1,7 +1,7 @@
 package cord_rep_test_util
 
 /*
-#cgo CXXFLAGS: -std=c++11
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 */
 import "C"

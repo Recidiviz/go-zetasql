@@ -1,1 +1,35 @@
-filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])
+
+filegroup(
+    name = "flex_lexer_h",
+    srcs = ["src/FlexLexer.h"],
+    visibility = ["@rules_flex//flex/internal:__pkg__"],
+)
+
+FLEX_SRCS_v25 = glob(
+    ["*.c", "*.h"],
+    exclude = ["lib*.c"],
+)
+
+FLEX_SRCS_v26 = glob(
+    ["src/*.c", "src/*.h"],
+    exclude = ["src/lib*.c"],
+)
+
+cc_library(
+    name = "flex_lib",
+    srcs = FLEX_SRCS_v26 if len(FLEX_SRCS_v26) > 0 else FLEX_SRCS_v25,
+    copts = [
+        "-DHAVE_ASSERT_H",
+        "-DHAVE_LIMITS_H",
+        "-DHAVE_NETINET_IN_H",
+        "-DHAVE_REGEX_H",
+        "-DHAVE_SYS_STAT_H",
+        "-DHAVE_SYS_WAIT_H",
+        "-DHAVE_UNISTD_H",
+        "-DSTDC_HEADERS",
+        '-DVERSION="2.6.4"',
+        '-DM4="/bin/false"',
+    ],
+    features = ["no_copts_tokenization"],
+    visibility = ["//bin:__pkg__"],
+)

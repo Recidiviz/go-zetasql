@@ -94,8 +94,8 @@ class FlattenState {
   // destruction so a child ExprResolutionInfo can essentially share
   // FlattenState.
   void SetParent(FlattenState* parent) {
-    ZETASQL_DCHECK(parent_ == nullptr) << "Parent shouldn't be set more than once";
-    ZETASQL_CHECK(parent);
+    ABSL_DCHECK(parent_ == nullptr) << "Parent shouldn't be set more than once";
+    ABSL_CHECK(parent);
     parent_ = parent;
     can_flatten_ = parent->can_flatten_;
     active_flatten_ = parent->active_flatten_;
@@ -245,6 +245,9 @@ struct ExprResolutionInfo {
 
   // True if this expression contains an analytic function.
   bool has_analytic = false;
+
+  // True if this expression contains a volatile function.
+  bool has_volatile = false;
 
   // True if this expression should be resolved against post-grouping
   // columns.  Gets set to false when resolving arguments of aggregation

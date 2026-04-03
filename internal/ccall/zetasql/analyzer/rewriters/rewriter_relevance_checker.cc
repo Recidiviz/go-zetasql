@@ -16,9 +16,12 @@
 
 #include "zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
 
+#include <memory>
 #include <optional>
+#include <vector>
 
 #include "zetasql/public/builtin_function.pb.h"
+#include "zetasql/public/function_signature.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/sql_function.h"
 #include "zetasql/public/sql_tvf.h"
@@ -27,7 +30,13 @@
 #include "zetasql/public/templated_sql_tvf.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_ast_visitor.h"
+#include "zetasql/resolved_ast/resolved_node.h"
+#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "absl/container/btree_set.h"
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "zetasql/base/ret_check.h"
+#include "zetasql/base/status_macros.h"
 
 namespace zetasql {
 
@@ -148,8 +157,53 @@ class RewriteApplicabilityChecker : public ResolvedASTVisitor {
     return DefaultVisit(node);
   }
 
+  absl::Status VisitResolvedSetOperationScan(
+      const ResolvedSetOperationScan* node) override {
+    if (node->column_match_mode() != ResolvedSetOperationScan::BY_POSITION) {
+      applicable_rewrites_->insert(
+          ResolvedASTRewrite::REWRITE_SET_OPERATION_CORRESPONDING);
+    }
+    return DefaultVisit(node);
+  }
+
+  absl::Status VisitResolvedAggregateScan(
+      const ResolvedAggregateScan* node) override {
+    ZETASQL_RETURN_IF_ERROR(VisitResolvedAggregateScanBasePrivate(node));
+    return DefaultVisit(node);
+  }
+
+  absl::Status VisitResolvedAggregationThresholdAggregateScan(
+      const ResolvedAggregationThresholdAggregateScan* node) override {
+    ZETASQL_RETURN_IF_ERROR(VisitResolvedAggregateScanBasePrivate(node));
+    return DefaultVisit(node);
+  }
+
  private:
   absl::btree_set<ResolvedASTRewrite>* applicable_rewrites_;
+
+  absl::Status VisitResolvedAggregateScanBasePrivate(
+      const ResolvedAggregateScanBase* node) {
+    for (const std::unique_ptr<const ResolvedGroupingSetBase>&
+             grouping_set_base : node->grouping_set_list()) {
+      if (grouping_set_base->Is<ResolvedRollup>() ||
+          grouping_set_base->Is<ResolvedCube>()) {
+        applicable_rewrites_->insert(ResolvedASTRewrite::REWRITE_GROUPING_SET);
+        break;
+      }
+    }
+    for (const auto& aggregate_comp_col : node->aggregate_list()) {
+      const auto& aggregate_expr = aggregate_comp_col->expr();
+      ZETASQL_RET_CHECK(aggregate_expr->Is<ResolvedAggregateFunctionCall>());
+      const auto& aggregate_func_call =
+          aggregate_expr->GetAs<ResolvedAggregateFunctionCall>();
+      if (aggregate_func_call->function()->Is<SQLFunctionInterface>() ||
+          aggregate_func_call->function()->Is<TemplatedSQLFunction>()) {
+        applicable_rewrites_->insert(REWRITE_INLINE_SQL_UDAS);
+      }
+    }
+
+    return absl::OkStatus();
+  }
 };
 
 absl::StatusOr<absl::btree_set<ResolvedASTRewrite>> FindRelevantRewriters(

@@ -39,6 +39,7 @@
 #include "zetasql/base/path.h"
 #include "google/protobuf/text_format.h"     
 #include "zetasql/common/internal_value.h"
+#include "zetasql/common/options_utils.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/compliance/compliance_label.pb.h"
@@ -46,9 +47,11 @@
 #include "zetasql/compliance/known_error.pb.h"
 #include "zetasql/compliance/legal_runtime_errors.h"
 #include "zetasql/compliance/sql_test_filebased_options.h"
+#include "zetasql/compliance/test_database_catalog.h"
 #include "zetasql/compliance/test_driver.h"
 #include "zetasql/compliance/test_util.h"
 #include "zetasql/public/analyzer_options.h"
+#include "zetasql/public/error_helpers.h"
 #include "zetasql/public/functions/string.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_helpers.h"
@@ -131,6 +134,13 @@ ABSL_FLAG(bool, zetasql_compliance_enforce_no_reference_label, false,
           "When true requires that Special:NoCompliance label is applied to "
           "exactly the tests that return an unimplemented error from the "
           "reference implementation.");
+ABSL_FLAG(bool, zetasql_compliance_extract_labels_using_all_rewrites, false,
+          "When true, applies all rewrites to the ResolvedAST used for "
+          "compliance label extraction. Note that this logic only applies to "
+          "compliance label extraction and not test execution.");
+ABSL_FLAG(bool, zetasql_compliance_print_array_orderedness, false,
+          "When true, includes the 'known order:', 'unknown order:' prefix "
+          "on array values with two or more elements.");
 
 namespace zetasql {
 
@@ -303,8 +313,8 @@ class Stats {
       absl::StatusCode actual_error_code) {
     // We don't run most of this function in presubmit, so we add the check
     // before the early return to guard against regressions.
-    ZETASQL_CHECK(!test_name.empty());
-    ZETASQL_CHECK(!absl::EndsWith(test_name, ":"));
+    ABSL_CHECK(!test_name.empty());
+    ABSL_CHECK(!absl::EndsWith(test_name, ":"));
     // Skip building the protos when not requested to prevent long-running RQG
     // tests from consuming too much memory.
     // See b/238890147
@@ -316,7 +326,7 @@ class Stats {
     int line = -1;
     if (!location.empty()) {
       bool matched = RE2::FullMatch(location, *kExtractLocation, &file, &line);
-      ZETASQL_DCHECK(matched) << "Failed to find filename and line in " << location;
+      ABSL_DCHECK(matched) << "Failed to find filename and line in " << location;
     }
 
     ComplianceTestCaseLabels* test_case = labels_proto_.add_test_cases();
@@ -324,11 +334,18 @@ class Stats {
     test_case->set_test_query(std::string(sql));
     test_case->mutable_test_location()->set_file(std::string(file));
     test_case->mutable_test_location()->set_line(line);
+    static constexpr int kMaxParameterLiteralSize = 1000;
+    std::string trunc_msg = "[TRUNCATED]";
     for (auto& [param_name, param_value] : params) {
       ComplianceTestCaseLabels::Param* param = test_case->add_param();
       param->set_param_name(param_name);
-      param->set_param_value_literal(
-          param_value.GetSQLLiteral(PRODUCT_EXTERNAL));
+      std::string param_value_literal =
+          param_value.GetSQLLiteral(PRODUCT_EXTERNAL);
+      if (param_value_literal.size() > kMaxParameterLiteralSize) {
+        param_value_literal.resize(kMaxParameterLiteralSize - trunc_msg.size());
+        param_value_literal.append(trunc_msg);
+      }
+      param->set_param_value_literal(param_value_literal);
     }
     test_case->set_test_error_mode(actual_error_mode);
     for (const std::string& label : label_set) {
@@ -339,7 +356,7 @@ class Stats {
   // Gets the most recently appended test case to the labels proto. This should
   // only be used for testing SqlTestBase, not by other clients.
   const ComplianceTestCaseLabels& GetLastComplianceTestCaseLabels() {
-    ZETASQL_DCHECK(!labels_proto_.test_cases().empty());
+    ABSL_DCHECK(!labels_proto_.test_cases().empty());
     return labels_proto_.test_cases().Get(labels_proto_.test_cases_size() - 1);
   }
 
@@ -495,7 +512,7 @@ void Stats::LogBatches(const Iterable& iterable, const std::string& title,
     ++batch_count;
     // Always "====" to the beginning and "==== End " to the end so
     // extract_compliance_results.py can recognize it.
-    ZETASQL_LOG(INFO) << "\n==== " << title << " #" << batch_count
+    ABSL_LOG(INFO) << "\n==== " << title << " #" << batch_count
               << "\n"
               // Leave enough space for "End".
               << absl::StrJoin(batch, delimiter).substr(0, kLogBufferSize - 160)
@@ -521,7 +538,7 @@ void Stats::LogReport() const {
   const std::string compliance_report_title = "ZETASQL COMPLIANCE REPORT";
   // Always "====" to the beginning and "==== End " to the end so
   // extract_compliance_results.py can recognize it.
-  ZETASQL_LOG(INFO) << "\n"
+  ABSL_LOG(INFO) << "\n"
             << "==== " << compliance_report_title << "\n"
             << "[  PASSED  ] " << num_executed_ - failures_.size()
             << " statements.\n"
@@ -541,7 +558,7 @@ void Stats::LogReport() const {
              "To Be Removed From Known Errors Statements", "\n");
   LogBatches(to_be_upgraded_, "To Be Upgraded Statements", "\n");
 
-  ZETASQL_LOG(INFO) << "\n==== RELATED KNOWN ERROR FILES ====\n"
+  ABSL_LOG(INFO) << "\n==== RELATED KNOWN ERROR FILES ====\n"
             << absl::StrJoin(known_error_files, "\n")
             << "\n==== END RELATED KNOWN ERROR FILES ====\n";
   if (!error_mode_to_new_failures_.empty()) {
@@ -657,12 +674,17 @@ bool CompareStatementResult(const StatementResult& expected,
   absl::StrAppend(reason, " at ", GetLocationString(expected));
   return false;
 }
+
 std::string StatementResultToString(const StatementResult& stmt_result) {
   absl::StatusOr<ComplianceTestCaseResult> status_or;
   if (stmt_result.result.ok()) {
     status_or = stmt_result.result.value();
   } else {
-    status_or = stmt_result.result.status();
+    // For file-based tests we do not care about the error message mode.
+    absl::Status status_without_error_mode_payload =
+    stmt_result.result.status();
+    status_without_error_mode_payload.ErasePayload(kErrorMessageModeUrl);
+    status_or = std::move(status_without_error_mode_payload);
   }
 
   return absl::StrCat(GetLocationString(stmt_result), " ",
@@ -746,7 +768,7 @@ MATCHER_P2(ReturnsStatusOrValue, expected, float_margin,
   if (!passed) {
     absl::string_view trimmed_reason;
     absl::Status status;
-    ZETASQL_CHECK(zetasql::functions::RightTrimBytes(reason, "\n", &trimmed_reason,
+    ABSL_CHECK(zetasql::functions::RightTrimBytes(reason, "\n", &trimmed_reason,
                                                &status));
 
     std::string error;
@@ -816,7 +838,7 @@ class KnownErrorFilter
     // CSV columns:
     // TargetName, TestPrefix, TestName, Passed, KnownError, KnownErrorMode
     // NOTE: Column names are duplicated in extract_compliance_results.py.
-    ZETASQL_LOG(INFO) << "CSV: \""
+    ABSL_LOG(INFO) << "CSV: \""
               << "\",\""
               << (sql_test_->stats_->IsFileBasedStatement()
                       ? sql_test_->full_name_
@@ -922,7 +944,7 @@ class KnownErrorFilter
       return true;
     }
     // This implies to_mode <= from_mode && from_mode == 0. Thus to_mode == 0.
-    ZETASQL_DCHECK_EQ(to_mode, 0);
+    ABSL_DCHECK_EQ(to_mode, 0);
     // Not a known error, and the test passed.
     return true;
   }
@@ -1175,6 +1197,9 @@ static void ExtractComplianceLabelsFromResolvedAST(
   AutoLanguageOptions options_cleanup(reference_driver);
   LanguageOptions language_options = reference_driver->language_options();
   language_options.SetEnabledLanguageFeatures({});
+  language_options.SetSupportedStatementKinds(
+      {RESOLVED_QUERY_STMT, RESOLVED_INSERT_STMT, RESOLVED_UPDATE_STMT,
+       RESOLVED_DELETE_STMT});
   for (LanguageFeature feature : required_features) {
     language_options.EnableLanguageFeature(feature);
   }
@@ -1186,24 +1211,37 @@ static void ExtractComplianceLabelsFromResolvedAST(
   // Get a ResolvedAST for PRODUCT_INTERNAL.
   language_options.set_product_mode(PRODUCT_INTERNAL);
   reference_driver->SetLanguageOptions(language_options);
-  bool product_internal_uses_unsupported_type = false;
+  std::optional<bool> product_internal_uses_unsupported_type = false;
   // TODO: Refactor ReferenceDriver::GetAnalyzerOptions to take
   //     LanguageOptions as an argument so we don't have to set the state and
   //     then re-set it using AutoLanguageOptions
   absl::StatusOr<AnalyzerOptions> product_internal_analyzer_options_or_err =
       reference_driver->GetAnalyzerOptions(
-          parameters, &product_internal_uses_unsupported_type);
+          parameters, product_internal_uses_unsupported_type);
   absl::Status product_internal_analyze_status;
   std::unique_ptr<const AnalyzerOutput> product_internal_analyzer_out;
+
+  // For the purpose of compliance label extraction, rewriters should be
+  // disabled by default.
+  absl::btree_set<ResolvedASTRewrite> rewrites_for_label_extraction = {};
+  if (absl::GetFlag(
+          FLAGS_zetasql_compliance_extract_labels_using_all_rewrites)) {
+    rewrites_for_label_extraction = internal::GetAllRewrites();
+    rewrites_for_label_extraction.erase(REWRITE_INLINE_SQL_FUNCTIONS);
+    rewrites_for_label_extraction.erase(REWRITE_INLINE_SQL_TVFS);
+    rewrites_for_label_extraction.erase(REWRITE_INLINE_SQL_VIEWS);
+    rewrites_for_label_extraction.erase(REWRITE_INLINE_SQL_UDAS);
+  }
+
   if (product_internal_analyzer_options_or_err.ok()) {
     AnalyzerOptions analyzer_options =
         *product_internal_analyzer_options_or_err;
-    analyzer_options.set_enabled_rewrites({});  // Disable the rewriter.
+    analyzer_options.set_enabled_rewrites(rewrites_for_label_extraction);
     product_internal_analyze_status =
         AnalyzeStatement(sql, analyzer_options, reference_driver->catalog(),
                          type_factory, &product_internal_analyzer_out);
     if (product_internal_analyze_status.ok() &&
-        !product_internal_uses_unsupported_type) {
+        !*product_internal_uses_unsupported_type) {
       // Check the plan for unsupported types too. Above we only checked params.
       product_internal_uses_unsupported_type =
           ReferenceDriver::UsesUnsupportedType(
@@ -1215,21 +1253,21 @@ static void ExtractComplianceLabelsFromResolvedAST(
   // Repeat with mode PRODUCT_EXTERNAL
   language_options.set_product_mode(PRODUCT_EXTERNAL);
   reference_driver->SetLanguageOptions(language_options);
-  bool product_external_uses_unsupported_type = false;
+  std::optional<bool> product_external_uses_unsupported_type = false;
   absl::StatusOr<AnalyzerOptions> product_external_analyzer_options_or_err =
       reference_driver->GetAnalyzerOptions(
-          parameters, &product_external_uses_unsupported_type);
+          parameters, product_external_uses_unsupported_type);
   absl::Status product_external_analyze_status;
   std::unique_ptr<const AnalyzerOutput> product_external_analyzer_out;
   if (product_external_analyzer_options_or_err.ok()) {
     AnalyzerOptions analyzer_options =
         *product_external_analyzer_options_or_err;
-    analyzer_options.set_enabled_rewrites({});  // Disable the rewriter.
+    analyzer_options.set_enabled_rewrites(rewrites_for_label_extraction);
     product_external_analyze_status =
         AnalyzeStatement(sql, analyzer_options, reference_driver->catalog(),
                          type_factory, &product_external_analyzer_out);
     if (product_external_analyze_status.ok() &&
-        !product_external_uses_unsupported_type) {
+        !*product_external_uses_unsupported_type) {
       // Check the plan for unsupported types too. Above we only checked params.
       product_external_uses_unsupported_type =
           ReferenceDriver::UsesUnsupportedType(
@@ -1240,10 +1278,10 @@ static void ExtractComplianceLabelsFromResolvedAST(
 
   bool internal_compiles = product_internal_analyzer_options_or_err.ok() &&
                            product_internal_analyze_status.ok() &&
-                           !product_internal_uses_unsupported_type;
+                           !*product_internal_uses_unsupported_type;
   bool external_compiles = product_external_analyzer_options_or_err.ok() &&
                            product_external_analyze_status.ok() &&
-                           !product_external_uses_unsupported_type;
+                           !*product_external_uses_unsupported_type;
   const ResolvedStatement* statement = nullptr;
   if (!internal_compiles && !external_compiles) {
     compliance_labels.emplace(kNoCompileLabel);
@@ -1277,7 +1315,7 @@ static void ExtractComplianceLabelsFromResolvedAST(
     compliance_labels.emplace(kProductModeExternalLabel);
     statement = product_external_analyzer_out->resolved_statement();
   } else {
-    ZETASQL_LOG(FATAL) << "Unreachable";
+    ABSL_LOG(FATAL) << "Unreachable";
   }
   if (statement != nullptr) {
     ZETASQL_EXPECT_OK(ExtractComplianceLabels(statement, compliance_labels));
@@ -1297,7 +1335,7 @@ absl::StatusOr<ComplianceTestCaseResult> SQLTestBase::RunSQL(
   labels.insert(full_name_);
   effective_labels_ = labels;
 
-  ZETASQL_LOG(INFO) << "Starting code-based test: " << full_name_;
+  ABSL_LOG(INFO) << "Starting code-based test: " << full_name_;
   LogStrings(labels, "Effective labels: ");
 
   ZETASQL_RETURN_IF_ERROR(InspectTestCase());
@@ -1319,7 +1357,7 @@ void SQLTestBase::RunSQLOnFeaturesAndValidateResult(
     const FloatMargin& float_margin) {
   full_name_ = GenerateCodeBasedStatementName(sql, params);
 
-  ZETASQL_CHECK(!script_mode_) << "Codebased tests don't run in script mode.";
+  ABSL_CHECK(!script_mode_) << "Codebased tests don't run in script mode.";
   // TODO: Refactor so that extract labels can be in known_errors.
   bool require_resolver_success =
       !IsOnResolverErrorCodebasedAllowList(full_name_) &&
@@ -1327,20 +1365,19 @@ void SQLTestBase::RunSQLOnFeaturesAndValidateResult(
   EXPECT_FALSE(full_name_.empty());
   ExtractComplianceLabelsFromResolvedAST(
       sql, params, require_resolver_success, full_name_,
-      execute_statement_type_factory(), GetReferenceDriver(), required_features,
+      execute_statement_type_factory(), reference_driver(), required_features,
       forbidden_features, GetCodeBasedLabels(), compliance_labels_);
 
   if (IsTestingReferenceImpl()) {
-    auto* reference_driver = GetReferenceDriver();
+    auto* ref_driver = reference_driver();
     absl::Cleanup reset_language_options =
-        [original = driver()->GetSupportedLanguageOptions(),
-         reference_driver]() {
-          reference_driver->SetLanguageOptions(original);
+        [original = driver()->GetSupportedLanguageOptions(), ref_driver]() {
+          ref_driver->SetLanguageOptions(original);
         };
 
     LanguageOptions language_options;
     language_options.SetEnabledLanguageFeatures(required_features);
-    reference_driver->SetLanguageOptions(language_options);
+    reference_driver()->SetLanguageOptions(language_options);
 
     auto run_result = RunSQL(sql, params, /*permit_compile_failure=*/false);
     EXPECT_THAT(run_result,
@@ -1408,14 +1445,13 @@ void SQLTestBase::RunSQLOnFeaturesAndValidateResult(
     // the reference engine output against QueryParamsWithResult::results()
     // because it isn't clear what feature set to use.
     TypeFactory type_factory;
-    bool is_deterministic_output;
-    bool uses_unsupported_type = false;
     sql_ = sql;  // To supply a const std::string&
+    ReferenceDriver::ExecuteStatementAuxOutput aux_output;
     absl::StatusOr<Value> reference_result =
         reference_driver()->ExecuteStatementForReferenceDriver(
             sql_, params, GetExecuteStatementOptions(), &type_factory,
-            &is_deterministic_output, &uses_unsupported_type);
-    if (uses_unsupported_type) {
+            aux_output);
+    if (aux_output.uses_unsupported_type.value_or(false)) {
       stats_->RecordComplianceTestsLabelsProto(
           full_name_, sql_, parameters_, location_,
           KnownErrorMode::ALLOW_UNIMPLEMENTED, compliance_labels_,
@@ -1431,7 +1467,7 @@ void SQLTestBase::RunSQLOnFeaturesAndValidateResult(
 }
 
 SimpleCatalog* SQLTestBase::catalog() const {
-  return GetReferenceDriver()->catalog();
+  return reference_driver()->catalog();
 }
 
 static std::unique_ptr<ReferenceDriver> CreateTestSetupDriver() {
@@ -1458,10 +1494,7 @@ SQLTestBase::SQLTestBase()
       test_driver_owner_(GetComplianceTestDriver()),
       test_driver_(test_driver_owner_.get()),
       reference_driver_owner_(
-          test_driver_->IsReferenceImplementation()
-              ? nullptr
-              : new ReferenceDriver(
-                    test_driver_->GetSupportedLanguageOptions())),
+          new ReferenceDriver(test_driver_->GetSupportedLanguageOptions())),
       reference_driver_(reference_driver_owner_.get()),
       execute_statement_type_factory_(std::make_unique<TypeFactory>()) {
   std::vector<std::string> known_error_files =
@@ -1477,10 +1510,14 @@ SQLTestBase::SQLTestBase(TestDriver* test_driver,
       test_driver_(test_driver),
       reference_driver_(reference_driver),
       execute_statement_type_factory_(std::make_unique<TypeFactory>()) {
-  // Sanity check that the contract is respected.
-  ZETASQL_CHECK_EQ(
-      reference_driver_ == nullptr,
-      test_driver_ == nullptr || test_driver_->IsReferenceImplementation());
+  // Both drivers should be provided, or no driver should be provided.
+  ABSL_CHECK_EQ(reference_driver_ != nullptr, test_driver_ != nullptr);
+  // If both drivers are provided, they should be different objects so that
+  // we don't need special conditions sprinkled around the setup code to handle
+  // the case where setup is non-idempotent. It is only meta-tests of the test
+  // framework and test-suite where it is tempting to make these the same
+  // object.
+  ABSL_CHECK(test_driver_ == nullptr || test_driver_ != reference_driver_);
   std::vector<std::string> known_error_files =
       absl::GetFlag(FLAGS_known_error_files);
   if (!known_error_files.empty()) {
@@ -1499,9 +1536,7 @@ absl::Status SQLTestBase::CreateDatabase(const TestDatabase& test_db) {
   ZETASQL_RETURN_IF_ERROR(ValidateFirstColumnPrimaryKey(
       test_db, driver()->GetSupportedLanguageOptions()));
   ZETASQL_RETURN_IF_ERROR(driver()->CreateDatabase(test_db));
-  if (!IsTestingReferenceImpl()) {
-    ZETASQL_RETURN_IF_ERROR(reference_driver()->CreateDatabase(test_db));
-  }
+  ZETASQL_RETURN_IF_ERROR(reference_driver()->CreateDatabase(test_db));
   return absl::OkStatus();
 }
 
@@ -1528,7 +1563,7 @@ SQLTestBase::TestResults SQLTestBase::ExecuteTestCase() {
   }
   for (::absl::string_view chunk :
        ::absl::StrSplit(sql_log_string, ::zetasql::LogChunkDelimiter())) {
-    ZETASQL_LOG(INFO) << chunk;
+    ABSL_LOG(INFO) << chunk;
   }
 
   // A known error can still fail the test if it fails in a more
@@ -1545,15 +1580,16 @@ SQLTestBase::TestResults SQLTestBase::ExecuteTestCase() {
   if (IsTestingReferenceImpl()) {
     bool uses_unsupported_type = false;  // unused
     if (script_mode_) {
-      result = GetReferenceDriver()->ExecuteScriptForReferenceDriver(
+      result = reference_driver()->ExecuteScriptForReferenceDriver(
           sql_, parameters_, GetExecuteStatementOptions(),
           execute_statement_type_factory(), &uses_unsupported_type);
     } else {
       is_deterministic_output = true;
-      result = GetReferenceDriver()->ExecuteStatementForReferenceDriver(
+      ReferenceDriver::ExecuteStatementAuxOutput aux_output;
+      result = reference_driver()->ExecuteStatementForReferenceDriver(
           sql_, parameters_, GetExecuteStatementOptions(),
-          execute_statement_type_factory(), &(is_deterministic_output.value()),
-          &uses_unsupported_type);
+          execute_statement_type_factory(), aux_output);
+      is_deterministic_output = aux_output.is_deterministic_output;
     }
   } else {
     if (script_mode_) {
@@ -1576,7 +1612,7 @@ void SQLTestBase::RunSQLTests(absl::string_view filename) {
 
   if (!file_based_test_driver::RunTestCasesFromFiles(
           filename, absl::bind_front(&SQLTestBase::RunTestFromFile, this))) {
-    ZETASQL_LOG(ERROR) << "Encountered failures when testing file: " << filename;
+    ABSL_LOG(ERROR) << "Encountered failures when testing file: " << filename;
   }
 
   // End of the file-based test.
@@ -1638,7 +1674,7 @@ void SQLTestBase::InitStatementState(
     sql_ = test_case_options_->sql();
     parameters_ = test_case_options_->params();
   } else {
-    ZETASQL_CHECK(!reason.empty()) << status_or.status();
+    ABSL_CHECK(!reason.empty()) << status_or.status();
     CheckCancellation(status_or.status(), reason);
   }
 }
@@ -1696,7 +1732,7 @@ void SQLTestBase::StepPrepareTimeZoneProtosEnums() {
 
   // Handles proto and enum loading second, because the table being created
   // may use these types.
-  ZETASQL_CHECK(test_case_options_ != nullptr);
+  ABSL_CHECK(test_case_options_ != nullptr);
   if (!test_case_options_->proto_file_names().empty() ||
       !test_case_options_->proto_message_names().empty() ||
       !test_case_options_->proto_enum_names().empty()) {
@@ -1723,7 +1759,7 @@ void SQLTestBase::StepPrepareDatabase() {
   switch (statement_workflow_) {
     case NOT_A_TEST:
     case KNOWN_CRASH:
-      ZETASQL_LOG(FATAL) << "Unexpected state in prepare database. "
+      ABSL_LOG(FATAL) << "Unexpected state in prepare database. "
                  << statement_workflow_;
     case CANCELLED:
       return;
@@ -1743,7 +1779,7 @@ void SQLTestBase::StepPrepareDatabase() {
 
   // In all cases where test_case_options_ is not set we should have returned
   // early.
-  ZETASQL_CHECK(test_case_options_ != nullptr);
+  ABSL_CHECK(test_case_options_ != nullptr);
 
   if (CREATE_DATABASE != file_workflow_) {
     absl::Status status(absl::StatusCode::kInvalidArgument,
@@ -1752,50 +1788,56 @@ void SQLTestBase::StepPrepareDatabase() {
     CheckCancellation(status, "Wrong placement of prepare_database");
   }
 
+  // We include broken [prepare_database] statements with this name in some
+  // test files to make sure the framework is handling things correctly when
+  // an engine does not support something inside a function or view definition.
+  constexpr absl::string_view kSkipFailedReferenceSetup =
+      "skip_failed_reference_setup";
+
   if (GetStatementKind(sql_) == RESOLVED_CREATE_FUNCTION_STMT) {
-    if (!IsTestingReferenceImpl() &&
-        test_case_options_->name() != "skip_failed_reference_setup") {
-      ZETASQL_EXPECT_OK(reference_driver()->AddSqlUdfs({sql_}));
-    }
+    bool is_testing_test_framework =
+        test_case_options_->name() == kSkipFailedReferenceSetup;
+    absl::Status reference_status = reference_driver()->AddSqlUdfs({sql_});
+    EXPECT_NE(reference_status.ok(), is_testing_test_framework)
+        << reference_status;
     absl::Status driver_status = driver()->AddSqlUdfs({sql_});
     if (!driver_status.ok()) {
       // We don't want to fail the test because of a database setup failure.
       // Any test statements that depend on this schema object should cause
       // the test to fail in a more useful way.
-      ZETASQL_LOG(ERROR) << "Prepare database failed with error: " << driver_status;
+      ABSL_LOG(ERROR) << "Prepare database failed with error: " << driver_status;
     }
     return;
   }
 
   if (GetStatementKind(sql_) == RESOLVED_CREATE_VIEW_STMT) {
-    if (!IsTestingReferenceImpl() &&
-        test_case_options_->name() != "skip_failed_reference_setup") {
-      ZETASQL_EXPECT_OK(reference_driver()->AddViews({sql_}));
-    }
+    bool is_testing_test_framework =
+        test_case_options_->name() == kSkipFailedReferenceSetup;
+    absl::Status reference_status = reference_driver()->AddViews({sql_});
+    EXPECT_NE(reference_status.ok(), is_testing_test_framework)
+        << reference_status;
     absl::Status driver_status = driver()->AddViews({sql_});
     if (!driver_status.ok()) {
       // We don't want to fail the test because of a database setup failure.
       // Any test statements that depend on this schema object should cause
       // the test to fail in a more useful way.
-      ZETASQL_LOG(ERROR) << "Prepare database failed with error: " << driver_status;
+      ABSL_LOG(ERROR) << "Prepare database failed with error: " << driver_status;
     }
     return;
   }
 
   if (GetStatementKind(sql_) == RESOLVED_CREATE_TABLE_AS_SELECT_STMT) {
-    std::string table_name;
-    bool is_deterministic_output;
-    bool uses_unsupported_type = false;  // unused
+    ReferenceDriver::ExecuteStatementAuxOutput aux_output;
     CheckCancellation(
         test_setup_driver_
             ->ExecuteStatementForReferenceDriver(
                 sql_, parameters_, ReferenceDriver::ExecuteStatementOptions(),
-                table_type_factory(), &is_deterministic_output,
-                &uses_unsupported_type, &test_db_, &table_name)
+                table_type_factory(), aux_output, &test_db_)
             .status(),
         "Failed to create table");
     if (statement_workflow_ == CANCELLED) return;
-    ZETASQL_CHECK(zetasql_base::ContainsKey(test_db_.tables, table_name));
+    std::string table_name = aux_output.created_table_name.value_or("");
+    ABSL_CHECK(zetasql_base::ContainsKey(test_db_.tables, table_name));
     *test_db_.tables[table_name].options.mutable_required_features() =
         test_case_options_->required_features();
 
@@ -1894,7 +1936,6 @@ void SQLTestBase::StepExecuteStatementCheckResult() {
     return;
   }
 
-  ReferenceDriver* ref_driver = GetReferenceDriver();
   bool should_extract_labels =
       // We don't include scripts in engine compliance report yet.
       !script_mode_
@@ -1911,12 +1952,12 @@ void SQLTestBase::StepExecuteStatementCheckResult() {
     EXPECT_FALSE(full_name_.empty()) << sql_;
     ExtractComplianceLabelsFromResolvedAST(
         sql_, parameters_, require_resolver_success, full_name_,
-        execute_statement_type_factory(), ref_driver,
+        execute_statement_type_factory(), reference_driver(),
         test_case_options_->required_features(),
         test_case_options_->forbidden_features(), effective_labels_,
         compliance_labels_);
   } else {
-    ZETASQL_LOG(INFO) << "Skip extracting compliance labels " << full_name_;
+    ABSL_LOG(INFO) << "Skip extracting compliance labels " << full_name_;
   }
 
   if (statement_workflow_ == FEATURE_MISMATCH) {
@@ -1978,11 +2019,11 @@ void SQLTestBase::StepExecuteStatementCheckResult() {
           sql_, parameters_, GetExecuteStatementOptions(),
           execute_statement_type_factory(), &uses_unsupported_type);
     } else {
-      bool is_deterministic_output;  // unused
+      ReferenceDriver::ExecuteStatementAuxOutput aux_output;
       ref_result = reference_driver()->ExecuteStatementForReferenceDriver(
           sql_, parameters_, GetExecuteStatementOptions(),
-          execute_statement_type_factory(), &is_deterministic_output,
-          &uses_unsupported_type);
+          execute_statement_type_factory(), aux_output);
+      uses_unsupported_type = aux_output.uses_unsupported_type.value_or(false);
     }
     if (uses_unsupported_type) {
       stats_->RecordComplianceTestsLabelsProto(
@@ -2009,12 +2050,11 @@ void SQLTestBase::StepExecuteStatementCheckResult() {
 
 SQLTestBase::TestResults SQLTestBase::RunTestWithFeaturesEnabled(
     const std::set<LanguageFeature>& features_set) {
-  ReferenceDriver* reference_driver = GetReferenceDriver();
   LanguageOptions language_options =
-      reference_driver->GetSupportedLanguageOptions();
+      reference_driver()->GetSupportedLanguageOptions();
   language_options.SetEnabledLanguageFeatures(features_set);
-  AutoLanguageOptions auto_options(reference_driver);
-  reference_driver->SetLanguageOptions(language_options);
+  AutoLanguageOptions auto_options(reference_driver());
+  reference_driver()->SetLanguageOptions(language_options);
   return ExecuteTestCase();
 }
 
@@ -2040,12 +2080,15 @@ bool SQLTestBase::IsFeatureRequired(LanguageFeature feature_to_check,
 void SQLTestBase::ParseAndCompareExpectedResults(TestResults& test_result) {
   test_result_->AddTestOutput(std::string(test_result.ToString()));
 
-  ZETASQL_DCHECK_EQ(statement_workflow_, NORMAL);
+  ABSL_DCHECK_EQ(statement_workflow_, NORMAL);
   if (test_case_options_->extract_labels()) {
     test_result_->AddTestOutput(absl::StrJoin(compliance_labels_, "\n"));
   }
-  absl::string_view expected_string = test_result_->parts()[1];
-  expected_string = absl::StripSuffix(expected_string, "\n");
+  absl::string_view expected_string = "";
+  if (test_result_->parts().size() >= 2) {
+    expected_string = test_result_->parts()[1];
+    expected_string = absl::StripSuffix(expected_string, "\n");
+  }
 
   EXPECT_THAT(test_result, ToStringIs(std::string(expected_string)));
 }
@@ -2096,16 +2139,16 @@ bool SQLTestBase::IsFeatureFalselyRequired(
       required_features.begin(), required_features.end());
   if (require_inclusive) {
     // this is the "required feature" case"
-    ZETASQL_DCHECK(features_minus_one.contains(feature));
+    ABSL_DCHECK(features_minus_one.contains(feature));
     features_minus_one.erase(feature);
   } else {
     // this is the "prohibited feature" case.
-    ZETASQL_DCHECK(!features_minus_one.contains(feature));
+    ABSL_DCHECK(!features_minus_one.contains(feature));
     features_minus_one.insert(feature);
   }
   LanguageOptions language_options;
   language_options.SetEnabledLanguageFeatures(features_minus_one);
-  GetReferenceDriver()->SetLanguageOptions(language_options);
+  reference_driver()->SetLanguageOptions(language_options);
   auto modified_run_result = RunSQL(sql, param_map);
   if (!modified_run_result.ok() &&
       modified_run_result.status() == initial_run_status) {
@@ -2198,13 +2241,13 @@ void SQLTestBase::LogStrings(const ContainerType& strings,
     const int logged_size = s.size() + 2;
     const bool want_flush = buf.size() + logged_size > flush_threshold;
     if (!buf.empty() && want_flush) {
-      ZETASQL_LOG(INFO) << prefix << buf;
+      ABSL_LOG(INFO) << prefix << buf;
       buf.clear();
     }
     absl::StrAppend(&buf, buf.empty() ? "" : ", ", s);
   }
   if (!buf.empty()) {
-    ZETASQL_LOG(INFO) << prefix << buf;
+    ABSL_LOG(INFO) << prefix << buf;
   }
 }
 
@@ -2217,7 +2260,7 @@ void SQLTestBase::AddCodeBasedLabels(std::vector<std::string> labels) {
 void SQLTestBase::RemoveCodeBasedLabels(std::vector<std::string> labels) {
   for (std::vector<std::string>::const_reverse_iterator iter = labels.rbegin();
        iter != labels.rend(); iter++) {
-    ZETASQL_CHECK_EQ(*iter, *(code_based_labels_.rbegin()))
+    ABSL_CHECK_EQ(*iter, *(code_based_labels_.rbegin()))
         << "Found corrupted code-based labels. Always use "
            "auto label = MakeScopedLabel(...){...} to avoid this.";
     code_based_labels_.pop_back();
@@ -2240,7 +2283,7 @@ std::string SQLTestBase::SignatureOfString(absl::string_view str) const {
   std::string hash_raw_str(reinterpret_cast<const char*>(hash_ptr),
                            sizeof(hash));
   std::string mid_raw = absl::WebSafeBase64Escape(hash_raw_str);
-  ZETASQL_CHECK_EQ(mid_raw.size(), 11) << mid_raw;
+  ABSL_CHECK_EQ(mid_raw.size(), 11) << mid_raw;
   std::string mid = mid_raw.substr(0, 11);
   std::string left = SafeString(escape.substr(0, kLengthOfLeftSlice));
   std::string right = SafeString(
@@ -2252,7 +2295,7 @@ std::string SQLTestBase::SignatureOfCompositeValue(const Value& value) const {
   std::string str = value.DebugString();
   absl::string_view trimmed_view;
   absl::Status status;
-  ZETASQL_CHECK(zetasql::functions::TrimBytes(str, "[]{}", &trimmed_view, &status));
+  ABSL_CHECK(zetasql::functions::TrimBytes(str, "[]{}", &trimmed_view, &status));
   return SignatureOfString(trimmed_view);
 }
 
@@ -2326,11 +2369,11 @@ std::string SQLTestBase::GetNamePrefix() const {
       name_prefix = test_info->name();
     }
   }
-  ZETASQL_CHECK(!name_prefix.empty())
+  ABSL_CHECK(!name_prefix.empty())
       << "Found an empty name prefix. Always use SetNamePrefix(...) or "
       << "TEST_F(...) to avoid this.";
   if (name_prefix_need_result_type_name_) {
-    ZETASQL_CHECK(!result_type_name_.empty())
+    ABSL_CHECK(!result_type_name_.empty())
         << "Name prefix " << name_prefix_
         << " needs a result type, but none was specified";
     absl::StrAppend(&name_prefix, "_", result_type_name_);
@@ -2356,7 +2399,7 @@ std::string SQLTestBase::GenerateCodeBasedStatementName(
     absl::StrAppend(&name, "_", absl::StrJoin(param_strs, "_"));
   }
   // If the name is not safe then we cannot create known error entries.
-  ZETASQL_CHECK(RE2::FullMatch(name, name)) << "Name is not RE2 safe " << name;
+  ABSL_CHECK(RE2::FullMatch(name, name)) << "Name is not RE2 safe " << name;
   return name;
 }
 
@@ -2364,24 +2407,31 @@ std::string SQLTestBase::ToString(const TestResults& result) {
   return std::string(result.ToString());
 }
 
+// static
 std::string SQLTestBase::ToString(
     const absl::StatusOr<ComplianceTestCaseResult>& status) {
   std::string result_string;
   if (!status.ok()) {
+    // For file-based tests we do not care about the error message mode.
+    absl::Status status_without_error_mode_payload = status.status();
+    status_without_error_mode_payload.ErasePayload(kErrorMessageModeUrl);
     result_string =
-        absl::StrCat("ERROR: ", internal::StatusToString(status.status()));
+        absl::StrCat("ERROR: ",
+    internal::StatusToString(status_without_error_mode_payload));
   } else if (std::holds_alternative<Value>(status.value())) {
     const Value& value = std::get<Value>(status.value());
-    ZETASQL_CHECK(!value.is_null());
-    ZETASQL_CHECK(value.is_valid());
-    result_string = value.Format();
+    ABSL_CHECK(!value.is_null());
+    ABSL_CHECK(value.is_valid());
+    result_string = InternalValue::FormatInternal(
+        value,
+        absl::GetFlag(FLAGS_zetasql_compliance_print_array_orderedness));
   } else {
     result_string =
         ScriptResultToString(std::get<ScriptResult>(status.value()));
   }
   absl::string_view trimmed_result;
   absl::Status ignored_status;
-  ZETASQL_CHECK(zetasql::functions::RightTrimBytes(result_string, "\n",
+  ABSL_CHECK(zetasql::functions::RightTrimBytes(result_string, "\n",
                                              &trimmed_result, &ignored_status));
   return std::string(trimmed_result);
 }
@@ -2458,7 +2508,7 @@ KnownErrorMode SQLTestBase::IsKnownError(
       individual_mode = zetasql_base::FindOrDie(label_info_map_, label).mode;
       mode = std::max(mode, individual_mode);
       by_set->insert(label);
-      ZETASQL_LOG(INFO) << "Statement matches known error by label: " << label
+      ABSL_LOG(INFO) << "Statement matches known error by label: " << label
                 << " in mode: " << KnownErrorMode_Name(individual_mode);
     }
 
@@ -2468,7 +2518,7 @@ KnownErrorMode SQLTestBase::IsKnownError(
             zetasql_base::FindOrDie(label_info_map_, regex->pattern()).mode;
         mode = std::max(mode, individual_mode);
         by_set->insert(regex->pattern());
-        ZETASQL_LOG(INFO) << "Statement matches known error by regex: "
+        ABSL_LOG(INFO) << "Statement matches known error by regex: "
                   << regex->pattern()
                   << " in mode: " << KnownErrorMode_Name(individual_mode);
       }
@@ -2523,39 +2573,6 @@ ProductMode SQLTestBase::product_mode() const {
 
 void SQLTestBase::SetUp() { ZETASQL_EXPECT_OK(CreateDatabase(TestDatabase{})); }
 
-namespace {
-
-// Returns true if the sql is of pattern "SELECT AS STRUCT",
-// or if the value is of type ARRAY with a non-struct element type. See
-// (broken link) for details.
-bool IsValueTable(const std::string& sql, const Value& table) {
-  RE2::Options options;
-  options.set_dot_nl(true);
-  static const RE2 pattern("(?i)\\s*SELECT\\s+AS\\s+STRUCT\\s+(.*)", options);
-  if (RE2::FullMatch(sql, pattern)) return true;
-
-  ZETASQL_CHECK(table.type()->IsArray());
-  return !table.type()->AsArray()->element_type()->IsStruct();
-}
-
-bool TableContainsColumn(const Value& table, const std::string& column) {
-  const Type* row_type = table.type()->AsArray()->element_type();
-  if (row_type->IsStruct()) {
-    bool is_ambiguous;
-    int index;
-    const StructField* field =
-        row_type->AsStruct()->FindField(column, &is_ambiguous, &index);
-    return field != nullptr;
-  } else if (row_type->IsProto()) {
-    const google::protobuf::FieldDescriptor* fd = ProtoType::FindFieldByNameIgnoreCase(
-        row_type->AsProto()->descriptor(), column);
-    return fd != nullptr;
-  }
-  return false;
-}
-
-}  // namespace
-
 absl::Status SQLTestBase::CreateDatabase() {
   ZETASQL_RETURN_IF_ERROR(ValidateFirstColumnPrimaryKey(
       test_db_, driver()->GetSupportedLanguageOptions()));
@@ -2564,32 +2581,10 @@ absl::Status SQLTestBase::CreateDatabase() {
   // type factory of the reference driver and invalidate all values in
   // test_db_.
   ZETASQL_RETURN_IF_ERROR(driver()->CreateDatabase(test_db_));
-  if (!IsTestingReferenceImpl()) {
-    // No need to load protos and enums into reference driver. They are
-    // already loaded in StepPrepareDatabase().
-    for (const auto& [table_name, test_table] : test_db_.tables) {
-      reference_driver()->AddTable(table_name, test_table);
-    }
-  }
+  ZETASQL_RETURN_IF_ERROR(reference_driver()->CreateDatabase(test_db_));
 
   // Only create test database once.
   test_db_.clear();
-
-  return absl::OkStatus();
-}
-
-absl::Status SQLTestBase::ValidateStatementResult(
-    const absl::StatusOr<Value>& result, const std::string& statement) const {
-  if (!result.ok()) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
-           << "Statement failed: " << internal::StatusToString(result.status());
-  }
-
-  if (result.value().is_null() || !result.value().is_valid()) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
-           << "Generated values is null or invalid when evaluating "
-           << statement;
-  }
 
   return absl::OkStatus();
 }
@@ -2604,10 +2599,8 @@ absl::Status SQLTestBase::LoadProtosAndEnums() {
     test_db_.proto_files.insert(files.begin(), files.end());
     test_db_.proto_names.insert(protos.begin(), protos.end());
     test_db_.enum_names.insert(enums.begin(), enums.end());
-    if (!IsTestingReferenceImpl()) {
-      ZETASQL_RETURN_IF_ERROR(
-          reference_driver_->LoadProtoEnumTypes(files, protos, enums));
-    }
+    ZETASQL_RETURN_IF_ERROR(
+        reference_driver_->LoadProtoEnumTypes(files, protos, enums));
   }
 
   return absl::OkStatus();
@@ -2617,40 +2610,7 @@ absl::Status SQLTestBase::SetDefaultTimeZone(
     const std::string& default_time_zone) {
   ZETASQL_RETURN_IF_ERROR(test_setup_driver_->SetDefaultTimeZone(default_time_zone));
   ZETASQL_RETURN_IF_ERROR(test_driver_->SetDefaultTimeZone(default_time_zone));
-  if (!IsTestingReferenceImpl()) {
-    ZETASQL_RETURN_IF_ERROR(reference_driver_->SetDefaultTimeZone(default_time_zone));
-  }
-
-  return absl::OkStatus();
-}
-
-void SQLTestBase::LogParameters(
-    const std::map<std::string, Value>& parameters) const {
-  std::vector<std::string> pairs;
-  pairs.reserve(parameters.size());
-  for (const std::pair<const std::string, Value>& item : parameters) {
-    pairs.emplace_back(
-        absl::StrCat(item.first, ":", item.second.FullDebugString()));
-  }
-
-  ZETASQL_VLOG(3) << "Parameters: " << absl::StrJoin(pairs, ", ");
-}
-
-absl::Status SQLTestBase::ParseFeatures(const std::string& features_str,
-                                        std::set<LanguageFeature>* features) {
-  features->clear();
-  const std::vector<std::string> feature_list =
-      absl::StrSplit(features_str, ',', absl::SkipEmpty());
-  for (const std::string& feature_name : feature_list) {
-    const std::string full_feature_name =
-        absl::StrCat("FEATURE_", feature_name);
-    LanguageFeature feature;
-    if (!LanguageFeature_Parse(full_feature_name, &feature)) {
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
-             << "Invalid feature name: " << full_feature_name;
-    }
-    features->insert(feature);
-  }
+  ZETASQL_RETURN_IF_ERROR(reference_driver_->SetDefaultTimeZone(default_time_zone));
   return absl::OkStatus();
 }
 
@@ -2685,9 +2645,9 @@ bool SQLTestBase::DriverSupportsFeature(LanguageFeature feature) {
   if (driver()->IsReferenceImplementation()) {
     // If the tests depend on whether some feature is enabled in the reference
     // implementation, and that feature is disabled, then something is
-    // probably wrong. This ZETASQL_CHECK helps prevent tests from being silently
+    // probably wrong. This ABSL_CHECK helps prevent tests from being silently
     // skipped.
-    ZETASQL_CHECK(enabled) << LanguageFeature_Name(feature);
+    ABSL_CHECK(enabled) << LanguageFeature_Name(feature);
   }
   return enabled;
 }

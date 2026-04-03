@@ -4,217 +4,284 @@
 #include "zetasql/proto/anon_output_with_report.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr AnonOutputWithReport::AnonOutputWithReport(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : bounding_report_(nullptr)
-  , _oneof_case_{}{}
+template <typename>
+PROTOBUF_CONSTEXPR AnonOutputWithReport::AnonOutputWithReport(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.bounding_report_)*/nullptr
+  , /*decltype(_impl_.result_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct AnonOutputWithReportDefaultTypeInternal {
-  constexpr AnonOutputWithReportDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR AnonOutputWithReportDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~AnonOutputWithReportDefaultTypeInternal() {}
   union {
     AnonOutputWithReport _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AnonOutputWithReportDefaultTypeInternal _AnonOutputWithReport_default_instance_;
-constexpr BoundingReport::BoundingReport(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : lower_bound_(nullptr)
-  , upper_bound_(nullptr)
-  , num_inputs_(0)
-  , num_outside_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AnonOutputWithReportDefaultTypeInternal _AnonOutputWithReport_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BoundingReport::BoundingReport(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.lower_bound_)*/nullptr
+  , /*decltype(_impl_.upper_bound_)*/nullptr
+  , /*decltype(_impl_.num_inputs_)*/ 0
+
+  , /*decltype(_impl_.num_outside_)*/ 0
+} {}
 struct BoundingReportDefaultTypeInternal {
-  constexpr BoundingReportDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BoundingReportDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BoundingReportDefaultTypeInternal() {}
   union {
     BoundingReport _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BoundingReportDefaultTypeInternal _BoundingReport_default_instance_;
-constexpr NoiseConfidenceInterval::NoiseConfidenceInterval(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : lower_bound_(0)
-  , upper_bound_(0)
-  , confidence_level_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BoundingReportDefaultTypeInternal _BoundingReport_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR NoiseConfidenceInterval::NoiseConfidenceInterval(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.lower_bound_)*/ 0
+
+  , /*decltype(_impl_.upper_bound_)*/ 0
+
+  , /*decltype(_impl_.confidence_level_)*/ 0
+} {}
 struct NoiseConfidenceIntervalDefaultTypeInternal {
-  constexpr NoiseConfidenceIntervalDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR NoiseConfidenceIntervalDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~NoiseConfidenceIntervalDefaultTypeInternal() {}
   union {
     NoiseConfidenceInterval _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT NoiseConfidenceIntervalDefaultTypeInternal _NoiseConfidenceInterval_default_instance_;
-constexpr AnonOutputValues::AnonOutputValues(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : values_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 NoiseConfidenceIntervalDefaultTypeInternal _NoiseConfidenceInterval_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR AnonOutputValues::AnonOutputValues(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.values_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct AnonOutputValuesDefaultTypeInternal {
-  constexpr AnonOutputValuesDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR AnonOutputValuesDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~AnonOutputValuesDefaultTypeInternal() {}
   union {
     AnonOutputValues _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AnonOutputValuesDefaultTypeInternal _AnonOutputValues_default_instance_;
-constexpr AnonOutputValue::AnonOutputValue(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : noise_confidence_interval_(nullptr)
-  , _oneof_case_{}{}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AnonOutputValuesDefaultTypeInternal _AnonOutputValues_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR AnonOutputValue::AnonOutputValue(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.noise_confidence_interval_)*/nullptr
+  , /*decltype(_impl_.value_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct AnonOutputValueDefaultTypeInternal {
-  constexpr AnonOutputValueDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR AnonOutputValueDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~AnonOutputValueDefaultTypeInternal() {}
   union {
     AnonOutputValue _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AnonOutputValueDefaultTypeInternal _AnonOutputValue_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AnonOutputValueDefaultTypeInternal _AnonOutputValue_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[5];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, bounding_report_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, result_),
-  ~0u,
-  ~0u,
-  0,
-  PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, lower_bound_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, upper_bound_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, num_inputs_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, num_outside_),
-  0,
-  1,
-  2,
-  3,
-  PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, lower_bound_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, upper_bound_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, confidence_level_),
-  0,
-  1,
-  2,
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValues, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValues, values_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, noise_confidence_interval_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, value_),
-  ~0u,
-  ~0u,
-  ~0u,
-  0,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 10, -1, sizeof(::zetasql::AnonOutputWithReport)},
-  { 13, 23, -1, sizeof(::zetasql::BoundingReport)},
-  { 27, 36, -1, sizeof(::zetasql::NoiseConfidenceInterval)},
-  { 39, -1, -1, sizeof(::zetasql::AnonOutputValues)},
-  { 46, 57, -1, sizeof(::zetasql::AnonOutputValue)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnonOutputWithReport_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_BoundingReport_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_NoiseConfidenceInterval_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnonOutputValues_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_AnonOutputValue_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[5];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _internal_metadata_),
+    ~0u,  // no _extensions_
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _impl_.bounding_report_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _impl_.result_),
+    ~0u,
+    ~0u,
+    0,
+    PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _impl_.lower_bound_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _impl_.upper_bound_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _impl_.num_inputs_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::BoundingReport, _impl_.num_outside_),
+    0,
+    1,
+    2,
+    3,
+    PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _impl_.lower_bound_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _impl_.upper_bound_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NoiseConfidenceInterval, _impl_.confidence_level_),
+    0,
+    1,
+    2,
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValues, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValues, _impl_.values_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _internal_metadata_),
+    ~0u,  // no _extensions_
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _impl_.noise_confidence_interval_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _impl_.value_),
+    ~0u,
+    ~0u,
+    ~0u,
+    0,
 };
 
-const char descriptor_table_protodef_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n+zetasql/proto/anon_output_with_report."
-  "proto\022\007zetasql\"\303\001\n\024AnonOutputWithReport\022"
-  ")\n\005value\030\001 \001(\0132\030.zetasql.AnonOutputValue"
-  "H\000\022+\n\006values\030\002 \001(\0132\031.zetasql.AnonOutputV"
-  "aluesH\000\0225\n\017bounding_report\030\003 \001(\0132\027.zetas"
-  "ql.BoundingReportH\001\210\001\001B\010\n\006resultB\022\n\020_bou"
-  "nding_report\"\352\001\n\016BoundingReport\0222\n\013lower"
-  "_bound\030\001 \001(\0132\030.zetasql.AnonOutputValueH\000"
-  "\210\001\001\0222\n\013upper_bound\030\002 \001(\0132\030.zetasql.AnonO"
-  "utputValueH\001\210\001\001\022\027\n\nnum_inputs\030\003 \001(\001H\002\210\001\001"
-  "\022\030\n\013num_outside\030\004 \001(\001H\003\210\001\001B\016\n\014_lower_bou"
-  "ndB\016\n\014_upper_boundB\r\n\013_num_inputsB\016\n\014_nu"
-  "m_outside\"\241\001\n\027NoiseConfidenceInterval\022\030\n"
-  "\013lower_bound\030\001 \001(\001H\000\210\001\001\022\030\n\013upper_bound\030\002"
-  " \001(\001H\001\210\001\001\022\035\n\020confidence_level\030\003 \001(\001H\002\210\001\001"
-  "B\016\n\014_lower_boundB\016\n\014_upper_boundB\023\n\021_con"
-  "fidence_level\"<\n\020AnonOutputValues\022(\n\006val"
-  "ues\030\001 \003(\0132\030.zetasql.AnonOutputValue\"\306\001\n\017"
-  "AnonOutputValue\022\023\n\tint_value\030\001 \001(\003H\000\022\025\n\013"
-  "float_value\030\002 \001(\001H\000\022\026\n\014string_value\030\003 \001("
-  "\tH\000\022H\n\031noise_confidence_interval\030\004 \001(\0132 "
-  ".zetasql.NoiseConfidenceIntervalH\001\210\001\001B\007\n"
-  "\005valueB\034\n\032_noise_confidence_intervalB1\n\022"
-  "com.google.zetasqlB\033ZetaSQLAnonOutputWit"
-  "hReportb\006proto3"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto = {
-  false, false, 975, descriptor_table_protodef_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto, "zetasql/proto/anon_output_with_report.proto", 
-  &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once, nullptr, 0, 5,
-  schemas, file_default_instances, TableStruct_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto::offsets,
-  file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto, file_level_enum_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto, file_level_service_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 12, -1, sizeof(::zetasql::AnonOutputWithReport)},
+        { 15, 27, -1, sizeof(::zetasql::BoundingReport)},
+        { 31, 42, -1, sizeof(::zetasql::NoiseConfidenceInterval)},
+        { 45, -1, -1, sizeof(::zetasql::AnonOutputValues)},
+        { 54, 67, -1, sizeof(::zetasql::AnonOutputValue)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_AnonOutputWithReport_default_instance_._instance,
+    &::zetasql::_BoundingReport_default_instance_._instance,
+    &::zetasql::_NoiseConfidenceInterval_default_instance_._instance,
+    &::zetasql::_AnonOutputValues_default_instance_._instance,
+    &::zetasql::_AnonOutputValue_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n+zetasql/proto/anon_output_with_report."
+    "proto\022\007zetasql\"\303\001\n\024AnonOutputWithReport\022"
+    ")\n\005value\030\001 \001(\0132\030.zetasql.AnonOutputValue"
+    "H\000\022+\n\006values\030\002 \001(\0132\031.zetasql.AnonOutputV"
+    "aluesH\000\0225\n\017bounding_report\030\003 \001(\0132\027.zetas"
+    "ql.BoundingReportH\001\210\001\001B\010\n\006resultB\022\n\020_bou"
+    "nding_report\"\352\001\n\016BoundingReport\0222\n\013lower"
+    "_bound\030\001 \001(\0132\030.zetasql.AnonOutputValueH\000"
+    "\210\001\001\0222\n\013upper_bound\030\002 \001(\0132\030.zetasql.AnonO"
+    "utputValueH\001\210\001\001\022\027\n\nnum_inputs\030\003 \001(\001H\002\210\001\001"
+    "\022\030\n\013num_outside\030\004 \001(\001H\003\210\001\001B\016\n\014_lower_bou"
+    "ndB\016\n\014_upper_boundB\r\n\013_num_inputsB\016\n\014_nu"
+    "m_outside\"\241\001\n\027NoiseConfidenceInterval\022\030\n"
+    "\013lower_bound\030\001 \001(\001H\000\210\001\001\022\030\n\013upper_bound\030\002"
+    " \001(\001H\001\210\001\001\022\035\n\020confidence_level\030\003 \001(\001H\002\210\001\001"
+    "B\016\n\014_lower_boundB\016\n\014_upper_boundB\023\n\021_con"
+    "fidence_level\"<\n\020AnonOutputValues\022(\n\006val"
+    "ues\030\001 \003(\0132\030.zetasql.AnonOutputValue\"\306\001\n\017"
+    "AnonOutputValue\022\023\n\tint_value\030\001 \001(\003H\000\022\025\n\013"
+    "float_value\030\002 \001(\001H\000\022\026\n\014string_value\030\003 \001("
+    "\tH\000\022H\n\031noise_confidence_interval\030\004 \001(\0132 "
+    ".zetasql.NoiseConfidenceIntervalH\001\210\001\001B\007\n"
+    "\005valueB\034\n\032_noise_confidence_intervalB1\n\022"
+    "com.google.zetasqlB\033ZetaSQLAnonOutputWit"
+    "hReportb\006proto3"
+};
+static ::absl::once_flag descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto = {
+    false,
+    false,
+    975,
+    descriptor_table_protodef_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
+    "zetasql/proto/anon_output_with_report.proto",
+    &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once,
+    nullptr,
+    0,
+    5,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto::offsets,
+    file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
+    file_level_enum_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
+    file_level_service_descriptors_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter() {
   return &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto(&descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto(&descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class AnonOutputWithReport::_Internal {
  public:
-  using HasBits = decltype(std::declval<AnonOutputWithReport>()._has_bits_);
+  using HasBits = decltype(std::declval<AnonOutputWithReport>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(AnonOutputWithReport, _impl_._has_bits_);
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputWithReport, _impl_._oneof_case_);
   static const ::zetasql::AnonOutputValue& value(const AnonOutputWithReport* msg);
   static const ::zetasql::AnonOutputValues& values(const AnonOutputWithReport* msg);
   static const ::zetasql::BoundingReport& bounding_report(const AnonOutputWithReport* msg);
@@ -225,28 +292,28 @@ class AnonOutputWithReport::_Internal {
 
 const ::zetasql::AnonOutputValue&
 AnonOutputWithReport::_Internal::value(const AnonOutputWithReport* msg) {
-  return *msg->result_.value_;
+  return *msg->_impl_.result_.value_;
 }
 const ::zetasql::AnonOutputValues&
 AnonOutputWithReport::_Internal::values(const AnonOutputWithReport* msg) {
-  return *msg->result_.values_;
+  return *msg->_impl_.result_.values_;
 }
 const ::zetasql::BoundingReport&
 AnonOutputWithReport::_Internal::bounding_report(const AnonOutputWithReport* msg) {
-  return *msg->bounding_report_;
+  return *msg->_impl_.bounding_report_;
 }
 void AnonOutputWithReport::set_allocated_value(::zetasql::AnonOutputValue* value) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   clear_result();
   if (value) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnonOutputValue>::GetOwningArena(value);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(value);
     if (message_arena != submessage_arena) {
       value = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, value, submessage_arena);
     }
     set_has_value();
-    result_.value_ = value;
+    _impl_.result_.value_ = value;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.AnonOutputWithReport.value)
 }
@@ -255,42 +322,45 @@ void AnonOutputWithReport::set_allocated_values(::zetasql::AnonOutputValues* val
   clear_result();
   if (values) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::AnonOutputValues>::GetOwningArena(values);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(values);
     if (message_arena != submessage_arena) {
       values = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, values, submessage_arena);
     }
     set_has_values();
-    result_.values_ = values;
+    _impl_.result_.values_ = values;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.AnonOutputWithReport.values)
 }
-AnonOutputWithReport::AnonOutputWithReport(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+AnonOutputWithReport::AnonOutputWithReport(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.AnonOutputWithReport)
 }
 AnonOutputWithReport::AnonOutputWithReport(const AnonOutputWithReport& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  AnonOutputWithReport* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.bounding_report_){nullptr}
+    , decltype(_impl_.result_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_bounding_report()) {
-    bounding_report_ = new ::zetasql::BoundingReport(*from.bounding_report_);
-  } else {
-    bounding_report_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.bounding_report_ = new ::zetasql::BoundingReport(*from._impl_.bounding_report_);
   }
   clear_has_result();
   switch (from.result_case()) {
     case kValue: {
-      _internal_mutable_value()->::zetasql::AnonOutputValue::MergeFrom(from._internal_value());
+      _this->_internal_mutable_value()->::zetasql::AnonOutputValue::MergeFrom(
+          from._internal_value());
       break;
     }
     case kValues: {
-      _internal_mutable_values()->::zetasql::AnonOutputValues::MergeFrom(from._internal_values());
+      _this->_internal_mutable_values()->::zetasql::AnonOutputValues::MergeFrom(
+          from._internal_values());
       break;
     }
     case RESULT_NOT_SET: {
@@ -300,34 +370,37 @@ AnonOutputWithReport::AnonOutputWithReport(const AnonOutputWithReport& from)
   // @@protoc_insertion_point(copy_constructor:zetasql.AnonOutputWithReport)
 }
 
-inline void AnonOutputWithReport::SharedCtor() {
-bounding_report_ = nullptr;
-clear_has_result();
+inline void AnonOutputWithReport::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.bounding_report_){nullptr}
+    , decltype(_impl_.result_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_result();
 }
 
 AnonOutputWithReport::~AnonOutputWithReport() {
   // @@protoc_insertion_point(destructor:zetasql.AnonOutputWithReport)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void AnonOutputWithReport::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete bounding_report_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.bounding_report_;
   if (has_result()) {
     clear_result();
   }
 }
 
-void AnonOutputWithReport::ArenaDtor(void* object) {
-  AnonOutputWithReport* _this = reinterpret_cast< AnonOutputWithReport* >(object);
-  (void)_this;
-}
-void AnonOutputWithReport::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void AnonOutputWithReport::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void AnonOutputWithReport::clear_result() {
@@ -335,13 +408,13 @@ void AnonOutputWithReport::clear_result() {
   switch (result_case()) {
     case kValue: {
       if (GetArenaForAllocation() == nullptr) {
-        delete result_.value_;
+        delete _impl_.result_.value_;
       }
       break;
     }
     case kValues: {
       if (GetArenaForAllocation() == nullptr) {
-        delete result_.values_;
+        delete _impl_.result_.values_;
       }
       break;
     }
@@ -349,56 +422,59 @@ void AnonOutputWithReport::clear_result() {
       break;
     }
   }
-  _oneof_case_[0] = RESULT_NOT_SET;
+  _impl_._oneof_case_[0] = RESULT_NOT_SET;
 }
 
 
 void AnonOutputWithReport::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.AnonOutputWithReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(bounding_report_ != nullptr);
-    bounding_report_->Clear();
+    ABSL_DCHECK(_impl_.bounding_report_ != nullptr);
+    _impl_.bounding_report_->Clear();
   }
   clear_result();
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* AnonOutputWithReport::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* AnonOutputWithReport::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // .zetasql.AnonOutputValue value = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_value(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // .zetasql.AnonOutputValues values = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_values(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.BoundingReport bounding_report = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_bounding_report(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -416,7 +492,7 @@ const char* AnonOutputWithReport::_InternalParse(const char* ptr, ::PROTOBUF_NAM
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -424,58 +500,57 @@ failure:
 #undef CHK_
 }
 
-uint8_t* AnonOutputWithReport::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* AnonOutputWithReport::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.AnonOutputWithReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .zetasql.AnonOutputValue value = 1;
-  if (_internal_has_value()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        1, _Internal::value(this), target, stream);
+  switch (result_case()) {
+    case kValue: {
+      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(1, _Internal::value(this),
+          _Internal::value(this).GetCachedSize(), target, stream);
+      break;
+    }
+    case kValues: {
+      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(2, _Internal::values(this),
+          _Internal::values(this).GetCachedSize(), target, stream);
+      break;
+    }
+    default: ;
   }
-
-  // .zetasql.AnonOutputValues values = 2;
-  if (_internal_has_values()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::values(this), target, stream);
-  }
-
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.BoundingReport bounding_report = 3;
-  if (_internal_has_bounding_report()) {
-    target = stream->EnsureSpace(target);
+  if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        3, _Internal::bounding_report(this), target, stream);
+      InternalWriteMessage(3, _Internal::bounding_report(this),
+        _Internal::bounding_report(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.AnonOutputWithReport)
   return target;
 }
 
-size_t AnonOutputWithReport::ByteSizeLong() const {
+::size_t AnonOutputWithReport::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.AnonOutputWithReport)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional .zetasql.BoundingReport bounding_report = 3;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *bounding_report_);
+        *_impl_.bounding_report_);
   }
 
   switch (result_case()) {
@@ -483,59 +558,58 @@ size_t AnonOutputWithReport::ByteSizeLong() const {
     case kValue: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *result_.value_);
+          *_impl_.result_.value_);
       break;
     }
     // .zetasql.AnonOutputValues values = 2;
     case kValues: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *result_.values_);
+          *_impl_.result_.values_);
       break;
     }
     case RESULT_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData AnonOutputWithReport::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     AnonOutputWithReport::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AnonOutputWithReport::GetClassData() const { return &_class_data_; }
 
-void AnonOutputWithReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<AnonOutputWithReport *>(to)->MergeFrom(
-      static_cast<const AnonOutputWithReport &>(from));
-}
 
-
-void AnonOutputWithReport::MergeFrom(const AnonOutputWithReport& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnonOutputWithReport)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void AnonOutputWithReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<AnonOutputWithReport*>(&to_msg);
+  auto& from = static_cast<const AnonOutputWithReport&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnonOutputWithReport)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_bounding_report()) {
-    _internal_mutable_bounding_report()->::zetasql::BoundingReport::MergeFrom(from._internal_bounding_report());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_bounding_report()->::zetasql::BoundingReport::MergeFrom(
+        from._internal_bounding_report());
   }
   switch (from.result_case()) {
     case kValue: {
-      _internal_mutable_value()->::zetasql::AnonOutputValue::MergeFrom(from._internal_value());
+      _this->_internal_mutable_value()->::zetasql::AnonOutputValue::MergeFrom(
+          from._internal_value());
       break;
     }
     case kValues: {
-      _internal_mutable_values()->::zetasql::AnonOutputValues::MergeFrom(from._internal_values());
+      _this->_internal_mutable_values()->::zetasql::AnonOutputValues::MergeFrom(
+          from._internal_values());
       break;
     }
     case RESULT_NOT_SET: {
       break;
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void AnonOutputWithReport::CopyFrom(const AnonOutputWithReport& from) {
@@ -552,23 +626,24 @@ bool AnonOutputWithReport::IsInitialized() const {
 void AnonOutputWithReport::InternalSwap(AnonOutputWithReport* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(bounding_report_, other->bounding_report_);
-  swap(result_, other->result_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.bounding_report_, other->_impl_.bounding_report_);
+  swap(_impl_.result_, other->_impl_.result_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata AnonOutputWithReport::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter, &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[0]);
 }
-
 // ===================================================================
 
 class BoundingReport::_Internal {
  public:
-  using HasBits = decltype(std::declval<BoundingReport>()._has_bits_);
+  using HasBits = decltype(std::declval<BoundingReport>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(BoundingReport, _impl_._has_bits_);
   static const ::zetasql::AnonOutputValue& lower_bound(const BoundingReport* msg);
   static void set_has_lower_bound(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -587,137 +662,146 @@ class BoundingReport::_Internal {
 
 const ::zetasql::AnonOutputValue&
 BoundingReport::_Internal::lower_bound(const BoundingReport* msg) {
-  return *msg->lower_bound_;
+  return *msg->_impl_.lower_bound_;
 }
 const ::zetasql::AnonOutputValue&
 BoundingReport::_Internal::upper_bound(const BoundingReport* msg) {
-  return *msg->upper_bound_;
+  return *msg->_impl_.upper_bound_;
 }
-BoundingReport::BoundingReport(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+BoundingReport::BoundingReport(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.BoundingReport)
 }
 BoundingReport::BoundingReport(const BoundingReport& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BoundingReport* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.lower_bound_){nullptr}
+    , decltype(_impl_.upper_bound_){nullptr}
+    , decltype(_impl_.num_inputs_) {}
+
+    , decltype(_impl_.num_outside_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_lower_bound()) {
-    lower_bound_ = new ::zetasql::AnonOutputValue(*from.lower_bound_);
-  } else {
-    lower_bound_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.lower_bound_ = new ::zetasql::AnonOutputValue(*from._impl_.lower_bound_);
   }
-  if (from._internal_has_upper_bound()) {
-    upper_bound_ = new ::zetasql::AnonOutputValue(*from.upper_bound_);
-  } else {
-    upper_bound_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.upper_bound_ = new ::zetasql::AnonOutputValue(*from._impl_.upper_bound_);
   }
-  ::memcpy(&num_inputs_, &from.num_inputs_,
-    static_cast<size_t>(reinterpret_cast<char*>(&num_outside_) -
-    reinterpret_cast<char*>(&num_inputs_)) + sizeof(num_outside_));
+  ::memcpy(&_impl_.num_inputs_, &from._impl_.num_inputs_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.num_outside_) -
+    reinterpret_cast<char*>(&_impl_.num_inputs_)) + sizeof(_impl_.num_outside_));
   // @@protoc_insertion_point(copy_constructor:zetasql.BoundingReport)
 }
 
-inline void BoundingReport::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&lower_bound_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&num_outside_) -
-    reinterpret_cast<char*>(&lower_bound_)) + sizeof(num_outside_));
+inline void BoundingReport::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.lower_bound_){nullptr}
+    , decltype(_impl_.upper_bound_){nullptr}
+    , decltype(_impl_.num_inputs_) { 0 }
+
+    , decltype(_impl_.num_outside_) { 0 }
+
+  };
 }
 
 BoundingReport::~BoundingReport() {
   // @@protoc_insertion_point(destructor:zetasql.BoundingReport)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void BoundingReport::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete lower_bound_;
-  if (this != internal_default_instance()) delete upper_bound_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.lower_bound_;
+  if (this != internal_default_instance()) delete _impl_.upper_bound_;
 }
 
-void BoundingReport::ArenaDtor(void* object) {
-  BoundingReport* _this = reinterpret_cast< BoundingReport* >(object);
-  (void)_this;
-}
-void BoundingReport::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void BoundingReport::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void BoundingReport::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.BoundingReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(lower_bound_ != nullptr);
-      lower_bound_->Clear();
+      ABSL_DCHECK(_impl_.lower_bound_ != nullptr);
+      _impl_.lower_bound_->Clear();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(upper_bound_ != nullptr);
-      upper_bound_->Clear();
+      ABSL_DCHECK(_impl_.upper_bound_ != nullptr);
+      _impl_.upper_bound_->Clear();
     }
   }
   if (cached_has_bits & 0x0000000cu) {
-    ::memset(&num_inputs_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&num_outside_) -
-        reinterpret_cast<char*>(&num_inputs_)) + sizeof(num_outside_));
+    ::memset(&_impl_.num_inputs_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.num_outside_) -
+        reinterpret_cast<char*>(&_impl_.num_inputs_)) + sizeof(_impl_.num_outside_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* BoundingReport::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* BoundingReport::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .zetasql.AnonOutputValue lower_bound = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_lower_bound(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.AnonOutputValue upper_bound = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_upper_bound(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double num_inputs = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_num_inputs(&has_bits);
-          num_inputs_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.num_inputs_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double num_outside = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 33)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 33)) {
           _Internal::set_has_num_outside(&has_bits);
-          num_outside_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.num_outside_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -735,7 +819,7 @@ const char* BoundingReport::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -743,122 +827,121 @@ failure:
 #undef CHK_
 }
 
-uint8_t* BoundingReport::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* BoundingReport::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.BoundingReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.AnonOutputValue lower_bound = 1;
-  if (_internal_has_lower_bound()) {
-    target = stream->EnsureSpace(target);
+  if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        1, _Internal::lower_bound(this), target, stream);
+      InternalWriteMessage(1, _Internal::lower_bound(this),
+        _Internal::lower_bound(this).GetCachedSize(), target, stream);
   }
 
   // optional .zetasql.AnonOutputValue upper_bound = 2;
-  if (_internal_has_upper_bound()) {
-    target = stream->EnsureSpace(target);
+  if (cached_has_bits & 0x00000002u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::upper_bound(this), target, stream);
+      InternalWriteMessage(2, _Internal::upper_bound(this),
+        _Internal::upper_bound(this).GetCachedSize(), target, stream);
   }
 
   // optional double num_inputs = 3;
-  if (_internal_has_num_inputs()) {
+  if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_num_inputs(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_num_inputs(), target);
   }
 
   // optional double num_outside = 4;
-  if (_internal_has_num_outside()) {
+  if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(4, this->_internal_num_outside(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        4, this->_internal_num_outside(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.BoundingReport)
   return target;
 }
 
-size_t BoundingReport::ByteSizeLong() const {
+::size_t BoundingReport::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.BoundingReport)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     // optional .zetasql.AnonOutputValue lower_bound = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *lower_bound_);
+          *_impl_.lower_bound_);
     }
 
     // optional .zetasql.AnonOutputValue upper_bound = 2;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *upper_bound_);
+          *_impl_.upper_bound_);
     }
 
     // optional double num_inputs = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double num_outside = 4;
     if (cached_has_bits & 0x00000008u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BoundingReport::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     BoundingReport::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BoundingReport::GetClassData() const { return &_class_data_; }
 
-void BoundingReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<BoundingReport *>(to)->MergeFrom(
-      static_cast<const BoundingReport &>(from));
-}
 
-
-void BoundingReport::MergeFrom(const BoundingReport& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.BoundingReport)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void BoundingReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BoundingReport*>(&to_msg);
+  auto& from = static_cast<const BoundingReport&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.BoundingReport)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_mutable_lower_bound()->::zetasql::AnonOutputValue::MergeFrom(from._internal_lower_bound());
+      _this->_internal_mutable_lower_bound()->::zetasql::AnonOutputValue::MergeFrom(
+          from._internal_lower_bound());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_upper_bound()->::zetasql::AnonOutputValue::MergeFrom(from._internal_upper_bound());
+      _this->_internal_mutable_upper_bound()->::zetasql::AnonOutputValue::MergeFrom(
+          from._internal_upper_bound());
     }
     if (cached_has_bits & 0x00000004u) {
-      num_inputs_ = from.num_inputs_;
+      _this->_impl_.num_inputs_ = from._impl_.num_inputs_;
     }
     if (cached_has_bits & 0x00000008u) {
-      num_outside_ = from.num_outside_;
+      _this->_impl_.num_outside_ = from._impl_.num_outside_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void BoundingReport::CopyFrom(const BoundingReport& from) {
@@ -875,26 +958,27 @@ bool BoundingReport::IsInitialized() const {
 void BoundingReport::InternalSwap(BoundingReport* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BoundingReport, num_outside_)
-      + sizeof(BoundingReport::num_outside_)
-      - PROTOBUF_FIELD_OFFSET(BoundingReport, lower_bound_)>(
-          reinterpret_cast<char*>(&lower_bound_),
-          reinterpret_cast<char*>(&other->lower_bound_));
+      PROTOBUF_FIELD_OFFSET(BoundingReport, _impl_.num_outside_)
+      + sizeof(BoundingReport::_impl_.num_outside_)
+      - PROTOBUF_FIELD_OFFSET(BoundingReport, _impl_.lower_bound_)>(
+          reinterpret_cast<char*>(&_impl_.lower_bound_),
+          reinterpret_cast<char*>(&other->_impl_.lower_bound_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BoundingReport::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter, &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[1]);
 }
-
 // ===================================================================
 
 class NoiseConfidenceInterval::_Internal {
  public:
-  using HasBits = decltype(std::declval<NoiseConfidenceInterval>()._has_bits_);
+  using HasBits = decltype(std::declval<NoiseConfidenceInterval>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(NoiseConfidenceInterval, _impl_._has_bits_);
   static void set_has_lower_bound(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -906,102 +990,101 @@ class NoiseConfidenceInterval::_Internal {
   }
 };
 
-NoiseConfidenceInterval::NoiseConfidenceInterval(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+NoiseConfidenceInterval::NoiseConfidenceInterval(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.NoiseConfidenceInterval)
 }
 NoiseConfidenceInterval::NoiseConfidenceInterval(const NoiseConfidenceInterval& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&lower_bound_, &from.lower_bound_,
-    static_cast<size_t>(reinterpret_cast<char*>(&confidence_level_) -
-    reinterpret_cast<char*>(&lower_bound_)) + sizeof(confidence_level_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.NoiseConfidenceInterval)
 }
 
-inline void NoiseConfidenceInterval::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&lower_bound_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&confidence_level_) -
-    reinterpret_cast<char*>(&lower_bound_)) + sizeof(confidence_level_));
+inline void NoiseConfidenceInterval::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.lower_bound_) { 0 }
+
+    , decltype(_impl_.upper_bound_) { 0 }
+
+    , decltype(_impl_.confidence_level_) { 0 }
+
+  };
 }
 
 NoiseConfidenceInterval::~NoiseConfidenceInterval() {
   // @@protoc_insertion_point(destructor:zetasql.NoiseConfidenceInterval)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void NoiseConfidenceInterval::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void NoiseConfidenceInterval::ArenaDtor(void* object) {
-  NoiseConfidenceInterval* _this = reinterpret_cast< NoiseConfidenceInterval* >(object);
-  (void)_this;
-}
-void NoiseConfidenceInterval::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void NoiseConfidenceInterval::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void NoiseConfidenceInterval::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.NoiseConfidenceInterval)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
-    ::memset(&lower_bound_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&confidence_level_) -
-        reinterpret_cast<char*>(&lower_bound_)) + sizeof(confidence_level_));
+    ::memset(&_impl_.lower_bound_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.confidence_level_) -
+        reinterpret_cast<char*>(&_impl_.lower_bound_)) + sizeof(_impl_.confidence_level_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* NoiseConfidenceInterval::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* NoiseConfidenceInterval::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional double lower_bound = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 9)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 9)) {
           _Internal::set_has_lower_bound(&has_bits);
-          lower_bound_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.lower_bound_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double upper_bound = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _Internal::set_has_upper_bound(&has_bits);
-          upper_bound_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.upper_bound_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double confidence_level = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_confidence_level(&has_bits);
-          confidence_level_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.confidence_level_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1019,7 +1102,7 @@ const char* NoiseConfidenceInterval::_InternalParse(const char* ptr, ::PROTOBUF_
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1027,100 +1110,100 @@ failure:
 #undef CHK_
 }
 
-uint8_t* NoiseConfidenceInterval::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* NoiseConfidenceInterval::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.NoiseConfidenceInterval)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  cached_has_bits = _impl_._has_bits_[0];
   // optional double lower_bound = 1;
-  if (_internal_has_lower_bound()) {
+  if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(1, this->_internal_lower_bound(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        1, this->_internal_lower_bound(), target);
   }
 
   // optional double upper_bound = 2;
-  if (_internal_has_upper_bound()) {
+  if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_upper_bound(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        2, this->_internal_upper_bound(), target);
   }
 
   // optional double confidence_level = 3;
-  if (_internal_has_confidence_level()) {
+  if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_confidence_level(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_confidence_level(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.NoiseConfidenceInterval)
   return target;
 }
 
-size_t NoiseConfidenceInterval::ByteSizeLong() const {
+::size_t NoiseConfidenceInterval::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.NoiseConfidenceInterval)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional double lower_bound = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double upper_bound = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double confidence_level = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData NoiseConfidenceInterval::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     NoiseConfidenceInterval::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*NoiseConfidenceInterval::GetClassData() const { return &_class_data_; }
 
-void NoiseConfidenceInterval::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<NoiseConfidenceInterval *>(to)->MergeFrom(
-      static_cast<const NoiseConfidenceInterval &>(from));
-}
 
-
-void NoiseConfidenceInterval::MergeFrom(const NoiseConfidenceInterval& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.NoiseConfidenceInterval)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void NoiseConfidenceInterval::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<NoiseConfidenceInterval*>(&to_msg);
+  auto& from = static_cast<const NoiseConfidenceInterval&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.NoiseConfidenceInterval)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      lower_bound_ = from.lower_bound_;
+      _this->_impl_.lower_bound_ = from._impl_.lower_bound_;
     }
     if (cached_has_bits & 0x00000002u) {
-      upper_bound_ = from.upper_bound_;
+      _this->_impl_.upper_bound_ = from._impl_.upper_bound_;
     }
     if (cached_has_bits & 0x00000004u) {
-      confidence_level_ = from.confidence_level_;
+      _this->_impl_.confidence_level_ = from._impl_.confidence_level_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void NoiseConfidenceInterval::CopyFrom(const NoiseConfidenceInterval& from) {
@@ -1137,87 +1220,87 @@ bool NoiseConfidenceInterval::IsInitialized() const {
 void NoiseConfidenceInterval::InternalSwap(NoiseConfidenceInterval* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(NoiseConfidenceInterval, confidence_level_)
-      + sizeof(NoiseConfidenceInterval::confidence_level_)
-      - PROTOBUF_FIELD_OFFSET(NoiseConfidenceInterval, lower_bound_)>(
-          reinterpret_cast<char*>(&lower_bound_),
-          reinterpret_cast<char*>(&other->lower_bound_));
+      PROTOBUF_FIELD_OFFSET(NoiseConfidenceInterval, _impl_.confidence_level_)
+      + sizeof(NoiseConfidenceInterval::_impl_.confidence_level_)
+      - PROTOBUF_FIELD_OFFSET(NoiseConfidenceInterval, _impl_.lower_bound_)>(
+          reinterpret_cast<char*>(&_impl_.lower_bound_),
+          reinterpret_cast<char*>(&other->_impl_.lower_bound_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata NoiseConfidenceInterval::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter, &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[2]);
 }
-
 // ===================================================================
 
 class AnonOutputValues::_Internal {
  public:
 };
 
-AnonOutputValues::AnonOutputValues(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  values_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+AnonOutputValues::AnonOutputValues(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.AnonOutputValues)
 }
 AnonOutputValues::AnonOutputValues(const AnonOutputValues& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      values_(from.values_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  AnonOutputValues* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.values_){from._impl_.values_}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.AnonOutputValues)
 }
 
-inline void AnonOutputValues::SharedCtor() {
+inline void AnonOutputValues::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.values_){arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 AnonOutputValues::~AnonOutputValues() {
   // @@protoc_insertion_point(destructor:zetasql.AnonOutputValues)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void AnonOutputValues::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_values()->~RepeatedPtrField();
 }
 
-void AnonOutputValues::ArenaDtor(void* object) {
-  AnonOutputValues* _this = reinterpret_cast< AnonOutputValues* >(object);
-  (void)_this;
-}
-void AnonOutputValues::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void AnonOutputValues::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void AnonOutputValues::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.AnonOutputValues)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  values_.Clear();
+  _internal_mutable_values()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* AnonOutputValues::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* AnonOutputValues::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated .zetasql.AnonOutputValue values = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1225,8 +1308,9 @@ const char* AnonOutputValues::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1251,67 +1335,63 @@ failure:
 #undef CHK_
 }
 
-uint8_t* AnonOutputValues::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* AnonOutputValues::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.AnonOutputValues)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .zetasql.AnonOutputValue values = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_values_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_values_size()); i < n; i++) {
+    const auto& repfield = this->_internal_values(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, this->_internal_values(i), target, stream);
+        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.AnonOutputValues)
   return target;
 }
 
-size_t AnonOutputValues::ByteSizeLong() const {
+::size_t AnonOutputValues::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.AnonOutputValues)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.AnonOutputValue values = 1;
   total_size += 1UL * this->_internal_values_size();
-  for (const auto& msg : this->values_) {
+  for (const auto& msg : this->_internal_values()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData AnonOutputValues::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     AnonOutputValues::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AnonOutputValues::GetClassData() const { return &_class_data_; }
 
-void AnonOutputValues::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<AnonOutputValues *>(to)->MergeFrom(
-      static_cast<const AnonOutputValues &>(from));
-}
 
-
-void AnonOutputValues::MergeFrom(const AnonOutputValues& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnonOutputValues)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void AnonOutputValues::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<AnonOutputValues*>(&to_msg);
+  auto& from = static_cast<const AnonOutputValues&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnonOutputValues)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  values_.MergeFrom(from.values_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_mutable_values()->MergeFrom(from._internal_values());
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void AnonOutputValues::CopyFrom(const AnonOutputValues& from) {
@@ -1328,20 +1408,23 @@ bool AnonOutputValues::IsInitialized() const {
 void AnonOutputValues::InternalSwap(AnonOutputValues* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  values_.InternalSwap(&other->values_);
+  _internal_mutable_values()->InternalSwap(other->_internal_mutable_values());
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata AnonOutputValues::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter, &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[3]);
 }
-
 // ===================================================================
 
 class AnonOutputValue::_Internal {
  public:
-  using HasBits = decltype(std::declval<AnonOutputValue>()._has_bits_);
+  using HasBits = decltype(std::declval<AnonOutputValue>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(AnonOutputValue, _impl_._has_bits_);
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnonOutputValue, _impl_._oneof_case_);
   static const ::zetasql::NoiseConfidenceInterval& noise_confidence_interval(const AnonOutputValue* msg);
   static void set_has_noise_confidence_interval(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -1350,38 +1433,39 @@ class AnonOutputValue::_Internal {
 
 const ::zetasql::NoiseConfidenceInterval&
 AnonOutputValue::_Internal::noise_confidence_interval(const AnonOutputValue* msg) {
-  return *msg->noise_confidence_interval_;
+  return *msg->_impl_.noise_confidence_interval_;
 }
-AnonOutputValue::AnonOutputValue(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+AnonOutputValue::AnonOutputValue(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.AnonOutputValue)
 }
 AnonOutputValue::AnonOutputValue(const AnonOutputValue& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  AnonOutputValue* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.noise_confidence_interval_){nullptr}
+    , decltype(_impl_.value_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_noise_confidence_interval()) {
-    noise_confidence_interval_ = new ::zetasql::NoiseConfidenceInterval(*from.noise_confidence_interval_);
-  } else {
-    noise_confidence_interval_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.noise_confidence_interval_ = new ::zetasql::NoiseConfidenceInterval(*from._impl_.noise_confidence_interval_);
   }
   clear_has_value();
   switch (from.value_case()) {
     case kIntValue: {
-      _internal_set_int_value(from._internal_int_value());
+      _this->_internal_set_int_value(from._internal_int_value());
       break;
     }
     case kFloatValue: {
-      _internal_set_float_value(from._internal_float_value());
+      _this->_internal_set_float_value(from._internal_float_value());
       break;
     }
     case kStringValue: {
-      _internal_set_string_value(from._internal_string_value());
+      _this->_internal_set_string_value(from._internal_string_value());
       break;
     }
     case VALUE_NOT_SET: {
@@ -1391,34 +1475,37 @@ AnonOutputValue::AnonOutputValue(const AnonOutputValue& from)
   // @@protoc_insertion_point(copy_constructor:zetasql.AnonOutputValue)
 }
 
-inline void AnonOutputValue::SharedCtor() {
-noise_confidence_interval_ = nullptr;
-clear_has_value();
+inline void AnonOutputValue::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.noise_confidence_interval_){nullptr}
+    , decltype(_impl_.value_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_value();
 }
 
 AnonOutputValue::~AnonOutputValue() {
   // @@protoc_insertion_point(destructor:zetasql.AnonOutputValue)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void AnonOutputValue::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete noise_confidence_interval_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.noise_confidence_interval_;
   if (has_value()) {
     clear_value();
   }
 }
 
-void AnonOutputValue::ArenaDtor(void* object) {
-  AnonOutputValue* _this = reinterpret_cast< AnonOutputValue* >(object);
-  (void)_this;
-}
-void AnonOutputValue::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void AnonOutputValue::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void AnonOutputValue::clear_value() {
@@ -1433,73 +1520,77 @@ void AnonOutputValue::clear_value() {
       break;
     }
     case kStringValue: {
-      value_.string_value_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+      _impl_.value_.string_value_.Destroy();
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  _oneof_case_[0] = VALUE_NOT_SET;
+  _impl_._oneof_case_[0] = VALUE_NOT_SET;
 }
 
 
 void AnonOutputValue::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.AnonOutputValue)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(noise_confidence_interval_ != nullptr);
-    noise_confidence_interval_->Clear();
+    ABSL_DCHECK(_impl_.noise_confidence_interval_ != nullptr);
+    _impl_.noise_confidence_interval_->Clear();
   }
   clear_value();
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* AnonOutputValue::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* AnonOutputValue::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // int64 int_value = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _internal_set_int_value(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // double float_value = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _internal_set_float_value(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // string string_value = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_string_value();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.AnonOutputValue.string_value"));
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          CHK_(::_pbi::VerifyUTF8(str, "zetasql.AnonOutputValue.string_value"));
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.NoiseConfidenceInterval noise_confidence_interval = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_noise_confidence_interval(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1517,7 +1608,7 @@ const char* AnonOutputValue::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPAC
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1525,131 +1616,128 @@ failure:
 #undef CHK_
 }
 
-uint8_t* AnonOutputValue::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* AnonOutputValue::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.AnonOutputValue)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int64 int_value = 1;
-  if (_internal_has_int_value()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_int_value(), target);
+  switch (value_case()) {
+    case kIntValue: {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+          1, this->_internal_int_value(), target);
+      break;
+    }
+    case kFloatValue: {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          2, this->_internal_float_value(), target);
+      break;
+    }
+    case kStringValue: {
+      const std::string& _s = this->_internal_string_value();
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "zetasql.AnonOutputValue.string_value");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
+      break;
+    }
+    default: ;
   }
-
-  // double float_value = 2;
-  if (_internal_has_float_value()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_float_value(), target);
-  }
-
-  // string string_value = 3;
-  if (_internal_has_string_value()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_string_value().data(), static_cast<int>(this->_internal_string_value().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "zetasql.AnonOutputValue.string_value");
-    target = stream->WriteStringMaybeAliased(
-        3, this->_internal_string_value(), target);
-  }
-
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.NoiseConfidenceInterval noise_confidence_interval = 4;
-  if (_internal_has_noise_confidence_interval()) {
-    target = stream->EnsureSpace(target);
+  if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        4, _Internal::noise_confidence_interval(this), target, stream);
+      InternalWriteMessage(4, _Internal::noise_confidence_interval(this),
+        _Internal::noise_confidence_interval(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.AnonOutputValue)
   return target;
 }
 
-size_t AnonOutputValue::ByteSizeLong() const {
+::size_t AnonOutputValue::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.AnonOutputValue)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional .zetasql.NoiseConfidenceInterval noise_confidence_interval = 4;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *noise_confidence_interval_);
+        *_impl_.noise_confidence_interval_);
   }
 
   switch (value_case()) {
     // int64 int_value = 1;
     case kIntValue: {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_int_value());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_int_value());
       break;
     }
     // double float_value = 2;
     case kFloatValue: {
-      total_size += 1 + 8;
+      total_size += 9;
       break;
     }
     // string string_value = 3;
     case kStringValue: {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_string_value());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_string_value());
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData AnonOutputValue::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     AnonOutputValue::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AnonOutputValue::GetClassData() const { return &_class_data_; }
 
-void AnonOutputValue::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<AnonOutputValue *>(to)->MergeFrom(
-      static_cast<const AnonOutputValue &>(from));
-}
 
-
-void AnonOutputValue::MergeFrom(const AnonOutputValue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnonOutputValue)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void AnonOutputValue::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<AnonOutputValue*>(&to_msg);
+  auto& from = static_cast<const AnonOutputValue&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.AnonOutputValue)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_noise_confidence_interval()) {
-    _internal_mutable_noise_confidence_interval()->::zetasql::NoiseConfidenceInterval::MergeFrom(from._internal_noise_confidence_interval());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_noise_confidence_interval()->::zetasql::NoiseConfidenceInterval::MergeFrom(
+        from._internal_noise_confidence_interval());
   }
   switch (from.value_case()) {
     case kIntValue: {
-      _internal_set_int_value(from._internal_int_value());
+      _this->_internal_set_int_value(from._internal_int_value());
       break;
     }
     case kFloatValue: {
-      _internal_set_float_value(from._internal_float_value());
+      _this->_internal_set_float_value(from._internal_float_value());
       break;
     }
     case kStringValue: {
-      _internal_set_string_value(from._internal_string_value());
+      _this->_internal_set_string_value(from._internal_string_value());
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void AnonOutputValue::CopyFrom(const AnonOutputValue& from) {
@@ -1666,37 +1754,40 @@ bool AnonOutputValue::IsInitialized() const {
 void AnonOutputValue::InternalSwap(AnonOutputValue* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(noise_confidence_interval_, other->noise_confidence_interval_);
-  swap(value_, other->value_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.noise_confidence_interval_, other->_impl_.noise_confidence_interval_);
+  swap(_impl_.value_, other->_impl_.value_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata AnonOutputValue::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_getter, &descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto[4]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::AnonOutputWithReport* Arena::CreateMaybeMessage< ::zetasql::AnonOutputWithReport >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::AnonOutputWithReport*
+Arena::CreateMaybeMessage< ::zetasql::AnonOutputWithReport >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::AnonOutputWithReport >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::BoundingReport* Arena::CreateMaybeMessage< ::zetasql::BoundingReport >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::BoundingReport*
+Arena::CreateMaybeMessage< ::zetasql::BoundingReport >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::BoundingReport >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::NoiseConfidenceInterval* Arena::CreateMaybeMessage< ::zetasql::NoiseConfidenceInterval >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::NoiseConfidenceInterval*
+Arena::CreateMaybeMessage< ::zetasql::NoiseConfidenceInterval >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::NoiseConfidenceInterval >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::AnonOutputValues* Arena::CreateMaybeMessage< ::zetasql::AnonOutputValues >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::AnonOutputValues*
+Arena::CreateMaybeMessage< ::zetasql::AnonOutputValues >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::AnonOutputValues >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::AnonOutputValue* Arena::CreateMaybeMessage< ::zetasql::AnonOutputValue >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::AnonOutputValue*
+Arena::CreateMaybeMessage< ::zetasql::AnonOutputValue >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::AnonOutputValue >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

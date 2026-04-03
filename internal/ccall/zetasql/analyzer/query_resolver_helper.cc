@@ -28,30 +28,123 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
 #include "zetasql/analyzer/analytic_function_resolver.h"
 #include "zetasql/analyzer/expr_resolver_helper.h"
 #include "zetasql/analyzer/name_scope.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parse_tree_errors.h"
 #include "zetasql/public/id_string.h"
+#include "zetasql/public/language_options.h"
 #include "zetasql/public/strings.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/value.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "zetasql/resolved_ast/resolved_column.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/flat_hash_map.h"
-#include "absl/memory/memory.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
 
 namespace zetasql {
+
+namespace {
+
+// Converts a list of ResolvedComputedColumn to a list ResolvedColumnRef.
+std::vector<std::unique_ptr<const ResolvedColumnRef>> MakeResolvedColumnRefs(
+    absl::Span<const ResolvedComputedColumn* const> column_list) {
+  absl::flat_hash_set<ResolvedColumn> distinct_column_set;
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> column_ref_list;
+  for (const ResolvedComputedColumn* computed_column : column_list) {
+    std::unique_ptr<ResolvedColumnRef> column_ref = MakeResolvedColumnRef(
+        computed_column->column().type(), computed_column->column(),
+        /*is_correlated=*/false);
+    // Don't duplicate columns in a the grouping set.
+    if (zetasql_base::InsertIfNotPresent(&distinct_column_set, column_ref->column())) {
+      column_ref_list.push_back(std::move(column_ref));
+    }
+  }
+  return column_ref_list;
+}
+
+// Releases rollup list to rollup_column_list and grouping_set_list, this is the
+// legacy way to represent rollup list in ResolvedAggregateScan. The method will
+// called only when FEATURE_V_1_4_GROUPING_SETS isn't enabled, and it will be
+// deprecated soon using the new representation of rollup, see more in
+// (broken link).
+absl::Status ReleaseLegacyRollupColumnList(
+    std::vector<GroupingSetInfo>& grouping_set_info_list,
+    std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>*
+        grouping_set_list,
+    std::vector<std::unique_ptr<const ResolvedColumnRef>>* rollup_column_list) {
+  // Extract the rollup column list from the grouping_set_info_list.
+  std::vector<const ResolvedComputedColumn*> rollup_columns;
+  for (const GroupingSetInfo& grouping_set : grouping_set_info_list) {
+    ZETASQL_RET_CHECK(grouping_set.kind == GroupingSetKind::kRollup);
+    for (const ResolvedComputedColumnList& column_list :
+         grouping_set.grouping_set_item_list) {
+      ZETASQL_RET_CHECK_EQ(column_list.size(), 1)
+          << "There should be exactly one column in the column_list";
+      rollup_columns.push_back(column_list.front());
+    }
+  }
+
+  if (rollup_columns.empty()) {
+    return absl::InvalidArgumentError("rollup column list is empty");
+  }
+  // group_by_info_.rollup_column_list stores the rollup columns. Grouping
+  // sets are computed from the prefixes of
+  // group_by_info_.rollup_column_list, and references to the same column
+  // are deduplicated within a particular grouping set.
+  //
+  // For example, suppose that group_by_info_.rollup_column_list contains
+  // columns b, a, c, a. This function will return:
+  //
+  // rollup_list: b, a, c, a.
+  // grouping_set_list: {b, a, c}, {b, a, c}, {b, a}, {b}, {}.
+
+  // Unowned pointers.
+  std::vector<const ResolvedColumnRef*> current_grouping_set;
+  std::set<ResolvedColumn> distinct_rollup_columns;
+
+  // Add the empty grouping set.
+  grouping_set_list->push_back(MakeResolvedGroupingSet());
+
+  for (const ResolvedComputedColumn* rollup_column : rollup_columns) {
+    auto rollup_column_ref = MakeResolvedColumnRef(
+        rollup_column->column().type(), rollup_column->column(),
+        /*is_correlated=*/false);
+    // Don't duplicate columns in the grouping sets.
+    if (zetasql_base::InsertIfNotPresent(&distinct_rollup_columns,
+                                rollup_column_ref->column())) {
+      current_grouping_set.push_back(rollup_column_ref.get());
+    }
+    rollup_column_list->push_back(std::move(rollup_column_ref));
+    std::vector<std::unique_ptr<const ResolvedColumnRef>> grouping_set_columns;
+    grouping_set_columns.reserve(current_grouping_set.size());
+    for (const ResolvedColumnRef* grouping_column : current_grouping_set) {
+      grouping_set_columns.push_back(MakeResolvedColumnRef(
+          grouping_column->column().type(), grouping_column->column(),
+          /*is_correlated=*/false));
+    }
+    grouping_set_list->push_back(
+        MakeResolvedGroupingSet(std::move(grouping_set_columns)));
+  }
+  // Order of the rows resulting from ROLLUP are not guaranteed, but engines
+  // will generally want to compute aggregates from more to less granular
+  // levels of subtotals, e.g. (a, b, c), (a, b), (a), and then ().
+  std::reverse(grouping_set_list->begin(), grouping_set_list->end());
+
+  grouping_set_info_list.clear();
+  return absl::OkStatus();
+}
+
+}  // namespace
 
 void QueryGroupByAndAggregateInfo::Reset() {
   has_group_by = false;
@@ -59,7 +152,9 @@ void QueryGroupByAndAggregateInfo::Reset() {
   aggregate_expr_map.clear();
   group_by_columns_to_compute.clear();
   group_by_expr_map.clear();
-  rollup_column_list.clear();
+  grouping_list.clear();
+  grouping_output_columns.clear();
+  grouping_set_list.clear();
   aggregate_columns_to_compute.clear();
   group_by_valid_field_info_map.Clear();
   is_post_distinct = false;
@@ -112,16 +207,16 @@ std::string SelectColumnState::DebugString(absl::string_view indent) const {
 
 void SelectColumnStateList::AddSelectColumn(
     const ASTExpression* ast_expr, IdString alias, bool is_explicit,
-    bool has_aggregation, bool has_analytic,
+    bool has_aggregation, bool has_analytic, bool has_volatile,
     std::unique_ptr<const ResolvedExpr> resolved_expr) {
   AddSelectColumn(std::make_unique<SelectColumnState>(
-      ast_expr, alias, is_explicit, has_aggregation, has_analytic,
+      ast_expr, alias, is_explicit, has_aggregation, has_analytic, has_volatile,
       std::move(resolved_expr)));
 }
 
 void SelectColumnStateList::AddSelectColumn(
     std::unique_ptr<SelectColumnState> select_column_state) {
-  ZETASQL_DCHECK_EQ(select_column_state->select_list_position, -1);
+  ABSL_DCHECK_EQ(select_column_state->select_list_position, -1);
   select_column_state->select_list_position =
       static_cast<int>(select_column_state_list_.size());
   // Save a mapping from the alias to this SelectColumnState. The mapping is
@@ -165,7 +260,7 @@ absl::Status SelectColumnStateList::FindAndValidateSelectColumnStateByAlias(
 }
 
 absl::Status SelectColumnStateList::FindAndValidateSelectColumnStateByOrdinal(
-    const std::string& expr_description, const ASTNode* ast_location,
+    absl::string_view expr_description, const ASTNode* ast_location,
     const int64_t ordinal, const ExprResolutionInfo* expr_resolution_info,
     const SelectColumnState** select_column_state) const {
   *select_column_state = nullptr;
@@ -212,15 +307,15 @@ absl::Status SelectColumnStateList::ValidateAggregateAndAnalyticSupport(
 
 SelectColumnState* SelectColumnStateList::GetSelectColumnState(
     int select_list_position) {
-  ZETASQL_CHECK_GE(select_list_position, 0);
-  ZETASQL_CHECK_LT(select_list_position, select_column_state_list_.size());
+  ABSL_CHECK_GE(select_list_position, 0);
+  ABSL_CHECK_LT(select_list_position, select_column_state_list_.size());
   return select_column_state_list_[select_list_position].get();
 }
 
 const SelectColumnState* SelectColumnStateList::GetSelectColumnState(
     int select_list_position) const {
-  ZETASQL_CHECK_GE(select_list_position, 0);
-  ZETASQL_CHECK_LT(select_list_position, select_column_state_list_.size());
+  ABSL_CHECK_GE(select_list_position, 0);
+  ABSL_CHECK_LT(select_list_position, select_column_state_list_.size());
   return select_column_state_list_[select_list_position].get();
 }
 
@@ -288,62 +383,87 @@ QueryResolutionInfo::GetEquivalentGroupByComputedColumnOrNull(
   return zetasql_base::FindPtrOrNull(group_by_info_.group_by_expr_map, expr);
 }
 
-void QueryResolutionInfo::AddRollupColumn(
-    const ResolvedComputedColumn* column) {
-  group_by_info_.rollup_column_list.push_back(column);
+void QueryResolutionInfo::AddGroupingSet(const GroupingSetInfo& grouping_set) {
+  group_by_info_.grouping_set_list.push_back(grouping_set);
 }
 
-void QueryResolutionInfo::ReleaseGroupingSetsAndRollupList(
-    std::vector<std::unique_ptr<const ResolvedGroupingSet>>* grouping_set_list,
-    std::vector<std::unique_ptr<const ResolvedColumnRef>>* rollup_column_list) {
-  if (group_by_info_.rollup_column_list.empty()) {
-    return;
+void QueryResolutionInfo::AddGroupingColumn(
+    std::unique_ptr<const ResolvedGroupingCall> column) {
+  group_by_info_.grouping_list.push_back(std::move(column));
+}
+
+// Add the grouping column to the expr map, but since at this point it's an
+// AggregateFunctionCall, don't add it to the grouping_call_list yet. That will
+// happen during the second pass of the selectList, where the
+// correct group_by column reference is resolved.
+absl::Status QueryResolutionInfo::AddGroupingColumnToExprMap(
+    const ASTFunctionCall* ast_function_call,
+    std::unique_ptr<const ResolvedComputedColumn> grouping_output_col) {
+  group_by_info_.has_aggregation = true;
+  ZETASQL_RET_CHECK(ast_function_call != nullptr);
+  zetasql_base::InsertIfNotPresent(&group_by_info_.aggregate_expr_map, ast_function_call,
+                          grouping_output_col.get());
+  group_by_info_.grouping_output_columns.push_back(
+      std::move(grouping_output_col));
+  return absl::OkStatus();
+}
+
+absl::Status QueryResolutionInfo::ReleaseGroupingSetsAndRollupList(
+    std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>*
+        grouping_set_list,
+    std::vector<std::unique_ptr<const ResolvedColumnRef>>* rollup_column_list,
+    const LanguageOptions& language_options) {
+  if (group_by_info_.grouping_set_list.empty()) {
+    return absl::OkStatus();
   }
 
-  // group_by_info_.rollup_column_list stores the rollup columns. Grouping sets
-  // are computed from the prefixes of group_by_info_.rollup_column_list, and
-  // references to the same column are deduplicated within a particular grouping
-  // set.
-  //
-  // For example, suppose that group_by_info_.rollup_column_list contains
-  // columns b, a, c, a. This function will return:
-  //
-  // rollup_list: b, a, c, a.
-  // grouping_set_list: {b, a, c}, {b, a, c}, {b, a}, {b}, {}.
-
-  // Unowned pointers.
-  std::vector<const ResolvedColumnRef*> current_grouping_set;
-  std::set<ResolvedColumn> distinct_rollup_columns;
-
-  // Add the empty grouping set.
-  grouping_set_list->push_back(MakeResolvedGroupingSet());
-
-  for (const ResolvedComputedColumn* rollup_column :
-       group_by_info_.rollup_column_list) {
-    auto rollup_column_ref =
-        MakeResolvedColumnRef(rollup_column->column().type(),
-                              rollup_column->column(), /*is_correlated=*/false);
-    // Don't duplicate columns in the grouping sets.
-    if (zetasql_base::InsertIfNotPresent(&distinct_rollup_columns,
-                                rollup_column_ref->column())) {
-      current_grouping_set.push_back(rollup_column_ref.get());
-    }
-    rollup_column_list->push_back(std::move(rollup_column_ref));
-    std::vector<std::unique_ptr<const ResolvedColumnRef>> grouping_set_columns;
-    grouping_set_columns.reserve(current_grouping_set.size());
-    for (const ResolvedColumnRef* grouping_column : current_grouping_set) {
-      grouping_set_columns.push_back(MakeResolvedColumnRef(
-          grouping_column->column().type(), grouping_column->column(),
-          /*is_correlated=*/false));
-    }
-    grouping_set_list->push_back(
-        MakeResolvedGroupingSet(std::move(grouping_set_columns)));
+  // Release the rollup column list to the legacy resolved ast representation
+  // when grouping sets feature isn't enabled.
+  if (!language_options.LanguageFeatureEnabled(FEATURE_V_1_4_GROUPING_SETS)) {
+    return ReleaseLegacyRollupColumnList(group_by_info_.grouping_set_list,
+                                         grouping_set_list, rollup_column_list);
   }
-  group_by_info_.rollup_column_list.clear();
-  // Order of the rows resulting from ROLLUP are not guaranteed, but engines
-  // will generally want to compute aggregates from more to less granular
-  // levels of subtotals, e.g. (a, b, c), (a, b), (a), and then ().
-  std::reverse(grouping_set_list->begin(), grouping_set_list->end());
+
+  for (const GroupingSetInfo& grouping_set : group_by_info_.grouping_set_list) {
+    if (grouping_set.kind == GroupingSetKind::kGroupingSet) {
+      std::vector<const ResolvedComputedColumn*> grouping_set_columns;
+      for (const ResolvedComputedColumnList& column_list :
+           grouping_set.grouping_set_item_list) {
+        ZETASQL_RET_CHECK_LE(column_list.size(), 1)
+            << "There should be at most one column in the column_list for a "
+               "grouping set";
+        // An empty list means an empty grouping set.
+        if (!column_list.empty()) {
+          grouping_set_columns.push_back(column_list.front());
+        }
+      }
+      grouping_set_list->push_back(MakeResolvedGroupingSet(
+          MakeResolvedColumnRefs(absl::MakeSpan(grouping_set_columns))));
+    } else {
+      std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>
+          multi_columns;
+      for (const ResolvedComputedColumnList& column_list :
+           grouping_set.grouping_set_item_list) {
+        std::vector<std::unique_ptr<const ResolvedColumnRef>> column_ref_list =
+            MakeResolvedColumnRefs(absl::MakeSpan(column_list));
+        ZETASQL_RET_CHECK_GT(column_ref_list.size(), 0)
+            << "At least one column in the rollup or cube's column list";
+        multi_columns.push_back(
+            MakeResolvedGroupingSetMultiColumn(std::move(column_ref_list)));
+      }
+      ZETASQL_RET_CHECK_GT(multi_columns.size(), 0)
+          << "rollup or cube column list can not be empty";
+      if (grouping_set.kind == GroupingSetKind::kRollup) {
+        grouping_set_list->push_back(
+            MakeResolvedRollup(std::move(multi_columns)));
+      } else {
+        grouping_set_list->push_back(
+            MakeResolvedCube(std::move(multi_columns)));
+      }
+    }
+  }
+  group_by_info_.grouping_set_list.clear();
+  return absl::OkStatus();
 }
 
 void QueryResolutionInfo::AddAggregateComputedColumn(
@@ -410,12 +530,15 @@ void QueryResolutionInfo::ResetAnalyticResolver(Resolver* resolver) {
       resolver, analytic_resolver_->ReleaseNamedWindowInfoMap());
 }
 
-absl::Status QueryResolutionInfo::CheckComputedColumnListsAreEmpty() const {
+absl::Status QueryResolutionInfo::CheckComputedColumnListsAreEmpty() {
+  // grouping columns to compute are not used for any computation, so can clear
+  // when expecting lists to be empty.
+  group_by_info_.grouping_output_columns.clear();
   ZETASQL_RET_CHECK(select_list_columns_to_compute_before_aggregation_.empty());
   ZETASQL_RET_CHECK(select_list_columns_to_compute_.empty());
   ZETASQL_RET_CHECK(group_by_info_.group_by_columns_to_compute.empty());
   ZETASQL_RET_CHECK(group_by_info_.aggregate_columns_to_compute.empty());
-  ZETASQL_RET_CHECK(group_by_info_.rollup_column_list.empty());
+  ZETASQL_RET_CHECK(group_by_info_.grouping_set_list.empty());
   ZETASQL_RET_CHECK(order_by_columns_to_compute_.empty());
   ZETASQL_RET_CHECK(!analytic_resolver_->HasWindowColumnsToCompute());
   return absl::OkStatus();
@@ -452,8 +575,6 @@ std::string QueryResolutionInfo::DebugString() const {
   }();
   absl::StrAppend(&debug_string, "select_with_mode: ", select_with_mode_str,
                   "\n");
-  absl::StrAppend(&debug_string,
-                  "has_aggregation: ", group_by_info_.has_aggregation, "\n");
   absl::StrAppend(&debug_string, "group_by_columns(size ",
                   group_by_info_.group_by_columns_to_compute.size(), "):\n");
   for (const auto& column : group_by_info_.group_by_columns_to_compute) {

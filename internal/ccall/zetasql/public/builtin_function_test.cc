@@ -23,7 +23,6 @@
 #include <vector>
 
 #include "zetasql/base/enum_utils.h"
-#include "google/protobuf/descriptor.h"
 #include "zetasql/base/testing/status_matchers.h"
 #include "zetasql/public/function.pb.h"
 #include "zetasql/public/language_options.h"
@@ -34,16 +33,22 @@
 #include "zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/strings/str_join.h"
 #include "zetasql/base/map_util.h"
-#include "zetasql/base/status.h"
 
 namespace zetasql {
 
+using testing::Eq;
+using testing::Gt;
+using testing::IsEmpty;
 using testing::IsNull;
+using testing::IsSupersetOf;
+using testing::Not;
 using testing::NotNull;
 
-using NameToFunctionMap = std::map<std::string, std::unique_ptr<Function>>;
+using NameToFunctionMap =
+    absl::flat_hash_map<std::string, std::unique_ptr<Function>>;
 using NameToTypeMap = absl::flat_hash_map<std::string, const Type*>;
 
 TEST(SimpleBuiltinFunctionTests, ConstructWithProtoTest) {
@@ -176,7 +181,7 @@ void GetConcreteTypesFromSignature(
 void ValidateFunction(const LanguageOptions& language_options,
                       absl::string_view function_name,
                       const Function& function) {
-  // GetZetaSQLFunctions should all be builtin functions.
+  // GetBuiltinFunctionsAndTypes should all be builtin functions.
   EXPECT_TRUE(function.IsZetaSQLBuiltin());
 
   // None of the built-in function names/aliases should start with
@@ -211,14 +216,17 @@ void ValidateFunction(const LanguageOptions& language_options,
 TEST(SimpleBuiltinFunctionTests, SanityTests) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
 
   // These settings retrieve the maximum set of functions/signatures
   // possible.
   LanguageOptions language_options;
   language_options.EnableMaximumLanguageFeaturesForDevelopment();
   language_options.set_product_mode(PRODUCT_INTERNAL);
+  ZetaSQLBuiltinFunctionOptions options(language_options);
   // Get all the relevant functions for this 'language_options'.
-  GetZetaSQLFunctions(&type_factory, language_options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   for (const auto& [name, function] : functions) {
     ValidateFunction(language_options, name, *function);
@@ -250,8 +258,11 @@ TEST(SimpleBuiltinFunctionTests, SanityTests) {
 TEST(SimpleBuiltinFunctionTests, BasicTests) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
+  ZetaSQLBuiltinFunctionOptions options(LanguageOptions{});
 
-  GetZetaSQLFunctions(&type_factory, LanguageOptions(), &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   std::unique_ptr<Function>* function =
       zetasql_base::FindOrNull(functions, "current_timestamp");
@@ -294,9 +305,11 @@ TEST(SimpleBuiltinFunctionTests, ExcludedBuiltinFunctionTests) {
   TypeFactory type_factory;
   NameToFunctionMap all_functions;
   NameToFunctionMap functions;
+  NameToTypeMap types;
 
   ZetaSQLBuiltinFunctionOptions options;
-  GetZetaSQLFunctions(&type_factory, options, &all_functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, all_functions, types));
 
   // Remove all CONCAT signatures.
   options.exclude_function_ids.insert(FN_CONCAT_STRING);
@@ -324,18 +337,20 @@ TEST(SimpleBuiltinFunctionTests, ExcludedBuiltinFunctionTests) {
   options.exclude_function_ids.insert(FN_ADD_INT64_DATE);
 
   // Get filtered functions.
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  types.clear();
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   std::vector<std::string> functions_not_in_all_functions;
   std::vector<std::string> all_functions_not_in_functions;
 
   for (const auto& function : all_functions) {
-    if (!zetasql_base::ContainsKey(functions, function.first)) {
+    if (!functions.contains(function.first)) {
       all_functions_not_in_functions.push_back(function.first);
     }
   }
   for (const auto& function : functions) {
-    if (!zetasql_base::ContainsKey(all_functions, function.first)) {
+    if (!all_functions.contains(function.first)) {
       functions_not_in_all_functions.push_back(function.first);
     }
   }
@@ -381,6 +396,7 @@ TEST(SimpleBuiltinFunctionTests, ExcludedBuiltinFunctionTests) {
 TEST(SimpleBuiltinFunctionTests, IncludedBuiltinFunctionTests) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
   ZetaSQLBuiltinFunctionOptions options;
 
   // Include signature for CONCAT.
@@ -391,7 +407,8 @@ TEST(SimpleBuiltinFunctionTests, IncludedBuiltinFunctionTests) {
   options.include_function_ids.insert(FN_ADD_INT64);
   options.include_function_ids.insert(FN_ADD_DOUBLE);
 
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   EXPECT_EQ(3, functions.size());
 
@@ -429,10 +446,12 @@ TEST(SimpleBuiltinFunctionTests,
 
   {
     NameToFunctionMap functions;
+    NameToTypeMap types;
     // FEATURE_V_1_2_CIVIL_TIME is not enabled, the function timestamp() should
     // have only two signatures.
     options.language_options.DisableAllLanguageFeatures();
-    GetZetaSQLFunctions(&type_factory, options, &functions);
+    ZETASQL_EXPECT_OK(
+        GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
     std::unique_ptr<Function>* function =
         zetasql_base::FindOrNull(functions, "timestamp");
     ASSERT_TRUE(function != nullptr);
@@ -446,11 +465,13 @@ TEST(SimpleBuiltinFunctionTests,
 
   {
     NameToFunctionMap functions;
+    NameToTypeMap types;
     // Enabling FEATURE_V_1_2_CIVIL_TIME should allow all three signatures to be
     // included for the function timestamp().
     options.language_options.SetEnabledLanguageFeatures(
         {FEATURE_V_1_2_CIVIL_TIME});
-    GetZetaSQLFunctions(&type_factory, options, &functions);
+    ZETASQL_EXPECT_OK(
+        GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
     std::unique_ptr<Function>* function =
         zetasql_base::FindOrNull(functions, "timestamp");
     ASSERT_TRUE(function != nullptr);
@@ -468,6 +489,7 @@ TEST(SimpleBuiltinFunctionTests,
 TEST(SimpleBuiltinFunctionTests, IncludedAndExcludedBuiltinFunctionTests) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
   ZetaSQLBuiltinFunctionOptions options;
 
   // Include two of three signatures for ADD, but exclude one of them.
@@ -475,7 +497,8 @@ TEST(SimpleBuiltinFunctionTests, IncludedAndExcludedBuiltinFunctionTests) {
   options.include_function_ids.insert(FN_ADD_DOUBLE);
   options.exclude_function_ids.insert(FN_ADD_DOUBLE);
 
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   EXPECT_EQ(1, functions.size());
 
@@ -489,56 +512,64 @@ TEST(SimpleBuiltinFunctionTests, IncludedAndExcludedBuiltinFunctionTests) {
 
 TEST(SimpleBuiltinFunctionTests, LanguageOptions) {
   LanguageOptions language_options;
+  ZetaSQLBuiltinFunctionOptions options(language_options);
 
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
 
   // With default LanguageOptions, we won't get analytic functions.
-  GetZetaSQLFunctions(&type_factory, language_options, &functions);
-  EXPECT_TRUE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_COUNT)));
-  EXPECT_FALSE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_RANK)));
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
+  EXPECT_TRUE(functions.contains(FunctionSignatureIdToName(FN_COUNT)));
+  EXPECT_FALSE(functions.contains(FunctionSignatureIdToName(FN_RANK)));
 
-  language_options.EnableLanguageFeature(FEATURE_ANALYTIC_FUNCTIONS);
-  language_options.EnableMaximumLanguageFeatures();
+  options.language_options.EnableLanguageFeature(FEATURE_ANALYTIC_FUNCTIONS);
+  options.language_options.EnableMaximumLanguageFeatures();
 
   functions.clear();
-  GetZetaSQLFunctions(&type_factory, language_options, &functions);
-  EXPECT_TRUE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_COUNT)));
-  EXPECT_TRUE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_RANK)));
+  types.clear();
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
+  EXPECT_TRUE(functions.contains(FunctionSignatureIdToName(FN_COUNT)));
+  EXPECT_TRUE(functions.contains(FunctionSignatureIdToName(FN_RANK)));
 
   // Now test combination of LanguageOptions, inclusions and exclusions.
   // Without enabling FEATURE_ANALYTIC_FUNCTIONS, we don't get FN_RANK, even
   // if we put it on the include_function_ids.
-  ZetaSQLBuiltinFunctionOptions options{LanguageOptions()};
+  options.language_options = LanguageOptions();
   EXPECT_FALSE(options.language_options.LanguageFeatureEnabled(
       FEATURE_ANALYTIC_FUNCTIONS));
   options.include_function_ids.insert(FN_RANK);
   options.include_function_ids.insert(FN_MAX);
 
   functions.clear();
-  GetZetaSQLFunctions(&type_factory, options, &functions);
-  EXPECT_TRUE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_MAX)));
-  EXPECT_FALSE(
-      zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_COUNT)));
-  EXPECT_FALSE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_RANK)));
-  EXPECT_FALSE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_LEAD)));
+  types.clear();
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
+  EXPECT_TRUE(functions.contains(FunctionSignatureIdToName(FN_MAX)));
+  EXPECT_FALSE(functions.contains(FunctionSignatureIdToName(FN_COUNT)));
+  EXPECT_FALSE(functions.contains(FunctionSignatureIdToName(FN_RANK)));
+  EXPECT_FALSE(functions.contains(FunctionSignatureIdToName(FN_LEAD)));
 
   // When we enable FEATURE_ANALYTIC_FUNCTIONS, inclusion lists apply to
   // analytic functions.
   options.language_options.EnableLanguageFeature(FEATURE_ANALYTIC_FUNCTIONS);
 
   functions.clear();
-  GetZetaSQLFunctions(&type_factory, options, &functions);
-  EXPECT_TRUE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_MAX)));
-  EXPECT_FALSE(
-      zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_COUNT)));
-  EXPECT_TRUE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_RANK)));
-  EXPECT_FALSE(zetasql_base::ContainsKey(functions, FunctionSignatureIdToName(FN_LEAD)));
+  types.clear();
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
+  EXPECT_TRUE(functions.contains(FunctionSignatureIdToName(FN_MAX)));
+  EXPECT_FALSE(functions.contains(FunctionSignatureIdToName(FN_COUNT)));
+  EXPECT_TRUE(functions.contains(FunctionSignatureIdToName(FN_RANK)));
+  EXPECT_FALSE(functions.contains(FunctionSignatureIdToName(FN_LEAD)));
 }
 
 TEST(SimpleBuiltinFunctionTests, NumericFunctions) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
 
   // Verify that numeric functions are available when NUMERIC type is enabled.
   LanguageOptions language_options;
@@ -548,7 +579,8 @@ TEST(SimpleBuiltinFunctionTests, NumericFunctions) {
   ZetaSQLBuiltinFunctionOptions options{language_options};
   options.include_function_ids.insert(FN_ABS_NUMERIC);
 
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
   std::unique_ptr<Function>* function =
       zetasql_base::FindOrNull(functions, FunctionSignatureIdToName(FN_ABS_NUMERIC));
   EXPECT_THAT(function, NotNull());
@@ -581,9 +613,11 @@ GetPostResolutionArgumentConstraints(FunctionSignatureId function_id,
 TEST(SimpleFunctionTests, TestCheckArgumentConstraints) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
   ZetaSQLBuiltinFunctionOptions options;
 
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   const Type* int64_type = types::Int64Type();
   const Type* string_type = types::StringType();
@@ -709,7 +743,9 @@ TEST(SimpleFunctionTests, HideFunctionsForExternalMode) {
       options.language_options.set_product_mode(PRODUCT_EXTERNAL);
     }
     NameToFunctionMap functions;
-    GetZetaSQLFunctions(&type_factory, options, &functions);
+    NameToTypeMap types;
+    ZETASQL_EXPECT_OK(
+        GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
     // NORMALIZE and NORMALIZE_AND_CASEFOLD take an enum type but are expected
     // to be available in external mode.
@@ -740,8 +776,8 @@ TEST(SimpleFunctionTests, TestNoOpaqueTypesInProductExternl) {
   options.language_options.EnableMaximumLanguageFeaturesForDevelopment();
   NameToFunctionMap functions;
   NameToTypeMap types;
-  ZETASQL_ASSERT_OK(GetZetaSQLFunctionsAndTypes(&type_factory, options, &functions,
-                                          &types));
+  ZETASQL_ASSERT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
   EXPECT_THAT(types, testing::IsEmpty());
 }
 
@@ -753,13 +789,13 @@ TEST(SimpleFunctionTests, TestOpaqueTypeConsistency) {
   TypeFactory type_factory;
   // Builtin functions that include an opaque type transitively in their
   // signature should also add that type with several exceptions.
-  // Conversly, all added types should appear in some function signature.
+  // Conversely, all added types should appear in some function signature.
   ZetaSQLBuiltinFunctionOptions options;
   options.language_options.EnableMaximumLanguageFeaturesForDevelopment();
   NameToFunctionMap functions;
   NameToTypeMap types;
-  ZETASQL_ASSERT_OK(GetZetaSQLFunctionsAndTypes(&type_factory, options, &functions,
-                                          &types));
+  ZETASQL_ASSERT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
   absl::flat_hash_set<const Type*> types_in_catalog;
   for (const auto& [_, type] : types) {
     types_in_catalog.insert(type);
@@ -781,7 +817,7 @@ TEST(SimpleFunctionTests, TestOpaqueTypeConsistency) {
           EXPECT_THAT(types_in_catalog, testing::Contains(type))
               << "function " << name << " with signature " << sig.DebugString()
               << " references opaque enum type " << type->DebugString()
-              << " which is not returned by GetZetaSQLFunctionsAndTypes";
+              << " which is not returned by GetBuiltinFunctionsAndTypes";
         }
       }
       all_referenced_types.insert(types_in_signature.begin(),
@@ -892,13 +928,15 @@ TEST(SimpleFunctionTests,
   // any function signatures that engines may have added for extensions.
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
 
   // These settings retrieve all the functions and signatures.
   LanguageOptions options;
   options.EnableMaximumLanguageFeatures();
   options.set_product_mode(PRODUCT_INTERNAL);
 
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   for (const auto& function_entry : functions) {
     const Function* function = function_entry.second.get();
@@ -914,13 +952,15 @@ TEST(SimpleFunctionTests,
 TEST(SimpleFunctionTests, TestRewriteEnabled) {
   TypeFactory type_factory;
   NameToFunctionMap functions;
+  NameToTypeMap types;
   ZetaSQLBuiltinFunctionOptions options;
 
   // Override the rewriters for ARRAY_FIRST and ARRAY_LAST.
   options.rewrite_enabled[FN_ARRAY_FIRST] = true;
   options.rewrite_enabled[FN_ARRAY_LAST] = false;
 
-  GetZetaSQLFunctions(&type_factory, options, &functions);
+  ZETASQL_EXPECT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
 
   std::unique_ptr<Function>* function =
       zetasql_base::FindOrNull(functions, FunctionSignatureIdToName(FN_ARRAY_FIRST));
@@ -935,6 +975,75 @@ TEST(SimpleFunctionTests, TestRewriteEnabled) {
   for (const FunctionSignature& signature : (*function)->signatures()) {
     EXPECT_FALSE(signature.options().rewrite_options()->enabled());
   }
+}
+
+TEST(SimpleFunctionTests, TestAllReleasedFunctions) {
+  auto options_all = BuiltinFunctionOptions::AllReleasedFunctions();
+  TypeFactory type_factory;
+  absl::flat_hash_map<std::string, const Type*> all_types;
+  absl::flat_hash_map<std::string, std::unique_ptr<Function>> all_functions;
+  ZETASQL_ASSERT_OK(GetBuiltinFunctionsAndTypes(options_all, type_factory,
+                                        all_functions, all_types));
+
+  absl::flat_hash_map<std::string, const Type*> min_types;
+  absl::flat_hash_map<std::string, std::unique_ptr<Function>> min_functions;
+  ZETASQL_ASSERT_OK(
+      GetBuiltinFunctionsAndTypes(BuiltinFunctionOptions(LanguageOptions()),
+                                  type_factory, min_functions, min_types));
+
+  EXPECT_THAT(all_functions.size(), Gt(min_functions.size()));
+  absl::flat_hash_set<absl::string_view> all_function_names;
+  for (const auto& [name, function] : all_functions) {
+    all_function_names.insert(name);
+  }
+  absl::flat_hash_set<absl::string_view> min_function_names;
+  for (const auto& [name, function] : min_functions) {
+    min_function_names.insert(name);
+  }
+  EXPECT_THAT(all_function_names, IsSupersetOf(min_function_names));
+  EXPECT_THAT(min_function_names, Not(IsSupersetOf(all_function_names)));
+}
+
+TEST(SimpleFunctionTests, TestReturningAPI) {
+  auto options = BuiltinFunctionOptions::AllReleasedFunctions();
+  TypeFactory type_factory;
+  absl::flat_hash_map<std::string, const Type*> types;
+  absl::flat_hash_map<std::string, std::unique_ptr<Function>> functions;
+  ZETASQL_ASSERT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
+  EXPECT_THAT(functions, Not(IsEmpty()));
+
+  types.clear();
+  functions.clear();
+  options.language_options.EnableLanguageFeature(
+      FEATURE_ROUND_WITH_ROUNDING_MODE);
+  ZETASQL_ASSERT_OK(
+      GetBuiltinFunctionsAndTypes(options, type_factory, functions, types));
+  EXPECT_THAT(types, Not(IsEmpty()));
+  EXPECT_THAT(functions, Not(IsEmpty()));
+}
+
+TEST(SimpleFunctionTests, TestGetAllAPI) {
+  auto [functions1, types1] = GetBuiltinFunctionsAndTypesForDefaultOptions();
+  EXPECT_THAT(functions1.size(), Gt(0));
+  // This will need changed when one of the language features that controls a
+  // built-in enum is moved out of 'in_development'.
+  EXPECT_THAT(types1.size(), Gt(0));
+  for (const auto& [name, function] : functions1) {
+    EXPECT_NE(function, nullptr);
+    // Call any API to let sanitizers detect an improperly initialized object.
+    EXPECT_FALSE(function->Name().empty());
+  }
+  for (const auto& [name, type] : types1) {
+    EXPECT_NE(type, nullptr);
+    // Call any API to let sanitizers detect an improperly initialized object.
+    EXPECT_FALSE(type->TypeName(PRODUCT_INTERNAL).empty());
+  }
+
+  auto [functions2, types2] = GetBuiltinFunctionsAndTypesForDefaultOptions();
+  // Multiple calls should return the same pointers.
+  EXPECT_THAT(functions1, Eq(functions2));
+  EXPECT_THAT(types1, Eq(types2));
 }
 
 }  // namespace zetasql

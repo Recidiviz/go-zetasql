@@ -30,6 +30,7 @@
 #include "zetasql/parser/statement_properties.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
+#include "absl/base/attributes.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/variant.h"
@@ -68,9 +69,6 @@ class ParserOptions {
   // then the parser APIs will create a new IdStringPool for every query that is
   // parsed. WARNING: If this is set, calling Parse functions concurrently with
   // the same ParserOptions is not allowed.
-  void set_id_string_pool(const std::shared_ptr<IdStringPool>& id_string_pool) {
-    id_string_pool_ = id_string_pool;
-  }
   std::shared_ptr<IdStringPool> id_string_pool() const {
     return id_string_pool_;
   }
@@ -226,7 +224,18 @@ absl::Status ParseStatement(absl::string_view statement_string,
 absl::Status ParseScript(absl::string_view script_string,
                          const ParserOptions& parser_options_in,
                          ErrorMessageMode error_message_mode,
+                         bool keep_error_location_payload,
                          std::unique_ptr<ParserOutput>* output);
+
+ABSL_DEPRECATED("Inline me!")
+inline absl::Status ParseScript(absl::string_view script_string,
+                                const ParserOptions& parser_options_in,
+                                ErrorMessageMode error_message_mode,
+                                std::unique_ptr<ParserOutput>* output) {
+  return ParseScript(script_string, parser_options_in, error_message_mode,
+                     /*keep_error_location_payload=*/
+                     error_message_mode == ERROR_MESSAGE_WITH_PAYLOAD, output);
+}
 
 // Parses one statement from a string that may contain multiple statements.
 // This can be called in a loop with the same <resume_location> to parse

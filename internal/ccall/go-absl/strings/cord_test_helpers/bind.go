@@ -1,7 +1,7 @@
 package cord_test_helpers
 
 /*
-#cgo CXXFLAGS: -std=c++11
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../absl/strings
 */

@@ -18,15 +18,13 @@
 
 #include <map>
 #include <memory>
-#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "zetasql/analyzer/query_resolver_helper.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
@@ -116,7 +114,7 @@ std::string QueryExpression::GetSQLQuery() const {
     absl::StrAppend(&sql, JoinListWithAliases(with_list_, ", "), " ");
   }
   if (!select_list_.empty()) {
-    ZETASQL_DCHECK(set_op_type_.empty() && set_op_modifier_.empty() &&
+    ABSL_DCHECK(set_op_type_.empty() && set_op_modifier_.empty() &&
            set_op_scan_list_.empty());
     absl::StrAppend(&sql, "SELECT ",
                     anonymization_options_.empty()
@@ -130,17 +128,17 @@ std::string QueryExpression::GetSQLQuery() const {
   }
 
   if (!set_op_scan_list_.empty()) {
-    ZETASQL_DCHECK(!set_op_type_.empty());
-    ZETASQL_DCHECK(!set_op_modifier_.empty());
-    ZETASQL_DCHECK(select_list_.empty());
-    ZETASQL_DCHECK(from_.empty() && where_.empty() && group_by_list_.empty());
+    ABSL_DCHECK(!set_op_type_.empty());
+    ABSL_DCHECK(!set_op_modifier_.empty());
+    ABSL_DCHECK(select_list_.empty());
+    ABSL_DCHECK(from_.empty() && where_.empty() && group_by_list_.empty());
     for (int i = 0; i < set_op_scan_list_.size(); ++i) {
       QueryExpression* qe = set_op_scan_list_[i].get();
       if (!select_as_modifier_.empty()) {
         if (qe->select_as_modifier_.empty()) {
           qe->SetSelectAsModifier(select_as_modifier_);
         } else {
-          ZETASQL_DCHECK_EQ(qe->select_as_modifier_, select_as_modifier_);
+          ABSL_DCHECK_EQ(qe->select_as_modifier_, select_as_modifier_);
         }
       }
       if (i > 0) {
@@ -177,6 +175,7 @@ std::string QueryExpression::GetSQLQuery() const {
         &sql, " GROUP ",
         group_by_hints_.empty() ? "" : absl::StrCat(group_by_hints_, " "),
         "BY ");
+    // Legacy ROLLUP
     if (!rollup_column_id_list_.empty()) {
       absl::StrAppend(
           &sql, "ROLLUP(",
@@ -186,6 +185,73 @@ std::string QueryExpression::GetSQLQuery() const {
                               out, zetasql_base::FindOrDie(group_by_list_, column_id));
                         }),
           ")");
+    } else if (!grouping_set_id_list_.empty()) {
+      // There are rollup, cube, or grouping sets in the group by clause.
+      // a lambda expression to output a column list
+      auto append_column_list = [this](std::string* output,
+                                       const std::vector<int>& column_id_list) {
+        if (column_id_list.empty()) {
+          absl::StrAppend(output, "()");
+          return;
+        }
+        if (column_id_list.size() > 1) {
+          absl::StrAppend(output, "(");
+        }
+        absl::StrAppend(
+            output,
+            absl::StrJoin(column_id_list, ", ",
+                          [this](std::string* out, int column_id) {
+                            absl::StrAppend(
+                                out, zetasql_base::FindOrDie(group_by_list_, column_id));
+                          }));
+        if (column_id_list.size() > 1) {
+          absl::StrAppend(output, ")");
+        }
+      };
+      std::vector<std::string> grouping_set_strs;
+      for (const GroupingSetIds& grouping_set_ids : grouping_set_id_list_) {
+        std::string grouping_set_str = "";
+        if (grouping_set_ids.kind == GroupingSetKind::kGroupingSet) {
+          std::vector<int> column_id_list;
+          for (const std::vector<int>& multi_column : grouping_set_ids.ids) {
+            ABSL_DCHECK_EQ(multi_column.size(), 1);
+            column_id_list.push_back(multi_column.front());
+          }
+          append_column_list(&grouping_set_str, column_id_list);
+        } else if (grouping_set_ids.kind == GroupingSetKind::kRollup ||
+                   grouping_set_ids.kind == GroupingSetKind::kCube) {
+          absl::StrAppend(&grouping_set_str,
+                          grouping_set_ids.kind == GroupingSetKind::kRollup
+                              ? "ROLLUP"
+                              : "CUBE",
+                          "(");
+          std::vector<std::string> multi_column_strs;
+          ABSL_DCHECK_GT(grouping_set_ids.ids.size(), 0);
+          for (const std::vector<int>& multi_column : grouping_set_ids.ids) {
+            ABSL_DCHECK_GT(multi_column.size(), 0);
+            std::string multi_column_str = "";
+            append_column_list(&multi_column_str, multi_column);
+            multi_column_strs.push_back(multi_column_str);
+          }
+          absl::StrAppend(&grouping_set_str,
+                          absl::StrJoin(multi_column_strs, ", "));
+          absl::StrAppend(&grouping_set_str, ")");
+        }
+        grouping_set_strs.push_back(grouping_set_str);
+      }
+      // Wrap grouping sets strings to GROUPING SETS only when
+      // 1. Multiple grouping sets, e.g. GROUPING SETS(x, ROLLUP(y)), OR
+      // 2. A grouping set, but its kind is kGroupingSet, e.g. GROUPING SETS(x)
+      // Otherwise for simplicity, we generate a top-level ROLLUP or CUBE
+      // instead of wrapping it to GROUPING SETS. E.g. We generate ROLLUP(x, y)
+      // rather than GROUPING SETS(ROLLUP(x, y)) where there is only a rollup.
+      if (grouping_set_strs.size() > 1 ||
+          grouping_set_id_list_.front().kind == GroupingSetKind::kGroupingSet) {
+        absl::StrAppend(&sql, " GROUPING SETS(",
+                        absl::StrJoin(grouping_set_strs, ", "), ")");
+      } else {
+        absl::StrAppend(&sql, " ", grouping_set_strs.front());
+      }
     } else {
       // We assume while iterating the group_by_list_, the entries will be
       // sorted by the column id.
@@ -223,8 +289,8 @@ bool QueryExpression::CanFormSQLQuery() const {
 }
 
 void QueryExpression::Wrap(absl::string_view alias) {
-  ZETASQL_DCHECK(CanFormSQLQuery());
-  ZETASQL_DCHECK(!alias.empty());
+  ABSL_DCHECK(CanFormSQLQuery());
+  ABSL_DCHECK(!alias.empty());
   const std::string sql = GetSQLQuery();
   ClearAllClauses();
   from_ = absl::StrCat("(", sql, ") AS ", alias);
@@ -248,7 +314,7 @@ bool QueryExpression::TrySetSelectClause(
     return false;
   }
   select_list_ = select_list;
-  ZETASQL_DCHECK(query_hints_.empty());
+  ABSL_DCHECK(query_hints_.empty());
   query_hints_ = select_hints;
   return true;
 }
@@ -281,11 +347,11 @@ bool QueryExpression::TrySetSetOpScanList(
   if (!CanSetSetOpScanList()) {
     return false;
   }
-  ZETASQL_DCHECK(set_op_scan_list != nullptr);
+  ABSL_DCHECK(set_op_scan_list != nullptr);
   set_op_scan_list_ = std::move(*set_op_scan_list);
   set_op_scan_list->clear();
-  ZETASQL_DCHECK(set_op_type_.empty());
-  ZETASQL_DCHECK(set_op_modifier_.empty());
+  ABSL_DCHECK(set_op_type_.empty());
+  ABSL_DCHECK(set_op_modifier_.empty());
   set_op_type_ = set_op_type;
   set_op_modifier_ = set_op_modifier;
   set_op_column_match_mode_ = set_op_column_match_mode;
@@ -296,13 +362,15 @@ bool QueryExpression::TrySetSetOpScanList(
 bool QueryExpression::TrySetGroupByClause(
     const std::map<int, std::string>& group_by_list,
     const std::string& group_by_hints,
+    const std::vector<GroupingSetIds>& grouping_set_id_list,
     const std::vector<int>& rollup_column_id_list) {
   if (!CanSetGroupByClause()) {
     return false;
   }
   group_by_list_ = group_by_list;
-  ZETASQL_DCHECK(group_by_hints_.empty());
+  ABSL_DCHECK(group_by_hints_.empty());
   group_by_hints_ = group_by_hints;
+  grouping_set_id_list_ = grouping_set_id_list;
   rollup_column_id_list_ = rollup_column_id_list;
   return true;
 }
@@ -314,7 +382,7 @@ bool QueryExpression::TrySetOrderByClause(
     return false;
   }
   order_by_list_ = order_by_list;
-  ZETASQL_DCHECK(order_by_hints_.empty());
+  ABSL_DCHECK(order_by_hints_.empty());
   order_by_hints_ = order_by_hints;
   return true;
 }
@@ -397,7 +465,7 @@ bool QueryExpression::CanSetUnpivotClause() const {
 const std::vector<std::pair<std::string, std::string>>&
 QueryExpression::SelectList() const {
   if (!set_op_scan_list_.empty()) {
-    ZETASQL_DCHECK(select_list_.empty());
+    ABSL_DCHECK(select_list_.empty());
     if (!set_op_column_match_mode_.empty()) {
       return corresponding_set_op_output_column_list_;
     }
@@ -475,7 +543,7 @@ absl::Status QueryExpression::SetAliasesForSelectList(
 }
 
 void QueryExpression::SetSelectAsModifier(const std::string& modifier) {
-  ZETASQL_DCHECK(select_as_modifier_.empty());
+  ABSL_DCHECK(select_as_modifier_.empty());
   select_as_modifier_ = modifier;
 }
 

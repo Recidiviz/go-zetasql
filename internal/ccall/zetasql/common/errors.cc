@@ -49,9 +49,9 @@ absl::Status StatusWithInternalErrorLocation(
 
 ErrorSource MakeErrorSource(const absl::Status& status, std::string_view text,
                             ErrorMessageMode mode) {
-  ZETASQL_DCHECK(!status.ok());
+  ABSL_DCHECK(!status.ok());
   // Sanity check that status does not have an InternalErrorLocation.
-  ZETASQL_DCHECK(!HasInternalErrorLocation(status));
+  ABSL_DCHECK(!HasInternalErrorLocation(status));
 
   ErrorSource error_source;
   error_source.set_error_message(std::string(status.message()));
@@ -72,11 +72,11 @@ const std::optional<::google::protobuf::RepeatedPtrField<ErrorSource>> GetErrorS
     const absl::Status& status) {
   if (internal::HasPayloadWithType<ErrorLocation>(status)) {
     // Sanity check that an OK status does not have a payload.
-    ZETASQL_DCHECK(!status.ok());
+    ABSL_DCHECK(!status.ok());
 
     return internal::GetPayload<ErrorLocation>(status).error_source();
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 std::string DeprecationWarningsToDebugString(
@@ -130,43 +130,6 @@ StatusesToDeprecationWarnings(const std::vector<absl::Status>& from_statuses,
   }
 
   return warnings;
-}
-
-absl::Status ConvertInternalErrorLocationToExternal(absl::Status status,
-                                                    absl::string_view query) {
-  if (!internal::HasPayloadWithType<InternalErrorLocation>(status)) {
-    // Nothing to do.
-    return status;
-  }
-  const InternalErrorLocation internal_error_location =
-      internal::GetPayload<InternalErrorLocation>(status);
-
-  const ParseLocationPoint error_point =
-      ParseLocationPoint::FromInternalErrorLocation(internal_error_location);
-
-  ParseLocationTranslator location_translator(query);
-
-  std::pair<int, int> line_and_column;
-  ZETASQL_ASSIGN_OR_RETURN(
-      line_and_column,
-      location_translator.GetLineAndColumnAfterTabExpansion(error_point),
-      _ << "Location " << error_point.GetString() << " from status \""
-        << internal::StatusToString(status) << "\" not found in query:\n"
-        << query);
-  ErrorLocation error_location;
-  if (internal_error_location.has_filename()) {
-    error_location.set_filename(internal_error_location.filename());
-  }
-  error_location.set_line(line_and_column.first);
-  error_location.set_column(line_and_column.second);
-  // Copy ErrorSource information if present.
-  *error_location.mutable_error_source() =
-      internal_error_location.error_source();
-
-  absl::Status copy = status;
-  internal::ErasePayloadTyped<InternalErrorLocation>(&copy);
-  internal::AttachPayload(&copy, error_location);
-  return copy;
 }
 
 }  // namespace zetasql

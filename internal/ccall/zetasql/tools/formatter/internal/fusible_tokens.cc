@@ -190,7 +190,7 @@ const std::vector<FusibleTokens>* GetFusibleTokens() {
   static const auto* fusible_tokens = new std::vector<FusibleTokens>({
       // Note: cannot supports this open source due to initialization pattern.
       // (broken link) start
-      // ADD ZETASQL_CHECK would be normally followed by an identifier, but
+      // ADD ABSL_CHECK would be normally followed by an identifier, but
       // it is enough to fuse a single token only and if it was a part of
       // multi-token identifier, IsPartOfSameChunk will handle it.
       {.t{"ADD", "CHECK", kAny}, .mark_as = kTopLevel},
@@ -395,7 +395,6 @@ const std::vector<FusibleTokens>* GetFusibleTokens() {
       {.t{"SELECT", "AS", kAny}},
       {.t{"SELECT", "DISTINCT", "AS", "VALUE"}},
       {.t{"SELECT", "DISTINCT", "AS", kAny}},
-      {.t{"SELECT", "WITH", "ANONYMIZATION"}, .full_match_only = true},
       {.t{"SET", "AS", kAny}},
       {.t{"SET", "DATA", "TYPE", kAny}},
       {.t{"SET", "OPTIONS"}},
@@ -411,6 +410,7 @@ const std::vector<FusibleTokens>* GetFusibleTokens() {
       {.t{"USE", "DATABASE", kAny}},
       {.t{"WHEN", "MATCHED"}},
       {.t{"WHEN", "NOT", "MATCHED", "BY", "SOURCE"}},
+      {.t{"WITH", "ANONYMIZATION", "OPTIONS", "("}, .full_match_only = true},
       {.t{"WITH", "RECURSIVE"}},
       {.t{"[", "DEFAULT", kId, "="},
        .mark_as = kTopLevel,

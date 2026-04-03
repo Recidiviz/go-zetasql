@@ -205,12 +205,34 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
     return ConsumeTopOfStack<ResolvedNodeType>();
   }
 
+  // Creates a deep copy of `node`.
+  //
+  // This differs from ProcessNode in that it does _not_ perform
+  // any calls to VisitX function.
   template <typename ResolvedNodeType>
   static absl::StatusOr<std::unique_ptr<ResolvedNodeType>> Copy(
       const ResolvedNodeType* node) {
     ResolvedASTDeepCopyVisitor visitor;
     ZETASQL_RETURN_IF_ERROR(node->Accept(&visitor));
     return visitor.ConsumeRootNode<ResolvedNodeType>();
+  }
+
+  // Creates a deep copy of a vector of nodes.
+  //
+  // This differs from ProcessNodeList in that it does _not_ perform
+  // any calls to VisitX function.
+  template <class ResolvedNodeType>
+  static absl::StatusOr<std::vector<std::unique_ptr<ResolvedNodeType>>>
+  CopyNodeList(
+      const std::vector<std::unique_ptr<const ResolvedNodeType>>& nodes) {
+    std::vector<std::unique_ptr<ResolvedNodeType>> copies;
+    copies.reserve(nodes.size());
+    for (const auto& node : nodes) {
+      ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<ResolvedNodeType> copy,
+                       ResolvedASTDeepCopyVisitor::Copy(node.get()));
+      copies.emplace_back(std::move(copy));
+    }
+    return copies;
   }
 
  protected:
@@ -227,7 +249,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   // The top object on the stack must be an instance of 'ResolvedNodeType'
   template <typename ResolvedNodeType>
   ResolvedNodeType* GetUnownedTopOfStack() const {
-    ZETASQL_DCHECK(!stack_.empty()) << "\n" << CurrentStackTrace()
+    ABSL_DCHECK(!stack_.empty()) << "\n" << CurrentStackTrace()
     ;
     if (stack_.empty() || stack_.top() == nullptr) {
       return nullptr;
@@ -236,7 +258,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
       // When call requires the wrong type of node, try to fail tests helpfully.
       // In production, return nullptr and hope the caller can do better than
       // crash.
-      ZETASQL_LOG(DFATAL)
+      ABSL_LOG(ERROR)
           << "Top of stack is not expected type.\n"
           << CurrentStackTrace();
       return nullptr;
@@ -249,7 +271,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   // The top object on the stack must be an instance of 'ResolvedNodeType'
   template <typename ResolvedNodeType>
   std::unique_ptr<ResolvedNodeType> ConsumeTopOfStack() {
-    ZETASQL_DCHECK(!stack_.empty()) << "\n" << CurrentStackTrace();
+    ABSL_DCHECK(!stack_.empty()) << "\n" << CurrentStackTrace();
     if (stack_.empty()) {
       return std::unique_ptr<ResolvedNodeType>();
     }
@@ -261,7 +283,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
       // When call requires the wrong type of node, try to fail tests helpfully.
       // In production, return nullptr and hope the caller can do better than
       // crash.
-      ZETASQL_LOG(DFATAL) << "Top of stack is not expected type.\n"
+      ABSL_LOG(ERROR) << "Top of stack is not expected type.\n"
           << CurrentStackTrace();
       return std::unique_ptr<ResolvedNodeType>();
     }
@@ -272,10 +294,13 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   }
 
   // Calls Visit on the node, pops the result off of the stack, and returns it.
+  //
+  // Note: If a simple deep copy is desired, use
+  // ResolvedASTDeepCopyVisitor::Copy.
   template <typename ResolvedNodeType>
   absl::StatusOr<std::unique_ptr<ResolvedNodeType>> ProcessNode(
       const ResolvedNodeType* node) {
-    ZETASQL_DCHECK(stack_.empty()) << "\n" << CurrentStackTrace();
+    ABSL_DCHECK(stack_.empty()) << "\n" << CurrentStackTrace();
     if (node == nullptr) {
       return std::unique_ptr<ResolvedNodeType>();
     }
@@ -285,6 +310,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   // Calls ProcessNode for all nodes of a vector, and returns a new vector of the
   // processed nodes.
+  //
+  // Note: If a simple deep copy is desired, use
+  // ResolvedASTDeepCopyVisitor::CopyNodeList.
   template <typename ResolvedNodeType>
   absl::StatusOr<std::vector<std::unique_ptr<ResolvedNodeType>>>
   ProcessNodeList(
@@ -324,6 +352,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedColumnRef(
       const ResolvedColumnRef* node);
 
+  absl::Status CopyVisitResolvedGroupingSetMultiColumn(
+      const ResolvedGroupingSetMultiColumn* node);
+
   absl::Status CopyVisitResolvedConstant(
       const ResolvedConstant* node);
 
@@ -332,6 +363,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedInlineLambda(
       const ResolvedInlineLambda* node);
+
+  absl::Status CopyVisitResolvedSequence(
+      const ResolvedSequence* node);
 
   absl::Status CopyVisitResolvedFilterFieldArg(
       const ResolvedFilterFieldArg* node);
@@ -423,8 +457,17 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedFilterScan(
       const ResolvedFilterScan* node);
 
+  absl::Status CopyVisitResolvedGroupingCall(
+      const ResolvedGroupingCall* node);
+
   absl::Status CopyVisitResolvedGroupingSet(
       const ResolvedGroupingSet* node);
+
+  absl::Status CopyVisitResolvedRollup(
+      const ResolvedRollup* node);
+
+  absl::Status CopyVisitResolvedCube(
+      const ResolvedCube* node);
 
   absl::Status CopyVisitResolvedAggregateScan(
       const ResolvedAggregateScan* node);
@@ -552,6 +595,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedExportDataStmt(
       const ResolvedExportDataStmt* node);
 
+  absl::Status CopyVisitResolvedExportMetadataStmt(
+      const ResolvedExportMetadataStmt* node);
+
   absl::Status CopyVisitResolvedDefineTableStmt(
       const ResolvedDefineTableStmt* node);
 
@@ -678,6 +724,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt* node);
 
+  absl::Status CopyVisitResolvedAlterApproxViewStmt(
+      const ResolvedAlterApproxViewStmt* node);
+
   absl::Status CopyVisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt* node);
 
@@ -759,8 +808,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedDropRowAccessPolicyStmt(
       const ResolvedDropRowAccessPolicyStmt* node);
 
-  absl::Status CopyVisitResolvedDropSearchIndexStmt(
-      const ResolvedDropSearchIndexStmt* node);
+  absl::Status CopyVisitResolvedDropIndexStmt(
+      const ResolvedDropIndexStmt* node);
 
   absl::Status CopyVisitResolvedGrantToAction(
       const ResolvedGrantToAction* node);
@@ -837,6 +886,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedCreateMaterializedViewStmt(
       const ResolvedCreateMaterializedViewStmt* node);
 
+  absl::Status CopyVisitResolvedCreateApproxViewStmt(
+      const ResolvedCreateApproxViewStmt* node);
+
   absl::Status CopyVisitResolvedCreateProcedureStmt(
       const ResolvedCreateProcedureStmt* node);
 
@@ -907,6 +959,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedColumnRef(
       const ResolvedColumnRef* node) override;
 
+  absl::Status VisitResolvedGroupingSetMultiColumn(
+      const ResolvedGroupingSetMultiColumn* node) override;
+
   absl::Status VisitResolvedConstant(
       const ResolvedConstant* node) override;
 
@@ -915,6 +970,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedInlineLambda(
       const ResolvedInlineLambda* node) override;
+
+  absl::Status VisitResolvedSequence(
+      const ResolvedSequence* node) override;
 
   absl::Status VisitResolvedFilterFieldArg(
       const ResolvedFilterFieldArg* node) override;
@@ -1006,8 +1064,17 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedFilterScan(
       const ResolvedFilterScan* node) override;
 
+  absl::Status VisitResolvedGroupingCall(
+      const ResolvedGroupingCall* node) override;
+
   absl::Status VisitResolvedGroupingSet(
       const ResolvedGroupingSet* node) override;
+
+  absl::Status VisitResolvedRollup(
+      const ResolvedRollup* node) override;
+
+  absl::Status VisitResolvedCube(
+      const ResolvedCube* node) override;
 
   absl::Status VisitResolvedAggregateScan(
       const ResolvedAggregateScan* node) override;
@@ -1135,6 +1202,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedExportDataStmt(
       const ResolvedExportDataStmt* node) override;
 
+  absl::Status VisitResolvedExportMetadataStmt(
+      const ResolvedExportMetadataStmt* node) override;
+
   absl::Status VisitResolvedDefineTableStmt(
       const ResolvedDefineTableStmt* node) override;
 
@@ -1261,6 +1331,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt* node) override;
 
+  absl::Status VisitResolvedAlterApproxViewStmt(
+      const ResolvedAlterApproxViewStmt* node) override;
+
   absl::Status VisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt* node) override;
 
@@ -1342,8 +1415,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedDropRowAccessPolicyStmt(
       const ResolvedDropRowAccessPolicyStmt* node) override;
 
-  absl::Status VisitResolvedDropSearchIndexStmt(
-      const ResolvedDropSearchIndexStmt* node) override;
+  absl::Status VisitResolvedDropIndexStmt(
+      const ResolvedDropIndexStmt* node) override;
 
   absl::Status VisitResolvedGrantToAction(
       const ResolvedGrantToAction* node) override;
@@ -1419,6 +1492,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedCreateMaterializedViewStmt(
       const ResolvedCreateMaterializedViewStmt* node) override;
+
+  absl::Status VisitResolvedCreateApproxViewStmt(
+      const ResolvedCreateApproxViewStmt* node) override;
 
   absl::Status VisitResolvedCreateProcedureStmt(
       const ResolvedCreateProcedureStmt* node) override;

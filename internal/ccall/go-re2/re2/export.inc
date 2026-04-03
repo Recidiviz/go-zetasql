@@ -6,6 +6,7 @@
 #include "re2/set.h"
 
 #include "re2/bitmap256.h"
+#include "re2/bitmap256.cc"
 #include "re2/bitstate.cc"
 #include "re2/compile.cc"
 #include "re2/dfa.cc"

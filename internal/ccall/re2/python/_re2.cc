@@ -10,11 +10,15 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "re2/filtered_re2.h"
 #include "re2/re2.h"
 #include "re2/set.h"
+
+#ifdef _WIN32
+#include <basetsd.h>
+#define ssize_t SSIZE_T
+#endif
 
 namespace re2_python {
 
@@ -69,7 +73,7 @@ std::unique_ptr<RE2> RE2InitShim(py::buffer buffer,
                                  const RE2::Options& options) {
   auto bytes = buffer.request();
   auto pattern = FromBytes(bytes);
-  return absl::make_unique<RE2>(pattern, options);
+  return std::make_unique<RE2>(pattern, options);
 }
 
 py::bytes RE2ErrorShim(const RE2& self) {
@@ -203,7 +207,7 @@ class Filter {
     RE2::Options options;
     options.set_literal(true);
     options.set_case_sensitive(false);
-    set_ = absl::make_unique<RE2::Set>(options, RE2::UNANCHORED);
+    set_ = std::make_unique<RE2::Set>(options, RE2::UNANCHORED);
     for (int i = 0; i < static_cast<int>(atoms.size()); ++i) {
       if (set_->Add(atoms[i], /*error=*/NULL) != i) {
         // Should never happen: the atom is a literal!
@@ -227,6 +231,10 @@ class Filter {
       filter_.AllMatches(text, atoms, &matches);
     }
     return matches;
+  }
+
+  const RE2& GetRE2(int index) const {
+    return filter_.GetRE2(index);
   }
 
  private:
@@ -260,6 +268,9 @@ PYBIND11_MODULE(_re2, module) {
   encoding.value("LATIN1", RE2::Options::Encoding::EncodingLatin1);
 
   options.def(py::init<>())
+      .def_property("max_mem",                          //
+                    &RE2::Options::max_mem,             //
+                    &RE2::Options::set_max_mem)         //
       .def_property("encoding",                         //
                     &RE2::Options::encoding,            //
                     &RE2::Options::set_encoding)        //
@@ -272,9 +283,6 @@ PYBIND11_MODULE(_re2, module) {
       .def_property("log_errors",                       //
                     &RE2::Options::log_errors,          //
                     &RE2::Options::set_log_errors)      //
-      .def_property("max_mem",                          //
-                    &RE2::Options::max_mem,             //
-                    &RE2::Options::set_max_mem)         //
       .def_property("literal",                          //
                     &RE2::Options::literal,             //
                     &RE2::Options::set_literal)         //
@@ -322,7 +330,9 @@ PYBIND11_MODULE(_re2, module) {
   filter.def(py::init<>())
       .def("Add", &Filter::Add)
       .def("Compile", &Filter::Compile)
-      .def("Match", &Filter::Match);
+      .def("Match", &Filter::Match)
+      .def("GetRE2", &Filter::GetRE2,
+           py::return_value_policy::reference_internal);
 }
 
 }  // namespace re2_python

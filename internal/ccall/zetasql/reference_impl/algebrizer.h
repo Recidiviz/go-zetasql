@@ -234,8 +234,8 @@ class Algebrizer {
   // ResolvedColumnRef, a ResolvedParameter, or a ResolvedExpressionColumn.
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeGetProtoFieldOfPath(
       const ResolvedExpr* column_or_param_expr,
-      const std::vector<absl::variant<const ResolvedGetProtoField*,
-                                      const ResolvedGetStructField*>>& path);
+      const std::vector<std::variant<const ResolvedGetProtoField*,
+                                     const ResolvedGetStructField*>>& path);
 
   // Algebrize specific expressions.
   absl::StatusOr<std::unique_ptr<AggregateArg>>
@@ -306,7 +306,6 @@ class Algebrizer {
       kGE,  // Include both > and >=
       kEquals,
       kBetween,
-      kIn,
       kInArray,
       kOther
     };
@@ -380,8 +379,8 @@ class Algebrizer {
   absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeJoinScan(
       const ResolvedJoinScan* join_scan,
       std::vector<FilterConjunctInfo*>* active_conjuncts);
-  // Returns an algebrized right scan with the given active conjuncts.
-  using RightScanAlgebrizerCb =
+  // Returns an algebrized scan with the given active conjuncts.
+  using ScanAlgebrizerCallback =
       std::function<absl::StatusOr<std::unique_ptr<RelationalOp>>(
           std::vector<FilterConjunctInfo*>*)>;
   absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeJoinScanInternal(
@@ -389,10 +388,14 @@ class Algebrizer {
       const ResolvedExpr* join_expr,  // May be NULL
       const ResolvedScan* left_scan,
       const std::vector<ResolvedColumn>& right_output_column_list,
-      const RightScanAlgebrizerCb& right_scan_algebrizer_cb,
+      const ScanAlgebrizerCallback& right_scan_algebrizer_cb,
       std::vector<FilterConjunctInfo*>* active_conjuncts);
   absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeFilterScan(
       const ResolvedFilterScan* filter_scan,
+      std::vector<FilterConjunctInfo*>* active_conjuncts);
+  absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeFilterScanInternal(
+      const ResolvedExpr* filter_expr,
+      const ScanAlgebrizerCallback& scan_algebrizer_cb,
       std::vector<FilterConjunctInfo*>* active_conjuncts);
   absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeSampleScan(
       const ResolvedSampleScan* sample_scan,
@@ -777,13 +780,13 @@ class Algebrizer {
 
     std::string DebugString() const {
       if (std::holds_alternative<int>(position_or_name_)) {
-        return absl::StrCat("$", *absl::get_if<int>(&position_or_name_));
+        return absl::StrCat("$", *std::get_if<int>(&position_or_name_));
       }
-      return absl::StrCat("$", *absl::get_if<std::string>(&position_or_name_));
+      return absl::StrCat("$", *std::get_if<std::string>(&position_or_name_));
     }
 
    private:
-    absl::variant<int, std::string> position_or_name_;
+    std::variant<int, std::string> position_or_name_;
   };
 
   // Represents a column or a parameter (or a ResolvedExpressionColumn, which in
@@ -812,18 +815,18 @@ class Algebrizer {
 
     std::string DebugString() const {
       if (std::holds_alternative<ResolvedColumn>(column_or_param_)) {
-        return absl::get_if<ResolvedColumn>(&column_or_param_)->DebugString();
+        return std::get_if<ResolvedColumn>(&column_or_param_)->DebugString();
       }
       if (std::holds_alternative<Parameter>(column_or_param_)) {
-        return absl::get_if<Parameter>(&column_or_param_)->DebugString();
+        return std::get_if<Parameter>(&column_or_param_)->DebugString();
       }
-      return *absl::get_if<std::string>(&column_or_param_);
+      return *std::get_if<std::string>(&column_or_param_);
     }
 
    private:
     // Stores a ResolvedColumn, a Parameter (for a ResolvedParameter), or the
     // name of a ResolvedExpressionColumn.
-    using StorageType = absl::variant<ResolvedColumn, Parameter, std::string>;
+    using StorageType = std::variant<ResolvedColumn, Parameter, std::string>;
     StorageType column_or_param_;
   };
 

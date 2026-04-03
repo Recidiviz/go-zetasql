@@ -58,6 +58,7 @@ cc_library(
         "//zetasql/public:parse_location",
         "//zetasql/public:type",
         "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:btree",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/flags:flag",
         "@com_google_absl//absl/status:statusor",
@@ -71,6 +72,7 @@ cc_test(
     srcs = ["parsed_script_test.cc"],
     deps = [
         ":parsed_script",
+        "//zetasql/base:source_location",
         "//zetasql/base/testing:status_matchers",
         "//zetasql/base/testing:zetasql_gtest_main",
         "//zetasql/parser",

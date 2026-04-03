@@ -57,8 +57,9 @@
 
 #include "zetasql/parser/location.hh"
 #include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/join_processor.h"
+#include "zetasql/parser/parse_tree.h"
+#include "zetasql/parser/parser_internal.h"
 #include "zetasql/parser/statement_properties.h"
 #include "zetasql/public/strings.h"
 #include "zetasql/base/case.h"
@@ -73,144 +74,8 @@
 #define YYDEBUG 0
 #endif
 
-// Shorthand to call parser->CreateASTNode<>(). The "node_type" must be a
-// AST... class from the zetasql namespace. The "..." are the arguments to
-// BisonParser::CreateASTNode<>().
-#define MAKE_NODE(node_type, ...) \
-    parser->CreateASTNode<zetasql::node_type>(__VA_ARGS__);
 
-enum class NotKeywordPresence {
-  kPresent,
-  kAbsent
-};
-
-enum class AllOrDistinctKeyword {
-  kAll,
-  kDistinct,
-  kNone,
-};
-
-enum class PrecedingOrFollowingKeyword {
-  kPreceding,
-  kFollowing
-};
-
-enum class ShiftOperator {
-  kLeft,
-  kRight
-};
-
-enum class TableOrTableFunctionKeywords {
-  kTableKeyword,
-  kTableAndFunctionKeywords
-};
-
-enum class ImportType {
-  kModule,
-  kProto,
-};
-
-// This node is used for temporarily aggregating together components of an
-// identifier that are separated by various characters, such as slash ("/"),
-// dash ("-"), and colon (":") to enable supporting table paths of the form:
-// /span/nonprod-test:db.Table without any escaping.  This node exists
-// temporarily to hold intermediate values, and will not be part of the final
-// parse tree.
-class SeparatedIdentifierTmpNode final : public zetasql::ASTNode {
- public:
-  static constexpr zetasql::ASTNodeKind kConcreteNodeKind =
-      zetasql::AST_FAKE;
-
-  SeparatedIdentifierTmpNode() : ASTNode(kConcreteNodeKind) {}
-  void Accept(zetasql::ParseTreeVisitor* visitor, void* data) const override {
-    ZETASQL_LOG(FATAL) << "SeparatedIdentifierTmpNode does not support Accept";
-  }
-  absl::StatusOr<zetasql::VisitResult> Accept(
-      zetasql::NonRecursiveParseTreeVisitor* visitor) const override {
-    ZETASQL_LOG(FATAL) << "SeparatedIdentifierTmpNode does not support Accept";
-  }
-  // This is used to represent an unquoted full identifier path that may contain
-  // slashes ("/"), dashes ('-'), and colons (":"). This requires special
-  // handling because of the ambiguity in the lexer between an identifier and a
-  // number. For example:
-  // /span/nonprod-5:db-3.Table
-  // The lexer takes this to be
-  // /,span,/,nonprod,-,5,:,db,-,3.,Table
-  // Where tokens like 3. are treated as a FLOATING_POINT_LITERAL, so the
-  // natural path separator "." is lost. For more information on this, see the
-  // 'slashed_identifier' rule.
-
-  // We represent this as a list of one or more 'PathParts' which are
-  // implicitly separated by a dot ('.'). Each may be composed of one or more
-  // 'IdParts' which is a list of the tokens that compose a single component of
-  // the path (a single identifier) including any slashes, dashes, and/or
-  // colons.
-  // Thus, the example string above would be represented as the following:
-  // {{"/", "span", "/", "nonprod", "-", "5", ":", "db", "-", "3"}, {"Table"}}
-
-  // In order to save memory, these all contain string_view entries (backed by
-  // the parser's copy of the input sql).
-  // This also uses inlined vectors, because we rarely expect more than a few
-  // entries at either level.
-  // Note, in the event the size is large, this will allocate directly to the
-  // heap, rather than into the arena.
-  using IdParts = std::vector<absl::string_view>;
-  using PathParts = std::vector<IdParts>;
-
-  void set_path_parts(PathParts path_parts) {
-    path_parts_ = std::move(path_parts);
-  }
-
-  PathParts&& release_path_parts() {
-    return std::move(path_parts_);
-  }
-  absl::Status InitFields() final {
-    {
-      FieldLoader fl(this);  // Triggers check that there were no children.
-      return fl.Finalize();
-    }
-  }
-
-  // Returns a vector of identifier ASTNodes from `raw_parts`.
-  // `raw_parts` represents a path as a list of lists. Each sublist contains the
-  // raw components of an identifier. To form an ASTPathExpression, we
-  // concatenate the components of each sublist together to form a single
-  // identifier and return a list of these identifiers, which can be used to
-  // build an ASTPathExpression.
-  static absl::StatusOr<std::vector<zetasql::ASTNode*>> BuildPathParts(
-    const zetasql_bison_parser::location& bison_location,
-    PathParts raw_parts, zetasql::parser::BisonParser* parser) {
-    if(raw_parts.empty()) {
-      return absl::InvalidArgumentError(
-        "Internal error: Empty slashed path expression");
-    }
-    std::vector<zetasql::ASTNode*> parts;
-    for (int i = 0; i < raw_parts.size(); ++i) {
-      SeparatedIdentifierTmpNode::IdParts& raw_id_parts = raw_parts[i];
-      if (raw_id_parts.empty()) {
-        return absl::InvalidArgumentError(
-          "Internal error: Empty dashed identifier part");
-      }
-      // Trim trailing "." which is leftover from lexing float literals
-      // like a/1.b -> {"a", "/", "1.", "b"}
-      for (int j = 0; j < raw_id_parts.size(); ++j) {
-        absl::string_view& dash_part = raw_id_parts[j];
-        if (absl::EndsWith(dash_part, ".")) {
-          dash_part.remove_suffix(1);
-        }
-      }
-      parts.push_back(parser->MakeIdentifier(bison_location,
-                                             absl::StrJoin(raw_id_parts, "")));
-    }
-    return parts;
-  }
-
- private:
-  PathParts path_parts_;
-};
-
-
-#line 214 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 79 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 # include <cstdlib> // std::abort
@@ -321,7 +186,7 @@ class SeparatedIdentifierTmpNode final : public zetasql::ASTNode {
 
 
 namespace zetasql_bison_parser {
-#line 325 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 190 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 
@@ -333,7 +198,7 @@ namespace zetasql_bison_parser {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 405 "zetasql/parser/bison_parser.y" // lalr1.cc:401
+    #line 262 "zetasql/parser/bison_parser.y" // lalr1.cc:401
 
   bool boolean;
   int64_t int64_val;
@@ -350,16 +215,21 @@ namespace zetasql_bison_parser {
   zetasql::ASTInsertStatement::InsertMode insert_mode;
   zetasql::ASTNodeKind ast_node_kind;
   zetasql::ASTUnpivotClause::NullFilter opt_unpivot_nulls_filter;
-  NotKeywordPresence not_keyword_presence;
-  AllOrDistinctKeyword all_or_distinct_keyword;
+  zetasql::parser_internal::NotKeywordPresence not_keyword_presence;
+  zetasql::parser_internal::AllOrDistinctKeyword all_or_distinct_keyword;
   zetasql::SchemaObjectKind schema_object_kind_keyword;
-  PrecedingOrFollowingKeyword preceding_or_following_keyword;
-  TableOrTableFunctionKeywords table_or_table_function_keywords;
-  ShiftOperator shift_operator;
-  ImportType import_type;
+  zetasql::parser_internal::PrecedingOrFollowingKeyword
+      preceding_or_following_keyword;
+  zetasql::parser_internal::TableOrTableFunctionKeywords
+      table_or_table_function_keywords;
+  zetasql::parser_internal::IndexTypeKeywords
+      index_type_keywords;
+  zetasql::parser_internal::ShiftOperator shift_operator;
+  zetasql::parser_internal::ImportType import_type;
   zetasql::ASTAuxLoadDataStatement::InsertionMode insertion_mode;
   zetasql::ASTCreateStatement::Scope create_scope;
   zetasql::ASTCreateStatement::SqlSecurity sql_security;
+  zetasql::ASTCreateStatement::SqlSecurity external_security;
   zetasql::ASTDropStatement::DropMode drop_mode;
   zetasql::ASTForeignKeyReference::Match foreign_key_match;
   zetasql::ASTForeignKeyActions::Action foreign_key_action;
@@ -385,7 +255,7 @@ namespace zetasql_bison_parser {
   zetasql::ASTInsertStatement* insert_statement;
   zetasql::ASTNode* node;
   zetasql::ASTStatementList* statement_list;
-  SeparatedIdentifierTmpNode* slashed_identifier;
+  zetasql::parser_internal::SeparatedIdentifierTmpNode* slashed_identifier;
   zetasql::ASTPivotClause* pivot_clause;
   zetasql::ASTUnpivotClause* unpivot_clause;
   zetasql::ASTSetOperationType* set_operation_type;
@@ -428,8 +298,12 @@ namespace zetasql_bison_parser {
     zetasql::ASTSetOperationColumnMatchMode* column_match_mode;
     zetasql::ASTColumnList* column_list;
   } column_match_suffix;
+  struct {
+    zetasql::ASTQuery* query;
+    zetasql::ASTPathExpression* replica_source;
+  } query_or_replica_source_info;
 
-#line 433 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 307 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -513,84 +387,84 @@ namespace zetasql_bison_parser {
         KW_ELSE = 307,
         KW_END = 308,
         KW_ENUM = 309,
-        KW_EXCEPT_IN_SET_OP = 310,
-        KW_EXCEPT = 311,
-        KW_EXISTS = 312,
-        KW_EXTRACT = 313,
-        KW_FALSE = 314,
-        KW_FOLLOWING = 315,
-        KW_FROM = 316,
-        KW_FULL = 317,
-        KW_FULL_IN_SET_OP = 318,
-        KW_GROUP = 319,
-        KW_GROUPING = 320,
-        KW_HASH = 321,
-        KW_HAVING = 322,
-        KW_IF = 323,
-        KW_IGNORE = 324,
-        KW_IN = 325,
-        KW_INNER = 326,
-        KW_INTERSECT = 327,
-        KW_INTERVAL = 328,
-        KW_INTO = 329,
-        KW_IS = 330,
-        KW_JOIN = 331,
-        KW_LEFT = 332,
-        KW_LEFT_IN_SET_OP = 333,
-        KW_LIKE = 334,
-        KW_LIMIT = 335,
-        KW_LOOKUP = 336,
-        KW_MERGE = 337,
-        KW_NATURAL = 338,
-        KW_NEW = 339,
-        KW_NO = 340,
-        KW_NOT = 341,
-        KW_NULL = 342,
-        KW_NULLS = 343,
-        KW_ON = 344,
-        KW_OR = 345,
-        KW_ORDER = 346,
-        KW_OUTER = 347,
-        KW_OVER = 348,
-        KW_PARTITION = 349,
-        KW_PRECEDING = 350,
-        KW_PROTO = 351,
-        KW_RANGE = 352,
-        KW_RECURSIVE = 353,
-        KW_RESPECT = 354,
-        KW_RIGHT = 355,
-        KW_ROLLUP = 356,
-        KW_ROWS = 357,
-        KW_SELECT = 358,
-        KW_SET = 359,
-        KW_STRUCT = 360,
-        KW_TABLESAMPLE = 361,
-        KW_THEN = 362,
-        KW_TO = 363,
-        KW_TRUE = 364,
-        KW_UNBOUNDED = 365,
-        KW_UNION = 366,
-        KW_USING = 367,
-        KW_WHEN = 368,
-        KW_WHERE = 369,
-        KW_WINDOW = 370,
-        KW_WITH = 371,
-        KW_WITH_STARTING_WITH_EXPRESSION = 372,
-        KW_UNNEST = 373,
-        KW_CONTAINS = 374,
-        KW_CUBE = 375,
-        KW_ESCAPE = 376,
-        KW_EXCLUDE = 377,
-        KW_FETCH = 378,
-        KW_FOR = 379,
-        KW_GROUPS = 380,
-        KW_LATERAL = 381,
-        KW_OF = 382,
-        KW_SOME = 383,
-        KW_TREAT = 384,
-        KW_WITHIN = 385,
-        KW_QUALIFY_RESERVED = 386,
-        SENTINEL_RESERVED_KW_END = 387,
+        KW_EXCEPT = 310,
+        KW_EXISTS = 311,
+        KW_EXTRACT = 312,
+        KW_FALSE = 313,
+        KW_FOLLOWING = 314,
+        KW_FROM = 315,
+        KW_FULL = 316,
+        KW_FULL_IN_SET_OP = 317,
+        KW_GROUP = 318,
+        KW_GROUPING = 319,
+        KW_HASH = 320,
+        KW_HAVING = 321,
+        KW_IF = 322,
+        KW_IGNORE = 323,
+        KW_IN = 324,
+        KW_INNER = 325,
+        KW_INTERSECT = 326,
+        KW_INTERVAL = 327,
+        KW_INTO = 328,
+        KW_IS = 329,
+        KW_JOIN = 330,
+        KW_LEFT = 331,
+        KW_LEFT_IN_SET_OP = 332,
+        KW_LIKE = 333,
+        KW_LIMIT = 334,
+        KW_LOOKUP = 335,
+        KW_MERGE = 336,
+        KW_NATURAL = 337,
+        KW_NEW = 338,
+        KW_NO = 339,
+        KW_NOT = 340,
+        KW_NULL = 341,
+        KW_NULLS = 342,
+        KW_ON = 343,
+        KW_OR = 344,
+        KW_ORDER = 345,
+        KW_OUTER = 346,
+        KW_OVER = 347,
+        KW_PARTITION = 348,
+        KW_PRECEDING = 349,
+        KW_PROTO = 350,
+        KW_RANGE = 351,
+        KW_RECURSIVE = 352,
+        KW_RESPECT = 353,
+        KW_RIGHT = 354,
+        KW_ROLLUP = 355,
+        KW_ROWS = 356,
+        KW_SELECT = 357,
+        KW_SET = 358,
+        KW_STRUCT = 359,
+        KW_TABLESAMPLE = 360,
+        KW_THEN = 361,
+        KW_TO = 362,
+        KW_TRUE = 363,
+        KW_UNBOUNDED = 364,
+        KW_UNION = 365,
+        KW_USING = 366,
+        KW_WHEN = 367,
+        KW_WHERE = 368,
+        KW_WINDOW = 369,
+        KW_WITH = 370,
+        KW_UNNEST = 371,
+        KW_CONTAINS = 372,
+        KW_CUBE = 373,
+        KW_ESCAPE = 374,
+        KW_EXCLUDE = 375,
+        KW_FETCH = 376,
+        KW_FOR = 377,
+        KW_GROUPS = 378,
+        KW_LATERAL = 379,
+        KW_OF = 380,
+        KW_SOME = 381,
+        KW_TREAT = 382,
+        KW_WITHIN = 383,
+        KW_QUALIFY_RESERVED = 384,
+        SENTINEL_RESERVED_KW_END = 385,
+        KW_WITH_STARTING_WITH_EXPRESSION = 386,
+        KW_EXCEPT_IN_SET_OP = 387,
         KW_NOT_SPECIAL = 388,
         SENTINEL_NONRESERVED_KW_START = 389,
         KW_ABORT = 390,
@@ -599,134 +473,134 @@ namespace zetasql_bison_parser {
         KW_ADD = 393,
         KW_AGGREGATE = 394,
         KW_ALTER = 395,
-        KW_ANONYMIZATION = 396,
-        KW_ANALYZE = 397,
-        KW_APPROX = 398,
-        KW_ARE = 399,
-        KW_ASSERT = 400,
-        KW_BATCH = 401,
-        KW_BEGIN = 402,
-        KW_BIGDECIMAL = 403,
-        KW_BIGNUMERIC = 404,
-        KW_BREAK = 405,
-        KW_CALL = 406,
-        KW_CASCADE = 407,
-        KW_CHECK = 408,
-        KW_CLAMPED = 409,
-        KW_CLONE = 410,
-        KW_COPY = 411,
-        KW_CLUSTER = 412,
-        KW_COLUMN = 413,
-        KW_COLUMNS = 414,
-        KW_COMMIT = 415,
-        KW_CONNECTION = 416,
-        KW_CONTINUE = 417,
-        KW_CONSTANT = 418,
-        KW_CONSTRAINT = 419,
-        KW_DATA = 420,
-        KW_DATABASE = 421,
-        KW_DATE = 422,
-        KW_DATETIME = 423,
-        KW_DECIMAL = 424,
-        KW_DECLARE = 425,
-        KW_DEFINER = 426,
-        KW_DELETE = 427,
-        KW_DELETION = 428,
-        KW_DESCRIBE = 429,
-        KW_DESCRIPTOR = 430,
-        KW_DETERMINISTIC = 431,
-        KW_DO = 432,
-        KW_DROP = 433,
-        KW_ENFORCED = 434,
-        KW_ELSEIF = 435,
-        KW_EXECUTE = 436,
-        KW_EXPLAIN = 437,
-        KW_EXPORT = 438,
-        KW_EXTERNAL = 439,
-        KW_FILES = 440,
-        KW_FILTER = 441,
-        KW_FILTER_FIELDS = 442,
-        KW_FILL = 443,
-        KW_FIRST = 444,
-        KW_FOREIGN = 445,
-        KW_FORMAT = 446,
-        KW_FUNCTION = 447,
-        KW_GENERATED = 448,
-        KW_GRANT = 449,
-        KW_GROUP_ROWS = 450,
-        KW_HIDDEN = 451,
-        KW_IMMEDIATE = 452,
-        KW_IMMUTABLE = 453,
-        KW_IMPORT = 454,
-        KW_INCLUDE = 455,
-        KW_INDEX = 456,
-        KW_INOUT = 457,
-        KW_INPUT = 458,
-        KW_INSERT = 459,
-        KW_INVOKER = 460,
-        KW_ITERATE = 461,
-        KW_ISOLATION = 462,
-        KW_JSON = 463,
-        KW_KEY = 464,
-        KW_LANGUAGE = 465,
-        KW_LAST = 466,
-        KW_LEAVE = 467,
-        KW_LEVEL = 468,
-        KW_LOAD = 469,
-        KW_LOOP = 470,
-        KW_MACRO = 471,
-        KW_MATCH = 472,
-        KW_MATCHED = 473,
-        KW_MATERIALIZED = 474,
-        KW_MAX = 475,
-        KW_MESSAGE = 476,
-        KW_MIN = 477,
-        KW_MODEL = 478,
-        KW_MODULE = 479,
-        KW_NUMERIC = 480,
-        KW_OFFSET = 481,
-        KW_ONLY = 482,
-        KW_OPTIONS = 483,
-        KW_OUT = 484,
-        KW_OUTPUT = 485,
-        KW_OVERWRITE = 486,
-        KW_PARTITIONS = 487,
-        KW_PERCENT = 488,
-        KW_PIVOT = 489,
-        KW_POLICIES = 490,
-        KW_POLICY = 491,
-        KW_PRIMARY = 492,
-        KW_PRIVATE = 493,
-        KW_PRIVILEGE = 494,
-        KW_PRIVILEGES = 495,
-        KW_PROCEDURE = 496,
-        KW_PUBLIC = 497,
-        KW_QUALIFY_NONRESERVED = 498,
-        KW_RAISE = 499,
-        KW_READ = 500,
-        KW_REFERENCES = 501,
-        KW_REMOTE = 502,
-        KW_REMOVE = 503,
-        KW_RENAME = 504,
-        KW_REPEAT = 505,
-        KW_REPEATABLE = 506,
-        KW_REPLACE = 507,
-        KW_REPLACE_FIELDS = 508,
-        KW_REPLICA = 509,
-        KW_REPORT = 510,
-        KW_RESTRICT = 511,
-        KW_RESTRICTION = 512,
-        KW_RETURN = 513,
-        KW_RETURNS = 514,
-        KW_REVOKE = 515,
-        KW_ROLLBACK = 516,
-        KW_ROW = 517,
-        KW_RUN = 518,
-        KW_SAFE_CAST = 519,
-        KW_SCHEMA = 520,
-        KW_SEARCH = 521,
-        KW_SECURITY = 522,
-        KW_SEQUENCE = 523,
+        KW_ANALYZE = 396,
+        KW_APPROX = 397,
+        KW_ARE = 398,
+        KW_ASSERT = 399,
+        KW_BATCH = 400,
+        KW_BEGIN = 401,
+        KW_BIGDECIMAL = 402,
+        KW_BIGNUMERIC = 403,
+        KW_BREAK = 404,
+        KW_CALL = 405,
+        KW_CASCADE = 406,
+        KW_CHECK = 407,
+        KW_CLAMPED = 408,
+        KW_CLONE = 409,
+        KW_COPY = 410,
+        KW_CLUSTER = 411,
+        KW_COLUMN = 412,
+        KW_COLUMNS = 413,
+        KW_COMMIT = 414,
+        KW_CONNECTION = 415,
+        KW_CONTINUE = 416,
+        KW_CONSTANT = 417,
+        KW_CONSTRAINT = 418,
+        KW_DATA = 419,
+        KW_DATABASE = 420,
+        KW_DATE = 421,
+        KW_DATETIME = 422,
+        KW_DECIMAL = 423,
+        KW_DECLARE = 424,
+        KW_DEFINER = 425,
+        KW_DELETE = 426,
+        KW_DELETION = 427,
+        KW_DESCRIBE = 428,
+        KW_DESCRIPTOR = 429,
+        KW_DETERMINISTIC = 430,
+        KW_DO = 431,
+        KW_DROP = 432,
+        KW_ENFORCED = 433,
+        KW_ELSEIF = 434,
+        KW_EXECUTE = 435,
+        KW_EXPLAIN = 436,
+        KW_EXPORT = 437,
+        KW_EXTERNAL = 438,
+        KW_FILES = 439,
+        KW_FILTER = 440,
+        KW_FILL = 441,
+        KW_FIRST = 442,
+        KW_FOREIGN = 443,
+        KW_FORMAT = 444,
+        KW_FUNCTION = 445,
+        KW_GENERATED = 446,
+        KW_GRANT = 447,
+        KW_GROUP_ROWS = 448,
+        KW_HIDDEN = 449,
+        KW_IMMEDIATE = 450,
+        KW_IMMUTABLE = 451,
+        KW_IMPORT = 452,
+        KW_INCLUDE = 453,
+        KW_INDEX = 454,
+        KW_INOUT = 455,
+        KW_INPUT = 456,
+        KW_INSERT = 457,
+        KW_INVOKER = 458,
+        KW_ITERATE = 459,
+        KW_ISOLATION = 460,
+        KW_JSON = 461,
+        KW_KEY = 462,
+        KW_LANGUAGE = 463,
+        KW_LAST = 464,
+        KW_LEAVE = 465,
+        KW_LEVEL = 466,
+        KW_LOAD = 467,
+        KW_LOOP = 468,
+        KW_MACRO = 469,
+        KW_MATCH = 470,
+        KW_MATCHED = 471,
+        KW_MATERIALIZED = 472,
+        KW_MAX = 473,
+        KW_MESSAGE = 474,
+        KW_METADATA = 475,
+        KW_MIN = 476,
+        KW_MODEL = 477,
+        KW_MODULE = 478,
+        KW_NUMERIC = 479,
+        KW_OFFSET = 480,
+        KW_ONLY = 481,
+        KW_OPTIONS = 482,
+        KW_OUT = 483,
+        KW_OUTPUT = 484,
+        KW_OVERWRITE = 485,
+        KW_PARTITIONS = 486,
+        KW_PERCENT = 487,
+        KW_PIVOT = 488,
+        KW_POLICIES = 489,
+        KW_POLICY = 490,
+        KW_PRIMARY = 491,
+        KW_PRIVATE = 492,
+        KW_PRIVILEGE = 493,
+        KW_PRIVILEGES = 494,
+        KW_PROCEDURE = 495,
+        KW_PUBLIC = 496,
+        KW_QUALIFY_NONRESERVED = 497,
+        KW_RAISE = 498,
+        KW_READ = 499,
+        KW_REFERENCES = 500,
+        KW_REMOTE = 501,
+        KW_REMOVE = 502,
+        KW_RENAME = 503,
+        KW_REPEAT = 504,
+        KW_REPEATABLE = 505,
+        KW_REPLACE = 506,
+        KW_REPLACE_FIELDS = 507,
+        KW_REPLICA = 508,
+        KW_REPORT = 509,
+        KW_RESTRICT = 510,
+        KW_RESTRICTION = 511,
+        KW_RETURN = 512,
+        KW_RETURNS = 513,
+        KW_REVOKE = 514,
+        KW_ROLLBACK = 515,
+        KW_ROW = 516,
+        KW_RUN = 517,
+        KW_SAFE_CAST = 518,
+        KW_SCHEMA = 519,
+        KW_SEARCH = 520,
+        KW_SECURITY = 521,
+        KW_SEQUENCE = 522,
+        KW_SETS = 523,
         KW_SHOW = 524,
         KW_SIMPLE = 525,
         KW_SNAPSHOT = 526,
@@ -757,30 +631,31 @@ namespace zetasql_bison_parser {
         KW_UPDATE = 551,
         KW_VALUE = 552,
         KW_VALUES = 553,
-        KW_VOLATILE = 554,
-        KW_VIEW = 555,
-        KW_VIEWS = 556,
-        KW_WEIGHT = 557,
-        KW_WHILE = 558,
-        KW_WRITE = 559,
-        KW_ZONE = 560,
-        KW_EXCEPTION = 561,
-        KW_ERROR = 562,
-        KW_CORRESPONDING = 563,
-        KW_STRICT = 564,
-        KW_INTERLEAVE = 565,
-        KW_NULL_FILTERED = 566,
-        KW_PARENT = 567,
-        SENTINEL_NONRESERVED_KW_END = 568,
-        KW_CURRENT_DATETIME_FUNCTION = 569,
-        MACRO_BODY_TOKEN = 570,
-        MODE_STATEMENT = 571,
-        MODE_SCRIPT = 572,
-        MODE_NEXT_STATEMENT = 573,
-        MODE_NEXT_SCRIPT_STATEMENT = 574,
-        MODE_NEXT_STATEMENT_KIND = 575,
-        MODE_EXPRESSION = 576,
-        MODE_TYPE = 577
+        KW_VECTOR = 554,
+        KW_VOLATILE = 555,
+        KW_VIEW = 556,
+        KW_VIEWS = 557,
+        KW_WEIGHT = 558,
+        KW_WHILE = 559,
+        KW_WRITE = 560,
+        KW_ZONE = 561,
+        KW_EXCEPTION = 562,
+        KW_ERROR = 563,
+        KW_CORRESPONDING = 564,
+        KW_STRICT = 565,
+        KW_INTERLEAVE = 566,
+        KW_NULL_FILTERED = 567,
+        KW_PARENT = 568,
+        SENTINEL_NONRESERVED_KW_END = 569,
+        KW_CURRENT_DATETIME_FUNCTION = 570,
+        MACRO_BODY_TOKEN = 571,
+        MODE_STATEMENT = 572,
+        MODE_SCRIPT = 573,
+        MODE_NEXT_STATEMENT = 574,
+        MODE_NEXT_SCRIPT_STATEMENT = 575,
+        MODE_NEXT_STATEMENT_KIND = 576,
+        MODE_EXPRESSION = 577,
+        MODE_TYPE = 578
       };
     };
 
@@ -1245,12 +1120,12 @@ namespace zetasql_bison_parser {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 33476,     ///< Last index in yytable_.
-      yynnts_ = 581,  ///< Number of nonterminal symbols.
-      yyfinal_ = 461, ///< Termination state number.
+      yylast_ = 35560,     ///< Last index in yytable_.
+      yynnts_ = 595,  ///< Number of nonterminal symbols.
+      yyfinal_ = 465, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 346  ///< Number of tokens.
+      yyntokens_ = 347  ///< Number of tokens.
     };
 
 
@@ -1269,7 +1144,7 @@ namespace zetasql_bison_parser {
 
 
 } // zetasql_bison_parser
-#line 1273 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 1148 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 

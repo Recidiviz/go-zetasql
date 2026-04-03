@@ -4,116 +4,152 @@
 #include "zetasql/public/proto/type_annotation.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr FieldFormat::FieldFormat(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+template <typename>
+PROTOBUF_CONSTEXPR FieldFormat::FieldFormat(
+    ::_pbi::ConstantInitialized) {}
 struct FieldFormatDefaultTypeInternal {
-  constexpr FieldFormatDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR FieldFormatDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~FieldFormatDefaultTypeInternal() {}
   union {
     FieldFormat _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FieldFormatDefaultTypeInternal _FieldFormat_default_instance_;
-constexpr DeprecatedEncoding::DeprecatedEncoding(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FieldFormatDefaultTypeInternal _FieldFormat_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR DeprecatedEncoding::DeprecatedEncoding(
+    ::_pbi::ConstantInitialized) {}
 struct DeprecatedEncodingDefaultTypeInternal {
-  constexpr DeprecatedEncodingDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DeprecatedEncodingDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DeprecatedEncodingDefaultTypeInternal() {}
   union {
     DeprecatedEncoding _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeprecatedEncodingDefaultTypeInternal _DeprecatedEncoding_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DeprecatedEncodingDefaultTypeInternal _DeprecatedEncoding_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[2];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::FieldFormat, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::DeprecatedEncoding, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::FieldFormat)},
-  { 6, -1, -1, sizeof(::zetasql::DeprecatedEncoding)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FieldFormat_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_DeprecatedEncoding_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[2];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::FieldFormat, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::DeprecatedEncoding, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n*zetasql/public/proto/type_annotation.p"
-  "roto\022\007zetasql\032 google/protobuf/descripto"
-  "r.proto\"\250\003\n\013FieldFormat\"\230\003\n\006Format\022\022\n\016DE"
-  "FAULT_FORMAT\020\000\022\010\n\004DATE\020\001\022\025\n\021TIMESTAMP_SE"
-  "CONDS\020\002\022\024\n\020TIMESTAMP_MILLIS\020\003\022\024\n\020TIMESTA"
-  "MP_MICROS\020\004\022\023\n\017TIMESTAMP_NANOS\020\005\022\020\n\014DATE"
-  "_DECIMAL\020\006\022\017\n\013TIME_MICROS\020\007\022\023\n\017DATETIME_"
-  "MICROS\020\010\022\030\n\024ST_GEOGRAPHY_ENCODED\020\t\022\013\n\007NU"
-  "MERIC\020\n\022\016\n\nBIGNUMERIC\020\013\022\010\n\004JSON\020\014\022\014\n\010INT"
-  "ERVAL\020\016\022\027\n\023RANGE_DATES_ENCODED\020\020\022\033\n\027RANG"
-  "E_DATETIMES_ENCODED\020\021\022\034\n\030RANGE_TIMESTAMP"
-  "S_ENCODED\020\022\022=\n0__FieldFormat_Type__switc"
-  "h_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\243\001\n\022D"
-  "eprecatedEncoding\"\214\001\n\010Encoding\022\024\n\020DEFAUL"
-  "T_ENCODING\020\000\022\021\n\rDATE_PACKED32\020\001\022\020\n\014DATE_"
-  "DECIMAL\020\001\022A\n4__FieldFormat_Encoding__swi"
-  "tch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001"
-  ":M\n\006format\022\035.google.protobuf.FieldOption"
-  "s\030\313\353\341  \001(\0162\033.zetasql.FieldFormat.Format:"
-  "K\n\004type\022\035.google.protobuf.FieldOptions\030\345"
-  "\252\337\027 \001(\0162\033.zetasql.FieldFormat.Format:X\n\010"
-  "encoding\022\035.google.protobuf.FieldOptions\030"
-  "\247\371\376\035 \001(\0162$.zetasql.DeprecatedEncoding.En"
-  "coding:<\n\014use_defaults\022\035.google.protobuf"
-  ".FieldOptions\030\277\246\336\027 \001(\010:\004true:D\n\022use_fiel"
-  "d_defaults\022\037.google.protobuf.MessageOpti"
-  "ons\030\202\371\326\027 \001(\010:\004trueB,\n\022com.google.zetasql"
-  "B\023TypeAnnotationProto\370\001\001"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps[1] = {
-  &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::FieldFormat)},
+        { 8, -1, -1, sizeof(::zetasql::DeprecatedEncoding)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = {
-  false, false, 1104, descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, "zetasql/public/proto/type_annotation.proto", 
-  &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps, 1, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_FieldFormat_default_instance_._instance,
+    &::zetasql::_DeprecatedEncoding_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n*zetasql/public/proto/type_annotation.p"
+    "roto\022\007zetasql\032 google/protobuf/descripto"
+    "r.proto\"\250\003\n\013FieldFormat\"\230\003\n\006Format\022\022\n\016DE"
+    "FAULT_FORMAT\020\000\022\010\n\004DATE\020\001\022\025\n\021TIMESTAMP_SE"
+    "CONDS\020\002\022\024\n\020TIMESTAMP_MILLIS\020\003\022\024\n\020TIMESTA"
+    "MP_MICROS\020\004\022\023\n\017TIMESTAMP_NANOS\020\005\022\020\n\014DATE"
+    "_DECIMAL\020\006\022\017\n\013TIME_MICROS\020\007\022\023\n\017DATETIME_"
+    "MICROS\020\010\022\030\n\024ST_GEOGRAPHY_ENCODED\020\t\022\013\n\007NU"
+    "MERIC\020\n\022\016\n\nBIGNUMERIC\020\013\022\010\n\004JSON\020\014\022\014\n\010INT"
+    "ERVAL\020\016\022\027\n\023RANGE_DATES_ENCODED\020\020\022\033\n\027RANG"
+    "E_DATETIMES_ENCODED\020\021\022\034\n\030RANGE_TIMESTAMP"
+    "S_ENCODED\020\022\022=\n0__FieldFormat_Type__switc"
+    "h_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\243\001\n\022D"
+    "eprecatedEncoding\"\214\001\n\010Encoding\022\024\n\020DEFAUL"
+    "T_ENCODING\020\000\022\021\n\rDATE_PACKED32\020\001\022\020\n\014DATE_"
+    "DECIMAL\020\001\022A\n4__FieldFormat_Encoding__swi"
+    "tch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001"
+    ":M\n\006format\022\035.google.protobuf.FieldOption"
+    "s\030\313\353\341  \001(\0162\033.zetasql.FieldFormat.Format:"
+    "K\n\004type\022\035.google.protobuf.FieldOptions\030\345"
+    "\252\337\027 \001(\0162\033.zetasql.FieldFormat.Format:X\n\010"
+    "encoding\022\035.google.protobuf.FieldOptions\030"
+    "\247\371\376\035 \001(\0162$.zetasql.DeprecatedEncoding.En"
+    "coding:<\n\014use_defaults\022\035.google.protobuf"
+    ".FieldOptions\030\277\246\336\027 \001(\010:\004true:D\n\022use_fiel"
+    "d_defaults\022\037.google.protobuf.MessageOpti"
+    "ons\030\202\371\326\027 \001(\010:\004trueB,\n\022com.google.zetasql"
+    "B\023TypeAnnotationProto\370\001\001"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps[1] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = {
+    false,
+    false,
+    1104,
+    descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
+    "zetasql/public/proto/type_annotation.proto",
+    &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once,
+    descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps,
+    1,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FieldFormat_Format_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto);
@@ -144,8 +180,9 @@ bool FieldFormat_Format_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FieldFormat_Format FieldFormat::DEFAULT_FORMAT;
 constexpr FieldFormat_Format FieldFormat::DATE;
 constexpr FieldFormat_Format FieldFormat::TIMESTAMP_SECONDS;
@@ -167,7 +204,9 @@ constexpr FieldFormat_Format FieldFormat::__FieldFormat_Type__switch_must_have_a
 constexpr FieldFormat_Format FieldFormat::Format_MIN;
 constexpr FieldFormat_Format FieldFormat::Format_MAX;
 constexpr int FieldFormat::Format_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DeprecatedEncoding_Encoding_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[1];
@@ -182,8 +221,9 @@ bool DeprecatedEncoding_Encoding_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DEFAULT_ENCODING;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DATE_PACKED32;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DATE_DECIMAL;
@@ -191,21 +231,22 @@ constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::__FieldFormat_Encoding
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::Encoding_MIN;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::Encoding_MAX;
 constexpr int DeprecatedEncoding::Encoding_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 // ===================================================================
 
 class FieldFormat::_Internal {
  public:
 };
 
-FieldFormat::FieldFormat(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+FieldFormat::FieldFormat(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.FieldFormat)
 }
 FieldFormat::FieldFormat(const FieldFormat& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  FieldFormat* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.FieldFormat)
 }
@@ -227,24 +268,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*FieldFormat::GetClassData() co
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FieldFormat::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[0]);
 }
-
 // ===================================================================
 
 class DeprecatedEncoding::_Internal {
  public:
 };
 
-DeprecatedEncoding::DeprecatedEncoding(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+DeprecatedEncoding::DeprecatedEncoding(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.DeprecatedEncoding)
 }
 DeprecatedEncoding::DeprecatedEncoding(const DeprecatedEncoding& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  DeprecatedEncoding* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.DeprecatedEncoding)
 }
@@ -266,36 +306,36 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeprecatedEncoding::GetClassDa
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DeprecatedEncoding::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[1]);
 }
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::FieldFormat_Format, ::zetasql::FieldFormat_Format_IsValid>, 14, false >
-  format(kFormatFieldNumber, static_cast< ::zetasql::FieldFormat_Format >(0));
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::FieldFormat_Format, ::zetasql::FieldFormat_Format_IsValid>, 14, false >
-  type(kTypeFieldNumber, static_cast< ::zetasql::FieldFormat_Format >(0));
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::DeprecatedEncoding_Encoding, ::zetasql::DeprecatedEncoding_Encoding_IsValid>, 14, false >
-  encoding(kEncodingFieldNumber, static_cast< ::zetasql::DeprecatedEncoding_Encoding >(0));
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  use_defaults(kUseDefaultsFieldNumber, true);
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  use_field_defaults(kUseFieldDefaultsFieldNumber, true);
-
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::FieldFormat_Format, ::zetasql::FieldFormat_Format_IsValid>, 14, false>
+  format(kFormatFieldNumber, static_cast< ::zetasql::FieldFormat_Format >(0), nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::FieldFormat_Format, ::zetasql::FieldFormat_Format_IsValid>, 14, false>
+  type(kTypeFieldNumber, static_cast< ::zetasql::FieldFormat_Format >(0), nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::DeprecatedEncoding_Encoding, ::zetasql::DeprecatedEncoding_Encoding_IsValid>, 14, false>
+  encoding(kEncodingFieldNumber, static_cast< ::zetasql::DeprecatedEncoding_Encoding >(0), nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false>
+  use_defaults(kUseDefaultsFieldNumber, true, nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false>
+  use_field_defaults(kUseFieldDefaultsFieldNumber, true, nullptr);
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::FieldFormat* Arena::CreateMaybeMessage< ::zetasql::FieldFormat >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::FieldFormat*
+Arena::CreateMaybeMessage< ::zetasql::FieldFormat >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::FieldFormat >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::DeprecatedEncoding* Arena::CreateMaybeMessage< ::zetasql::DeprecatedEncoding >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::DeprecatedEncoding*
+Arena::CreateMaybeMessage< ::zetasql::DeprecatedEncoding >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::DeprecatedEncoding >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

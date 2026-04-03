@@ -40,6 +40,7 @@
 #include "zetasql/parser/parse_tree_errors.h"
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/coercer.h"
+#include "zetasql/public/cycle_detector.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/input_argument_type.h"
 #include "zetasql/public/language_options.h"
@@ -388,6 +389,47 @@ absl::Status Resolver::ResolveInsertQuery(
   return absl::OkStatus();
 }
 
+class GeneratedColumnCycleDetector : public ResolvedASTVisitor {
+ public:
+  explicit GeneratedColumnCycleDetector(const Table* table,
+                                        CycleDetector* cycle_detector)
+      : table_(table), cycle_detector_(cycle_detector) {}
+
+ protected:
+  absl::Status DefaultVisit(const ResolvedNode* node) override {
+    // TODO: Add checks for ResolvedCatalogColumnRef here whenever
+    // it becomes relevant.
+    if (node->Is<ResolvedExpressionColumn>()) {
+      std::string column_name = node->GetAs<ResolvedExpressionColumn>()->name();
+      const Column* column = table_->FindColumnByName(column_name);
+      ZETASQL_RET_CHECK_NE(column, nullptr);
+      if (column->HasGeneratedExpression()) {
+        ZETASQL_RET_CHECK(column->GetExpression().has_value());
+        CycleDetector::ObjectInfo object(column->FullName(), column,
+                                         cycle_detector_);
+        absl::Status status = object.DetectCycle("generated column");
+        if (!status.ok()) {
+          const std::vector<std::string>& cycle_names =
+              cycle_detector_->ObjectNames();
+          return MakeSqlError()
+                 << "Recursive dependencies detected while evaluating "
+                    "generated column expression values for "
+                 << column->FullName()
+                 << ". The expression indicates the column depends on "
+                    "itself. Columns forming the cycle : "
+                 << absl::StrJoin(cycle_names, ", ");
+        }
+        const ResolvedExpr* resolved_expr =
+            column->GetExpression()->GetResolvedExpression();
+        ZETASQL_RETURN_IF_ERROR(resolved_expr->Accept(this));
+      }
+    }
+    return ResolvedASTVisitor::DefaultVisit(node);
+  }
+  const Table* table_;
+  CycleDetector* cycle_detector_;
+};
+
 absl::Status Resolver::ResolveInsertStatement(
     const ASTInsertStatement* ast_statement,
     std::unique_ptr<ResolvedInsertStmt>* output) {
@@ -412,6 +454,25 @@ absl::Status Resolver::ResolveInsertStatement(
     }
   }
 
+  // Check for cycles for generated columns in the table.
+  for (auto const& [resolved_column, catalog_column] :
+       resolved_columns_from_table_scans_) {
+    if (catalog_column->HasGeneratedExpression()) {
+      ZETASQL_RET_CHECK(catalog_column->GetExpression().has_value());
+      CycleDetector* cycle_detector =
+          analyzer_options_.find_options().cycle_detector();
+      ZETASQL_RET_CHECK(cycle_detector != nullptr)
+          << "Cycle detector needs to be set in analyzer options";
+      GeneratedColumnCycleDetector detector(resolved_table_scan->table(),
+                                            cycle_detector);
+      CycleDetector::ObjectInfo object(catalog_column->FullName(),
+                                       catalog_column, cycle_detector);
+      const ResolvedExpr* resolved_expr =
+          catalog_column->GetExpression()->GetResolvedExpression();
+      ZETASQL_RETURN_IF_ERROR(resolved_expr->Accept(&detector));
+    }
+  }
+
   ResolvedColumnList insert_columns;
   IdStringHashSetCase visited_column_names;
 
@@ -428,7 +489,7 @@ absl::Status Resolver::ResolveInsertStatement(
       const ResolvedColumn* column =
           zetasql_base::FindOrNull(table_scan_columns, column_name_id);
       if (column != nullptr) {
-        if (zetasql_base::ContainsKey(ambiguous_column_names, column_name_id)) {
+        if (ambiguous_column_names.contains(column_name_id)) {
           return MakeSqlErrorAt(column_name)
                  << "Column " << column_name_id
                  << " is ambiguous and cannot be referenced";
@@ -448,7 +509,7 @@ absl::Status Resolver::ResolveInsertStatement(
     for (auto const& [resolved_column, catalog_column] :
          resolved_columns_from_table_scans_) {
       if (catalog_column->IsWritableColumn() &&
-          catalog_column->HasDefaultValue()) {
+          catalog_column->HasDefaultExpression()) {
         RecordColumnAccess(resolved_column, ResolvedStatement::WRITE);
       }
     }
@@ -463,9 +524,9 @@ absl::Status Resolver::ResolveInsertStatement(
               FEATURE_V_1_3_OMIT_INSERT_COLUMN_LIST)) {
         // Implicitly expand column list to all writable non-pseudo columns.
         for (const NamedColumn& named_column : name_list->columns()) {
-          const IdString column_name_id = named_column.name;
-          const ResolvedColumn& column = named_column.column;
-          if (zetasql_base::ContainsKey(ambiguous_column_names, column_name_id)) {
+          const IdString column_name_id = named_column.name();
+          const ResolvedColumn& column = named_column.column();
+          if (ambiguous_column_names.contains(column_name_id)) {
             return MakeSqlErrorAt(ast_statement)
                    << "Column " << column_name_id
                    << " is ambiguous and cannot be referenced";
@@ -646,7 +707,7 @@ static const ASTGeneralizedPathExpression* GetTargetPath(
   } else if (ast_update_item->update_statement() != nullptr) {
     return ast_update_item->update_statement()->GetTargetPathForNested();
   } else {
-    ZETASQL_DCHECK(ast_update_item->insert_statement() != nullptr);
+    ABSL_DCHECK(ast_update_item->insert_statement() != nullptr);
     return ast_update_item->insert_statement()->GetTargetPathForNested();
   }
 }
@@ -689,7 +750,7 @@ static std::string GeneralizedPathAsString(
       const std::string ret =
           absl::StrCat("Unexpected node kind in GeneralizedPathAsString: ",
                        path->GetNodeKindString());
-      ZETASQL_DCHECK(false) << ret;
+      ABSL_DCHECK(false) << ret;
       return ret;
   }
 }
@@ -702,7 +763,7 @@ static const ASTAlias* GetTargetAlias(const ASTUpdateItem* ast_update_item) {
   } else if (ast_update_item->delete_statement() != nullptr) {
     return ast_update_item->delete_statement()->alias();
   } else {
-    ZETASQL_DCHECK(ast_update_item->update_statement() != nullptr);
+    ABSL_DCHECK(ast_update_item->update_statement() != nullptr);
     return ast_update_item->update_statement()->alias();
   }
 }
@@ -720,7 +781,7 @@ static int GetFieldPathDepth(const ResolvedExpr* expr) {
     return 1 +
            GetFieldPathDepth(expr->GetAs<ResolvedGetStructField>()->expr());
   } else {
-    ZETASQL_DCHECK_EQ(node_kind, RESOLVED_COLUMN_REF);
+    ABSL_DCHECK_EQ(node_kind, RESOLVED_COLUMN_REF);
     return 0;
   }
 }
@@ -736,7 +797,7 @@ static const ResolvedExpr* StripLastnFields(const ResolvedExpr* expr, int n) {
     return StripLastnFields(expr->GetAs<ResolvedGetProtoField>()->expr(),
                             n - 1);
   } else {
-    ZETASQL_DCHECK_EQ(node_kind, RESOLVED_GET_STRUCT_FIELD);
+    ABSL_DCHECK_EQ(node_kind, RESOLVED_GET_STRUCT_FIELD);
     return StripLastnFields(expr->GetAs<ResolvedGetStructField>()->expr(),
                             n - 1);
   }
@@ -1106,7 +1167,7 @@ static absl::Status VerifyNestedStatementsOrdering(
     const ResolvedUpdateItem* resolved_update_item, bool is_nested_delete,
     bool is_nested_update) {
   // Both cannot be true for a nested statement.
-  ZETASQL_DCHECK(!is_nested_delete || !is_nested_update);
+  ABSL_DCHECK(!is_nested_delete || !is_nested_update);
 
   const std::string err_message_suffix =
       "nested statements referencing the same field must be written in the"
@@ -1971,7 +2032,7 @@ absl::Status Resolver::ResolveAssertRowsModified(
   ZETASQL_RETURN_IF_ERROR(ResolveScalarExpr(ast_node->num_rows(),
                                     empty_name_scope_.get(),
                                     "assert_rows_modified", &resolved_expr));
-  ZETASQL_DCHECK(resolved_expr != nullptr);
+  ABSL_DCHECK(resolved_expr != nullptr);
   ZETASQL_RETURN_IF_ERROR(ValidateParameterOrLiteralAndCoerceToInt64IfNeeded(
       "ASSERT_ROWS_MODIFIED" /* clause_name */, ast_node->num_rows(),
       &resolved_expr));
@@ -2049,7 +2110,7 @@ absl::Status Resolver::ResolveReturningClause(
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list;
   for (const NamedColumn& named_column : output_name_list->columns()) {
     output_column_list.push_back(MakeResolvedOutputColumn(
-        named_column.name.ToString(), named_column.column));
+        named_column.name().ToString(), named_column.column()));
   }
 
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> computed_columns =

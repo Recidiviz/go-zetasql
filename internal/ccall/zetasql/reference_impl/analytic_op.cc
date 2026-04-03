@@ -131,7 +131,7 @@ namespace {
 // Applies the Functor to the left and the right value.
 template <template <typename> class Functor>
 Value DoOperation(const Value& left, const Value& right) {
-  ZETASQL_DCHECK_EQ(left.type_kind(), right.type_kind());
+  ABSL_DCHECK_EQ(left.type_kind(), right.type_kind());
   switch (left.type_kind()) {
     case TYPE_INT32:
       return Value::Int32(
@@ -158,7 +158,7 @@ Value DoOperation(const Value& left, const Value& right) {
       return Value::Double(
           Functor<double>()(left.double_value(), right.double_value()));
     default:
-      ZETASQL_LOG(FATAL) << left.type()->DebugString() << " not supported";
+      ABSL_LOG(FATAL) << left.type()->DebugString() << " not supported";
   }
 }
 
@@ -183,7 +183,7 @@ Value GetMaxValue(TypeKind type_kind) {
     case TYPE_DOUBLE:
       return Value::Double(std::numeric_limits<double>::max());
     default:
-      ZETASQL_LOG(FATAL) << Type::TypeKindToString(type_kind, PRODUCT_INTERNAL)
+      ABSL_LOG(FATAL) << Type::TypeKindToString(type_kind, PRODUCT_INTERNAL)
                  << " not supported";
   }
 }
@@ -209,7 +209,7 @@ Value GetMinValue(TypeKind type_kind) {
     case TYPE_DOUBLE:
       return Value::Double(std::numeric_limits<double>::lowest());
     default:
-      ZETASQL_LOG(FATAL) << Type::TypeKindToString(type_kind, PRODUCT_INTERNAL)
+      ABSL_LOG(FATAL) << Type::TypeKindToString(type_kind, PRODUCT_INTERNAL)
                  << " not supported";
   }
 }
@@ -1914,6 +1914,7 @@ absl::Status AggregateAnalyticArg::Eval(
       *partition_schema_, partition, order_keys, params, context, &windows,
       &window_frame_is_deterministic));
 
+  uint64_t num_windows = 0;
   for (const AnalyticWindow& window : windows) {
     // Call AggregateArg::EvalAgg to evaluate the argument expressions and
     // compute the aggregate on each window.
@@ -1922,6 +1923,7 @@ absl::Status AggregateAnalyticArg::Eval(
     ZETASQL_ASSIGN_OR_RETURN(const Value agg_value,
                      aggregator_->EvalAgg(window_tuples, params, context));
     values->emplace_back(agg_value);
+    ZETASQL_RETURN_IF_ERROR(PeriodicallyVerifyNotAborted(context, ++num_windows));
   }
 
   // We conservatively treat aggregation results as non-deterministic

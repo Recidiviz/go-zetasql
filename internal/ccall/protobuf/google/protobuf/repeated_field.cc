@@ -32,29 +32,35 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/repeated_field.h>
+#include "google/protobuf/repeated_field.h"
 
 #include <algorithm>
+#include <string>
 
-#include <google/protobuf/stubs/logging.h>
-#include <google/protobuf/stubs/common.h>
+#include "absl/log/absl_check.h"
+#include "absl/log/absl_log.h"
+#include "absl/strings/cord.h"
 
-#include <google/protobuf/port_def.inc>
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 
 namespace google {
 namespace protobuf {
 
 
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<bool>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<int32_t>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<uint32_t>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<int64_t>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<uint64_t>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<float>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedField<double>;
-template class PROTOBUF_EXPORT_TEMPLATE_DEFINE RepeatedPtrField<std::string>;
+template <>
+PROTOBUF_EXPORT_TEMPLATE_DEFINE size_t
+RepeatedField<absl::Cord>::SpaceUsedExcludingSelfLong() const {
+  size_t result = current_size_ * sizeof(absl::Cord);
+  for (int i = 0; i < current_size_; i++) {
+    // Estimate only.
+    result += Get(i).size();
+  }
+  return result;
+}
+
 
 }  // namespace protobuf
 }  // namespace google
 
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

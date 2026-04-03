@@ -39,8 +39,14 @@ type SourceConfig struct {
 	Source string `yaml:"source"`
 }
 
+type AmalgamationHeaderExclude struct {
+	Pkg     string   `yaml:"pkg"`     // e.g. absl/types/optional (BasePkg/Name)
+	Headers []string `yaml:"headers"` // e.g. absl/types/internal/optional.h as emitted by HeaderPaths
+}
+
 type CCLibConfig struct {
-	Excludes []string `yaml:"excludes"`
+	Excludes                   []string                      `yaml:"excludes"`
+	ExcludeAmalgamationHeaders []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
 }
 
 type ProtocConfig struct {

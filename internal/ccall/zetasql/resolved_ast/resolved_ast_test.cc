@@ -77,7 +77,7 @@ static std::unique_ptr<const ResolvedJoinScan> MakeJoin(
       MakeResolvedTableScan({} /* column_list */, t1, nullptr /* systime */),
       MakeResolvedTableScan({} /* column_list */, t2, nullptr /* systime */),
       nullptr /* join_condition */);
-  ZETASQL_LOG(INFO) << "Made " << node->DebugString();
+  ABSL_LOG(INFO) << "Made " << node->DebugString();
   return node;
 }
 
@@ -108,7 +108,7 @@ TEST_F(ResolvedASTTest, Misc) {
       MakeNodeVector(MakeResolvedComputedColumn(
           select_column, MakeIntLiteral(4))) /* expr_list */,
       MakeJoin() /* input_scan */);
-  ZETASQL_LOG(INFO) << project->DebugString();
+  ABSL_LOG(INFO) << project->DebugString();
   EXPECT_EQ(RESOLVED_PROJECT_SCAN, project->node_kind());
   EXPECT_EQ(1, project->expr_list_size());
   EXPECT_EQ(select_column, project->expr_list(0)->column());
@@ -125,7 +125,7 @@ TEST_F(ResolvedASTTest, Misc) {
   project->set_input_scan(std::move(new_scan));
   project->add_expr_list(
       MakeResolvedComputedColumn(MakeColumn(), MakeIntLiteral(-1234)));
-  ZETASQL_LOG(INFO) << project->DebugString();
+  ABSL_LOG(INFO) << project->DebugString();
 
   EXPECT_EQ("ProjectScan", project->node_kind_string());
   EXPECT_EQ("ProjectScan", ResolvedNodeKindToString(RESOLVED_PROJECT_SCAN));
@@ -187,6 +187,29 @@ QueryStmt
             absl::StrCat("\n", query_stmt->DebugString()));
 }
 
+TEST_F(ResolvedASTTest, DebugStringPrintAccessedWithNullInTree2) {
+  IdStringPool pool;
+  std::unique_ptr<ResolvedQueryStmt> query_stmt = MakeSelect1Stmt(pool);
+  const_cast<ResolvedComputedColumn*>(
+      query_stmt->query()->GetAs<ResolvedProjectScan>()->expr_list(0))
+      ->release_expr();
+
+  EXPECT_EQ(
+      R"(
+QueryStmt
++-output_column_list{ }=
+| +-tbl.x#1 AS x [INT64]
++-query{*}=
+  +-ProjectScan
+    +-column_list{ }=[tbl.x#1]
+    +-expr_list{*}=
+    | +-x#1 := <nullptr AST node>
+    +-input_scan{ }=
+      +-SingleRowScan
+)",
+      absl::StrCat("\n", query_stmt->DebugString({.print_accessed = true})));
+}
+
 TEST_F(ResolvedASTTest, DebugStringAnnotationsFunctionCall) {
   TypeFactory type_factory;
 
@@ -208,6 +231,28 @@ FunctionCall(test_group:test(INT64, INT64, INT64) -> INT64) (test - call root)
                                    {call.get(), "(test - call root)"}}))));
 }
 
+TEST_F(ResolvedASTTest, DebugStringAnnotationsAndPrintAccessedFunctionCall) {
+  TypeFactory type_factory;
+
+  std::unique_ptr<ResolvedFunctionCall> call =
+      zetasql::testing::WrapInFunctionCall(
+          &type_factory, MakeResolvedLiteral(Value::Int64(1)),
+          MakeResolvedLiteral(Value::Int64(2)),
+          MakeResolvedLiteral(Value::Int64(3)));
+  EXPECT_EQ(
+      R"(
+FunctionCall(test_group:test(INT64, INT64, INT64) -> INT64) (test - call root)
++-Literal(type{*}=INT64, value{ }=1) (test - arg 0)
++-Literal(type{*}=INT64, value{ }=2) (test - arg 1)
++-Literal(type{*}=INT64, value{ }=3)
+)",
+      absl::StrCat(absl::StrCat(
+          "\n", call->DebugString(
+                    {.annotations{{call->argument_list(0), "(test - arg 0)"},
+                                  {call->argument_list(1), "(test - arg 1)"},
+                                  {call.get(), "(test - call root)"}},
+                     .print_accessed = true}))));
+}
 TEST_F(ResolvedASTTest, QueryStmtDebugString) {
   IdStringPool pool;
 
@@ -299,9 +344,9 @@ TEST_F(ResolvedASTTest, CheckFieldsAccessed) {
   // Note that calling node()->DebugString() marks node as accesssed but
   // node's children are still unaccessed.
   std::unique_ptr<const ResolvedJoinScan> node = MakeJoin();
-  ZETASQL_LOG(INFO) << AsTableScan(node->left_scan())->table()->FullName();
-  ZETASQL_LOG(INFO) << AsTableScan(node->right_scan())->table()->FullName();
-  ZETASQL_LOG(INFO) << node->join_type();
+  AsTableScan(node->left_scan())->table()->FullName();
+  AsTableScan(node->right_scan())->table()->FullName();
+  node->join_type();
   ZETASQL_EXPECT_OK(node->CheckFieldsAccessed());
 
   EXPECT_EQ(RESOLVED_JOIN_SCAN, node->node_kind());
@@ -309,61 +354,61 @@ TEST_F(ResolvedASTTest, CheckFieldsAccessed) {
   EXPECT_EQ(RESOLVED_TABLE_SCAN, node->right_scan()->node_kind());
 
   node = MakeJoin();
-  ZETASQL_LOG(INFO) << AsTableScan(node->left_scan())->table()->FullName();
-  ZETASQL_LOG(INFO) << node->join_type();
+  AsTableScan(node->left_scan())->table()->FullName();
+  node->join_type();
   EXPECT_EQ(
       R"(Unimplemented feature (ResolvedJoinScan::right_scan not accessed)
 JoinScan (*** This node has unaccessed field ***)
-+-left_scan=
-| +-TableScan(table=T1)
-+-right_scan=
-  +-TableScan(table=T2)
++-left_scan{*}=
+| +-TableScan(table{*}=T1)
++-right_scan{ }=
+  +-TableScan(table{ }=T2)
 )",
       node->CheckFieldsAccessed().message());
   // DebugString does not count as accessing the members inside.
-  ZETASQL_LOG(INFO) << node->right_scan()->DebugString();
+  node->right_scan()->DebugString();
   EXPECT_EQ(R"(Unimplemented feature (ResolvedTableScan::table not accessed)
 JoinScan
-+-left_scan=
-| +-TableScan(table=T1)
-+-right_scan=
-  +-TableScan(table=T2) (*** This node has unaccessed field ***)
++-left_scan{*}=
+| +-TableScan(table{*}=T1)
++-right_scan{*}=
+  +-TableScan(table{ }=T2) (*** This node has unaccessed field ***)
 )",
             node->CheckFieldsAccessed().message());
-  ZETASQL_LOG(INFO) << AsTableScan(node->right_scan())->table()->FullName();
+  AsTableScan(node->right_scan())->table()->FullName();
   ZETASQL_EXPECT_OK(node->CheckFieldsAccessed());
 
   // Unaccessed type, but it has the default value.
   node = MakeJoin();
-  ZETASQL_LOG(INFO) << AsTableScan(node->left_scan())->table()->FullName();
-  ZETASQL_LOG(INFO) << AsTableScan(node->right_scan())->table()->FullName();
+  AsTableScan(node->left_scan())->table()->FullName();
+  AsTableScan(node->right_scan())->table()->FullName();
   ZETASQL_EXPECT_OK(node->CheckFieldsAccessed());
 
   // Unaccessed type, with a non-default value.
   node = MakeJoin(ResolvedJoinScan::LEFT);
-  ZETASQL_LOG(INFO) << AsTableScan(node->left_scan())->table()->FullName();
-  ZETASQL_LOG(INFO) << AsTableScan(node->right_scan())->table()->FullName();
+  AsTableScan(node->left_scan())->table()->FullName();
+  AsTableScan(node->right_scan())->table()->FullName();
   EXPECT_EQ(
       R"(Unimplemented feature (ResolvedJoinScan::join_type not accessed and has non-default value)
 JoinScan (*** This node has unaccessed field ***)
-+-join_type=LEFT
-+-left_scan=
-| +-TableScan(table=T1)
-+-right_scan=
-  +-TableScan(table=T2)
++-join_type{ }=LEFT
++-left_scan{*}=
+| +-TableScan(table{*}=T1)
++-right_scan{*}=
+  +-TableScan(table{*}=T2)
 )",
       node->CheckFieldsAccessed().message());
 
   // Make sure MarkFieldsAccessed() works.
   node = MakeJoin();
-  ZETASQL_LOG(INFO) << AsTableScan(node->left_scan())->table()->FullName();
+  AsTableScan(node->left_scan())->table()->FullName();
   node->right_scan();
   EXPECT_EQ(R"(Unimplemented feature (ResolvedTableScan::table not accessed)
 JoinScan
-+-left_scan=
-| +-TableScan(table=T1)
-+-right_scan=
-  +-TableScan(table=T2) (*** This node has unaccessed field ***)
++-left_scan{*}=
+| +-TableScan(table{*}=T1)
++-right_scan{*}=
+  +-TableScan(table{ }=T2) (*** This node has unaccessed field ***)
 )",
             node->CheckFieldsAccessed().message());
   node->right_scan()->MarkFieldsAccessed();
@@ -387,7 +432,7 @@ TEST_F(ResolvedASTTest, CheckVectorFieldsAccessed) {
     node->input_scan();
 
     if (i != 0) {
-      // Reading num_ doesn't mark field as accessed if the
+      // Reading _size doesn't mark field as accessed if the
       // vector is non-empty.
       EXPECT_EQ(3, node->expr_list_size());
     }
@@ -399,7 +444,7 @@ ProjectScan (*** This node has unaccessed field ***)
 )",
           node->CheckFieldsAccessed().message());
 
-      // If the vector is empty, reading num_ marks it accessed.
+      // If the vector is empty, reading _size marks it accessed.
       EXPECT_EQ(0, node->expr_list_size());
 
       ZETASQL_EXPECT_OK(node->CheckFieldsAccessed());
@@ -412,45 +457,65 @@ ProjectScan (*** This node has unaccessed field ***)
           MakeColumn(), MakeResolvedLiteral(Value::Bool(true))));
       // Note: Mutating or adding elements doesn't reset accessed bits anywhere,
       // but the new elements won't be accessed yet.
+      // Now the vector is accessed, but some of its elements aren't.
+      EXPECT_EQ(
+          R"(Unimplemented feature (ResolvedComputedColumn::expr not accessed)
+ProjectScan
++-expr_list{*}=
+  +-C#1001 := Literal(type{ }=BOOL, value{ }=true) (*** This node has unaccessed field ***)
+  +-C#1002 := Literal(type{ }=BOOL, value{ }=false)
+  +-C#1003 := Literal(type{ }=BOOL, value{ }=true)
+)",
+          node->CheckFieldsAccessed().message());
     } else if (i == 1) {
       EXPECT_EQ(
           R"(Unimplemented feature (ResolvedProjectScan::expr_list not accessed)
 ProjectScan (*** This node has unaccessed field ***)
-+-expr_list=
-  +-C#1001 := Literal(type=BOOL, value=true)
-  +-C#1002 := Literal(type=BOOL, value=false)
-  +-C#1003 := Literal(type=BOOL, value=true)
++-expr_list{ }=
+  +-C#1001 := Literal(type{ }=BOOL, value{ }=true)
+  +-C#1002 := Literal(type{ }=BOOL, value{ }=false)
+  +-C#1003 := Literal(type{ }=BOOL, value{ }=true)
 )",
           node->CheckFieldsAccessed().message());
 
       // Access one of the vector elements, and its bool value.
       static_cast<const ResolvedLiteral*>(node->expr_list(1)->expr())->value();
-    } else {
+
+      // Now the vector is accessed, but some of its elements aren't.
+      EXPECT_EQ(
+          R"(Unimplemented feature (ResolvedComputedColumn::expr not accessed)
+ProjectScan
++-expr_list{*}=
+  +-C#1001 := Literal(type{ }=BOOL, value{ }=true) (*** This node has unaccessed field ***)
+  +-C#1002 := Literal(type{ }=BOOL, value{*}=false)
+  +-C#1003 := Literal(type{ }=BOOL, value{ }=true)
+)",
+          node->CheckFieldsAccessed().message());
+    } else /* i == 2 */ {
       EXPECT_EQ(
           R"(Unimplemented feature (ResolvedProjectScan::expr_list not accessed)
 ProjectScan (*** This node has unaccessed field ***)
-+-expr_list=
-  +-C#1001 := Literal(type=BOOL, value=true)
-  +-C#1002 := Literal(type=BOOL, value=false)
-  +-C#1003 := Literal(type=BOOL, value=true)
++-expr_list{ }=
+  +-C#1001 := Literal(type{ }=BOOL, value{ }=true)
+  +-C#1002 := Literal(type{ }=BOOL, value{ }=false)
+  +-C#1003 := Literal(type{ }=BOOL, value{ }=true)
 )",
           node->CheckFieldsAccessed().message());
 
       EXPECT_EQ(2, i);
       // Access the whole vector, and element 1's bool value.
       static_cast<const ResolvedLiteral*>(node->expr_list()[1]->expr())->value();
-    }
-
     // Now the vector is accessed, but some of its elements aren't.
-    EXPECT_EQ(
-        R"(Unimplemented feature (ResolvedComputedColumn::expr not accessed)
+      EXPECT_EQ(
+          R"(Unimplemented feature (ResolvedComputedColumn::expr not accessed)
 ProjectScan
-+-expr_list=
-  +-C#1001 := Literal(type=BOOL, value=true) (*** This node has unaccessed field ***)
-  +-C#1002 := Literal(type=BOOL, value=false)
-  +-C#1003 := Literal(type=BOOL, value=true)
++-expr_list{*}=
+  +-C#1001 := Literal(type{ }=BOOL, value{ }=true) (*** This node has unaccessed field ***)
+  +-C#1002 := Literal(type{ }=BOOL, value{*}=false)
+  +-C#1003 := Literal(type{ }=BOOL, value{ }=true)
 )",
-        node->CheckFieldsAccessed().message());
+          node->CheckFieldsAccessed().message());
+    }
 
     // We get an OK result once we access all vector elements.
     for (int j = 0; j < node->expr_list_size(); ++j) {
@@ -827,7 +892,7 @@ TEST_F(ResolvedASTTest, GetDescendantsWithKinds) {
       MakeNodeVector(MakeResolvedSetOperationItem(std::move(join1)),
                      MakeResolvedSetOperationItem(std::move(s4_uptr))));
 
-  ZETASQL_LOG(INFO) << "Built tree:\n" << u1->DebugString();
+  ABSL_LOG(INFO) << "Built tree:\n" << u1->DebugString();
 
   std::vector<const ResolvedNode*> found_nodes;
 
@@ -902,7 +967,7 @@ TEST_F(ResolvedASTTest, GetDescendantsSatisfying) {
                             false /* is_value_table */, std::move(p1_uptr));
   const ResolvedQueryStmt* q1 = q1_uptr.get();
 
-  ZETASQL_LOG(INFO) << "Built tree:\n" << q1->DebugString();
+  ABSL_LOG(INFO) << "Built tree:\n" << q1->DebugString();
 
   std::vector<const ResolvedNode*> found_nodes;
 

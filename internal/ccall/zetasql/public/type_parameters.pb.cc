@@ -4,172 +4,228 @@
 #include "zetasql/public/type_parameters.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr TypeParametersProto::TypeParametersProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : child_list_()
-  , _oneof_case_{}{}
+template <typename>
+PROTOBUF_CONSTEXPR TypeParametersProto::TypeParametersProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.child_list_)*/{}
+  , /*decltype(_impl_.type_parameters_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct TypeParametersProtoDefaultTypeInternal {
-  constexpr TypeParametersProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR TypeParametersProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~TypeParametersProtoDefaultTypeInternal() {}
   union {
     TypeParametersProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TypeParametersProtoDefaultTypeInternal _TypeParametersProto_default_instance_;
-constexpr StringTypeParametersProto::StringTypeParametersProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : _oneof_case_{}{}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TypeParametersProtoDefaultTypeInternal _TypeParametersProto_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR StringTypeParametersProto::StringTypeParametersProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.param_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct StringTypeParametersProtoDefaultTypeInternal {
-  constexpr StringTypeParametersProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR StringTypeParametersProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~StringTypeParametersProtoDefaultTypeInternal() {}
   union {
     StringTypeParametersProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT StringTypeParametersProtoDefaultTypeInternal _StringTypeParametersProto_default_instance_;
-constexpr NumericTypeParametersProto::NumericTypeParametersProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : scale_(int64_t{0})
-  , _oneof_case_{}{}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StringTypeParametersProtoDefaultTypeInternal _StringTypeParametersProto_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR NumericTypeParametersProto::NumericTypeParametersProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._extensions_)*/{}
+  , /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.scale_)*/ ::int64_t{0}
+
+  , /*decltype(_impl_.precision_param_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct NumericTypeParametersProtoDefaultTypeInternal {
-  constexpr NumericTypeParametersProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR NumericTypeParametersProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~NumericTypeParametersProtoDefaultTypeInternal() {}
   union {
     NumericTypeParametersProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT NumericTypeParametersProtoDefaultTypeInternal _NumericTypeParametersProto_default_instance_;
-constexpr ExtendedTypeParametersProto::ExtendedTypeParametersProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : parameters_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 NumericTypeParametersProtoDefaultTypeInternal _NumericTypeParametersProto_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ExtendedTypeParametersProto::ExtendedTypeParametersProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.parameters_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ExtendedTypeParametersProtoDefaultTypeInternal {
-  constexpr ExtendedTypeParametersProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ExtendedTypeParametersProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ExtendedTypeParametersProtoDefaultTypeInternal() {}
   union {
     ExtendedTypeParametersProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ExtendedTypeParametersProtoDefaultTypeInternal _ExtendedTypeParametersProto_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ExtendedTypeParametersProtoDefaultTypeInternal _ExtendedTypeParametersProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto[4];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2ftype_5fparameters_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, child_list_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, type_parameters_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, param_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _internal_metadata_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _extensions_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, scale_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, precision_param_),
-  ~0u,
-  ~0u,
-  0,
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ExtendedTypeParametersProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ExtendedTypeParametersProto, parameters_),
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::TypeParametersProto)},
-  { 11, -1, -1, sizeof(::zetasql::StringTypeParametersProto)},
-  { 20, 30, -1, sizeof(::zetasql::NumericTypeParametersProto)},
-  { 33, -1, -1, sizeof(::zetasql::ExtendedTypeParametersProto)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_TypeParametersProto_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_StringTypeParametersProto_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_NumericTypeParametersProto_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ExtendedTypeParametersProto_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto[4];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2ftype_5fparameters_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _impl_.child_list_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _impl_.type_parameters_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, _impl_.param_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _internal_metadata_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _impl_._extensions_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _impl_.scale_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _impl_.precision_param_),
+    ~0u,
+    ~0u,
+    0,
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ExtendedTypeParametersProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ExtendedTypeParametersProto, _impl_.parameters_),
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n$zetasql/public/type_parameters.proto\022\007"
-  "zetasql\032!zetasql/public/simple_value.pro"
-  "to\"\262\002\n\023TypeParametersProto\022D\n\026string_typ"
-  "e_parameters\030\001 \001(\0132\".zetasql.StringTypeP"
-  "arametersProtoH\000\022F\n\027numeric_type_paramet"
-  "ers\030\002 \001(\0132#.zetasql.NumericTypeParameter"
-  "sProtoH\000\022H\n\030extended_type_parameters\030\003 \001"
-  "(\0132$.zetasql.ExtendedTypeParametersProto"
-  "H\000\0220\n\nchild_list\030d \003(\0132\034.zetasql.TypePar"
-  "ametersProtoB\021\n\017type_parameters\"S\n\031Strin"
-  "gTypeParametersProto\022\024\n\nmax_length\030\001 \001(\003"
-  "H\000\022\027\n\ris_max_length\030\002 \001(\010H\000B\007\n\005param\"w\n\032"
-  "NumericTypeParametersProto\022\023\n\tprecision\030"
-  "\001 \001(\003H\000\022\032\n\020is_max_precision\030\002 \001(\010H\000\022\r\n\005s"
-  "cale\030\003 \001(\003*\006\010\350\007\020\321\017B\021\n\017precision_param\"L\n"
-  "\033ExtendedTypeParametersProto\022-\n\nparamete"
-  "rs\030\001 \003(\0132\031.zetasql.SimpleValueProtoB+\n\022c"
-  "om.google.zetasqlB\025ZetaSQLTypeParameters"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_deps[1] = {
-  &::descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::TypeParametersProto)},
+        { 13, -1, -1, sizeof(::zetasql::StringTypeParametersProto)},
+        { 24, 36, -1, sizeof(::zetasql::NumericTypeParametersProto)},
+        { 39, -1, -1, sizeof(::zetasql::ExtendedTypeParametersProto)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto = {
-  false, false, 720, descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eproto, "zetasql/public/type_parameters.proto", 
-  &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once, descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_deps, 1, 4,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ftype_5fparameters_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_TypeParametersProto_default_instance_._instance,
+    &::zetasql::_StringTypeParametersProto_default_instance_._instance,
+    &::zetasql::_NumericTypeParametersProto_default_instance_._instance,
+    &::zetasql::_ExtendedTypeParametersProto_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n$zetasql/public/type_parameters.proto\022\007"
+    "zetasql\032!zetasql/public/simple_value.pro"
+    "to\"\262\002\n\023TypeParametersProto\022D\n\026string_typ"
+    "e_parameters\030\001 \001(\0132\".zetasql.StringTypeP"
+    "arametersProtoH\000\022F\n\027numeric_type_paramet"
+    "ers\030\002 \001(\0132#.zetasql.NumericTypeParameter"
+    "sProtoH\000\022H\n\030extended_type_parameters\030\003 \001"
+    "(\0132$.zetasql.ExtendedTypeParametersProto"
+    "H\000\0220\n\nchild_list\030d \003(\0132\034.zetasql.TypePar"
+    "ametersProtoB\021\n\017type_parameters\"S\n\031Strin"
+    "gTypeParametersProto\022\024\n\nmax_length\030\001 \001(\003"
+    "H\000\022\027\n\ris_max_length\030\002 \001(\010H\000B\007\n\005param\"w\n\032"
+    "NumericTypeParametersProto\022\023\n\tprecision\030"
+    "\001 \001(\003H\000\022\032\n\020is_max_precision\030\002 \001(\010H\000\022\r\n\005s"
+    "cale\030\003 \001(\003*\006\010\350\007\020\321\017B\021\n\017precision_param\"L\n"
+    "\033ExtendedTypeParametersProto\022-\n\nparamete"
+    "rs\030\001 \003(\0132\031.zetasql.SimpleValueProtoB+\n\022c"
+    "om.google.zetasqlB\025ZetaSQLTypeParameters"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_deps[1] =
+    {
+        &::descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto = {
+    false,
+    false,
+    720,
+    descriptor_table_protodef_zetasql_2fpublic_2ftype_5fparameters_2eproto,
+    "zetasql/public/type_parameters.proto",
+    &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once,
+    descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_deps,
+    1,
+    4,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2ftype_5fparameters_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2ftype_5fparameters_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ftype_5fparameters_2eproto(&descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ftype_5fparameters_2eproto(&descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class TypeParametersProto::_Internal {
  public:
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::TypeParametersProto, _impl_._oneof_case_);
   static const ::zetasql::StringTypeParametersProto& string_type_parameters(const TypeParametersProto* msg);
   static const ::zetasql::NumericTypeParametersProto& numeric_type_parameters(const TypeParametersProto* msg);
   static const ::zetasql::ExtendedTypeParametersProto& extended_type_parameters(const TypeParametersProto* msg);
@@ -177,28 +233,28 @@ class TypeParametersProto::_Internal {
 
 const ::zetasql::StringTypeParametersProto&
 TypeParametersProto::_Internal::string_type_parameters(const TypeParametersProto* msg) {
-  return *msg->type_parameters_.string_type_parameters_;
+  return *msg->_impl_.type_parameters_.string_type_parameters_;
 }
 const ::zetasql::NumericTypeParametersProto&
 TypeParametersProto::_Internal::numeric_type_parameters(const TypeParametersProto* msg) {
-  return *msg->type_parameters_.numeric_type_parameters_;
+  return *msg->_impl_.type_parameters_.numeric_type_parameters_;
 }
 const ::zetasql::ExtendedTypeParametersProto&
 TypeParametersProto::_Internal::extended_type_parameters(const TypeParametersProto* msg) {
-  return *msg->type_parameters_.extended_type_parameters_;
+  return *msg->_impl_.type_parameters_.extended_type_parameters_;
 }
 void TypeParametersProto::set_allocated_string_type_parameters(::zetasql::StringTypeParametersProto* string_type_parameters) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   clear_type_parameters();
   if (string_type_parameters) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::StringTypeParametersProto>::GetOwningArena(string_type_parameters);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(string_type_parameters);
     if (message_arena != submessage_arena) {
       string_type_parameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, string_type_parameters, submessage_arena);
     }
     set_has_string_type_parameters();
-    type_parameters_.string_type_parameters_ = string_type_parameters;
+    _impl_.type_parameters_.string_type_parameters_ = string_type_parameters;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.TypeParametersProto.string_type_parameters)
 }
@@ -207,13 +263,13 @@ void TypeParametersProto::set_allocated_numeric_type_parameters(::zetasql::Numer
   clear_type_parameters();
   if (numeric_type_parameters) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::NumericTypeParametersProto>::GetOwningArena(numeric_type_parameters);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(numeric_type_parameters);
     if (message_arena != submessage_arena) {
       numeric_type_parameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, numeric_type_parameters, submessage_arena);
     }
     set_has_numeric_type_parameters();
-    type_parameters_.numeric_type_parameters_ = numeric_type_parameters;
+    _impl_.type_parameters_.numeric_type_parameters_ = numeric_type_parameters;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.TypeParametersProto.numeric_type_parameters)
 }
@@ -222,42 +278,46 @@ void TypeParametersProto::set_allocated_extended_type_parameters(::zetasql::Exte
   clear_type_parameters();
   if (extended_type_parameters) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::ExtendedTypeParametersProto>::GetOwningArena(extended_type_parameters);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(extended_type_parameters);
     if (message_arena != submessage_arena) {
       extended_type_parameters = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, extended_type_parameters, submessage_arena);
     }
     set_has_extended_type_parameters();
-    type_parameters_.extended_type_parameters_ = extended_type_parameters;
+    _impl_.type_parameters_.extended_type_parameters_ = extended_type_parameters;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.TypeParametersProto.extended_type_parameters)
 }
-TypeParametersProto::TypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  child_list_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+TypeParametersProto::TypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.TypeParametersProto)
 }
 TypeParametersProto::TypeParametersProto(const TypeParametersProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      child_list_(from.child_list_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  TypeParametersProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.child_list_){from._impl_.child_list_}
+    , decltype(_impl_.type_parameters_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   clear_has_type_parameters();
   switch (from.type_parameters_case()) {
     case kStringTypeParameters: {
-      _internal_mutable_string_type_parameters()->::zetasql::StringTypeParametersProto::MergeFrom(from._internal_string_type_parameters());
+      _this->_internal_mutable_string_type_parameters()->::zetasql::StringTypeParametersProto::MergeFrom(
+          from._internal_string_type_parameters());
       break;
     }
     case kNumericTypeParameters: {
-      _internal_mutable_numeric_type_parameters()->::zetasql::NumericTypeParametersProto::MergeFrom(from._internal_numeric_type_parameters());
+      _this->_internal_mutable_numeric_type_parameters()->::zetasql::NumericTypeParametersProto::MergeFrom(
+          from._internal_numeric_type_parameters());
       break;
     }
     case kExtendedTypeParameters: {
-      _internal_mutable_extended_type_parameters()->::zetasql::ExtendedTypeParametersProto::MergeFrom(from._internal_extended_type_parameters());
+      _this->_internal_mutable_extended_type_parameters()->::zetasql::ExtendedTypeParametersProto::MergeFrom(
+          from._internal_extended_type_parameters());
       break;
     }
     case TYPE_PARAMETERS_NOT_SET: {
@@ -267,32 +327,36 @@ TypeParametersProto::TypeParametersProto(const TypeParametersProto& from)
   // @@protoc_insertion_point(copy_constructor:zetasql.TypeParametersProto)
 }
 
-inline void TypeParametersProto::SharedCtor() {
-clear_has_type_parameters();
+inline void TypeParametersProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.child_list_){arena}
+    , decltype(_impl_.type_parameters_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_type_parameters();
 }
 
 TypeParametersProto::~TypeParametersProto() {
   // @@protoc_insertion_point(destructor:zetasql.TypeParametersProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void TypeParametersProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_child_list()->~RepeatedPtrField();
   if (has_type_parameters()) {
     clear_type_parameters();
   }
 }
 
-void TypeParametersProto::ArenaDtor(void* object) {
-  TypeParametersProto* _this = reinterpret_cast< TypeParametersProto* >(object);
-  (void)_this;
-}
-void TypeParametersProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void TypeParametersProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void TypeParametersProto::clear_type_parameters() {
@@ -300,19 +364,19 @@ void TypeParametersProto::clear_type_parameters() {
   switch (type_parameters_case()) {
     case kStringTypeParameters: {
       if (GetArenaForAllocation() == nullptr) {
-        delete type_parameters_.string_type_parameters_;
+        delete _impl_.type_parameters_.string_type_parameters_;
       }
       break;
     }
     case kNumericTypeParameters: {
       if (GetArenaForAllocation() == nullptr) {
-        delete type_parameters_.numeric_type_parameters_;
+        delete _impl_.type_parameters_.numeric_type_parameters_;
       }
       break;
     }
     case kExtendedTypeParameters: {
       if (GetArenaForAllocation() == nullptr) {
-        delete type_parameters_.extended_type_parameters_;
+        delete _impl_.type_parameters_.extended_type_parameters_;
       }
       break;
     }
@@ -320,54 +384,57 @@ void TypeParametersProto::clear_type_parameters() {
       break;
     }
   }
-  _oneof_case_[0] = TYPE_PARAMETERS_NOT_SET;
+  _impl_._oneof_case_[0] = TYPE_PARAMETERS_NOT_SET;
 }
 
 
 void TypeParametersProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.TypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  child_list_.Clear();
+  _internal_mutable_child_list()->Clear();
   clear_type_parameters();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* TypeParametersProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* TypeParametersProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // .zetasql.StringTypeParametersProto string_type_parameters = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_string_type_parameters(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // .zetasql.NumericTypeParametersProto numeric_type_parameters = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_numeric_type_parameters(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // .zetasql.ExtendedTypeParametersProto extended_type_parameters = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_extended_type_parameters(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.TypeParametersProto child_list = 100;
       case 100:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr -= 2;
           do {
             ptr += 2;
@@ -375,8 +442,9 @@ const char* TypeParametersProto::_InternalParse(const char* ptr, ::PROTOBUF_NAME
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<802>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -401,63 +469,60 @@ failure:
 #undef CHK_
 }
 
-uint8_t* TypeParametersProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* TypeParametersProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.TypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   switch (type_parameters_case()) {
     case kStringTypeParameters: {
-      target = stream->EnsureSpace(target);
       target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(
-          1, _Internal::string_type_parameters(this), target, stream);
+        InternalWriteMessage(1, _Internal::string_type_parameters(this),
+          _Internal::string_type_parameters(this).GetCachedSize(), target, stream);
       break;
     }
     case kNumericTypeParameters: {
-      target = stream->EnsureSpace(target);
       target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(
-          2, _Internal::numeric_type_parameters(this), target, stream);
+        InternalWriteMessage(2, _Internal::numeric_type_parameters(this),
+          _Internal::numeric_type_parameters(this).GetCachedSize(), target, stream);
       break;
     }
     case kExtendedTypeParameters: {
-      target = stream->EnsureSpace(target);
       target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(
-          3, _Internal::extended_type_parameters(this), target, stream);
+        InternalWriteMessage(3, _Internal::extended_type_parameters(this),
+          _Internal::extended_type_parameters(this).GetCachedSize(), target, stream);
       break;
     }
     default: ;
   }
   // repeated .zetasql.TypeParametersProto child_list = 100;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_child_list_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_child_list_size()); i < n; i++) {
+    const auto& repfield = this->_internal_child_list(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(100, this->_internal_child_list(i), target, stream);
+        InternalWriteMessage(100, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.TypeParametersProto)
   return target;
 }
 
-size_t TypeParametersProto::ByteSizeLong() const {
+::size_t TypeParametersProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.TypeParametersProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.TypeParametersProto child_list = 100;
   total_size += 2UL * this->_internal_child_list_size();
-  for (const auto& msg : this->child_list_) {
+  for (const auto& msg : this->_internal_child_list()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
@@ -467,68 +532,67 @@ size_t TypeParametersProto::ByteSizeLong() const {
     case kStringTypeParameters: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *type_parameters_.string_type_parameters_);
+          *_impl_.type_parameters_.string_type_parameters_);
       break;
     }
     // .zetasql.NumericTypeParametersProto numeric_type_parameters = 2;
     case kNumericTypeParameters: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *type_parameters_.numeric_type_parameters_);
+          *_impl_.type_parameters_.numeric_type_parameters_);
       break;
     }
     // .zetasql.ExtendedTypeParametersProto extended_type_parameters = 3;
     case kExtendedTypeParameters: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *type_parameters_.extended_type_parameters_);
+          *_impl_.type_parameters_.extended_type_parameters_);
       break;
     }
     case TYPE_PARAMETERS_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TypeParametersProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     TypeParametersProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TypeParametersProto::GetClassData() const { return &_class_data_; }
 
-void TypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<TypeParametersProto *>(to)->MergeFrom(
-      static_cast<const TypeParametersProto &>(from));
-}
 
-
-void TypeParametersProto::MergeFrom(const TypeParametersProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.TypeParametersProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void TypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<TypeParametersProto*>(&to_msg);
+  auto& from = static_cast<const TypeParametersProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.TypeParametersProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  child_list_.MergeFrom(from.child_list_);
+  _this->_internal_mutable_child_list()->MergeFrom(from._internal_child_list());
   switch (from.type_parameters_case()) {
     case kStringTypeParameters: {
-      _internal_mutable_string_type_parameters()->::zetasql::StringTypeParametersProto::MergeFrom(from._internal_string_type_parameters());
+      _this->_internal_mutable_string_type_parameters()->::zetasql::StringTypeParametersProto::MergeFrom(
+          from._internal_string_type_parameters());
       break;
     }
     case kNumericTypeParameters: {
-      _internal_mutable_numeric_type_parameters()->::zetasql::NumericTypeParametersProto::MergeFrom(from._internal_numeric_type_parameters());
+      _this->_internal_mutable_numeric_type_parameters()->::zetasql::NumericTypeParametersProto::MergeFrom(
+          from._internal_numeric_type_parameters());
       break;
     }
     case kExtendedTypeParameters: {
-      _internal_mutable_extended_type_parameters()->::zetasql::ExtendedTypeParametersProto::MergeFrom(from._internal_extended_type_parameters());
+      _this->_internal_mutable_extended_type_parameters()->::zetasql::ExtendedTypeParametersProto::MergeFrom(
+          from._internal_extended_type_parameters());
       break;
     }
     case TYPE_PARAMETERS_NOT_SET: {
       break;
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void TypeParametersProto::CopyFrom(const TypeParametersProto& from) {
@@ -539,15 +603,15 @@ void TypeParametersProto::CopyFrom(const TypeParametersProto& from) {
 }
 
 bool TypeParametersProto::IsInitialized() const {
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(child_list_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_child_list()))
     return false;
   switch (type_parameters_case()) {
     case kStringTypeParameters: {
       break;
     }
     case kNumericTypeParameters: {
-      if (_internal_has_numeric_type_parameters()) {
-        if (!type_parameters_.numeric_type_parameters_->IsInitialized()) return false;
+      if (type_parameters_case() == kNumericTypeParameters) {
+        if (!_impl_.type_parameters_.numeric_type_parameters_->IsInitialized()) return false;
       }
       break;
     }
@@ -564,43 +628,46 @@ bool TypeParametersProto::IsInitialized() const {
 void TypeParametersProto::InternalSwap(TypeParametersProto* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  child_list_.InternalSwap(&other->child_list_);
-  swap(type_parameters_, other->type_parameters_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  _internal_mutable_child_list()->InternalSwap(other->_internal_mutable_child_list());
+  swap(_impl_.type_parameters_, other->_impl_.type_parameters_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TypeParametersProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto[0]);
 }
-
 // ===================================================================
 
 class StringTypeParametersProto::_Internal {
  public:
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::StringTypeParametersProto, _impl_._oneof_case_);
 };
 
-StringTypeParametersProto::StringTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+StringTypeParametersProto::StringTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.StringTypeParametersProto)
 }
 StringTypeParametersProto::StringTypeParametersProto(const StringTypeParametersProto& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
+  StringTypeParametersProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.param_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   clear_has_param();
   switch (from.param_case()) {
     case kMaxLength: {
-      _internal_set_max_length(from._internal_max_length());
+      _this->_internal_set_max_length(from._internal_max_length());
       break;
     }
     case kIsMaxLength: {
-      _internal_set_is_max_length(from._internal_is_max_length());
+      _this->_internal_set_is_max_length(from._internal_is_max_length());
       break;
     }
     case PARAM_NOT_SET: {
@@ -610,32 +677,34 @@ StringTypeParametersProto::StringTypeParametersProto(const StringTypeParametersP
   // @@protoc_insertion_point(copy_constructor:zetasql.StringTypeParametersProto)
 }
 
-inline void StringTypeParametersProto::SharedCtor() {
-clear_has_param();
+inline void StringTypeParametersProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.param_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_param();
 }
 
 StringTypeParametersProto::~StringTypeParametersProto() {
   // @@protoc_insertion_point(destructor:zetasql.StringTypeParametersProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void StringTypeParametersProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
   if (has_param()) {
     clear_param();
   }
 }
 
-void StringTypeParametersProto::ArenaDtor(void* object) {
-  StringTypeParametersProto* _this = reinterpret_cast< StringTypeParametersProto* >(object);
-  (void)_this;
-}
-void StringTypeParametersProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void StringTypeParametersProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void StringTypeParametersProto::clear_param() {
@@ -653,13 +722,13 @@ void StringTypeParametersProto::clear_param() {
       break;
     }
   }
-  _oneof_case_[0] = PARAM_NOT_SET;
+  _impl_._oneof_case_[0] = PARAM_NOT_SET;
 }
 
 
 void StringTypeParametersProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.StringTypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
@@ -667,27 +736,29 @@ void StringTypeParametersProto::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* StringTypeParametersProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* StringTypeParametersProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // int64 max_length = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _internal_set_max_length(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // bool is_max_length = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _internal_set_is_max_length(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -712,92 +783,91 @@ failure:
 #undef CHK_
 }
 
-uint8_t* StringTypeParametersProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* StringTypeParametersProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.StringTypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   switch (param_case()) {
     case kMaxLength: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_max_length(), target);
+      target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+          1, this->_internal_max_length(), target);
       break;
     }
     case kIsMaxLength: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_is_max_length(), target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          2, this->_internal_is_max_length(), target);
       break;
     }
     default: ;
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.StringTypeParametersProto)
   return target;
 }
 
-size_t StringTypeParametersProto::ByteSizeLong() const {
+::size_t StringTypeParametersProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.StringTypeParametersProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   switch (param_case()) {
     // int64 max_length = 1;
     case kMaxLength: {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_max_length());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_max_length());
       break;
     }
     // bool is_max_length = 2;
     case kIsMaxLength: {
-      total_size += 1 + 1;
+      total_size += 2;
       break;
     }
     case PARAM_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData StringTypeParametersProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     StringTypeParametersProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*StringTypeParametersProto::GetClassData() const { return &_class_data_; }
 
-void StringTypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<StringTypeParametersProto *>(to)->MergeFrom(
-      static_cast<const StringTypeParametersProto &>(from));
-}
 
-
-void StringTypeParametersProto::MergeFrom(const StringTypeParametersProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.StringTypeParametersProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void StringTypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<StringTypeParametersProto*>(&to_msg);
+  auto& from = static_cast<const StringTypeParametersProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.StringTypeParametersProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   switch (from.param_case()) {
     case kMaxLength: {
-      _internal_set_max_length(from._internal_max_length());
+      _this->_internal_set_max_length(from._internal_max_length());
       break;
     }
     case kIsMaxLength: {
-      _internal_set_is_max_length(from._internal_is_max_length());
+      _this->_internal_set_is_max_length(from._internal_is_max_length());
       break;
     }
     case PARAM_NOT_SET: {
       break;
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void StringTypeParametersProto::CopyFrom(const StringTypeParametersProto& from) {
@@ -814,50 +884,57 @@ bool StringTypeParametersProto::IsInitialized() const {
 void StringTypeParametersProto::InternalSwap(StringTypeParametersProto* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(param_, other->param_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_.param_, other->_impl_.param_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StringTypeParametersProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto[1]);
 }
-
 // ===================================================================
 
 class NumericTypeParametersProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<NumericTypeParametersProto>()._has_bits_);
+  using HasBits = decltype(std::declval<NumericTypeParametersProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(NumericTypeParametersProto, _impl_._has_bits_);
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::NumericTypeParametersProto, _impl_._oneof_case_);
   static void set_has_scale(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
-NumericTypeParametersProto::NumericTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  _extensions_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+NumericTypeParametersProto::NumericTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.NumericTypeParametersProto)
 }
 NumericTypeParametersProto::NumericTypeParametersProto(const NumericTypeParametersProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  NumericTypeParametersProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{}
+    , decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.scale_) {}
+
+    , decltype(_impl_.precision_param_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
-  scale_ = from.scale_;
+  _impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  _this->_impl_.scale_ = from._impl_.scale_;
   clear_has_precision_param();
   switch (from.precision_param_case()) {
     case kPrecision: {
-      _internal_set_precision(from._internal_precision());
+      _this->_internal_set_precision(from._internal_precision());
       break;
     }
     case kIsMaxPrecision: {
-      _internal_set_is_max_precision(from._internal_is_max_precision());
+      _this->_internal_set_is_max_precision(from._internal_is_max_precision());
       break;
     }
     case PRECISION_PARAM_NOT_SET: {
@@ -867,33 +944,39 @@ NumericTypeParametersProto::NumericTypeParametersProto(const NumericTypeParamete
   // @@protoc_insertion_point(copy_constructor:zetasql.NumericTypeParametersProto)
 }
 
-inline void NumericTypeParametersProto::SharedCtor() {
-scale_ = int64_t{0};
-clear_has_precision_param();
+inline void NumericTypeParametersProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{::_pbi::ArenaInitialized(), arena}
+    , decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.scale_) { ::int64_t{0} }
+
+    , decltype(_impl_.precision_param_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_precision_param();
 }
 
 NumericTypeParametersProto::~NumericTypeParametersProto() {
   // @@protoc_insertion_point(destructor:zetasql.NumericTypeParametersProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void NumericTypeParametersProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_._extensions_.~ExtensionSet();
   if (has_precision_param()) {
     clear_precision_param();
   }
 }
 
-void NumericTypeParametersProto::ArenaDtor(void* object) {
-  NumericTypeParametersProto* _this = reinterpret_cast< NumericTypeParametersProto* >(object);
-  (void)_this;
-}
-void NumericTypeParametersProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void NumericTypeParametersProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void NumericTypeParametersProto::clear_precision_param() {
@@ -911,54 +994,57 @@ void NumericTypeParametersProto::clear_precision_param() {
       break;
     }
   }
-  _oneof_case_[0] = PRECISION_PARAM_NOT_SET;
+  _impl_._oneof_case_[0] = PRECISION_PARAM_NOT_SET;
 }
 
 
 void NumericTypeParametersProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.NumericTypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _extensions_.Clear();
-  scale_ = int64_t{0};
+  _impl_._extensions_.Clear();
+  _impl_.scale_ = ::int64_t{0};
   clear_precision_param();
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* NumericTypeParametersProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* NumericTypeParametersProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // int64 precision = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _internal_set_precision(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // bool is_max_precision = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _internal_set_is_max_precision(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int64 scale = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
           _Internal::set_has_scale(&has_bits);
-          scale_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.scale_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -970,7 +1056,7 @@ const char* NumericTypeParametersProto::_InternalParse(const char* ptr, ::PROTOB
       goto message_done;
     }
     if ((8000u <= tag && tag < 16008u)) {
-      ptr = _extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
+      ptr = _impl_._extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
       CHK_(ptr != nullptr);
       continue;
     }
@@ -981,7 +1067,7 @@ const char* NumericTypeParametersProto::_InternalParse(const char* ptr, ::PROTOB
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -989,115 +1075,116 @@ failure:
 #undef CHK_
 }
 
-uint8_t* NumericTypeParametersProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* NumericTypeParametersProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.NumericTypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   switch (precision_param_case()) {
     case kPrecision: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_precision(), target);
+      target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+          1, this->_internal_precision(), target);
       break;
     }
     case kIsMaxPrecision: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_is_max_precision(), target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          2, this->_internal_is_max_precision(), target);
       break;
     }
     default: ;
   }
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int64 scale = 3;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(3, this->_internal_scale(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        3, this->_internal_scale(), target);
   }
 
   // Extension range [1000, 2001)
-  target = _extensions_._InternalSerialize(
+  target = _impl_._extensions_._InternalSerialize(
   internal_default_instance(), 1000, 2001, target, stream);
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.NumericTypeParametersProto)
   return target;
 }
 
-size_t NumericTypeParametersProto::ByteSizeLong() const {
+::size_t NumericTypeParametersProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.NumericTypeParametersProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  total_size += _extensions_.ByteSize();
+  total_size += _impl_._extensions_.ByteSize();
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional int64 scale = 3;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_scale());
+    total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+        this->_internal_scale());
   }
 
   switch (precision_param_case()) {
     // int64 precision = 1;
     case kPrecision: {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_precision());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_precision());
       break;
     }
     // bool is_max_precision = 2;
     case kIsMaxPrecision: {
-      total_size += 1 + 1;
+      total_size += 2;
       break;
     }
     case PRECISION_PARAM_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData NumericTypeParametersProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     NumericTypeParametersProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*NumericTypeParametersProto::GetClassData() const { return &_class_data_; }
 
-void NumericTypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<NumericTypeParametersProto *>(to)->MergeFrom(
-      static_cast<const NumericTypeParametersProto &>(from));
-}
 
-
-void NumericTypeParametersProto::MergeFrom(const NumericTypeParametersProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.NumericTypeParametersProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void NumericTypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<NumericTypeParametersProto*>(&to_msg);
+  auto& from = static_cast<const NumericTypeParametersProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.NumericTypeParametersProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_scale()) {
-    _internal_set_scale(from._internal_scale());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_set_scale(from._internal_scale());
   }
   switch (from.precision_param_case()) {
     case kPrecision: {
-      _internal_set_precision(from._internal_precision());
+      _this->_internal_set_precision(from._internal_precision());
       break;
     }
     case kIsMaxPrecision: {
-      _internal_set_is_max_precision(from._internal_is_max_precision());
+      _this->_internal_set_is_max_precision(from._internal_is_max_precision());
       break;
     }
     case PRECISION_PARAM_NOT_SET: {
       break;
     }
   }
-  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void NumericTypeParametersProto::CopyFrom(const NumericTypeParametersProto& from) {
@@ -1108,7 +1195,7 @@ void NumericTypeParametersProto::CopyFrom(const NumericTypeParametersProto& from
 }
 
 bool NumericTypeParametersProto::IsInitialized() const {
-  if (!_extensions_.IsInitialized()) {
+  if (!_impl_._extensions_.IsInitialized(internal_default_instance())) {
     return false;
   }
 
@@ -1117,20 +1204,20 @@ bool NumericTypeParametersProto::IsInitialized() const {
 
 void NumericTypeParametersProto::InternalSwap(NumericTypeParametersProto* other) {
   using std::swap;
-  _extensions_.InternalSwap(&other->_extensions_);
+  _impl_._extensions_.InternalSwap(&other->_impl_._extensions_);
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(scale_, other->scale_);
-  swap(precision_param_, other->precision_param_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+
+  swap(_impl_.scale_, other->_impl_.scale_);
+  swap(_impl_.precision_param_, other->_impl_.precision_param_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata NumericTypeParametersProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto[2]);
 }
-
 // ===================================================================
 
 class ExtendedTypeParametersProto::_Internal {
@@ -1138,68 +1225,69 @@ class ExtendedTypeParametersProto::_Internal {
 };
 
 void ExtendedTypeParametersProto::clear_parameters() {
-  parameters_.Clear();
+  _internal_mutable_parameters()->Clear();
 }
-ExtendedTypeParametersProto::ExtendedTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  parameters_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ExtendedTypeParametersProto::ExtendedTypeParametersProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ExtendedTypeParametersProto)
 }
 ExtendedTypeParametersProto::ExtendedTypeParametersProto(const ExtendedTypeParametersProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      parameters_(from.parameters_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ExtendedTypeParametersProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.parameters_){from._impl_.parameters_}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ExtendedTypeParametersProto)
 }
 
-inline void ExtendedTypeParametersProto::SharedCtor() {
+inline void ExtendedTypeParametersProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.parameters_){arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 ExtendedTypeParametersProto::~ExtendedTypeParametersProto() {
   // @@protoc_insertion_point(destructor:zetasql.ExtendedTypeParametersProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ExtendedTypeParametersProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_parameters()->~RepeatedPtrField();
 }
 
-void ExtendedTypeParametersProto::ArenaDtor(void* object) {
-  ExtendedTypeParametersProto* _this = reinterpret_cast< ExtendedTypeParametersProto* >(object);
-  (void)_this;
-}
-void ExtendedTypeParametersProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ExtendedTypeParametersProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ExtendedTypeParametersProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ExtendedTypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  parameters_.Clear();
+  _internal_mutable_parameters()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ExtendedTypeParametersProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ExtendedTypeParametersProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated .zetasql.SimpleValueProto parameters = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1207,8 +1295,9 @@ const char* ExtendedTypeParametersProto::_InternalParse(const char* ptr, ::PROTO
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1233,67 +1322,63 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ExtendedTypeParametersProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ExtendedTypeParametersProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ExtendedTypeParametersProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .zetasql.SimpleValueProto parameters = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_parameters_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_parameters_size()); i < n; i++) {
+    const auto& repfield = this->_internal_parameters(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, this->_internal_parameters(i), target, stream);
+        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ExtendedTypeParametersProto)
   return target;
 }
 
-size_t ExtendedTypeParametersProto::ByteSizeLong() const {
+::size_t ExtendedTypeParametersProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ExtendedTypeParametersProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.SimpleValueProto parameters = 1;
   total_size += 1UL * this->_internal_parameters_size();
-  for (const auto& msg : this->parameters_) {
+  for (const auto& msg : this->_internal_parameters()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ExtendedTypeParametersProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ExtendedTypeParametersProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ExtendedTypeParametersProto::GetClassData() const { return &_class_data_; }
 
-void ExtendedTypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ExtendedTypeParametersProto *>(to)->MergeFrom(
-      static_cast<const ExtendedTypeParametersProto &>(from));
-}
 
-
-void ExtendedTypeParametersProto::MergeFrom(const ExtendedTypeParametersProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ExtendedTypeParametersProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ExtendedTypeParametersProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ExtendedTypeParametersProto*>(&to_msg);
+  auto& from = static_cast<const ExtendedTypeParametersProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ExtendedTypeParametersProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  parameters_.MergeFrom(from.parameters_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_mutable_parameters()->MergeFrom(from._internal_parameters());
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ExtendedTypeParametersProto::CopyFrom(const ExtendedTypeParametersProto& from) {
@@ -1310,31 +1395,33 @@ bool ExtendedTypeParametersProto::IsInitialized() const {
 void ExtendedTypeParametersProto::InternalSwap(ExtendedTypeParametersProto* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  parameters_.InternalSwap(&other->parameters_);
+  _internal_mutable_parameters()->InternalSwap(other->_internal_mutable_parameters());
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ExtendedTypeParametersProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_5fparameters_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ftype_5fparameters_2eproto[3]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::TypeParametersProto* Arena::CreateMaybeMessage< ::zetasql::TypeParametersProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::TypeParametersProto*
+Arena::CreateMaybeMessage< ::zetasql::TypeParametersProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::TypeParametersProto >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::StringTypeParametersProto* Arena::CreateMaybeMessage< ::zetasql::StringTypeParametersProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::StringTypeParametersProto*
+Arena::CreateMaybeMessage< ::zetasql::StringTypeParametersProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::StringTypeParametersProto >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::NumericTypeParametersProto* Arena::CreateMaybeMessage< ::zetasql::NumericTypeParametersProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::NumericTypeParametersProto*
+Arena::CreateMaybeMessage< ::zetasql::NumericTypeParametersProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::NumericTypeParametersProto >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ExtendedTypeParametersProto* Arena::CreateMaybeMessage< ::zetasql::ExtendedTypeParametersProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ExtendedTypeParametersProto*
+Arena::CreateMaybeMessage< ::zetasql::ExtendedTypeParametersProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ExtendedTypeParametersProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

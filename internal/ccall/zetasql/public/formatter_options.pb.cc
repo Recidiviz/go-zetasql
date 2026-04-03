@@ -4,136 +4,190 @@
 #include "zetasql/public/formatter_options.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr FormatterOptionsProto::FormatterOptionsProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : new_line_type_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , line_length_limit_(0)
-  , indentation_spaces_(0)
-  , allow_invalid_tokens_(false)
-  , capitalize_keywords_(false)
-  , preserve_line_breaks_(false)
-  , expand_format_ranges_(false)
-  , enforce_single_quotes_(false)
-  , capitalize_functions_(false){}
+template <typename>
+PROTOBUF_CONSTEXPR FormatterOptionsProto::FormatterOptionsProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.new_line_type_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.line_length_limit_)*/ 0
+
+  , /*decltype(_impl_.indentation_spaces_)*/ 0
+
+  , /*decltype(_impl_.allow_invalid_tokens_)*/ false
+
+  , /*decltype(_impl_.capitalize_keywords_)*/ false
+
+  , /*decltype(_impl_.preserve_line_breaks_)*/ false
+
+  , /*decltype(_impl_.expand_format_ranges_)*/ false
+
+  , /*decltype(_impl_.enforce_single_quotes_)*/ false
+
+  , /*decltype(_impl_.capitalize_functions_)*/ false
+} {}
 struct FormatterOptionsProtoDefaultTypeInternal {
-  constexpr FormatterOptionsProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR FormatterOptionsProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~FormatterOptionsProtoDefaultTypeInternal() {}
   union {
     FormatterOptionsProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FormatterOptionsProtoDefaultTypeInternal _FormatterOptionsProto_default_instance_;
-constexpr FormatterRangeProto::FormatterRangeProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : start_(0)
-  , end_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FormatterOptionsProtoDefaultTypeInternal _FormatterOptionsProto_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR FormatterRangeProto::FormatterRangeProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.start_)*/ 0
+
+  , /*decltype(_impl_.end_)*/ 0
+} {}
 struct FormatterRangeProtoDefaultTypeInternal {
-  constexpr FormatterRangeProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR FormatterRangeProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~FormatterRangeProtoDefaultTypeInternal() {}
   union {
     FormatterRangeProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FormatterRangeProtoDefaultTypeInternal _FormatterRangeProto_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FormatterRangeProtoDefaultTypeInternal _FormatterRangeProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fformatter_5foptions_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2fformatter_5foptions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, new_line_type_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, line_length_limit_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, indentation_spaces_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, allow_invalid_tokens_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, capitalize_keywords_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, preserve_line_breaks_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, expand_format_ranges_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, enforce_single_quotes_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, capitalize_functions_),
-  0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, start_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, end_),
-  0,
-  1,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 15, -1, sizeof(::zetasql::FormatterOptionsProto)},
-  { 24, 32, -1, sizeof(::zetasql::FormatterRangeProto)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FormatterOptionsProto_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FormatterRangeProto_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2fformatter_5foptions_2eproto[2];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2fformatter_5foptions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.new_line_type_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.line_length_limit_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.indentation_spaces_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.allow_invalid_tokens_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.capitalize_keywords_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.preserve_line_breaks_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.expand_format_ranges_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.enforce_single_quotes_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterOptionsProto, _impl_.capitalize_functions_),
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, _impl_.start_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FormatterRangeProto, _impl_.end_),
+    0,
+    1,
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2fformatter_5foptions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n&zetasql/public/formatter_options.proto"
-  "\022\007zetasql\"\231\002\n\025FormatterOptionsProto\022\025\n\rn"
-  "ew_line_type\030\001 \001(\t\022\031\n\021line_length_limit\030"
-  "\002 \001(\005\022\032\n\022indentation_spaces\030\003 \001(\005\022\034\n\024all"
-  "ow_invalid_tokens\030\004 \001(\010\022\033\n\023capitalize_ke"
-  "ywords\030\005 \001(\010\022\034\n\024preserve_line_breaks\030\006 \001"
-  "(\010\022\034\n\024expand_format_ranges\030\007 \001(\010\022\035\n\025enfo"
-  "rce_single_quotes\030\010 \001(\010\022\034\n\024capitalize_fu"
-  "nctions\030\t \001(\010\"1\n\023FormatterRangeProto\022\r\n\005"
-  "start\030\001 \001(\005\022\013\n\003end\030\002 \001(\005B\024\n\022com.google.z"
-  "etasql"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto = {
-  false, false, 406, descriptor_table_protodef_zetasql_2fpublic_2fformatter_5foptions_2eproto, "zetasql/public/formatter_options.proto", 
-  &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_once, nullptr, 0, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fformatter_5foptions_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2fformatter_5foptions_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 17, -1, sizeof(::zetasql::FormatterOptionsProto)},
+        { 26, 36, -1, sizeof(::zetasql::FormatterRangeProto)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_FormatterOptionsProto_default_instance_._instance,
+    &::zetasql::_FormatterRangeProto_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fpublic_2fformatter_5foptions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n&zetasql/public/formatter_options.proto"
+    "\022\007zetasql\"\231\002\n\025FormatterOptionsProto\022\025\n\rn"
+    "ew_line_type\030\001 \001(\t\022\031\n\021line_length_limit\030"
+    "\002 \001(\005\022\032\n\022indentation_spaces\030\003 \001(\005\022\034\n\024all"
+    "ow_invalid_tokens\030\004 \001(\010\022\033\n\023capitalize_ke"
+    "ywords\030\005 \001(\010\022\034\n\024preserve_line_breaks\030\006 \001"
+    "(\010\022\034\n\024expand_format_ranges\030\007 \001(\010\022\035\n\025enfo"
+    "rce_single_quotes\030\010 \001(\010\022\034\n\024capitalize_fu"
+    "nctions\030\t \001(\010\"1\n\023FormatterRangeProto\022\r\n\005"
+    "start\030\001 \001(\005\022\013\n\003end\030\002 \001(\005B\024\n\022com.google.z"
+    "etasql"
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto = {
+    false,
+    false,
+    406,
+    descriptor_table_protodef_zetasql_2fpublic_2fformatter_5foptions_2eproto,
+    "zetasql/public/formatter_options.proto",
+    &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_once,
+    nullptr,
+    0,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2fformatter_5foptions_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2fformatter_5foptions_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2fformatter_5foptions_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fformatter_5foptions_2eproto(&descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fformatter_5foptions_2eproto(&descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class FormatterOptionsProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<FormatterOptionsProto>()._has_bits_);
+  using HasBits = decltype(std::declval<FormatterOptionsProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(FormatterOptionsProto, _impl_._has_bits_);
   static void set_has_new_line_type(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -163,176 +217,217 @@ class FormatterOptionsProto::_Internal {
   }
 };
 
-FormatterOptionsProto::FormatterOptionsProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+FormatterOptionsProto::FormatterOptionsProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.FormatterOptionsProto)
 }
 FormatterOptionsProto::FormatterOptionsProto(const FormatterOptionsProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  FormatterOptionsProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.new_line_type_) {}
+
+    , decltype(_impl_.line_length_limit_) {}
+
+    , decltype(_impl_.indentation_spaces_) {}
+
+    , decltype(_impl_.allow_invalid_tokens_) {}
+
+    , decltype(_impl_.capitalize_keywords_) {}
+
+    , decltype(_impl_.preserve_line_breaks_) {}
+
+    , decltype(_impl_.expand_format_ranges_) {}
+
+    , decltype(_impl_.enforce_single_quotes_) {}
+
+    , decltype(_impl_.capitalize_functions_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  new_line_type_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.new_line_type_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    new_line_type_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_new_line_type()) {
-    new_line_type_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_new_line_type(), 
-      GetArenaForAllocation());
+        _impl_.new_line_type_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.new_line_type_.Set(from._internal_new_line_type(), _this->GetArenaForAllocation());
   }
-  ::memcpy(&line_length_limit_, &from.line_length_limit_,
-    static_cast<size_t>(reinterpret_cast<char*>(&capitalize_functions_) -
-    reinterpret_cast<char*>(&line_length_limit_)) + sizeof(capitalize_functions_));
+  ::memcpy(&_impl_.line_length_limit_, &from._impl_.line_length_limit_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.capitalize_functions_) -
+    reinterpret_cast<char*>(&_impl_.line_length_limit_)) + sizeof(_impl_.capitalize_functions_));
   // @@protoc_insertion_point(copy_constructor:zetasql.FormatterOptionsProto)
 }
 
-inline void FormatterOptionsProto::SharedCtor() {
-new_line_type_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  new_line_type_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&line_length_limit_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&capitalize_functions_) -
-    reinterpret_cast<char*>(&line_length_limit_)) + sizeof(capitalize_functions_));
+inline void FormatterOptionsProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.new_line_type_) {}
+
+    , decltype(_impl_.line_length_limit_) { 0 }
+
+    , decltype(_impl_.indentation_spaces_) { 0 }
+
+    , decltype(_impl_.allow_invalid_tokens_) { false }
+
+    , decltype(_impl_.capitalize_keywords_) { false }
+
+    , decltype(_impl_.preserve_line_breaks_) { false }
+
+    , decltype(_impl_.expand_format_ranges_) { false }
+
+    , decltype(_impl_.enforce_single_quotes_) { false }
+
+    , decltype(_impl_.capitalize_functions_) { false }
+
+  };
+  _impl_.new_line_type_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.new_line_type_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 FormatterOptionsProto::~FormatterOptionsProto() {
   // @@protoc_insertion_point(destructor:zetasql.FormatterOptionsProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void FormatterOptionsProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  new_line_type_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.new_line_type_.Destroy();
 }
 
-void FormatterOptionsProto::ArenaDtor(void* object) {
-  FormatterOptionsProto* _this = reinterpret_cast< FormatterOptionsProto* >(object);
-  (void)_this;
-}
-void FormatterOptionsProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void FormatterOptionsProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void FormatterOptionsProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.FormatterOptionsProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    new_line_type_.ClearNonDefaultToEmpty();
+    _impl_.new_line_type_.ClearNonDefaultToEmpty();
   }
   if (cached_has_bits & 0x000000feu) {
-    ::memset(&line_length_limit_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&enforce_single_quotes_) -
-        reinterpret_cast<char*>(&line_length_limit_)) + sizeof(enforce_single_quotes_));
+    ::memset(&_impl_.line_length_limit_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.enforce_single_quotes_) -
+        reinterpret_cast<char*>(&_impl_.line_length_limit_)) + sizeof(_impl_.enforce_single_quotes_));
   }
-  capitalize_functions_ = false;
-  _has_bits_.Clear();
+  _impl_.capitalize_functions_ = false;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* FormatterOptionsProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* FormatterOptionsProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional string new_line_type = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_new_line_type();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.FormatterOptionsProto.new_line_type");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.FormatterOptionsProto.new_line_type");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 line_length_limit = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _Internal::set_has_line_length_limit(&has_bits);
-          line_length_limit_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.line_length_limit_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 indentation_spaces = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
           _Internal::set_has_indentation_spaces(&has_bits);
-          indentation_spaces_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.indentation_spaces_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool allow_invalid_tokens = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
           _Internal::set_has_allow_invalid_tokens(&has_bits);
-          allow_invalid_tokens_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.allow_invalid_tokens_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool capitalize_keywords = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
           _Internal::set_has_capitalize_keywords(&has_bits);
-          capitalize_keywords_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.capitalize_keywords_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool preserve_line_breaks = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
           _Internal::set_has_preserve_line_breaks(&has_bits);
-          preserve_line_breaks_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.preserve_line_breaks_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool expand_format_ranges = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
           _Internal::set_has_expand_format_ranges(&has_bits);
-          expand_format_ranges_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.expand_format_ranges_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool enforce_single_quotes = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 64)) {
           _Internal::set_has_enforce_single_quotes(&has_bits);
-          enforce_single_quotes_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.enforce_single_quotes_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool capitalize_functions = 9;
       case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 72)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 72)) {
           _Internal::set_has_capitalize_functions(&has_bits);
-          capitalize_functions_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.capitalize_functions_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -350,7 +445,7 @@ const char* FormatterOptionsProto::_InternalParse(const char* ptr, ::PROTOBUF_NA
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -358,191 +453,194 @@ failure:
 #undef CHK_
 }
 
-uint8_t* FormatterOptionsProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* FormatterOptionsProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.FormatterOptionsProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string new_line_type = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_new_line_type().data(), static_cast<int>(this->_internal_new_line_type().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.FormatterOptionsProto.new_line_type");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_new_line_type(), target);
+    const std::string& _s = this->_internal_new_line_type();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.FormatterOptionsProto.new_line_type");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // optional int32 line_length_limit = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_line_length_limit(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        2, this->_internal_line_length_limit(), target);
   }
 
   // optional int32 indentation_spaces = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_indentation_spaces(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        3, this->_internal_indentation_spaces(), target);
   }
 
   // optional bool allow_invalid_tokens = 4;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(4, this->_internal_allow_invalid_tokens(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        4, this->_internal_allow_invalid_tokens(), target);
   }
 
   // optional bool capitalize_keywords = 5;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_capitalize_keywords(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        5, this->_internal_capitalize_keywords(), target);
   }
 
   // optional bool preserve_line_breaks = 6;
   if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_preserve_line_breaks(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        6, this->_internal_preserve_line_breaks(), target);
   }
 
   // optional bool expand_format_ranges = 7;
   if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(7, this->_internal_expand_format_ranges(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        7, this->_internal_expand_format_ranges(), target);
   }
 
   // optional bool enforce_single_quotes = 8;
   if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_enforce_single_quotes(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        8, this->_internal_enforce_single_quotes(), target);
   }
 
   // optional bool capitalize_functions = 9;
   if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(9, this->_internal_capitalize_functions(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        9, this->_internal_capitalize_functions(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.FormatterOptionsProto)
   return target;
 }
 
-size_t FormatterOptionsProto::ByteSizeLong() const {
+::size_t FormatterOptionsProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.FormatterOptionsProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     // optional string new_line_type = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_new_line_type());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_new_line_type());
     }
 
     // optional int32 line_length_limit = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_line_length_limit());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_line_length_limit());
     }
 
     // optional int32 indentation_spaces = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_indentation_spaces());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_indentation_spaces());
     }
 
     // optional bool allow_invalid_tokens = 4;
     if (cached_has_bits & 0x00000008u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
     // optional bool capitalize_keywords = 5;
     if (cached_has_bits & 0x00000010u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
     // optional bool preserve_line_breaks = 6;
     if (cached_has_bits & 0x00000020u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
     // optional bool expand_format_ranges = 7;
     if (cached_has_bits & 0x00000040u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
     // optional bool enforce_single_quotes = 8;
     if (cached_has_bits & 0x00000080u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
   }
   // optional bool capitalize_functions = 9;
   if (cached_has_bits & 0x00000100u) {
-    total_size += 1 + 1;
+    total_size += 2;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData FormatterOptionsProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     FormatterOptionsProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*FormatterOptionsProto::GetClassData() const { return &_class_data_; }
 
-void FormatterOptionsProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<FormatterOptionsProto *>(to)->MergeFrom(
-      static_cast<const FormatterOptionsProto &>(from));
-}
 
-
-void FormatterOptionsProto::MergeFrom(const FormatterOptionsProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.FormatterOptionsProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void FormatterOptionsProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<FormatterOptionsProto*>(&to_msg);
+  auto& from = static_cast<const FormatterOptionsProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.FormatterOptionsProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_new_line_type(from._internal_new_line_type());
+      _this->_internal_set_new_line_type(from._internal_new_line_type());
     }
     if (cached_has_bits & 0x00000002u) {
-      line_length_limit_ = from.line_length_limit_;
+      _this->_impl_.line_length_limit_ = from._impl_.line_length_limit_;
     }
     if (cached_has_bits & 0x00000004u) {
-      indentation_spaces_ = from.indentation_spaces_;
+      _this->_impl_.indentation_spaces_ = from._impl_.indentation_spaces_;
     }
     if (cached_has_bits & 0x00000008u) {
-      allow_invalid_tokens_ = from.allow_invalid_tokens_;
+      _this->_impl_.allow_invalid_tokens_ = from._impl_.allow_invalid_tokens_;
     }
     if (cached_has_bits & 0x00000010u) {
-      capitalize_keywords_ = from.capitalize_keywords_;
+      _this->_impl_.capitalize_keywords_ = from._impl_.capitalize_keywords_;
     }
     if (cached_has_bits & 0x00000020u) {
-      preserve_line_breaks_ = from.preserve_line_breaks_;
+      _this->_impl_.preserve_line_breaks_ = from._impl_.preserve_line_breaks_;
     }
     if (cached_has_bits & 0x00000040u) {
-      expand_format_ranges_ = from.expand_format_ranges_;
+      _this->_impl_.expand_format_ranges_ = from._impl_.expand_format_ranges_;
     }
     if (cached_has_bits & 0x00000080u) {
-      enforce_single_quotes_ = from.enforce_single_quotes_;
+      _this->_impl_.enforce_single_quotes_ = from._impl_.enforce_single_quotes_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
   if (cached_has_bits & 0x00000100u) {
-    _internal_set_capitalize_functions(from._internal_capitalize_functions());
+    _this->_internal_set_capitalize_functions(from._internal_capitalize_functions());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void FormatterOptionsProto::CopyFrom(const FormatterOptionsProto& from) {
@@ -561,31 +659,29 @@ void FormatterOptionsProto::InternalSwap(FormatterOptionsProto* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &new_line_type_, lhs_arena,
-      &other->new_line_type_, rhs_arena
-  );
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.new_line_type_, lhs_arena,
+                                       &other->_impl_.new_line_type_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FormatterOptionsProto, capitalize_functions_)
-      + sizeof(FormatterOptionsProto::capitalize_functions_)
-      - PROTOBUF_FIELD_OFFSET(FormatterOptionsProto, line_length_limit_)>(
-          reinterpret_cast<char*>(&line_length_limit_),
-          reinterpret_cast<char*>(&other->line_length_limit_));
+      PROTOBUF_FIELD_OFFSET(FormatterOptionsProto, _impl_.capitalize_functions_)
+      + sizeof(FormatterOptionsProto::_impl_.capitalize_functions_)
+      - PROTOBUF_FIELD_OFFSET(FormatterOptionsProto, _impl_.line_length_limit_)>(
+          reinterpret_cast<char*>(&_impl_.line_length_limit_),
+          reinterpret_cast<char*>(&other->_impl_.line_length_limit_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FormatterOptionsProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fformatter_5foptions_2eproto[0]);
 }
-
 // ===================================================================
 
 class FormatterRangeProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<FormatterRangeProto>()._has_bits_);
+  using HasBits = decltype(std::declval<FormatterRangeProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(FormatterRangeProto, _impl_._has_bits_);
   static void set_has_start(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -594,93 +690,89 @@ class FormatterRangeProto::_Internal {
   }
 };
 
-FormatterRangeProto::FormatterRangeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+FormatterRangeProto::FormatterRangeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.FormatterRangeProto)
 }
 FormatterRangeProto::FormatterRangeProto(const FormatterRangeProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&start_, &from.start_,
-    static_cast<size_t>(reinterpret_cast<char*>(&end_) -
-    reinterpret_cast<char*>(&start_)) + sizeof(end_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.FormatterRangeProto)
 }
 
-inline void FormatterRangeProto::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&start_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&end_) -
-    reinterpret_cast<char*>(&start_)) + sizeof(end_));
+inline void FormatterRangeProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.start_) { 0 }
+
+    , decltype(_impl_.end_) { 0 }
+
+  };
 }
 
 FormatterRangeProto::~FormatterRangeProto() {
   // @@protoc_insertion_point(destructor:zetasql.FormatterRangeProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void FormatterRangeProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void FormatterRangeProto::ArenaDtor(void* object) {
-  FormatterRangeProto* _this = reinterpret_cast< FormatterRangeProto* >(object);
-  (void)_this;
-}
-void FormatterRangeProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void FormatterRangeProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void FormatterRangeProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.FormatterRangeProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
-    ::memset(&start_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&end_) -
-        reinterpret_cast<char*>(&start_)) + sizeof(end_));
+    ::memset(&_impl_.start_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.end_) -
+        reinterpret_cast<char*>(&_impl_.start_)) + sizeof(_impl_.end_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* FormatterRangeProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* FormatterRangeProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int32 start = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_start(&has_bits);
-          start_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.start_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 end = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _Internal::set_has_end(&has_bits);
-          end_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.end_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -698,7 +790,7 @@ const char* FormatterRangeProto::_InternalParse(const char* ptr, ::PROTOBUF_NAME
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -706,87 +798,87 @@ failure:
 #undef CHK_
 }
 
-uint8_t* FormatterRangeProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* FormatterRangeProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.FormatterRangeProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int32 start = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_start(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        1, this->_internal_start(), target);
   }
 
   // optional int32 end = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_end(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        2, this->_internal_end(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.FormatterRangeProto)
   return target;
 }
 
-size_t FormatterRangeProto::ByteSizeLong() const {
+::size_t FormatterRangeProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.FormatterRangeProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     // optional int32 start = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_start());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_start());
     }
 
     // optional int32 end = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_end());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_end());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData FormatterRangeProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     FormatterRangeProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*FormatterRangeProto::GetClassData() const { return &_class_data_; }
 
-void FormatterRangeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<FormatterRangeProto *>(to)->MergeFrom(
-      static_cast<const FormatterRangeProto &>(from));
-}
 
-
-void FormatterRangeProto::MergeFrom(const FormatterRangeProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.FormatterRangeProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void FormatterRangeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<FormatterRangeProto*>(&to_msg);
+  auto& from = static_cast<const FormatterRangeProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.FormatterRangeProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      start_ = from.start_;
+      _this->_impl_.start_ = from._impl_.start_;
     }
     if (cached_has_bits & 0x00000002u) {
-      end_ = from.end_;
+      _this->_impl_.end_ = from._impl_.end_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void FormatterRangeProto::CopyFrom(const FormatterRangeProto& from) {
@@ -803,31 +895,31 @@ bool FormatterRangeProto::IsInitialized() const {
 void FormatterRangeProto::InternalSwap(FormatterRangeProto* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FormatterRangeProto, end_)
-      + sizeof(FormatterRangeProto::end_)
-      - PROTOBUF_FIELD_OFFSET(FormatterRangeProto, start_)>(
-          reinterpret_cast<char*>(&start_),
-          reinterpret_cast<char*>(&other->start_));
+      PROTOBUF_FIELD_OFFSET(FormatterRangeProto, _impl_.end_)
+      + sizeof(FormatterRangeProto::_impl_.end_)
+      - PROTOBUF_FIELD_OFFSET(FormatterRangeProto, _impl_.start_)>(
+          reinterpret_cast<char*>(&_impl_.start_),
+          reinterpret_cast<char*>(&other->_impl_.start_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FormatterRangeProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fformatter_5foptions_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fformatter_5foptions_2eproto[1]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::FormatterOptionsProto* Arena::CreateMaybeMessage< ::zetasql::FormatterOptionsProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::FormatterOptionsProto*
+Arena::CreateMaybeMessage< ::zetasql::FormatterOptionsProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::FormatterOptionsProto >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::FormatterRangeProto* Arena::CreateMaybeMessage< ::zetasql::FormatterRangeProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::FormatterRangeProto*
+Arena::CreateMaybeMessage< ::zetasql::FormatterRangeProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::FormatterRangeProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

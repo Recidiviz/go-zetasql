@@ -60,6 +60,8 @@ java_proto_library(
 proto_library(
     name = "test_schema_proto",
     srcs = [
+        "referenced_schema.proto",
+        "referencing_schema.proto",
         "test_schema.proto",
     ],
     features = ["-proto_dynamic_mode_static_link"],
@@ -192,6 +194,7 @@ cc_library(
         ":test_proto3_cc_proto",
         ":test_schema_cc_proto",
         "//zetasql/base",
+        "//zetasql/base:check",
         "//zetasql/base:ret_check",
         "//zetasql/base:status",
         "//zetasql/base/testing:status_matchers",
@@ -200,7 +203,6 @@ cc_library(
         "//zetasql/public:analyzer_output",
         "//zetasql/public:anon_function",
         "//zetasql/public:catalog",
-        "//zetasql/public:constant",
         "//zetasql/public:cycle_detector",
         "//zetasql/public:deprecation_warning_cc_proto",
         "//zetasql/public:error_location_cc_proto",
@@ -273,6 +275,7 @@ cc_library(
         "//zetasql/public:simple_catalog",
         "//zetasql/public:type",
         "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:btree",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/strings",
     ],

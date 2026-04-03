@@ -100,14 +100,14 @@ static std::string GetExtractFunctionSignatureString(
     // The date part argument is present in 'arguments', so arguments[1]
     // is the date part and arguments[2] (if present) is the time zone.
     //
-    // ZETASQL_DCHECK validated - given the non-standard function call syntax for
+    // ABSL_DCHECK validated - given the non-standard function call syntax for
     // EXTRACT, the parser enforces 2 or 3 arguments in the language.
     if (arguments.size() != 2 && arguments.size() != 3) {
       return absl::StrCat("Expected 2 or 3 arguments to EXTRACT, but found ",
                           arguments.size());
     }
     // Expected invariant - the 1th argument is the date part argument.
-    ZETASQL_DCHECK(arguments[1].type()->Equivalent(types::DatePartEnumType()));
+    ABSL_DCHECK(arguments[1].type()->Equivalent(types::DatePartEnumType()));
 
     datepart_string = arguments[1].UserFacingName(product_mode);
     if (arguments.size() == 3) {
@@ -118,11 +118,11 @@ static std::string GetExtractFunctionSignatureString(
     // date part argument is not present in 'arguments', so arguments[1]
     // (if present) is the time zone.
     //
-    // ZETASQL_DCHECK validated - given the non-standard function call syntax for
+    // ABSL_DCHECK validated - given the non-standard function call syntax for
     // EXTRACT, the parser enforces 2 or 3 arguments in the language and
     // the date part argument has been omitted from this signature (i.e.,
     // $extract_date, etc.).
-    ZETASQL_DCHECK(arguments.size() == 1 || arguments.size() == 2) << arguments.size();
+    ABSL_DCHECK(arguments.size() == 1 || arguments.size() == 2) << arguments.size();
     datepart_string = explicit_datepart_name;
     // If present, the 1th argument is the optional timezone argument.
     if (arguments.size() == 2) {
@@ -142,7 +142,7 @@ static std::string GetExtractFunctionSignatureString(
 
 static std::string NoMatchingSignatureForExtractFunction(
     const std::string& explicit_datepart_name,
-    const std::string& qualified_function_name,
+    absl::string_view qualified_function_name,
     const std::vector<InputArgumentType>& arguments, ProductMode product_mode) {
   if (arguments.empty()) {
     return "No matching signature for function EXTRACT,"
@@ -1029,7 +1029,7 @@ void GetDatetimeFunctions(TypeFactory* type_factory,
 namespace {
 
 std::string IntervalConstructorSQL(const std::vector<std::string>& inputs) {
-  ZETASQL_DCHECK_EQ(inputs.size(), 2);
+  ABSL_DCHECK_EQ(inputs.size(), 2);
   return absl::StrFormat("INTERVAL %s %s", inputs[0], inputs[1]);
 }
 
@@ -1522,7 +1522,13 @@ void GetAggregateFunctions(TypeFactory* type_factory,
         {{int64_type, {ARG_TYPE_ANY_1}, FN_GROUPING}},
         DefaultAggregateFunctionOptions()
             .set_post_resolution_argument_constraint(
-                absl::bind_front(&CheckArgumentsSupportGrouping, "Grouping")));
+                absl::bind_front(&CheckArgumentsSupportGrouping, "Grouping"))
+            .set_supports_safe_error_mode(false)
+            .set_supports_over_clause(false)
+            .set_supports_distinct_modifier(false)
+            .set_supports_window_framing(false)
+            .set_window_ordering_support(FunctionOptions::ORDER_UNSUPPORTED)
+            .set_supports_having_modifier(false));
   }
 
   FunctionArgumentTypeOptions non_null_non_agg;
@@ -2168,7 +2174,7 @@ void GetBooleanFunctions(TypeFactory* type_factory,
         {{bool_type,
           {string_type, {string_type, REPEATED}},
           FN_STRING_LIKE_ANY,
-          FunctionSignatureOptions().set_rejects_collation()},
+          FunctionSignatureOptions().set_uses_operation_collation()},
          {bool_type, {byte_type, {byte_type, REPEATED}}, FN_BYTE_LIKE_ANY}},
         FunctionOptions()
             .set_supports_safe_error_mode(false)
@@ -2185,7 +2191,7 @@ void GetBooleanFunctions(TypeFactory* type_factory,
         {{bool_type,
           {string_type, {string_type, REPEATED}},
           FN_STRING_LIKE_ALL,
-          FunctionSignatureOptions().set_rejects_collation()},
+          FunctionSignatureOptions().set_uses_operation_collation()},
          {bool_type, {byte_type, {byte_type, REPEATED}}, FN_BYTE_LIKE_ALL}},
         FunctionOptions()
             .set_supports_safe_error_mode(false)
@@ -2196,7 +2202,10 @@ void GetBooleanFunctions(TypeFactory* type_factory,
             .set_sql_name("like all")
             .set_supported_signatures_callback(&EmptySupportedSignatures)
             .set_get_sql_callback(&LikeAllFunctionSQL));
+  }
 
+  if (options.language_options.LanguageFeatureEnabled(
+          FEATURE_V_1_4_LIKE_ANY_SOME_ALL_ARRAY)) {
     // Supports both LIKE ANY and LIKE SOME arrays.
     InsertFunction(
         functions, options, "$like_any_array", SCALAR,

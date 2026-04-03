@@ -92,6 +92,7 @@ cc_library(
     hdrs = ["timer_util.h"],
     deps = [
         ":thread_stack",
+        "//zetasql/base:check",
         "//zetasql/public/proto:logging_cc_proto",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/time",
@@ -328,6 +329,9 @@ cc_test(
 
 cc_library(
     name = "internal_value",
+    srcs = [
+        "internal_value.cc",
+    ],
     hdrs = [
         "internal_value.h",
     ],
@@ -337,6 +341,19 @@ cc_library(
         "//zetasql/public:value",
         "//zetasql/public/types",
         "@com_google_absl//absl/types:span",
+    ],
+)
+
+cc_test(
+    name = "internal_value_test",
+    srcs = [
+        "internal_value_test.cc",
+    ],
+    deps = [
+        ":internal_value",
+        "//zetasql/base/testing:zetasql_gtest_main",
+        "//zetasql/public:value",
+        "//zetasql/testing:test_value",
     ],
 )
 
@@ -480,6 +497,31 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
+    ],
+)
+
+cc_library(
+    name = "unicode_utils",
+    srcs = ["unicode_utils.cc"],
+    hdrs = ["unicode_utils.h"],
+    deps = [
+        "//zetasql/base",
+        "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/strings",
+        "@icu//:common",
+    ],
+)
+
+cc_test(
+    name = "unicode_utils_test",
+    size = "small",
+    srcs = ["unicode_utils_test.cc"],
+    deps = [
+        ":unicode_utils",
+        "//zetasql/base/testing:zetasql_gtest_main",
+        "@com_google_absl//absl/flags:flag",
     ],
 )
 

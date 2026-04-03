@@ -606,9 +606,9 @@ static std::unique_ptr<const zetasql::ResolvedStatement> make_unique_stmt(void *
     memcpy((void *)ret.get(), (void *)node, sizeof(zetasql::ResolvedDropRowAccessPolicyStmt));
     return ret;
   }
-  case zetasql::RESOLVED_DROP_SEARCH_INDEX_STMT:{
-    std::unique_ptr<zetasql::ResolvedDropSearchIndexStmt> ret = zetasql::MakeResolvedDropSearchIndexStmt();
-    memcpy((void *)ret.get(), (void *)node, sizeof(zetasql::ResolvedDropSearchIndexStmt));
+  case zetasql::RESOLVED_DROP_INDEX_STMT:{
+    std::unique_ptr<zetasql::ResolvedDropIndexStmt> ret = zetasql::MakeResolvedDropIndexStmt();
+    memcpy((void *)ret.get(), (void *)node, sizeof(zetasql::ResolvedDropIndexStmt));
     return ret;
   }
   case zetasql::RESOLVED_ALTER_PRIVILEGE_RESTRICTION_STMT:{
@@ -2568,12 +2568,12 @@ void GO_EXPORT(ResolvedAggregateScan_grouping_set_list)(void * arg0,void ** arg1
 
 void GO_EXPORT(ResolvedAggregateScan_set_grouping_set_list)(void * arg0,void * arg1){
   zetasql::ResolvedAggregateScan *node = (zetasql::ResolvedAggregateScan *)arg0;
-  SET_UNIQUE_PTR_LIST(node->set_grouping_set_list, ResolvedGroupingSet, arg1);
+  SET_UNIQUE_PTR_GROUPING_SET_LIST(node->set_grouping_set_list, arg1);
 }
 
 void GO_EXPORT(ResolvedAggregateScan_add_grouping_set_list)(void * arg0,void * arg1){
   zetasql::ResolvedAggregateScan *node = (zetasql::ResolvedAggregateScan *)arg0;
-  ADD_UNIQUE_PTR_LIST(node->add_grouping_set_list, ResolvedGroupingSet, arg1);
+  ADD_UNIQUE_PTR_GROUPING_SET_LIST(node->add_grouping_set_list, arg1);
 }
 
 void GO_EXPORT(ResolvedAggregateScan_rollup_column_list)(void * arg0,void ** arg1){
@@ -5571,7 +5571,8 @@ void GO_EXPORT(ResolvedGrantOrRevokeStmt_object_type)(void * arg0,void ** arg1){
 
 void GO_EXPORT(ResolvedGrantOrRevokeStmt_set_object_type)(void * arg0,void * arg1){
   zetasql::ResolvedGrantOrRevokeStmt *node = (zetasql::ResolvedGrantOrRevokeStmt *)arg0;
-  node->set_object_type((char *)arg1);
+  node->mutable_object_type_list()->clear();
+  node->add_object_type_list(std::string((const char *)arg1));
 }
 
 void GO_EXPORT(ResolvedGrantOrRevokeStmt_name_path)(void * arg0,void ** arg1){
@@ -6220,38 +6221,42 @@ void GO_EXPORT(ResolvedDropRowAccessPolicyStmt_add_target_name_path)(void * arg0
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_is_if_exists)(void * arg0,char* arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
   *arg1 = node->is_if_exists();
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_set_is_if_exists)(void * arg0,int arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
   node->set_is_if_exists(arg1);
+  node->set_index_type(zetasql::ResolvedDropIndexStmt::INDEX_SEARCH);
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_name)(void * arg0,void ** arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
   *arg1 = (void *)((new std::string(node->name()))->c_str());
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_set_name)(void * arg0,void * arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
-  node->set_name((char *)arg1);
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
+  node->set_name(std::string((const char *)arg1));
+  node->set_index_type(zetasql::ResolvedDropIndexStmt::INDEX_SEARCH);
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_table_name_path)(void * arg0,void ** arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
   GET_STRS(node->table_name_path, arg1);
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_set_table_name_path)(void * arg0,void * arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
   SET_LIST(node->set_table_name_path, std::string, arg1);
+  node->set_index_type(zetasql::ResolvedDropIndexStmt::INDEX_SEARCH);
 }
 
 void GO_EXPORT(ResolvedDropSearchIndexStmt_add_table_name_path)(void * arg0,void * arg1){
-  zetasql::ResolvedDropSearchIndexStmt *node = (zetasql::ResolvedDropSearchIndexStmt *)arg0;
+  zetasql::ResolvedDropIndexStmt *node = (zetasql::ResolvedDropIndexStmt *)arg0;
   node->add_table_name_path((char *)arg1);
+  node->set_index_type(zetasql::ResolvedDropIndexStmt::INDEX_SEARCH);
 }
 
 void GO_EXPORT(ResolvedGrantToAction_grantee_expr_list)(void * arg0,void ** arg1){

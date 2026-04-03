@@ -170,7 +170,7 @@ struct MultisetValueContentContainerElementHasher {
 
 ArrayType::ArrayType(const TypeFactory* factory, const Type* element_type)
     : ContainerType(factory, TYPE_ARRAY), element_type_(element_type) {
-  ZETASQL_CHECK(!element_type->IsArray());  // Blocked in MakeArrayType.
+  ABSL_CHECK(!element_type->IsArray());  // Blocked in MakeArrayType.
 }
 
 ArrayType::~ArrayType() {}
@@ -181,7 +181,7 @@ bool ArrayType::IsSupportedType(const LanguageOptions& language_options) const {
 
 bool ArrayType::EqualsForSameKind(const Type* that, bool equivalent) const {
   const ArrayType* other = that->AsArray();
-  ZETASQL_DCHECK(other);
+  ABSL_DCHECK(other);
   return EqualsImpl(this, other, equivalent);
 }
 
@@ -387,7 +387,7 @@ bool ArrayType::EqualElementMultiSet(
   ValueContentContainerElementEq eq(options, element_type());
   CountMap x_multiset(x_container->num_elements(), hasher, eq);
   CountMap y_multiset(y_container->num_elements(), hasher, eq);
-  ZETASQL_DCHECK_EQ(x_container->num_elements(), y_container->num_elements());
+  ABSL_DCHECK_EQ(x_container->num_elements(), y_container->num_elements());
   for (int i = 0; i < x_container->num_elements(); i++) {
     x_multiset[x_container->element(i)]++;
     y_multiset[y_container->element(i)]++;
@@ -436,11 +436,11 @@ bool ArrayType::EqualElementMultiSet(
             absl::Substitute("Multiset element $0 of $1 is missing in $2\n",
                              FormatValueContentContainerElement(
                                  element, element_type(), format_options),
-                             FormatValueContent(x, format_options),
-                             FormatValueContent(y, format_options)));
+                             FormatValueContent(y, format_options),
+                             FormatValueContent(x, format_options)));
       }
     }
-    ZETASQL_DCHECK(!reason->empty());
+    ABSL_DCHECK(!reason->empty());
   }
   return false;
 }
@@ -539,9 +539,15 @@ std::string ArrayType::GetFormatPrefix(
         }
       }
       prefix.push_back('[');
-      if (!container_ref->preserves_order()) {
-        prefix.append("unordered: ");
+      if (options.include_array_ordereness &&
+          container_ref->value()->num_elements() > 1) {
+        if (container_ref->preserves_order()) {
+          absl::StrAppend(&prefix, "known order: ");
+        } else {
+          absl::StrAppend(&prefix, "unknown order: ");
+        }
       }
+
       break;
     }
     case Type::FormatValueContentOptions::Mode::kSQLLiteral: {

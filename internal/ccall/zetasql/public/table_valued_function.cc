@@ -32,6 +32,7 @@
 #include "zetasql/public/simple_table.pb.h"
 #include "zetasql/public/strings.h"
 #include "zetasql/base/case.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -83,23 +84,29 @@ const FunctionSignature* TableValuedFunction::GetSignature(int64_t idx) const {
 }
 
 std::string TableValuedFunction::GetSupportedSignaturesUserFacingText(
-    const LanguageOptions& language_options) const {
+    const LanguageOptions& language_options,
+    bool print_template_and_name_details) const {
   std::string supported_signatures;
   for (const FunctionSignature& signature : signatures()) {
-    absl::StrAppend(&supported_signatures,
-                    (!supported_signatures.empty() ? "; " : ""),
-                    GetSignatureUserFacingText(signature, language_options));
+    absl::StrAppend(
+        &supported_signatures, (!supported_signatures.empty() ? "; " : ""),
+        GetSignatureUserFacingText(signature, language_options,
+                                   print_template_and_name_details));
   }
   return supported_signatures;
 }
 
 std::string TableValuedFunction::GetSignatureUserFacingText(
-    const FunctionSignature& signature,
-    const LanguageOptions& language_options) const {
+    const FunctionSignature& signature, const LanguageOptions& language_options,
+    bool print_template_and_name_details) const {
   std::vector<std::string> argument_texts;
   for (const FunctionArgumentType& argument : signature.arguments()) {
-    std::string arg_type_string =
-        argument.UserFacingName(language_options.product_mode());
+    std::string arg_type_string = argument.UserFacingName(
+        language_options.product_mode(), print_template_and_name_details);
+    if (print_template_and_name_details && argument.has_argument_name()) {
+      arg_type_string =
+          absl::StrCat(argument.argument_name(), " => ", arg_type_string);
+    }
     // If the argument is a relation argument to a table-valued function and the
     // function signature specifies a required input schema, append the types of
     // the required columns to the user-facing signature string.
@@ -148,17 +155,33 @@ std::string TableValuedFunction::GetTVFSignatureErrorMessage(
     const std::vector<InputArgumentType>& input_arg_types, int signature_idx,
     const SignatureMatchResult& signature_match_result,
     const LanguageOptions& language_options) const {
-  if (!signature_match_result.mismatch_message().empty()) {
+  // Merge of tvf_mismatch_message and mismatch_message should be considered
+  // when show_function_signature_mismatch_details is enabled by default.
+  if (!signature_match_result.tvf_mismatch_message().empty()) {
     // TODO: Update this error message when we support more than one
     // TVF signature.
-    return absl::StrCat(signature_match_result.mismatch_message(), " of ",
-                        GetSupportedSignaturesUserFacingText(language_options));
+    return absl::StrCat(signature_match_result.tvf_mismatch_message(), " of ",
+                        GetSupportedSignaturesUserFacingText(
+                            language_options,
+                            /*print_template_and_name_details=*/false));
+  } else if (!signature_match_result.mismatch_message().empty()) {
+    return absl::StrCat(
+        Function::GetGenericNoMatchingFunctionSignatureErrorMessage(
+            tvf_name_string, input_arg_types, language_options.product_mode(),
+            {}, /*argument_types_on_new_line=*/true),
+        "\n  Signature: ",
+        GetSupportedSignaturesUserFacingText(
+            language_options,
+            /*print_template_and_name_details=*/true),
+        "\n    ", signature_match_result.mismatch_message());
   } else {
     return absl::StrCat(
         Function::GetGenericNoMatchingFunctionSignatureErrorMessage(
             tvf_name_string, input_arg_types, language_options.product_mode()),
         ". Supported signature", (NumSignatures() > 1 ? "s" : ""), ": ",
-        GetSupportedSignaturesUserFacingText(language_options));
+        GetSupportedSignaturesUserFacingText(
+            language_options,
+            /*print_template_and_name_details=*/false));
   }
 }
 
@@ -221,10 +244,10 @@ absl::Status TableValuedFunction::Deserialize(
 // static
 void TableValuedFunction::RegisterDeserializer(
     FunctionEnums::TableValuedFunctionType type, TVFDeserializer deserializer) {
-  // ZETASQL_CHECK validated -- This is used at initialization time only.
-  ZETASQL_CHECK(FunctionEnums::TableValuedFunctionType_IsValid(type)) << type;
-  // ZETASQL_CHECK validated -- This is used at initialization time only.
-  ZETASQL_CHECK(!(*TvfDeserializers())[type]) << type;
+  // ABSL_CHECK validated -- This is used at initialization time only.
+  ABSL_CHECK(FunctionEnums::TableValuedFunctionType_IsValid(type)) << type;
+  // ABSL_CHECK validated -- This is used at initialization time only.
+  ABSL_CHECK(!(*TvfDeserializers())[type]) << type;
   (*TvfDeserializers())[type] = std::move(deserializer);
 }
 
@@ -556,7 +579,7 @@ absl::Status ForwardInputSchemaToOutputSchemaWithAppendedColumnTVF::Resolve(
   std::vector<TVFSchemaColumn> output_schema(
       actual_arguments[0].relation().columns());
   output_schema.reserve(output_schema.size() + extra_columns_.size());
-  std::unordered_set<std::string> input_column_names;
+  absl::flat_hash_set<std::string> input_column_names;
   input_column_names.reserve(output_schema.size());
   for (const TVFSchemaColumn& input_column : output_schema) {
     input_column_names.insert(input_column.name);
@@ -623,7 +646,7 @@ absl::Status ForwardInputSchemaToOutputSchemaWithAppendedColumnTVF::
         const std::vector<TVFSchemaColumn>& extra_columns) const {
   ZETASQL_RET_CHECK(isTemplated) << "Does not support non-templated argument type";
 
-  std::unordered_set<std::string> name_set;
+  absl::flat_hash_set<std::string> name_set;
   for (const TVFSchemaColumn& column : extra_columns) {
     ZETASQL_RET_CHECK(!column.name.empty())
         << "invalid empty column name in extra columns";

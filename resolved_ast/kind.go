@@ -144,7 +144,7 @@ const (
 	CreateRowAccessPolicyStmt      Kind = 73
 	DropPrivilegeRestrictionStmt   Kind = 192
 	DropRowAccessPolicyStmt        Kind = 74
-	DropSearchIndexStmt            Kind = 190
+	DropSearchIndexStmt            Kind = 242
 	GrantToAction                  Kind = 135
 	RestrictToAction               Kind = 193
 	AddToRestricteeListAction      Kind = 194

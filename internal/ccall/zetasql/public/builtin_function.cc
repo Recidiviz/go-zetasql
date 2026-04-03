@@ -16,53 +16,80 @@
 
 #include "zetasql/public/builtin_function.h"
 
-#include <ctype.h>
-
-#include <algorithm>
 #include <map>
 #include <memory>
-#include <set>
 #include <string>
 #include <utility>
-#include <vector>
 
-#include "zetasql/base/logging.h"
 #include "zetasql/common/builtin_function_internal.h"
+#include "zetasql/public/builtin_function_options.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
-#include "zetasql/public/value.h"
 #include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
+#include "zetasql/base/check.h"
+#include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
-#include "absl/strings/string_view.h"
 #include "zetasql/base/map_util.h"
-#include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
 
 namespace zetasql {
 
 class AnalyzerOptions;
 
+using NameToFunctionMap =
+    absl::flat_hash_map<std::string, std::unique_ptr<Function>>;
+using NameToFunctionPtrMap = absl::flat_hash_map<std::string, const Function*>;
+using NameToTypeMap = absl::flat_hash_map<std::string, const Type*>;
+
+std::pair<const NameToFunctionPtrMap&, const NameToTypeMap&>
+GetBuiltinFunctionsAndTypesForDefaultOptions() {
+  static const auto kFunctionsAndTypes =
+      []() -> std::pair<const NameToFunctionPtrMap&, const NameToTypeMap&> {
+    // Process lifetime.
+    static auto& type_factory = *(new TypeFactory);
+    static auto& types = *(new NameToTypeMap);
+    static auto& unowned_functions = *(new NameToFunctionPtrMap);
+
+    NameToFunctionMap owned_functions;
+    absl::Status status = GetBuiltinFunctionsAndTypes(
+        BuiltinFunctionOptions::AllReleasedFunctions(), type_factory,
+        owned_functions, types);
+    // Non-OK status can be returned if the builtins_options is configured
+    // incorrectly, or if an internal invariant is broken do to a bug in the
+    // ZetaSQL library.
+    ZETASQL_DCHECK_OK(status);
+    for (auto& [name, function] : owned_functions) {
+      unowned_functions.emplace(name, function.release());
+    }
+    return {unowned_functions, types};
+  }();
+  return kFunctionsAndTypes;
+}
+
 static const FunctionIdToNameMap& GetFunctionIdToNameMap() {
   static FunctionIdToNameMap* id_map = [] () {
     // Initialize map from ZetaSQL function to function names.
     FunctionIdToNameMap* id_map = new FunctionIdToNameMap();
     TypeFactory type_factory;
+    NameToTypeMap types_ignored;
     NameToFunctionMap functions;
 
     // Enable the maximum language features.  This enables retrieving a maximum
     // set of functions and signatures.
     //
-    // TODO: Maybe it is better to add a new function
-    // GetAllZetaSQLFunctionsAndSignatures() that does not take any options,
-    // to ensure that we get them all.  This could be a ZetaSQL-internal
-    // only function.
+    // TODO: Change this to use only stable features and a select list
+    //   of "in_development" features that control function signatures as of the
+    //   time the change is made. When that list becomes empty, convert this to
+    //   use `GetAllBuiltinFunctionsAndTypes`.
     LanguageOptions options;
     options.EnableMaximumLanguageFeaturesForDevelopment();
     options.set_product_mode(PRODUCT_INTERNAL);
 
-    GetZetaSQLFunctions(&type_factory, options, &functions);
+    absl::Status status =
+        GetBuiltinFunctionsAndTypes(BuiltinFunctionOptions(options),
+                                    type_factory, functions, types_ignored);
+    ZETASQL_DCHECK_OK(status);
 
     for (const auto& function_entry : functions) {
       for (const FunctionSignature& signature :
@@ -89,76 +116,82 @@ const std::string FunctionSignatureIdToName(FunctionSignatureId id) {
   return absl::StrCat("<INVALID FUNCTION ID: ", id, ">");
 }
 
-using NameToFunctionMap = std::map<std::string, std::unique_ptr<Function>>;
-using NameToTypeMap = absl::flat_hash_map<std::string, const Type*>;
-
-void GetZetaSQLFunctions(TypeFactory* type_factory,
-                           const ZetaSQLBuiltinFunctionOptions& options,
-                           NameToFunctionMap* functions) {
+// DEPRECATED
+void GetZetaSQLFunctions(
+    TypeFactory* type_factory, const BuiltinFunctionOptions& options,
+    std::map<std::string, std::unique_ptr<Function>>* functions) {
   NameToTypeMap types_ignored;
-  absl::Status status = GetZetaSQLFunctionsAndTypes(
-      type_factory, options, functions, &types_ignored);
+  NameToFunctionMap adequately_efficient_function_map;
+  absl::Status status = GetBuiltinFunctionsAndTypes(
+      options, *type_factory, adequately_efficient_function_map, types_ignored);
+  for (auto& [name, function] : adequately_efficient_function_map) {
+    functions->emplace(name, std::move(function));
+  }
   ZETASQL_DCHECK_OK(status);
 }
 
-absl::Status GetZetaSQLFunctionsAndTypes(
-    TypeFactory* type_factory, const ZetaSQLBuiltinFunctionOptions& options,
-    NameToFunctionMap* functions, NameToTypeMap* types) {
-  GetDatetimeFunctions(type_factory, options, functions);
-  GetIntervalFunctions(type_factory, options, functions);
-  GetArithmeticFunctions(type_factory, options, functions);
-  GetBitwiseFunctions(type_factory, options, functions);
-  GetAggregateFunctions(type_factory, options, functions);
-  GetApproxFunctions(type_factory, options, functions);
-  GetStatisticalFunctions(type_factory, options, functions);
-  GetBooleanFunctions(type_factory, options, functions);
-  GetLogicFunctions(type_factory, options, functions);
-  GetStringFunctions(type_factory, options, functions);
-  GetRegexFunctions(type_factory, options, functions);
-  GetErrorHandlingFunctions(type_factory, options, functions);
-  GetConditionalFunctions(type_factory, options, functions);
-  GetMiscellaneousFunctions(type_factory, options, functions);
-  GetArrayMiscFunctions(type_factory, options, functions);
-  GetArrayAggregationFunctions(type_factory, options, functions);
-  GetSubscriptFunctions(type_factory, options, functions);
-  GetJSONFunctions(type_factory, options, functions);
-  ZETASQL_RETURN_IF_ERROR(GetMathFunctions(type_factory, options, functions, types));
-  GetHllCountFunctions(type_factory, options, functions);
-  GetD3ACountFunctions(type_factory, options, functions);
-  GetKllQuantilesFunctions(type_factory, options, functions);
-  GetProto3ConversionFunctions(type_factory, options, functions);
+absl::Status GetBuiltinFunctionsAndTypes(const BuiltinFunctionOptions& options,
+                                         TypeFactory& type_factory,
+                                         NameToFunctionMap& functions,
+                                         NameToTypeMap& types) {
+  // TODO: Enable these preconditions with global presubmit.
+  // ZETASQL_RET_CHECK(types.empty());
+  // ZETASQL_RET_CHECK(functions.empty());
+  GetDatetimeFunctions(&type_factory, options, &functions);
+  GetIntervalFunctions(&type_factory, options, &functions);
+  GetArithmeticFunctions(&type_factory, options, &functions);
+  GetBitwiseFunctions(&type_factory, options, &functions);
+  GetAggregateFunctions(&type_factory, options, &functions);
+  GetApproxFunctions(&type_factory, options, &functions);
+  GetStatisticalFunctions(&type_factory, options, &functions);
+  GetBooleanFunctions(&type_factory, options, &functions);
+  GetLogicFunctions(&type_factory, options, &functions);
+  GetStringFunctions(&type_factory, options, &functions);
+  GetRegexFunctions(&type_factory, options, &functions);
+  GetErrorHandlingFunctions(&type_factory, options, &functions);
+  GetConditionalFunctions(&type_factory, options, &functions);
+  GetMiscellaneousFunctions(&type_factory, options, &functions);
+  GetArrayMiscFunctions(&type_factory, options, &functions);
+  GetArrayAggregationFunctions(&type_factory, options, &functions);
+  GetSubscriptFunctions(&type_factory, options, &functions);
+  GetJSONFunctions(&type_factory, options, &functions);
+  ZETASQL_RETURN_IF_ERROR(GetMathFunctions(&type_factory, options, &functions, &types));
+  GetHllCountFunctions(&type_factory, options, &functions);
+  GetD3ACountFunctions(&type_factory, options, &functions);
+  GetKllQuantilesFunctions(&type_factory, options, &functions);
+  GetProto3ConversionFunctions(&type_factory, options, &functions);
   if (options.language_options.LanguageFeatureEnabled(
           FEATURE_ANALYTIC_FUNCTIONS)) {
-    GetAnalyticFunctions(type_factory, options, functions);
+    GetAnalyticFunctions(&type_factory, options, &functions);
   }
-  GetNetFunctions(type_factory, options, functions);
-  GetHashingFunctions(type_factory, options, functions);
+  GetNetFunctions(&type_factory, options, &functions);
+  GetHashingFunctions(&type_factory, options, &functions);
   if (options.language_options.LanguageFeatureEnabled(FEATURE_ENCRYPTION)) {
-    GetEncryptionFunctions(type_factory, options, functions);
+    GetEncryptionFunctions(&type_factory, options, &functions);
   }
   if (options.language_options.LanguageFeatureEnabled(FEATURE_GEOGRAPHY)) {
-    GetGeographyFunctions(type_factory, options, functions);
+    GetGeographyFunctions(&type_factory, options, &functions);
   }
   if (options.language_options.LanguageFeatureEnabled(FEATURE_ANONYMIZATION)) {
-    GetAnonFunctions(type_factory, options, functions);
+    GetAnonFunctions(&type_factory, options, &functions);
   }
   if (options.language_options.LanguageFeatureEnabled(
           FEATURE_DIFFERENTIAL_PRIVACY)) {
-    GetDifferentialPrivacyFunctions(type_factory, options, functions, types);
+    GetDifferentialPrivacyFunctions(&type_factory, options, &functions, &types);
   }
-  GetTypeOfFunction(type_factory, options, functions);
-  GetFilterFieldsFunction(type_factory, options, functions);
+  GetTypeOfFunction(&type_factory, options, &functions);
+  GetFilterFieldsFunction(&type_factory, options, &functions);
   if (options.language_options.LanguageFeatureEnabled(FEATURE_RANGE_TYPE)) {
-    GetRangeFunctions(type_factory, options, functions);
+    GetRangeFunctions(&type_factory, options, &functions);
   }
-  GetArraySlicingFunctions(type_factory, options, functions);
-  GetArrayFilteringFunctions(type_factory, options, functions);
-  GetArrayTransformFunctions(type_factory, options, functions);
-  GetArrayIncludesFunctions(type_factory, options, functions);
+  GetArraySlicingFunctions(&type_factory, options, &functions);
+  GetArrayFilteringFunctions(&type_factory, options, &functions);
+  GetArrayTransformFunctions(&type_factory, options, &functions);
+  GetArrayIncludesFunctions(&type_factory, options, &functions);
   if (options.language_options.LanguageFeatureEnabled(
           FEATURE_V_1_4_ARRAY_FIND_FUNCTIONS)) {
     ZETASQL_RETURN_IF_ERROR(
-        GetArrayFindFunctions(type_factory, options, functions, types));
+        GetArrayFindFunctions(&type_factory, options, &functions, &types));
   }
   return absl::OkStatus();
 }

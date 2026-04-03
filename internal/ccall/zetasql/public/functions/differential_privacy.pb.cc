@@ -4,211 +4,275 @@
 #include "zetasql/public/functions/differential_privacy.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
 namespace functions {
-constexpr DifferentialPrivacyEnums::DifferentialPrivacyEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+template <typename>
+PROTOBUF_CONSTEXPR DifferentialPrivacyEnums::DifferentialPrivacyEnums(
+    ::_pbi::ConstantInitialized) {}
 struct DifferentialPrivacyEnumsDefaultTypeInternal {
-  constexpr DifferentialPrivacyEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DifferentialPrivacyEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DifferentialPrivacyEnumsDefaultTypeInternal() {}
   union {
     DifferentialPrivacyEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DifferentialPrivacyEnumsDefaultTypeInternal _DifferentialPrivacyEnums_default_instance_;
-constexpr DifferentialPrivacyOutputWithReport::DifferentialPrivacyOutputWithReport(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : bounding_report_(nullptr)
-  , _oneof_case_{}{}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DifferentialPrivacyEnumsDefaultTypeInternal _DifferentialPrivacyEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR DifferentialPrivacyOutputWithReport::DifferentialPrivacyOutputWithReport(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.bounding_report_)*/nullptr
+  , /*decltype(_impl_.result_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct DifferentialPrivacyOutputWithReportDefaultTypeInternal {
-  constexpr DifferentialPrivacyOutputWithReportDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DifferentialPrivacyOutputWithReportDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DifferentialPrivacyOutputWithReportDefaultTypeInternal() {}
   union {
     DifferentialPrivacyOutputWithReport _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DifferentialPrivacyOutputWithReportDefaultTypeInternal _DifferentialPrivacyOutputWithReport_default_instance_;
-constexpr DifferentialPrivacyBoundingReport::DifferentialPrivacyBoundingReport(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : lower_bound_(nullptr)
-  , upper_bound_(nullptr)
-  , num_inputs_(0)
-  , num_outside_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DifferentialPrivacyOutputWithReportDefaultTypeInternal _DifferentialPrivacyOutputWithReport_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR DifferentialPrivacyBoundingReport::DifferentialPrivacyBoundingReport(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.lower_bound_)*/nullptr
+  , /*decltype(_impl_.upper_bound_)*/nullptr
+  , /*decltype(_impl_.num_inputs_)*/ 0
+
+  , /*decltype(_impl_.num_outside_)*/ 0
+} {}
 struct DifferentialPrivacyBoundingReportDefaultTypeInternal {
-  constexpr DifferentialPrivacyBoundingReportDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DifferentialPrivacyBoundingReportDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DifferentialPrivacyBoundingReportDefaultTypeInternal() {}
   union {
     DifferentialPrivacyBoundingReport _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DifferentialPrivacyBoundingReportDefaultTypeInternal _DifferentialPrivacyBoundingReport_default_instance_;
-constexpr DifferentialPrivacyOutputValues::DifferentialPrivacyOutputValues(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : values_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DifferentialPrivacyBoundingReportDefaultTypeInternal _DifferentialPrivacyBoundingReport_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR DifferentialPrivacyOutputValues::DifferentialPrivacyOutputValues(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.values_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct DifferentialPrivacyOutputValuesDefaultTypeInternal {
-  constexpr DifferentialPrivacyOutputValuesDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DifferentialPrivacyOutputValuesDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DifferentialPrivacyOutputValuesDefaultTypeInternal() {}
   union {
     DifferentialPrivacyOutputValues _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DifferentialPrivacyOutputValuesDefaultTypeInternal _DifferentialPrivacyOutputValues_default_instance_;
-constexpr DifferentialPrivacyOutputValue::DifferentialPrivacyOutputValue(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : noise_confidence_interval_(nullptr)
-  , _oneof_case_{}{}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DifferentialPrivacyOutputValuesDefaultTypeInternal _DifferentialPrivacyOutputValues_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR DifferentialPrivacyOutputValue::DifferentialPrivacyOutputValue(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.noise_confidence_interval_)*/nullptr
+  , /*decltype(_impl_.value_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct DifferentialPrivacyOutputValueDefaultTypeInternal {
-  constexpr DifferentialPrivacyOutputValueDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DifferentialPrivacyOutputValueDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DifferentialPrivacyOutputValueDefaultTypeInternal() {}
   union {
     DifferentialPrivacyOutputValue _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DifferentialPrivacyOutputValueDefaultTypeInternal _DifferentialPrivacyOutputValue_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DifferentialPrivacyOutputValueDefaultTypeInternal _DifferentialPrivacyOutputValue_default_instance_;
 }  // namespace functions
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[5];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, bounding_report_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, result_),
-  ~0u,
-  ~0u,
-  0,
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, lower_bound_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, upper_bound_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, num_inputs_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, num_outside_),
-  0,
-  1,
-  2,
-  3,
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValues, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValues, values_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _internal_metadata_),
-  ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _oneof_case_[0]),
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, noise_confidence_interval_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, value_),
-  ~0u,
-  ~0u,
-  ~0u,
-  0,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::functions::DifferentialPrivacyEnums)},
-  { 6, 16, -1, sizeof(::zetasql::functions::DifferentialPrivacyOutputWithReport)},
-  { 19, 29, -1, sizeof(::zetasql::functions::DifferentialPrivacyBoundingReport)},
-  { 33, -1, -1, sizeof(::zetasql::functions::DifferentialPrivacyOutputValues)},
-  { 40, 51, -1, sizeof(::zetasql::functions::DifferentialPrivacyOutputValue)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::functions::_DifferentialPrivacyEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::functions::_DifferentialPrivacyOutputWithReport_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::functions::_DifferentialPrivacyBoundingReport_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::functions::_DifferentialPrivacyOutputValues_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::functions::_DifferentialPrivacyOutputValue_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[5];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[2];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _internal_metadata_),
+    ~0u,  // no _extensions_
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _impl_.bounding_report_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _impl_.result_),
+    ~0u,
+    ~0u,
+    0,
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _impl_.lower_bound_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _impl_.upper_bound_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _impl_.num_inputs_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyBoundingReport, _impl_.num_outside_),
+    0,
+    1,
+    2,
+    3,
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValues, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValues, _impl_.values_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _internal_metadata_),
+    ~0u,  // no _extensions_
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _impl_._oneof_case_[0]),
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _impl_.noise_confidence_interval_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _impl_.value_),
+    ~0u,
+    ~0u,
+    ~0u,
+    0,
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n3zetasql/public/functions/differential_"
-  "privacy.proto\022\021zetasql.functions\032+zetasq"
-  "l/proto/anon_output_with_report.proto\032\031z"
-  "etasql/public/type.proto\"\246\001\n\030Differentia"
-  "lPrivacyEnums\"\211\001\n\014ReportFormat\0228\n*DIFFER"
-  "ENTIAL_PRIVACY_REPORT_FORMAT_INVALID\020\000\032\010"
-  "\262\362\260\222\016\002\010\001\022\010\n\004JSON\020\001\022\t\n\005PROTO\020\002\032*\262\320\257\372\r$\n\"D"
-  "IFFERENTIAL_PRIVACY_REPORT_FORMAT\"\210\002\n#Di"
-  "fferentialPrivacyOutputWithReport\022B\n\005val"
-  "ue\030\001 \001(\01321.zetasql.functions.Differentia"
-  "lPrivacyOutputValueH\000\022D\n\006values\030\002 \001(\01322."
-  "zetasql.functions.DifferentialPrivacyOut"
-  "putValuesH\000\022M\n\017bounding_report\030\003 \001(\01324.z"
-  "etasql.functions.DifferentialPrivacyBoun"
-  "dingReportB\010\n\006result\"\334\001\n!DifferentialPri"
-  "vacyBoundingReport\022F\n\013lower_bound\030\001 \001(\0132"
-  "1.zetasql.functions.DifferentialPrivacyO"
-  "utputValue\022F\n\013upper_bound\030\002 \001(\01321.zetasq"
-  "l.functions.DifferentialPrivacyOutputVal"
-  "ue\022\022\n\nnum_inputs\030\003 \001(\001\022\023\n\013num_outside\030\004 "
-  "\001(\001\"d\n\037DifferentialPrivacyOutputValues\022A"
-  "\n\006values\030\001 \003(\01321.zetasql.functions.Diffe"
-  "rentialPrivacyOutputValue\"\262\001\n\036Differenti"
-  "alPrivacyOutputValue\022\023\n\tint_value\030\001 \001(\003H"
-  "\000\022\025\n\013float_value\030\002 \001(\001H\000\022\026\n\014string_value"
-  "\030\003 \001(\tH\000\022C\n\031noise_confidence_interval\030\004 "
-  "\001(\0132 .zetasql.NoiseConfidenceIntervalB\007\n"
-  "\005valueB:\n\034com.google.zetasql.functionsB\032"
-  "ZetaSQLDifferentialPrivacy"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_deps[2] = {
-  &::descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
-  &::descriptor_table_zetasql_2fpublic_2ftype_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::functions::DifferentialPrivacyEnums)},
+        { 8, 20, -1, sizeof(::zetasql::functions::DifferentialPrivacyOutputWithReport)},
+        { 23, 35, -1, sizeof(::zetasql::functions::DifferentialPrivacyBoundingReport)},
+        { 39, -1, -1, sizeof(::zetasql::functions::DifferentialPrivacyOutputValues)},
+        { 48, 61, -1, sizeof(::zetasql::functions::DifferentialPrivacyOutputValue)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto = {
-  false, false, 1146, descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto, "zetasql/public/functions/differential_privacy.proto", 
-  &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once, descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_deps, 2, 5,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::functions::_DifferentialPrivacyEnums_default_instance_._instance,
+    &::zetasql::functions::_DifferentialPrivacyOutputWithReport_default_instance_._instance,
+    &::zetasql::functions::_DifferentialPrivacyBoundingReport_default_instance_._instance,
+    &::zetasql::functions::_DifferentialPrivacyOutputValues_default_instance_._instance,
+    &::zetasql::functions::_DifferentialPrivacyOutputValue_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n3zetasql/public/functions/differential_"
+    "privacy.proto\022\021zetasql.functions\032+zetasq"
+    "l/proto/anon_output_with_report.proto\032\031z"
+    "etasql/public/type.proto\"\347\002\n\030Differentia"
+    "lPrivacyEnums\"\211\001\n\014ReportFormat\0228\n*DIFFER"
+    "ENTIAL_PRIVACY_REPORT_FORMAT_INVALID\020\000\032\010"
+    "\262\362\260\222\016\002\010\001\022\010\n\004JSON\020\001\022\t\n\005PROTO\020\002\032*\262\320\257\372\r$\n\"D"
+    "IFFERENTIAL_PRIVACY_REPORT_FORMAT\"\276\001\n\026Gr"
+    "oupSelectionStrategy\022C\n5DIFFERENTIAL_PRI"
+    "VACY_GROUP_SELECTION_STRATEGY_INVALID\020\000\032"
+    "\010\262\362\260\222\016\002\010\001\022\025\n\021LAPLACE_THRESHOLD\020\001\022\021\n\rPUBL"
+    "IC_GROUPS\020\002\0325\262\320\257\372\r/\n-DIFFERENTIAL_PRIVAC"
+    "Y_GROUP_SELECTION_STRATEGY\"\210\002\n#Different"
+    "ialPrivacyOutputWithReport\022B\n\005value\030\001 \001("
+    "\01321.zetasql.functions.DifferentialPrivac"
+    "yOutputValueH\000\022D\n\006values\030\002 \001(\01322.zetasql"
+    ".functions.DifferentialPrivacyOutputValu"
+    "esH\000\022M\n\017bounding_report\030\003 \001(\01324.zetasql."
+    "functions.DifferentialPrivacyBoundingRep"
+    "ortB\010\n\006result\"\334\001\n!DifferentialPrivacyBou"
+    "ndingReport\022F\n\013lower_bound\030\001 \001(\01321.zetas"
+    "ql.functions.DifferentialPrivacyOutputVa"
+    "lue\022F\n\013upper_bound\030\002 \001(\01321.zetasql.funct"
+    "ions.DifferentialPrivacyOutputValue\022\022\n\nn"
+    "um_inputs\030\003 \001(\001\022\023\n\013num_outside\030\004 \001(\001\"d\n\037"
+    "DifferentialPrivacyOutputValues\022A\n\006value"
+    "s\030\001 \003(\01321.zetasql.functions.Differential"
+    "PrivacyOutputValue\"\262\001\n\036DifferentialPriva"
+    "cyOutputValue\022\023\n\tint_value\030\001 \001(\003H\000\022\025\n\013fl"
+    "oat_value\030\002 \001(\001H\000\022\026\n\014string_value\030\003 \001(\tH"
+    "\000\022C\n\031noise_confidence_interval\030\004 \001(\0132 .z"
+    "etasql.NoiseConfidenceIntervalB\007\n\005valueB"
+    ":\n\034com.google.zetasql.functionsB\032ZetaSQL"
+    "DifferentialPrivacy"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_deps[2] =
+    {
+        &::descriptor_table_zetasql_2fproto_2fanon_5foutput_5fwith_5freport_2eproto,
+        &::descriptor_table_zetasql_2fpublic_2ftype_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto = {
+    false,
+    false,
+    1339,
+    descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto,
+    "zetasql/public/functions/differential_privacy.proto",
+    &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once,
+    descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_deps,
+    2,
+    5,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto(&descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto(&descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto);
 namespace zetasql {
 namespace functions {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DifferentialPrivacyEnums_ReportFormat_descriptor() {
@@ -225,29 +289,57 @@ bool DifferentialPrivacyEnums_ReportFormat_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr DifferentialPrivacyEnums_ReportFormat DifferentialPrivacyEnums::DIFFERENTIAL_PRIVACY_REPORT_FORMAT_INVALID;
 constexpr DifferentialPrivacyEnums_ReportFormat DifferentialPrivacyEnums::JSON;
 constexpr DifferentialPrivacyEnums_ReportFormat DifferentialPrivacyEnums::PROTO;
 constexpr DifferentialPrivacyEnums_ReportFormat DifferentialPrivacyEnums::ReportFormat_MIN;
 constexpr DifferentialPrivacyEnums_ReportFormat DifferentialPrivacyEnums::ReportFormat_MAX;
 constexpr int DifferentialPrivacyEnums::ReportFormat_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DifferentialPrivacyEnums_GroupSelectionStrategy_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[1];
+}
+bool DifferentialPrivacyEnums_GroupSelectionStrategy_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr DifferentialPrivacyEnums_GroupSelectionStrategy DifferentialPrivacyEnums::DIFFERENTIAL_PRIVACY_GROUP_SELECTION_STRATEGY_INVALID;
+constexpr DifferentialPrivacyEnums_GroupSelectionStrategy DifferentialPrivacyEnums::LAPLACE_THRESHOLD;
+constexpr DifferentialPrivacyEnums_GroupSelectionStrategy DifferentialPrivacyEnums::PUBLIC_GROUPS;
+constexpr DifferentialPrivacyEnums_GroupSelectionStrategy DifferentialPrivacyEnums::GroupSelectionStrategy_MIN;
+constexpr DifferentialPrivacyEnums_GroupSelectionStrategy DifferentialPrivacyEnums::GroupSelectionStrategy_MAX;
+constexpr int DifferentialPrivacyEnums::GroupSelectionStrategy_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 // ===================================================================
 
 class DifferentialPrivacyEnums::_Internal {
  public:
 };
 
-DifferentialPrivacyEnums::DifferentialPrivacyEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+DifferentialPrivacyEnums::DifferentialPrivacyEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.functions.DifferentialPrivacyEnums)
 }
 DifferentialPrivacyEnums::DifferentialPrivacyEnums(const DifferentialPrivacyEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  DifferentialPrivacyEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.DifferentialPrivacyEnums)
 }
@@ -269,16 +361,19 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DifferentialPrivacyEnums::GetC
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DifferentialPrivacyEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[0]);
 }
-
 // ===================================================================
 
 class DifferentialPrivacyOutputWithReport::_Internal {
  public:
-  using HasBits = decltype(std::declval<DifferentialPrivacyOutputWithReport>()._has_bits_);
+  using HasBits = decltype(std::declval<DifferentialPrivacyOutputWithReport>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(DifferentialPrivacyOutputWithReport, _impl_._has_bits_);
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputWithReport, _impl_._oneof_case_);
   static const ::zetasql::functions::DifferentialPrivacyOutputValue& value(const DifferentialPrivacyOutputWithReport* msg);
   static const ::zetasql::functions::DifferentialPrivacyOutputValues& values(const DifferentialPrivacyOutputWithReport* msg);
   static const ::zetasql::functions::DifferentialPrivacyBoundingReport& bounding_report(const DifferentialPrivacyOutputWithReport* msg);
@@ -289,28 +384,28 @@ class DifferentialPrivacyOutputWithReport::_Internal {
 
 const ::zetasql::functions::DifferentialPrivacyOutputValue&
 DifferentialPrivacyOutputWithReport::_Internal::value(const DifferentialPrivacyOutputWithReport* msg) {
-  return *msg->result_.value_;
+  return *msg->_impl_.result_.value_;
 }
 const ::zetasql::functions::DifferentialPrivacyOutputValues&
 DifferentialPrivacyOutputWithReport::_Internal::values(const DifferentialPrivacyOutputWithReport* msg) {
-  return *msg->result_.values_;
+  return *msg->_impl_.result_.values_;
 }
 const ::zetasql::functions::DifferentialPrivacyBoundingReport&
 DifferentialPrivacyOutputWithReport::_Internal::bounding_report(const DifferentialPrivacyOutputWithReport* msg) {
-  return *msg->bounding_report_;
+  return *msg->_impl_.bounding_report_;
 }
 void DifferentialPrivacyOutputWithReport::set_allocated_value(::zetasql::functions::DifferentialPrivacyOutputValue* value) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   clear_result();
   if (value) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::functions::DifferentialPrivacyOutputValue>::GetOwningArena(value);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(value);
     if (message_arena != submessage_arena) {
       value = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, value, submessage_arena);
     }
     set_has_value();
-    result_.value_ = value;
+    _impl_.result_.value_ = value;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.functions.DifferentialPrivacyOutputWithReport.value)
 }
@@ -319,42 +414,45 @@ void DifferentialPrivacyOutputWithReport::set_allocated_values(::zetasql::functi
   clear_result();
   if (values) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::zetasql::functions::DifferentialPrivacyOutputValues>::GetOwningArena(values);
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(values);
     if (message_arena != submessage_arena) {
       values = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, values, submessage_arena);
     }
     set_has_values();
-    result_.values_ = values;
+    _impl_.result_.values_ = values;
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.functions.DifferentialPrivacyOutputWithReport.values)
 }
-DifferentialPrivacyOutputWithReport::DifferentialPrivacyOutputWithReport(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+DifferentialPrivacyOutputWithReport::DifferentialPrivacyOutputWithReport(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.functions.DifferentialPrivacyOutputWithReport)
 }
 DifferentialPrivacyOutputWithReport::DifferentialPrivacyOutputWithReport(const DifferentialPrivacyOutputWithReport& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DifferentialPrivacyOutputWithReport* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.bounding_report_){nullptr}
+    , decltype(_impl_.result_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_bounding_report()) {
-    bounding_report_ = new ::zetasql::functions::DifferentialPrivacyBoundingReport(*from.bounding_report_);
-  } else {
-    bounding_report_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.bounding_report_ = new ::zetasql::functions::DifferentialPrivacyBoundingReport(*from._impl_.bounding_report_);
   }
   clear_has_result();
   switch (from.result_case()) {
     case kValue: {
-      _internal_mutable_value()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(from._internal_value());
+      _this->_internal_mutable_value()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(
+          from._internal_value());
       break;
     }
     case kValues: {
-      _internal_mutable_values()->::zetasql::functions::DifferentialPrivacyOutputValues::MergeFrom(from._internal_values());
+      _this->_internal_mutable_values()->::zetasql::functions::DifferentialPrivacyOutputValues::MergeFrom(
+          from._internal_values());
       break;
     }
     case RESULT_NOT_SET: {
@@ -364,34 +462,37 @@ DifferentialPrivacyOutputWithReport::DifferentialPrivacyOutputWithReport(const D
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.DifferentialPrivacyOutputWithReport)
 }
 
-inline void DifferentialPrivacyOutputWithReport::SharedCtor() {
-bounding_report_ = nullptr;
-clear_has_result();
+inline void DifferentialPrivacyOutputWithReport::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.bounding_report_){nullptr}
+    , decltype(_impl_.result_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_result();
 }
 
 DifferentialPrivacyOutputWithReport::~DifferentialPrivacyOutputWithReport() {
   // @@protoc_insertion_point(destructor:zetasql.functions.DifferentialPrivacyOutputWithReport)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void DifferentialPrivacyOutputWithReport::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete bounding_report_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.bounding_report_;
   if (has_result()) {
     clear_result();
   }
 }
 
-void DifferentialPrivacyOutputWithReport::ArenaDtor(void* object) {
-  DifferentialPrivacyOutputWithReport* _this = reinterpret_cast< DifferentialPrivacyOutputWithReport* >(object);
-  (void)_this;
-}
-void DifferentialPrivacyOutputWithReport::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void DifferentialPrivacyOutputWithReport::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void DifferentialPrivacyOutputWithReport::clear_result() {
@@ -399,13 +500,13 @@ void DifferentialPrivacyOutputWithReport::clear_result() {
   switch (result_case()) {
     case kValue: {
       if (GetArenaForAllocation() == nullptr) {
-        delete result_.value_;
+        delete _impl_.result_.value_;
       }
       break;
     }
     case kValues: {
       if (GetArenaForAllocation() == nullptr) {
-        delete result_.values_;
+        delete _impl_.result_.values_;
       }
       break;
     }
@@ -413,56 +514,59 @@ void DifferentialPrivacyOutputWithReport::clear_result() {
       break;
     }
   }
-  _oneof_case_[0] = RESULT_NOT_SET;
+  _impl_._oneof_case_[0] = RESULT_NOT_SET;
 }
 
 
 void DifferentialPrivacyOutputWithReport::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.functions.DifferentialPrivacyOutputWithReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(bounding_report_ != nullptr);
-    bounding_report_->Clear();
+    ABSL_DCHECK(_impl_.bounding_report_ != nullptr);
+    _impl_.bounding_report_->Clear();
   }
   clear_result();
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DifferentialPrivacyOutputWithReport::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* DifferentialPrivacyOutputWithReport::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // .zetasql.functions.DifferentialPrivacyOutputValue value = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_value(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // .zetasql.functions.DifferentialPrivacyOutputValues values = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_values(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_bounding_report(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -480,7 +584,7 @@ const char* DifferentialPrivacyOutputWithReport::_InternalParse(const char* ptr,
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -488,60 +592,57 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DifferentialPrivacyOutputWithReport::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* DifferentialPrivacyOutputWithReport::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.functions.DifferentialPrivacyOutputWithReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   switch (result_case()) {
     case kValue: {
-      target = stream->EnsureSpace(target);
       target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(
-          1, _Internal::value(this), target, stream);
+        InternalWriteMessage(1, _Internal::value(this),
+          _Internal::value(this).GetCachedSize(), target, stream);
       break;
     }
     case kValues: {
-      target = stream->EnsureSpace(target);
       target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(
-          2, _Internal::values(this), target, stream);
+        InternalWriteMessage(2, _Internal::values(this),
+          _Internal::values(this).GetCachedSize(), target, stream);
       break;
     }
     default: ;
   }
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        3, _Internal::bounding_report(this), target, stream);
+      InternalWriteMessage(3, _Internal::bounding_report(this),
+        _Internal::bounding_report(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.functions.DifferentialPrivacyOutputWithReport)
   return target;
 }
 
-size_t DifferentialPrivacyOutputWithReport::ByteSizeLong() const {
+::size_t DifferentialPrivacyOutputWithReport::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.functions.DifferentialPrivacyOutputWithReport)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *bounding_report_);
+        *_impl_.bounding_report_);
   }
 
   switch (result_case()) {
@@ -549,59 +650,58 @@ size_t DifferentialPrivacyOutputWithReport::ByteSizeLong() const {
     case kValue: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *result_.value_);
+          *_impl_.result_.value_);
       break;
     }
     // .zetasql.functions.DifferentialPrivacyOutputValues values = 2;
     case kValues: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *result_.values_);
+          *_impl_.result_.values_);
       break;
     }
     case RESULT_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DifferentialPrivacyOutputWithReport::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     DifferentialPrivacyOutputWithReport::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DifferentialPrivacyOutputWithReport::GetClassData() const { return &_class_data_; }
 
-void DifferentialPrivacyOutputWithReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<DifferentialPrivacyOutputWithReport *>(to)->MergeFrom(
-      static_cast<const DifferentialPrivacyOutputWithReport &>(from));
-}
 
-
-void DifferentialPrivacyOutputWithReport::MergeFrom(const DifferentialPrivacyOutputWithReport& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyOutputWithReport)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void DifferentialPrivacyOutputWithReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DifferentialPrivacyOutputWithReport*>(&to_msg);
+  auto& from = static_cast<const DifferentialPrivacyOutputWithReport&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyOutputWithReport)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_bounding_report()) {
-    _internal_mutable_bounding_report()->::zetasql::functions::DifferentialPrivacyBoundingReport::MergeFrom(from._internal_bounding_report());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_bounding_report()->::zetasql::functions::DifferentialPrivacyBoundingReport::MergeFrom(
+        from._internal_bounding_report());
   }
   switch (from.result_case()) {
     case kValue: {
-      _internal_mutable_value()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(from._internal_value());
+      _this->_internal_mutable_value()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(
+          from._internal_value());
       break;
     }
     case kValues: {
-      _internal_mutable_values()->::zetasql::functions::DifferentialPrivacyOutputValues::MergeFrom(from._internal_values());
+      _this->_internal_mutable_values()->::zetasql::functions::DifferentialPrivacyOutputValues::MergeFrom(
+          from._internal_values());
       break;
     }
     case RESULT_NOT_SET: {
       break;
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void DifferentialPrivacyOutputWithReport::CopyFrom(const DifferentialPrivacyOutputWithReport& from) {
@@ -618,23 +718,24 @@ bool DifferentialPrivacyOutputWithReport::IsInitialized() const {
 void DifferentialPrivacyOutputWithReport::InternalSwap(DifferentialPrivacyOutputWithReport* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(bounding_report_, other->bounding_report_);
-  swap(result_, other->result_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.bounding_report_, other->_impl_.bounding_report_);
+  swap(_impl_.result_, other->_impl_.result_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DifferentialPrivacyOutputWithReport::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[1]);
 }
-
 // ===================================================================
 
 class DifferentialPrivacyBoundingReport::_Internal {
  public:
-  using HasBits = decltype(std::declval<DifferentialPrivacyBoundingReport>()._has_bits_);
+  using HasBits = decltype(std::declval<DifferentialPrivacyBoundingReport>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(DifferentialPrivacyBoundingReport, _impl_._has_bits_);
   static const ::zetasql::functions::DifferentialPrivacyOutputValue& lower_bound(const DifferentialPrivacyBoundingReport* msg);
   static void set_has_lower_bound(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -653,137 +754,146 @@ class DifferentialPrivacyBoundingReport::_Internal {
 
 const ::zetasql::functions::DifferentialPrivacyOutputValue&
 DifferentialPrivacyBoundingReport::_Internal::lower_bound(const DifferentialPrivacyBoundingReport* msg) {
-  return *msg->lower_bound_;
+  return *msg->_impl_.lower_bound_;
 }
 const ::zetasql::functions::DifferentialPrivacyOutputValue&
 DifferentialPrivacyBoundingReport::_Internal::upper_bound(const DifferentialPrivacyBoundingReport* msg) {
-  return *msg->upper_bound_;
+  return *msg->_impl_.upper_bound_;
 }
-DifferentialPrivacyBoundingReport::DifferentialPrivacyBoundingReport(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+DifferentialPrivacyBoundingReport::DifferentialPrivacyBoundingReport(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.functions.DifferentialPrivacyBoundingReport)
 }
 DifferentialPrivacyBoundingReport::DifferentialPrivacyBoundingReport(const DifferentialPrivacyBoundingReport& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DifferentialPrivacyBoundingReport* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.lower_bound_){nullptr}
+    , decltype(_impl_.upper_bound_){nullptr}
+    , decltype(_impl_.num_inputs_) {}
+
+    , decltype(_impl_.num_outside_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_lower_bound()) {
-    lower_bound_ = new ::zetasql::functions::DifferentialPrivacyOutputValue(*from.lower_bound_);
-  } else {
-    lower_bound_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.lower_bound_ = new ::zetasql::functions::DifferentialPrivacyOutputValue(*from._impl_.lower_bound_);
   }
-  if (from._internal_has_upper_bound()) {
-    upper_bound_ = new ::zetasql::functions::DifferentialPrivacyOutputValue(*from.upper_bound_);
-  } else {
-    upper_bound_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.upper_bound_ = new ::zetasql::functions::DifferentialPrivacyOutputValue(*from._impl_.upper_bound_);
   }
-  ::memcpy(&num_inputs_, &from.num_inputs_,
-    static_cast<size_t>(reinterpret_cast<char*>(&num_outside_) -
-    reinterpret_cast<char*>(&num_inputs_)) + sizeof(num_outside_));
+  ::memcpy(&_impl_.num_inputs_, &from._impl_.num_inputs_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.num_outside_) -
+    reinterpret_cast<char*>(&_impl_.num_inputs_)) + sizeof(_impl_.num_outside_));
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.DifferentialPrivacyBoundingReport)
 }
 
-inline void DifferentialPrivacyBoundingReport::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&lower_bound_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&num_outside_) -
-    reinterpret_cast<char*>(&lower_bound_)) + sizeof(num_outside_));
+inline void DifferentialPrivacyBoundingReport::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.lower_bound_){nullptr}
+    , decltype(_impl_.upper_bound_){nullptr}
+    , decltype(_impl_.num_inputs_) { 0 }
+
+    , decltype(_impl_.num_outside_) { 0 }
+
+  };
 }
 
 DifferentialPrivacyBoundingReport::~DifferentialPrivacyBoundingReport() {
   // @@protoc_insertion_point(destructor:zetasql.functions.DifferentialPrivacyBoundingReport)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void DifferentialPrivacyBoundingReport::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete lower_bound_;
-  if (this != internal_default_instance()) delete upper_bound_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.lower_bound_;
+  if (this != internal_default_instance()) delete _impl_.upper_bound_;
 }
 
-void DifferentialPrivacyBoundingReport::ArenaDtor(void* object) {
-  DifferentialPrivacyBoundingReport* _this = reinterpret_cast< DifferentialPrivacyBoundingReport* >(object);
-  (void)_this;
-}
-void DifferentialPrivacyBoundingReport::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void DifferentialPrivacyBoundingReport::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void DifferentialPrivacyBoundingReport::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.functions.DifferentialPrivacyBoundingReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(lower_bound_ != nullptr);
-      lower_bound_->Clear();
+      ABSL_DCHECK(_impl_.lower_bound_ != nullptr);
+      _impl_.lower_bound_->Clear();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(upper_bound_ != nullptr);
-      upper_bound_->Clear();
+      ABSL_DCHECK(_impl_.upper_bound_ != nullptr);
+      _impl_.upper_bound_->Clear();
     }
   }
   if (cached_has_bits & 0x0000000cu) {
-    ::memset(&num_inputs_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&num_outside_) -
-        reinterpret_cast<char*>(&num_inputs_)) + sizeof(num_outside_));
+    ::memset(&_impl_.num_inputs_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.num_outside_) -
+        reinterpret_cast<char*>(&_impl_.num_inputs_)) + sizeof(_impl_.num_outside_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DifferentialPrivacyBoundingReport::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* DifferentialPrivacyBoundingReport::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .zetasql.functions.DifferentialPrivacyOutputValue lower_bound = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_lower_bound(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.functions.DifferentialPrivacyOutputValue upper_bound = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_upper_bound(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double num_inputs = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_num_inputs(&has_bits);
-          num_inputs_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.num_inputs_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double num_outside = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 33)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 33)) {
           _Internal::set_has_num_outside(&has_bits);
-          num_outside_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.num_outside_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -801,7 +911,7 @@ const char* DifferentialPrivacyBoundingReport::_InternalParse(const char* ptr, :
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -809,123 +919,121 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DifferentialPrivacyBoundingReport::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* DifferentialPrivacyBoundingReport::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.functions.DifferentialPrivacyBoundingReport)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.functions.DifferentialPrivacyOutputValue lower_bound = 1;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        1, _Internal::lower_bound(this), target, stream);
+      InternalWriteMessage(1, _Internal::lower_bound(this),
+        _Internal::lower_bound(this).GetCachedSize(), target, stream);
   }
 
   // optional .zetasql.functions.DifferentialPrivacyOutputValue upper_bound = 2;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::upper_bound(this), target, stream);
+      InternalWriteMessage(2, _Internal::upper_bound(this),
+        _Internal::upper_bound(this).GetCachedSize(), target, stream);
   }
 
   // optional double num_inputs = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_num_inputs(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_num_inputs(), target);
   }
 
   // optional double num_outside = 4;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(4, this->_internal_num_outside(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        4, this->_internal_num_outside(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.functions.DifferentialPrivacyBoundingReport)
   return target;
 }
 
-size_t DifferentialPrivacyBoundingReport::ByteSizeLong() const {
+::size_t DifferentialPrivacyBoundingReport::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.functions.DifferentialPrivacyBoundingReport)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     // optional .zetasql.functions.DifferentialPrivacyOutputValue lower_bound = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *lower_bound_);
+          *_impl_.lower_bound_);
     }
 
     // optional .zetasql.functions.DifferentialPrivacyOutputValue upper_bound = 2;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *upper_bound_);
+          *_impl_.upper_bound_);
     }
 
     // optional double num_inputs = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double num_outside = 4;
     if (cached_has_bits & 0x00000008u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DifferentialPrivacyBoundingReport::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     DifferentialPrivacyBoundingReport::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DifferentialPrivacyBoundingReport::GetClassData() const { return &_class_data_; }
 
-void DifferentialPrivacyBoundingReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<DifferentialPrivacyBoundingReport *>(to)->MergeFrom(
-      static_cast<const DifferentialPrivacyBoundingReport &>(from));
-}
 
-
-void DifferentialPrivacyBoundingReport::MergeFrom(const DifferentialPrivacyBoundingReport& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyBoundingReport)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void DifferentialPrivacyBoundingReport::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DifferentialPrivacyBoundingReport*>(&to_msg);
+  auto& from = static_cast<const DifferentialPrivacyBoundingReport&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyBoundingReport)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_mutable_lower_bound()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(from._internal_lower_bound());
+      _this->_internal_mutable_lower_bound()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(
+          from._internal_lower_bound());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_upper_bound()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(from._internal_upper_bound());
+      _this->_internal_mutable_upper_bound()->::zetasql::functions::DifferentialPrivacyOutputValue::MergeFrom(
+          from._internal_upper_bound());
     }
     if (cached_has_bits & 0x00000004u) {
-      num_inputs_ = from.num_inputs_;
+      _this->_impl_.num_inputs_ = from._impl_.num_inputs_;
     }
     if (cached_has_bits & 0x00000008u) {
-      num_outside_ = from.num_outside_;
+      _this->_impl_.num_outside_ = from._impl_.num_outside_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void DifferentialPrivacyBoundingReport::CopyFrom(const DifferentialPrivacyBoundingReport& from) {
@@ -942,87 +1050,87 @@ bool DifferentialPrivacyBoundingReport::IsInitialized() const {
 void DifferentialPrivacyBoundingReport::InternalSwap(DifferentialPrivacyBoundingReport* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(DifferentialPrivacyBoundingReport, num_outside_)
-      + sizeof(DifferentialPrivacyBoundingReport::num_outside_)
-      - PROTOBUF_FIELD_OFFSET(DifferentialPrivacyBoundingReport, lower_bound_)>(
-          reinterpret_cast<char*>(&lower_bound_),
-          reinterpret_cast<char*>(&other->lower_bound_));
+      PROTOBUF_FIELD_OFFSET(DifferentialPrivacyBoundingReport, _impl_.num_outside_)
+      + sizeof(DifferentialPrivacyBoundingReport::_impl_.num_outside_)
+      - PROTOBUF_FIELD_OFFSET(DifferentialPrivacyBoundingReport, _impl_.lower_bound_)>(
+          reinterpret_cast<char*>(&_impl_.lower_bound_),
+          reinterpret_cast<char*>(&other->_impl_.lower_bound_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DifferentialPrivacyBoundingReport::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[2]);
 }
-
 // ===================================================================
 
 class DifferentialPrivacyOutputValues::_Internal {
  public:
 };
 
-DifferentialPrivacyOutputValues::DifferentialPrivacyOutputValues(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  values_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+DifferentialPrivacyOutputValues::DifferentialPrivacyOutputValues(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.functions.DifferentialPrivacyOutputValues)
 }
 DifferentialPrivacyOutputValues::DifferentialPrivacyOutputValues(const DifferentialPrivacyOutputValues& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      values_(from.values_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DifferentialPrivacyOutputValues* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.values_){from._impl_.values_}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.DifferentialPrivacyOutputValues)
 }
 
-inline void DifferentialPrivacyOutputValues::SharedCtor() {
+inline void DifferentialPrivacyOutputValues::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.values_){arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 DifferentialPrivacyOutputValues::~DifferentialPrivacyOutputValues() {
   // @@protoc_insertion_point(destructor:zetasql.functions.DifferentialPrivacyOutputValues)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void DifferentialPrivacyOutputValues::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_values()->~RepeatedPtrField();
 }
 
-void DifferentialPrivacyOutputValues::ArenaDtor(void* object) {
-  DifferentialPrivacyOutputValues* _this = reinterpret_cast< DifferentialPrivacyOutputValues* >(object);
-  (void)_this;
-}
-void DifferentialPrivacyOutputValues::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void DifferentialPrivacyOutputValues::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void DifferentialPrivacyOutputValues::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.functions.DifferentialPrivacyOutputValues)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  values_.Clear();
+  _internal_mutable_values()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DifferentialPrivacyOutputValues::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* DifferentialPrivacyOutputValues::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated .zetasql.functions.DifferentialPrivacyOutputValue values = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1030,8 +1138,9 @@ const char* DifferentialPrivacyOutputValues::_InternalParse(const char* ptr, ::P
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1056,67 +1165,63 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DifferentialPrivacyOutputValues::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* DifferentialPrivacyOutputValues::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.functions.DifferentialPrivacyOutputValues)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .zetasql.functions.DifferentialPrivacyOutputValue values = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_values_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_values_size()); i < n; i++) {
+    const auto& repfield = this->_internal_values(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, this->_internal_values(i), target, stream);
+        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.functions.DifferentialPrivacyOutputValues)
   return target;
 }
 
-size_t DifferentialPrivacyOutputValues::ByteSizeLong() const {
+::size_t DifferentialPrivacyOutputValues::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.functions.DifferentialPrivacyOutputValues)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.functions.DifferentialPrivacyOutputValue values = 1;
   total_size += 1UL * this->_internal_values_size();
-  for (const auto& msg : this->values_) {
+  for (const auto& msg : this->_internal_values()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DifferentialPrivacyOutputValues::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     DifferentialPrivacyOutputValues::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DifferentialPrivacyOutputValues::GetClassData() const { return &_class_data_; }
 
-void DifferentialPrivacyOutputValues::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<DifferentialPrivacyOutputValues *>(to)->MergeFrom(
-      static_cast<const DifferentialPrivacyOutputValues &>(from));
-}
 
-
-void DifferentialPrivacyOutputValues::MergeFrom(const DifferentialPrivacyOutputValues& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyOutputValues)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void DifferentialPrivacyOutputValues::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DifferentialPrivacyOutputValues*>(&to_msg);
+  auto& from = static_cast<const DifferentialPrivacyOutputValues&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyOutputValues)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  values_.MergeFrom(from.values_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_mutable_values()->MergeFrom(from._internal_values());
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void DifferentialPrivacyOutputValues::CopyFrom(const DifferentialPrivacyOutputValues& from) {
@@ -1133,20 +1238,23 @@ bool DifferentialPrivacyOutputValues::IsInitialized() const {
 void DifferentialPrivacyOutputValues::InternalSwap(DifferentialPrivacyOutputValues* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  values_.InternalSwap(&other->values_);
+  _internal_mutable_values()->InternalSwap(other->_internal_mutable_values());
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DifferentialPrivacyOutputValues::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[3]);
 }
-
 // ===================================================================
 
 class DifferentialPrivacyOutputValue::_Internal {
  public:
-  using HasBits = decltype(std::declval<DifferentialPrivacyOutputValue>()._has_bits_);
+  using HasBits = decltype(std::declval<DifferentialPrivacyOutputValue>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(DifferentialPrivacyOutputValue, _impl_._has_bits_);
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::DifferentialPrivacyOutputValue, _impl_._oneof_case_);
   static const ::zetasql::NoiseConfidenceInterval& noise_confidence_interval(const DifferentialPrivacyOutputValue* msg);
   static void set_has_noise_confidence_interval(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -1155,42 +1263,43 @@ class DifferentialPrivacyOutputValue::_Internal {
 
 const ::zetasql::NoiseConfidenceInterval&
 DifferentialPrivacyOutputValue::_Internal::noise_confidence_interval(const DifferentialPrivacyOutputValue* msg) {
-  return *msg->noise_confidence_interval_;
+  return *msg->_impl_.noise_confidence_interval_;
 }
 void DifferentialPrivacyOutputValue::clear_noise_confidence_interval() {
-  if (noise_confidence_interval_ != nullptr) noise_confidence_interval_->Clear();
-  _has_bits_[0] &= ~0x00000001u;
+  if (_impl_.noise_confidence_interval_ != nullptr) _impl_.noise_confidence_interval_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
-DifferentialPrivacyOutputValue::DifferentialPrivacyOutputValue(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+DifferentialPrivacyOutputValue::DifferentialPrivacyOutputValue(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.functions.DifferentialPrivacyOutputValue)
 }
 DifferentialPrivacyOutputValue::DifferentialPrivacyOutputValue(const DifferentialPrivacyOutputValue& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DifferentialPrivacyOutputValue* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.noise_confidence_interval_){nullptr}
+    , decltype(_impl_.value_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_noise_confidence_interval()) {
-    noise_confidence_interval_ = new ::zetasql::NoiseConfidenceInterval(*from.noise_confidence_interval_);
-  } else {
-    noise_confidence_interval_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.noise_confidence_interval_ = new ::zetasql::NoiseConfidenceInterval(*from._impl_.noise_confidence_interval_);
   }
   clear_has_value();
   switch (from.value_case()) {
     case kIntValue: {
-      _internal_set_int_value(from._internal_int_value());
+      _this->_internal_set_int_value(from._internal_int_value());
       break;
     }
     case kFloatValue: {
-      _internal_set_float_value(from._internal_float_value());
+      _this->_internal_set_float_value(from._internal_float_value());
       break;
     }
     case kStringValue: {
-      _internal_set_string_value(from._internal_string_value());
+      _this->_internal_set_string_value(from._internal_string_value());
       break;
     }
     case VALUE_NOT_SET: {
@@ -1200,34 +1309,37 @@ DifferentialPrivacyOutputValue::DifferentialPrivacyOutputValue(const Differentia
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.DifferentialPrivacyOutputValue)
 }
 
-inline void DifferentialPrivacyOutputValue::SharedCtor() {
-noise_confidence_interval_ = nullptr;
-clear_has_value();
+inline void DifferentialPrivacyOutputValue::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.noise_confidence_interval_){nullptr}
+    , decltype(_impl_.value_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_value();
 }
 
 DifferentialPrivacyOutputValue::~DifferentialPrivacyOutputValue() {
   // @@protoc_insertion_point(destructor:zetasql.functions.DifferentialPrivacyOutputValue)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void DifferentialPrivacyOutputValue::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete noise_confidence_interval_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.noise_confidence_interval_;
   if (has_value()) {
     clear_value();
   }
 }
 
-void DifferentialPrivacyOutputValue::ArenaDtor(void* object) {
-  DifferentialPrivacyOutputValue* _this = reinterpret_cast< DifferentialPrivacyOutputValue* >(object);
-  (void)_this;
-}
-void DifferentialPrivacyOutputValue::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void DifferentialPrivacyOutputValue::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void DifferentialPrivacyOutputValue::clear_value() {
@@ -1242,75 +1354,79 @@ void DifferentialPrivacyOutputValue::clear_value() {
       break;
     }
     case kStringValue: {
-      value_.string_value_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+      _impl_.value_.string_value_.Destroy();
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  _oneof_case_[0] = VALUE_NOT_SET;
+  _impl_._oneof_case_[0] = VALUE_NOT_SET;
 }
 
 
 void DifferentialPrivacyOutputValue::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.functions.DifferentialPrivacyOutputValue)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(noise_confidence_interval_ != nullptr);
-    noise_confidence_interval_->Clear();
+    ABSL_DCHECK(_impl_.noise_confidence_interval_ != nullptr);
+    _impl_.noise_confidence_interval_->Clear();
   }
   clear_value();
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DifferentialPrivacyOutputValue::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* DifferentialPrivacyOutputValue::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // int64 int_value = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _internal_set_int_value(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // double float_value = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _internal_set_float_value(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // string string_value = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_string_value();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.functions.DifferentialPrivacyOutputValue.string_value");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.functions.DifferentialPrivacyOutputValue.string_value");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.NoiseConfidenceInterval noise_confidence_interval = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_noise_confidence_interval(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1328,7 +1444,7 @@ const char* DifferentialPrivacyOutputValue::_InternalParse(const char* ptr, ::PR
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1336,132 +1452,128 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DifferentialPrivacyOutputValue::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* DifferentialPrivacyOutputValue::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.functions.DifferentialPrivacyOutputValue)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   switch (value_case()) {
     case kIntValue: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_int_value(), target);
+      target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+          1, this->_internal_int_value(), target);
       break;
     }
     case kFloatValue: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_float_value(), target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          2, this->_internal_float_value(), target);
       break;
     }
     case kStringValue: {
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-        this->_internal_string_value().data(), static_cast<int>(this->_internal_string_value().length()),
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-        "zetasql.functions.DifferentialPrivacyOutputValue.string_value");
-      target = stream->WriteStringMaybeAliased(
-          3, this->_internal_string_value(), target);
+      const std::string& _s = this->_internal_string_value();
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                  "zetasql.functions.DifferentialPrivacyOutputValue.string_value");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
       break;
     }
     default: ;
   }
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.NoiseConfidenceInterval noise_confidence_interval = 4;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        4, _Internal::noise_confidence_interval(this), target, stream);
+      InternalWriteMessage(4, _Internal::noise_confidence_interval(this),
+        _Internal::noise_confidence_interval(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.functions.DifferentialPrivacyOutputValue)
   return target;
 }
 
-size_t DifferentialPrivacyOutputValue::ByteSizeLong() const {
+::size_t DifferentialPrivacyOutputValue::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.functions.DifferentialPrivacyOutputValue)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional .zetasql.NoiseConfidenceInterval noise_confidence_interval = 4;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *noise_confidence_interval_);
+        *_impl_.noise_confidence_interval_);
   }
 
   switch (value_case()) {
     // int64 int_value = 1;
     case kIntValue: {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_int_value());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_int_value());
       break;
     }
     // double float_value = 2;
     case kFloatValue: {
-      total_size += 1 + 8;
+      total_size += 9;
       break;
     }
     // string string_value = 3;
     case kStringValue: {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_string_value());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_string_value());
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DifferentialPrivacyOutputValue::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     DifferentialPrivacyOutputValue::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DifferentialPrivacyOutputValue::GetClassData() const { return &_class_data_; }
 
-void DifferentialPrivacyOutputValue::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<DifferentialPrivacyOutputValue *>(to)->MergeFrom(
-      static_cast<const DifferentialPrivacyOutputValue &>(from));
-}
 
-
-void DifferentialPrivacyOutputValue::MergeFrom(const DifferentialPrivacyOutputValue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyOutputValue)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void DifferentialPrivacyOutputValue::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DifferentialPrivacyOutputValue*>(&to_msg);
+  auto& from = static_cast<const DifferentialPrivacyOutputValue&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.functions.DifferentialPrivacyOutputValue)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_noise_confidence_interval()) {
-    _internal_mutable_noise_confidence_interval()->::zetasql::NoiseConfidenceInterval::MergeFrom(from._internal_noise_confidence_interval());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_noise_confidence_interval()->::zetasql::NoiseConfidenceInterval::MergeFrom(
+        from._internal_noise_confidence_interval());
   }
   switch (from.value_case()) {
     case kIntValue: {
-      _internal_set_int_value(from._internal_int_value());
+      _this->_internal_set_int_value(from._internal_int_value());
       break;
     }
     case kFloatValue: {
-      _internal_set_float_value(from._internal_float_value());
+      _this->_internal_set_float_value(from._internal_float_value());
       break;
     }
     case kStringValue: {
-      _internal_set_string_value(from._internal_string_value());
+      _this->_internal_set_string_value(from._internal_string_value());
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void DifferentialPrivacyOutputValue::CopyFrom(const DifferentialPrivacyOutputValue& from) {
@@ -1478,38 +1590,41 @@ bool DifferentialPrivacyOutputValue::IsInitialized() const {
 void DifferentialPrivacyOutputValue::InternalSwap(DifferentialPrivacyOutputValue* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(noise_confidence_interval_, other->noise_confidence_interval_);
-  swap(value_, other->value_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.noise_confidence_interval_, other->_impl_.noise_confidence_interval_);
+  swap(_impl_.value_, other->_impl_.value_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DifferentialPrivacyOutputValue::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto[4]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace functions
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyEnums* Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyEnums*
+Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::functions::DifferentialPrivacyEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyOutputWithReport* Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyOutputWithReport >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyOutputWithReport*
+Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyOutputWithReport >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::functions::DifferentialPrivacyOutputWithReport >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyBoundingReport* Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyBoundingReport >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyBoundingReport*
+Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyBoundingReport >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::functions::DifferentialPrivacyBoundingReport >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyOutputValues* Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyOutputValues >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyOutputValues*
+Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyOutputValues >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::functions::DifferentialPrivacyOutputValues >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyOutputValue* Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyOutputValue >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::functions::DifferentialPrivacyOutputValue*
+Arena::CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyOutputValue >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::functions::DifferentialPrivacyOutputValue >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

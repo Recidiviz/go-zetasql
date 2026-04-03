@@ -2,7 +2,6 @@ package json
 
 /*
 #cgo CXXFLAGS: -std=c++17
-#cgo CXXFLAGS: -I../../json
-#include "export.inc"
+typedef int cgo_json_unused;
 */
 import "C"

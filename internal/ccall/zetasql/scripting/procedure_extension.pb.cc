@@ -4,140 +4,175 @@
 #include "zetasql/scripting/procedure_extension.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr ProcedureExtension::ProcedureExtension(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+template <typename>
+PROTOBUF_CONSTEXPR ProcedureExtension::ProcedureExtension(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._extensions_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ProcedureExtensionDefaultTypeInternal {
-  constexpr ProcedureExtensionDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ProcedureExtensionDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ProcedureExtensionDefaultTypeInternal() {}
   union {
     ProcedureExtension _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ProcedureExtensionDefaultTypeInternal _ProcedureExtension_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ProcedureExtensionDefaultTypeInternal _ProcedureExtension_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fscripting_2fprocedure_5fextension_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fscripting_2fprocedure_5fextension_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ProcedureExtension, _internal_metadata_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ProcedureExtension, _extensions_),
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::ProcedureExtension)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ProcedureExtension_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fscripting_2fprocedure_5fextension_2eproto[1];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fscripting_2fprocedure_5fextension_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ProcedureExtension, _internal_metadata_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ProcedureExtension, _impl_._extensions_),
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
-const char descriptor_table_protodef_zetasql_2fscripting_2fprocedure_5fextension_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n+zetasql/scripting/procedure_extension."
-  "proto\022\007zetasql\"\037\n\022ProcedureExtension*\t\010\350"
-  "\007\020\200\200\200\200\002"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto = {
-  false, false, 87, descriptor_table_protodef_zetasql_2fscripting_2fprocedure_5fextension_2eproto, "zetasql/scripting/procedure_extension.proto", 
-  &descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fscripting_2fprocedure_5fextension_2eproto::offsets,
-  file_level_metadata_zetasql_2fscripting_2fprocedure_5fextension_2eproto, file_level_enum_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto, file_level_service_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::ProcedureExtension)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_ProcedureExtension_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fscripting_2fprocedure_5fextension_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n+zetasql/scripting/procedure_extension."
+    "proto\022\007zetasql\"\037\n\022ProcedureExtension*\t\010\350"
+    "\007\020\200\200\200\200\002"
+};
+static ::absl::once_flag descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto = {
+    false,
+    false,
+    87,
+    descriptor_table_protodef_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
+    "zetasql/scripting/procedure_extension.proto",
+    &descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_once,
+    nullptr,
+    0,
+    1,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fscripting_2fprocedure_5fextension_2eproto::offsets,
+    file_level_metadata_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
+    file_level_enum_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
+    file_level_service_descriptors_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_getter() {
   return &descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fscripting_2fprocedure_5fextension_2eproto(&descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fscripting_2fprocedure_5fextension_2eproto(&descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class ProcedureExtension::_Internal {
  public:
 };
 
-ProcedureExtension::ProcedureExtension(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  _extensions_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ProcedureExtension::ProcedureExtension(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ProcedureExtension)
 }
 ProcedureExtension::ProcedureExtension(const ProcedureExtension& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ProcedureExtension* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
+  _impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ProcedureExtension)
 }
 
-inline void ProcedureExtension::SharedCtor() {
+inline void ProcedureExtension::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{::_pbi::ArenaInitialized(), arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 ProcedureExtension::~ProcedureExtension() {
   // @@protoc_insertion_point(destructor:zetasql.ProcedureExtension)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ProcedureExtension::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_._extensions_.~ExtensionSet();
 }
 
-void ProcedureExtension::ArenaDtor(void* object) {
-  ProcedureExtension* _this = reinterpret_cast< ProcedureExtension* >(object);
-  (void)_this;
-}
-void ProcedureExtension::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ProcedureExtension::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ProcedureExtension::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ProcedureExtension)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _extensions_.Clear();
+  _impl_._extensions_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ProcedureExtension::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ProcedureExtension::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     if ((tag == 0) || ((tag & 7) == 4)) {
       CHK_(ptr);
       ctx->SetLastTag(tag);
       goto message_done;
     }
     if ((8000u <= tag)) {
-      ptr = _extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
+      ptr = _impl_._extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
       CHK_(ptr != nullptr);
       continue;
     }
@@ -155,58 +190,54 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ProcedureExtension::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ProcedureExtension::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ProcedureExtension)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // Extension range [1000, 536870912)
-  target = _extensions_._InternalSerialize(
+  target = _impl_._extensions_._InternalSerialize(
   internal_default_instance(), 1000, 536870912, target, stream);
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ProcedureExtension)
   return target;
 }
 
-size_t ProcedureExtension::ByteSizeLong() const {
+::size_t ProcedureExtension::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ProcedureExtension)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  total_size += _extensions_.ByteSize();
+  total_size += _impl_._extensions_.ByteSize();
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ProcedureExtension::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ProcedureExtension::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ProcedureExtension::GetClassData() const { return &_class_data_; }
 
-void ProcedureExtension::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ProcedureExtension *>(to)->MergeFrom(
-      static_cast<const ProcedureExtension &>(from));
-}
 
-
-void ProcedureExtension::MergeFrom(const ProcedureExtension& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ProcedureExtension)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ProcedureExtension::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ProcedureExtension*>(&to_msg);
+  auto& from = static_cast<const ProcedureExtension&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ProcedureExtension)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _extensions_.MergeFrom(internal_default_instance(), from._extensions_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ProcedureExtension::CopyFrom(const ProcedureExtension& from) {
@@ -217,7 +248,7 @@ void ProcedureExtension::CopyFrom(const ProcedureExtension& from) {
 }
 
 bool ProcedureExtension::IsInitialized() const {
-  if (!_extensions_.IsInitialized()) {
+  if (!_impl_._extensions_.IsInitialized(internal_default_instance())) {
     return false;
   }
 
@@ -226,23 +257,22 @@ bool ProcedureExtension::IsInitialized() const {
 
 void ProcedureExtension::InternalSwap(ProcedureExtension* other) {
   using std::swap;
-  _extensions_.InternalSwap(&other->_extensions_);
+  _impl_._extensions_.InternalSwap(&other->_impl_._extensions_);
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ProcedureExtension::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto_once,
       file_level_metadata_zetasql_2fscripting_2fprocedure_5fextension_2eproto[0]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::ProcedureExtension* Arena::CreateMaybeMessage< ::zetasql::ProcedureExtension >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ProcedureExtension*
+Arena::CreateMaybeMessage< ::zetasql::ProcedureExtension >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ProcedureExtension >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

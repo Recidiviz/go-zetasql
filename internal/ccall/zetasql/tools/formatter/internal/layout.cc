@@ -217,8 +217,8 @@ bool StmtLayout::Empty() const { return chunks_.empty(); }
 
 const Chunk& StmtLayout::ChunkAt(int index) const {
   // In debug mode: crash with readable message if the index is out of bounds.
-  ZETASQL_DCHECK_GE(index, 0);
-  ZETASQL_DCHECK_LT(index, chunks_.size());
+  ABSL_DCHECK_GE(index, 0);
+  ABSL_DCHECK_LT(index, chunks_.size());
   // Not in debug mode: try to recover.
   if (index < 0) {
     return chunks_.front();
@@ -988,7 +988,19 @@ void StmtLayout::PruneLineBreaks() {
     //    ...             ...
     //  )               ) AS smth;
     //    AS smth;
-    if (prev_line->LengthInChunks() == 1) {
+    // The rule doesn't apply for map constructors: removing line break after {
+    // keeps the indent for the next line, but that would also require removing
+    // the line break before closing bracket, which increases the line length.
+    // Example:
+    // before:  {         # Removing line break here wouldn't change the
+    //            a: 1    # indent for "a: 1".
+    //          }
+    // after:   { a: 1 }  # But it increases line length because of "}".
+    //
+    if (prev_line->LengthInChunks() == 1 &&
+        !ChunkAt(prev_line->start)
+             .LastToken()
+             .Is(Token::Type::BRACED_CONSTR_BRACKET)) {
       const Chunk& prev_chunk = ChunkAt(prev_line->start);
       const int curr_line_level = first_chunk.ChunkBlock()->Level();
       const int prev_line_level = prev_chunk.ChunkBlock()->Level();
@@ -1437,7 +1449,7 @@ absl::btree_set<int> StmtLayout::BreakpointsCloseToLineLength(
     ChunkAt(b).ChunkBlock()->MarkAsBreakCloseToLineLength();
   }
 
-  // Once we splitted the expression, check if the expression is followed by an
+  // Once we split the expression, check if the expression is followed by an
   // 'AS alias' clause. If it does, and there is more than 1 token on the last
   // line, add a line break before the alias. For instance:
   //   1 + 2 + 3
@@ -1538,9 +1550,10 @@ absl::btree_set<int> StmtLayout::FindSiblingBreakpoints(const Line& line,
           // There is a single line comment at the end of the previous line -
           // we cannot put a closing bracket there.
           ChunkAt(closing_bracket - 1).EndsWithSingleLineComment() ||
-          // Curly braced constructor "NEW Type{ foo: 1 }".
-          first_in_parentheses->LastToken().Is(
-              Token::Type::BRACED_CONSTR_COLON)) {
+          // Curly braced constructor `NEW Type { foo: 1 }`.
+          ChunkAt(closing_bracket)
+              .FirstToken()
+              .Is(Token::Type::BRACED_CONSTR_BRACKET)) {
         // Add a line break before closing parenthesis.
         result.insert(closing_bracket);
       } else {

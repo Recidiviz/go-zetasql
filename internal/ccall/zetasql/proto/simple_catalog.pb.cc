@@ -4,156 +4,217 @@
 #include "zetasql/proto/simple_catalog.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr SimpleCatalogProto_NamedTypeProto::SimpleCatalogProto_NamedTypeProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , type_(nullptr){}
+template <typename>
+PROTOBUF_CONSTEXPR SimpleCatalogProto_NamedTypeProto::SimpleCatalogProto_NamedTypeProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.type_)*/nullptr} {}
 struct SimpleCatalogProto_NamedTypeProtoDefaultTypeInternal {
-  constexpr SimpleCatalogProto_NamedTypeProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR SimpleCatalogProto_NamedTypeProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~SimpleCatalogProto_NamedTypeProtoDefaultTypeInternal() {}
   union {
     SimpleCatalogProto_NamedTypeProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SimpleCatalogProto_NamedTypeProtoDefaultTypeInternal _SimpleCatalogProto_NamedTypeProto_default_instance_;
-constexpr SimpleCatalogProto::SimpleCatalogProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : table_()
-  , named_type_()
-  , catalog_()
-  , custom_function_()
-  , procedure_()
-  , custom_tvf_()
-  , constant_()
-  , name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , builtin_function_options_(nullptr)
-  , file_descriptor_set_index_(-1){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SimpleCatalogProto_NamedTypeProtoDefaultTypeInternal _SimpleCatalogProto_NamedTypeProto_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR SimpleCatalogProto::SimpleCatalogProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.table_)*/{}
+  , /*decltype(_impl_.named_type_)*/{}
+  , /*decltype(_impl_.catalog_)*/{}
+  , /*decltype(_impl_.custom_function_)*/{}
+  , /*decltype(_impl_.procedure_)*/{}
+  , /*decltype(_impl_.custom_tvf_)*/{}
+  , /*decltype(_impl_.constant_)*/{}
+  , /*decltype(_impl_.connection_)*/{}
+  , /*decltype(_impl_.model_)*/{}
+  , /*decltype(_impl_.name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.builtin_function_options_)*/nullptr
+  , /*decltype(_impl_.file_descriptor_set_index_)*/ -1
+} {}
 struct SimpleCatalogProtoDefaultTypeInternal {
-  constexpr SimpleCatalogProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR SimpleCatalogProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~SimpleCatalogProtoDefaultTypeInternal() {}
   union {
     SimpleCatalogProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SimpleCatalogProtoDefaultTypeInternal _SimpleCatalogProto_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SimpleCatalogProtoDefaultTypeInternal _SimpleCatalogProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fproto_2fsimple_5fcatalog_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto = nullptr;
+static ::_pb::Metadata file_level_metadata_zetasql_2fproto_2fsimple_5fcatalog_2eproto[2];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fproto_2fsimple_5fcatalog_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, _impl_.name_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, _impl_.type_),
+    0,
+    1,
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.name_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.table_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.named_type_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.catalog_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.builtin_function_options_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.custom_function_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.custom_tvf_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.file_descriptor_set_index_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.procedure_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.constant_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.connection_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.model_),
+    0,
+    ~0u,
+    ~0u,
+    ~0u,
+    1,
+    ~0u,
+    ~0u,
+    2,
+    ~0u,
+    ~0u,
+    ~0u,
+    ~0u,
+};
 
-const uint32_t TableStruct_zetasql_2fproto_2fsimple_5fcatalog_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, name_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto_NamedTypeProto, type_),
-  0,
-  1,
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, name_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, table_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, named_type_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, catalog_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, builtin_function_options_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, custom_function_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, custom_tvf_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, file_descriptor_set_index_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, procedure_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, constant_),
-  0,
-  ~0u,
-  ~0u,
-  ~0u,
-  1,
-  ~0u,
-  ~0u,
-  2,
-  ~0u,
-  ~0u,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 8, -1, sizeof(::zetasql::SimpleCatalogProto_NamedTypeProto)},
-  { 10, 26, -1, sizeof(::zetasql::SimpleCatalogProto)},
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 10, -1, sizeof(::zetasql::SimpleCatalogProto_NamedTypeProto)},
+        { 12, 32, -1, sizeof(::zetasql::SimpleCatalogProto)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_SimpleCatalogProto_NamedTypeProto_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_SimpleCatalogProto_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_SimpleCatalogProto_NamedTypeProto_default_instance_._instance,
+    &::zetasql::_SimpleCatalogProto_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fproto_2fsimple_5fcatalog_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\"zetasql/proto/simple_catalog.proto\022\007ze"
+    "tasql\032\034zetasql/proto/function.proto\032\033zet"
+    "asql/proto/options.proto\032&zetasql/public"
+    "/simple_connection.proto\032$zetasql/public"
+    "/simple_constant.proto\032!zetasql/public/s"
+    "imple_model.proto\032!zetasql/public/simple"
+    "_table.proto\032\031zetasql/public/type.proto\""
+    "\224\005\n\022SimpleCatalogProto\022\014\n\004name\030\001 \001(\t\022(\n\005"
+    "table\030\002 \003(\0132\031.zetasql.SimpleTableProto\022>"
+    "\n\nnamed_type\030\003 \003(\0132*.zetasql.SimpleCatal"
+    "ogProto.NamedTypeProto\022,\n\007catalog\030\004 \003(\0132"
+    "\033.zetasql.SimpleCatalogProto\022M\n\030builtin_"
+    "function_options\030\005 \001(\0132+.zetasql.ZetaSQL"
+    "BuiltinFunctionOptionsProto\022/\n\017custom_fu"
+    "nction\030\006 \003(\0132\026.zetasql.FunctionProto\0225\n\n"
+    "custom_tvf\030\t \003(\0132!.zetasql.TableValuedFu"
+    "nctionProto\022%\n\031file_descriptor_set_index"
+    "\030\007 \001(\005:\002-1\022*\n\tprocedure\030\010 \003(\0132\027.zetasql."
+    "ProcedureProto\022.\n\010constant\030\n \003(\0132\034.zetas"
+    "ql.SimpleConstantProto\0222\n\nconnection\030\014 \003"
+    "(\0132\036.zetasql.SimpleConnectionProto\022(\n\005mo"
+    "del\030\r \003(\0132\031.zetasql.SimpleModelProto\032@\n\016"
+    "NamedTypeProto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001"
+    "(\0132\022.zetasql.TypeProtoB)\n\022com.google.zet"
+    "asqlB\023SimpleCatalogProtos"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps[7] =
+    {
+        &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
+        &::descriptor_table_zetasql_2fproto_2foptions_2eproto,
+        &::descriptor_table_zetasql_2fpublic_2fsimple_5fconnection_2eproto,
+        &::descriptor_table_zetasql_2fpublic_2fsimple_5fconstant_2eproto,
+        &::descriptor_table_zetasql_2fpublic_2fsimple_5fmodel_2eproto,
+        &::descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto,
+        &::descriptor_table_zetasql_2fpublic_2ftype_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto = {
+    false,
+    false,
+    985,
+    descriptor_table_protodef_zetasql_2fproto_2fsimple_5fcatalog_2eproto,
+    "zetasql/proto/simple_catalog.proto",
+    &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once,
+    descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps,
+    7,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fproto_2fsimple_5fcatalog_2eproto::offsets,
+    file_level_metadata_zetasql_2fproto_2fsimple_5fcatalog_2eproto,
+    file_level_enum_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto,
+    file_level_service_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto,
 };
 
-const char descriptor_table_protodef_zetasql_2fproto_2fsimple_5fcatalog_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\"zetasql/proto/simple_catalog.proto\022\007ze"
-  "tasql\032\034zetasql/proto/function.proto\032\033zet"
-  "asql/proto/options.proto\032$zetasql/public"
-  "/simple_constant.proto\032!zetasql/public/s"
-  "imple_table.proto\032\031zetasql/public/type.p"
-  "roto\"\266\004\n\022SimpleCatalogProto\022\014\n\004name\030\001 \001("
-  "\t\022(\n\005table\030\002 \003(\0132\031.zetasql.SimpleTablePr"
-  "oto\022>\n\nnamed_type\030\003 \003(\0132*.zetasql.Simple"
-  "CatalogProto.NamedTypeProto\022,\n\007catalog\030\004"
-  " \003(\0132\033.zetasql.SimpleCatalogProto\022M\n\030bui"
-  "ltin_function_options\030\005 \001(\0132+.zetasql.Ze"
-  "taSQLBuiltinFunctionOptionsProto\022/\n\017cust"
-  "om_function\030\006 \003(\0132\026.zetasql.FunctionProt"
-  "o\0225\n\ncustom_tvf\030\t \003(\0132!.zetasql.TableVal"
-  "uedFunctionProto\022%\n\031file_descriptor_set_"
-  "index\030\007 \001(\005:\002-1\022*\n\tprocedure\030\010 \003(\0132\027.zet"
-  "asql.ProcedureProto\022.\n\010constant\030\n \003(\0132\034."
-  "zetasql.SimpleConstantProto\032@\n\016NamedType"
-  "Proto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zeta"
-  "sql.TypeProtoB)\n\022com.google.zetasqlB\023Sim"
-  "pleCatalogProtos"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps[5] = {
-  &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
-  &::descriptor_table_zetasql_2fproto_2foptions_2eproto,
-  &::descriptor_table_zetasql_2fpublic_2fsimple_5fconstant_2eproto,
-  &::descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto,
-  &::descriptor_table_zetasql_2fpublic_2ftype_2eproto,
-};
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto = {
-  false, false, 816, descriptor_table_protodef_zetasql_2fproto_2fsimple_5fcatalog_2eproto, "zetasql/proto/simple_catalog.proto", 
-  &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once, descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps, 5, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fproto_2fsimple_5fcatalog_2eproto::offsets,
-  file_level_metadata_zetasql_2fproto_2fsimple_5fcatalog_2eproto, file_level_enum_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto, file_level_service_descriptors_zetasql_2fproto_2fsimple_5fcatalog_2eproto,
-};
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_getter() {
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_getter() {
   return &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fproto_2fsimple_5fcatalog_2eproto(&descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fproto_2fsimple_5fcatalog_2eproto(&descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class SimpleCatalogProto_NamedTypeProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<SimpleCatalogProto_NamedTypeProto>()._has_bits_);
+  using HasBits = decltype(std::declval<SimpleCatalogProto_NamedTypeProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(SimpleCatalogProto_NamedTypeProto, _impl_._has_bits_);
   static void set_has_name(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -165,118 +226,123 @@ class SimpleCatalogProto_NamedTypeProto::_Internal {
 
 const ::zetasql::TypeProto&
 SimpleCatalogProto_NamedTypeProto::_Internal::type(const SimpleCatalogProto_NamedTypeProto* msg) {
-  return *msg->type_;
+  return *msg->_impl_.type_;
 }
 void SimpleCatalogProto_NamedTypeProto::clear_type() {
-  if (type_ != nullptr) type_->Clear();
-  _has_bits_[0] &= ~0x00000002u;
+  if (_impl_.type_ != nullptr) _impl_.type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
-SimpleCatalogProto_NamedTypeProto::SimpleCatalogProto_NamedTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+SimpleCatalogProto_NamedTypeProto::SimpleCatalogProto_NamedTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.SimpleCatalogProto.NamedTypeProto)
 }
 SimpleCatalogProto_NamedTypeProto::SimpleCatalogProto_NamedTypeProto(const SimpleCatalogProto_NamedTypeProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  SimpleCatalogProto_NamedTypeProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.type_){nullptr}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_name()) {
-    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
-      GetArenaForAllocation());
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.name_.Set(from._internal_name(), _this->GetArenaForAllocation());
   }
-  if (from._internal_has_type()) {
-    type_ = new ::zetasql::TypeProto(*from.type_);
-  } else {
-    type_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.type_ = new ::zetasql::TypeProto(*from._impl_.type_);
   }
   // @@protoc_insertion_point(copy_constructor:zetasql.SimpleCatalogProto.NamedTypeProto)
 }
 
-inline void SimpleCatalogProto_NamedTypeProto::SharedCtor() {
-name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-type_ = nullptr;
+inline void SimpleCatalogProto_NamedTypeProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.type_){nullptr}
+  };
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 SimpleCatalogProto_NamedTypeProto::~SimpleCatalogProto_NamedTypeProto() {
   // @@protoc_insertion_point(destructor:zetasql.SimpleCatalogProto.NamedTypeProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void SimpleCatalogProto_NamedTypeProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete type_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.name_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.type_;
 }
 
-void SimpleCatalogProto_NamedTypeProto::ArenaDtor(void* object) {
-  SimpleCatalogProto_NamedTypeProto* _this = reinterpret_cast< SimpleCatalogProto_NamedTypeProto* >(object);
-  (void)_this;
-}
-void SimpleCatalogProto_NamedTypeProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void SimpleCatalogProto_NamedTypeProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void SimpleCatalogProto_NamedTypeProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.SimpleCatalogProto.NamedTypeProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      name_.ClearNonDefaultToEmpty();
+      _impl_.name_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(type_ != nullptr);
-      type_->Clear();
+      ABSL_DCHECK(_impl_.type_ != nullptr);
+      _impl_.type_->Clear();
     }
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* SimpleCatalogProto_NamedTypeProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* SimpleCatalogProto_NamedTypeProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional string name = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.SimpleCatalogProto.NamedTypeProto.name");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.SimpleCatalogProto.NamedTypeProto.name");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.TypeProto type = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_type(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -294,7 +360,7 @@ const char* SimpleCatalogProto_NamedTypeProto::_InternalParse(const char* ptr, :
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -302,96 +368,89 @@ failure:
 #undef CHK_
 }
 
-uint8_t* SimpleCatalogProto_NamedTypeProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* SimpleCatalogProto_NamedTypeProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.SimpleCatalogProto.NamedTypeProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string name = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.SimpleCatalogProto.NamedTypeProto.name");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_name(), target);
+    const std::string& _s = this->_internal_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.SimpleCatalogProto.NamedTypeProto.name");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // optional .zetasql.TypeProto type = 2;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::type(this), target, stream);
+      InternalWriteMessage(2, _Internal::type(this),
+        _Internal::type(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.SimpleCatalogProto.NamedTypeProto)
   return target;
 }
 
-size_t SimpleCatalogProto_NamedTypeProto::ByteSizeLong() const {
+::size_t SimpleCatalogProto_NamedTypeProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.SimpleCatalogProto.NamedTypeProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_name());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_name());
     }
 
     // optional .zetasql.TypeProto type = 2;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *type_);
+          *_impl_.type_);
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SimpleCatalogProto_NamedTypeProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     SimpleCatalogProto_NamedTypeProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SimpleCatalogProto_NamedTypeProto::GetClassData() const { return &_class_data_; }
 
-void SimpleCatalogProto_NamedTypeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<SimpleCatalogProto_NamedTypeProto *>(to)->MergeFrom(
-      static_cast<const SimpleCatalogProto_NamedTypeProto &>(from));
-}
 
-
-void SimpleCatalogProto_NamedTypeProto::MergeFrom(const SimpleCatalogProto_NamedTypeProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.SimpleCatalogProto.NamedTypeProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void SimpleCatalogProto_NamedTypeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SimpleCatalogProto_NamedTypeProto*>(&to_msg);
+  auto& from = static_cast<const SimpleCatalogProto_NamedTypeProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.SimpleCatalogProto.NamedTypeProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_name(from._internal_name());
+      _this->_internal_set_name(from._internal_name());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_type()->::zetasql::TypeProto::MergeFrom(from._internal_type());
+      _this->_internal_mutable_type()->::zetasql::TypeProto::MergeFrom(
+          from._internal_type());
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void SimpleCatalogProto_NamedTypeProto::CopyFrom(const SimpleCatalogProto_NamedTypeProto& from) {
@@ -402,8 +461,8 @@ void SimpleCatalogProto_NamedTypeProto::CopyFrom(const SimpleCatalogProto_NamedT
 }
 
 bool SimpleCatalogProto_NamedTypeProto::IsInitialized() const {
-  if (_internal_has_type()) {
-    if (!type_->IsInitialized()) return false;
+  if ((_impl_._has_bits_[0] & 0x00000002u) != 0) {
+    if (!_impl_.type_->IsInitialized()) return false;
   }
   return true;
 }
@@ -413,26 +472,24 @@ void SimpleCatalogProto_NamedTypeProto::InternalSwap(SimpleCatalogProto_NamedTyp
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &name_, lhs_arena,
-      &other->name_, rhs_arena
-  );
-  swap(type_, other->type_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,
+                                       &other->_impl_.name_, rhs_arena);
+  swap(_impl_.type_, other->_impl_.type_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SimpleCatalogProto_NamedTypeProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_getter, &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fsimple_5fcatalog_2eproto[0]);
 }
-
 // ===================================================================
 
 class SimpleCatalogProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<SimpleCatalogProto>()._has_bits_);
+  using HasBits = decltype(std::declval<SimpleCatalogProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(SimpleCatalogProto, _impl_._has_bits_);
   static void set_has_name(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -447,153 +504,181 @@ class SimpleCatalogProto::_Internal {
 
 const ::zetasql::ZetaSQLBuiltinFunctionOptionsProto&
 SimpleCatalogProto::_Internal::builtin_function_options(const SimpleCatalogProto* msg) {
-  return *msg->builtin_function_options_;
+  return *msg->_impl_.builtin_function_options_;
 }
 void SimpleCatalogProto::clear_table() {
-  table_.Clear();
+  _internal_mutable_table()->Clear();
 }
 void SimpleCatalogProto::clear_builtin_function_options() {
-  if (builtin_function_options_ != nullptr) builtin_function_options_->Clear();
-  _has_bits_[0] &= ~0x00000002u;
+  if (_impl_.builtin_function_options_ != nullptr) _impl_.builtin_function_options_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 void SimpleCatalogProto::clear_custom_function() {
-  custom_function_.Clear();
+  _internal_mutable_custom_function()->Clear();
 }
 void SimpleCatalogProto::clear_custom_tvf() {
-  custom_tvf_.Clear();
+  _internal_mutable_custom_tvf()->Clear();
 }
 void SimpleCatalogProto::clear_procedure() {
-  procedure_.Clear();
+  _internal_mutable_procedure()->Clear();
 }
 void SimpleCatalogProto::clear_constant() {
-  constant_.Clear();
+  _internal_mutable_constant()->Clear();
 }
-SimpleCatalogProto::SimpleCatalogProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  table_(arena),
-  named_type_(arena),
-  catalog_(arena),
-  custom_function_(arena),
-  procedure_(arena),
-  custom_tvf_(arena),
-  constant_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+void SimpleCatalogProto::clear_connection() {
+  _internal_mutable_connection()->Clear();
+}
+void SimpleCatalogProto::clear_model() {
+  _internal_mutable_model()->Clear();
+}
+SimpleCatalogProto::SimpleCatalogProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.SimpleCatalogProto)
 }
 SimpleCatalogProto::SimpleCatalogProto(const SimpleCatalogProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      table_(from.table_),
-      named_type_(from.named_type_),
-      catalog_(from.catalog_),
-      custom_function_(from.custom_function_),
-      procedure_(from.procedure_),
-      custom_tvf_(from.custom_tvf_),
-      constant_(from.constant_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  SimpleCatalogProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.table_){from._impl_.table_}
+    , decltype(_impl_.named_type_){from._impl_.named_type_}
+    , decltype(_impl_.catalog_){from._impl_.catalog_}
+    , decltype(_impl_.custom_function_){from._impl_.custom_function_}
+    , decltype(_impl_.procedure_){from._impl_.procedure_}
+    , decltype(_impl_.custom_tvf_){from._impl_.custom_tvf_}
+    , decltype(_impl_.constant_){from._impl_.constant_}
+    , decltype(_impl_.connection_){from._impl_.connection_}
+    , decltype(_impl_.model_){from._impl_.model_}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.builtin_function_options_){nullptr}
+    , decltype(_impl_.file_descriptor_set_index_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_name()) {
-    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
-      GetArenaForAllocation());
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.name_.Set(from._internal_name(), _this->GetArenaForAllocation());
   }
-  if (from._internal_has_builtin_function_options()) {
-    builtin_function_options_ = new ::zetasql::ZetaSQLBuiltinFunctionOptionsProto(*from.builtin_function_options_);
-  } else {
-    builtin_function_options_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.builtin_function_options_ = new ::zetasql::ZetaSQLBuiltinFunctionOptionsProto(*from._impl_.builtin_function_options_);
   }
-  file_descriptor_set_index_ = from.file_descriptor_set_index_;
+  _this->_impl_.file_descriptor_set_index_ = from._impl_.file_descriptor_set_index_;
   // @@protoc_insertion_point(copy_constructor:zetasql.SimpleCatalogProto)
 }
 
-inline void SimpleCatalogProto::SharedCtor() {
-name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-builtin_function_options_ = nullptr;
-file_descriptor_set_index_ = -1;
+inline void SimpleCatalogProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.table_){arena}
+    , decltype(_impl_.named_type_){arena}
+    , decltype(_impl_.catalog_){arena}
+    , decltype(_impl_.custom_function_){arena}
+    , decltype(_impl_.procedure_){arena}
+    , decltype(_impl_.custom_tvf_){arena}
+    , decltype(_impl_.constant_){arena}
+    , decltype(_impl_.connection_){arena}
+    , decltype(_impl_.model_){arena}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.builtin_function_options_){nullptr}
+    , decltype(_impl_.file_descriptor_set_index_) { -1 }
+
+  };
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 SimpleCatalogProto::~SimpleCatalogProto() {
   // @@protoc_insertion_point(destructor:zetasql.SimpleCatalogProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void SimpleCatalogProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete builtin_function_options_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_table()->~RepeatedPtrField();
+  _internal_mutable_named_type()->~RepeatedPtrField();
+  _internal_mutable_catalog()->~RepeatedPtrField();
+  _internal_mutable_custom_function()->~RepeatedPtrField();
+  _internal_mutable_procedure()->~RepeatedPtrField();
+  _internal_mutable_custom_tvf()->~RepeatedPtrField();
+  _internal_mutable_constant()->~RepeatedPtrField();
+  _internal_mutable_connection()->~RepeatedPtrField();
+  _internal_mutable_model()->~RepeatedPtrField();
+  _impl_.name_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.builtin_function_options_;
 }
 
-void SimpleCatalogProto::ArenaDtor(void* object) {
-  SimpleCatalogProto* _this = reinterpret_cast< SimpleCatalogProto* >(object);
-  (void)_this;
-}
-void SimpleCatalogProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void SimpleCatalogProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void SimpleCatalogProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.SimpleCatalogProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  table_.Clear();
-  named_type_.Clear();
-  catalog_.Clear();
-  custom_function_.Clear();
-  procedure_.Clear();
-  custom_tvf_.Clear();
-  constant_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_table()->Clear();
+  _internal_mutable_named_type()->Clear();
+  _internal_mutable_catalog()->Clear();
+  _internal_mutable_custom_function()->Clear();
+  _internal_mutable_procedure()->Clear();
+  _internal_mutable_custom_tvf()->Clear();
+  _internal_mutable_constant()->Clear();
+  _internal_mutable_connection()->Clear();
+  _internal_mutable_model()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      name_.ClearNonDefaultToEmpty();
+      _impl_.name_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(builtin_function_options_ != nullptr);
-      builtin_function_options_->Clear();
+      ABSL_DCHECK(_impl_.builtin_function_options_ != nullptr);
+      _impl_.builtin_function_options_->Clear();
     }
-    file_descriptor_set_index_ = -1;
+    _impl_.file_descriptor_set_index_ = -1;
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional string name = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.SimpleCatalogProto.name");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.SimpleCatalogProto.name");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.SimpleTableProto table = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -601,12 +686,13 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.SimpleCatalogProto.NamedTypeProto named_type = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -614,12 +700,13 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.SimpleCatalogProto catalog = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -627,20 +714,22 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.ZetaSQLBuiltinFunctionOptionsProto builtin_function_options = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_builtin_function_options(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.FunctionProto custom_function = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 50)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -648,21 +737,23 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<50>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 file_descriptor_set_index = 7 [default = -1];
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
           _Internal::set_has_file_descriptor_set_index(&has_bits);
-          file_descriptor_set_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.file_descriptor_set_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.ProcedureProto procedure = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 66)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -670,12 +761,13 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.TableValuedFunctionProto custom_tvf = 9;
       case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 74)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -683,12 +775,13 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.SimpleConstantProto constant = 10;
       case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 82)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 82)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -696,8 +789,37 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<82>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
+        continue;
+      // repeated .zetasql.SimpleConnectionProto connection = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 98)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_connection(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<98>(ptr));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // repeated .zetasql.SimpleModelProto model = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 106)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_model(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<106>(ptr));
+        } else {
+          goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -715,7 +837,7 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -723,223 +845,250 @@ failure:
 #undef CHK_
 }
 
-uint8_t* SimpleCatalogProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* SimpleCatalogProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.SimpleCatalogProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string name = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.SimpleCatalogProto.name");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_name(), target);
+    const std::string& _s = this->_internal_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.SimpleCatalogProto.name");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // repeated .zetasql.SimpleTableProto table = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_table_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_table_size()); i < n; i++) {
+    const auto& repfield = this->_internal_table(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_table(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.SimpleCatalogProto.NamedTypeProto named_type = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_named_type_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_named_type_size()); i < n; i++) {
+    const auto& repfield = this->_internal_named_type(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(3, this->_internal_named_type(i), target, stream);
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.SimpleCatalogProto catalog = 4;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_catalog_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_catalog_size()); i < n; i++) {
+    const auto& repfield = this->_internal_catalog(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(4, this->_internal_catalog(i), target, stream);
+        InternalWriteMessage(4, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // optional .zetasql.ZetaSQLBuiltinFunctionOptionsProto builtin_function_options = 5;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        5, _Internal::builtin_function_options(this), target, stream);
+      InternalWriteMessage(5, _Internal::builtin_function_options(this),
+        _Internal::builtin_function_options(this).GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.FunctionProto custom_function = 6;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_custom_function_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_custom_function_size()); i < n; i++) {
+    const auto& repfield = this->_internal_custom_function(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(6, this->_internal_custom_function(i), target, stream);
+        InternalWriteMessage(6, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // optional int32 file_descriptor_set_index = 7 [default = -1];
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_file_descriptor_set_index(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        7, this->_internal_file_descriptor_set_index(), target);
   }
 
   // repeated .zetasql.ProcedureProto procedure = 8;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_procedure_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_procedure_size()); i < n; i++) {
+    const auto& repfield = this->_internal_procedure(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(8, this->_internal_procedure(i), target, stream);
+        InternalWriteMessage(8, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.TableValuedFunctionProto custom_tvf = 9;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_custom_tvf_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_custom_tvf_size()); i < n; i++) {
+    const auto& repfield = this->_internal_custom_tvf(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(9, this->_internal_custom_tvf(i), target, stream);
+        InternalWriteMessage(9, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.SimpleConstantProto constant = 10;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_constant_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_constant_size()); i < n; i++) {
+    const auto& repfield = this->_internal_constant(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(10, this->_internal_constant(i), target, stream);
+        InternalWriteMessage(10, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // repeated .zetasql.SimpleConnectionProto connection = 12;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_connection_size()); i < n; i++) {
+    const auto& repfield = this->_internal_connection(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(12, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // repeated .zetasql.SimpleModelProto model = 13;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_model_size()); i < n; i++) {
+    const auto& repfield = this->_internal_model(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(13, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.SimpleCatalogProto)
   return target;
 }
 
-size_t SimpleCatalogProto::ByteSizeLong() const {
+::size_t SimpleCatalogProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.SimpleCatalogProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.SimpleTableProto table = 2;
   total_size += 1UL * this->_internal_table_size();
-  for (const auto& msg : this->table_) {
+  for (const auto& msg : this->_internal_table()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.SimpleCatalogProto.NamedTypeProto named_type = 3;
   total_size += 1UL * this->_internal_named_type_size();
-  for (const auto& msg : this->named_type_) {
+  for (const auto& msg : this->_internal_named_type()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.SimpleCatalogProto catalog = 4;
   total_size += 1UL * this->_internal_catalog_size();
-  for (const auto& msg : this->catalog_) {
+  for (const auto& msg : this->_internal_catalog()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.FunctionProto custom_function = 6;
   total_size += 1UL * this->_internal_custom_function_size();
-  for (const auto& msg : this->custom_function_) {
+  for (const auto& msg : this->_internal_custom_function()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.ProcedureProto procedure = 8;
   total_size += 1UL * this->_internal_procedure_size();
-  for (const auto& msg : this->procedure_) {
+  for (const auto& msg : this->_internal_procedure()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.TableValuedFunctionProto custom_tvf = 9;
   total_size += 1UL * this->_internal_custom_tvf_size();
-  for (const auto& msg : this->custom_tvf_) {
+  for (const auto& msg : this->_internal_custom_tvf()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.SimpleConstantProto constant = 10;
   total_size += 1UL * this->_internal_constant_size();
-  for (const auto& msg : this->constant_) {
+  for (const auto& msg : this->_internal_constant()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  cached_has_bits = _has_bits_[0];
+  // repeated .zetasql.SimpleConnectionProto connection = 12;
+  total_size += 1UL * this->_internal_connection_size();
+  for (const auto& msg : this->_internal_connection()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated .zetasql.SimpleModelProto model = 13;
+  total_size += 1UL * this->_internal_model_size();
+  for (const auto& msg : this->_internal_model()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_name());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_name());
     }
 
     // optional .zetasql.ZetaSQLBuiltinFunctionOptionsProto builtin_function_options = 5;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *builtin_function_options_);
+          *_impl_.builtin_function_options_);
     }
 
     // optional int32 file_descriptor_set_index = 7 [default = -1];
     if (cached_has_bits & 0x00000004u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_file_descriptor_set_index());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_file_descriptor_set_index());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SimpleCatalogProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     SimpleCatalogProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SimpleCatalogProto::GetClassData() const { return &_class_data_; }
 
-void SimpleCatalogProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<SimpleCatalogProto *>(to)->MergeFrom(
-      static_cast<const SimpleCatalogProto &>(from));
-}
 
-
-void SimpleCatalogProto::MergeFrom(const SimpleCatalogProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.SimpleCatalogProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void SimpleCatalogProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SimpleCatalogProto*>(&to_msg);
+  auto& from = static_cast<const SimpleCatalogProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.SimpleCatalogProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  table_.MergeFrom(from.table_);
-  named_type_.MergeFrom(from.named_type_);
-  catalog_.MergeFrom(from.catalog_);
-  custom_function_.MergeFrom(from.custom_function_);
-  procedure_.MergeFrom(from.procedure_);
-  custom_tvf_.MergeFrom(from.custom_tvf_);
-  constant_.MergeFrom(from.constant_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_table()->MergeFrom(from._internal_table());
+  _this->_internal_mutable_named_type()->MergeFrom(from._internal_named_type());
+  _this->_internal_mutable_catalog()->MergeFrom(from._internal_catalog());
+  _this->_internal_mutable_custom_function()->MergeFrom(from._internal_custom_function());
+  _this->_internal_mutable_procedure()->MergeFrom(from._internal_procedure());
+  _this->_internal_mutable_custom_tvf()->MergeFrom(from._internal_custom_tvf());
+  _this->_internal_mutable_constant()->MergeFrom(from._internal_constant());
+  _this->_internal_mutable_connection()->MergeFrom(from._internal_connection());
+  _this->_internal_mutable_model()->MergeFrom(from._internal_model());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_name(from._internal_name());
+      _this->_internal_set_name(from._internal_name());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_builtin_function_options()->::zetasql::ZetaSQLBuiltinFunctionOptionsProto::MergeFrom(from._internal_builtin_function_options());
+      _this->_internal_mutable_builtin_function_options()->::zetasql::ZetaSQLBuiltinFunctionOptionsProto::MergeFrom(
+          from._internal_builtin_function_options());
     }
     if (cached_has_bits & 0x00000004u) {
-      file_descriptor_set_index_ = from.file_descriptor_set_index_;
+      _this->_impl_.file_descriptor_set_index_ = from._impl_.file_descriptor_set_index_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void SimpleCatalogProto::CopyFrom(const SimpleCatalogProto& from) {
@@ -950,19 +1099,21 @@ void SimpleCatalogProto::CopyFrom(const SimpleCatalogProto& from) {
 }
 
 bool SimpleCatalogProto::IsInitialized() const {
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(table_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_table()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(named_type_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_named_type()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(catalog_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_catalog()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(custom_function_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_custom_function()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(procedure_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_procedure()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(custom_tvf_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_custom_tvf()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(constant_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_constant()))
+    return false;
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_model()))
     return false;
   return true;
 }
@@ -972,39 +1123,42 @@ void SimpleCatalogProto::InternalSwap(SimpleCatalogProto* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  table_.InternalSwap(&other->table_);
-  named_type_.InternalSwap(&other->named_type_);
-  catalog_.InternalSwap(&other->catalog_);
-  custom_function_.InternalSwap(&other->custom_function_);
-  procedure_.InternalSwap(&other->procedure_);
-  custom_tvf_.InternalSwap(&other->custom_tvf_);
-  constant_.InternalSwap(&other->constant_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &name_, lhs_arena,
-      &other->name_, rhs_arena
-  );
-  swap(builtin_function_options_, other->builtin_function_options_);
-  swap(file_descriptor_set_index_, other->file_descriptor_set_index_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_table()->InternalSwap(other->_internal_mutable_table());
+  _internal_mutable_named_type()->InternalSwap(other->_internal_mutable_named_type());
+  _internal_mutable_catalog()->InternalSwap(other->_internal_mutable_catalog());
+  _internal_mutable_custom_function()->InternalSwap(other->_internal_mutable_custom_function());
+  _internal_mutable_procedure()->InternalSwap(other->_internal_mutable_procedure());
+  _internal_mutable_custom_tvf()->InternalSwap(other->_internal_mutable_custom_tvf());
+  _internal_mutable_constant()->InternalSwap(other->_internal_mutable_constant());
+  _internal_mutable_connection()->InternalSwap(other->_internal_mutable_connection());
+  _internal_mutable_model()->InternalSwap(other->_internal_mutable_model());
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,
+                                       &other->_impl_.name_, rhs_arena);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(SimpleCatalogProto, _impl_.file_descriptor_set_index_)
+      + sizeof(SimpleCatalogProto::_impl_.file_descriptor_set_index_)
+      - PROTOBUF_FIELD_OFFSET(SimpleCatalogProto, _impl_.builtin_function_options_)>(
+          reinterpret_cast<char*>(&_impl_.builtin_function_options_),
+          reinterpret_cast<char*>(&other->_impl_.builtin_function_options_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SimpleCatalogProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_getter, &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fsimple_5fcatalog_2eproto[1]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::SimpleCatalogProto_NamedTypeProto* Arena::CreateMaybeMessage< ::zetasql::SimpleCatalogProto_NamedTypeProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::SimpleCatalogProto_NamedTypeProto*
+Arena::CreateMaybeMessage< ::zetasql::SimpleCatalogProto_NamedTypeProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::SimpleCatalogProto_NamedTypeProto >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::SimpleCatalogProto* Arena::CreateMaybeMessage< ::zetasql::SimpleCatalogProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::SimpleCatalogProto*
+Arena::CreateMaybeMessage< ::zetasql::SimpleCatalogProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::SimpleCatalogProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

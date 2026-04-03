@@ -61,7 +61,7 @@ void Formatter::Indent() {
 }
 
 void Formatter::Dedent() {
-  ZETASQL_CHECK_GE(indentation_.size(), kDefaultNumIndentSpaces)
+  ABSL_CHECK_GE(indentation_.size(), kDefaultNumIndentSpaces)
       << "Impossible to dedent: has reached to the beginning of the line.";
   indentation_.resize(indentation_.size() - kDefaultNumIndentSpaces);
 }
@@ -149,7 +149,7 @@ bool Formatter::LastTokenIsSeparator() {
   // These are keywords emitted in uppercase in Unparser, so don't need to make
   // them case insensitive.
   static const std::set<std::string>& kWordSperarator =
-      *new std::set<std::string>({"AND", "OR", "ON", "IN"});
+      *new std::set<std::string>({"AND", "OR", "ON", "IN", "BY"});
   static const std::set<char>& kNonWordSperarator =
       *new std::set<char>({',', '<', '>', '-', '+', '=', '*', '/', '%'});
   if (buffer_.empty()) return false;
@@ -178,7 +178,7 @@ void Formatter::FlushLine() {
 
 // Helper functions.
 void Unparser::PrintOpenParenIfNeeded(const ASTNode* node) {
-  ZETASQL_DCHECK(node->IsExpression() || node->IsQueryExpression())
+  ABSL_DCHECK(node->IsExpression() || node->IsQueryExpression())
       << "Parenthesization is not allowed for " << node->GetNodeKindString();
   if (node->IsExpression() &&
       node->GetAsOrDie<ASTExpression>()->parenthesized()) {
@@ -190,7 +190,7 @@ void Unparser::PrintOpenParenIfNeeded(const ASTNode* node) {
 }
 
 void Unparser::PrintCloseParenIfNeeded(const ASTNode* node) {
-  ZETASQL_DCHECK(node->IsExpression() || node->IsQueryExpression())
+  ABSL_DCHECK(node->IsExpression() || node->IsQueryExpression())
       << "Parenthesization is not allowed for " << node->GetNodeKindString();
   if (node->IsExpression() &&
       node->GetAsOrDie<ASTExpression>()->parenthesized()) {
@@ -787,7 +787,17 @@ void Unparser::visitASTCreateViewStatement(
 
 void Unparser::visitASTCreateApproxViewStatement(
     const ASTCreateApproxViewStatement* node, void* data) {
-  print(GetCreateStatementPrefix(node, "APPROX VIEW"));
+  print("CREATE");
+
+  if (node->is_or_replace()) print("OR REPLACE");
+  print("APPROX");
+  if (node->recursive()) {
+    print("RECURSIVE");
+  }
+  print("VIEW");
+  if (node->is_if_not_exists()) {
+    print("IF NOT EXISTS");
+  }
   node->name()->Accept(this, data);
   if (node->column_with_options_list() != nullptr) {
     node->column_with_options_list()->Accept(this, data);
@@ -833,8 +843,13 @@ void Unparser::visitASTCreateMaterializedViewStatement(
     print("OPTIONS");
     node->options_list()->Accept(this, data);
   }
-  println("AS");
-  node->query()->Accept(this, data);
+  if (node->query() != nullptr) {
+    println("AS");
+    node->query()->Accept(this, data);
+  } else if (node->replica_source() != nullptr) {
+    println("AS REPLICA OF");
+    node->replica_source()->Accept(this, data);
+  }
 }
 
 void Unparser::visitASTColumnWithOptions(const ASTColumnWithOptions* node,
@@ -901,21 +916,6 @@ void Unparser::visitASTCreateSnapshotTableStatement(
   node->name()->Accept(this, data);
   print("CLONE");
   node->clone_data_source()->Accept(this, data);
-  if (node->options_list() != nullptr) {
-    print("OPTIONS");
-    node->options_list()->Accept(this, data);
-  }
-}
-
-void Unparser::visitASTCreateReplicaMaterializedViewStatement(
-    const ASTCreateReplicaMaterializedViewStatement* node, void* data) {
-  print("CREATE");
-  if (node->is_or_replace()) print("OR REPLACE");
-  print("REPLICA MATERIALIZED VIEW");
-  if (node->is_if_not_exists()) print("IF NOT EXISTS");
-  node->name()->Accept(this, data);
-  print("FROM");
-  node->data_source()->Accept(this, data);
   if (node->options_list() != nullptr) {
     print("OPTIONS");
     node->options_list()->Accept(this, data);
@@ -1050,6 +1050,24 @@ void Unparser::visitASTExportModelStatement(const ASTExportModelStatement* node,
   }
 }
 
+void Unparser::visitASTExportMetadataStatement(
+    const ASTExportMetadataStatement* node, void* data) {
+  print("EXPORT");
+  print(SchemaObjectKindToName(node->schema_object_kind()));
+  print("METADATA FROM");
+  ABSL_DCHECK(node->name_path() != nullptr);
+  node->name_path()->Accept(this, data);
+
+  if (node->with_connection_clause() != nullptr) {
+    node->with_connection_clause()->Accept(this, data);
+  }
+
+  if (node->options_list() != nullptr) {
+    print("OPTIONS");
+    node->options_list()->Accept(this, data);
+  }
+}
+
 void Unparser::visitASTWithConnectionClause(const ASTWithConnectionClause* node,
                                             void* data) {
   print("WITH");
@@ -1143,7 +1161,7 @@ void Unparser::visitASTTransactionReadWriteMode(
       print("READ WRITE");
       break;
     case ASTTransactionReadWriteMode::INVALID:
-      ZETASQL_LOG(DFATAL) << "invalid read write mode";
+      ABSL_LOG(ERROR) << "invalid read write mode";
       break;
   }
 }
@@ -1285,9 +1303,8 @@ void Unparser::visitASTDropAllRowAccessPoliciesStatement(
   node->table_name()->Accept(this, data);
 }
 
-void Unparser::visitASTDropSearchIndexStatement(
-    const ASTDropSearchIndexStatement* node, void* data) {
-  print("DROP SEARCH INDEX");
+void Unparser::VisitASTDropIndexStatement(const ASTDropIndexStatement* node,
+                                          void* data) {
   if (node->is_if_exists()) {
     print("IF EXISTS");
   }
@@ -1296,6 +1313,18 @@ void Unparser::visitASTDropSearchIndexStatement(
     print("ON");
     node->table_name()->Accept(this, data);
   }
+}
+
+void Unparser::visitASTDropSearchIndexStatement(
+    const ASTDropSearchIndexStatement* node, void* data) {
+  print("DROP SEARCH INDEX");
+  VisitASTDropIndexStatement(node, data);
+}
+
+void Unparser::visitASTDropVectorIndexStatement(
+    const ASTDropVectorIndexStatement* node, void* data) {
+  print("DROP VECTOR INDEX");
+  VisitASTDropIndexStatement(node, data);
 }
 
 void Unparser::visitASTDropMaterializedViewStatement(
@@ -1554,7 +1583,16 @@ void Unparser::visitASTWithOffset(const ASTWithOffset* node, void* data) {
 void Unparser::visitASTUnnestExpression(const ASTUnnestExpression* node,
                                         void* data) {
   print("UNNEST(");
-  visitASTChildren(node, data);
+  for (int i = 0; i < node->expressions().size(); i++) {
+    if (i > 0) {
+      print(", ");
+    }
+    node->expressions(i)->Accept(this, data);
+  }
+  if (node->array_zip_mode() != nullptr) {
+    print(", ");
+    node->array_zip_mode()->Accept(this, data);
+  }
   print(")");
 }
 
@@ -1664,13 +1702,57 @@ void Unparser::visitASTRollup(const ASTRollup* node, void* data) {
   print(")");
 }
 
-void Unparser::visitASTGroupingItem(const ASTGroupingItem* node, void* data) {
+void Unparser::visitASTCube(const ASTCube* node, void* data) {
+  print("CUBE(");
+  UnparseVectorWithSeparator(node->expressions(), data, ",");
+  print(")");
+}
+
+void Unparser::visitASTGroupingSet(const ASTGroupingSet* node, void* data) {
+  ABSL_DCHECK_LE((node->expression() != nullptr) + (node->rollup() != nullptr) +
+                (node->cube() != nullptr),
+            1)
+      << "at most one of expressions, rollup, and cube can exist";
+
   if (node->expression() != nullptr) {
-    ZETASQL_DCHECK(node->rollup() == nullptr);
     node->expression()->Accept(this, data);
-  } else {
-    ZETASQL_DCHECK(node->rollup() != nullptr);
+  } else if (node->rollup() != nullptr) {
     node->rollup()->Accept(this, data);
+  } else if (node->cube() != nullptr) {
+    node->cube()->Accept(this, data);
+  } else {
+    // Indicate this is an empty grouping set.
+    print("()");
+  }
+}
+
+void Unparser::visitASTGroupingSetList(const ASTGroupingSetList* node,
+                                       void* data) {
+  print("GROUPING SETS(");
+  {
+    Formatter::Indenter indenter(&formatter_);
+    UnparseVectorWithSeparator(node->grouping_sets(), data, ",");
+  }
+  print(")");
+}
+
+void Unparser::visitASTGroupingItem(const ASTGroupingItem* node, void* data) {
+  ABSL_DCHECK_LE((node->expression() != nullptr) + (node->rollup() != nullptr) +
+                (node->cube() != nullptr) +
+                (node->grouping_set_list() != nullptr),
+            1)
+      << "At most one of expression, rollup, cube, and grouping_set_list exist";
+  if (node->expression() != nullptr) {
+    node->expression()->Accept(this, data);
+  } else if (node->rollup() != nullptr) {
+    node->rollup()->Accept(this, data);
+  } else if (node->cube() != nullptr) {
+    node->cube()->Accept(this, data);
+  } else if (node->grouping_set_list() != nullptr) {
+    node->grouping_set_list()->Accept(this, data);
+  } else {
+    // This is an empty grouping item ()
+    print("()");
   }
 }
 
@@ -1681,10 +1763,16 @@ void Unparser::visitASTGroupBy(const ASTGroupBy* node, void* data) {
     node->hint()->Accept(this, data);
   }
   print("BY");
-  {
+  if (node->all() != nullptr) {
+    node->all()->Accept(this, data);
+  } else {
     Formatter::Indenter indenter(&formatter_);
     UnparseVectorWithSeparator(node->grouping_items(), data, ",");
   }
+}
+
+void Unparser::visitASTGroupByAll(const ASTGroupByAll* node, void* data) {
+  print("ALL");
 }
 
 void Unparser::visitASTHaving(const ASTHaving* node, void* data) {
@@ -2499,6 +2587,27 @@ void Unparser::visitASTStructField(const ASTStructField* node, void* data) {
   UnparseChildrenWithSeparator(node, data, "");
 }
 
+void Unparser::visitASTFunctionType(const ASTFunctionType* node, void* data) {
+  print("FUNCTION<(");
+  node->arg_list()->Accept(this, data);
+  print(") ->");
+  node->return_type()->Accept(this, data);
+  print(">");
+
+  if (node->type_parameters() != nullptr) {
+    node->type_parameters()->Accept(this, data);
+  }
+
+  if (node->collate() != nullptr) {
+    node->collate()->Accept(this, data);
+  }
+}
+
+void Unparser::visitASTFunctionTypeArgList(const ASTFunctionTypeArgList* node,
+                                           void* data) {
+  UnparseVectorWithSeparator(node->args(), data, ",");
+}
+
 void Unparser::visitASTSimpleColumnSchema(const ASTSimpleColumnSchema* node,
                                           void* data) {
   const ASTPathExpression* type_name = node->type_name();
@@ -2533,7 +2642,7 @@ void Unparser::visitASTStructColumnSchema(const ASTStructColumnSchema* node,
 void Unparser::visitASTGeneratedColumnInfo(const ASTGeneratedColumnInfo* node,
                                            void* data) {
   print("AS (");
-  ZETASQL_DCHECK(node->expression() != nullptr);
+  ABSL_DCHECK(node->expression() != nullptr);
   node->expression()->Accept(this, data);
   print(")");
   print(node->GetSqlForStoredMode());
@@ -2916,7 +3025,7 @@ void Unparser::visitASTMergeAction(const ASTMergeAction* node, void* data) {
         node->insert_column_list()->Accept(this, data);
       }
       println();
-      ZETASQL_DCHECK(node->insert_row() != nullptr);
+      ABSL_DCHECK(node->insert_row() != nullptr);
       if (!node->insert_row()->values().empty()) {
         println("VALUES");
         {
@@ -2940,7 +3049,7 @@ void Unparser::visitASTMergeAction(const ASTMergeAction* node, void* data) {
       print("DELETE");
       break;
     case ASTMergeAction::NOT_SET:
-      ZETASQL_LOG(DFATAL) << "Merge clause action type is not set";
+      ABSL_LOG(ERROR) << "Merge clause action type is not set";
   }
 }
 
@@ -2958,7 +3067,7 @@ void Unparser::visitASTMergeWhenClause(const ASTMergeWhenClause* node,
       print("WHEN NOT MATCHED BY TARGET");
       break;
     case ASTMergeWhenClause::NOT_SET:
-      ZETASQL_LOG(DFATAL) << "Match type of merge match clause is not set.";
+      ABSL_LOG(ERROR) << "Match type of merge match clause is not set.";
   }
   if (node->search_condition() != nullptr) {
     print("AND");
@@ -3055,9 +3164,8 @@ void Unparser::visitASTGrantStatement(const ASTGrantStatement* node,
   print("GRANT");
   node->privileges()->Accept(this, data);
   print("ON");
-  if (node->target_type() != nullptr) {
-    node->target_type()->Accept(this, data);
-  }
+  // TODO: target_type_parts should be in upper case in unparsing.
+  UnparseVectorWithSeparator(node->target_type_parts(), data, "");
   node->target_path()->Accept(this, data);
   print("TO");
   node->grantee_list()->Accept(this, data);
@@ -3068,9 +3176,8 @@ void Unparser::visitASTRevokeStatement(const ASTRevokeStatement* node,
   print("REVOKE");
   node->privileges()->Accept(this, data);
   print("ON");
-  if (node->target_type() != nullptr) {
-    node->target_type()->Accept(this, data);
-  }
+  // TODO: target_type_parts should be in upper case in unparsing.
+  UnparseVectorWithSeparator(node->target_type_parts(), data, "");
   node->target_path()->Accept(this, data);
   print("FROM");
   node->grantee_list()->Accept(this, data);
@@ -3105,7 +3212,7 @@ void Unparser::visitASTReplaceFieldsExpression(
 void Unparser::visitASTFilterFieldsArg(const ASTFilterFieldsArg* node,
                                        void* data) {
   std::string path_expression = Unparse(node->path_expression());
-  ZETASQL_DCHECK_EQ(path_expression.back(), '\n');
+  ABSL_DCHECK_EQ(path_expression.back(), '\n');
   path_expression.pop_back();
   print(absl::StrCat(node->GetSQLForOperator(), path_expression));
 }
@@ -3325,7 +3432,7 @@ void Unparser::visitASTAddConstraintAction(const ASTAddConstraintAction* node,
   } else if (node_kind == AST_PRIMARY_KEY) {
     constraint->GetAs<ASTPrimaryKey>()->Accept(this, data);
   } else {
-    ZETASQL_LOG(FATAL) << "Unknown constraint node kind: "
+    ABSL_LOG(FATAL) << "Unknown constraint node kind: "
                << ASTNode::NodeKindToString(node_kind);
   }
 }
@@ -3540,6 +3647,7 @@ void Unparser::visitASTCreateIndexStatement(const ASTCreateIndexStatement* node,
   if (node->is_unique()) print("UNIQUE");
   if (node->spanner_is_null_filtered()) print("NULL_FILTERED");
   if (node->is_search()) print("SEARCH");
+  if (node->is_vector()) print("VECTOR");
   print("INDEX");
   if (node->is_if_not_exists()) print("IF NOT EXISTS");
   node->name()->Accept(this, data);
@@ -3917,6 +4025,10 @@ void Unparser::visitASTCreateProcedureStatement(
   node->name()->Accept(this, data);
   node->parameters()->Accept(this, data);
   println();
+  if (node->external_security() !=
+      ASTCreateStatement::SQL_SECURITY_UNSPECIFIED) {
+    print(node->GetSqlForExternalSecurity());
+  }
   if (node->with_connection_clause() != nullptr) {
     node->with_connection_clause()->Accept(this, data);
   }
@@ -3929,7 +4041,7 @@ void Unparser::visitASTCreateProcedureStatement(
   if (node->body() != nullptr) {
     // CREATE PROCEDURE statements are constructed so that the body always
     // consists of a single ASTBeginEndBlock statement.
-    ZETASQL_DCHECK_EQ(node->body()->statement_list().size(), 1);
+    ABSL_DCHECK_EQ(node->body()->statement_list().size(), 1);
     node->body()->statement_list()[0]->Accept(this, data);
   } else if (node->language() != nullptr) {
     print("LANGUAGE");
@@ -4232,6 +4344,14 @@ void Unparser::visitASTSetOperationColumnPropagationMode(
       break;
     case ASTSetOperation::INNER:
       break;
+  }
+}
+
+void Unparser::visitASTExpressionWithOptAlias(
+    const ASTExpressionWithOptAlias* node, void* data) {
+  node->expression()->Accept(this, data);
+  if (node->optional_alias() != nullptr) {
+    node->optional_alias()->Accept(this, data);
   }
 }
 

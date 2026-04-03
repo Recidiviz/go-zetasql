@@ -50,13 +50,16 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 #include "zetasql/base/status.h"
 
 namespace zetasql {
 
 using ::zetasql::testing::EqualsProto;
+using ::testing::Eq;
 using ::testing::IsEmpty;
 using ::testing::Not;
+using ::testing::UnorderedElementsAre;
 using ::zetasql_base::testing::IsOk;
 using ::zetasql_base::testing::StatusIs;
 namespace local_service {
@@ -236,7 +239,7 @@ void AddKitchenSink3DescriptorPool(DescriptorPoolListProto* list) {
       &ignored, list->add_definitions()->mutable_file_descriptor_set()));
 }
 
-void AddTestTable(SimpleTableProto* table, const std::string& table_name) {
+void AddTestTable(SimpleTableProto* table, absl::string_view table_name) {
   table->set_name(table_name);
   SimpleColumnProto* col1 = table->add_column();
   col1->set_name("column_str");
@@ -252,7 +255,7 @@ void AddTestTable(SimpleTableProto* table, const std::string& table_name) {
 void InsertTestTableContent(
     google::protobuf::Map<std::string, ::zetasql::local_service::TableContent>*
         tables_contents,
-    const std::string& table_name) {
+    absl::string_view table_name) {
   TableContent table_content;
   TableData* table_data = table_content.mutable_table_data();
 
@@ -272,7 +275,7 @@ void InsertTestTableContent(
 void InsertEmptyTestTableContent(
     google::protobuf::Map<std::string, ::zetasql::local_service::TableContent>*
         tables_contents,
-    const std::string& table_name) {
+    absl::string_view table_name) {
   TableContent table_content;
   table_content.mutable_table_data();
 
@@ -446,7 +449,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, NonZetaSQLTableFromProto) {
   *request.mutable_proto() = proto.proto_type();
   ASSERT_TRUE(GetTableFromProto(request, &response).ok());
   SimpleTableProto expected;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(
         name: "KitchenSinkPB"
         is_value_table: true
@@ -513,7 +516,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromStatement) {
   ExtractTableNamesFromStatementResponse response;
   ZETASQL_ASSERT_OK(ExtractTableNamesFromStatement(request, &response));
   ExtractTableNamesFromStatementResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(R"pb(table_name {
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(R"pb(table_name {
                                                     table_name_segment: "foo"
                                                     table_name_segment: "bar"
                                                   })pb", &expectedResponse));
@@ -528,7 +531,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromScript) {
   ExtractTableNamesFromStatementResponse response;
   ZETASQL_ASSERT_OK(ExtractTableNamesFromStatement(request, &response));
   ExtractTableNamesFromStatementResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(table_name { table_name_segment: "foo" table_name_segment: "bar" }
            table_name {
              table_name_segment: "x"
@@ -541,7 +544,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromScript) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromFirstStatement) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "select count(1) from foo.bar; select id from baz;"
            })pb",
@@ -550,7 +553,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromFirstStatement) {
   ExtractTableNamesFromNextStatementResponse response;
   ZETASQL_ASSERT_OK(ExtractTableNamesFromNextStatement(request, &response));
   ExtractTableNamesFromNextStatementResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(table_name {
              table_name_segment: "foo"
              table_name_segment: "bar"
@@ -562,7 +565,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromFirstStatement) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithUnsupportedStatement) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "CREATE TABLE test AS SELECT COUNT(1) FROM foo.bar;"
              byte_position: 0
@@ -577,7 +580,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithUnsupportedStatement) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithWrongStatementSupported) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "CREATE TABLE test AS SELECT COUNT(1) FROM foo.bar;"
              byte_position: 0
@@ -596,7 +599,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithWrongStatementSupported) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithAllStatementsSupported) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "CREATE TABLE test AS SELECT COUNT(1) FROM foo.bar;"
              byte_position: 0
@@ -608,7 +611,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithAllStatementsSupported) {
   ExtractTableNamesFromNextStatementResponse response;
   ZETASQL_ASSERT_OK(ExtractTableNamesFromNextStatement(request, &response));
   ExtractTableNamesFromNextStatementResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(table_name {
              table_name_segment: "foo"
              table_name_segment: "bar"
@@ -620,7 +623,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithAllStatementsSupported) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromEmptyStatement) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "select count(1) from foo.bar;   "
              byte_position: 29
@@ -636,7 +639,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromEmptyStatement) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithBigResumePosition) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "select count(1) from foo.bar;"
              byte_position: 9000
@@ -651,7 +654,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithBigResumePosition) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithNegativeResumePosition) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "select count(1) from foo.bar;"
              byte_position: -1
@@ -666,7 +669,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractWithNegativeResumePosition) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromNextStatement) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "select count(1) from foo.bar; select id from baz;"
              byte_position: 29
@@ -676,7 +679,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromNextStatement) {
   ExtractTableNamesFromNextStatementResponse response;
   ZETASQL_ASSERT_OK(ExtractTableNamesFromNextStatement(request, &response));
   ExtractTableNamesFromNextStatementResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(table_name {
              table_name_segment: "baz"
            }
@@ -687,7 +690,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesFromNextStatement) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesWithNoSemicolon) {
   ExtractTableNamesFromNextStatementRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(parse_resume_location {
              input: "select count(1) from foo.bar; select id from baz"
              byte_position: 29
@@ -697,7 +700,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, ExtractTableNamesWithNoSemicolon) {
   ExtractTableNamesFromNextStatementResponse response;
   ZETASQL_ASSERT_OK(ExtractTableNamesFromNextStatement(request, &response));
   ExtractTableNamesFromNextStatementResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(table_name {
              table_name_segment: "baz"
            }
@@ -1015,7 +1018,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, Analyze) {
     })pb";
 
   SimpleCatalogProto catalog;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(catalog_proto_text, &catalog));
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(catalog_proto_text, &catalog));
 
   AnalyzeRequest request;
   *request.mutable_simple_catalog() = catalog;
@@ -1077,7 +1080,7 @@ TEST_F(ZetaSqlLocalServiceImplTest,
   EXPECT_EQ(date_trunc_call.function().name(), "ZetaSQL:date_trunc");
 
   TypeProto datetimepart_type;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(type_kind: TYPE_ENUM
            enum_type {
              enum_name: "zetasql.functions.DateTimestampPart"
@@ -1132,7 +1135,7 @@ TEST_F(ZetaSqlLocalServiceImplTest,
   ZETASQL_CHECK_OK(Analyze(request, &response));
 
   TypeProto expected_kitchen_sink_proto_type;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(
         type_kind: TYPE_PROTO
         proto_type {
@@ -1143,7 +1146,7 @@ TEST_F(ZetaSqlLocalServiceImplTest,
       &expected_kitchen_sink_proto_type));
 
   TypeProto expected_kitchen_sink_proto3_type;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(
         type_kind: TYPE_PROTO
         proto_type {
@@ -1257,7 +1260,7 @@ TEST_F(ZetaSqlLocalServiceImplTest,
   ZETASQL_CHECK_OK(options.Serialize(&descriptor_map, request.mutable_options()));
   // We expect the generated pool (i.e. what Int64Value is using) as the 2nd
   // entry.
-  ZETASQL_CHECK_EQ(descriptor_map.size(), 2);
+  ABSL_CHECK_EQ(descriptor_map.size(), 2);
   EXPECT_THAT(descriptor_map[&empty]->file_descriptors, ::testing::IsEmpty());
 
   AnalyzeResponse response;
@@ -1344,7 +1347,7 @@ std::vector<TypeProto> GetOutputTypes(
 
 TypeProto GetOutputType(const AnyResolvedStatementProto& resolved_statement) {
   std::vector<TypeProto> types = GetOutputTypes(resolved_statement);
-  ZETASQL_CHECK_EQ(types.size(), 1);
+  ABSL_CHECK_EQ(types.size(), 1);
   return types[0];
 }
 
@@ -2011,7 +2014,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, AnalyzeExpression) {
   ZETASQL_EXPECT_OK(Analyze(request, &response));
 
   AnalyzeResponse expectedResponse;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(resolved_expression {
              resolved_literal_node {
                parent {
@@ -2041,7 +2044,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, AnalyzeExpression) {
   ZETASQL_EXPECT_OK(Analyze(request2, &response2));
 
   AnalyzeResponse expectedResponse2;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(resolved_expression {
              resolved_function_call_base_node {
                resolved_function_call_node {
@@ -2133,10 +2136,10 @@ TEST_F(ZetaSqlLocalServiceImplTest, BuildSqlStatement) {
     })pb";
 
   SimpleCatalogProto catalog;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(catalog_proto_text, &catalog));
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(catalog_proto_text, &catalog));
 
   BuildSqlRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(resolved_statement {
              resolved_query_stmt_node {
                output_column_list {
@@ -2200,7 +2203,7 @@ TEST_F(ZetaSqlLocalServiceImplTest, BuildSqlStatement) {
 
 TEST_F(ZetaSqlLocalServiceImplTest, BuildSqlExpression) {
   BuildSqlRequest request;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(
+  ABSL_QCHECK(google::protobuf::TextFormat::ParseFromString(
       R"pb(resolved_expression {
              resolved_function_call_base_node {
                resolved_function_call_node {
@@ -2489,8 +2492,10 @@ TEST_F(ZetaSqlLocalServiceImplTest, GetBuiltinFunctions) {
 
   ZETASQL_ASSERT_OK(GetBuiltinFunctions(proto, &response));
   EXPECT_EQ(response.function_size(), 2);
-  EXPECT_EQ(function1.DebugString(), response.function(0).DebugString());
-  EXPECT_EQ(function2.DebugString(), response.function(1).DebugString());
+  std::vector<std::string> responses = {response.function(0).DebugString(),
+                                        response.function(1).DebugString()};
+  EXPECT_THAT(responses, UnorderedElementsAre(Eq(function1.DebugString()),
+                                              Eq(function2.DebugString())));
 }
 
 TEST_F(ZetaSqlLocalServiceImplTest, GetBuiltinFunctionsReturnsTypes) {

@@ -15,11 +15,18 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      with:
+        submodules: recursive
     - name: setup Go ${{ matrix.go-version }}
       uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
       with:
         go-version: ${{ matrix.go-version }}
         cache: true
+    - name: Build protobuf CGO static library (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install bazelisk
+        bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
     - name: test
       run: go test -race -v ./ -count=1
       env:

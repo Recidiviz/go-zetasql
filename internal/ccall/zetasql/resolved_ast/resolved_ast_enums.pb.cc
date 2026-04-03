@@ -4,542 +4,682 @@
 #include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr ResolvedSubqueryExprEnums::ResolvedSubqueryExprEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedSubqueryExprEnums::ResolvedSubqueryExprEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedSubqueryExprEnumsDefaultTypeInternal {
-  constexpr ResolvedSubqueryExprEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedSubqueryExprEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedSubqueryExprEnumsDefaultTypeInternal() {}
   union {
     ResolvedSubqueryExprEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedSubqueryExprEnumsDefaultTypeInternal _ResolvedSubqueryExprEnums_default_instance_;
-constexpr ResolvedJoinScanEnums::ResolvedJoinScanEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedSubqueryExprEnumsDefaultTypeInternal _ResolvedSubqueryExprEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedJoinScanEnums::ResolvedJoinScanEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedJoinScanEnumsDefaultTypeInternal {
-  constexpr ResolvedJoinScanEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedJoinScanEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedJoinScanEnumsDefaultTypeInternal() {}
   union {
     ResolvedJoinScanEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedJoinScanEnumsDefaultTypeInternal _ResolvedJoinScanEnums_default_instance_;
-constexpr ResolvedSetOperationScanEnums::ResolvedSetOperationScanEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedJoinScanEnumsDefaultTypeInternal _ResolvedJoinScanEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedSetOperationScanEnums::ResolvedSetOperationScanEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedSetOperationScanEnumsDefaultTypeInternal {
-  constexpr ResolvedSetOperationScanEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedSetOperationScanEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedSetOperationScanEnumsDefaultTypeInternal() {}
   union {
     ResolvedSetOperationScanEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedSetOperationScanEnumsDefaultTypeInternal _ResolvedSetOperationScanEnums_default_instance_;
-constexpr ResolvedRecursiveScanEnums::ResolvedRecursiveScanEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedSetOperationScanEnumsDefaultTypeInternal _ResolvedSetOperationScanEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedRecursiveScanEnums::ResolvedRecursiveScanEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedRecursiveScanEnumsDefaultTypeInternal {
-  constexpr ResolvedRecursiveScanEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedRecursiveScanEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedRecursiveScanEnumsDefaultTypeInternal() {}
   union {
     ResolvedRecursiveScanEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedRecursiveScanEnumsDefaultTypeInternal _ResolvedRecursiveScanEnums_default_instance_;
-constexpr ResolvedSampleScanEnums::ResolvedSampleScanEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedRecursiveScanEnumsDefaultTypeInternal _ResolvedRecursiveScanEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedSampleScanEnums::ResolvedSampleScanEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedSampleScanEnumsDefaultTypeInternal {
-  constexpr ResolvedSampleScanEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedSampleScanEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedSampleScanEnumsDefaultTypeInternal() {}
   union {
     ResolvedSampleScanEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedSampleScanEnumsDefaultTypeInternal _ResolvedSampleScanEnums_default_instance_;
-constexpr ResolvedOrderByItemEnums::ResolvedOrderByItemEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedSampleScanEnumsDefaultTypeInternal _ResolvedSampleScanEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedOrderByItemEnums::ResolvedOrderByItemEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedOrderByItemEnumsDefaultTypeInternal {
-  constexpr ResolvedOrderByItemEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedOrderByItemEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedOrderByItemEnumsDefaultTypeInternal() {}
   union {
     ResolvedOrderByItemEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedOrderByItemEnumsDefaultTypeInternal _ResolvedOrderByItemEnums_default_instance_;
-constexpr ResolvedCreateStatementEnums::ResolvedCreateStatementEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedOrderByItemEnumsDefaultTypeInternal _ResolvedOrderByItemEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedCreateStatementEnums::ResolvedCreateStatementEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedCreateStatementEnumsDefaultTypeInternal {
-  constexpr ResolvedCreateStatementEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedCreateStatementEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedCreateStatementEnumsDefaultTypeInternal() {}
   union {
     ResolvedCreateStatementEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedCreateStatementEnumsDefaultTypeInternal _ResolvedCreateStatementEnums_default_instance_;
-constexpr ResolvedGeneratedColumnInfoEnums::ResolvedGeneratedColumnInfoEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedCreateStatementEnumsDefaultTypeInternal _ResolvedCreateStatementEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedGeneratedColumnInfoEnums::ResolvedGeneratedColumnInfoEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal {
-  constexpr ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal() {}
   union {
     ResolvedGeneratedColumnInfoEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal _ResolvedGeneratedColumnInfoEnums_default_instance_;
-constexpr ResolvedDropStmtEnums::ResolvedDropStmtEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal _ResolvedGeneratedColumnInfoEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedDropStmtEnums::ResolvedDropStmtEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedDropStmtEnumsDefaultTypeInternal {
-  constexpr ResolvedDropStmtEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedDropStmtEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedDropStmtEnumsDefaultTypeInternal() {}
   union {
     ResolvedDropStmtEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedDropStmtEnumsDefaultTypeInternal _ResolvedDropStmtEnums_default_instance_;
-constexpr ResolvedBeginStmtEnums::ResolvedBeginStmtEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedDropStmtEnumsDefaultTypeInternal _ResolvedDropStmtEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedBeginStmtEnums::ResolvedBeginStmtEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedBeginStmtEnumsDefaultTypeInternal {
-  constexpr ResolvedBeginStmtEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedBeginStmtEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedBeginStmtEnumsDefaultTypeInternal() {}
   union {
     ResolvedBeginStmtEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedBeginStmtEnumsDefaultTypeInternal _ResolvedBeginStmtEnums_default_instance_;
-constexpr ResolvedWindowFrameEnums::ResolvedWindowFrameEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedBeginStmtEnumsDefaultTypeInternal _ResolvedBeginStmtEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedWindowFrameEnums::ResolvedWindowFrameEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedWindowFrameEnumsDefaultTypeInternal {
-  constexpr ResolvedWindowFrameEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedWindowFrameEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedWindowFrameEnumsDefaultTypeInternal() {}
   union {
     ResolvedWindowFrameEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedWindowFrameEnumsDefaultTypeInternal _ResolvedWindowFrameEnums_default_instance_;
-constexpr ResolvedWindowFrameExprEnums::ResolvedWindowFrameExprEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedWindowFrameEnumsDefaultTypeInternal _ResolvedWindowFrameEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedWindowFrameExprEnums::ResolvedWindowFrameExprEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedWindowFrameExprEnumsDefaultTypeInternal {
-  constexpr ResolvedWindowFrameExprEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedWindowFrameExprEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedWindowFrameExprEnumsDefaultTypeInternal() {}
   union {
     ResolvedWindowFrameExprEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedWindowFrameExprEnumsDefaultTypeInternal _ResolvedWindowFrameExprEnums_default_instance_;
-constexpr ResolvedInsertStmtEnums::ResolvedInsertStmtEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedWindowFrameExprEnumsDefaultTypeInternal _ResolvedWindowFrameExprEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedInsertStmtEnums::ResolvedInsertStmtEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedInsertStmtEnumsDefaultTypeInternal {
-  constexpr ResolvedInsertStmtEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedInsertStmtEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedInsertStmtEnumsDefaultTypeInternal() {}
   union {
     ResolvedInsertStmtEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedInsertStmtEnumsDefaultTypeInternal _ResolvedInsertStmtEnums_default_instance_;
-constexpr ResolvedMergeWhenEnums::ResolvedMergeWhenEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedInsertStmtEnumsDefaultTypeInternal _ResolvedInsertStmtEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedMergeWhenEnums::ResolvedMergeWhenEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedMergeWhenEnumsDefaultTypeInternal {
-  constexpr ResolvedMergeWhenEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedMergeWhenEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedMergeWhenEnumsDefaultTypeInternal() {}
   union {
     ResolvedMergeWhenEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedMergeWhenEnumsDefaultTypeInternal _ResolvedMergeWhenEnums_default_instance_;
-constexpr ResolvedArgumentDefEnums::ResolvedArgumentDefEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedMergeWhenEnumsDefaultTypeInternal _ResolvedMergeWhenEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedArgumentDefEnums::ResolvedArgumentDefEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedArgumentDefEnumsDefaultTypeInternal {
-  constexpr ResolvedArgumentDefEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedArgumentDefEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedArgumentDefEnumsDefaultTypeInternal() {}
   union {
     ResolvedArgumentDefEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedArgumentDefEnumsDefaultTypeInternal _ResolvedArgumentDefEnums_default_instance_;
-constexpr ResolvedFunctionCallBaseEnums::ResolvedFunctionCallBaseEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedArgumentDefEnumsDefaultTypeInternal _ResolvedArgumentDefEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedFunctionCallBaseEnums::ResolvedFunctionCallBaseEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedFunctionCallBaseEnumsDefaultTypeInternal {
-  constexpr ResolvedFunctionCallBaseEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedFunctionCallBaseEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedFunctionCallBaseEnumsDefaultTypeInternal() {}
   union {
     ResolvedFunctionCallBaseEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedFunctionCallBaseEnumsDefaultTypeInternal _ResolvedFunctionCallBaseEnums_default_instance_;
-constexpr ResolvedNonScalarFunctionCallBaseEnums::ResolvedNonScalarFunctionCallBaseEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedFunctionCallBaseEnumsDefaultTypeInternal _ResolvedFunctionCallBaseEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedNonScalarFunctionCallBaseEnums::ResolvedNonScalarFunctionCallBaseEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal {
-  constexpr ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal() {}
   union {
     ResolvedNonScalarFunctionCallBaseEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal _ResolvedNonScalarFunctionCallBaseEnums_default_instance_;
-constexpr ResolvedAggregateHavingModifierEnums::ResolvedAggregateHavingModifierEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal _ResolvedNonScalarFunctionCallBaseEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedAggregateHavingModifierEnums::ResolvedAggregateHavingModifierEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedAggregateHavingModifierEnumsDefaultTypeInternal {
-  constexpr ResolvedAggregateHavingModifierEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedAggregateHavingModifierEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedAggregateHavingModifierEnumsDefaultTypeInternal() {}
   union {
     ResolvedAggregateHavingModifierEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedAggregateHavingModifierEnumsDefaultTypeInternal _ResolvedAggregateHavingModifierEnums_default_instance_;
-constexpr ResolvedStatementEnums::ResolvedStatementEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedAggregateHavingModifierEnumsDefaultTypeInternal _ResolvedAggregateHavingModifierEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedStatementEnums::ResolvedStatementEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedStatementEnumsDefaultTypeInternal {
-  constexpr ResolvedStatementEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedStatementEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedStatementEnumsDefaultTypeInternal() {}
   union {
     ResolvedStatementEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedStatementEnumsDefaultTypeInternal _ResolvedStatementEnums_default_instance_;
-constexpr ResolvedImportStmtEnums::ResolvedImportStmtEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedStatementEnumsDefaultTypeInternal _ResolvedStatementEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedImportStmtEnums::ResolvedImportStmtEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedImportStmtEnumsDefaultTypeInternal {
-  constexpr ResolvedImportStmtEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedImportStmtEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedImportStmtEnumsDefaultTypeInternal() {}
   union {
     ResolvedImportStmtEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedImportStmtEnumsDefaultTypeInternal _ResolvedImportStmtEnums_default_instance_;
-constexpr ResolvedForeignKeyEnums::ResolvedForeignKeyEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedImportStmtEnumsDefaultTypeInternal _ResolvedImportStmtEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedForeignKeyEnums::ResolvedForeignKeyEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedForeignKeyEnumsDefaultTypeInternal {
-  constexpr ResolvedForeignKeyEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedForeignKeyEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedForeignKeyEnumsDefaultTypeInternal() {}
   union {
     ResolvedForeignKeyEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedForeignKeyEnumsDefaultTypeInternal _ResolvedForeignKeyEnums_default_instance_;
-constexpr ResolvedAuxLoadDataStmtEnums::ResolvedAuxLoadDataStmtEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedForeignKeyEnumsDefaultTypeInternal _ResolvedForeignKeyEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedAuxLoadDataStmtEnums::ResolvedAuxLoadDataStmtEnums(
+    ::_pbi::ConstantInitialized) {}
 struct ResolvedAuxLoadDataStmtEnumsDefaultTypeInternal {
-  constexpr ResolvedAuxLoadDataStmtEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedAuxLoadDataStmtEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedAuxLoadDataStmtEnumsDefaultTypeInternal() {}
   union {
     ResolvedAuxLoadDataStmtEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedAuxLoadDataStmtEnumsDefaultTypeInternal _ResolvedAuxLoadDataStmtEnums_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedAuxLoadDataStmtEnumsDefaultTypeInternal _ResolvedAuxLoadDataStmtEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedDropIndexStmtEnums::ResolvedDropIndexStmtEnums(
+    ::_pbi::ConstantInitialized) {}
+struct ResolvedDropIndexStmtEnumsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ResolvedDropIndexStmtEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ResolvedDropIndexStmtEnumsDefaultTypeInternal() {}
+  union {
+    ResolvedDropIndexStmtEnums _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedDropIndexStmtEnumsDefaultTypeInternal _ResolvedDropIndexStmtEnums_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[22];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[29];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto = nullptr;
+static ::_pb::Metadata file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[23];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[30];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSubqueryExprEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedJoinScanEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedRecursiveScanEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSampleScanEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedOrderByItemEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedCreateStatementEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedGeneratedColumnInfoEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedDropStmtEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedBeginStmtEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedWindowFrameEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedWindowFrameExprEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedInsertStmtEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedMergeWhenEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedArgumentDefEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedFunctionCallBaseEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedNonScalarFunctionCallBaseEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregateHavingModifierEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedStatementEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedImportStmtEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedForeignKeyEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAuxLoadDataStmtEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedDropIndexStmtEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+};
 
-const uint32_t TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSubqueryExprEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedJoinScanEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSetOperationScanEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedRecursiveScanEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedSampleScanEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedOrderByItemEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedCreateStatementEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedGeneratedColumnInfoEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedDropStmtEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedBeginStmtEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedWindowFrameEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedWindowFrameExprEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedInsertStmtEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedMergeWhenEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedArgumentDefEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedFunctionCallBaseEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedNonScalarFunctionCallBaseEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAggregateHavingModifierEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedStatementEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedImportStmtEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedForeignKeyEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedAuxLoadDataStmtEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::ResolvedSubqueryExprEnums)},
-  { 6, -1, -1, sizeof(::zetasql::ResolvedJoinScanEnums)},
-  { 12, -1, -1, sizeof(::zetasql::ResolvedSetOperationScanEnums)},
-  { 18, -1, -1, sizeof(::zetasql::ResolvedRecursiveScanEnums)},
-  { 24, -1, -1, sizeof(::zetasql::ResolvedSampleScanEnums)},
-  { 30, -1, -1, sizeof(::zetasql::ResolvedOrderByItemEnums)},
-  { 36, -1, -1, sizeof(::zetasql::ResolvedCreateStatementEnums)},
-  { 42, -1, -1, sizeof(::zetasql::ResolvedGeneratedColumnInfoEnums)},
-  { 48, -1, -1, sizeof(::zetasql::ResolvedDropStmtEnums)},
-  { 54, -1, -1, sizeof(::zetasql::ResolvedBeginStmtEnums)},
-  { 60, -1, -1, sizeof(::zetasql::ResolvedWindowFrameEnums)},
-  { 66, -1, -1, sizeof(::zetasql::ResolvedWindowFrameExprEnums)},
-  { 72, -1, -1, sizeof(::zetasql::ResolvedInsertStmtEnums)},
-  { 78, -1, -1, sizeof(::zetasql::ResolvedMergeWhenEnums)},
-  { 84, -1, -1, sizeof(::zetasql::ResolvedArgumentDefEnums)},
-  { 90, -1, -1, sizeof(::zetasql::ResolvedFunctionCallBaseEnums)},
-  { 96, -1, -1, sizeof(::zetasql::ResolvedNonScalarFunctionCallBaseEnums)},
-  { 102, -1, -1, sizeof(::zetasql::ResolvedAggregateHavingModifierEnums)},
-  { 108, -1, -1, sizeof(::zetasql::ResolvedStatementEnums)},
-  { 114, -1, -1, sizeof(::zetasql::ResolvedImportStmtEnums)},
-  { 120, -1, -1, sizeof(::zetasql::ResolvedForeignKeyEnums)},
-  { 126, -1, -1, sizeof(::zetasql::ResolvedAuxLoadDataStmtEnums)},
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::ResolvedSubqueryExprEnums)},
+        { 8, -1, -1, sizeof(::zetasql::ResolvedJoinScanEnums)},
+        { 16, -1, -1, sizeof(::zetasql::ResolvedSetOperationScanEnums)},
+        { 24, -1, -1, sizeof(::zetasql::ResolvedRecursiveScanEnums)},
+        { 32, -1, -1, sizeof(::zetasql::ResolvedSampleScanEnums)},
+        { 40, -1, -1, sizeof(::zetasql::ResolvedOrderByItemEnums)},
+        { 48, -1, -1, sizeof(::zetasql::ResolvedCreateStatementEnums)},
+        { 56, -1, -1, sizeof(::zetasql::ResolvedGeneratedColumnInfoEnums)},
+        { 64, -1, -1, sizeof(::zetasql::ResolvedDropStmtEnums)},
+        { 72, -1, -1, sizeof(::zetasql::ResolvedBeginStmtEnums)},
+        { 80, -1, -1, sizeof(::zetasql::ResolvedWindowFrameEnums)},
+        { 88, -1, -1, sizeof(::zetasql::ResolvedWindowFrameExprEnums)},
+        { 96, -1, -1, sizeof(::zetasql::ResolvedInsertStmtEnums)},
+        { 104, -1, -1, sizeof(::zetasql::ResolvedMergeWhenEnums)},
+        { 112, -1, -1, sizeof(::zetasql::ResolvedArgumentDefEnums)},
+        { 120, -1, -1, sizeof(::zetasql::ResolvedFunctionCallBaseEnums)},
+        { 128, -1, -1, sizeof(::zetasql::ResolvedNonScalarFunctionCallBaseEnums)},
+        { 136, -1, -1, sizeof(::zetasql::ResolvedAggregateHavingModifierEnums)},
+        { 144, -1, -1, sizeof(::zetasql::ResolvedStatementEnums)},
+        { 152, -1, -1, sizeof(::zetasql::ResolvedImportStmtEnums)},
+        { 160, -1, -1, sizeof(::zetasql::ResolvedForeignKeyEnums)},
+        { 168, -1, -1, sizeof(::zetasql::ResolvedAuxLoadDataStmtEnums)},
+        { 176, -1, -1, sizeof(::zetasql::ResolvedDropIndexStmtEnums)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedSubqueryExprEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedJoinScanEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedSetOperationScanEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedRecursiveScanEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedSampleScanEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedOrderByItemEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedCreateStatementEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedGeneratedColumnInfoEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedDropStmtEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedBeginStmtEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedWindowFrameEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedWindowFrameExprEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedInsertStmtEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedMergeWhenEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedArgumentDefEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedFunctionCallBaseEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedNonScalarFunctionCallBaseEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAggregateHavingModifierEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedStatementEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedImportStmtEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedForeignKeyEnums_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedAuxLoadDataStmtEnums_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_ResolvedSubqueryExprEnums_default_instance_._instance,
+    &::zetasql::_ResolvedJoinScanEnums_default_instance_._instance,
+    &::zetasql::_ResolvedSetOperationScanEnums_default_instance_._instance,
+    &::zetasql::_ResolvedRecursiveScanEnums_default_instance_._instance,
+    &::zetasql::_ResolvedSampleScanEnums_default_instance_._instance,
+    &::zetasql::_ResolvedOrderByItemEnums_default_instance_._instance,
+    &::zetasql::_ResolvedCreateStatementEnums_default_instance_._instance,
+    &::zetasql::_ResolvedGeneratedColumnInfoEnums_default_instance_._instance,
+    &::zetasql::_ResolvedDropStmtEnums_default_instance_._instance,
+    &::zetasql::_ResolvedBeginStmtEnums_default_instance_._instance,
+    &::zetasql::_ResolvedWindowFrameEnums_default_instance_._instance,
+    &::zetasql::_ResolvedWindowFrameExprEnums_default_instance_._instance,
+    &::zetasql::_ResolvedInsertStmtEnums_default_instance_._instance,
+    &::zetasql::_ResolvedMergeWhenEnums_default_instance_._instance,
+    &::zetasql::_ResolvedArgumentDefEnums_default_instance_._instance,
+    &::zetasql::_ResolvedFunctionCallBaseEnums_default_instance_._instance,
+    &::zetasql::_ResolvedNonScalarFunctionCallBaseEnums_default_instance_._instance,
+    &::zetasql::_ResolvedAggregateHavingModifierEnums_default_instance_._instance,
+    &::zetasql::_ResolvedStatementEnums_default_instance_._instance,
+    &::zetasql::_ResolvedImportStmtEnums_default_instance_._instance,
+    &::zetasql::_ResolvedForeignKeyEnums_default_instance_._instance,
+    &::zetasql::_ResolvedAuxLoadDataStmtEnums_default_instance_._instance,
+    &::zetasql::_ResolvedDropIndexStmtEnums_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n-zetasql/resolved_ast/resolved_ast_enum"
+    "s.proto\022\007zetasql\"r\n\031ResolvedSubqueryExpr"
+    "Enums\"U\n\014SubqueryType\022\n\n\006SCALAR\020\000\022\t\n\005ARR"
+    "AY\020\001\022\n\n\006EXISTS\020\002\022\006\n\002IN\020\003\022\014\n\010LIKE_ANY\020\004\022\014"
+    "\n\010LIKE_ALL\020\005\"M\n\025ResolvedJoinScanEnums\"4\n"
+    "\010JoinType\022\t\n\005INNER\020\000\022\010\n\004LEFT\020\001\022\t\n\005RIGHT\020"
+    "\002\022\010\n\004FULL\020\003\"\320\002\n\035ResolvedSetOperationScan"
+    "Enums\"\205\001\n\020SetOperationType\022\r\n\tUNION_ALL\020"
+    "\000\022\022\n\016UNION_DISTINCT\020\001\022\021\n\rINTERSECT_ALL\020\002"
+    "\022\026\n\022INTERSECT_DISTINCT\020\003\022\016\n\nEXCEPT_ALL\020\004"
+    "\022\023\n\017EXCEPT_DISTINCT\020\005\"W\n\033SetOperationCol"
+    "umnMatchMode\022\017\n\013BY_POSITION\020\000\022\021\n\rCORRESP"
+    "ONDING\020\001\022\024\n\020CORRESPONDING_BY\020\002\"N\n!SetOpe"
+    "rationColumnPropagationMode\022\n\n\006STRICT\020\000\022"
+    "\t\n\005INNER\020\001\022\010\n\004LEFT\020\002\022\010\n\004FULL\020\003\"\\\n\032Resolv"
+    "edRecursiveScanEnums\">\n\031RecursiveSetOper"
+    "ationType\022\r\n\tUNION_ALL\020\000\022\022\n\016UNION_DISTIN"
+    "CT\020\001\">\n\027ResolvedSampleScanEnums\"#\n\nSampl"
+    "eUnit\022\010\n\004ROWS\020\000\022\013\n\007PERCENT\020\001\"c\n\030Resolved"
+    "OrderByItemEnums\"G\n\rNullOrderMode\022\025\n\021ORD"
+    "ER_UNSPECIFIED\020\000\022\017\n\013NULLS_FIRST\020\001\022\016\n\nNUL"
+    "LS_LAST\020\002\"\364\003\n\034ResolvedCreateStatementEnu"
+    "ms\"_\n\013CreateScope\022\030\n\024CREATE_DEFAULT_SCOP"
+    "E\020\000\022\022\n\016CREATE_PRIVATE\020\001\022\021\n\rCREATE_PUBLIC"
+    "\020\002\022\017\n\013CREATE_TEMP\020\003\"Q\n\nCreateMode\022\022\n\016CRE"
+    "ATE_DEFAULT\020\000\022\025\n\021CREATE_OR_REPLACE\020\001\022\030\n\024"
+    "CREATE_IF_NOT_EXISTS\020\002\"_\n\013SqlSecurity\022\034\n"
+    "\030SQL_SECURITY_UNSPECIFIED\020\000\022\030\n\024SQL_SECUR"
+    "ITY_DEFINER\020\001\022\030\n\024SQL_SECURITY_INVOKER\020\002\""
+    "\276\001\n\020DeterminismLevel\022\033\n\027DETERMINISM_UNSP"
+    "ECIFIED\020\000\022\035\n\031DETERMINISM_DETERMINISTIC\020\001"
+    "\022!\n\035DETERMINISM_NOT_DETERMINISTIC\020\002\022\031\n\025D"
+    "ETERMINISM_IMMUTABLE\020\003\022\026\n\022DETERMINISM_ST"
+    "ABLE\020\004\022\030\n\024DETERMINISM_VOLATILE\020\005\"a\n Reso"
+    "lvedGeneratedColumnInfoEnums\"=\n\nStoredMo"
+    "de\022\016\n\nNON_STORED\020\000\022\n\n\006STORED\020\001\022\023\n\017STORED"
+    "_VOLATILE\020\002\"Y\n\025ResolvedDropStmtEnums\"@\n\010"
+    "DropMode\022\031\n\025DROP_MODE_UNSPECIFIED\020\000\022\014\n\010R"
+    "ESTRICT\020\001\022\013\n\007CASCADE\020\002\"h\n\026ResolvedBeginS"
+    "tmtEnums\"N\n\rReadWriteMode\022\024\n\020MODE_UNSPEC"
+    "IFIED\020\000\022\022\n\016MODE_READ_ONLY\020\001\022\023\n\017MODE_READ"
+    "_WRITE\020\002\"<\n\030ResolvedWindowFrameEnums\" \n\t"
+    "FrameUnit\022\010\n\004ROWS\020\000\022\t\n\005RANGE\020\001\"\235\001\n\034Resol"
+    "vedWindowFrameExprEnums\"}\n\014BoundaryType\022"
+    "\027\n\023UNBOUNDED_PRECEDING\020\000\022\024\n\020OFFSET_PRECE"
+    "DING\020\001\022\017\n\013CURRENT_ROW\020\002\022\024\n\020OFFSET_FOLLOW"
+    "ING\020\003\022\027\n\023UNBOUNDED_FOLLOWING\020\004\"c\n\027Resolv"
+    "edInsertStmtEnums\"H\n\nInsertMode\022\014\n\010OR_ER"
+    "ROR\020\000\022\r\n\tOR_IGNORE\020\001\022\016\n\nOR_REPLACE\020\002\022\r\n\t"
+    "OR_UPDATE\020\003\"\232\001\n\026ResolvedMergeWhenEnums\"N"
+    "\n\tMatchType\022\013\n\007MATCHED\020\000\022\031\n\025NOT_MATCHED_"
+    "BY_SOURCE\020\001\022\031\n\025NOT_MATCHED_BY_TARGET\020\002\"0"
+    "\n\nActionType\022\n\n\006INSERT\020\000\022\n\n\006UPDATE\020\001\022\n\n\006"
+    "DELETE\020\002\"X\n\030ResolvedArgumentDefEnums\"<\n\014"
+    "ArgumentKind\022\n\n\006SCALAR\020\000\022\r\n\tAGGREGATE\020\001\022"
+    "\021\n\rNOT_AGGREGATE\020\002\"Y\n\035ResolvedFunctionCa"
+    "llBaseEnums\"8\n\tErrorMode\022\026\n\022DEFAULT_ERRO"
+    "R_MODE\020\000\022\023\n\017SAFE_ERROR_MODE\020\001\"\200\001\n&Resolv"
+    "edNonScalarFunctionCallBaseEnums\"V\n\024Null"
+    "HandlingModifier\022\031\n\025DEFAULT_NULL_HANDLIN"
+    "G\020\000\022\020\n\014IGNORE_NULLS\020\001\022\021\n\rRESPECT_NULLS\020\002"
+    "\"[\n$ResolvedAggregateHavingModifierEnums"
+    "\"3\n\022HavingModifierKind\022\013\n\007INVALID\020\000\022\007\n\003M"
+    "AX\020\001\022\007\n\003MIN\020\002\"W\n\026ResolvedStatementEnums\""
+    "=\n\014ObjectAccess\022\010\n\004NONE\020\000\022\010\n\004READ\020\001\022\t\n\005W"
+    "RITE\020\002\022\016\n\nREAD_WRITE\020\003\"w\n\027ResolvedImport"
+    "StmtEnums\"\\\n\nImportKind\022\n\n\006MODULE\020\000\022\t\n\005P"
+    "ROTO\020\001\0227\n*__ImportKind__switch_must_have"
+    "_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\231\001\n\027ResolvedFore"
+    "ignKeyEnums\"3\n\tMatchMode\022\n\n\006SIMPLE\020\000\022\010\n\004"
+    "FULL\020\001\022\020\n\014NOT_DISTINCT\020\002\"I\n\017ActionOperat"
+    "ion\022\r\n\tNO_ACTION\020\000\022\014\n\010RESTRICT\020\001\022\013\n\007CASC"
+    "ADE\020\002\022\014\n\010SET_NULL\020\003\"T\n\034ResolvedAuxLoadDa"
+    "taStmtEnums\"4\n\rInsertionMode\022\010\n\004NONE\020\000\022\n"
+    "\n\006APPEND\020\001\022\r\n\tOVERWRITE\020\002\"`\n\032ResolvedDro"
+    "pIndexStmtEnums\"B\n\tIndexType\022\021\n\rINDEX_DE"
+    "FAULT\020\000\022\020\n\014INDEX_SEARCH\020\001\022\020\n\014INDEX_VECTO"
+    "R\020\002B;\n\036com.google.zetasql.resolvedastB\027Z"
+    "etaSQLResolvedASTEnumsP\001"
+};
+static ::absl::once_flag descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto = {
+    false,
+    false,
+    3144,
+    descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto,
+    "zetasql/resolved_ast/resolved_ast_enums.proto",
+    &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
+    nullptr,
+    0,
+    23,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto::offsets,
+    file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto,
+    file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto,
+    file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto,
 };
 
-const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n-zetasql/resolved_ast/resolved_ast_enum"
-  "s.proto\022\007zetasql\"r\n\031ResolvedSubqueryExpr"
-  "Enums\"U\n\014SubqueryType\022\n\n\006SCALAR\020\000\022\t\n\005ARR"
-  "AY\020\001\022\n\n\006EXISTS\020\002\022\006\n\002IN\020\003\022\014\n\010LIKE_ANY\020\004\022\014"
-  "\n\010LIKE_ALL\020\005\"M\n\025ResolvedJoinScanEnums\"4\n"
-  "\010JoinType\022\t\n\005INNER\020\000\022\010\n\004LEFT\020\001\022\t\n\005RIGHT\020"
-  "\002\022\010\n\004FULL\020\003\"\320\002\n\035ResolvedSetOperationScan"
-  "Enums\"\205\001\n\020SetOperationType\022\r\n\tUNION_ALL\020"
-  "\000\022\022\n\016UNION_DISTINCT\020\001\022\021\n\rINTERSECT_ALL\020\002"
-  "\022\026\n\022INTERSECT_DISTINCT\020\003\022\016\n\nEXCEPT_ALL\020\004"
-  "\022\023\n\017EXCEPT_DISTINCT\020\005\"W\n\033SetOperationCol"
-  "umnMatchMode\022\017\n\013BY_POSITION\020\000\022\021\n\rCORRESP"
-  "ONDING\020\001\022\024\n\020CORRESPONDING_BY\020\002\"N\n!SetOpe"
-  "rationColumnPropagationMode\022\n\n\006STRICT\020\000\022"
-  "\t\n\005INNER\020\001\022\010\n\004LEFT\020\002\022\010\n\004FULL\020\003\"\\\n\032Resolv"
-  "edRecursiveScanEnums\">\n\031RecursiveSetOper"
-  "ationType\022\r\n\tUNION_ALL\020\000\022\022\n\016UNION_DISTIN"
-  "CT\020\001\">\n\027ResolvedSampleScanEnums\"#\n\nSampl"
-  "eUnit\022\010\n\004ROWS\020\000\022\013\n\007PERCENT\020\001\"c\n\030Resolved"
-  "OrderByItemEnums\"G\n\rNullOrderMode\022\025\n\021ORD"
-  "ER_UNSPECIFIED\020\000\022\017\n\013NULLS_FIRST\020\001\022\016\n\nNUL"
-  "LS_LAST\020\002\"\364\003\n\034ResolvedCreateStatementEnu"
-  "ms\"_\n\013CreateScope\022\030\n\024CREATE_DEFAULT_SCOP"
-  "E\020\000\022\022\n\016CREATE_PRIVATE\020\001\022\021\n\rCREATE_PUBLIC"
-  "\020\002\022\017\n\013CREATE_TEMP\020\003\"Q\n\nCreateMode\022\022\n\016CRE"
-  "ATE_DEFAULT\020\000\022\025\n\021CREATE_OR_REPLACE\020\001\022\030\n\024"
-  "CREATE_IF_NOT_EXISTS\020\002\"_\n\013SqlSecurity\022\034\n"
-  "\030SQL_SECURITY_UNSPECIFIED\020\000\022\030\n\024SQL_SECUR"
-  "ITY_DEFINER\020\001\022\030\n\024SQL_SECURITY_INVOKER\020\002\""
-  "\276\001\n\020DeterminismLevel\022\033\n\027DETERMINISM_UNSP"
-  "ECIFIED\020\000\022\035\n\031DETERMINISM_DETERMINISTIC\020\001"
-  "\022!\n\035DETERMINISM_NOT_DETERMINISTIC\020\002\022\031\n\025D"
-  "ETERMINISM_IMMUTABLE\020\003\022\026\n\022DETERMINISM_ST"
-  "ABLE\020\004\022\030\n\024DETERMINISM_VOLATILE\020\005\"a\n Reso"
-  "lvedGeneratedColumnInfoEnums\"=\n\nStoredMo"
-  "de\022\016\n\nNON_STORED\020\000\022\n\n\006STORED\020\001\022\023\n\017STORED"
-  "_VOLATILE\020\002\"Y\n\025ResolvedDropStmtEnums\"@\n\010"
-  "DropMode\022\031\n\025DROP_MODE_UNSPECIFIED\020\000\022\014\n\010R"
-  "ESTRICT\020\001\022\013\n\007CASCADE\020\002\"h\n\026ResolvedBeginS"
-  "tmtEnums\"N\n\rReadWriteMode\022\024\n\020MODE_UNSPEC"
-  "IFIED\020\000\022\022\n\016MODE_READ_ONLY\020\001\022\023\n\017MODE_READ"
-  "_WRITE\020\002\"<\n\030ResolvedWindowFrameEnums\" \n\t"
-  "FrameUnit\022\010\n\004ROWS\020\000\022\t\n\005RANGE\020\001\"\235\001\n\034Resol"
-  "vedWindowFrameExprEnums\"}\n\014BoundaryType\022"
-  "\027\n\023UNBOUNDED_PRECEDING\020\000\022\024\n\020OFFSET_PRECE"
-  "DING\020\001\022\017\n\013CURRENT_ROW\020\002\022\024\n\020OFFSET_FOLLOW"
-  "ING\020\003\022\027\n\023UNBOUNDED_FOLLOWING\020\004\"c\n\027Resolv"
-  "edInsertStmtEnums\"H\n\nInsertMode\022\014\n\010OR_ER"
-  "ROR\020\000\022\r\n\tOR_IGNORE\020\001\022\016\n\nOR_REPLACE\020\002\022\r\n\t"
-  "OR_UPDATE\020\003\"\232\001\n\026ResolvedMergeWhenEnums\"N"
-  "\n\tMatchType\022\013\n\007MATCHED\020\000\022\031\n\025NOT_MATCHED_"
-  "BY_SOURCE\020\001\022\031\n\025NOT_MATCHED_BY_TARGET\020\002\"0"
-  "\n\nActionType\022\n\n\006INSERT\020\000\022\n\n\006UPDATE\020\001\022\n\n\006"
-  "DELETE\020\002\"X\n\030ResolvedArgumentDefEnums\"<\n\014"
-  "ArgumentKind\022\n\n\006SCALAR\020\000\022\r\n\tAGGREGATE\020\001\022"
-  "\021\n\rNOT_AGGREGATE\020\002\"Y\n\035ResolvedFunctionCa"
-  "llBaseEnums\"8\n\tErrorMode\022\026\n\022DEFAULT_ERRO"
-  "R_MODE\020\000\022\023\n\017SAFE_ERROR_MODE\020\001\"\200\001\n&Resolv"
-  "edNonScalarFunctionCallBaseEnums\"V\n\024Null"
-  "HandlingModifier\022\031\n\025DEFAULT_NULL_HANDLIN"
-  "G\020\000\022\020\n\014IGNORE_NULLS\020\001\022\021\n\rRESPECT_NULLS\020\002"
-  "\"[\n$ResolvedAggregateHavingModifierEnums"
-  "\"3\n\022HavingModifierKind\022\013\n\007INVALID\020\000\022\007\n\003M"
-  "AX\020\001\022\007\n\003MIN\020\002\"W\n\026ResolvedStatementEnums\""
-  "=\n\014ObjectAccess\022\010\n\004NONE\020\000\022\010\n\004READ\020\001\022\t\n\005W"
-  "RITE\020\002\022\016\n\nREAD_WRITE\020\003\"w\n\027ResolvedImport"
-  "StmtEnums\"\\\n\nImportKind\022\n\n\006MODULE\020\000\022\t\n\005P"
-  "ROTO\020\001\0227\n*__ImportKind__switch_must_have"
-  "_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\231\001\n\027ResolvedFore"
-  "ignKeyEnums\"3\n\tMatchMode\022\n\n\006SIMPLE\020\000\022\010\n\004"
-  "FULL\020\001\022\020\n\014NOT_DISTINCT\020\002\"I\n\017ActionOperat"
-  "ion\022\r\n\tNO_ACTION\020\000\022\014\n\010RESTRICT\020\001\022\013\n\007CASC"
-  "ADE\020\002\022\014\n\010SET_NULL\020\003\"T\n\034ResolvedAuxLoadDa"
-  "taStmtEnums\"4\n\rInsertionMode\022\010\n\004NONE\020\000\022\n"
-  "\n\006APPEND\020\001\022\r\n\tOVERWRITE\020\002B;\n\036com.google."
-  "zetasql.resolvedastB\027ZetaSQLResolvedASTE"
-  "numsP\001"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto = {
-  false, false, 3046, descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto, "zetasql/resolved_ast/resolved_ast_enums.proto", 
-  &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once, nullptr, 0, 22,
-  schemas, file_default_instances, TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto::offsets,
-  file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto, file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto, file_level_service_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto,
-};
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter() {
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter() {
   return &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSubqueryExprEnums_SubqueryType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
@@ -558,8 +698,9 @@ bool ResolvedSubqueryExprEnums_SubqueryType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedSubqueryExprEnums_SubqueryType ResolvedSubqueryExprEnums::SCALAR;
 constexpr ResolvedSubqueryExprEnums_SubqueryType ResolvedSubqueryExprEnums::ARRAY;
 constexpr ResolvedSubqueryExprEnums_SubqueryType ResolvedSubqueryExprEnums::EXISTS;
@@ -569,7 +710,9 @@ constexpr ResolvedSubqueryExprEnums_SubqueryType ResolvedSubqueryExprEnums::LIKE
 constexpr ResolvedSubqueryExprEnums_SubqueryType ResolvedSubqueryExprEnums::SubqueryType_MIN;
 constexpr ResolvedSubqueryExprEnums_SubqueryType ResolvedSubqueryExprEnums::SubqueryType_MAX;
 constexpr int ResolvedSubqueryExprEnums::SubqueryType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedJoinScanEnums_JoinType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[1];
@@ -585,8 +728,9 @@ bool ResolvedJoinScanEnums_JoinType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedJoinScanEnums_JoinType ResolvedJoinScanEnums::INNER;
 constexpr ResolvedJoinScanEnums_JoinType ResolvedJoinScanEnums::LEFT;
 constexpr ResolvedJoinScanEnums_JoinType ResolvedJoinScanEnums::RIGHT;
@@ -594,7 +738,9 @@ constexpr ResolvedJoinScanEnums_JoinType ResolvedJoinScanEnums::FULL;
 constexpr ResolvedJoinScanEnums_JoinType ResolvedJoinScanEnums::JoinType_MIN;
 constexpr ResolvedJoinScanEnums_JoinType ResolvedJoinScanEnums::JoinType_MAX;
 constexpr int ResolvedJoinScanEnums::JoinType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSetOperationScanEnums_SetOperationType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[2];
@@ -612,8 +758,9 @@ bool ResolvedSetOperationScanEnums_SetOperationType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedSetOperationScanEnums_SetOperationType ResolvedSetOperationScanEnums::UNION_ALL;
 constexpr ResolvedSetOperationScanEnums_SetOperationType ResolvedSetOperationScanEnums::UNION_DISTINCT;
 constexpr ResolvedSetOperationScanEnums_SetOperationType ResolvedSetOperationScanEnums::INTERSECT_ALL;
@@ -623,7 +770,9 @@ constexpr ResolvedSetOperationScanEnums_SetOperationType ResolvedSetOperationSca
 constexpr ResolvedSetOperationScanEnums_SetOperationType ResolvedSetOperationScanEnums::SetOperationType_MIN;
 constexpr ResolvedSetOperationScanEnums_SetOperationType ResolvedSetOperationScanEnums::SetOperationType_MAX;
 constexpr int ResolvedSetOperationScanEnums::SetOperationType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[3];
@@ -638,15 +787,18 @@ bool ResolvedSetOperationScanEnums_SetOperationColumnMatchMode_IsValid(int value
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums::BY_POSITION;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums::CORRESPONDING;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums::CORRESPONDING_BY;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums::SetOperationColumnMatchMode_MIN;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnMatchMode ResolvedSetOperationScanEnums::SetOperationColumnMatchMode_MAX;
 constexpr int ResolvedSetOperationScanEnums::SetOperationColumnMatchMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[4];
@@ -662,8 +814,9 @@ bool ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode_IsValid(int
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums::STRICT;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums::INNER;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums::LEFT;
@@ -671,7 +824,9 @@ constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode Resolv
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums::SetOperationColumnPropagationMode_MIN;
 constexpr ResolvedSetOperationScanEnums_SetOperationColumnPropagationMode ResolvedSetOperationScanEnums::SetOperationColumnPropagationMode_MAX;
 constexpr int ResolvedSetOperationScanEnums::SetOperationColumnPropagationMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedRecursiveScanEnums_RecursiveSetOperationType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[5];
@@ -685,14 +840,17 @@ bool ResolvedRecursiveScanEnums_RecursiveSetOperationType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedRecursiveScanEnums_RecursiveSetOperationType ResolvedRecursiveScanEnums::UNION_ALL;
 constexpr ResolvedRecursiveScanEnums_RecursiveSetOperationType ResolvedRecursiveScanEnums::UNION_DISTINCT;
 constexpr ResolvedRecursiveScanEnums_RecursiveSetOperationType ResolvedRecursiveScanEnums::RecursiveSetOperationType_MIN;
 constexpr ResolvedRecursiveScanEnums_RecursiveSetOperationType ResolvedRecursiveScanEnums::RecursiveSetOperationType_MAX;
 constexpr int ResolvedRecursiveScanEnums::RecursiveSetOperationType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedSampleScanEnums_SampleUnit_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[6];
@@ -706,14 +864,17 @@ bool ResolvedSampleScanEnums_SampleUnit_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedSampleScanEnums_SampleUnit ResolvedSampleScanEnums::ROWS;
 constexpr ResolvedSampleScanEnums_SampleUnit ResolvedSampleScanEnums::PERCENT;
 constexpr ResolvedSampleScanEnums_SampleUnit ResolvedSampleScanEnums::SampleUnit_MIN;
 constexpr ResolvedSampleScanEnums_SampleUnit ResolvedSampleScanEnums::SampleUnit_MAX;
 constexpr int ResolvedSampleScanEnums::SampleUnit_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedOrderByItemEnums_NullOrderMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[7];
@@ -728,15 +889,18 @@ bool ResolvedOrderByItemEnums_NullOrderMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedOrderByItemEnums_NullOrderMode ResolvedOrderByItemEnums::ORDER_UNSPECIFIED;
 constexpr ResolvedOrderByItemEnums_NullOrderMode ResolvedOrderByItemEnums::NULLS_FIRST;
 constexpr ResolvedOrderByItemEnums_NullOrderMode ResolvedOrderByItemEnums::NULLS_LAST;
 constexpr ResolvedOrderByItemEnums_NullOrderMode ResolvedOrderByItemEnums::NullOrderMode_MIN;
 constexpr ResolvedOrderByItemEnums_NullOrderMode ResolvedOrderByItemEnums::NullOrderMode_MAX;
 constexpr int ResolvedOrderByItemEnums::NullOrderMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedCreateStatementEnums_CreateScope_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[8];
@@ -752,8 +916,9 @@ bool ResolvedCreateStatementEnums_CreateScope_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedCreateStatementEnums_CreateScope ResolvedCreateStatementEnums::CREATE_DEFAULT_SCOPE;
 constexpr ResolvedCreateStatementEnums_CreateScope ResolvedCreateStatementEnums::CREATE_PRIVATE;
 constexpr ResolvedCreateStatementEnums_CreateScope ResolvedCreateStatementEnums::CREATE_PUBLIC;
@@ -761,7 +926,9 @@ constexpr ResolvedCreateStatementEnums_CreateScope ResolvedCreateStatementEnums:
 constexpr ResolvedCreateStatementEnums_CreateScope ResolvedCreateStatementEnums::CreateScope_MIN;
 constexpr ResolvedCreateStatementEnums_CreateScope ResolvedCreateStatementEnums::CreateScope_MAX;
 constexpr int ResolvedCreateStatementEnums::CreateScope_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedCreateStatementEnums_CreateMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[9];
@@ -776,15 +943,18 @@ bool ResolvedCreateStatementEnums_CreateMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedCreateStatementEnums_CreateMode ResolvedCreateStatementEnums::CREATE_DEFAULT;
 constexpr ResolvedCreateStatementEnums_CreateMode ResolvedCreateStatementEnums::CREATE_OR_REPLACE;
 constexpr ResolvedCreateStatementEnums_CreateMode ResolvedCreateStatementEnums::CREATE_IF_NOT_EXISTS;
 constexpr ResolvedCreateStatementEnums_CreateMode ResolvedCreateStatementEnums::CreateMode_MIN;
 constexpr ResolvedCreateStatementEnums_CreateMode ResolvedCreateStatementEnums::CreateMode_MAX;
 constexpr int ResolvedCreateStatementEnums::CreateMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedCreateStatementEnums_SqlSecurity_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[10];
@@ -799,15 +969,18 @@ bool ResolvedCreateStatementEnums_SqlSecurity_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedCreateStatementEnums_SqlSecurity ResolvedCreateStatementEnums::SQL_SECURITY_UNSPECIFIED;
 constexpr ResolvedCreateStatementEnums_SqlSecurity ResolvedCreateStatementEnums::SQL_SECURITY_DEFINER;
 constexpr ResolvedCreateStatementEnums_SqlSecurity ResolvedCreateStatementEnums::SQL_SECURITY_INVOKER;
 constexpr ResolvedCreateStatementEnums_SqlSecurity ResolvedCreateStatementEnums::SqlSecurity_MIN;
 constexpr ResolvedCreateStatementEnums_SqlSecurity ResolvedCreateStatementEnums::SqlSecurity_MAX;
 constexpr int ResolvedCreateStatementEnums::SqlSecurity_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedCreateStatementEnums_DeterminismLevel_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[11];
@@ -825,8 +998,9 @@ bool ResolvedCreateStatementEnums_DeterminismLevel_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedCreateStatementEnums_DeterminismLevel ResolvedCreateStatementEnums::DETERMINISM_UNSPECIFIED;
 constexpr ResolvedCreateStatementEnums_DeterminismLevel ResolvedCreateStatementEnums::DETERMINISM_DETERMINISTIC;
 constexpr ResolvedCreateStatementEnums_DeterminismLevel ResolvedCreateStatementEnums::DETERMINISM_NOT_DETERMINISTIC;
@@ -836,7 +1010,9 @@ constexpr ResolvedCreateStatementEnums_DeterminismLevel ResolvedCreateStatementE
 constexpr ResolvedCreateStatementEnums_DeterminismLevel ResolvedCreateStatementEnums::DeterminismLevel_MIN;
 constexpr ResolvedCreateStatementEnums_DeterminismLevel ResolvedCreateStatementEnums::DeterminismLevel_MAX;
 constexpr int ResolvedCreateStatementEnums::DeterminismLevel_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedGeneratedColumnInfoEnums_StoredMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[12];
@@ -851,15 +1027,18 @@ bool ResolvedGeneratedColumnInfoEnums_StoredMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedGeneratedColumnInfoEnums_StoredMode ResolvedGeneratedColumnInfoEnums::NON_STORED;
 constexpr ResolvedGeneratedColumnInfoEnums_StoredMode ResolvedGeneratedColumnInfoEnums::STORED;
 constexpr ResolvedGeneratedColumnInfoEnums_StoredMode ResolvedGeneratedColumnInfoEnums::STORED_VOLATILE;
 constexpr ResolvedGeneratedColumnInfoEnums_StoredMode ResolvedGeneratedColumnInfoEnums::StoredMode_MIN;
 constexpr ResolvedGeneratedColumnInfoEnums_StoredMode ResolvedGeneratedColumnInfoEnums::StoredMode_MAX;
 constexpr int ResolvedGeneratedColumnInfoEnums::StoredMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedDropStmtEnums_DropMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[13];
@@ -874,15 +1053,18 @@ bool ResolvedDropStmtEnums_DropMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedDropStmtEnums_DropMode ResolvedDropStmtEnums::DROP_MODE_UNSPECIFIED;
 constexpr ResolvedDropStmtEnums_DropMode ResolvedDropStmtEnums::RESTRICT;
 constexpr ResolvedDropStmtEnums_DropMode ResolvedDropStmtEnums::CASCADE;
 constexpr ResolvedDropStmtEnums_DropMode ResolvedDropStmtEnums::DropMode_MIN;
 constexpr ResolvedDropStmtEnums_DropMode ResolvedDropStmtEnums::DropMode_MAX;
 constexpr int ResolvedDropStmtEnums::DropMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedBeginStmtEnums_ReadWriteMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[14];
@@ -897,15 +1079,18 @@ bool ResolvedBeginStmtEnums_ReadWriteMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedBeginStmtEnums_ReadWriteMode ResolvedBeginStmtEnums::MODE_UNSPECIFIED;
 constexpr ResolvedBeginStmtEnums_ReadWriteMode ResolvedBeginStmtEnums::MODE_READ_ONLY;
 constexpr ResolvedBeginStmtEnums_ReadWriteMode ResolvedBeginStmtEnums::MODE_READ_WRITE;
 constexpr ResolvedBeginStmtEnums_ReadWriteMode ResolvedBeginStmtEnums::ReadWriteMode_MIN;
 constexpr ResolvedBeginStmtEnums_ReadWriteMode ResolvedBeginStmtEnums::ReadWriteMode_MAX;
 constexpr int ResolvedBeginStmtEnums::ReadWriteMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedWindowFrameEnums_FrameUnit_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[15];
@@ -919,14 +1104,17 @@ bool ResolvedWindowFrameEnums_FrameUnit_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedWindowFrameEnums_FrameUnit ResolvedWindowFrameEnums::ROWS;
 constexpr ResolvedWindowFrameEnums_FrameUnit ResolvedWindowFrameEnums::RANGE;
 constexpr ResolvedWindowFrameEnums_FrameUnit ResolvedWindowFrameEnums::FrameUnit_MIN;
 constexpr ResolvedWindowFrameEnums_FrameUnit ResolvedWindowFrameEnums::FrameUnit_MAX;
 constexpr int ResolvedWindowFrameEnums::FrameUnit_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedWindowFrameExprEnums_BoundaryType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[16];
@@ -943,8 +1131,9 @@ bool ResolvedWindowFrameExprEnums_BoundaryType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedWindowFrameExprEnums_BoundaryType ResolvedWindowFrameExprEnums::UNBOUNDED_PRECEDING;
 constexpr ResolvedWindowFrameExprEnums_BoundaryType ResolvedWindowFrameExprEnums::OFFSET_PRECEDING;
 constexpr ResolvedWindowFrameExprEnums_BoundaryType ResolvedWindowFrameExprEnums::CURRENT_ROW;
@@ -953,7 +1142,9 @@ constexpr ResolvedWindowFrameExprEnums_BoundaryType ResolvedWindowFrameExprEnums
 constexpr ResolvedWindowFrameExprEnums_BoundaryType ResolvedWindowFrameExprEnums::BoundaryType_MIN;
 constexpr ResolvedWindowFrameExprEnums_BoundaryType ResolvedWindowFrameExprEnums::BoundaryType_MAX;
 constexpr int ResolvedWindowFrameExprEnums::BoundaryType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedInsertStmtEnums_InsertMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[17];
@@ -969,8 +1160,9 @@ bool ResolvedInsertStmtEnums_InsertMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedInsertStmtEnums_InsertMode ResolvedInsertStmtEnums::OR_ERROR;
 constexpr ResolvedInsertStmtEnums_InsertMode ResolvedInsertStmtEnums::OR_IGNORE;
 constexpr ResolvedInsertStmtEnums_InsertMode ResolvedInsertStmtEnums::OR_REPLACE;
@@ -978,7 +1170,9 @@ constexpr ResolvedInsertStmtEnums_InsertMode ResolvedInsertStmtEnums::OR_UPDATE;
 constexpr ResolvedInsertStmtEnums_InsertMode ResolvedInsertStmtEnums::InsertMode_MIN;
 constexpr ResolvedInsertStmtEnums_InsertMode ResolvedInsertStmtEnums::InsertMode_MAX;
 constexpr int ResolvedInsertStmtEnums::InsertMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedMergeWhenEnums_MatchType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[18];
@@ -993,15 +1187,18 @@ bool ResolvedMergeWhenEnums_MatchType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedMergeWhenEnums_MatchType ResolvedMergeWhenEnums::MATCHED;
 constexpr ResolvedMergeWhenEnums_MatchType ResolvedMergeWhenEnums::NOT_MATCHED_BY_SOURCE;
 constexpr ResolvedMergeWhenEnums_MatchType ResolvedMergeWhenEnums::NOT_MATCHED_BY_TARGET;
 constexpr ResolvedMergeWhenEnums_MatchType ResolvedMergeWhenEnums::MatchType_MIN;
 constexpr ResolvedMergeWhenEnums_MatchType ResolvedMergeWhenEnums::MatchType_MAX;
 constexpr int ResolvedMergeWhenEnums::MatchType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedMergeWhenEnums_ActionType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[19];
@@ -1016,15 +1213,18 @@ bool ResolvedMergeWhenEnums_ActionType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedMergeWhenEnums_ActionType ResolvedMergeWhenEnums::INSERT;
 constexpr ResolvedMergeWhenEnums_ActionType ResolvedMergeWhenEnums::UPDATE;
 constexpr ResolvedMergeWhenEnums_ActionType ResolvedMergeWhenEnums::DELETE;
 constexpr ResolvedMergeWhenEnums_ActionType ResolvedMergeWhenEnums::ActionType_MIN;
 constexpr ResolvedMergeWhenEnums_ActionType ResolvedMergeWhenEnums::ActionType_MAX;
 constexpr int ResolvedMergeWhenEnums::ActionType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedArgumentDefEnums_ArgumentKind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[20];
@@ -1039,15 +1239,18 @@ bool ResolvedArgumentDefEnums_ArgumentKind_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedArgumentDefEnums_ArgumentKind ResolvedArgumentDefEnums::SCALAR;
 constexpr ResolvedArgumentDefEnums_ArgumentKind ResolvedArgumentDefEnums::AGGREGATE;
 constexpr ResolvedArgumentDefEnums_ArgumentKind ResolvedArgumentDefEnums::NOT_AGGREGATE;
 constexpr ResolvedArgumentDefEnums_ArgumentKind ResolvedArgumentDefEnums::ArgumentKind_MIN;
 constexpr ResolvedArgumentDefEnums_ArgumentKind ResolvedArgumentDefEnums::ArgumentKind_MAX;
 constexpr int ResolvedArgumentDefEnums::ArgumentKind_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedFunctionCallBaseEnums_ErrorMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[21];
@@ -1061,14 +1264,17 @@ bool ResolvedFunctionCallBaseEnums_ErrorMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedFunctionCallBaseEnums_ErrorMode ResolvedFunctionCallBaseEnums::DEFAULT_ERROR_MODE;
 constexpr ResolvedFunctionCallBaseEnums_ErrorMode ResolvedFunctionCallBaseEnums::SAFE_ERROR_MODE;
 constexpr ResolvedFunctionCallBaseEnums_ErrorMode ResolvedFunctionCallBaseEnums::ErrorMode_MIN;
 constexpr ResolvedFunctionCallBaseEnums_ErrorMode ResolvedFunctionCallBaseEnums::ErrorMode_MAX;
 constexpr int ResolvedFunctionCallBaseEnums::ErrorMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[22];
@@ -1083,15 +1289,18 @@ bool ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier_IsValid(int val
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier ResolvedNonScalarFunctionCallBaseEnums::DEFAULT_NULL_HANDLING;
 constexpr ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier ResolvedNonScalarFunctionCallBaseEnums::IGNORE_NULLS;
 constexpr ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier ResolvedNonScalarFunctionCallBaseEnums::RESPECT_NULLS;
 constexpr ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier ResolvedNonScalarFunctionCallBaseEnums::NullHandlingModifier_MIN;
 constexpr ResolvedNonScalarFunctionCallBaseEnums_NullHandlingModifier ResolvedNonScalarFunctionCallBaseEnums::NullHandlingModifier_MAX;
 constexpr int ResolvedNonScalarFunctionCallBaseEnums::NullHandlingModifier_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedAggregateHavingModifierEnums_HavingModifierKind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[23];
@@ -1106,15 +1315,18 @@ bool ResolvedAggregateHavingModifierEnums_HavingModifierKind_IsValid(int value) 
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedAggregateHavingModifierEnums_HavingModifierKind ResolvedAggregateHavingModifierEnums::INVALID;
 constexpr ResolvedAggregateHavingModifierEnums_HavingModifierKind ResolvedAggregateHavingModifierEnums::MAX;
 constexpr ResolvedAggregateHavingModifierEnums_HavingModifierKind ResolvedAggregateHavingModifierEnums::MIN;
 constexpr ResolvedAggregateHavingModifierEnums_HavingModifierKind ResolvedAggregateHavingModifierEnums::HavingModifierKind_MIN;
 constexpr ResolvedAggregateHavingModifierEnums_HavingModifierKind ResolvedAggregateHavingModifierEnums::HavingModifierKind_MAX;
 constexpr int ResolvedAggregateHavingModifierEnums::HavingModifierKind_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedStatementEnums_ObjectAccess_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[24];
@@ -1130,8 +1342,9 @@ bool ResolvedStatementEnums_ObjectAccess_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedStatementEnums_ObjectAccess ResolvedStatementEnums::NONE;
 constexpr ResolvedStatementEnums_ObjectAccess ResolvedStatementEnums::READ;
 constexpr ResolvedStatementEnums_ObjectAccess ResolvedStatementEnums::WRITE;
@@ -1139,7 +1352,9 @@ constexpr ResolvedStatementEnums_ObjectAccess ResolvedStatementEnums::READ_WRITE
 constexpr ResolvedStatementEnums_ObjectAccess ResolvedStatementEnums::ObjectAccess_MIN;
 constexpr ResolvedStatementEnums_ObjectAccess ResolvedStatementEnums::ObjectAccess_MAX;
 constexpr int ResolvedStatementEnums::ObjectAccess_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedImportStmtEnums_ImportKind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[25];
@@ -1154,15 +1369,18 @@ bool ResolvedImportStmtEnums_ImportKind_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedImportStmtEnums_ImportKind ResolvedImportStmtEnums::MODULE;
 constexpr ResolvedImportStmtEnums_ImportKind ResolvedImportStmtEnums::PROTO;
 constexpr ResolvedImportStmtEnums_ImportKind ResolvedImportStmtEnums::__ImportKind__switch_must_have_a_default__;
 constexpr ResolvedImportStmtEnums_ImportKind ResolvedImportStmtEnums::ImportKind_MIN;
 constexpr ResolvedImportStmtEnums_ImportKind ResolvedImportStmtEnums::ImportKind_MAX;
 constexpr int ResolvedImportStmtEnums::ImportKind_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedForeignKeyEnums_MatchMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[26];
@@ -1177,15 +1395,18 @@ bool ResolvedForeignKeyEnums_MatchMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedForeignKeyEnums_MatchMode ResolvedForeignKeyEnums::SIMPLE;
 constexpr ResolvedForeignKeyEnums_MatchMode ResolvedForeignKeyEnums::FULL;
 constexpr ResolvedForeignKeyEnums_MatchMode ResolvedForeignKeyEnums::NOT_DISTINCT;
 constexpr ResolvedForeignKeyEnums_MatchMode ResolvedForeignKeyEnums::MatchMode_MIN;
 constexpr ResolvedForeignKeyEnums_MatchMode ResolvedForeignKeyEnums::MatchMode_MAX;
 constexpr int ResolvedForeignKeyEnums::MatchMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedForeignKeyEnums_ActionOperation_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[27];
@@ -1201,8 +1422,9 @@ bool ResolvedForeignKeyEnums_ActionOperation_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedForeignKeyEnums_ActionOperation ResolvedForeignKeyEnums::NO_ACTION;
 constexpr ResolvedForeignKeyEnums_ActionOperation ResolvedForeignKeyEnums::RESTRICT;
 constexpr ResolvedForeignKeyEnums_ActionOperation ResolvedForeignKeyEnums::CASCADE;
@@ -1210,7 +1432,9 @@ constexpr ResolvedForeignKeyEnums_ActionOperation ResolvedForeignKeyEnums::SET_N
 constexpr ResolvedForeignKeyEnums_ActionOperation ResolvedForeignKeyEnums::ActionOperation_MIN;
 constexpr ResolvedForeignKeyEnums_ActionOperation ResolvedForeignKeyEnums::ActionOperation_MAX;
 constexpr int ResolvedForeignKeyEnums::ActionOperation_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedAuxLoadDataStmtEnums_InsertionMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[28];
@@ -1225,29 +1449,57 @@ bool ResolvedAuxLoadDataStmtEnums_InsertionMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadDataStmtEnums::NONE;
 constexpr ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadDataStmtEnums::APPEND;
 constexpr ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadDataStmtEnums::OVERWRITE;
 constexpr ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadDataStmtEnums::InsertionMode_MIN;
 constexpr ResolvedAuxLoadDataStmtEnums_InsertionMode ResolvedAuxLoadDataStmtEnums::InsertionMode_MAX;
 constexpr int ResolvedAuxLoadDataStmtEnums::InsertionMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedDropIndexStmtEnums_IndexType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto);
+  return file_level_enum_descriptors_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[29];
+}
+bool ResolvedDropIndexStmtEnums_IndexType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr ResolvedDropIndexStmtEnums_IndexType ResolvedDropIndexStmtEnums::INDEX_DEFAULT;
+constexpr ResolvedDropIndexStmtEnums_IndexType ResolvedDropIndexStmtEnums::INDEX_SEARCH;
+constexpr ResolvedDropIndexStmtEnums_IndexType ResolvedDropIndexStmtEnums::INDEX_VECTOR;
+constexpr ResolvedDropIndexStmtEnums_IndexType ResolvedDropIndexStmtEnums::IndexType_MIN;
+constexpr ResolvedDropIndexStmtEnums_IndexType ResolvedDropIndexStmtEnums::IndexType_MAX;
+constexpr int ResolvedDropIndexStmtEnums::IndexType_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 // ===================================================================
 
 class ResolvedSubqueryExprEnums::_Internal {
  public:
 };
 
-ResolvedSubqueryExprEnums::ResolvedSubqueryExprEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedSubqueryExprEnums::ResolvedSubqueryExprEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedSubqueryExprEnums)
 }
 ResolvedSubqueryExprEnums::ResolvedSubqueryExprEnums(const ResolvedSubqueryExprEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedSubqueryExprEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedSubqueryExprEnums)
 }
@@ -1269,24 +1521,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedSubqueryExprEnums::Get
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSubqueryExprEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[0]);
 }
-
 // ===================================================================
 
 class ResolvedJoinScanEnums::_Internal {
  public:
 };
 
-ResolvedJoinScanEnums::ResolvedJoinScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedJoinScanEnums::ResolvedJoinScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedJoinScanEnums)
 }
 ResolvedJoinScanEnums::ResolvedJoinScanEnums(const ResolvedJoinScanEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedJoinScanEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedJoinScanEnums)
 }
@@ -1308,24 +1559,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedJoinScanEnums::GetClas
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedJoinScanEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[1]);
 }
-
 // ===================================================================
 
 class ResolvedSetOperationScanEnums::_Internal {
  public:
 };
 
-ResolvedSetOperationScanEnums::ResolvedSetOperationScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedSetOperationScanEnums::ResolvedSetOperationScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedSetOperationScanEnums)
 }
 ResolvedSetOperationScanEnums::ResolvedSetOperationScanEnums(const ResolvedSetOperationScanEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedSetOperationScanEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedSetOperationScanEnums)
 }
@@ -1347,24 +1597,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedSetOperationScanEnums:
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSetOperationScanEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[2]);
 }
-
 // ===================================================================
 
 class ResolvedRecursiveScanEnums::_Internal {
  public:
 };
 
-ResolvedRecursiveScanEnums::ResolvedRecursiveScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedRecursiveScanEnums::ResolvedRecursiveScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedRecursiveScanEnums)
 }
 ResolvedRecursiveScanEnums::ResolvedRecursiveScanEnums(const ResolvedRecursiveScanEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedRecursiveScanEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedRecursiveScanEnums)
 }
@@ -1386,24 +1635,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedRecursiveScanEnums::Ge
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedRecursiveScanEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[3]);
 }
-
 // ===================================================================
 
 class ResolvedSampleScanEnums::_Internal {
  public:
 };
 
-ResolvedSampleScanEnums::ResolvedSampleScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedSampleScanEnums::ResolvedSampleScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedSampleScanEnums)
 }
 ResolvedSampleScanEnums::ResolvedSampleScanEnums(const ResolvedSampleScanEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedSampleScanEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedSampleScanEnums)
 }
@@ -1425,24 +1673,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedSampleScanEnums::GetCl
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedSampleScanEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[4]);
 }
-
 // ===================================================================
 
 class ResolvedOrderByItemEnums::_Internal {
  public:
 };
 
-ResolvedOrderByItemEnums::ResolvedOrderByItemEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedOrderByItemEnums::ResolvedOrderByItemEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedOrderByItemEnums)
 }
 ResolvedOrderByItemEnums::ResolvedOrderByItemEnums(const ResolvedOrderByItemEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedOrderByItemEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedOrderByItemEnums)
 }
@@ -1464,24 +1711,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedOrderByItemEnums::GetC
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedOrderByItemEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[5]);
 }
-
 // ===================================================================
 
 class ResolvedCreateStatementEnums::_Internal {
  public:
 };
 
-ResolvedCreateStatementEnums::ResolvedCreateStatementEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedCreateStatementEnums::ResolvedCreateStatementEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedCreateStatementEnums)
 }
 ResolvedCreateStatementEnums::ResolvedCreateStatementEnums(const ResolvedCreateStatementEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedCreateStatementEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedCreateStatementEnums)
 }
@@ -1503,24 +1749,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedCreateStatementEnums::
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedCreateStatementEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[6]);
 }
-
 // ===================================================================
 
 class ResolvedGeneratedColumnInfoEnums::_Internal {
  public:
 };
 
-ResolvedGeneratedColumnInfoEnums::ResolvedGeneratedColumnInfoEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedGeneratedColumnInfoEnums::ResolvedGeneratedColumnInfoEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedGeneratedColumnInfoEnums)
 }
 ResolvedGeneratedColumnInfoEnums::ResolvedGeneratedColumnInfoEnums(const ResolvedGeneratedColumnInfoEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedGeneratedColumnInfoEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedGeneratedColumnInfoEnums)
 }
@@ -1542,24 +1787,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedGeneratedColumnInfoEnu
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedGeneratedColumnInfoEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[7]);
 }
-
 // ===================================================================
 
 class ResolvedDropStmtEnums::_Internal {
  public:
 };
 
-ResolvedDropStmtEnums::ResolvedDropStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedDropStmtEnums::ResolvedDropStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedDropStmtEnums)
 }
 ResolvedDropStmtEnums::ResolvedDropStmtEnums(const ResolvedDropStmtEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedDropStmtEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedDropStmtEnums)
 }
@@ -1581,24 +1825,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedDropStmtEnums::GetClas
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropStmtEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[8]);
 }
-
 // ===================================================================
 
 class ResolvedBeginStmtEnums::_Internal {
  public:
 };
 
-ResolvedBeginStmtEnums::ResolvedBeginStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedBeginStmtEnums::ResolvedBeginStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedBeginStmtEnums)
 }
 ResolvedBeginStmtEnums::ResolvedBeginStmtEnums(const ResolvedBeginStmtEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedBeginStmtEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedBeginStmtEnums)
 }
@@ -1620,24 +1863,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedBeginStmtEnums::GetCla
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedBeginStmtEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[9]);
 }
-
 // ===================================================================
 
 class ResolvedWindowFrameEnums::_Internal {
  public:
 };
 
-ResolvedWindowFrameEnums::ResolvedWindowFrameEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedWindowFrameEnums::ResolvedWindowFrameEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedWindowFrameEnums)
 }
 ResolvedWindowFrameEnums::ResolvedWindowFrameEnums(const ResolvedWindowFrameEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedWindowFrameEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedWindowFrameEnums)
 }
@@ -1659,24 +1901,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedWindowFrameEnums::GetC
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWindowFrameEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[10]);
 }
-
 // ===================================================================
 
 class ResolvedWindowFrameExprEnums::_Internal {
  public:
 };
 
-ResolvedWindowFrameExprEnums::ResolvedWindowFrameExprEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedWindowFrameExprEnums::ResolvedWindowFrameExprEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedWindowFrameExprEnums)
 }
 ResolvedWindowFrameExprEnums::ResolvedWindowFrameExprEnums(const ResolvedWindowFrameExprEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedWindowFrameExprEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedWindowFrameExprEnums)
 }
@@ -1698,24 +1939,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedWindowFrameExprEnums::
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedWindowFrameExprEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[11]);
 }
-
 // ===================================================================
 
 class ResolvedInsertStmtEnums::_Internal {
  public:
 };
 
-ResolvedInsertStmtEnums::ResolvedInsertStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedInsertStmtEnums::ResolvedInsertStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedInsertStmtEnums)
 }
 ResolvedInsertStmtEnums::ResolvedInsertStmtEnums(const ResolvedInsertStmtEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedInsertStmtEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedInsertStmtEnums)
 }
@@ -1737,24 +1977,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedInsertStmtEnums::GetCl
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedInsertStmtEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[12]);
 }
-
 // ===================================================================
 
 class ResolvedMergeWhenEnums::_Internal {
  public:
 };
 
-ResolvedMergeWhenEnums::ResolvedMergeWhenEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedMergeWhenEnums::ResolvedMergeWhenEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedMergeWhenEnums)
 }
 ResolvedMergeWhenEnums::ResolvedMergeWhenEnums(const ResolvedMergeWhenEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedMergeWhenEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedMergeWhenEnums)
 }
@@ -1776,24 +2015,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedMergeWhenEnums::GetCla
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedMergeWhenEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[13]);
 }
-
 // ===================================================================
 
 class ResolvedArgumentDefEnums::_Internal {
  public:
 };
 
-ResolvedArgumentDefEnums::ResolvedArgumentDefEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedArgumentDefEnums::ResolvedArgumentDefEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedArgumentDefEnums)
 }
 ResolvedArgumentDefEnums::ResolvedArgumentDefEnums(const ResolvedArgumentDefEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedArgumentDefEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedArgumentDefEnums)
 }
@@ -1815,24 +2053,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedArgumentDefEnums::GetC
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedArgumentDefEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[14]);
 }
-
 // ===================================================================
 
 class ResolvedFunctionCallBaseEnums::_Internal {
  public:
 };
 
-ResolvedFunctionCallBaseEnums::ResolvedFunctionCallBaseEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedFunctionCallBaseEnums::ResolvedFunctionCallBaseEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedFunctionCallBaseEnums)
 }
 ResolvedFunctionCallBaseEnums::ResolvedFunctionCallBaseEnums(const ResolvedFunctionCallBaseEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedFunctionCallBaseEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedFunctionCallBaseEnums)
 }
@@ -1854,24 +2091,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedFunctionCallBaseEnums:
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedFunctionCallBaseEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[15]);
 }
-
 // ===================================================================
 
 class ResolvedNonScalarFunctionCallBaseEnums::_Internal {
  public:
 };
 
-ResolvedNonScalarFunctionCallBaseEnums::ResolvedNonScalarFunctionCallBaseEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedNonScalarFunctionCallBaseEnums::ResolvedNonScalarFunctionCallBaseEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedNonScalarFunctionCallBaseEnums)
 }
 ResolvedNonScalarFunctionCallBaseEnums::ResolvedNonScalarFunctionCallBaseEnums(const ResolvedNonScalarFunctionCallBaseEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedNonScalarFunctionCallBaseEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedNonScalarFunctionCallBaseEnums)
 }
@@ -1893,24 +2129,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedNonScalarFunctionCallB
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedNonScalarFunctionCallBaseEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[16]);
 }
-
 // ===================================================================
 
 class ResolvedAggregateHavingModifierEnums::_Internal {
  public:
 };
 
-ResolvedAggregateHavingModifierEnums::ResolvedAggregateHavingModifierEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedAggregateHavingModifierEnums::ResolvedAggregateHavingModifierEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedAggregateHavingModifierEnums)
 }
 ResolvedAggregateHavingModifierEnums::ResolvedAggregateHavingModifierEnums(const ResolvedAggregateHavingModifierEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedAggregateHavingModifierEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedAggregateHavingModifierEnums)
 }
@@ -1932,24 +2167,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedAggregateHavingModifie
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAggregateHavingModifierEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[17]);
 }
-
 // ===================================================================
 
 class ResolvedStatementEnums::_Internal {
  public:
 };
 
-ResolvedStatementEnums::ResolvedStatementEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedStatementEnums::ResolvedStatementEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedStatementEnums)
 }
 ResolvedStatementEnums::ResolvedStatementEnums(const ResolvedStatementEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedStatementEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedStatementEnums)
 }
@@ -1971,24 +2205,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedStatementEnums::GetCla
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedStatementEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[18]);
 }
-
 // ===================================================================
 
 class ResolvedImportStmtEnums::_Internal {
  public:
 };
 
-ResolvedImportStmtEnums::ResolvedImportStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedImportStmtEnums::ResolvedImportStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedImportStmtEnums)
 }
 ResolvedImportStmtEnums::ResolvedImportStmtEnums(const ResolvedImportStmtEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedImportStmtEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedImportStmtEnums)
 }
@@ -2010,24 +2243,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedImportStmtEnums::GetCl
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedImportStmtEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[19]);
 }
-
 // ===================================================================
 
 class ResolvedForeignKeyEnums::_Internal {
  public:
 };
 
-ResolvedForeignKeyEnums::ResolvedForeignKeyEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedForeignKeyEnums::ResolvedForeignKeyEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedForeignKeyEnums)
 }
 ResolvedForeignKeyEnums::ResolvedForeignKeyEnums(const ResolvedForeignKeyEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedForeignKeyEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedForeignKeyEnums)
 }
@@ -2049,24 +2281,23 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedForeignKeyEnums::GetCl
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedForeignKeyEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[20]);
 }
-
 // ===================================================================
 
 class ResolvedAuxLoadDataStmtEnums::_Internal {
  public:
 };
 
-ResolvedAuxLoadDataStmtEnums::ResolvedAuxLoadDataStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+ResolvedAuxLoadDataStmtEnums::ResolvedAuxLoadDataStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedAuxLoadDataStmtEnums)
 }
 ResolvedAuxLoadDataStmtEnums::ResolvedAuxLoadDataStmtEnums(const ResolvedAuxLoadDataStmtEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedAuxLoadDataStmtEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedAuxLoadDataStmtEnums)
 }
@@ -2088,81 +2319,143 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedAuxLoadDataStmtEnums::
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedAuxLoadDataStmtEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[21]);
 }
+// ===================================================================
 
+class ResolvedDropIndexStmtEnums::_Internal {
+ public:
+};
+
+ResolvedDropIndexStmtEnums::ResolvedDropIndexStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedDropIndexStmtEnums)
+}
+ResolvedDropIndexStmtEnums::ResolvedDropIndexStmtEnums(const ResolvedDropIndexStmtEnums& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ResolvedDropIndexStmtEnums* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedDropIndexStmtEnums)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ResolvedDropIndexStmtEnums::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedDropIndexStmtEnums::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata ResolvedDropIndexStmtEnums::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto_once,
+      file_level_metadata_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto[22]);
+}
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSubqueryExprEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedSubqueryExprEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSubqueryExprEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedSubqueryExprEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedSubqueryExprEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedJoinScanEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedJoinScanEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedJoinScanEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedJoinScanEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedJoinScanEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSetOperationScanEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedSetOperationScanEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSetOperationScanEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedSetOperationScanEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedSetOperationScanEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedRecursiveScanEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedRecursiveScanEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedRecursiveScanEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedRecursiveScanEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedRecursiveScanEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSampleScanEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedSampleScanEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedSampleScanEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedSampleScanEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedSampleScanEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedOrderByItemEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedOrderByItemEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedOrderByItemEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedOrderByItemEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedOrderByItemEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedCreateStatementEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedCreateStatementEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedCreateStatementEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedCreateStatementEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedCreateStatementEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedGeneratedColumnInfoEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedGeneratedColumnInfoEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedGeneratedColumnInfoEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedGeneratedColumnInfoEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedGeneratedColumnInfoEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedDropStmtEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedDropStmtEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedDropStmtEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedDropStmtEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedDropStmtEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedBeginStmtEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedBeginStmtEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedBeginStmtEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedBeginStmtEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedBeginStmtEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedWindowFrameEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedWindowFrameEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedWindowFrameEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedWindowFrameEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedWindowFrameEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedWindowFrameExprEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedWindowFrameExprEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedWindowFrameExprEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedWindowFrameExprEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedWindowFrameExprEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedInsertStmtEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedInsertStmtEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedInsertStmtEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedInsertStmtEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedInsertStmtEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedMergeWhenEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedMergeWhenEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedMergeWhenEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedMergeWhenEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedMergeWhenEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedArgumentDefEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedArgumentDefEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedArgumentDefEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedArgumentDefEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedArgumentDefEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedFunctionCallBaseEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedFunctionCallBaseEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedFunctionCallBaseEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedFunctionCallBaseEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedFunctionCallBaseEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedNonScalarFunctionCallBaseEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedNonScalarFunctionCallBaseEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedNonScalarFunctionCallBaseEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedNonScalarFunctionCallBaseEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedNonScalarFunctionCallBaseEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAggregateHavingModifierEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedAggregateHavingModifierEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAggregateHavingModifierEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedAggregateHavingModifierEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedAggregateHavingModifierEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedStatementEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedStatementEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedStatementEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedStatementEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedStatementEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedImportStmtEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedImportStmtEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedImportStmtEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedImportStmtEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedImportStmtEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedForeignKeyEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedForeignKeyEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedForeignKeyEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedForeignKeyEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedForeignKeyEnums >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAuxLoadDataStmtEnums* Arena::CreateMaybeMessage< ::zetasql::ResolvedAuxLoadDataStmtEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedAuxLoadDataStmtEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedAuxLoadDataStmtEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedAuxLoadDataStmtEnums >(arena);
 }
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedDropIndexStmtEnums*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedDropIndexStmtEnums >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ResolvedDropIndexStmtEnums >(arena);
+}
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

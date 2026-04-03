@@ -37,6 +37,13 @@
 
 namespace re2 {
 
+// Controls the maximum count permitted by GlobalReplace(); -1 is unlimited.
+static int maximum_global_replace_count = -1;
+
+void RE2::FUZZING_ONLY_set_maximum_global_replace_count(int i) {
+  maximum_global_replace_count = i;
+}
+
 // Maximum number of args we can set
 static const int kMaxArgs = 16;
 static const int kVecSize = 1+kMaxArgs;
@@ -44,11 +51,11 @@ static const int kVecSize = 1+kMaxArgs;
 const int RE2::Options::kDefaultMaxMem;  // initialized in re2.h
 
 RE2::Options::Options(RE2::CannedOptions opt)
-  : encoding_(opt == RE2::Latin1 ? EncodingLatin1 : EncodingUTF8),
+  : max_mem_(kDefaultMaxMem),
+    encoding_(opt == RE2::Latin1 ? EncodingLatin1 : EncodingUTF8),
     posix_syntax_(opt == RE2::POSIX),
     longest_match_(opt == RE2::POSIX),
     log_errors_(opt != RE2::Quiet),
-    max_mem_(kDefaultMaxMem),
     literal_(false),
     never_nl_(false),
     dot_nl_(false),
@@ -59,11 +66,30 @@ RE2::Options::Options(RE2::CannedOptions opt)
     one_line_(false) {
 }
 
-// static empty objects for use as const references.
-// To avoid global constructors, allocated in RE2::Init().
-static const std::string* empty_string;
-static const std::map<std::string, int>* empty_named_groups;
-static const std::map<int, std::string>* empty_group_names;
+// Empty objects for use as const references.
+// Statically allocating the storage and then
+// lazily constructing the objects (in a once
+// in RE2::Init()) avoids global constructors
+// and the false positives (thanks, Valgrind)
+// about memory leaks at program termination.
+struct EmptyStorage {
+  std::string empty_string;
+  std::map<std::string, int> empty_named_groups;
+  std::map<int, std::string> empty_group_names;
+};
+alignas(EmptyStorage) static char empty_storage[sizeof(EmptyStorage)];
+
+static inline std::string* empty_string() {
+  return &reinterpret_cast<EmptyStorage*>(empty_storage)->empty_string;
+}
+
+static inline std::map<std::string, int>* empty_named_groups() {
+  return &reinterpret_cast<EmptyStorage*>(empty_storage)->empty_named_groups;
+}
+
+static inline std::map<int, std::string>* empty_group_names() {
+  return &reinterpret_cast<EmptyStorage*>(empty_storage)->empty_group_names;
+}
 
 // Converts from Regexp error code to RE2 error code.
 // Maybe some day they will diverge.  In any event, this
@@ -174,23 +200,23 @@ int RE2::Options::ParseFlags() const {
 void RE2::Init(absl::string_view pattern, const Options& options) {
   static absl::once_flag empty_once;
   absl::call_once(empty_once, []() {
-    empty_string = new std::string;
-    empty_named_groups = new std::map<std::string, int>;
-    empty_group_names = new std::map<int, std::string>;
+    (void) new (empty_storage) EmptyStorage;
   });
 
-  pattern_.assign(pattern.data(), pattern.size());
+  pattern_ = new std::string(pattern);
   options_.Copy(options);
   entire_regexp_ = NULL;
-  error_ = empty_string;
-  error_code_ = NoError;
-  error_arg_.clear();
-  prefix_.clear();
-  prefix_foldcase_ = false;
   suffix_regexp_ = NULL;
-  prog_ = NULL;
+  error_ = empty_string();
+  error_arg_ = empty_string();
+
   num_captures_ = -1;
+  error_code_ = NoError;
+  longest_match_ = options_.longest_match();
   is_one_pass_ = false;
+  prefix_foldcase_ = false;
+  prefix_.clear();
+  prog_ = NULL;
 
   rprog_ = NULL;
   named_groups_ = NULL;
@@ -198,25 +224,29 @@ void RE2::Init(absl::string_view pattern, const Options& options) {
 
   RegexpStatus status;
   entire_regexp_ = Regexp::Parse(
-    pattern_,
+    *pattern_,
     static_cast<Regexp::ParseFlags>(options_.ParseFlags()),
     &status);
   if (entire_regexp_ == NULL) {
     if (options_.log_errors()) {
-      LOG(ERROR) << "Error parsing '" << trunc(pattern_) << "': "
+      LOG(ERROR) << "Error parsing '" << trunc(*pattern_) << "': "
                  << status.Text();
     }
     error_ = new std::string(status.Text());
     error_code_ = RegexpErrorToRE2(status.code());
-    error_arg_ = std::string(status.error_arg());
+    error_arg_ = new std::string(status.error_arg());
     return;
   }
 
+  bool foldcase;
   re2::Regexp* suffix;
-  if (entire_regexp_->RequiredPrefix(&prefix_, &prefix_foldcase_, &suffix))
+  if (entire_regexp_->RequiredPrefix(&prefix_, &foldcase, &suffix)) {
+    prefix_foldcase_ = foldcase;
     suffix_regexp_ = suffix;
-  else
+  }
+  else {
     suffix_regexp_ = entire_regexp_->Incref();
+  }
 
   // Two thirds of the memory goes to the forward Prog,
   // one third to the reverse prog, because the forward
@@ -224,7 +254,7 @@ void RE2::Init(absl::string_view pattern, const Options& options) {
   prog_ = suffix_regexp_->CompileToProg(options_.max_mem()*2/3);
   if (prog_ == NULL) {
     if (options_.log_errors())
-      LOG(ERROR) << "Error compiling '" << trunc(pattern_) << "'";
+      LOG(ERROR) << "Error compiling '" << trunc(*pattern_) << "'";
     error_ = new std::string("pattern too large - compile failed");
     error_code_ = RE2::ErrorPatternTooLarge;
     return;
@@ -250,7 +280,8 @@ re2::Prog* RE2::ReverseProg() const {
         re->suffix_regexp_->CompileToReverseProg(re->options_.max_mem() / 3);
     if (re->rprog_ == NULL) {
       if (re->options_.log_errors())
-        LOG(ERROR) << "Error reverse compiling '" << trunc(re->pattern_) << "'";
+        LOG(ERROR) << "Error reverse compiling '" << trunc(*re->pattern_)
+                   << "'";
       // We no longer touch error_ and error_code_ because failing to compile
       // the reverse Prog is not a showstopper: falling back to NFA execution
       // is fine. More importantly, an RE2 object is supposed to be logically
@@ -262,18 +293,21 @@ re2::Prog* RE2::ReverseProg() const {
 }
 
 RE2::~RE2() {
+  if (group_names_ != empty_group_names())
+    delete group_names_;
+  if (named_groups_ != empty_named_groups())
+    delete named_groups_;
+  delete rprog_;
+  delete prog_;
+  if (error_arg_ != empty_string())
+    delete error_arg_;
+  if (error_ != empty_string())
+    delete error_;
   if (suffix_regexp_)
     suffix_regexp_->Decref();
   if (entire_regexp_)
     entire_regexp_->Decref();
-  delete prog_;
-  delete rprog_;
-  if (error_ != empty_string)
-    delete error_;
-  if (named_groups_ != NULL && named_groups_ != empty_named_groups)
-    delete named_groups_;
-  if (group_names_ != NULL &&  group_names_ != empty_group_names)
-    delete group_names_;
+  delete pattern_;
 }
 
 int RE2::ProgramSize() const {
@@ -353,7 +387,7 @@ const std::map<std::string, int>& RE2::NamedCapturingGroups() const {
     if (re->suffix_regexp_ != NULL)
       re->named_groups_ = re->suffix_regexp_->NamedCaptures();
     if (re->named_groups_ == NULL)
-      re->named_groups_ = empty_named_groups;
+      re->named_groups_ = empty_named_groups();
   }, this);
   return *named_groups_;
 }
@@ -364,7 +398,7 @@ const std::map<int, std::string>& RE2::CapturingGroupNames() const {
     if (re->suffix_regexp_ != NULL)
       re->group_names_ = re->suffix_regexp_->CaptureNames();
     if (re->group_names_ == NULL)
-      re->group_names_ = empty_group_names;
+      re->group_names_ = empty_group_names();
   }, this);
   return *group_names_;
 }
@@ -440,13 +474,10 @@ int RE2::GlobalReplace(std::string* str,
   const char* lastend = NULL;
   std::string out;
   int count = 0;
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-  // Iterate just once when fuzzing. Otherwise, we easily get bogged down
-  // and coverage is unlikely to improve despite significant expense.
-  while (p == str->data()) {
-#else
   while (p <= ep) {
-#endif
+    if (maximum_global_replace_count != -1 &&
+        count >= maximum_global_replace_count)
+      break;
     if (!re.Match(*str, static_cast<size_t>(p - str->data()),
                   str->size(), UNANCHORED, vec, nvec))
       break;
@@ -687,9 +718,8 @@ bool RE2::Match(absl::string_view text,
   }
 
   Prog::Anchor anchor = Prog::kUnanchored;
-  Prog::MatchKind kind = Prog::kFirstMatch;
-  if (options_.longest_match())
-    kind = Prog::kLongestMatch;
+  Prog::MatchKind kind =
+      longest_match_ ? Prog::kLongestMatch : Prog::kFirstMatch;
 
   bool can_one_pass = is_one_pass_ && ncap <= Prog::kMaxOnePassCapture;
   bool can_bit_state = prog_->CanBitState();
@@ -721,7 +751,7 @@ bool RE2::Match(absl::string_view text,
           if (dfa_failed) {
             if (options_.log_errors())
               LOG(ERROR) << "DFA out of memory: "
-                         << "pattern length " << pattern_.size() << ", "
+                         << "pattern length " << pattern_->size() << ", "
                          << "program size " << prog->size() << ", "
                          << "list count " << prog->list_count() << ", "
                          << "bytemap range " << prog->bytemap_range();
@@ -741,7 +771,7 @@ bool RE2::Match(absl::string_view text,
         if (dfa_failed) {
           if (options_.log_errors())
             LOG(ERROR) << "DFA out of memory: "
-                       << "pattern length " << pattern_.size() << ", "
+                       << "pattern length " << pattern_->size() << ", "
                        << "program size " << prog_->size() << ", "
                        << "list count " << prog_->list_count() << ", "
                        << "bytemap range " << prog_->bytemap_range();
@@ -767,7 +797,7 @@ bool RE2::Match(absl::string_view text,
         if (dfa_failed) {
           if (options_.log_errors())
             LOG(ERROR) << "DFA out of memory: "
-                       << "pattern length " << pattern_.size() << ", "
+                       << "pattern length " << pattern_->size() << ", "
                        << "program size " << prog->size() << ", "
                        << "list count " << prog->list_count() << ", "
                        << "bytemap range " << prog->bytemap_range();
@@ -810,7 +840,7 @@ bool RE2::Match(absl::string_view text,
         if (dfa_failed) {
           if (options_.log_errors())
             LOG(ERROR) << "DFA out of memory: "
-                       << "pattern length " << pattern_.size() << ", "
+                       << "pattern length " << pattern_->size() << ", "
                        << "program size " << prog_->size() << ", "
                        << "list count " << prog_->list_count() << ", "
                        << "bytemap range " << prog_->bytemap_range();

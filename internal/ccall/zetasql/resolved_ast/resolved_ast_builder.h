@@ -26,6 +26,7 @@
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/statusor.h"
+#include "zetasql/base/source_location.h"
 
 namespace zetasql {
 
@@ -36,9 +37,11 @@ class ResolvedParameterBuilder;
 class ResolvedExpressionColumnBuilder;
 class ResolvedCatalogColumnRefBuilder;
 class ResolvedColumnRefBuilder;
+class ResolvedGroupingSetMultiColumnBuilder;
 class ResolvedConstantBuilder;
 class ResolvedSystemVariableBuilder;
 class ResolvedInlineLambdaBuilder;
+class ResolvedSequenceBuilder;
 class ResolvedFilterFieldArgBuilder;
 class ResolvedFilterFieldBuilder;
 class ResolvedFunctionCallBuilder;
@@ -69,7 +72,10 @@ class ResolvedJoinScanBuilder;
 class ResolvedArrayScanBuilder;
 class ResolvedColumnHolderBuilder;
 class ResolvedFilterScanBuilder;
+class ResolvedGroupingCallBuilder;
 class ResolvedGroupingSetBuilder;
+class ResolvedRollupBuilder;
+class ResolvedCubeBuilder;
 class ResolvedAggregateScanBuilder;
 class ResolvedAnonymizedAggregateScanBuilder;
 class ResolvedDifferentialPrivacyAggregateScanBuilder;
@@ -112,6 +118,7 @@ class ResolvedCreateSnapshotTableStmtBuilder;
 class ResolvedCreateExternalTableStmtBuilder;
 class ResolvedExportModelStmtBuilder;
 class ResolvedExportDataStmtBuilder;
+class ResolvedExportMetadataStmtBuilder;
 class ResolvedDefineTableStmtBuilder;
 class ResolvedDescribeStmtBuilder;
 class ResolvedShowStmtBuilder;
@@ -154,6 +161,7 @@ class ResolvedGrantStmtBuilder;
 class ResolvedRevokeStmtBuilder;
 class ResolvedAlterDatabaseStmtBuilder;
 class ResolvedAlterMaterializedViewStmtBuilder;
+class ResolvedAlterApproxViewStmtBuilder;
 class ResolvedAlterSchemaStmtBuilder;
 class ResolvedAlterModelStmtBuilder;
 class ResolvedAlterTableStmtBuilder;
@@ -181,7 +189,7 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder;
 class ResolvedCreateRowAccessPolicyStmtBuilder;
 class ResolvedDropPrivilegeRestrictionStmtBuilder;
 class ResolvedDropRowAccessPolicyStmtBuilder;
-class ResolvedDropSearchIndexStmtBuilder;
+class ResolvedDropIndexStmtBuilder;
 class ResolvedGrantToActionBuilder;
 class ResolvedRestrictToActionBuilder;
 class ResolvedAddToRestricteeListActionBuilder;
@@ -207,6 +215,7 @@ class ResolvedImportStmtBuilder;
 class ResolvedModuleStmtBuilder;
 class ResolvedAggregateHavingModifierBuilder;
 class ResolvedCreateMaterializedViewStmtBuilder;
+class ResolvedCreateApproxViewStmtBuilder;
 class ResolvedCreateProcedureStmtBuilder;
 class ResolvedExecuteImmediateArgumentBuilder;
 class ResolvedExecuteImmediateStmtBuilder;
@@ -254,13 +263,13 @@ class ResolvedLiteralBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedLiteral::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedLiteral::value was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -272,7 +281,7 @@ class ResolvedLiteralBuilder final {
 
   // Getters and chained setters
   const Value& value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value();
   }
 
@@ -296,7 +305,7 @@ class ResolvedLiteralBuilder final {
   // This exists mainly for resolver bookkeeping and should be ignored
   // by engines.
   bool has_explicit_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->has_explicit_type();
   }
 
@@ -318,7 +327,7 @@ class ResolvedLiteralBuilder final {
   // original image of the literal to avoid precision loss. An ID of 0
   // represents a literal without a cached image.
   int float_literal_id() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->float_literal_id();
   }
 
@@ -338,7 +347,7 @@ class ResolvedLiteralBuilder final {
   // this literal value in place, rather than replace it with a query
   // parameter.
   bool preserve_in_literal_remover() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->preserve_in_literal_remover();
   }
 
@@ -355,7 +364,7 @@ class ResolvedLiteralBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -374,7 +383,7 @@ class ResolvedLiteralBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -400,7 +409,7 @@ class ResolvedLiteralBuilder final {
 
   ResolvedLiteralBuilder(std::unique_ptr<ResolvedLiteral> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -443,7 +452,7 @@ class ResolvedParameterBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedParameter::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -459,7 +468,7 @@ class ResolvedParameterBuilder final {
   // A ResolvedParameter will have either a name or a position but not
   // both.
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -480,7 +489,7 @@ class ResolvedParameterBuilder final {
   // A ResolvedParameter will have either a name or a position but not
   // both.
   int position() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->position();
   }
 
@@ -501,7 +510,7 @@ class ResolvedParameterBuilder final {
   // This exists mainly for resolver bookkeeping and should be ignored
   // by engines.
   bool is_untyped() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_untyped();
   }
 
@@ -518,7 +527,7 @@ class ResolvedParameterBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -537,7 +546,7 @@ class ResolvedParameterBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -563,7 +572,7 @@ class ResolvedParameterBuilder final {
 
   ResolvedParameterBuilder(std::unique_ptr<ResolvedParameter> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -605,13 +614,13 @@ class ResolvedExpressionColumnBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExpressionColumn::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExpressionColumn::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -623,7 +632,7 @@ class ResolvedExpressionColumnBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -642,7 +651,7 @@ class ResolvedExpressionColumnBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -661,7 +670,7 @@ class ResolvedExpressionColumnBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -687,7 +696,7 @@ class ResolvedExpressionColumnBuilder final {
 
   ResolvedExpressionColumnBuilder(std::unique_ptr<ResolvedExpressionColumn> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -730,13 +739,13 @@ class ResolvedCatalogColumnRefBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCatalogColumnRef::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCatalogColumnRef::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -748,7 +757,7 @@ class ResolvedCatalogColumnRefBuilder final {
 
   // Getters and chained setters
   const Column* column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -767,7 +776,7 @@ class ResolvedCatalogColumnRefBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -786,7 +795,7 @@ class ResolvedCatalogColumnRefBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -812,7 +821,7 @@ class ResolvedCatalogColumnRefBuilder final {
 
   ResolvedCatalogColumnRefBuilder(std::unique_ptr<ResolvedCatalogColumnRef> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -855,19 +864,19 @@ class ResolvedColumnRefBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnRef::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnRef::column was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnRef::is_correlated was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -879,7 +888,7 @@ class ResolvedColumnRefBuilder final {
 
   // Getters and chained setters
   const ResolvedColumn& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -898,7 +907,7 @@ class ResolvedColumnRefBuilder final {
   }
 
   bool is_correlated() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_correlated();
   }
 
@@ -917,7 +926,7 @@ class ResolvedColumnRefBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -936,7 +945,7 @@ class ResolvedColumnRefBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -962,7 +971,7 @@ class ResolvedColumnRefBuilder final {
 
   ResolvedColumnRefBuilder(std::unique_ptr<ResolvedColumnRef> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -974,6 +983,132 @@ inline ResolvedColumnRefBuilder ToBuilder(
   builder.field_is_set_.set(0, true);
   builder.field_is_set_.set(2, true);
   builder.field_is_set_.set(3, true);
+  return builder;
+}
+
+class ResolvedGroupingSetMultiColumnBuilder final {
+ public:
+  ResolvedGroupingSetMultiColumnBuilder() : ResolvedGroupingSetMultiColumnBuilder(absl::WrapUnique(new ResolvedGroupingSetMultiColumn)) {}
+
+  ResolvedGroupingSetMultiColumnBuilder(const ResolvedGroupingSetMultiColumnBuilder&) = delete;
+  ResolvedGroupingSetMultiColumnBuilder& operator=(const ResolvedGroupingSetMultiColumnBuilder&) = delete;
+  ResolvedGroupingSetMultiColumnBuilder(ResolvedGroupingSetMultiColumnBuilder&& other)
+      : ResolvedGroupingSetMultiColumnBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedGroupingSetMultiColumnBuilder& operator=(ResolvedGroupingSetMultiColumnBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedColumnRef>>& column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list();
+  }
+
+  int column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list_size();
+  }
+
+  const ResolvedColumnRef* column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingSetMultiColumnBuilder&& add_column_list(T v) && {
+    node_->add_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingSetMultiColumnBuilder& add_column_list(T v) & {
+    node_->add_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingSetMultiColumnBuilder&& add_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingSetMultiColumnBuilder& add_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> release_column_list() {
+    return node_->release_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedGroupingSetMultiColumnBuilder&& set_column_list(T v) && {
+    node_->set_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedGroupingSetMultiColumnBuilder& set_column_list(T v) & {
+    node_->set_column_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedGroupingSetMultiColumn> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedGroupingSetMultiColumnBuilder ToBuilder(
+      std::unique_ptr<const ResolvedGroupingSetMultiColumn> node);
+
+  ResolvedGroupingSetMultiColumnBuilder(std::unique_ptr<ResolvedGroupingSetMultiColumn> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedGroupingSetMultiColumnBuilder ToBuilder(
+    std::unique_ptr<const ResolvedGroupingSetMultiColumn> node) {
+  ResolvedGroupingSetMultiColumnBuilder builder(absl::WrapUnique<ResolvedGroupingSetMultiColumn>(
+      const_cast<ResolvedGroupingSetMultiColumn*>(node.release())));
+  // All required nodes are evidently already set
   return builder;
 }
 
@@ -1006,13 +1141,13 @@ class ResolvedConstantBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedConstant::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedConstant::constant was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -1025,7 +1160,7 @@ class ResolvedConstantBuilder final {
   // Getters and chained setters
   // The matching Constant from the Catalog.
   const Constant* constant() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->constant();
   }
 
@@ -1044,7 +1179,7 @@ class ResolvedConstantBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -1063,7 +1198,7 @@ class ResolvedConstantBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -1089,7 +1224,7 @@ class ResolvedConstantBuilder final {
 
   ResolvedConstantBuilder(std::unique_ptr<ResolvedConstant> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -1132,7 +1267,7 @@ class ResolvedSystemVariableBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSystemVariable::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -1145,17 +1280,17 @@ class ResolvedSystemVariableBuilder final {
   // Getters and chained setters
   // Path to system variable.
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -1184,7 +1319,7 @@ class ResolvedSystemVariableBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -1203,7 +1338,7 @@ class ResolvedSystemVariableBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -1229,7 +1364,7 @@ class ResolvedSystemVariableBuilder final {
 
   ResolvedSystemVariableBuilder(std::unique_ptr<ResolvedSystemVariable> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -1271,7 +1406,7 @@ class ResolvedInlineLambdaBuilder final {
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedInlineLambda::body was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -1283,17 +1418,17 @@ class ResolvedInlineLambdaBuilder final {
 
   // Getters and chained setters
   const std::vector<ResolvedColumn>& argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list();
   }
 
   int argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list_size();
   }
 
   const ResolvedColumn& argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list(i);
   }
 
@@ -1322,17 +1457,17 @@ class ResolvedInlineLambdaBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& parameter_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->parameter_list();
   }
 
   int parameter_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->parameter_list_size();
   }
 
   const ResolvedColumnRef* parameter_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->parameter_list(i);
   }
 
@@ -1395,7 +1530,7 @@ class ResolvedInlineLambdaBuilder final {
   }
 
   const ResolvedExpr* body() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->body();
   }
 
@@ -1457,7 +1592,7 @@ class ResolvedInlineLambdaBuilder final {
 
   ResolvedInlineLambdaBuilder(std::unique_ptr<ResolvedInlineLambda> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -1467,6 +1602,88 @@ inline ResolvedInlineLambdaBuilder ToBuilder(
       const_cast<ResolvedInlineLambda*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(2, true);
+  return builder;
+}
+
+class ResolvedSequenceBuilder final {
+ public:
+  ResolvedSequenceBuilder() : ResolvedSequenceBuilder(absl::WrapUnique(new ResolvedSequence)) {}
+
+  ResolvedSequenceBuilder(const ResolvedSequenceBuilder&) = delete;
+  ResolvedSequenceBuilder& operator=(const ResolvedSequenceBuilder&) = delete;
+  ResolvedSequenceBuilder(ResolvedSequenceBuilder&& other)
+      : ResolvedSequenceBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedSequenceBuilder& operator=(ResolvedSequenceBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedSequence>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedSequence::sequence was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const Sequence* sequence() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->sequence();
+  }
+
+  ResolvedSequenceBuilder&& set_sequence(const Sequence* v) && {
+    node_->set_sequence(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedSequenceBuilder& set_sequence(const Sequence* v) & {
+    node_->set_sequence(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedSequence> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<1> field_is_set_ = {0};
+  friend ResolvedSequenceBuilder ToBuilder(
+      std::unique_ptr<const ResolvedSequence> node);
+
+  ResolvedSequenceBuilder(std::unique_ptr<ResolvedSequence> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedSequenceBuilder ToBuilder(
+    std::unique_ptr<const ResolvedSequence> node) {
+  ResolvedSequenceBuilder builder(absl::WrapUnique<ResolvedSequence>(
+      const_cast<ResolvedSequence*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
   return builder;
 }
 
@@ -1499,7 +1716,7 @@ class ResolvedFilterFieldArgBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterFieldArg::include was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -1515,7 +1732,7 @@ class ResolvedFilterFieldArgBuilder final {
   // If False, we will remove this path (but may still include paths
   // below it).
   bool include() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->include();
   }
 
@@ -1536,17 +1753,17 @@ class ResolvedFilterFieldArgBuilder final {
   // A vector of FieldDescriptors that denotes the path to a proto
   // field that will be include or exclude.
   const std::vector<const google::protobuf::FieldDescriptor*>& field_descriptor_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_descriptor_path();
   }
 
   int field_descriptor_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_descriptor_path_size();
   }
 
   const google::protobuf::FieldDescriptor* field_descriptor_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_descriptor_path(i);
   }
 
@@ -1584,7 +1801,7 @@ class ResolvedFilterFieldArgBuilder final {
 
   ResolvedFilterFieldArgBuilder(std::unique_ptr<ResolvedFilterFieldArg> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -1626,19 +1843,19 @@ class ResolvedFilterFieldBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterField::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterField::expr was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterField::reset_cleared_required_fields was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -1651,7 +1868,7 @@ class ResolvedFilterFieldBuilder final {
   // Getters and chained setters
   // The proto to modify.
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -1706,17 +1923,17 @@ class ResolvedFilterFieldBuilder final {
   // The list of field paths to include or exclude. The path starts
   // from the proto type of <expr>.
   const std::vector<std::unique_ptr<const ResolvedFilterFieldArg>>& filter_field_arg_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->filter_field_arg_list();
   }
 
   int filter_field_arg_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->filter_field_arg_list_size();
   }
 
   const ResolvedFilterFieldArg* filter_field_arg_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->filter_field_arg_list(i);
   }
 
@@ -1781,7 +1998,7 @@ class ResolvedFilterFieldBuilder final {
   // If true, will reset cleared required fields into a
   // default value.
   bool reset_cleared_required_fields() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->reset_cleared_required_fields();
   }
 
@@ -1800,7 +2017,7 @@ class ResolvedFilterFieldBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -1819,7 +2036,7 @@ class ResolvedFilterFieldBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -1845,7 +2062,7 @@ class ResolvedFilterFieldBuilder final {
 
   ResolvedFilterFieldBuilder(std::unique_ptr<ResolvedFilterField> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -1889,19 +2106,19 @@ class ResolvedFunctionCallBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFunctionCall::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFunctionCall::function was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFunctionCall::signature was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -1925,7 +2142,7 @@ class ResolvedFunctionCallBuilder final {
   // there is no extra information to consider besides the arguments
   // and other fields from ResolvedFunctionCallBase.
   const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_call_info();
   }
 
@@ -1942,7 +2159,7 @@ class ResolvedFunctionCallBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -1961,7 +2178,7 @@ class ResolvedFunctionCallBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -1979,7 +2196,7 @@ class ResolvedFunctionCallBuilder final {
 
   // The matching Function from the Catalog.
   const Function* function() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function();
   }
 
@@ -2003,7 +2220,7 @@ class ResolvedFunctionCallBuilder final {
   // function, in which case this node must be either
   // ResolvedAggregateFunctionCall or ResolvedAnalyticFunctionCall.
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -2022,17 +2239,17 @@ class ResolvedFunctionCallBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list();
   }
 
   int argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list_size();
   }
 
   const ResolvedExpr* argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list(i);
   }
 
@@ -2095,17 +2312,17 @@ class ResolvedFunctionCallBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& generic_argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list();
   }
 
   int generic_argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list_size();
   }
 
   const ResolvedFunctionArgument* generic_argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list(i);
   }
 
@@ -2172,7 +2389,7 @@ class ResolvedFunctionCallBuilder final {
   // problems), return NULL instead of an error. This is used for
   // functions called using SAFE, as in SAFE.FUNCTION(...).
   ResolvedFunctionCallBase::ErrorMode error_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->error_mode();
   }
 
@@ -2190,17 +2407,17 @@ class ResolvedFunctionCallBuilder final {
 
   // Function call hints.
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -2263,17 +2480,17 @@ class ResolvedFunctionCallBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -2311,7 +2528,7 @@ class ResolvedFunctionCallBuilder final {
 
   ResolvedFunctionCallBuilder(std::unique_ptr<ResolvedFunctionCall> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -2355,19 +2572,19 @@ class ResolvedAggregateFunctionCallBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregateFunctionCall::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregateFunctionCall::function was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregateFunctionCall::signature was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -2380,7 +2597,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // Getters and chained setters
   // Apply HAVING MAX/MIN filtering to the stream of input values.
   const ResolvedAggregateHavingModifier* having_modifier() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->having_modifier();
   }
 
@@ -2431,17 +2648,17 @@ class ResolvedAggregateFunctionCallBuilder final {
   // Apply ordering to the stream of input values before calling
   // function.
   const std::vector<std::unique_ptr<const ResolvedOrderByItem>>& order_by_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list();
   }
 
   int order_by_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list_size();
   }
 
   const ResolvedOrderByItem* order_by_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list(i);
   }
 
@@ -2504,7 +2721,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   }
 
   const ResolvedExpr* limit() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->limit();
   }
 
@@ -2565,7 +2782,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // fully-resolved function body in context of the actual concrete
   // types of the arguments provided to the function call.
   const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_call_info();
   }
 
@@ -2582,7 +2799,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -2601,7 +2818,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -2619,7 +2836,7 @@ class ResolvedAggregateFunctionCallBuilder final {
 
   // The matching Function from the Catalog.
   const Function* function() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function();
   }
 
@@ -2643,7 +2860,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // function, in which case this node must be either
   // ResolvedAggregateFunctionCall or ResolvedAnalyticFunctionCall.
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -2662,17 +2879,17 @@ class ResolvedAggregateFunctionCallBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list();
   }
 
   int argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list_size();
   }
 
   const ResolvedExpr* argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list(i);
   }
 
@@ -2735,17 +2952,17 @@ class ResolvedAggregateFunctionCallBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& generic_argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list();
   }
 
   int generic_argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list_size();
   }
 
   const ResolvedFunctionArgument* generic_argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list(i);
   }
 
@@ -2812,7 +3029,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // problems), return NULL instead of an error. This is used for
   // functions called using SAFE, as in SAFE.FUNCTION(...).
   ResolvedFunctionCallBase::ErrorMode error_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->error_mode();
   }
 
@@ -2830,17 +3047,17 @@ class ResolvedAggregateFunctionCallBuilder final {
 
   // Function call hints.
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -2903,17 +3120,17 @@ class ResolvedAggregateFunctionCallBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -2944,7 +3161,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // Apply DISTINCT to the stream of input values before calling
   // function.
   bool distinct() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->distinct();
   }
 
@@ -2963,7 +3180,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // Apply IGNORE/RESPECT NULLS filtering to the stream of input
   // values.
   ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->null_handling_modifier();
   }
 
@@ -3005,7 +3222,7 @@ class ResolvedAggregateFunctionCallBuilder final {
   // the immediate outer query. The same rules apply to
   // <with_group_rows_parameter_list> as in ResolvedSubqueryExpr.
   const ResolvedScan* with_group_rows_subquery() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_subquery();
   }
 
@@ -3055,17 +3272,17 @@ class ResolvedAggregateFunctionCallBuilder final {
 
   // Correlated parameters to <with_group_rows_subquery>
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& with_group_rows_parameter_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_parameter_list();
   }
 
   int with_group_rows_parameter_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_parameter_list_size();
   }
 
   const ResolvedColumnRef* with_group_rows_parameter_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_parameter_list(i);
   }
 
@@ -3137,7 +3354,7 @@ class ResolvedAggregateFunctionCallBuilder final {
 
   ResolvedAggregateFunctionCallBuilder(std::unique_ptr<ResolvedAggregateFunctionCall> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -3181,25 +3398,25 @@ class ResolvedAnalyticFunctionCallBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticFunctionCall::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticFunctionCall::function was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticFunctionCall::signature was not set on the builder");
     }
     if (!field_is_set_.test(13)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticFunctionCall::window_frame was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -3211,7 +3428,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
 
   // Getters and chained setters
   const ResolvedWindowFrame* window_frame() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->window_frame();
   }
 
@@ -3264,7 +3481,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -3283,7 +3500,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -3301,7 +3518,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
 
   // The matching Function from the Catalog.
   const Function* function() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function();
   }
 
@@ -3325,7 +3542,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   // function, in which case this node must be either
   // ResolvedAggregateFunctionCall or ResolvedAnalyticFunctionCall.
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -3344,17 +3561,17 @@ class ResolvedAnalyticFunctionCallBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list();
   }
 
   int argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list_size();
   }
 
   const ResolvedExpr* argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list(i);
   }
 
@@ -3417,17 +3634,17 @@ class ResolvedAnalyticFunctionCallBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& generic_argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list();
   }
 
   int generic_argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list_size();
   }
 
   const ResolvedFunctionArgument* generic_argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generic_argument_list(i);
   }
 
@@ -3494,7 +3711,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   // problems), return NULL instead of an error. This is used for
   // functions called using SAFE, as in SAFE.FUNCTION(...).
   ResolvedFunctionCallBase::ErrorMode error_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->error_mode();
   }
 
@@ -3512,17 +3729,17 @@ class ResolvedAnalyticFunctionCallBuilder final {
 
   // Function call hints.
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -3585,17 +3802,17 @@ class ResolvedAnalyticFunctionCallBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -3626,7 +3843,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   // Apply DISTINCT to the stream of input values before calling
   // function.
   bool distinct() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->distinct();
   }
 
@@ -3645,7 +3862,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   // Apply IGNORE/RESPECT NULLS filtering to the stream of input
   // values.
   ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->null_handling_modifier();
   }
 
@@ -3687,7 +3904,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
   // the immediate outer query. The same rules apply to
   // <with_group_rows_parameter_list> as in ResolvedSubqueryExpr.
   const ResolvedScan* with_group_rows_subquery() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_subquery();
   }
 
@@ -3737,17 +3954,17 @@ class ResolvedAnalyticFunctionCallBuilder final {
 
   // Correlated parameters to <with_group_rows_subquery>
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& with_group_rows_parameter_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_parameter_list();
   }
 
   int with_group_rows_parameter_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_parameter_list_size();
   }
 
   const ResolvedColumnRef* with_group_rows_parameter_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_group_rows_parameter_list(i);
   }
 
@@ -3819,7 +4036,7 @@ class ResolvedAnalyticFunctionCallBuilder final {
 
   ResolvedAnalyticFunctionCallBuilder(std::unique_ptr<ResolvedAnalyticFunctionCall> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -3864,19 +4081,19 @@ class ResolvedExtendedCastElementBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExtendedCastElement::from_type was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExtendedCastElement::to_type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExtendedCastElement::function was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -3888,7 +4105,7 @@ class ResolvedExtendedCastElementBuilder final {
 
   // Getters and chained setters
   const Type* from_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_type();
   }
 
@@ -3907,7 +4124,7 @@ class ResolvedExtendedCastElementBuilder final {
   }
 
   const Type* to_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->to_type();
   }
 
@@ -3926,7 +4143,7 @@ class ResolvedExtendedCastElementBuilder final {
   }
 
   const Function* function() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function();
   }
 
@@ -3954,7 +4171,7 @@ class ResolvedExtendedCastElementBuilder final {
 
   ResolvedExtendedCastElementBuilder(std::unique_ptr<ResolvedExtendedCastElement> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -4008,17 +4225,17 @@ class ResolvedExtendedCastBuilder final {
   // can be multiple cast elements (one for each distinct pair of field
   // types). For non-struct types, there will be just a single element.
   const std::vector<std::unique_ptr<const ResolvedExtendedCastElement>>& element_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->element_list();
   }
 
   int element_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->element_list_size();
   }
 
   const ResolvedExtendedCastElement* element_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->element_list(i);
   }
 
@@ -4089,7 +4306,7 @@ class ResolvedExtendedCastBuilder final {
 
   ResolvedExtendedCastBuilder(std::unique_ptr<ResolvedExtendedCast> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -4142,13 +4359,13 @@ class ResolvedCastBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCast::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCast::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -4160,7 +4377,7 @@ class ResolvedCastBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -4215,7 +4432,7 @@ class ResolvedCastBuilder final {
   // Whether to return NULL if the cast fails. This is set to true for
   // SAFE_CAST.
   bool return_null_on_error() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->return_null_on_error();
   }
 
@@ -4235,7 +4452,7 @@ class ResolvedCastBuilder final {
   // extended (TYPE_EXTENDED) type, this field contains information
   // necessary to execute this cast.
   const ResolvedExtendedCast* extended_cast() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->extended_cast();
   }
 
@@ -4286,7 +4503,7 @@ class ResolvedCastBuilder final {
   // The format string specified by the optional FORMAT clause. It is
   // nullptr when the clause does not exist.
   const ResolvedExpr* format() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->format();
   }
 
@@ -4337,7 +4554,7 @@ class ResolvedCastBuilder final {
   // The time zone expression by the optional AT TIME ZONE clause. It
   // is nullptr when the clause does not exist.
   const ResolvedExpr* time_zone() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->time_zone();
   }
 
@@ -4414,7 +4631,7 @@ class ResolvedCastBuilder final {
   //   CAST(["abc"] AS ARRAY<STRING COLLATE "und:ci">) should return
   //     the array ["abc"] with collation "und:ci" at the element type.
   const TypeModifiers& type_modifiers() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_modifiers();
   }
 
@@ -4431,7 +4648,7 @@ class ResolvedCastBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -4450,7 +4667,7 @@ class ResolvedCastBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -4476,7 +4693,7 @@ class ResolvedCastBuilder final {
 
   ResolvedCastBuilder(std::unique_ptr<ResolvedCast> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -4519,7 +4736,7 @@ class ResolvedMakeStructBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMakeStruct::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -4531,17 +4748,17 @@ class ResolvedMakeStructBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedExpr>>& field_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_list();
   }
 
   int field_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_list_size();
   }
 
   const ResolvedExpr* field_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_list(i);
   }
 
@@ -4604,7 +4821,7 @@ class ResolvedMakeStructBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -4623,7 +4840,7 @@ class ResolvedMakeStructBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -4649,7 +4866,7 @@ class ResolvedMakeStructBuilder final {
 
   ResolvedMakeStructBuilder(std::unique_ptr<ResolvedMakeStruct> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -4691,7 +4908,7 @@ class ResolvedMakeProtoBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMakeProto::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -4703,17 +4920,17 @@ class ResolvedMakeProtoBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedMakeProtoField>>& field_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_list();
   }
 
   int field_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_list_size();
   }
 
   const ResolvedMakeProtoField* field_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_list(i);
   }
 
@@ -4776,7 +4993,7 @@ class ResolvedMakeProtoBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -4795,7 +5012,7 @@ class ResolvedMakeProtoBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -4821,7 +5038,7 @@ class ResolvedMakeProtoBuilder final {
 
   ResolvedMakeProtoBuilder(std::unique_ptr<ResolvedMakeProto> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -4863,13 +5080,13 @@ class ResolvedMakeProtoFieldBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMakeProtoField::field_descriptor was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMakeProtoField::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -4881,7 +5098,7 @@ class ResolvedMakeProtoFieldBuilder final {
 
   // Getters and chained setters
   const google::protobuf::FieldDescriptor* field_descriptor() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_descriptor();
   }
 
@@ -4903,7 +5120,7 @@ class ResolvedMakeProtoFieldBuilder final {
   // this field.  The annotation specifies both the ZetaSQL type and
   // the encoding format for this field.
   FieldFormat::Format format() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->format();
   }
 
@@ -4920,7 +5137,7 @@ class ResolvedMakeProtoFieldBuilder final {
   }
 
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -4982,7 +5199,7 @@ class ResolvedMakeProtoFieldBuilder final {
 
   ResolvedMakeProtoFieldBuilder(std::unique_ptr<ResolvedMakeProtoField> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -5025,19 +5242,19 @@ class ResolvedGetStructFieldBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetStructField::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetStructField::expr was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetStructField::field_idx was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -5049,7 +5266,7 @@ class ResolvedGetStructFieldBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -5102,7 +5319,7 @@ class ResolvedGetStructFieldBuilder final {
   }
 
   int field_idx() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_idx();
   }
 
@@ -5124,7 +5341,7 @@ class ResolvedGetStructFieldBuilder final {
   // specifying field name, Only for preserving user intent; no
   // semantic consequences
   bool field_expr_is_positional() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_expr_is_positional();
   }
 
@@ -5141,7 +5358,7 @@ class ResolvedGetStructFieldBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -5160,7 +5377,7 @@ class ResolvedGetStructFieldBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -5186,7 +5403,7 @@ class ResolvedGetStructFieldBuilder final {
 
   ResolvedGetStructFieldBuilder(std::unique_ptr<ResolvedGetStructField> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -5230,25 +5447,25 @@ class ResolvedGetProtoFieldBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetProtoField::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetProtoField::expr was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetProtoField::field_descriptor was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetProtoField::default_value was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -5260,7 +5477,7 @@ class ResolvedGetProtoFieldBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -5327,7 +5544,7 @@ class ResolvedGetProtoFieldBuilder final {
   // The field is required if field_descriptor->is_required().  If the
   // field is required and not present, an error should result.
   const google::protobuf::FieldDescriptor* field_descriptor() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_descriptor();
   }
 
@@ -5362,7 +5579,7 @@ class ResolvedGetProtoFieldBuilder final {
   // TODO Make un-ignorable after clients migrate to start
   // using it.
   const Value& default_value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->default_value();
   }
 
@@ -5386,7 +5603,7 @@ class ResolvedGetProtoFieldBuilder final {
   // <return_default_value_when_unset> is true, and vice versa.
   // Expression type will be BOOL.
   bool get_has_bit() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->get_has_bit();
   }
 
@@ -5407,7 +5624,7 @@ class ResolvedGetProtoFieldBuilder final {
   // the encoding format for this field. This cannot be set when
   // get_has_bit is true.
   FieldFormat::Format format() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->format();
   }
 
@@ -5434,7 +5651,7 @@ class ResolvedGetProtoFieldBuilder final {
   // zetasql.use_defaults=true. This cannot be set when <get_has_bit>
   // is true or the field is required.
   bool return_default_value_when_unset() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->return_default_value_when_unset();
   }
 
@@ -5451,7 +5668,7 @@ class ResolvedGetProtoFieldBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -5470,7 +5687,7 @@ class ResolvedGetProtoFieldBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -5496,7 +5713,7 @@ class ResolvedGetProtoFieldBuilder final {
 
   ResolvedGetProtoFieldBuilder(std::unique_ptr<ResolvedGetProtoField> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -5541,19 +5758,19 @@ class ResolvedGetJsonFieldBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetJsonField::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetJsonField::expr was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGetJsonField::field_name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -5565,7 +5782,7 @@ class ResolvedGetJsonFieldBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -5618,7 +5835,7 @@ class ResolvedGetJsonFieldBuilder final {
   }
 
   const std::string& field_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->field_name();
   }
 
@@ -5637,7 +5854,7 @@ class ResolvedGetJsonFieldBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -5656,7 +5873,7 @@ class ResolvedGetJsonFieldBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -5682,7 +5899,7 @@ class ResolvedGetJsonFieldBuilder final {
 
   ResolvedGetJsonFieldBuilder(std::unique_ptr<ResolvedGetJsonField> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -5726,13 +5943,13 @@ class ResolvedFlattenBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFlatten::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFlatten::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -5744,7 +5961,7 @@ class ResolvedFlattenBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -5805,17 +6022,17 @@ class ResolvedFlattenBuilder final {
   // The 'get' fields may either be a ResolvedGet*Field or an array
   // offset function around a ResolvedGet*Field.
   const std::vector<std::unique_ptr<const ResolvedExpr>>& get_field_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->get_field_list();
   }
 
   int get_field_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->get_field_list_size();
   }
 
   const ResolvedExpr* get_field_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->get_field_list(i);
   }
 
@@ -5878,7 +6095,7 @@ class ResolvedFlattenBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -5897,7 +6114,7 @@ class ResolvedFlattenBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -5923,7 +6140,7 @@ class ResolvedFlattenBuilder final {
 
   ResolvedFlattenBuilder(std::unique_ptr<ResolvedFlatten> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -5965,7 +6182,7 @@ class ResolvedFlattenedArgBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFlattenedArg::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -5977,7 +6194,7 @@ class ResolvedFlattenedArgBuilder final {
 
   // Getters and chained setters
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -5996,7 +6213,7 @@ class ResolvedFlattenedArgBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -6022,7 +6239,7 @@ class ResolvedFlattenedArgBuilder final {
 
   ResolvedFlattenedArgBuilder(std::unique_ptr<ResolvedFlattenedArg> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -6064,7 +6281,7 @@ class ResolvedReplaceFieldItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedReplaceFieldItem::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -6082,7 +6299,7 @@ class ResolvedReplaceFieldItemBuilder final {
   // is a required field, the engine must return an error if it is set
   // to NULL.
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -6140,17 +6357,17 @@ class ResolvedReplaceFieldItemBuilder final {
   // is also non-empty, then the field corresponding to the last index
   // in this vector should be of proto type.
   const std::vector<int>& struct_index_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->struct_index_path();
   }
 
   int struct_index_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->struct_index_path_size();
   }
 
   int struct_index_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->struct_index_path(i);
   }
 
@@ -6184,17 +6401,17 @@ class ResolvedReplaceFieldItemBuilder final {
   // subfield of the proto corresponding to the last element in
   // <struct_index_path>.
   const std::vector<const google::protobuf::FieldDescriptor*>& proto_field_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->proto_field_path();
   }
 
   int proto_field_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->proto_field_path_size();
   }
 
   const google::protobuf::FieldDescriptor* proto_field_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->proto_field_path(i);
   }
 
@@ -6232,7 +6449,7 @@ class ResolvedReplaceFieldItemBuilder final {
 
   ResolvedReplaceFieldItemBuilder(std::unique_ptr<ResolvedReplaceFieldItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -6274,13 +6491,13 @@ class ResolvedReplaceFieldBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedReplaceField::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedReplaceField::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -6293,7 +6510,7 @@ class ResolvedReplaceFieldBuilder final {
   // Getters and chained setters
   // The proto/struct to modify.
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -6355,17 +6572,17 @@ class ResolvedReplaceFieldBuilder final {
   //   error.
   // - Clearing a required field or subfield is an error.
   const std::vector<std::unique_ptr<const ResolvedReplaceFieldItem>>& replace_field_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->replace_field_item_list();
   }
 
   int replace_field_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->replace_field_item_list_size();
   }
 
   const ResolvedReplaceFieldItem* replace_field_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->replace_field_item_list(i);
   }
 
@@ -6428,7 +6645,7 @@ class ResolvedReplaceFieldBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -6447,7 +6664,7 @@ class ResolvedReplaceFieldBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -6473,7 +6690,7 @@ class ResolvedReplaceFieldBuilder final {
 
   ResolvedReplaceFieldBuilder(std::unique_ptr<ResolvedReplaceField> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -6524,19 +6741,19 @@ class ResolvedSubqueryExprBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSubqueryExpr::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSubqueryExpr::subquery_type was not set on the builder");
     }
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSubqueryExpr::subquery was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -6548,7 +6765,7 @@ class ResolvedSubqueryExprBuilder final {
 
   // Getters and chained setters
   ResolvedSubqueryExpr::SubqueryType subquery_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->subquery_type();
   }
 
@@ -6567,17 +6784,17 @@ class ResolvedSubqueryExprBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& parameter_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->parameter_list();
   }
 
   int parameter_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->parameter_list_size();
   }
 
   const ResolvedColumnRef* parameter_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->parameter_list(i);
   }
 
@@ -6642,7 +6859,7 @@ class ResolvedSubqueryExprBuilder final {
   // Field is only populated for subqueries of type IN or LIKE
   // ANY|SOME|ALL.
   const ResolvedExpr* in_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->in_expr();
   }
 
@@ -6694,7 +6911,7 @@ class ResolvedSubqueryExprBuilder final {
   // operation collation to use to compare <in_expr> with the rows from
   // <subquery>.
   const ResolvedCollation& in_collation() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->in_collation();
   }
 
@@ -6711,7 +6928,7 @@ class ResolvedSubqueryExprBuilder final {
   }
 
   const ResolvedScan* subquery() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->subquery();
   }
 
@@ -6766,17 +6983,17 @@ class ResolvedSubqueryExprBuilder final {
   // Note: Hints currently happen only for EXISTS, IN, or a LIKE
   // expression subquery but not for ARRAY or SCALAR subquery.
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -6839,7 +7056,7 @@ class ResolvedSubqueryExprBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -6858,7 +7075,7 @@ class ResolvedSubqueryExprBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -6884,7 +7101,7 @@ class ResolvedSubqueryExprBuilder final {
 
   ResolvedSubqueryExprBuilder(std::unique_ptr<ResolvedSubqueryExpr> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -6928,13 +7145,13 @@ class ResolvedWithExprBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWithExpr::type was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWithExpr::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -6946,17 +7163,17 @@ class ResolvedWithExprBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& assignment_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->assignment_list();
   }
 
   int assignment_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->assignment_list_size();
   }
 
   const ResolvedComputedColumn* assignment_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->assignment_list(i);
   }
 
@@ -7019,7 +7236,7 @@ class ResolvedWithExprBuilder final {
   }
 
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -7072,7 +7289,7 @@ class ResolvedWithExprBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -7091,7 +7308,7 @@ class ResolvedWithExprBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -7117,7 +7334,7 @@ class ResolvedWithExprBuilder final {
 
   ResolvedWithExprBuilder(std::unique_ptr<ResolvedWithExpr> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -7157,22 +7374,22 @@ class ResolvedExecuteAsRoleScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedExecuteAsRoleScan::input_scan was not set on the builder");
-    }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedExecuteAsRoleScan::original_inlined_view was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedExecuteAsRoleScan::input_scan was not set on the builder");
     }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedExecuteAsRoleScan::original_inlined_view was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExecuteAsRoleScan::original_inlined_tvf was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -7186,7 +7403,7 @@ class ResolvedExecuteAsRoleScanBuilder final {
   // The input scan whose subtree is to be encompassed by the current
   // role context.
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -7197,7 +7414,7 @@ class ResolvedExecuteAsRoleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedExecuteAsRoleScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
     node_->set_input_scan(std::move(v), propagate_order);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -7205,7 +7422,7 @@ class ResolvedExecuteAsRoleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedExecuteAsRoleScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
     node_->set_input_scan(std::move(v), propagate_order);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -7219,7 +7436,7 @@ class ResolvedExecuteAsRoleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -7233,7 +7450,7 @@ class ResolvedExecuteAsRoleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -7242,20 +7459,20 @@ class ResolvedExecuteAsRoleScanBuilder final {
   // 'original_inlined_tvf' is null. The validator checks that this
   // table is indeed a SqlView, not some other subclass of Table.
   const Table* original_inlined_view() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->original_inlined_view();
   }
 
   ResolvedExecuteAsRoleScanBuilder&& set_original_inlined_view(const Table* v) && {
     node_->set_original_inlined_view(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   ResolvedExecuteAsRoleScanBuilder& set_original_inlined_view(const Table* v) & {
     node_->set_original_inlined_view(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -7263,36 +7480,36 @@ class ResolvedExecuteAsRoleScanBuilder final {
   // The original TVF that was inlined. If set, then
   // 'original_inlined_view' is null.
   const TableValuedFunction* original_inlined_tvf() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->original_inlined_tvf();
   }
 
   ResolvedExecuteAsRoleScanBuilder&& set_original_inlined_tvf(const TableValuedFunction* v) && {
     node_->set_original_inlined_tvf(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
 
   ResolvedExecuteAsRoleScanBuilder& set_original_inlined_tvf(const TableValuedFunction* v) & {
     node_->set_original_inlined_tvf(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -7321,17 +7538,17 @@ class ResolvedExecuteAsRoleScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -7394,7 +7611,7 @@ class ResolvedExecuteAsRoleScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -7410,17 +7627,34 @@ class ResolvedExecuteAsRoleScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedExecuteAsRoleScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedExecuteAsRoleScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedExecuteAsRoleScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<6> field_is_set_ = {0};
+  std::bitset<7> field_is_set_ = {0};
   friend ResolvedExecuteAsRoleScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedExecuteAsRoleScan> node);
 
   ResolvedExecuteAsRoleScanBuilder(std::unique_ptr<ResolvedExecuteAsRoleScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -7429,9 +7663,9 @@ inline ResolvedExecuteAsRoleScanBuilder ToBuilder(
   ResolvedExecuteAsRoleScanBuilder builder(absl::WrapUnique<ResolvedExecuteAsRoleScan>(
       const_cast<ResolvedExecuteAsRoleScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -7464,7 +7698,7 @@ class ResolvedModelBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedModel::model was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -7476,7 +7710,7 @@ class ResolvedModelBuilder final {
 
   // Getters and chained setters
   const Model* model() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->model();
   }
 
@@ -7504,7 +7738,7 @@ class ResolvedModelBuilder final {
 
   ResolvedModelBuilder(std::unique_ptr<ResolvedModel> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -7546,7 +7780,7 @@ class ResolvedConnectionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedConnection::connection was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -7558,7 +7792,7 @@ class ResolvedConnectionBuilder final {
 
   // Getters and chained setters
   const Connection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -7586,7 +7820,7 @@ class ResolvedConnectionBuilder final {
 
   ResolvedConnectionBuilder(std::unique_ptr<ResolvedConnection> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -7632,17 +7866,17 @@ class ResolvedDescriptorBuilder final {
 
   // Getters and chained setters
   const std::vector<ResolvedColumn>& descriptor_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_column_list();
   }
 
   int descriptor_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_column_list_size();
   }
 
   const ResolvedColumn& descriptor_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_column_list(i);
   }
 
@@ -7671,17 +7905,17 @@ class ResolvedDescriptorBuilder final {
   }
 
   const std::vector<std::string>& descriptor_column_name_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_column_name_list();
   }
 
   int descriptor_column_name_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_column_name_list_size();
   }
 
   const std::string& descriptor_column_name_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_column_name_list(i);
   }
 
@@ -7718,7 +7952,7 @@ class ResolvedDescriptorBuilder final {
 
   ResolvedDescriptorBuilder(std::unique_ptr<ResolvedDescriptor> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -7762,17 +7996,17 @@ class ResolvedSingleRowScanBuilder final {
 
   // Getters and chained setters
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -7801,17 +8035,17 @@ class ResolvedSingleRowScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -7874,7 +8108,7 @@ class ResolvedSingleRowScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -7890,6 +8124,23 @@ class ResolvedSingleRowScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedSingleRowScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedSingleRowScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedSingleRowScan> node_;
 
@@ -7899,7 +8150,7 @@ class ResolvedSingleRowScanBuilder final {
 
   ResolvedSingleRowScanBuilder(std::unique_ptr<ResolvedSingleRowScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -7937,10 +8188,10 @@ class ResolvedTableScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedTableScan::table was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -7952,26 +8203,26 @@ class ResolvedTableScanBuilder final {
 
   // Getters and chained setters
   const Table* table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table();
   }
 
   ResolvedTableScanBuilder&& set_table(const Table* v) && {
     node_->set_table(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   ResolvedTableScanBuilder& set_table(const Table* v) & {
     node_->set_table(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const ResolvedExpr* for_system_time_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->for_system_time_expr();
   }
 
@@ -8020,17 +8271,17 @@ class ResolvedTableScanBuilder final {
   }
 
   const std::vector<int>& column_index_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list();
   }
 
   int column_index_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list_size();
   }
 
   int column_index_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list(i);
   }
 
@@ -8059,7 +8310,7 @@ class ResolvedTableScanBuilder final {
   }
 
   const std::string& alias() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias();
   }
 
@@ -8076,17 +8327,17 @@ class ResolvedTableScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -8115,17 +8366,17 @@ class ResolvedTableScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -8188,7 +8439,7 @@ class ResolvedTableScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -8204,17 +8455,34 @@ class ResolvedTableScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedTableScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedTableScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedTableScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<7> field_is_set_ = {0};
+  std::bitset<8> field_is_set_ = {0};
   friend ResolvedTableScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedTableScan> node);
 
   ResolvedTableScanBuilder(std::unique_ptr<ResolvedTableScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -8223,7 +8491,7 @@ inline ResolvedTableScanBuilder ToBuilder(
   ResolvedTableScanBuilder builder(absl::WrapUnique<ResolvedTableScan>(
       const_cast<ResolvedTableScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -8259,16 +8527,16 @@ class ResolvedJoinScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(4)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedJoinScan::left_scan was not set on the builder");
-    }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedJoinScan::left_scan was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedJoinScan::right_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -8280,7 +8548,7 @@ class ResolvedJoinScanBuilder final {
 
   // Getters and chained setters
   ResolvedJoinScan::JoinType join_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->join_type();
   }
 
@@ -8297,7 +8565,7 @@ class ResolvedJoinScanBuilder final {
   }
 
   const ResolvedScan* left_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->left_scan();
   }
 
@@ -8308,7 +8576,7 @@ class ResolvedJoinScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedJoinScanBuilder&& set_left_scan(T v) && {
     node_->set_left_scan(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -8316,7 +8584,7 @@ class ResolvedJoinScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedJoinScanBuilder& set_left_scan(T v) & {
     node_->set_left_scan(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -8330,7 +8598,7 @@ class ResolvedJoinScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -8344,13 +8612,13 @@ class ResolvedJoinScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const ResolvedScan* right_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->right_scan();
   }
 
@@ -8361,7 +8629,7 @@ class ResolvedJoinScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedJoinScanBuilder&& set_right_scan(T v) && {
     node_->set_right_scan(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -8369,7 +8637,7 @@ class ResolvedJoinScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedJoinScanBuilder& set_right_scan(T v) & {
     node_->set_right_scan(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
@@ -8383,7 +8651,7 @@ class ResolvedJoinScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -8397,13 +8665,13 @@ class ResolvedJoinScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   const ResolvedExpr* join_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->join_expr();
   }
 
@@ -8452,17 +8720,17 @@ class ResolvedJoinScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -8491,17 +8759,17 @@ class ResolvedJoinScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -8564,7 +8832,7 @@ class ResolvedJoinScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -8580,17 +8848,34 @@ class ResolvedJoinScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedJoinScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedJoinScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedJoinScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<7> field_is_set_ = {0};
+  std::bitset<8> field_is_set_ = {0};
   friend ResolvedJoinScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedJoinScan> node);
 
   ResolvedJoinScanBuilder(std::unique_ptr<ResolvedJoinScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -8599,8 +8884,8 @@ inline ResolvedJoinScanBuilder ToBuilder(
   ResolvedJoinScanBuilder builder(absl::WrapUnique<ResolvedJoinScan>(
       const_cast<ResolvedJoinScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -8630,16 +8915,16 @@ class ResolvedArrayScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(4)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedArrayScan::array_expr was not set on the builder");
-    }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedArrayScan::array_expr was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedArrayScan::element_column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -8651,7 +8936,7 @@ class ResolvedArrayScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -8700,7 +8985,7 @@ class ResolvedArrayScanBuilder final {
   }
 
   const ResolvedExpr* array_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_expr();
   }
 
@@ -8711,7 +8996,7 @@ class ResolvedArrayScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedArrayScanBuilder&& set_array_expr(T v) && {
     node_->set_array_expr(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -8719,7 +9004,7 @@ class ResolvedArrayScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedArrayScanBuilder& set_array_expr(T v) & {
     node_->set_array_expr(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -8733,7 +9018,7 @@ class ResolvedArrayScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -8747,32 +9032,32 @@ class ResolvedArrayScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const ResolvedColumn& element_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->element_column();
   }
 
   ResolvedArrayScanBuilder&& set_element_column(const ResolvedColumn& v) && {
     node_->set_element_column(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
 
   ResolvedArrayScanBuilder& set_element_column(const ResolvedColumn& v) & {
     node_->set_element_column(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_offset_column();
   }
 
@@ -8821,7 +9106,7 @@ class ResolvedArrayScanBuilder final {
   }
 
   const ResolvedExpr* join_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->join_expr();
   }
 
@@ -8870,7 +9155,7 @@ class ResolvedArrayScanBuilder final {
   }
 
   bool is_outer() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_outer();
   }
 
@@ -8887,17 +9172,17 @@ class ResolvedArrayScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -8926,17 +9211,17 @@ class ResolvedArrayScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -8999,7 +9284,7 @@ class ResolvedArrayScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -9015,17 +9300,34 @@ class ResolvedArrayScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedArrayScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedArrayScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedArrayScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<10> field_is_set_ = {0};
   friend ResolvedArrayScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedArrayScan> node);
 
   ResolvedArrayScanBuilder(std::unique_ptr<ResolvedArrayScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -9034,8 +9336,8 @@ inline ResolvedArrayScanBuilder ToBuilder(
   ResolvedArrayScanBuilder builder(absl::WrapUnique<ResolvedArrayScan>(
       const_cast<ResolvedArrayScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -9068,7 +9370,7 @@ class ResolvedColumnHolderBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnHolder::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -9080,7 +9382,7 @@ class ResolvedColumnHolderBuilder final {
 
   // Getters and chained setters
   const ResolvedColumn& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -9108,7 +9410,7 @@ class ResolvedColumnHolderBuilder final {
 
   ResolvedColumnHolderBuilder(std::unique_ptr<ResolvedColumnHolder> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -9147,16 +9449,16 @@ class ResolvedFilterScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedFilterScan::input_scan was not set on the builder");
-    }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedFilterScan::input_scan was not set on the builder");
+    }
+    if (!field_is_set_.test(5)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterScan::filter_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -9168,7 +9470,7 @@ class ResolvedFilterScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -9179,7 +9481,7 @@ class ResolvedFilterScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedFilterScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -9187,7 +9489,7 @@ class ResolvedFilterScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedFilterScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -9201,7 +9503,7 @@ class ResolvedFilterScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -9215,13 +9517,13 @@ class ResolvedFilterScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const ResolvedExpr* filter_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->filter_expr();
   }
 
@@ -9232,7 +9534,7 @@ class ResolvedFilterScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedFilterScanBuilder&& set_filter_expr(T v) && {
     node_->set_filter_expr(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -9240,7 +9542,7 @@ class ResolvedFilterScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedFilterScanBuilder& set_filter_expr(T v) & {
     node_->set_filter_expr(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -9254,7 +9556,7 @@ class ResolvedFilterScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -9268,23 +9570,23 @@ class ResolvedFilterScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -9313,17 +9615,17 @@ class ResolvedFilterScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -9386,7 +9688,7 @@ class ResolvedFilterScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -9402,17 +9704,34 @@ class ResolvedFilterScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedFilterScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedFilterScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedFilterScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedFilterScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedFilterScan> node);
 
   ResolvedFilterScanBuilder(std::unique_ptr<ResolvedFilterScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -9421,8 +9740,150 @@ inline ResolvedFilterScanBuilder ToBuilder(
   ResolvedFilterScanBuilder builder(absl::WrapUnique<ResolvedFilterScan>(
       const_cast<ResolvedFilterScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(5, true);
+  return builder;
+}
+
+class ResolvedGroupingCallBuilder final {
+ public:
+  ResolvedGroupingCallBuilder() : ResolvedGroupingCallBuilder(absl::WrapUnique(new ResolvedGroupingCall)) {}
+
+  ResolvedGroupingCallBuilder(const ResolvedGroupingCallBuilder&) = delete;
+  ResolvedGroupingCallBuilder& operator=(const ResolvedGroupingCallBuilder&) = delete;
+  ResolvedGroupingCallBuilder(ResolvedGroupingCallBuilder&& other)
+      : ResolvedGroupingCallBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedGroupingCallBuilder& operator=(ResolvedGroupingCallBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedGroupingCall>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGroupingCall::group_by_column was not set on the builder");
+    }
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGroupingCall::output_column was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const ResolvedColumnRef* group_by_column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->group_by_column();
+  }
+
+  std::unique_ptr<const ResolvedColumnRef> release_group_by_column() {
+    return node_->release_group_by_column();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingCallBuilder&& set_group_by_column(T v) && {
+    node_->set_group_by_column(std::move(v));
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingCallBuilder& set_group_by_column(T v) & {
+    node_->set_group_by_column(std::move(v));
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingCallBuilder&& set_group_by_column(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_group_by_column(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedGroupingCallBuilder& set_group_by_column(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_group_by_column(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const ResolvedColumn& output_column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->output_column();
+  }
+
+  ResolvedGroupingCallBuilder&& set_output_column(const ResolvedColumn& v) && {
+    node_->set_output_column(v);
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedGroupingCallBuilder& set_output_column(const ResolvedColumn& v) & {
+    node_->set_output_column(v);
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedGroupingCall> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<2> field_is_set_ = {0};
+  friend ResolvedGroupingCallBuilder ToBuilder(
+      std::unique_ptr<const ResolvedGroupingCall> node);
+
+  ResolvedGroupingCallBuilder(std::unique_ptr<ResolvedGroupingCall> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedGroupingCallBuilder ToBuilder(
+    std::unique_ptr<const ResolvedGroupingCall> node) {
+  ResolvedGroupingCallBuilder builder(absl::WrapUnique<ResolvedGroupingCall>(
+      const_cast<ResolvedGroupingCall*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(1, true);
   return builder;
 }
 
@@ -9459,17 +9920,17 @@ class ResolvedGroupingSetBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& group_by_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_column_list();
   }
 
   int group_by_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_column_list_size();
   }
 
   const ResolvedColumnRef* group_by_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_column_list(i);
   }
 
@@ -9540,7 +10001,7 @@ class ResolvedGroupingSetBuilder final {
 
   ResolvedGroupingSetBuilder(std::unique_ptr<ResolvedGroupingSet> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -9548,6 +10009,258 @@ inline ResolvedGroupingSetBuilder ToBuilder(
     std::unique_ptr<const ResolvedGroupingSet> node) {
   ResolvedGroupingSetBuilder builder(absl::WrapUnique<ResolvedGroupingSet>(
       const_cast<ResolvedGroupingSet*>(node.release())));
+  // All required nodes are evidently already set
+  return builder;
+}
+
+class ResolvedRollupBuilder final {
+ public:
+  ResolvedRollupBuilder() : ResolvedRollupBuilder(absl::WrapUnique(new ResolvedRollup)) {}
+
+  ResolvedRollupBuilder(const ResolvedRollupBuilder&) = delete;
+  ResolvedRollupBuilder& operator=(const ResolvedRollupBuilder&) = delete;
+  ResolvedRollupBuilder(ResolvedRollupBuilder&& other)
+      : ResolvedRollupBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedRollupBuilder& operator=(ResolvedRollupBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedRollup>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>& rollup_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list();
+  }
+
+  int rollup_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list_size();
+  }
+
+  const ResolvedGroupingSetMultiColumn* rollup_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedRollupBuilder&& add_rollup_column_list(T v) && {
+    node_->add_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedRollupBuilder& add_rollup_column_list(T v) & {
+    node_->add_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedRollupBuilder&& add_rollup_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedRollupBuilder& add_rollup_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> release_rollup_column_list() {
+    return node_->release_rollup_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>>::value>>
+  ResolvedRollupBuilder&& set_rollup_column_list(T v) && {
+    node_->set_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>>::value>>
+  ResolvedRollupBuilder& set_rollup_column_list(T v) & {
+    node_->set_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedRollup> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedRollupBuilder ToBuilder(
+      std::unique_ptr<const ResolvedRollup> node);
+
+  ResolvedRollupBuilder(std::unique_ptr<ResolvedRollup> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedRollupBuilder ToBuilder(
+    std::unique_ptr<const ResolvedRollup> node) {
+  ResolvedRollupBuilder builder(absl::WrapUnique<ResolvedRollup>(
+      const_cast<ResolvedRollup*>(node.release())));
+  // All required nodes are evidently already set
+  return builder;
+}
+
+class ResolvedCubeBuilder final {
+ public:
+  ResolvedCubeBuilder() : ResolvedCubeBuilder(absl::WrapUnique(new ResolvedCube)) {}
+
+  ResolvedCubeBuilder(const ResolvedCubeBuilder&) = delete;
+  ResolvedCubeBuilder& operator=(const ResolvedCubeBuilder&) = delete;
+  ResolvedCubeBuilder(ResolvedCubeBuilder&& other)
+      : ResolvedCubeBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedCubeBuilder& operator=(ResolvedCubeBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedCube>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>& cube_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->cube_column_list();
+  }
+
+  int cube_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->cube_column_list_size();
+  }
+
+  const ResolvedGroupingSetMultiColumn* cube_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->cube_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedCubeBuilder&& add_cube_column_list(T v) && {
+    node_->add_cube_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedCubeBuilder& add_cube_column_list(T v) & {
+    node_->add_cube_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedCubeBuilder&& add_cube_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_cube_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetMultiColumn>>::value>>
+  ResolvedCubeBuilder& add_cube_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_cube_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> release_cube_column_list() {
+    return node_->release_cube_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>>::value>>
+  ResolvedCubeBuilder&& set_cube_column_list(T v) && {
+    node_->set_cube_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>>>::value>>
+  ResolvedCubeBuilder& set_cube_column_list(T v) & {
+    node_->set_cube_column_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedCube> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedCubeBuilder ToBuilder(
+      std::unique_ptr<const ResolvedCube> node);
+
+  ResolvedCubeBuilder(std::unique_ptr<ResolvedCube> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedCubeBuilder ToBuilder(
+    std::unique_ptr<const ResolvedCube> node) {
+  ResolvedCubeBuilder builder(absl::WrapUnique<ResolvedCube>(
+      const_cast<ResolvedCube*>(node.release())));
   // All required nodes are evidently already set
   return builder;
 }
@@ -9577,11 +10290,10 @@ class ResolvedAggregateScanBuilder final {
   absl::StatusOr<std::unique_ptr<const ResolvedAggregateScan>> Build() && {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
-    node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregateScan::input_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -9592,164 +10304,18 @@ class ResolvedAggregateScanBuilder final {
   }
 
   // Getters and chained setters
-  const std::vector<std::unique_ptr<const ResolvedGroupingSet>>& grouping_set_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->grouping_set_list();
-  }
-
-  int grouping_set_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->grouping_set_list_size();
-  }
-
-  const ResolvedGroupingSet* grouping_set_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->grouping_set_list(i);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSet>>::value>>
-  ResolvedAggregateScanBuilder&& add_grouping_set_list(T v) && {
-    node_->add_grouping_set_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSet>>::value>>
-  ResolvedAggregateScanBuilder& add_grouping_set_list(T v) & {
-    node_->add_grouping_set_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSet>>::value>>
-  ResolvedAggregateScanBuilder&& add_grouping_set_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_grouping_set_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSet>>::value>>
-  ResolvedAggregateScanBuilder& add_grouping_set_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_grouping_set_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  std::vector<std::unique_ptr<const ResolvedGroupingSet>> release_grouping_set_list() {
-    return node_->release_grouping_set_list();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSet>>>::value>>
-  ResolvedAggregateScanBuilder&& set_grouping_set_list(T v) && {
-    node_->set_grouping_set_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSet>>>::value>>
-  ResolvedAggregateScanBuilder& set_grouping_set_list(T v) & {
-    node_->set_grouping_set_list(std::move(v));
-
-    return *this;
-  }
-
-  const std::vector<std::unique_ptr<const ResolvedColumnRef>>& rollup_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->rollup_column_list();
-  }
-
-  int rollup_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->rollup_column_list_size();
-  }
-
-  const ResolvedColumnRef* rollup_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->rollup_column_list(i);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
-  ResolvedAggregateScanBuilder&& add_rollup_column_list(T v) && {
-    node_->add_rollup_column_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
-  ResolvedAggregateScanBuilder& add_rollup_column_list(T v) & {
-    node_->add_rollup_column_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
-  ResolvedAggregateScanBuilder&& add_rollup_column_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_rollup_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
-  ResolvedAggregateScanBuilder& add_rollup_column_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_rollup_column_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  std::vector<std::unique_ptr<const ResolvedColumnRef>> release_rollup_column_list() {
-    return node_->release_rollup_column_list();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAggregateScanBuilder&& set_rollup_column_list(T v) && {
-    node_->set_rollup_column_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
-  ResolvedAggregateScanBuilder& set_rollup_column_list(T v) & {
-    node_->set_rollup_column_list(std::move(v));
-
-    return *this;
-  }
-
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -9778,17 +10344,17 @@ class ResolvedAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -9851,7 +10417,7 @@ class ResolvedAggregateScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -9867,8 +10433,25 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedAggregateScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregateScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -9879,7 +10462,7 @@ class ResolvedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAggregateScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -9887,7 +10470,7 @@ class ResolvedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAggregateScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -9901,7 +10484,7 @@ class ResolvedAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -9915,23 +10498,23 @@ class ResolvedAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list();
   }
 
   int group_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list_size();
   }
 
   const ResolvedComputedColumn* group_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list(i);
   }
 
@@ -9994,17 +10577,17 @@ class ResolvedAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -10033,17 +10616,17 @@ class ResolvedAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
 
   int aggregate_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list_size();
   }
 
   const ResolvedComputedColumn* aggregate_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
@@ -10105,17 +10688,236 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>& grouping_set_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list();
+  }
+
+  int grouping_set_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list_size();
+  }
+
+  const ResolvedGroupingSetBase* grouping_set_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregateScanBuilder&& add_grouping_set_list(T v) && {
+    node_->add_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregateScanBuilder& add_grouping_set_list(T v) & {
+    node_->add_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregateScanBuilder&& add_grouping_set_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregateScanBuilder& add_grouping_set_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingSetBase>> release_grouping_set_list() {
+    return node_->release_grouping_set_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedAggregateScanBuilder&& set_grouping_set_list(T v) && {
+    node_->set_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedAggregateScanBuilder& set_grouping_set_list(T v) & {
+    node_->set_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedColumnRef>>& rollup_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list();
+  }
+
+  int rollup_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list_size();
+  }
+
+  const ResolvedColumnRef* rollup_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregateScanBuilder&& add_rollup_column_list(T v) && {
+    node_->add_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregateScanBuilder& add_rollup_column_list(T v) & {
+    node_->add_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregateScanBuilder&& add_rollup_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregateScanBuilder& add_rollup_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> release_rollup_column_list() {
+    return node_->release_rollup_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedAggregateScanBuilder&& set_rollup_column_list(T v) && {
+    node_->set_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedAggregateScanBuilder& set_rollup_column_list(T v) & {
+    node_->set_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGroupingCall>>& grouping_call_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list();
+  }
+
+  int grouping_call_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list_size();
+  }
+
+  const ResolvedGroupingCall* grouping_call_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregateScanBuilder&& add_grouping_call_list(T v) && {
+    node_->add_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregateScanBuilder& add_grouping_call_list(T v) & {
+    node_->add_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregateScanBuilder&& add_grouping_call_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregateScanBuilder& add_grouping_call_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingCall>> release_grouping_call_list() {
+    return node_->release_grouping_call_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedAggregateScanBuilder&& set_grouping_call_list(T v) && {
+    node_->set_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedAggregateScanBuilder& set_grouping_call_list(T v) & {
+    node_->set_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedAggregateScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<11> field_is_set_ = {0};
   friend ResolvedAggregateScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedAggregateScan> node);
 
   ResolvedAggregateScanBuilder(std::unique_ptr<ResolvedAggregateScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -10124,7 +10926,7 @@ inline ResolvedAggregateScanBuilder ToBuilder(
   ResolvedAggregateScanBuilder builder(absl::WrapUnique<ResolvedAggregateScan>(
       const_cast<ResolvedAggregateScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -10154,16 +10956,16 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnonymizedAggregateScan::input_scan was not set on the builder");
     }
-    if (!field_is_set_.test(7)) {
+    if (!field_is_set_.test(11)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnonymizedAggregateScan::k_threshold_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -10175,7 +10977,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* k_threshold_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->k_threshold_expr();
   }
 
@@ -10186,7 +10988,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& set_k_threshold_expr(T v) && {
     node_->set_k_threshold_expr(std::move(v));
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return std::move(*this);
   }
@@ -10194,7 +10996,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_k_threshold_expr(T v) & {
     node_->set_k_threshold_expr(std::move(v));
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return *this;
   }
@@ -10208,7 +11010,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return std::move(*this);
   }
@@ -10222,23 +11024,23 @@ class ResolvedAnonymizedAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& anonymization_option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->anonymization_option_list();
   }
 
   int anonymization_option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->anonymization_option_list_size();
   }
 
   const ResolvedOption* anonymization_option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->anonymization_option_list(i);
   }
 
@@ -10301,17 +11103,17 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -10340,17 +11142,17 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -10413,7 +11215,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -10429,8 +11231,25 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedAnonymizedAggregateScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAnonymizedAggregateScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -10441,7 +11260,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -10449,7 +11268,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -10463,7 +11282,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -10477,23 +11296,23 @@ class ResolvedAnonymizedAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list();
   }
 
   int group_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list_size();
   }
 
   const ResolvedComputedColumn* group_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list(i);
   }
 
@@ -10556,17 +11375,17 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -10595,17 +11414,17 @@ class ResolvedAnonymizedAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
 
   int aggregate_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list_size();
   }
 
   const ResolvedComputedColumn* aggregate_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
@@ -10667,17 +11486,236 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>& grouping_set_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list();
+  }
+
+  int grouping_set_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list_size();
+  }
+
+  const ResolvedGroupingSetBase* grouping_set_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& add_grouping_set_list(T v) && {
+    node_->add_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& add_grouping_set_list(T v) & {
+    node_->add_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& add_grouping_set_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& add_grouping_set_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingSetBase>> release_grouping_set_list() {
+    return node_->release_grouping_set_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& set_grouping_set_list(T v) && {
+    node_->set_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& set_grouping_set_list(T v) & {
+    node_->set_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedColumnRef>>& rollup_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list();
+  }
+
+  int rollup_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list_size();
+  }
+
+  const ResolvedColumnRef* rollup_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& add_rollup_column_list(T v) && {
+    node_->add_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& add_rollup_column_list(T v) & {
+    node_->add_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& add_rollup_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& add_rollup_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> release_rollup_column_list() {
+    return node_->release_rollup_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& set_rollup_column_list(T v) && {
+    node_->set_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& set_rollup_column_list(T v) & {
+    node_->set_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGroupingCall>>& grouping_call_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list();
+  }
+
+  int grouping_call_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list_size();
+  }
+
+  const ResolvedGroupingCall* grouping_call_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& add_grouping_call_list(T v) && {
+    node_->add_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& add_grouping_call_list(T v) & {
+    node_->add_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& add_grouping_call_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& add_grouping_call_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingCall>> release_grouping_call_list() {
+    return node_->release_grouping_call_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder&& set_grouping_call_list(T v) && {
+    node_->set_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedAnonymizedAggregateScanBuilder& set_grouping_call_list(T v) & {
+    node_->set_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedAnonymizedAggregateScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<13> field_is_set_ = {0};
   friend ResolvedAnonymizedAggregateScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedAnonymizedAggregateScan> node);
 
   ResolvedAnonymizedAggregateScanBuilder(std::unique_ptr<ResolvedAnonymizedAggregateScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -10686,8 +11724,8 @@ inline ResolvedAnonymizedAggregateScanBuilder ToBuilder(
   ResolvedAnonymizedAggregateScanBuilder builder(absl::WrapUnique<ResolvedAnonymizedAggregateScan>(
       const_cast<ResolvedAnonymizedAggregateScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
-  builder.field_is_set_.set(7, true);
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(11, true);
   return builder;
 }
 
@@ -10717,16 +11755,16 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDifferentialPrivacyAggregateScan::input_scan was not set on the builder");
     }
-    if (!field_is_set_.test(7)) {
+    if (!field_is_set_.test(11)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDifferentialPrivacyAggregateScan::group_selection_threshold_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -10738,7 +11776,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* group_selection_threshold_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_selection_threshold_expr();
   }
 
@@ -10749,7 +11787,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder&& set_group_selection_threshold_expr(T v) && {
     node_->set_group_selection_threshold_expr(std::move(v));
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return std::move(*this);
   }
@@ -10757,7 +11795,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder& set_group_selection_threshold_expr(T v) & {
     node_->set_group_selection_threshold_expr(std::move(v));
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return *this;
   }
@@ -10771,7 +11809,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return std::move(*this);
   }
@@ -10785,23 +11823,23 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(7, true);
+    field_is_set_.set(11, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -10864,17 +11902,17 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -10903,17 +11941,17 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -10976,7 +12014,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -10992,8 +12030,25 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -11004,7 +12059,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -11012,7 +12067,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -11026,7 +12081,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -11040,23 +12095,23 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list();
   }
 
   int group_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list_size();
   }
 
   const ResolvedComputedColumn* group_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list(i);
   }
 
@@ -11119,17 +12174,17 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -11158,17 +12213,17 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
 
   int aggregate_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list_size();
   }
 
   const ResolvedComputedColumn* aggregate_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
@@ -11230,17 +12285,236 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>& grouping_set_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list();
+  }
+
+  int grouping_set_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list_size();
+  }
+
+  const ResolvedGroupingSetBase* grouping_set_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_grouping_set_list(T v) && {
+    node_->add_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_grouping_set_list(T v) & {
+    node_->add_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_grouping_set_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_grouping_set_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingSetBase>> release_grouping_set_list() {
+    return node_->release_grouping_set_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_grouping_set_list(T v) && {
+    node_->set_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_grouping_set_list(T v) & {
+    node_->set_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedColumnRef>>& rollup_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list();
+  }
+
+  int rollup_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list_size();
+  }
+
+  const ResolvedColumnRef* rollup_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_rollup_column_list(T v) && {
+    node_->add_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_rollup_column_list(T v) & {
+    node_->add_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_rollup_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_rollup_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> release_rollup_column_list() {
+    return node_->release_rollup_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_rollup_column_list(T v) && {
+    node_->set_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_rollup_column_list(T v) & {
+    node_->set_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGroupingCall>>& grouping_call_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list();
+  }
+
+  int grouping_call_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list_size();
+  }
+
+  const ResolvedGroupingCall* grouping_call_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_grouping_call_list(T v) && {
+    node_->add_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_grouping_call_list(T v) & {
+    node_->add_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& add_grouping_call_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& add_grouping_call_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingCall>> release_grouping_call_list() {
+    return node_->release_grouping_call_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_grouping_call_list(T v) && {
+    node_->set_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_grouping_call_list(T v) & {
+    node_->set_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedDifferentialPrivacyAggregateScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<13> field_is_set_ = {0};
   friend ResolvedDifferentialPrivacyAggregateScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan> node);
 
   ResolvedDifferentialPrivacyAggregateScanBuilder(std::unique_ptr<ResolvedDifferentialPrivacyAggregateScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -11249,8 +12523,8 @@ inline ResolvedDifferentialPrivacyAggregateScanBuilder ToBuilder(
   ResolvedDifferentialPrivacyAggregateScanBuilder builder(absl::WrapUnique<ResolvedDifferentialPrivacyAggregateScan>(
       const_cast<ResolvedDifferentialPrivacyAggregateScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
-  builder.field_is_set_.set(7, true);
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(11, true);
   return builder;
 }
 
@@ -11280,10 +12554,10 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregationThresholdAggregateScan::input_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -11295,17 +12569,17 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -11368,17 +12642,17 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -11407,17 +12681,17 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -11480,7 +12754,7 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -11496,8 +12770,25 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAggregationThresholdAggregateScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -11508,7 +12799,7 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -11516,7 +12807,7 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -11530,7 +12821,7 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -11544,23 +12835,23 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list();
   }
 
   int group_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list_size();
   }
 
   const ResolvedComputedColumn* group_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list(i);
   }
 
@@ -11623,17 +12914,17 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   }
 
   const std::vector<ResolvedCollation>& collation_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list();
   }
 
   int collation_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list_size();
   }
 
   const ResolvedCollation& collation_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_list(i);
   }
 
@@ -11662,17 +12953,17 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
 
   int aggregate_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list_size();
   }
 
   const ResolvedComputedColumn* aggregate_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
@@ -11734,17 +13025,236 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>& grouping_set_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list();
+  }
+
+  int grouping_set_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list_size();
+  }
+
+  const ResolvedGroupingSetBase* grouping_set_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_set_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_grouping_set_list(T v) && {
+    node_->add_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_grouping_set_list(T v) & {
+    node_->add_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_grouping_set_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingSetBase>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_grouping_set_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_set_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingSetBase>> release_grouping_set_list() {
+    return node_->release_grouping_set_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_grouping_set_list(T v) && {
+    node_->set_grouping_set_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingSetBase>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_grouping_set_list(T v) & {
+    node_->set_grouping_set_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedColumnRef>>& rollup_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list();
+  }
+
+  int rollup_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list_size();
+  }
+
+  const ResolvedColumnRef* rollup_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->rollup_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_rollup_column_list(T v) && {
+    node_->add_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_rollup_column_list(T v) & {
+    node_->add_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_rollup_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnRef>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_rollup_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_rollup_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> release_rollup_column_list() {
+    return node_->release_rollup_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_rollup_column_list(T v) && {
+    node_->set_rollup_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnRef>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_rollup_column_list(T v) & {
+    node_->set_rollup_column_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGroupingCall>>& grouping_call_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list();
+  }
+
+  int grouping_call_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list_size();
+  }
+
+  const ResolvedGroupingCall* grouping_call_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->grouping_call_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_grouping_call_list(T v) && {
+    node_->add_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_grouping_call_list(T v) & {
+    node_->add_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& add_grouping_call_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedGroupingCall>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& add_grouping_call_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_grouping_call_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGroupingCall>> release_grouping_call_list() {
+    return node_->release_grouping_call_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_grouping_call_list(T v) && {
+    node_->set_grouping_call_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedGroupingCall>>>::value>>
+  ResolvedAggregationThresholdAggregateScanBuilder& set_grouping_call_list(T v) & {
+    node_->set_grouping_call_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedAggregationThresholdAggregateScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<8> field_is_set_ = {0};
+  std::bitset<12> field_is_set_ = {0};
   friend ResolvedAggregationThresholdAggregateScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedAggregationThresholdAggregateScan> node);
 
   ResolvedAggregationThresholdAggregateScanBuilder(std::unique_ptr<ResolvedAggregationThresholdAggregateScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -11753,7 +13263,7 @@ inline ResolvedAggregationThresholdAggregateScanBuilder ToBuilder(
   ResolvedAggregationThresholdAggregateScanBuilder builder(absl::WrapUnique<ResolvedAggregationThresholdAggregateScan>(
       const_cast<ResolvedAggregationThresholdAggregateScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -11786,7 +13296,7 @@ class ResolvedSetOperationItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSetOperationItem::scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -11798,7 +13308,7 @@ class ResolvedSetOperationItemBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->scan();
   }
 
@@ -11851,17 +13361,17 @@ class ResolvedSetOperationItemBuilder final {
   }
 
   const std::vector<ResolvedColumn>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedColumn& output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -11899,7 +13409,7 @@ class ResolvedSetOperationItemBuilder final {
 
   ResolvedSetOperationItemBuilder(std::unique_ptr<ResolvedSetOperationItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -11955,10 +13465,10 @@ class ResolvedSetOperationScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSetOperationScan::op_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -11970,36 +13480,36 @@ class ResolvedSetOperationScanBuilder final {
 
   // Getters and chained setters
   ResolvedSetOperationScan::SetOperationType op_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->op_type();
   }
 
   ResolvedSetOperationScanBuilder&& set_op_type(ResolvedSetOperationScan::SetOperationType v) && {
     node_->set_op_type(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   ResolvedSetOperationScanBuilder& set_op_type(ResolvedSetOperationScan::SetOperationType v) & {
     node_->set_op_type(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedSetOperationItem>>& input_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_item_list();
   }
 
   int input_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_item_list_size();
   }
 
   const ResolvedSetOperationItem* input_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_item_list(i);
   }
 
@@ -12062,7 +13572,7 @@ class ResolvedSetOperationScanBuilder final {
   }
 
   ResolvedSetOperationScan::SetOperationColumnMatchMode column_match_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_match_mode();
   }
 
@@ -12079,7 +13589,7 @@ class ResolvedSetOperationScanBuilder final {
   }
 
   ResolvedSetOperationScan::SetOperationColumnPropagationMode column_propagation_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_propagation_mode();
   }
 
@@ -12096,17 +13606,17 @@ class ResolvedSetOperationScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -12135,17 +13645,17 @@ class ResolvedSetOperationScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -12208,7 +13718,7 @@ class ResolvedSetOperationScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -12224,17 +13734,34 @@ class ResolvedSetOperationScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedSetOperationScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedSetOperationScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedSetOperationScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<7> field_is_set_ = {0};
+  std::bitset<8> field_is_set_ = {0};
   friend ResolvedSetOperationScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedSetOperationScan> node);
 
   ResolvedSetOperationScanBuilder(std::unique_ptr<ResolvedSetOperationScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -12243,7 +13770,7 @@ inline ResolvedSetOperationScanBuilder ToBuilder(
   ResolvedSetOperationScanBuilder builder(absl::WrapUnique<ResolvedSetOperationScan>(
       const_cast<ResolvedSetOperationScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -12273,10 +13800,10 @@ class ResolvedOrderByScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedOrderByScan::input_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -12288,7 +13815,7 @@ class ResolvedOrderByScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -12299,7 +13826,7 @@ class ResolvedOrderByScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedOrderByScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -12307,7 +13834,7 @@ class ResolvedOrderByScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedOrderByScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -12321,7 +13848,7 @@ class ResolvedOrderByScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -12335,23 +13862,23 @@ class ResolvedOrderByScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOrderByItem>>& order_by_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list();
   }
 
   int order_by_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list_size();
   }
 
   const ResolvedOrderByItem* order_by_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list(i);
   }
 
@@ -12414,17 +13941,17 @@ class ResolvedOrderByScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -12453,17 +13980,17 @@ class ResolvedOrderByScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -12526,7 +14053,7 @@ class ResolvedOrderByScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -12542,17 +14069,34 @@ class ResolvedOrderByScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedOrderByScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedOrderByScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedOrderByScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedOrderByScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedOrderByScan> node);
 
   ResolvedOrderByScanBuilder(std::unique_ptr<ResolvedOrderByScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -12561,7 +14105,7 @@ inline ResolvedOrderByScanBuilder ToBuilder(
   ResolvedOrderByScanBuilder builder(absl::WrapUnique<ResolvedOrderByScan>(
       const_cast<ResolvedOrderByScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -12591,22 +14135,22 @@ class ResolvedLimitOffsetScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedLimitOffsetScan::input_scan was not set on the builder");
-    }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedLimitOffsetScan::limit was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedLimitOffsetScan::input_scan was not set on the builder");
     }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedLimitOffsetScan::limit was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedLimitOffsetScan::offset was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -12618,7 +14162,7 @@ class ResolvedLimitOffsetScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -12629,7 +14173,7 @@ class ResolvedLimitOffsetScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedLimitOffsetScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
     node_->set_input_scan(std::move(v), propagate_order);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -12637,7 +14181,7 @@ class ResolvedLimitOffsetScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedLimitOffsetScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
     node_->set_input_scan(std::move(v), propagate_order);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -12651,7 +14195,7 @@ class ResolvedLimitOffsetScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -12665,13 +14209,13 @@ class ResolvedLimitOffsetScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const ResolvedExpr* limit() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->limit();
   }
 
@@ -12682,7 +14226,7 @@ class ResolvedLimitOffsetScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedLimitOffsetScanBuilder&& set_limit(T v) && {
     node_->set_limit(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -12690,7 +14234,7 @@ class ResolvedLimitOffsetScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedLimitOffsetScanBuilder& set_limit(T v) & {
     node_->set_limit(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -12704,7 +14248,7 @@ class ResolvedLimitOffsetScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -12718,13 +14262,13 @@ class ResolvedLimitOffsetScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const ResolvedExpr* offset() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->offset();
   }
 
@@ -12735,7 +14279,7 @@ class ResolvedLimitOffsetScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedLimitOffsetScanBuilder&& set_offset(T v) && {
     node_->set_offset(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -12743,7 +14287,7 @@ class ResolvedLimitOffsetScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedLimitOffsetScanBuilder& set_offset(T v) & {
     node_->set_offset(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
@@ -12757,7 +14301,7 @@ class ResolvedLimitOffsetScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -12771,23 +14315,23 @@ class ResolvedLimitOffsetScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -12816,17 +14360,17 @@ class ResolvedLimitOffsetScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -12889,7 +14433,7 @@ class ResolvedLimitOffsetScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -12905,17 +14449,34 @@ class ResolvedLimitOffsetScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedLimitOffsetScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedLimitOffsetScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedLimitOffsetScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<6> field_is_set_ = {0};
+  std::bitset<7> field_is_set_ = {0};
   friend ResolvedLimitOffsetScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedLimitOffsetScan> node);
 
   ResolvedLimitOffsetScanBuilder(std::unique_ptr<ResolvedLimitOffsetScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -12924,9 +14485,9 @@ inline ResolvedLimitOffsetScanBuilder ToBuilder(
   ResolvedLimitOffsetScanBuilder builder(absl::WrapUnique<ResolvedLimitOffsetScan>(
       const_cast<ResolvedLimitOffsetScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -12956,10 +14517,10 @@ class ResolvedWithRefScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWithRefScan::with_query_name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -12971,36 +14532,36 @@ class ResolvedWithRefScanBuilder final {
 
   // Getters and chained setters
   const std::string& with_query_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_query_name();
   }
 
   ResolvedWithRefScanBuilder&& set_with_query_name(const std::string& v) && {
     node_->set_with_query_name(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   ResolvedWithRefScanBuilder& set_with_query_name(const std::string& v) & {
     node_->set_with_query_name(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -13029,17 +14590,17 @@ class ResolvedWithRefScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -13102,7 +14663,7 @@ class ResolvedWithRefScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -13118,17 +14679,34 @@ class ResolvedWithRefScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedWithRefScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedWithRefScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedWithRefScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<4> field_is_set_ = {0};
+  std::bitset<5> field_is_set_ = {0};
   friend ResolvedWithRefScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedWithRefScan> node);
 
   ResolvedWithRefScanBuilder(std::unique_ptr<ResolvedWithRefScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -13137,7 +14715,7 @@ inline ResolvedWithRefScanBuilder ToBuilder(
   ResolvedWithRefScanBuilder builder(absl::WrapUnique<ResolvedWithRefScan>(
       const_cast<ResolvedWithRefScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -13167,10 +14745,10 @@ class ResolvedAnalyticScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticScan::input_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -13182,7 +14760,7 @@ class ResolvedAnalyticScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -13193,7 +14771,7 @@ class ResolvedAnalyticScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAnalyticScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -13201,7 +14779,7 @@ class ResolvedAnalyticScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedAnalyticScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -13215,7 +14793,7 @@ class ResolvedAnalyticScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -13229,23 +14807,23 @@ class ResolvedAnalyticScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>& function_group_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_group_list();
   }
 
   int function_group_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_group_list_size();
   }
 
   const ResolvedAnalyticFunctionGroup* function_group_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_group_list(i);
   }
 
@@ -13308,17 +14886,17 @@ class ResolvedAnalyticScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -13347,17 +14925,17 @@ class ResolvedAnalyticScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -13420,7 +14998,7 @@ class ResolvedAnalyticScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -13436,17 +15014,34 @@ class ResolvedAnalyticScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedAnalyticScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAnalyticScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedAnalyticScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedAnalyticScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedAnalyticScan> node);
 
   ResolvedAnalyticScanBuilder(std::unique_ptr<ResolvedAnalyticScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -13455,7 +15050,7 @@ inline ResolvedAnalyticScanBuilder ToBuilder(
   ResolvedAnalyticScanBuilder builder(absl::WrapUnique<ResolvedAnalyticScan>(
       const_cast<ResolvedAnalyticScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -13489,34 +15084,34 @@ class ResolvedSampleScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedSampleScan::input_scan was not set on the builder");
-    }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedSampleScan::method was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedSampleScan::input_scan was not set on the builder");
     }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedSampleScan::size was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedSampleScan::method was not set on the builder");
     }
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedSampleScan::unit was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedSampleScan::size was not set on the builder");
     }
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedSampleScan::unit was not set on the builder");
+    }
+    if (!field_is_set_.test(8)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSampleScan::repeatable_argument was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -13528,7 +15123,7 @@ class ResolvedSampleScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -13539,7 +15134,7 @@ class ResolvedSampleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedSampleScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -13547,7 +15142,7 @@ class ResolvedSampleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedSampleScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -13561,7 +15156,7 @@ class ResolvedSampleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -13575,32 +15170,32 @@ class ResolvedSampleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::string& method() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->method();
   }
 
   ResolvedSampleScanBuilder&& set_method(const std::string& v) && {
     node_->set_method(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   ResolvedSampleScanBuilder& set_method(const std::string& v) & {
     node_->set_method(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const ResolvedExpr* size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->size();
   }
 
@@ -13611,7 +15206,7 @@ class ResolvedSampleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedSampleScanBuilder&& set_size(T v) && {
     node_->set_size(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -13619,7 +15214,7 @@ class ResolvedSampleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedSampleScanBuilder& set_size(T v) & {
     node_->set_size(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
@@ -13633,7 +15228,7 @@ class ResolvedSampleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -13647,32 +15242,32 @@ class ResolvedSampleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   ResolvedSampleScan::SampleUnit unit() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unit();
   }
 
   ResolvedSampleScanBuilder&& set_unit(ResolvedSampleScan::SampleUnit v) && {
     node_->set_unit(v);
-    field_is_set_.set(6, true);
+    field_is_set_.set(7, true);
 
     return std::move(*this);
   }
 
   ResolvedSampleScanBuilder& set_unit(ResolvedSampleScan::SampleUnit v) & {
     node_->set_unit(v);
-    field_is_set_.set(6, true);
+    field_is_set_.set(7, true);
 
     return *this;
   }
 
   const ResolvedExpr* repeatable_argument() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->repeatable_argument();
   }
 
@@ -13683,7 +15278,7 @@ class ResolvedSampleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedSampleScanBuilder&& set_repeatable_argument(T v) && {
     node_->set_repeatable_argument(std::move(v));
-    field_is_set_.set(7, true);
+    field_is_set_.set(8, true);
 
     return std::move(*this);
   }
@@ -13691,7 +15286,7 @@ class ResolvedSampleScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedSampleScanBuilder& set_repeatable_argument(T v) & {
     node_->set_repeatable_argument(std::move(v));
-    field_is_set_.set(7, true);
+    field_is_set_.set(8, true);
 
     return *this;
   }
@@ -13705,7 +15300,7 @@ class ResolvedSampleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(7, true);
+    field_is_set_.set(8, true);
 
     return std::move(*this);
   }
@@ -13719,13 +15314,13 @@ class ResolvedSampleScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(7, true);
+    field_is_set_.set(8, true);
 
     return *this;
   }
 
   const ResolvedColumnHolder* weight_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->weight_column();
   }
 
@@ -13774,17 +15369,17 @@ class ResolvedSampleScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
   }
 
   int partition_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list_size();
   }
 
   const ResolvedExpr* partition_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list(i);
   }
 
@@ -13847,17 +15442,17 @@ class ResolvedSampleScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -13886,17 +15481,17 @@ class ResolvedSampleScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -13959,7 +15554,7 @@ class ResolvedSampleScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -13975,17 +15570,34 @@ class ResolvedSampleScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedSampleScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedSampleScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedSampleScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<10> field_is_set_ = {0};
+  std::bitset<11> field_is_set_ = {0};
   friend ResolvedSampleScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedSampleScan> node);
 
   ResolvedSampleScanBuilder(std::unique_ptr<ResolvedSampleScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -13994,11 +15606,11 @@ inline ResolvedSampleScanBuilder ToBuilder(
   ResolvedSampleScanBuilder builder(absl::WrapUnique<ResolvedSampleScan>(
       const_cast<ResolvedSampleScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
   builder.field_is_set_.set(6, true);
   builder.field_is_set_.set(7, true);
+  builder.field_is_set_.set(8, true);
   return builder;
 }
 
@@ -14031,13 +15643,13 @@ class ResolvedComputedColumnBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedComputedColumn::column was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedComputedColumn::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -14049,7 +15661,7 @@ class ResolvedComputedColumnBuilder final {
 
   // Getters and chained setters
   const ResolvedColumn& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -14068,7 +15680,7 @@ class ResolvedComputedColumnBuilder final {
   }
 
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -14130,7 +15742,7 @@ class ResolvedComputedColumnBuilder final {
 
   ResolvedComputedColumnBuilder(std::unique_ptr<ResolvedComputedColumn> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -14178,7 +15790,7 @@ class ResolvedOrderByItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedOrderByItem::column_ref was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -14190,7 +15802,7 @@ class ResolvedOrderByItemBuilder final {
 
   // Getters and chained setters
   const ResolvedColumnRef* column_ref() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_ref();
   }
 
@@ -14243,7 +15855,7 @@ class ResolvedOrderByItemBuilder final {
   }
 
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -14292,7 +15904,7 @@ class ResolvedOrderByItemBuilder final {
   }
 
   bool is_descending() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_descending();
   }
 
@@ -14309,7 +15921,7 @@ class ResolvedOrderByItemBuilder final {
   }
 
   ResolvedOrderByItem::NullOrderMode null_order() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->null_order();
   }
 
@@ -14326,7 +15938,7 @@ class ResolvedOrderByItemBuilder final {
   }
 
   const ResolvedCollation& collation() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation();
   }
 
@@ -14352,7 +15964,7 @@ class ResolvedOrderByItemBuilder final {
 
   ResolvedOrderByItemBuilder(std::unique_ptr<ResolvedOrderByItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -14406,7 +16018,7 @@ class ResolvedColumnAnnotationsBuilder final {
   // when FEATURE_V_1_3_COLLATION_SUPPORT is enabled. See
   // (broken link).
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -14455,7 +16067,7 @@ class ResolvedColumnAnnotationsBuilder final {
   }
 
   bool not_null() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->not_null();
   }
 
@@ -14472,17 +16084,17 @@ class ResolvedColumnAnnotationsBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -14545,17 +16157,17 @@ class ResolvedColumnAnnotationsBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnAnnotations>>& child_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->child_list();
   }
 
   int child_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->child_list_size();
   }
 
   const ResolvedColumnAnnotations* child_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->child_list(i);
   }
 
@@ -14623,7 +16235,7 @@ class ResolvedColumnAnnotationsBuilder final {
   // can access the full type parameters with child_list by calling
   // ResolvedColumnDefinition.getFullTypeParameters() function.
   const TypeParameters& type_parameters() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_parameters();
   }
 
@@ -14648,7 +16260,7 @@ class ResolvedColumnAnnotationsBuilder final {
 
   ResolvedColumnAnnotationsBuilder(std::unique_ptr<ResolvedColumnAnnotations> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -14694,13 +16306,13 @@ class ResolvedGeneratedColumnInfoBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGeneratedColumnInfo::expression was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGeneratedColumnInfo::stored_mode was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -14712,7 +16324,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expression();
   }
 
@@ -14765,7 +16377,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
   }
 
   ResolvedGeneratedColumnInfo::StoredMode stored_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->stored_mode();
   }
 
@@ -14793,7 +16405,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
 
   ResolvedGeneratedColumnInfoBuilder(std::unique_ptr<ResolvedGeneratedColumnInfo> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -14836,13 +16448,13 @@ class ResolvedColumnDefaultValueBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnDefaultValue::expression was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnDefaultValue::sql was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -14854,7 +16466,7 @@ class ResolvedColumnDefaultValueBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expression();
   }
 
@@ -14907,7 +16519,7 @@ class ResolvedColumnDefaultValueBuilder final {
   }
 
   const std::string& sql() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql();
   }
 
@@ -14935,7 +16547,7 @@ class ResolvedColumnDefaultValueBuilder final {
 
   ResolvedColumnDefaultValueBuilder(std::unique_ptr<ResolvedColumnDefaultValue> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -14983,19 +16595,19 @@ class ResolvedColumnDefinitionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnDefinition::name was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnDefinition::type was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedColumnDefinition::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -15007,7 +16619,7 @@ class ResolvedColumnDefinitionBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -15026,7 +16638,7 @@ class ResolvedColumnDefinitionBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -15045,7 +16657,7 @@ class ResolvedColumnDefinitionBuilder final {
   }
 
   const ResolvedColumnAnnotations* annotations() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->annotations();
   }
 
@@ -15094,7 +16706,7 @@ class ResolvedColumnDefinitionBuilder final {
   }
 
   bool is_hidden() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_hidden();
   }
 
@@ -15111,7 +16723,7 @@ class ResolvedColumnDefinitionBuilder final {
   }
 
   const ResolvedColumn& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -15130,7 +16742,7 @@ class ResolvedColumnDefinitionBuilder final {
   }
 
   const ResolvedGeneratedColumnInfo* generated_column_info() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->generated_column_info();
   }
 
@@ -15179,7 +16791,7 @@ class ResolvedColumnDefinitionBuilder final {
   }
 
   const ResolvedColumnDefaultValue* default_value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->default_value();
   }
 
@@ -15237,7 +16849,7 @@ class ResolvedColumnDefinitionBuilder final {
 
   ResolvedColumnDefinitionBuilder(std::unique_ptr<ResolvedColumnDefinition> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -15285,17 +16897,17 @@ class ResolvedPrimaryKeyBuilder final {
 
   // Getters and chained setters
   const std::vector<int>& column_offset_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_offset_list();
   }
 
   int column_offset_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_offset_list_size();
   }
 
   int column_offset_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_offset_list(i);
   }
 
@@ -15324,17 +16936,17 @@ class ResolvedPrimaryKeyBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -15397,7 +17009,7 @@ class ResolvedPrimaryKeyBuilder final {
   }
 
   bool unenforced() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unenforced();
   }
 
@@ -15414,7 +17026,7 @@ class ResolvedPrimaryKeyBuilder final {
   }
 
   const std::string& constraint_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->constraint_name();
   }
 
@@ -15431,17 +17043,17 @@ class ResolvedPrimaryKeyBuilder final {
   }
 
   const std::vector<std::string>& column_name_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_name_list();
   }
 
   int column_name_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_name_list_size();
   }
 
   const std::string& column_name_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_name_list(i);
   }
 
@@ -15478,7 +17090,7 @@ class ResolvedPrimaryKeyBuilder final {
 
   ResolvedPrimaryKeyBuilder(std::unique_ptr<ResolvedPrimaryKey> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -15529,37 +17141,37 @@ class ResolvedForeignKeyBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedForeignKey::constraint_name was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedForeignKey::referenced_table was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedForeignKey::match_mode was not set on the builder");
     }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedForeignKey::update_action was not set on the builder");
     }
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedForeignKey::delete_action was not set on the builder");
     }
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedForeignKey::enforced was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -15571,7 +17183,7 @@ class ResolvedForeignKeyBuilder final {
 
   // Getters and chained setters
   const std::string& constraint_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->constraint_name();
   }
 
@@ -15590,17 +17202,17 @@ class ResolvedForeignKeyBuilder final {
   }
 
   const std::vector<int>& referencing_column_offset_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referencing_column_offset_list();
   }
 
   int referencing_column_offset_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referencing_column_offset_list_size();
   }
 
   int referencing_column_offset_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referencing_column_offset_list(i);
   }
 
@@ -15629,7 +17241,7 @@ class ResolvedForeignKeyBuilder final {
   }
 
   const Table* referenced_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referenced_table();
   }
 
@@ -15648,17 +17260,17 @@ class ResolvedForeignKeyBuilder final {
   }
 
   const std::vector<int>& referenced_column_offset_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referenced_column_offset_list();
   }
 
   int referenced_column_offset_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referenced_column_offset_list_size();
   }
 
   int referenced_column_offset_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referenced_column_offset_list(i);
   }
 
@@ -15687,7 +17299,7 @@ class ResolvedForeignKeyBuilder final {
   }
 
   ResolvedForeignKey::MatchMode match_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->match_mode();
   }
 
@@ -15706,7 +17318,7 @@ class ResolvedForeignKeyBuilder final {
   }
 
   ResolvedForeignKey::ActionOperation update_action() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_action();
   }
 
@@ -15725,7 +17337,7 @@ class ResolvedForeignKeyBuilder final {
   }
 
   ResolvedForeignKey::ActionOperation delete_action() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->delete_action();
   }
 
@@ -15744,7 +17356,7 @@ class ResolvedForeignKeyBuilder final {
   }
 
   bool enforced() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->enforced();
   }
 
@@ -15763,17 +17375,17 @@ class ResolvedForeignKeyBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -15836,17 +17448,17 @@ class ResolvedForeignKeyBuilder final {
   }
 
   const std::vector<std::string>& referencing_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referencing_column_list();
   }
 
   int referencing_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referencing_column_list_size();
   }
 
   const std::string& referencing_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->referencing_column_list(i);
   }
 
@@ -15884,7 +17496,7 @@ class ResolvedForeignKeyBuilder final {
 
   ResolvedForeignKeyBuilder(std::unique_ptr<ResolvedForeignKey> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -15931,19 +17543,19 @@ class ResolvedCheckConstraintBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCheckConstraint::constraint_name was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCheckConstraint::expression was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCheckConstraint::enforced was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -15955,7 +17567,7 @@ class ResolvedCheckConstraintBuilder final {
 
   // Getters and chained setters
   const std::string& constraint_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->constraint_name();
   }
 
@@ -15974,7 +17586,7 @@ class ResolvedCheckConstraintBuilder final {
   }
 
   const ResolvedExpr* expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expression();
   }
 
@@ -16027,7 +17639,7 @@ class ResolvedCheckConstraintBuilder final {
   }
 
   bool enforced() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->enforced();
   }
 
@@ -16046,17 +17658,17 @@ class ResolvedCheckConstraintBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -16128,7 +17740,7 @@ class ResolvedCheckConstraintBuilder final {
 
   ResolvedCheckConstraintBuilder(std::unique_ptr<ResolvedCheckConstraint> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -16172,13 +17784,13 @@ class ResolvedOutputColumnBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedOutputColumn::name was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedOutputColumn::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -16190,7 +17802,7 @@ class ResolvedOutputColumnBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -16209,7 +17821,7 @@ class ResolvedOutputColumnBuilder final {
   }
 
   const ResolvedColumn& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -16237,7 +17849,7 @@ class ResolvedOutputColumnBuilder final {
 
   ResolvedOutputColumnBuilder(std::unique_ptr<ResolvedOutputColumn> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -16277,10 +17889,10 @@ class ResolvedProjectScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(4)) {
+    if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedProjectScan::input_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -16292,17 +17904,17 @@ class ResolvedProjectScanBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr_list();
   }
 
   int expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr_list_size();
   }
 
   const ResolvedComputedColumn* expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr_list(i);
   }
 
@@ -16365,7 +17977,7 @@ class ResolvedProjectScanBuilder final {
   }
 
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -16376,7 +17988,7 @@ class ResolvedProjectScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedProjectScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
     node_->set_input_scan(std::move(v), propagate_order);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -16384,7 +17996,7 @@ class ResolvedProjectScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedProjectScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
     node_->set_input_scan(std::move(v), propagate_order);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -16398,7 +18010,7 @@ class ResolvedProjectScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -16412,23 +18024,23 @@ class ResolvedProjectScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -16457,17 +18069,17 @@ class ResolvedProjectScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -16530,7 +18142,7 @@ class ResolvedProjectScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -16546,17 +18158,34 @@ class ResolvedProjectScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedProjectScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedProjectScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedProjectScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedProjectScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedProjectScan> node);
 
   ResolvedProjectScanBuilder(std::unique_ptr<ResolvedProjectScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -16565,7 +18194,7 @@ inline ResolvedProjectScanBuilder ToBuilder(
   ResolvedProjectScanBuilder builder(absl::WrapUnique<ResolvedProjectScan>(
       const_cast<ResolvedProjectScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(5, true);
   return builder;
 }
 
@@ -16595,22 +18224,22 @@ class ResolvedTVFScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedTVFScan::tvf was not set on the builder");
-    }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedTVFScan::signature was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedTVFScan::tvf was not set on the builder");
     }
-    if (!field_is_set_.test(7)) {
+    if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedTVFScan::signature was not set on the builder");
+    }
+    if (!field_is_set_.test(8)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedTVFScan::alias was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -16622,55 +18251,55 @@ class ResolvedTVFScanBuilder final {
 
   // Getters and chained setters
   const TableValuedFunction* tvf() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->tvf();
   }
 
   ResolvedTVFScanBuilder&& set_tvf(const TableValuedFunction* v) && {
     node_->set_tvf(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   ResolvedTVFScanBuilder& set_tvf(const TableValuedFunction* v) & {
     node_->set_tvf(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const std::shared_ptr<TVFSignature>& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
   ResolvedTVFScanBuilder&& set_signature(const std::shared_ptr<TVFSignature>& v) && {
     node_->set_signature(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   ResolvedTVFScanBuilder& set_signature(const std::shared_ptr<TVFSignature>& v) & {
     node_->set_signature(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedFunctionArgument>>& argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list();
   }
 
   int argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list_size();
   }
 
   const ResolvedFunctionArgument* argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list(i);
   }
 
@@ -16733,17 +18362,17 @@ class ResolvedTVFScanBuilder final {
   }
 
   const std::vector<int>& column_index_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list();
   }
 
   int column_index_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list_size();
   }
 
   int column_index_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list(i);
   }
 
@@ -16772,26 +18401,26 @@ class ResolvedTVFScanBuilder final {
   }
 
   const std::string& alias() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias();
   }
 
   ResolvedTVFScanBuilder&& set_alias(const std::string& v) && {
     node_->set_alias(v);
-    field_is_set_.set(7, true);
+    field_is_set_.set(8, true);
 
     return std::move(*this);
   }
 
   ResolvedTVFScanBuilder& set_alias(const std::string& v) & {
     node_->set_alias(v);
-    field_is_set_.set(7, true);
+    field_is_set_.set(8, true);
 
     return *this;
   }
 
   const std::shared_ptr<FunctionSignature>& function_call_signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_call_signature();
   }
 
@@ -16808,17 +18437,17 @@ class ResolvedTVFScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -16847,17 +18476,17 @@ class ResolvedTVFScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -16920,7 +18549,7 @@ class ResolvedTVFScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -16936,17 +18565,34 @@ class ResolvedTVFScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedTVFScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedTVFScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedTVFScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<10> field_is_set_ = {0};
   friend ResolvedTVFScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedTVFScan> node);
 
   ResolvedTVFScanBuilder(std::unique_ptr<ResolvedTVFScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -16955,9 +18601,9 @@ inline ResolvedTVFScanBuilder ToBuilder(
   ResolvedTVFScanBuilder builder(absl::WrapUnique<ResolvedTVFScan>(
       const_cast<ResolvedTVFScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(4, true);
-  builder.field_is_set_.set(7, true);
+  builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(8, true);
   return builder;
 }
 
@@ -16987,10 +18633,10 @@ class ResolvedGroupRowsScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(4)) {
+    if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedGroupRowsScan::alias was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -17002,17 +18648,17 @@ class ResolvedGroupRowsScanBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& input_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_column_list();
   }
 
   int input_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_column_list_size();
   }
 
   const ResolvedComputedColumn* input_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_column_list(i);
   }
 
@@ -17075,36 +18721,36 @@ class ResolvedGroupRowsScanBuilder final {
   }
 
   const std::string& alias() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias();
   }
 
   ResolvedGroupRowsScanBuilder&& set_alias(const std::string& v) && {
     node_->set_alias(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   ResolvedGroupRowsScanBuilder& set_alias(const std::string& v) & {
     node_->set_alias(v);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -17133,17 +18779,17 @@ class ResolvedGroupRowsScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -17206,7 +18852,7 @@ class ResolvedGroupRowsScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -17222,17 +18868,34 @@ class ResolvedGroupRowsScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedGroupRowsScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedGroupRowsScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedGroupRowsScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedGroupRowsScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedGroupRowsScan> node);
 
   ResolvedGroupRowsScanBuilder(std::unique_ptr<ResolvedGroupRowsScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -17241,7 +18904,7 @@ inline ResolvedGroupRowsScanBuilder ToBuilder(
   ResolvedGroupRowsScanBuilder builder(absl::WrapUnique<ResolvedGroupRowsScan>(
       const_cast<ResolvedGroupRowsScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(5, true);
   return builder;
 }
 
@@ -17278,7 +18941,7 @@ class ResolvedFunctionArgumentBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -17327,7 +18990,7 @@ class ResolvedFunctionArgumentBuilder final {
   }
 
   const ResolvedScan* scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->scan();
   }
 
@@ -17376,7 +19039,7 @@ class ResolvedFunctionArgumentBuilder final {
   }
 
   const ResolvedModel* model() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->model();
   }
 
@@ -17425,7 +19088,7 @@ class ResolvedFunctionArgumentBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -17474,7 +19137,7 @@ class ResolvedFunctionArgumentBuilder final {
   }
 
   const ResolvedDescriptor* descriptor_arg() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descriptor_arg();
   }
 
@@ -17523,17 +19186,17 @@ class ResolvedFunctionArgumentBuilder final {
   }
 
   const std::vector<ResolvedColumn>& argument_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_column_list();
   }
 
   int argument_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_column_list_size();
   }
 
   const ResolvedColumn& argument_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_column_list(i);
   }
 
@@ -17562,7 +19225,7 @@ class ResolvedFunctionArgumentBuilder final {
   }
 
   const ResolvedInlineLambda* inline_lambda() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->inline_lambda();
   }
 
@@ -17610,6 +19273,55 @@ class ResolvedFunctionArgumentBuilder final {
     return *this;
   }
 
+  const ResolvedSequence* sequence() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->sequence();
+  }
+
+  std::unique_ptr<const ResolvedSequence> release_sequence() {
+    return node_->release_sequence();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedSequence>>::value>>
+  ResolvedFunctionArgumentBuilder&& set_sequence(T v) && {
+    node_->set_sequence(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedSequence>>::value>>
+  ResolvedFunctionArgumentBuilder& set_sequence(T v) & {
+    node_->set_sequence(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedSequence>>::value>>
+  ResolvedFunctionArgumentBuilder&& set_sequence(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_sequence(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedSequence>>::value>>
+  ResolvedFunctionArgumentBuilder& set_sequence(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_sequence(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedFunctionArgument> node_;
 
@@ -17619,7 +19331,7 @@ class ResolvedFunctionArgumentBuilder final {
 
   ResolvedFunctionArgumentBuilder(std::unique_ptr<ResolvedFunctionArgument> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -17660,7 +19372,7 @@ class ResolvedExplainStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExplainStmt::statement was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -17672,7 +19384,7 @@ class ResolvedExplainStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedStatement* statement() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->statement();
   }
 
@@ -17725,17 +19437,17 @@ class ResolvedExplainStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -17807,7 +19519,7 @@ class ResolvedExplainStmtBuilder final {
 
   ResolvedExplainStmtBuilder(std::unique_ptr<ResolvedExplainStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -17849,7 +19561,7 @@ class ResolvedQueryStmtBuilder final {
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedQueryStmt::query was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -17861,17 +19573,17 @@ class ResolvedQueryStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -17938,7 +19650,7 @@ class ResolvedQueryStmtBuilder final {
   // unnamed value type.  output_column_list will have exactly one
   // column, with an empty name. See (broken link).
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -17955,7 +19667,7 @@ class ResolvedQueryStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -18008,17 +19720,17 @@ class ResolvedQueryStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -18090,7 +19802,7 @@ class ResolvedQueryStmtBuilder final {
 
   ResolvedQueryStmtBuilder(std::unique_ptr<ResolvedQueryStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -18136,17 +19848,17 @@ class ResolvedCreateDatabaseStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -18175,17 +19887,17 @@ class ResolvedCreateDatabaseStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -18248,17 +19960,17 @@ class ResolvedCreateDatabaseStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -18329,7 +20041,7 @@ class ResolvedCreateDatabaseStmtBuilder final {
 
   ResolvedCreateDatabaseStmtBuilder(std::unique_ptr<ResolvedCreateDatabaseStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -18370,13 +20082,13 @@ class ResolvedIndexItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedIndexItem::column_ref was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedIndexItem::descending was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -18388,7 +20100,7 @@ class ResolvedIndexItemBuilder final {
 
   // Getters and chained setters
   const ResolvedColumnRef* column_ref() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_ref();
   }
 
@@ -18441,7 +20153,7 @@ class ResolvedIndexItemBuilder final {
   }
 
   bool descending() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->descending();
   }
 
@@ -18469,7 +20181,7 @@ class ResolvedIndexItemBuilder final {
 
   ResolvedIndexItemBuilder(std::unique_ptr<ResolvedIndexItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -18512,13 +20224,13 @@ class ResolvedUnnestItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUnnestItem::array_expr was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUnnestItem::element_column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -18530,7 +20242,7 @@ class ResolvedUnnestItemBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* array_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_expr();
   }
 
@@ -18583,7 +20295,7 @@ class ResolvedUnnestItemBuilder final {
   }
 
   const ResolvedColumn& element_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->element_column();
   }
 
@@ -18602,7 +20314,7 @@ class ResolvedUnnestItemBuilder final {
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_offset_column();
   }
 
@@ -18660,7 +20372,7 @@ class ResolvedUnnestItemBuilder final {
 
   ResolvedUnnestItemBuilder(std::unique_ptr<ResolvedUnnestItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -18703,13 +20415,13 @@ class ResolvedCreateIndexStmtBuilder final {
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateIndexStmt::table_scan was not set on the builder");
     }
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateIndexStmt::is_unique was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -18721,17 +20433,17 @@ class ResolvedCreateIndexStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& table_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_name_path();
   }
 
   int table_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_name_path_size();
   }
 
   const std::string& table_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_name_path(i);
   }
 
@@ -18760,7 +20472,7 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -18813,7 +20525,7 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   bool is_unique() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_unique();
   }
 
@@ -18832,7 +20544,7 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   bool is_search() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_search();
   }
 
@@ -18848,8 +20560,25 @@ class ResolvedCreateIndexStmtBuilder final {
     return *this;
   }
 
+  bool is_vector() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_vector();
+  }
+
+  ResolvedCreateIndexStmtBuilder&& set_is_vector(bool v) && {
+    node_->set_is_vector(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateIndexStmtBuilder& set_is_vector(bool v) & {
+    node_->set_is_vector(v);
+
+    return *this;
+  }
+
   bool index_all_columns() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->index_all_columns();
   }
 
@@ -18866,17 +20595,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedIndexItem>>& index_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->index_item_list();
   }
 
   int index_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->index_item_list_size();
   }
 
   const ResolvedIndexItem* index_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->index_item_list(i);
   }
 
@@ -18939,17 +20668,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& storing_expression_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->storing_expression_list();
   }
 
   int storing_expression_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->storing_expression_list_size();
   }
 
   const ResolvedExpr* storing_expression_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->storing_expression_list(i);
   }
 
@@ -19012,17 +20741,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -19085,17 +20814,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& computed_columns_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->computed_columns_list();
   }
 
   int computed_columns_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->computed_columns_list_size();
   }
 
   const ResolvedComputedColumn* computed_columns_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->computed_columns_list(i);
   }
 
@@ -19158,17 +20887,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedUnnestItem>>& unnest_expressions_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unnest_expressions_list();
   }
 
   int unnest_expressions_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unnest_expressions_list_size();
   }
 
   const ResolvedUnnestItem* unnest_expressions_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unnest_expressions_list(i);
   }
 
@@ -19231,17 +20960,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -19304,17 +21033,17 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -19343,7 +21072,7 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -19360,7 +21089,7 @@ class ResolvedCreateIndexStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -19380,13 +21109,13 @@ class ResolvedCreateIndexStmtBuilder final {
   std::unique_ptr<ResolvedCreateIndexStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<14> field_is_set_ = {0};
+  std::bitset<15> field_is_set_ = {0};
   friend ResolvedCreateIndexStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateIndexStmt> node);
 
   ResolvedCreateIndexStmtBuilder(std::unique_ptr<ResolvedCreateIndexStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -19433,7 +21162,7 @@ class ResolvedCreateSchemaStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -19482,17 +21211,17 @@ class ResolvedCreateSchemaStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -19555,17 +21284,17 @@ class ResolvedCreateSchemaStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -19628,17 +21357,17 @@ class ResolvedCreateSchemaStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -19667,7 +21396,7 @@ class ResolvedCreateSchemaStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -19684,7 +21413,7 @@ class ResolvedCreateSchemaStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -19709,7 +21438,7 @@ class ResolvedCreateSchemaStmtBuilder final {
 
   ResolvedCreateSchemaStmtBuilder(std::unique_ptr<ResolvedCreateSchemaStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -19754,7 +21483,7 @@ class ResolvedCreateTableStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* clone_from() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->clone_from();
   }
 
@@ -19803,7 +21532,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const ResolvedScan* copy_from() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->copy_from();
   }
 
@@ -19852,17 +21581,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
   }
 
   int partition_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list_size();
   }
 
   const ResolvedExpr* partition_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list(i);
   }
 
@@ -19925,17 +21654,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
   }
 
   int cluster_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list_size();
   }
 
   const ResolvedExpr* cluster_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list(i);
   }
 
@@ -19998,17 +21727,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -20071,17 +21800,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -20110,7 +21839,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -20127,7 +21856,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -20144,17 +21873,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -20217,17 +21946,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -20290,17 +22019,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<ResolvedColumn>& pseudo_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list();
   }
 
   int pseudo_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list_size();
   }
 
   const ResolvedColumn& pseudo_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list(i);
   }
 
@@ -20329,7 +22058,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const ResolvedPrimaryKey* primary_key() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->primary_key();
   }
 
@@ -20378,17 +22107,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedForeignKey>>& foreign_key_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list();
   }
 
   int foreign_key_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list_size();
   }
 
   const ResolvedForeignKey* foreign_key_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list(i);
   }
 
@@ -20451,17 +22180,17 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
   }
 
   int check_constraint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list_size();
   }
 
   const ResolvedCheckConstraint* check_constraint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list(i);
   }
 
@@ -20524,7 +22253,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -20541,7 +22270,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const Table* like_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->like_table();
   }
 
@@ -20558,7 +22287,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -20607,7 +22336,7 @@ class ResolvedCreateTableStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -20664,7 +22393,7 @@ class ResolvedCreateTableStmtBuilder final {
 
   ResolvedCreateTableStmtBuilder(std::unique_ptr<ResolvedCreateTableStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -20705,7 +22434,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     if (!field_is_set_.test(17)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateTableAsSelectStmt::query was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -20717,17 +22446,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
   }
 
   int partition_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list_size();
   }
 
   const ResolvedExpr* partition_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list(i);
   }
 
@@ -20790,17 +22519,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
   }
 
   int cluster_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list_size();
   }
 
   const ResolvedExpr* cluster_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list(i);
   }
 
@@ -20863,17 +22592,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -20936,7 +22665,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -20989,17 +22718,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -21062,17 +22791,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -21101,7 +22830,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -21118,7 +22847,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -21135,17 +22864,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -21208,17 +22937,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -21281,17 +23010,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<ResolvedColumn>& pseudo_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list();
   }
 
   int pseudo_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list_size();
   }
 
   const ResolvedColumn& pseudo_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list(i);
   }
 
@@ -21320,7 +23049,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const ResolvedPrimaryKey* primary_key() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->primary_key();
   }
 
@@ -21369,17 +23098,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedForeignKey>>& foreign_key_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list();
   }
 
   int foreign_key_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list_size();
   }
 
   const ResolvedForeignKey* foreign_key_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list(i);
   }
 
@@ -21442,17 +23171,17 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
   }
 
   int check_constraint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list_size();
   }
 
   const ResolvedCheckConstraint* check_constraint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list(i);
   }
 
@@ -21515,7 +23244,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -21532,7 +23261,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const Table* like_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->like_table();
   }
 
@@ -21549,7 +23278,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -21598,7 +23327,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -21656,7 +23385,7 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
 
   ResolvedCreateTableAsSelectStmtBuilder(std::unique_ptr<ResolvedCreateTableAsSelectStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -21698,13 +23427,13 @@ class ResolvedCreateModelAliasedQueryBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateModelAliasedQuery::alias was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateModelAliasedQuery::query was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -21716,7 +23445,7 @@ class ResolvedCreateModelAliasedQueryBuilder final {
 
   // Getters and chained setters
   const std::string& alias() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias();
   }
 
@@ -21735,7 +23464,7 @@ class ResolvedCreateModelAliasedQueryBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -21788,17 +23517,17 @@ class ResolvedCreateModelAliasedQueryBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -21870,7 +23599,7 @@ class ResolvedCreateModelAliasedQueryBuilder final {
 
   ResolvedCreateModelAliasedQueryBuilder(std::unique_ptr<ResolvedCreateModelAliasedQuery> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -21913,7 +23642,7 @@ class ResolvedCreateModelStmtBuilder final {
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateModelStmt::query was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -21925,17 +23654,17 @@ class ResolvedCreateModelStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -21998,17 +23727,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -22071,7 +23800,7 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -22124,17 +23853,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedCreateModelAliasedQuery>>& aliased_query_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aliased_query_list();
   }
 
   int aliased_query_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aliased_query_list_size();
   }
 
   const ResolvedCreateModelAliasedQuery* aliased_query_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aliased_query_list(i);
   }
 
@@ -22197,17 +23926,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& transform_input_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_input_column_list();
   }
 
   int transform_input_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_input_column_list_size();
   }
 
   const ResolvedColumnDefinition* transform_input_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_input_column_list(i);
   }
 
@@ -22270,17 +23999,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& transform_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_list();
   }
 
   int transform_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_list_size();
   }
 
   const ResolvedComputedColumn* transform_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_list(i);
   }
 
@@ -22343,17 +24072,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& transform_output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_output_column_list();
   }
 
   int transform_output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_output_column_list_size();
   }
 
   const ResolvedOutputColumn* transform_output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_output_column_list(i);
   }
 
@@ -22416,17 +24145,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>>& transform_analytic_function_group_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_analytic_function_group_list();
   }
 
   int transform_analytic_function_group_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_analytic_function_group_list_size();
   }
 
   const ResolvedAnalyticFunctionGroup* transform_analytic_function_group_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->transform_analytic_function_group_list(i);
   }
 
@@ -22489,17 +24218,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& input_column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_column_definition_list();
   }
 
   int input_column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* input_column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_column_definition_list(i);
   }
 
@@ -22562,17 +24291,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& output_column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_definition_list();
   }
 
   int output_column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* output_column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_definition_list(i);
   }
 
@@ -22635,7 +24364,7 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   bool is_remote() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_remote();
   }
 
@@ -22652,7 +24381,7 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -22701,17 +24430,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -22774,17 +24503,17 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -22813,7 +24542,7 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -22830,7 +24559,7 @@ class ResolvedCreateModelStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -22856,7 +24585,7 @@ class ResolvedCreateModelStmtBuilder final {
 
   ResolvedCreateModelStmtBuilder(std::unique_ptr<ResolvedCreateModelStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -22897,19 +24626,19 @@ class ResolvedCreateViewStmtBuilder final {
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateViewStmt::query was not set on the builder");
     }
     if (!field_is_set_.test(8)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateViewStmt::sql was not set on the builder");
     }
     if (!field_is_set_.test(11)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateViewStmt::recursive was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -22921,17 +24650,17 @@ class ResolvedCreateViewStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -22994,17 +24723,17 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -23033,7 +24762,7 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -23050,7 +24779,7 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -23067,17 +24796,17 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -23140,17 +24869,17 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -23213,7 +24942,7 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   bool has_explicit_columns() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->has_explicit_columns();
   }
 
@@ -23230,7 +24959,7 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -23283,7 +25012,7 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   const std::string& sql() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql();
   }
 
@@ -23302,7 +25031,7 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   ResolvedCreateStatement::SqlSecurity sql_security() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql_security();
   }
 
@@ -23323,7 +25052,7 @@ class ResolvedCreateViewStmtBuilder final {
   // value type.  output_column_list will have exactly one column, with
   // an empty name. See (broken link).
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -23342,7 +25071,7 @@ class ResolvedCreateViewStmtBuilder final {
   // True if the view uses the RECURSIVE keyword. <query>
   // can be a ResolvedRecursiveScan only if this is true.
   bool recursive() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->recursive();
   }
 
@@ -23361,17 +25090,17 @@ class ResolvedCreateViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -23443,7 +25172,7 @@ class ResolvedCreateViewStmtBuilder final {
 
   ResolvedCreateViewStmtBuilder(std::unique_ptr<ResolvedCreateViewStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -23491,17 +25220,17 @@ class ResolvedWithPartitionColumnsBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -23572,7 +25301,7 @@ class ResolvedWithPartitionColumnsBuilder final {
 
   ResolvedWithPartitionColumnsBuilder(std::unique_ptr<ResolvedWithPartitionColumns> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -23613,7 +25342,7 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateSnapshotTableStmt::clone_from was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -23625,7 +25354,7 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* clone_from() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->clone_from();
   }
 
@@ -23678,17 +25407,17 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -23751,17 +25480,17 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -23824,17 +25553,17 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -23863,7 +25592,7 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -23880,7 +25609,7 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -23906,7 +25635,7 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
 
   ResolvedCreateSnapshotTableStmtBuilder(std::unique_ptr<ResolvedCreateSnapshotTableStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -23952,7 +25681,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedWithPartitionColumns* with_partition_columns() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_partition_columns();
   }
 
@@ -24001,17 +25730,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -24074,17 +25803,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -24113,7 +25842,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -24130,7 +25859,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -24147,17 +25876,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -24220,17 +25949,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -24293,17 +26022,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<ResolvedColumn>& pseudo_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list();
   }
 
   int pseudo_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list_size();
   }
 
   const ResolvedColumn& pseudo_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list(i);
   }
 
@@ -24332,7 +26061,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const ResolvedPrimaryKey* primary_key() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->primary_key();
   }
 
@@ -24381,17 +26110,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedForeignKey>>& foreign_key_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list();
   }
 
   int foreign_key_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list_size();
   }
 
   const ResolvedForeignKey* foreign_key_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list(i);
   }
 
@@ -24454,17 +26183,17 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
   }
 
   int check_constraint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list_size();
   }
 
   const ResolvedCheckConstraint* check_constraint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list(i);
   }
 
@@ -24527,7 +26256,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -24544,7 +26273,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const Table* like_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->like_table();
   }
 
@@ -24561,7 +26290,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -24610,7 +26339,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -24667,7 +26396,7 @@ class ResolvedCreateExternalTableStmtBuilder final {
 
   ResolvedCreateExternalTableStmtBuilder(std::unique_ptr<ResolvedCreateExternalTableStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -24712,17 +26441,17 @@ class ResolvedExportModelStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& model_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->model_name_path();
   }
 
   int model_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->model_name_path_size();
   }
 
   const std::string& model_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->model_name_path(i);
   }
 
@@ -24751,7 +26480,7 @@ class ResolvedExportModelStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -24800,17 +26529,17 @@ class ResolvedExportModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -24873,17 +26602,17 @@ class ResolvedExportModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -24954,7 +26683,7 @@ class ResolvedExportModelStmtBuilder final {
 
   ResolvedExportModelStmtBuilder(std::unique_ptr<ResolvedExportModelStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -24995,7 +26724,7 @@ class ResolvedExportDataStmtBuilder final {
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExportDataStmt::query was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -25007,7 +26736,7 @@ class ResolvedExportDataStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -25056,17 +26785,17 @@ class ResolvedExportDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -25129,17 +26858,17 @@ class ResolvedExportDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -25206,7 +26935,7 @@ class ResolvedExportDataStmtBuilder final {
   // unnamed value type.  output_column_list will have exactly one
   // column, with an empty name. See (broken link).
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -25223,7 +26952,7 @@ class ResolvedExportDataStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -25276,17 +27005,17 @@ class ResolvedExportDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -25358,7 +27087,7 @@ class ResolvedExportDataStmtBuilder final {
 
   ResolvedExportDataStmtBuilder(std::unique_ptr<ResolvedExportDataStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -25368,6 +27097,322 @@ inline ResolvedExportDataStmtBuilder ToBuilder(
       const_cast<ResolvedExportDataStmt*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(5, true);
+  return builder;
+}
+
+class ResolvedExportMetadataStmtBuilder final {
+ public:
+  ResolvedExportMetadataStmtBuilder() : ResolvedExportMetadataStmtBuilder(absl::WrapUnique(new ResolvedExportMetadataStmt)) {}
+
+  ResolvedExportMetadataStmtBuilder(const ResolvedExportMetadataStmtBuilder&) = delete;
+  ResolvedExportMetadataStmtBuilder& operator=(const ResolvedExportMetadataStmtBuilder&) = delete;
+  ResolvedExportMetadataStmtBuilder(ResolvedExportMetadataStmtBuilder&& other)
+      : ResolvedExportMetadataStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedExportMetadataStmtBuilder& operator=(ResolvedExportMetadataStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedExportMetadataStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedExportMetadataStmt::schema_object_kind was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::string& schema_object_kind() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->schema_object_kind();
+  }
+
+  ResolvedExportMetadataStmtBuilder&& set_schema_object_kind(const std::string& v) && {
+    node_->set_schema_object_kind(v);
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedExportMetadataStmtBuilder& set_schema_object_kind(const std::string& v) & {
+    node_->set_schema_object_kind(v);
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedExportMetadataStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedExportMetadataStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedExportMetadataStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedExportMetadataStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  const ResolvedConnection* connection() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->connection();
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return node_->release_connection();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedExportMetadataStmtBuilder&& set_connection(T v) && {
+    node_->set_connection(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedExportMetadataStmtBuilder& set_connection(T v) & {
+    node_->set_connection(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedExportMetadataStmtBuilder&& set_connection(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedExportMetadataStmtBuilder& set_connection(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedExportMetadataStmtBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedExportMetadataStmtBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedExportMetadataStmtBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedExportMetadataStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedExportMetadataStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedExportMetadataStmt> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<5> field_is_set_ = {0};
+  friend ResolvedExportMetadataStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedExportMetadataStmt> node);
+
+  ResolvedExportMetadataStmtBuilder(std::unique_ptr<ResolvedExportMetadataStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedExportMetadataStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedExportMetadataStmt> node) {
+  ResolvedExportMetadataStmtBuilder builder(absl::WrapUnique<ResolvedExportMetadataStmt>(
+      const_cast<ResolvedExportMetadataStmt*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(1, true);
   return builder;
 }
 
@@ -25404,17 +27449,17 @@ class ResolvedDefineTableStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -25443,17 +27488,17 @@ class ResolvedDefineTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -25516,17 +27561,17 @@ class ResolvedDefineTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -25597,7 +27642,7 @@ class ResolvedDefineTableStmtBuilder final {
 
   ResolvedDefineTableStmtBuilder(std::unique_ptr<ResolvedDefineTableStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -25638,7 +27683,7 @@ class ResolvedDescribeStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDescribeStmt::object_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -25650,7 +27695,7 @@ class ResolvedDescribeStmtBuilder final {
 
   // Getters and chained setters
   const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->object_type();
   }
 
@@ -25669,17 +27714,17 @@ class ResolvedDescribeStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -25708,17 +27753,17 @@ class ResolvedDescribeStmtBuilder final {
   }
 
   const std::vector<std::string>& from_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_name_path();
   }
 
   int from_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_name_path_size();
   }
 
   const std::string& from_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_name_path(i);
   }
 
@@ -25747,17 +27792,17 @@ class ResolvedDescribeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -25829,7 +27874,7 @@ class ResolvedDescribeStmtBuilder final {
 
   ResolvedDescribeStmtBuilder(std::unique_ptr<ResolvedDescribeStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -25871,7 +27916,7 @@ class ResolvedShowStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedShowStmt::identifier was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -25883,7 +27928,7 @@ class ResolvedShowStmtBuilder final {
 
   // Getters and chained setters
   const std::string& identifier() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->identifier();
   }
 
@@ -25902,17 +27947,17 @@ class ResolvedShowStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -25941,7 +27986,7 @@ class ResolvedShowStmtBuilder final {
   }
 
   const ResolvedLiteral* like_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->like_expr();
   }
 
@@ -25990,17 +28035,17 @@ class ResolvedShowStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26072,7 +28117,7 @@ class ResolvedShowStmtBuilder final {
 
   ResolvedShowStmtBuilder(std::unique_ptr<ResolvedShowStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -26123,7 +28168,7 @@ class ResolvedBeginStmtBuilder final {
 
   // Getters and chained setters
   ResolvedBeginStmt::ReadWriteMode read_write_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->read_write_mode();
   }
 
@@ -26140,17 +28185,17 @@ class ResolvedBeginStmtBuilder final {
   }
 
   const std::vector<std::string>& isolation_level_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->isolation_level_list();
   }
 
   int isolation_level_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->isolation_level_list_size();
   }
 
   const std::string& isolation_level_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->isolation_level_list(i);
   }
 
@@ -26179,17 +28224,17 @@ class ResolvedBeginStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26260,7 +28305,7 @@ class ResolvedBeginStmtBuilder final {
 
   ResolvedBeginStmtBuilder(std::unique_ptr<ResolvedBeginStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -26307,7 +28352,7 @@ class ResolvedSetTransactionStmtBuilder final {
 
   // Getters and chained setters
   ResolvedBeginStmt::ReadWriteMode read_write_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->read_write_mode();
   }
 
@@ -26324,17 +28369,17 @@ class ResolvedSetTransactionStmtBuilder final {
   }
 
   const std::vector<std::string>& isolation_level_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->isolation_level_list();
   }
 
   int isolation_level_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->isolation_level_list_size();
   }
 
   const std::string& isolation_level_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->isolation_level_list(i);
   }
 
@@ -26363,17 +28408,17 @@ class ResolvedSetTransactionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26444,7 +28489,7 @@ class ResolvedSetTransactionStmtBuilder final {
 
   ResolvedSetTransactionStmtBuilder(std::unique_ptr<ResolvedSetTransactionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -26488,17 +28533,17 @@ class ResolvedCommitStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26569,7 +28614,7 @@ class ResolvedCommitStmtBuilder final {
 
   ResolvedCommitStmtBuilder(std::unique_ptr<ResolvedCommitStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -26613,17 +28658,17 @@ class ResolvedRollbackStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26694,7 +28739,7 @@ class ResolvedRollbackStmtBuilder final {
 
   ResolvedRollbackStmtBuilder(std::unique_ptr<ResolvedRollbackStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -26739,7 +28784,7 @@ class ResolvedStartBatchStmtBuilder final {
 
   // Getters and chained setters
   const std::string& batch_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->batch_type();
   }
 
@@ -26756,17 +28801,17 @@ class ResolvedStartBatchStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26837,7 +28882,7 @@ class ResolvedStartBatchStmtBuilder final {
 
   ResolvedStartBatchStmtBuilder(std::unique_ptr<ResolvedStartBatchStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -26881,17 +28926,17 @@ class ResolvedRunBatchStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -26962,7 +29007,7 @@ class ResolvedRunBatchStmtBuilder final {
 
   ResolvedRunBatchStmtBuilder(std::unique_ptr<ResolvedRunBatchStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -27006,17 +29051,17 @@ class ResolvedAbortBatchStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -27087,7 +29132,7 @@ class ResolvedAbortBatchStmtBuilder final {
 
   ResolvedAbortBatchStmtBuilder(std::unique_ptr<ResolvedAbortBatchStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -27133,13 +29178,13 @@ class ResolvedDropStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropStmt::object_type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropStmt::is_if_exists was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -27151,7 +29196,7 @@ class ResolvedDropStmtBuilder final {
 
   // Getters and chained setters
   const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->object_type();
   }
 
@@ -27170,7 +29215,7 @@ class ResolvedDropStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -27189,17 +29234,17 @@ class ResolvedDropStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -27228,7 +29273,7 @@ class ResolvedDropStmtBuilder final {
   }
 
   ResolvedDropStmt::DropMode drop_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->drop_mode();
   }
 
@@ -27245,17 +29290,17 @@ class ResolvedDropStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -27327,7 +29372,7 @@ class ResolvedDropStmtBuilder final {
 
   ResolvedDropStmtBuilder(std::unique_ptr<ResolvedDropStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -27370,7 +29415,7 @@ class ResolvedDropMaterializedViewStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropMaterializedViewStmt::is_if_exists was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -27382,7 +29427,7 @@ class ResolvedDropMaterializedViewStmtBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -27401,17 +29446,17 @@ class ResolvedDropMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -27440,17 +29485,17 @@ class ResolvedDropMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -27522,7 +29567,7 @@ class ResolvedDropMaterializedViewStmtBuilder final {
 
   ResolvedDropMaterializedViewStmtBuilder(std::unique_ptr<ResolvedDropMaterializedViewStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -27564,7 +29609,7 @@ class ResolvedDropSnapshotTableStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropSnapshotTableStmt::is_if_exists was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -27576,7 +29621,7 @@ class ResolvedDropSnapshotTableStmtBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -27595,17 +29640,17 @@ class ResolvedDropSnapshotTableStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -27634,17 +29679,17 @@ class ResolvedDropSnapshotTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -27716,7 +29761,7 @@ class ResolvedDropSnapshotTableStmtBuilder final {
 
   ResolvedDropSnapshotTableStmtBuilder(std::unique_ptr<ResolvedDropSnapshotTableStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -27761,17 +29806,17 @@ class ResolvedRecursiveRefScanBuilder final {
 
   // Getters and chained setters
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -27800,17 +29845,17 @@ class ResolvedRecursiveRefScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -27873,7 +29918,7 @@ class ResolvedRecursiveRefScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -27889,6 +29934,23 @@ class ResolvedRecursiveRefScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedRecursiveRefScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedRecursiveRefScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedRecursiveRefScan> node_;
 
@@ -27898,7 +29960,7 @@ class ResolvedRecursiveRefScanBuilder final {
 
   ResolvedRecursiveRefScanBuilder(std::unique_ptr<ResolvedRecursiveRefScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -27940,22 +30002,22 @@ class ResolvedRecursiveScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedRecursiveScan::op_type was not set on the builder");
-    }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedRecursiveScan::non_recursive_term was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedRecursiveScan::op_type was not set on the builder");
     }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedRecursiveScan::non_recursive_term was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedRecursiveScan::recursive_term was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -27967,26 +30029,26 @@ class ResolvedRecursiveScanBuilder final {
 
   // Getters and chained setters
   ResolvedRecursiveScan::RecursiveSetOperationType op_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->op_type();
   }
 
   ResolvedRecursiveScanBuilder&& set_op_type(ResolvedRecursiveScan::RecursiveSetOperationType v) && {
     node_->set_op_type(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   ResolvedRecursiveScanBuilder& set_op_type(ResolvedRecursiveScan::RecursiveSetOperationType v) & {
     node_->set_op_type(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
 
   const ResolvedSetOperationItem* non_recursive_term() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->non_recursive_term();
   }
 
@@ -27997,7 +30059,7 @@ class ResolvedRecursiveScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedSetOperationItem>>::value>>
   ResolvedRecursiveScanBuilder&& set_non_recursive_term(T v) && {
     node_->set_non_recursive_term(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -28005,7 +30067,7 @@ class ResolvedRecursiveScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedSetOperationItem>>::value>>
   ResolvedRecursiveScanBuilder& set_non_recursive_term(T v) & {
     node_->set_non_recursive_term(std::move(v));
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -28019,7 +30081,7 @@ class ResolvedRecursiveScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -28033,13 +30095,13 @@ class ResolvedRecursiveScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   const ResolvedSetOperationItem* recursive_term() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->recursive_term();
   }
 
@@ -28050,7 +30112,7 @@ class ResolvedRecursiveScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedSetOperationItem>>::value>>
   ResolvedRecursiveScanBuilder&& set_recursive_term(T v) && {
     node_->set_recursive_term(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -28058,7 +30120,7 @@ class ResolvedRecursiveScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedSetOperationItem>>::value>>
   ResolvedRecursiveScanBuilder& set_recursive_term(T v) & {
     node_->set_recursive_term(std::move(v));
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
@@ -28072,7 +30134,7 @@ class ResolvedRecursiveScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
@@ -28086,23 +30148,23 @@ class ResolvedRecursiveScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -28131,17 +30193,17 @@ class ResolvedRecursiveScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -28204,7 +30266,7 @@ class ResolvedRecursiveScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -28220,17 +30282,34 @@ class ResolvedRecursiveScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedRecursiveScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedRecursiveScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedRecursiveScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<6> field_is_set_ = {0};
+  std::bitset<7> field_is_set_ = {0};
   friend ResolvedRecursiveScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedRecursiveScan> node);
 
   ResolvedRecursiveScanBuilder(std::unique_ptr<ResolvedRecursiveScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -28239,9 +30318,9 @@ inline ResolvedRecursiveScanBuilder ToBuilder(
   ResolvedRecursiveScanBuilder builder(absl::WrapUnique<ResolvedRecursiveScan>(
       const_cast<ResolvedRecursiveScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
   builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -28271,16 +30350,16 @@ class ResolvedWithScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(4)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedWithScan::query was not set on the builder");
-    }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedWithScan::query was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWithScan::recursive was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -28292,17 +30371,17 @@ class ResolvedWithScanBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedWithEntry>>& with_entry_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_entry_list();
   }
 
   int with_entry_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_entry_list_size();
   }
 
   const ResolvedWithEntry* with_entry_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_entry_list(i);
   }
 
@@ -28365,7 +30444,7 @@ class ResolvedWithScanBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -28376,7 +30455,7 @@ class ResolvedWithScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedWithScanBuilder&& set_query(T v, bool propagate_order=true) && {
     node_->set_query(std::move(v), propagate_order);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -28384,7 +30463,7 @@ class ResolvedWithScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedWithScanBuilder& set_query(T v, bool propagate_order=true) & {
     node_->set_query(std::move(v), propagate_order);
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
@@ -28398,7 +30477,7 @@ class ResolvedWithScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
@@ -28412,43 +30491,43 @@ class ResolvedWithScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(4, true);
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   // True if the WITH clause uses the recursive keyword.
   bool recursive() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->recursive();
   }
 
   ResolvedWithScanBuilder&& set_recursive(bool v) && {
     node_->set_recursive(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
 
   ResolvedWithScanBuilder& set_recursive(bool v) & {
     node_->set_recursive(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -28477,17 +30556,17 @@ class ResolvedWithScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -28550,7 +30629,7 @@ class ResolvedWithScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -28566,17 +30645,34 @@ class ResolvedWithScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedWithScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedWithScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedWithScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<6> field_is_set_ = {0};
+  std::bitset<7> field_is_set_ = {0};
   friend ResolvedWithScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedWithScan> node);
 
   ResolvedWithScanBuilder(std::unique_ptr<ResolvedWithScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -28585,8 +30681,8 @@ inline ResolvedWithScanBuilder ToBuilder(
   ResolvedWithScanBuilder builder(absl::WrapUnique<ResolvedWithScan>(
       const_cast<ResolvedWithScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(4, true);
   builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -28619,13 +30715,13 @@ class ResolvedWithEntryBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWithEntry::with_query_name was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWithEntry::with_subquery was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -28637,7 +30733,7 @@ class ResolvedWithEntryBuilder final {
 
   // Getters and chained setters
   const std::string& with_query_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_query_name();
   }
 
@@ -28656,7 +30752,7 @@ class ResolvedWithEntryBuilder final {
   }
 
   const ResolvedScan* with_subquery() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_subquery();
   }
 
@@ -28718,7 +30814,7 @@ class ResolvedWithEntryBuilder final {
 
   ResolvedWithEntryBuilder(std::unique_ptr<ResolvedWithEntry> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -28761,13 +30857,13 @@ class ResolvedOptionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedOption::name was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedOption::value was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -28779,7 +30875,7 @@ class ResolvedOptionBuilder final {
 
   // Getters and chained setters
   const std::string& qualifier() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->qualifier();
   }
 
@@ -28796,7 +30892,7 @@ class ResolvedOptionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -28815,7 +30911,7 @@ class ResolvedOptionBuilder final {
   }
 
   const ResolvedExpr* value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value();
   }
 
@@ -28877,7 +30973,7 @@ class ResolvedOptionBuilder final {
 
   ResolvedOptionBuilder(std::unique_ptr<ResolvedOption> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -28924,17 +31020,17 @@ class ResolvedWindowPartitioningBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& partition_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
   }
 
   int partition_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list_size();
   }
 
   const ResolvedColumnRef* partition_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list(i);
   }
 
@@ -28997,17 +31093,17 @@ class ResolvedWindowPartitioningBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -29069,6 +31165,45 @@ class ResolvedWindowPartitioningBuilder final {
     return *this;
   }
 
+  const std::vector<ResolvedCollation>& collation_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->collation_list();
+  }
+
+  int collation_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->collation_list_size();
+  }
+
+  const ResolvedCollation& collation_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->collation_list(i);
+  }
+
+  ResolvedWindowPartitioningBuilder&& add_collation_list(ResolvedCollation v) && {
+    node_->add_collation_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedWindowPartitioningBuilder& add_collation_list(ResolvedCollation v) & {
+    node_->add_collation_list(v);
+
+    return *this;
+  }
+
+  ResolvedWindowPartitioningBuilder&& set_collation_list(const std::vector<ResolvedCollation>& v) && {
+    node_->set_collation_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedWindowPartitioningBuilder& set_collation_list(const std::vector<ResolvedCollation>& v) & {
+    node_->set_collation_list(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedWindowPartitioning> node_;
 
@@ -29078,7 +31213,7 @@ class ResolvedWindowPartitioningBuilder final {
 
   ResolvedWindowPartitioningBuilder(std::unique_ptr<ResolvedWindowPartitioning> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -29123,17 +31258,17 @@ class ResolvedWindowOrderingBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOrderByItem>>& order_by_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list();
   }
 
   int order_by_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list_size();
   }
 
   const ResolvedOrderByItem* order_by_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by_item_list(i);
   }
 
@@ -29196,17 +31331,17 @@ class ResolvedWindowOrderingBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -29277,7 +31412,7 @@ class ResolvedWindowOrderingBuilder final {
 
   ResolvedWindowOrderingBuilder(std::unique_ptr<ResolvedWindowOrdering> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -29325,19 +31460,19 @@ class ResolvedWindowFrameBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWindowFrame::frame_unit was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWindowFrame::start_expr was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWindowFrame::end_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -29349,7 +31484,7 @@ class ResolvedWindowFrameBuilder final {
 
   // Getters and chained setters
   ResolvedWindowFrame::FrameUnit frame_unit() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->frame_unit();
   }
 
@@ -29368,7 +31503,7 @@ class ResolvedWindowFrameBuilder final {
   }
 
   const ResolvedWindowFrameExpr* start_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->start_expr();
   }
 
@@ -29421,7 +31556,7 @@ class ResolvedWindowFrameBuilder final {
   }
 
   const ResolvedWindowFrameExpr* end_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->end_expr();
   }
 
@@ -29483,7 +31618,7 @@ class ResolvedWindowFrameBuilder final {
 
   ResolvedWindowFrameBuilder(std::unique_ptr<ResolvedWindowFrame> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -29527,13 +31662,13 @@ class ResolvedAnalyticFunctionGroupBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticFunctionGroup::partition_by was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAnalyticFunctionGroup::order_by was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -29545,7 +31680,7 @@ class ResolvedAnalyticFunctionGroupBuilder final {
 
   // Getters and chained setters
   const ResolvedWindowPartitioning* partition_by() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by();
   }
 
@@ -29598,7 +31733,7 @@ class ResolvedAnalyticFunctionGroupBuilder final {
   }
 
   const ResolvedWindowOrdering* order_by() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->order_by();
   }
 
@@ -29651,17 +31786,17 @@ class ResolvedAnalyticFunctionGroupBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& analytic_function_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->analytic_function_list();
   }
 
   int analytic_function_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->analytic_function_list_size();
   }
 
   const ResolvedComputedColumn* analytic_function_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->analytic_function_list(i);
   }
 
@@ -29733,7 +31868,7 @@ class ResolvedAnalyticFunctionGroupBuilder final {
 
   ResolvedAnalyticFunctionGroupBuilder(std::unique_ptr<ResolvedAnalyticFunctionGroup> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -29786,13 +31921,13 @@ class ResolvedWindowFrameExprBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWindowFrameExpr::boundary_type was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedWindowFrameExpr::expression was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -29804,7 +31939,7 @@ class ResolvedWindowFrameExprBuilder final {
 
   // Getters and chained setters
   ResolvedWindowFrameExpr::BoundaryType boundary_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->boundary_type();
   }
 
@@ -29823,7 +31958,7 @@ class ResolvedWindowFrameExprBuilder final {
   }
 
   const ResolvedExpr* expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expression();
   }
 
@@ -29885,7 +32020,7 @@ class ResolvedWindowFrameExprBuilder final {
 
   ResolvedWindowFrameExprBuilder(std::unique_ptr<ResolvedWindowFrameExpr> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -29928,7 +32063,7 @@ class ResolvedDMLValueBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDMLValue::value was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -29940,7 +32075,7 @@ class ResolvedDMLValueBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value();
   }
 
@@ -30002,7 +32137,7 @@ class ResolvedDMLValueBuilder final {
 
   ResolvedDMLValueBuilder(std::unique_ptr<ResolvedDMLValue> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -30043,7 +32178,7 @@ class ResolvedDMLDefaultBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDMLDefault::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -30055,7 +32190,7 @@ class ResolvedDMLDefaultBuilder final {
 
   // Getters and chained setters
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -30074,7 +32209,7 @@ class ResolvedDMLDefaultBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -30100,7 +32235,7 @@ class ResolvedDMLDefaultBuilder final {
 
   ResolvedDMLDefaultBuilder(std::unique_ptr<ResolvedDMLDefault> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -30142,7 +32277,7 @@ class ResolvedAssertStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAssertStmt::expression was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -30154,7 +32289,7 @@ class ResolvedAssertStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expression();
   }
 
@@ -30207,7 +32342,7 @@ class ResolvedAssertStmtBuilder final {
   }
 
   const std::string& description() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->description();
   }
 
@@ -30224,17 +32359,17 @@ class ResolvedAssertStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -30306,7 +32441,7 @@ class ResolvedAssertStmtBuilder final {
 
   ResolvedAssertStmtBuilder(std::unique_ptr<ResolvedAssertStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -30348,7 +32483,7 @@ class ResolvedAssertRowsModifiedBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAssertRowsModified::rows was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -30360,7 +32495,7 @@ class ResolvedAssertRowsModifiedBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* rows() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->rows();
   }
 
@@ -30422,7 +32557,7 @@ class ResolvedAssertRowsModifiedBuilder final {
 
   ResolvedAssertRowsModifiedBuilder(std::unique_ptr<ResolvedAssertRowsModified> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -30468,17 +32603,17 @@ class ResolvedInsertRowBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedDMLValue>>& value_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value_list();
   }
 
   int value_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value_list_size();
   }
 
   const ResolvedDMLValue* value_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value_list(i);
   }
 
@@ -30549,7 +32684,7 @@ class ResolvedInsertRowBuilder final {
 
   ResolvedInsertRowBuilder(std::unique_ptr<ResolvedInsertRow> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -30603,7 +32738,7 @@ class ResolvedInsertStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -30654,7 +32789,7 @@ class ResolvedInsertStmtBuilder final {
   // Behavior on duplicate rows (normally defined to mean duplicate
   // primary keys).
   ResolvedInsertStmt::InsertMode insert_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_mode();
   }
 
@@ -30671,7 +32806,7 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const ResolvedAssertRowsModified* assert_rows_modified() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->assert_rows_modified();
   }
 
@@ -30720,7 +32855,7 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const ResolvedReturningClause* returning() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->returning();
   }
 
@@ -30769,17 +32904,17 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const std::vector<ResolvedColumn>& insert_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_column_list();
   }
 
   int insert_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_column_list_size();
   }
 
   const ResolvedColumn& insert_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_column_list(i);
   }
 
@@ -30808,17 +32943,17 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& query_parameter_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query_parameter_list();
   }
 
   int query_parameter_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query_parameter_list_size();
   }
 
   const ResolvedColumnRef* query_parameter_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query_parameter_list(i);
   }
 
@@ -30881,7 +33016,7 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -30930,17 +33065,17 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const std::vector<ResolvedColumn>& query_output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query_output_column_list();
   }
 
   int query_output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query_output_column_list_size();
   }
 
   const ResolvedColumn& query_output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query_output_column_list(i);
   }
 
@@ -30969,17 +33104,17 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedInsertRow>>& row_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->row_list();
   }
 
   int row_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->row_list_size();
   }
 
   const ResolvedInsertRow* row_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->row_list(i);
   }
 
@@ -31042,17 +33177,17 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list();
   }
 
   int column_access_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list_size();
   }
 
   ResolvedStatement::ObjectAccess column_access_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list(i);
   }
 
@@ -31081,17 +33216,17 @@ class ResolvedInsertStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -31162,7 +33297,7 @@ class ResolvedInsertStmtBuilder final {
 
   ResolvedInsertStmtBuilder(std::unique_ptr<ResolvedInsertStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -31203,7 +33338,7 @@ class ResolvedDeleteStmtBuilder final {
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDeleteStmt::where_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -31215,7 +33350,7 @@ class ResolvedDeleteStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -31264,7 +33399,7 @@ class ResolvedDeleteStmtBuilder final {
   }
 
   const ResolvedAssertRowsModified* assert_rows_modified() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->assert_rows_modified();
   }
 
@@ -31313,7 +33448,7 @@ class ResolvedDeleteStmtBuilder final {
   }
 
   const ResolvedReturningClause* returning() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->returning();
   }
 
@@ -31362,17 +33497,17 @@ class ResolvedDeleteStmtBuilder final {
   }
 
   const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list();
   }
 
   int column_access_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list_size();
   }
 
   ResolvedStatement::ObjectAccess column_access_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list(i);
   }
 
@@ -31401,7 +33536,7 @@ class ResolvedDeleteStmtBuilder final {
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_offset_column();
   }
 
@@ -31450,7 +33585,7 @@ class ResolvedDeleteStmtBuilder final {
   }
 
   const ResolvedExpr* where_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->where_expr();
   }
 
@@ -31503,17 +33638,17 @@ class ResolvedDeleteStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -31585,7 +33720,7 @@ class ResolvedDeleteStmtBuilder final {
 
   ResolvedDeleteStmtBuilder(std::unique_ptr<ResolvedDeleteStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -31627,13 +33762,13 @@ class ResolvedUpdateItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUpdateItem::target was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUpdateItem::element_column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -31677,7 +33812,7 @@ class ResolvedUpdateItemBuilder final {
   // they are not treated the same.  Here, they express a path inside
   // an object that is being mutated, so they have reference semantics.
   const ResolvedExpr* target() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target();
   }
 
@@ -31736,7 +33871,7 @@ class ResolvedUpdateItemBuilder final {
   // This is mutually exclusive with all fields below, which are used
   // for nested updates only.
   const ResolvedDMLValue* set_value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->set_value();
   }
 
@@ -31793,7 +33928,7 @@ class ResolvedUpdateItemBuilder final {
   //
   // This column can be referenced inside the nested statements below.
   const ResolvedColumnHolder* element_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->element_column();
   }
 
@@ -31855,17 +33990,17 @@ class ResolvedUpdateItemBuilder final {
   // TODO: Consider generalizing this to allow
   // SET a[<expr1>].b = ..., a[<expr2>].c = ...
   const std::vector<std::unique_ptr<const ResolvedUpdateArrayItem>>& array_update_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_update_list();
   }
 
   int array_update_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_update_list_size();
   }
 
   const ResolvedUpdateArrayItem* array_update_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_update_list(i);
   }
 
@@ -31934,17 +34069,17 @@ class ResolvedUpdateItemBuilder final {
   //
   // It is legal for the same input element to match multiple DELETEs.
   const std::vector<std::unique_ptr<const ResolvedDeleteStmt>>& delete_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->delete_list();
   }
 
   int delete_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->delete_list_size();
   }
 
   const ResolvedDeleteStmt* delete_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->delete_list(i);
   }
 
@@ -32013,17 +34148,17 @@ class ResolvedUpdateItemBuilder final {
   //
   // It is an error if any element is matched by multiple UPDATEs.
   const std::vector<std::unique_ptr<const ResolvedUpdateStmt>>& update_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_list();
   }
 
   int update_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_list_size();
   }
 
   const ResolvedUpdateStmt* update_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_list(i);
   }
 
@@ -32093,17 +34228,17 @@ class ResolvedUpdateItemBuilder final {
   // For nested UPDATEs, insert_mode will always be the default, and
   // has no effect.
   const std::vector<std::unique_ptr<const ResolvedInsertStmt>>& insert_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_list();
   }
 
   int insert_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_list_size();
   }
 
   const ResolvedInsertStmt* insert_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_list(i);
   }
 
@@ -32175,7 +34310,7 @@ class ResolvedUpdateItemBuilder final {
 
   ResolvedUpdateItemBuilder(std::unique_ptr<ResolvedUpdateItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -32218,13 +34353,13 @@ class ResolvedUpdateArrayItemBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUpdateArrayItem::offset was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUpdateArrayItem::update_item was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -32237,7 +34372,7 @@ class ResolvedUpdateArrayItemBuilder final {
   // Getters and chained setters
   // The array offset to be modified.
   const ResolvedExpr* offset() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->offset();
   }
 
@@ -32291,7 +34426,7 @@ class ResolvedUpdateArrayItemBuilder final {
 
   // The modification to perform to the array element.
   const ResolvedUpdateItem* update_item() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item();
   }
 
@@ -32353,7 +34488,7 @@ class ResolvedUpdateArrayItemBuilder final {
 
   ResolvedUpdateArrayItemBuilder(std::unique_ptr<ResolvedUpdateArrayItem> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -32396,7 +34531,7 @@ class ResolvedUpdateStmtBuilder final {
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUpdateStmt::where_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -32408,7 +34543,7 @@ class ResolvedUpdateStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -32457,17 +34592,17 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list();
   }
 
   int column_access_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list_size();
   }
 
   ResolvedStatement::ObjectAccess column_access_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list(i);
   }
 
@@ -32496,7 +34631,7 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const ResolvedAssertRowsModified* assert_rows_modified() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->assert_rows_modified();
   }
 
@@ -32545,7 +34680,7 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const ResolvedReturningClause* returning() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->returning();
   }
 
@@ -32594,7 +34729,7 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->array_offset_column();
   }
 
@@ -32643,7 +34778,7 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const ResolvedExpr* where_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->where_expr();
   }
 
@@ -32696,17 +34831,17 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedUpdateItem>>& update_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item_list();
   }
 
   int update_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item_list_size();
   }
 
   const ResolvedUpdateItem* update_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item_list(i);
   }
 
@@ -32769,7 +34904,7 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const ResolvedScan* from_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_scan();
   }
 
@@ -32818,17 +34953,17 @@ class ResolvedUpdateStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -32900,7 +35035,7 @@ class ResolvedUpdateStmtBuilder final {
 
   ResolvedUpdateStmtBuilder(std::unique_ptr<ResolvedUpdateStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -32951,19 +35086,19 @@ class ResolvedMergeWhenBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMergeWhen::match_type was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMergeWhen::match_expr was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMergeWhen::action_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -32975,7 +35110,7 @@ class ResolvedMergeWhenBuilder final {
 
   // Getters and chained setters
   ResolvedMergeWhen::MatchType match_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->match_type();
   }
 
@@ -32994,7 +35129,7 @@ class ResolvedMergeWhenBuilder final {
   }
 
   const ResolvedExpr* match_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->match_expr();
   }
 
@@ -33047,7 +35182,7 @@ class ResolvedMergeWhenBuilder final {
   }
 
   ResolvedMergeWhen::ActionType action_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->action_type();
   }
 
@@ -33066,17 +35201,17 @@ class ResolvedMergeWhenBuilder final {
   }
 
   const std::vector<ResolvedColumn>& insert_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_column_list();
   }
 
   int insert_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_column_list_size();
   }
 
   const ResolvedColumn& insert_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_column_list(i);
   }
 
@@ -33105,7 +35240,7 @@ class ResolvedMergeWhenBuilder final {
   }
 
   const ResolvedInsertRow* insert_row() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insert_row();
   }
 
@@ -33154,17 +35289,17 @@ class ResolvedMergeWhenBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedUpdateItem>>& update_item_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item_list();
   }
 
   int update_item_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item_list_size();
   }
 
   const ResolvedUpdateItem* update_item_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->update_item_list(i);
   }
 
@@ -33236,7 +35371,7 @@ class ResolvedMergeWhenBuilder final {
 
   ResolvedMergeWhenBuilder(std::unique_ptr<ResolvedMergeWhen> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -33280,19 +35415,19 @@ class ResolvedMergeStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMergeStmt::table_scan was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMergeStmt::from_scan was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedMergeStmt::merge_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -33304,7 +35439,7 @@ class ResolvedMergeStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -33357,17 +35492,17 @@ class ResolvedMergeStmtBuilder final {
   }
 
   const std::vector<ResolvedStatement::ObjectAccess>& column_access_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list();
   }
 
   int column_access_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list_size();
   }
 
   ResolvedStatement::ObjectAccess column_access_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_access_list(i);
   }
 
@@ -33396,7 +35531,7 @@ class ResolvedMergeStmtBuilder final {
   }
 
   const ResolvedScan* from_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_scan();
   }
 
@@ -33449,7 +35584,7 @@ class ResolvedMergeStmtBuilder final {
   }
 
   const ResolvedExpr* merge_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->merge_expr();
   }
 
@@ -33502,17 +35637,17 @@ class ResolvedMergeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedMergeWhen>>& when_clause_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->when_clause_list();
   }
 
   int when_clause_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->when_clause_list_size();
   }
 
   const ResolvedMergeWhen* when_clause_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->when_clause_list(i);
   }
 
@@ -33575,17 +35710,17 @@ class ResolvedMergeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -33657,7 +35792,7 @@ class ResolvedMergeStmtBuilder final {
 
   ResolvedMergeStmtBuilder(std::unique_ptr<ResolvedMergeStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -33701,13 +35836,13 @@ class ResolvedTruncateStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedTruncateStmt::table_scan was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedTruncateStmt::where_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -33719,7 +35854,7 @@ class ResolvedTruncateStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -33772,7 +35907,7 @@ class ResolvedTruncateStmtBuilder final {
   }
 
   const ResolvedExpr* where_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->where_expr();
   }
 
@@ -33825,17 +35960,17 @@ class ResolvedTruncateStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -33907,7 +36042,7 @@ class ResolvedTruncateStmtBuilder final {
 
   ResolvedTruncateStmtBuilder(std::unique_ptr<ResolvedTruncateStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -33954,17 +36089,17 @@ class ResolvedObjectUnitBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -34001,7 +36136,7 @@ class ResolvedObjectUnitBuilder final {
 
   ResolvedObjectUnitBuilder(std::unique_ptr<ResolvedObjectUnit> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -34042,7 +36177,7 @@ class ResolvedPrivilegeBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedPrivilege::action_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -34054,7 +36189,7 @@ class ResolvedPrivilegeBuilder final {
 
   // Getters and chained setters
   const std::string& action_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->action_type();
   }
 
@@ -34073,17 +36208,17 @@ class ResolvedPrivilegeBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedObjectUnit>>& unit_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unit_list();
   }
 
   int unit_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unit_list_size();
   }
 
   const ResolvedObjectUnit* unit_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unit_list(i);
   }
 
@@ -34155,7 +36290,7 @@ class ResolvedPrivilegeBuilder final {
 
   ResolvedPrivilegeBuilder(std::unique_ptr<ResolvedPrivilege> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -34177,13 +36312,11 @@ class ResolvedGrantStmtBuilder final {
   ResolvedGrantStmtBuilder(ResolvedGrantStmtBuilder&& other)
       : ResolvedGrantStmtBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
   }
 
   ResolvedGrantStmtBuilder& operator=(ResolvedGrantStmtBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
     return *this;
   };
 
@@ -34193,12 +36326,6 @@ class ResolvedGrantStmtBuilder final {
   absl::StatusOr<std::unique_ptr<const ResolvedGrantStmt>> Build() && {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
-    if (!field_is_set_.test(2)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedGrantStmt::object_type was not set on the builder");
-    }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -34208,17 +36335,17 @@ class ResolvedGrantStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -34281,17 +36408,17 @@ class ResolvedGrantStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& privilege_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->privilege_list();
   }
 
   int privilege_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->privilege_list_size();
   }
 
   const ResolvedPrivilege* privilege_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->privilege_list(i);
   }
 
@@ -34353,37 +36480,57 @@ class ResolvedGrantStmtBuilder final {
     return *this;
   }
 
-  const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->object_type();
+  const std::vector<std::string>& object_type_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->object_type_list();
   }
 
-  ResolvedGrantStmtBuilder&& set_object_type(const std::string& v) && {
-    node_->set_object_type(v);
-    field_is_set_.set(2, true);
+  int object_type_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->object_type_list_size();
+  }
+
+  const std::string& object_type_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->object_type_list(i);
+  }
+
+  ResolvedGrantStmtBuilder&& add_object_type_list(std::string v) && {
+    node_->add_object_type_list(v);
 
     return std::move(*this);
   }
 
-  ResolvedGrantStmtBuilder& set_object_type(const std::string& v) & {
-    node_->set_object_type(v);
-    field_is_set_.set(2, true);
+  ResolvedGrantStmtBuilder& add_object_type_list(std::string v) & {
+    node_->add_object_type_list(v);
+
+    return *this;
+  }
+
+  ResolvedGrantStmtBuilder&& set_object_type_list(const std::vector<std::string>& v) && {
+    node_->set_object_type_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedGrantStmtBuilder& set_object_type_list(const std::vector<std::string>& v) & {
+    node_->set_object_type_list(v);
 
     return *this;
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -34412,17 +36559,17 @@ class ResolvedGrantStmtBuilder final {
   }
 
   const std::vector<std::string>& grantee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list();
   }
 
   int grantee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list_size();
   }
 
   const std::string& grantee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list(i);
   }
 
@@ -34451,17 +36598,17 @@ class ResolvedGrantStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& grantee_expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list();
   }
 
   int grantee_expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list_size();
   }
 
   const ResolvedExpr* grantee_expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list(i);
   }
 
@@ -34527,13 +36674,12 @@ class ResolvedGrantStmtBuilder final {
   std::unique_ptr<ResolvedGrantStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<6> field_is_set_ = {0};
   friend ResolvedGrantStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedGrantStmt> node);
 
   ResolvedGrantStmtBuilder(std::unique_ptr<ResolvedGrantStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -34542,7 +36688,6 @@ inline ResolvedGrantStmtBuilder ToBuilder(
   ResolvedGrantStmtBuilder builder(absl::WrapUnique<ResolvedGrantStmt>(
       const_cast<ResolvedGrantStmt*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(2, true);
   return builder;
 }
 
@@ -34555,13 +36700,11 @@ class ResolvedRevokeStmtBuilder final {
   ResolvedRevokeStmtBuilder(ResolvedRevokeStmtBuilder&& other)
       : ResolvedRevokeStmtBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
   }
 
   ResolvedRevokeStmtBuilder& operator=(ResolvedRevokeStmtBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
     return *this;
   };
 
@@ -34571,12 +36714,6 @@ class ResolvedRevokeStmtBuilder final {
   absl::StatusOr<std::unique_ptr<const ResolvedRevokeStmt>> Build() && {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
-    if (!field_is_set_.test(2)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedRevokeStmt::object_type was not set on the builder");
-    }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -34586,17 +36723,17 @@ class ResolvedRevokeStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -34659,17 +36796,17 @@ class ResolvedRevokeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& privilege_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->privilege_list();
   }
 
   int privilege_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->privilege_list_size();
   }
 
   const ResolvedPrivilege* privilege_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->privilege_list(i);
   }
 
@@ -34731,37 +36868,57 @@ class ResolvedRevokeStmtBuilder final {
     return *this;
   }
 
-  const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
-    return node_->object_type();
+  const std::vector<std::string>& object_type_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->object_type_list();
   }
 
-  ResolvedRevokeStmtBuilder&& set_object_type(const std::string& v) && {
-    node_->set_object_type(v);
-    field_is_set_.set(2, true);
+  int object_type_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->object_type_list_size();
+  }
+
+  const std::string& object_type_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->object_type_list(i);
+  }
+
+  ResolvedRevokeStmtBuilder&& add_object_type_list(std::string v) && {
+    node_->add_object_type_list(v);
 
     return std::move(*this);
   }
 
-  ResolvedRevokeStmtBuilder& set_object_type(const std::string& v) & {
-    node_->set_object_type(v);
-    field_is_set_.set(2, true);
+  ResolvedRevokeStmtBuilder& add_object_type_list(std::string v) & {
+    node_->add_object_type_list(v);
+
+    return *this;
+  }
+
+  ResolvedRevokeStmtBuilder&& set_object_type_list(const std::vector<std::string>& v) && {
+    node_->set_object_type_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedRevokeStmtBuilder& set_object_type_list(const std::vector<std::string>& v) & {
+    node_->set_object_type_list(v);
 
     return *this;
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -34790,17 +36947,17 @@ class ResolvedRevokeStmtBuilder final {
   }
 
   const std::vector<std::string>& grantee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list();
   }
 
   int grantee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list_size();
   }
 
   const std::string& grantee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list(i);
   }
 
@@ -34829,17 +36986,17 @@ class ResolvedRevokeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& grantee_expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list();
   }
 
   int grantee_expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list_size();
   }
 
   const ResolvedExpr* grantee_expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list(i);
   }
 
@@ -34905,13 +37062,12 @@ class ResolvedRevokeStmtBuilder final {
   std::unique_ptr<ResolvedRevokeStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<6> field_is_set_ = {0};
   friend ResolvedRevokeStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedRevokeStmt> node);
 
   ResolvedRevokeStmtBuilder(std::unique_ptr<ResolvedRevokeStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -34920,7 +37076,6 @@ inline ResolvedRevokeStmtBuilder ToBuilder(
   ResolvedRevokeStmtBuilder builder(absl::WrapUnique<ResolvedRevokeStmt>(
       const_cast<ResolvedRevokeStmt*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(2, true);
   return builder;
 }
 
@@ -34956,17 +37111,17 @@ class ResolvedAlterDatabaseStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -35029,17 +37184,17 @@ class ResolvedAlterDatabaseStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -35068,17 +37223,17 @@ class ResolvedAlterDatabaseStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -35141,7 +37296,7 @@ class ResolvedAlterDatabaseStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -35166,7 +37321,7 @@ class ResolvedAlterDatabaseStmtBuilder final {
 
   ResolvedAlterDatabaseStmtBuilder(std::unique_ptr<ResolvedAlterDatabaseStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -35210,17 +37365,17 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -35283,17 +37438,17 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -35322,17 +37477,17 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -35395,7 +37550,7 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -35420,7 +37575,7 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
 
   ResolvedAlterMaterializedViewStmtBuilder(std::unique_ptr<ResolvedAlterMaterializedViewStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -35428,6 +37583,260 @@ inline ResolvedAlterMaterializedViewStmtBuilder ToBuilder(
     std::unique_ptr<const ResolvedAlterMaterializedViewStmt> node) {
   ResolvedAlterMaterializedViewStmtBuilder builder(absl::WrapUnique<ResolvedAlterMaterializedViewStmt>(
       const_cast<ResolvedAlterMaterializedViewStmt*>(node.release())));
+  // All required nodes are evidently already set
+  return builder;
+}
+
+class ResolvedAlterApproxViewStmtBuilder final {
+ public:
+  ResolvedAlterApproxViewStmtBuilder() : ResolvedAlterApproxViewStmtBuilder(absl::WrapUnique(new ResolvedAlterApproxViewStmt)) {}
+
+  ResolvedAlterApproxViewStmtBuilder(const ResolvedAlterApproxViewStmtBuilder&) = delete;
+  ResolvedAlterApproxViewStmtBuilder& operator=(const ResolvedAlterApproxViewStmtBuilder&) = delete;
+  ResolvedAlterApproxViewStmtBuilder(ResolvedAlterApproxViewStmtBuilder&& other)
+      : ResolvedAlterApproxViewStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedAlterApproxViewStmtBuilder& operator=(ResolvedAlterApproxViewStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterApproxViewStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterApproxViewStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterApproxViewStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterApproxViewStmtBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterApproxViewStmtBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAlterApproxViewStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAlterApproxViewStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedAlterApproxViewStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterApproxViewStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedAlterApproxViewStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterApproxViewStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list();
+  }
+
+  int alter_action_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list_size();
+  }
+
+  const ResolvedAlterAction* alter_action_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterApproxViewStmtBuilder&& add_alter_action_list(T v) && {
+    node_->add_alter_action_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterApproxViewStmtBuilder& add_alter_action_list(T v) & {
+    node_->add_alter_action_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterApproxViewStmtBuilder&& add_alter_action_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_alter_action_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterApproxViewStmtBuilder& add_alter_action_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_alter_action_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedAlterAction>> release_alter_action_list() {
+    return node_->release_alter_action_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
+  ResolvedAlterApproxViewStmtBuilder&& set_alter_action_list(T v) && {
+    node_->set_alter_action_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
+  ResolvedAlterApproxViewStmtBuilder& set_alter_action_list(T v) & {
+    node_->set_alter_action_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_if_exists() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_if_exists();
+  }
+
+  ResolvedAlterApproxViewStmtBuilder&& set_is_if_exists(bool v) && {
+    node_->set_is_if_exists(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterApproxViewStmtBuilder& set_is_if_exists(bool v) & {
+    node_->set_is_if_exists(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAlterApproxViewStmt> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedAlterApproxViewStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAlterApproxViewStmt> node);
+
+  ResolvedAlterApproxViewStmtBuilder(std::unique_ptr<ResolvedAlterApproxViewStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAlterApproxViewStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAlterApproxViewStmt> node) {
+  ResolvedAlterApproxViewStmtBuilder builder(absl::WrapUnique<ResolvedAlterApproxViewStmt>(
+      const_cast<ResolvedAlterApproxViewStmt*>(node.release())));
   // All required nodes are evidently already set
   return builder;
 }
@@ -35464,17 +37873,17 @@ class ResolvedAlterSchemaStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -35537,17 +37946,17 @@ class ResolvedAlterSchemaStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -35576,17 +37985,17 @@ class ResolvedAlterSchemaStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -35649,7 +38058,7 @@ class ResolvedAlterSchemaStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -35674,7 +38083,7 @@ class ResolvedAlterSchemaStmtBuilder final {
 
   ResolvedAlterSchemaStmtBuilder(std::unique_ptr<ResolvedAlterSchemaStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -35718,17 +38127,17 @@ class ResolvedAlterModelStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -35791,17 +38200,17 @@ class ResolvedAlterModelStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -35830,17 +38239,17 @@ class ResolvedAlterModelStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -35903,7 +38312,7 @@ class ResolvedAlterModelStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -35928,7 +38337,7 @@ class ResolvedAlterModelStmtBuilder final {
 
   ResolvedAlterModelStmtBuilder(std::unique_ptr<ResolvedAlterModelStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -35972,17 +38381,17 @@ class ResolvedAlterTableStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -36045,17 +38454,17 @@ class ResolvedAlterTableStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -36084,17 +38493,17 @@ class ResolvedAlterTableStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -36157,7 +38566,7 @@ class ResolvedAlterTableStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -36182,7 +38591,7 @@ class ResolvedAlterTableStmtBuilder final {
 
   ResolvedAlterTableStmtBuilder(std::unique_ptr<ResolvedAlterTableStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -36226,17 +38635,17 @@ class ResolvedAlterViewStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -36299,17 +38708,17 @@ class ResolvedAlterViewStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -36338,17 +38747,17 @@ class ResolvedAlterViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -36411,7 +38820,7 @@ class ResolvedAlterViewStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -36436,7 +38845,7 @@ class ResolvedAlterViewStmtBuilder final {
 
   ResolvedAlterViewStmtBuilder(std::unique_ptr<ResolvedAlterViewStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -36481,17 +38890,17 @@ class ResolvedSetOptionsActionBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -36562,7 +38971,7 @@ class ResolvedSetOptionsActionBuilder final {
 
   ResolvedSetOptionsActionBuilder(std::unique_ptr<ResolvedSetOptionsAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -36603,19 +39012,19 @@ class ResolvedAlterSubEntityActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterSubEntityAction::entity_type was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterSubEntityAction::name was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterSubEntityAction::alter_action was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -36627,7 +39036,7 @@ class ResolvedAlterSubEntityActionBuilder final {
 
   // Getters and chained setters
   const std::string& entity_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_type();
   }
 
@@ -36646,7 +39055,7 @@ class ResolvedAlterSubEntityActionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -36665,7 +39074,7 @@ class ResolvedAlterSubEntityActionBuilder final {
   }
 
   const ResolvedAlterAction* alter_action() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action();
   }
 
@@ -36718,7 +39127,7 @@ class ResolvedAlterSubEntityActionBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -36744,7 +39153,7 @@ class ResolvedAlterSubEntityActionBuilder final {
 
   ResolvedAlterSubEntityActionBuilder(std::unique_ptr<ResolvedAlterSubEntityAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -36788,13 +39197,13 @@ class ResolvedAddSubEntityActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAddSubEntityAction::entity_type was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAddSubEntityAction::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -36806,7 +39215,7 @@ class ResolvedAddSubEntityActionBuilder final {
 
   // Getters and chained setters
   const std::string& entity_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_type();
   }
 
@@ -36825,7 +39234,7 @@ class ResolvedAddSubEntityActionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -36844,17 +39253,17 @@ class ResolvedAddSubEntityActionBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& options_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->options_list();
   }
 
   int options_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->options_list_size();
   }
 
   const ResolvedOption* options_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->options_list(i);
   }
 
@@ -36917,7 +39326,7 @@ class ResolvedAddSubEntityActionBuilder final {
   }
 
   bool is_if_not_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_not_exists();
   }
 
@@ -36943,7 +39352,7 @@ class ResolvedAddSubEntityActionBuilder final {
 
   ResolvedAddSubEntityActionBuilder(std::unique_ptr<ResolvedAddSubEntityAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -36986,13 +39395,13 @@ class ResolvedDropSubEntityActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropSubEntityAction::entity_type was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropSubEntityAction::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37004,7 +39413,7 @@ class ResolvedDropSubEntityActionBuilder final {
 
   // Getters and chained setters
   const std::string& entity_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_type();
   }
 
@@ -37023,7 +39432,7 @@ class ResolvedDropSubEntityActionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -37042,7 +39451,7 @@ class ResolvedDropSubEntityActionBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -37068,7 +39477,7 @@ class ResolvedDropSubEntityActionBuilder final {
 
   ResolvedDropSubEntityActionBuilder(std::unique_ptr<ResolvedDropSubEntityAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37111,13 +39520,13 @@ class ResolvedAddColumnActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAddColumnAction::is_if_not_exists was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAddColumnAction::column_definition was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37129,7 +39538,7 @@ class ResolvedAddColumnActionBuilder final {
 
   // Getters and chained setters
   bool is_if_not_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_not_exists();
   }
 
@@ -37148,7 +39557,7 @@ class ResolvedAddColumnActionBuilder final {
   }
 
   const ResolvedColumnDefinition* column_definition() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition();
   }
 
@@ -37210,7 +39619,7 @@ class ResolvedAddColumnActionBuilder final {
 
   ResolvedAddColumnActionBuilder(std::unique_ptr<ResolvedAddColumnAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37253,13 +39662,13 @@ class ResolvedAddConstraintActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAddConstraintAction::is_if_not_exists was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAddConstraintAction::constraint was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37271,7 +39680,7 @@ class ResolvedAddConstraintActionBuilder final {
 
   // Getters and chained setters
   bool is_if_not_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_not_exists();
   }
 
@@ -37290,7 +39699,7 @@ class ResolvedAddConstraintActionBuilder final {
   }
 
   const ResolvedConstraint* constraint() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->constraint();
   }
 
@@ -37343,7 +39752,7 @@ class ResolvedAddConstraintActionBuilder final {
   }
 
   const Table* table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table();
   }
 
@@ -37369,7 +39778,7 @@ class ResolvedAddConstraintActionBuilder final {
 
   ResolvedAddConstraintActionBuilder(std::unique_ptr<ResolvedAddConstraintAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37412,13 +39821,13 @@ class ResolvedDropConstraintActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropConstraintAction::is_if_exists was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropConstraintAction::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37430,7 +39839,7 @@ class ResolvedDropConstraintActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -37449,7 +39858,7 @@ class ResolvedDropConstraintActionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -37477,7 +39886,7 @@ class ResolvedDropConstraintActionBuilder final {
 
   ResolvedDropConstraintActionBuilder(std::unique_ptr<ResolvedDropConstraintAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37520,7 +39929,7 @@ class ResolvedDropPrimaryKeyActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropPrimaryKeyAction::is_if_exists was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37532,7 +39941,7 @@ class ResolvedDropPrimaryKeyActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -37560,7 +39969,7 @@ class ResolvedDropPrimaryKeyActionBuilder final {
 
   ResolvedDropPrimaryKeyActionBuilder(std::unique_ptr<ResolvedDropPrimaryKeyAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37602,7 +40011,7 @@ class ResolvedAlterColumnOptionsActionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnOptionsAction::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37614,17 +40023,17 @@ class ResolvedAlterColumnOptionsActionBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -37687,7 +40096,7 @@ class ResolvedAlterColumnOptionsActionBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -37704,7 +40113,7 @@ class ResolvedAlterColumnOptionsActionBuilder final {
   }
 
   const std::string& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -37732,7 +40141,7 @@ class ResolvedAlterColumnOptionsActionBuilder final {
 
   ResolvedAlterColumnOptionsActionBuilder(std::unique_ptr<ResolvedAlterColumnOptionsAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37773,7 +40182,7 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnDropNotNullAction::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37785,7 +40194,7 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -37802,7 +40211,7 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
   }
 
   const std::string& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -37830,7 +40239,7 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
 
   ResolvedAlterColumnDropNotNullActionBuilder(std::unique_ptr<ResolvedAlterColumnDropNotNullAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -37872,19 +40281,19 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnSetDataTypeAction::column was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnSetDataTypeAction::updated_type was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnSetDataTypeAction::updated_annotations was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -37897,7 +40306,7 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
   // Getters and chained setters
   // The new type for the column.
   const Type* updated_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->updated_type();
   }
 
@@ -37920,7 +40329,7 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
   // populated for ARRAY and STRUCT types.
   // TODO Use updated_annotations to pass type parameters.
   const TypeParameters& updated_type_parameters() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->updated_type_parameters();
   }
 
@@ -37940,7 +40349,7 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
   // specifications. Changing options using SET DATA TYPE action is not
   // allowed.
   const ResolvedColumnAnnotations* updated_annotations() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->updated_annotations();
   }
 
@@ -37993,7 +40402,7 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -38010,7 +40419,7 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
   }
 
   const std::string& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -38038,7 +40447,7 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
 
   ResolvedAlterColumnSetDataTypeActionBuilder(std::unique_ptr<ResolvedAlterColumnSetDataTypeAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38082,13 +40491,13 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnSetDefaultAction::column was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnSetDefaultAction::default_value was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -38100,7 +40509,7 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
 
   // Getters and chained setters
   const ResolvedColumnDefaultValue* default_value() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->default_value();
   }
 
@@ -38153,7 +40562,7 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -38170,7 +40579,7 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
   }
 
   const std::string& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -38198,7 +40607,7 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
 
   ResolvedAlterColumnSetDefaultActionBuilder(std::unique_ptr<ResolvedAlterColumnSetDefaultAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38240,7 +40649,7 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterColumnDropDefaultAction::column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -38252,7 +40661,7 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -38269,7 +40678,7 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
   }
 
   const std::string& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -38297,7 +40706,7 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
 
   ResolvedAlterColumnDropDefaultActionBuilder(std::unique_ptr<ResolvedAlterColumnDropDefaultAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38339,13 +40748,13 @@ class ResolvedDropColumnActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropColumnAction::is_if_exists was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropColumnAction::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -38357,7 +40766,7 @@ class ResolvedDropColumnActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -38376,7 +40785,7 @@ class ResolvedDropColumnActionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -38404,7 +40813,7 @@ class ResolvedDropColumnActionBuilder final {
 
   ResolvedDropColumnActionBuilder(std::unique_ptr<ResolvedDropColumnAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38447,13 +40856,13 @@ class ResolvedRenameColumnActionBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedRenameColumnAction::name was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedRenameColumnAction::new_name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -38465,7 +40874,7 @@ class ResolvedRenameColumnActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -38482,7 +40891,7 @@ class ResolvedRenameColumnActionBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -38501,7 +40910,7 @@ class ResolvedRenameColumnActionBuilder final {
   }
 
   const std::string& new_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_name();
   }
 
@@ -38529,7 +40938,7 @@ class ResolvedRenameColumnActionBuilder final {
 
   ResolvedRenameColumnActionBuilder(std::unique_ptr<ResolvedRenameColumnAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38576,7 +40985,7 @@ class ResolvedSetAsActionBuilder final {
 
   // Getters and chained setters
   const std::string& entity_body_json() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_body_json();
   }
 
@@ -38593,7 +41002,7 @@ class ResolvedSetAsActionBuilder final {
   }
 
   const std::string& entity_body_text() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_body_text();
   }
 
@@ -38618,7 +41027,7 @@ class ResolvedSetAsActionBuilder final {
 
   ResolvedSetAsActionBuilder(std::unique_ptr<ResolvedSetAsAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38659,7 +41068,7 @@ class ResolvedSetCollateClauseBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedSetCollateClause::collation_name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -38671,7 +41080,7 @@ class ResolvedSetCollateClauseBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* collation_name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->collation_name();
   }
 
@@ -38733,7 +41142,7 @@ class ResolvedSetCollateClauseBuilder final {
 
   ResolvedSetCollateClauseBuilder(std::unique_ptr<ResolvedSetCollateClause> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -38779,17 +41188,17 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -38818,17 +41227,17 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -38891,7 +41300,7 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -38908,17 +41317,17 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -38989,7 +41398,7 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
 
   ResolvedAlterTableSetOptionsStmtBuilder(std::unique_ptr<ResolvedAlterTableSetOptionsStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -39030,7 +41439,7 @@ class ResolvedRenameStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedRenameStmt::object_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -39042,7 +41451,7 @@ class ResolvedRenameStmtBuilder final {
 
   // Getters and chained setters
   const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->object_type();
   }
 
@@ -39061,17 +41470,17 @@ class ResolvedRenameStmtBuilder final {
   }
 
   const std::vector<std::string>& old_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->old_name_path();
   }
 
   int old_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->old_name_path_size();
   }
 
   const std::string& old_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->old_name_path(i);
   }
 
@@ -39100,17 +41509,17 @@ class ResolvedRenameStmtBuilder final {
   }
 
   const std::vector<std::string>& new_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_name_path();
   }
 
   int new_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_name_path_size();
   }
 
   const std::string& new_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_name_path(i);
   }
 
@@ -39139,17 +41548,17 @@ class ResolvedRenameStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -39221,7 +41630,7 @@ class ResolvedRenameStmtBuilder final {
 
   ResolvedRenameStmtBuilder(std::unique_ptr<ResolvedRenameStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -39263,7 +41672,7 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreatePrivilegeRestrictionStmt::object_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -39275,17 +41684,17 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& column_privilege_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list();
   }
 
   int column_privilege_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list_size();
   }
 
   const ResolvedPrivilege* column_privilege_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list(i);
   }
 
@@ -39348,7 +41757,7 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   }
 
   const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->object_type();
   }
 
@@ -39367,17 +41776,17 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& restrictee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list();
   }
 
   int restrictee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list_size();
   }
 
   const ResolvedExpr* restrictee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list(i);
   }
 
@@ -39440,17 +41849,17 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -39513,17 +41922,17 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -39552,7 +41961,7 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -39569,7 +41978,7 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -39595,7 +42004,7 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
 
   ResolvedCreatePrivilegeRestrictionStmtBuilder(std::unique_ptr<ResolvedCreatePrivilegeRestrictionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -39639,19 +42048,19 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateRowAccessPolicyStmt::table_scan was not set on the builder");
     }
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateRowAccessPolicyStmt::predicate was not set on the builder");
     }
     if (!field_is_set_.test(8)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateRowAccessPolicyStmt::predicate_str was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -39663,7 +42072,7 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
 
   // Getters and chained setters
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -39680,7 +42089,7 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -39697,17 +42106,17 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::string>& target_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_name_path();
   }
 
   int target_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_name_path_size();
   }
 
   const std::string& target_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_name_path(i);
   }
 
@@ -39736,17 +42145,17 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::string>& grantee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list();
   }
 
   int grantee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list_size();
   }
 
   const std::string& grantee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_list(i);
   }
 
@@ -39775,17 +42184,17 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& grantee_expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list();
   }
 
   int grantee_expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list_size();
   }
 
   const ResolvedExpr* grantee_expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list(i);
   }
 
@@ -39848,7 +42257,7 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -39901,7 +42310,7 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const ResolvedExpr* predicate() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->predicate();
   }
 
@@ -39954,7 +42363,7 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const std::string& predicate_str() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->predicate_str();
   }
 
@@ -39973,17 +42382,17 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -40055,7 +42464,7 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
 
   ResolvedCreateRowAccessPolicyStmtBuilder(std::unique_ptr<ResolvedCreateRowAccessPolicyStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -40099,7 +42508,7 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropPrivilegeRestrictionStmt::object_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -40111,7 +42520,7 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
 
   // Getters and chained setters
   const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->object_type();
   }
 
@@ -40130,7 +42539,7 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -40147,17 +42556,17 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -40186,17 +42595,17 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& column_privilege_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list();
   }
 
   int column_privilege_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list_size();
   }
 
   const ResolvedPrivilege* column_privilege_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list(i);
   }
 
@@ -40259,17 +42668,17 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -40341,7 +42750,7 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
 
   ResolvedDropPrivilegeRestrictionStmtBuilder(std::unique_ptr<ResolvedDropPrivilegeRestrictionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -40387,7 +42796,7 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
 
   // Getters and chained setters
   bool is_drop_all() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_drop_all();
   }
 
@@ -40404,7 +42813,7 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -40421,7 +42830,7 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -40438,17 +42847,17 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::string>& target_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_name_path();
   }
 
   int target_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_name_path_size();
   }
 
   const std::string& target_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_name_path(i);
   }
 
@@ -40477,17 +42886,17 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -40558,7 +42967,7 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
 
   ResolvedDropRowAccessPolicyStmtBuilder(std::unique_ptr<ResolvedDropRowAccessPolicyStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -40570,19 +42979,27 @@ inline ResolvedDropRowAccessPolicyStmtBuilder ToBuilder(
   return builder;
 }
 
-class ResolvedDropSearchIndexStmtBuilder final {
+class ResolvedDropIndexStmtBuilder final {
  public:
-  ResolvedDropSearchIndexStmtBuilder() : ResolvedDropSearchIndexStmtBuilder(absl::WrapUnique(new ResolvedDropSearchIndexStmt)) {}
+    typedef ResolvedDropIndexStmtEnums::IndexType IndexType;
+  static const IndexType INDEX_DEFAULT = ResolvedDropIndexStmtEnums::INDEX_DEFAULT;
+  static const IndexType INDEX_SEARCH = ResolvedDropIndexStmtEnums::INDEX_SEARCH;
+  static const IndexType INDEX_VECTOR = ResolvedDropIndexStmtEnums::INDEX_VECTOR;
 
-  ResolvedDropSearchIndexStmtBuilder(const ResolvedDropSearchIndexStmtBuilder&) = delete;
-  ResolvedDropSearchIndexStmtBuilder& operator=(const ResolvedDropSearchIndexStmtBuilder&) = delete;
-  ResolvedDropSearchIndexStmtBuilder(ResolvedDropSearchIndexStmtBuilder&& other)
-      : ResolvedDropSearchIndexStmtBuilder(std::move(other.node_)) {
+  std::string GetIndexTypeString() const;
+  static std::string IndexTypeToString(IndexType index_type);
+
+  ResolvedDropIndexStmtBuilder() : ResolvedDropIndexStmtBuilder(absl::WrapUnique(new ResolvedDropIndexStmt)) {}
+
+  ResolvedDropIndexStmtBuilder(const ResolvedDropIndexStmtBuilder&) = delete;
+  ResolvedDropIndexStmtBuilder& operator=(const ResolvedDropIndexStmtBuilder&) = delete;
+  ResolvedDropIndexStmtBuilder(ResolvedDropIndexStmtBuilder&& other)
+      : ResolvedDropIndexStmtBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
     field_is_set_ = std::move(other.field_is_set_);
   }
 
-  ResolvedDropSearchIndexStmtBuilder& operator=(ResolvedDropSearchIndexStmtBuilder&& other) {
+  ResolvedDropIndexStmtBuilder& operator=(ResolvedDropIndexStmtBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
     field_is_set_ = std::move(other.field_is_set_);
@@ -40592,21 +43009,21 @@ class ResolvedDropSearchIndexStmtBuilder final {
   // Build() releases the current inner node, so it is callable only on an
   // r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropSearchIndexStmt>> Build() && {
+  absl::StatusOr<std::unique_ptr<const ResolvedDropIndexStmt>> Build() && {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedDropSearchIndexStmt::is_if_exists was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedDropIndexStmt::is_if_exists was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
-            << "ResolvedDropSearchIndexStmt::name was not set on the builder");
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedDropIndexStmt::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
@@ -40617,18 +43034,18 @@ class ResolvedDropSearchIndexStmtBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
-  ResolvedDropSearchIndexStmtBuilder&& set_is_if_exists(bool v) && {
+  ResolvedDropIndexStmtBuilder&& set_is_if_exists(bool v) && {
     node_->set_is_if_exists(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropSearchIndexStmtBuilder& set_is_if_exists(bool v) & {
+  ResolvedDropIndexStmtBuilder& set_is_if_exists(bool v) & {
     node_->set_is_if_exists(v);
     field_is_set_.set(1, true);
 
@@ -40636,18 +43053,18 @@ class ResolvedDropSearchIndexStmtBuilder final {
   }
 
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
-  ResolvedDropSearchIndexStmtBuilder&& set_name(const std::string& v) && {
+  ResolvedDropIndexStmtBuilder&& set_name(const std::string& v) && {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropSearchIndexStmtBuilder& set_name(const std::string& v) & {
+  ResolvedDropIndexStmtBuilder& set_name(const std::string& v) & {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
@@ -40655,75 +43072,92 @@ class ResolvedDropSearchIndexStmtBuilder final {
   }
 
   const std::vector<std::string>& table_name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_name_path();
   }
 
   int table_name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_name_path_size();
   }
 
   const std::string& table_name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_name_path(i);
   }
 
-  ResolvedDropSearchIndexStmtBuilder&& add_table_name_path(std::string v) && {
+  ResolvedDropIndexStmtBuilder&& add_table_name_path(std::string v) && {
     node_->add_table_name_path(v);
 
     return std::move(*this);
   }
 
-  ResolvedDropSearchIndexStmtBuilder& add_table_name_path(std::string v) & {
+  ResolvedDropIndexStmtBuilder& add_table_name_path(std::string v) & {
     node_->add_table_name_path(v);
 
     return *this;
   }
 
-  ResolvedDropSearchIndexStmtBuilder&& set_table_name_path(const std::vector<std::string>& v) && {
+  ResolvedDropIndexStmtBuilder&& set_table_name_path(const std::vector<std::string>& v) && {
     node_->set_table_name_path(v);
 
     return std::move(*this);
   }
 
-  ResolvedDropSearchIndexStmtBuilder& set_table_name_path(const std::vector<std::string>& v) & {
+  ResolvedDropIndexStmtBuilder& set_table_name_path(const std::vector<std::string>& v) & {
     node_->set_table_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedDropIndexStmt::IndexType index_type() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->index_type();
+  }
+
+  ResolvedDropIndexStmtBuilder&& set_index_type(ResolvedDropIndexStmt::IndexType v) && {
+    node_->set_index_type(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedDropIndexStmtBuilder& set_index_type(ResolvedDropIndexStmt::IndexType v) & {
+    node_->set_index_type(v);
 
     return *this;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedDropSearchIndexStmtBuilder&& add_hint_list(T v) && {
+  ResolvedDropIndexStmtBuilder&& add_hint_list(T v) && {
     node_->add_hint_list(std::move(v));
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedDropSearchIndexStmtBuilder& add_hint_list(T v) & {
+  ResolvedDropIndexStmtBuilder& add_hint_list(T v) & {
     node_->add_hint_list(std::move(v));
 
     return *this;
   }
 
   template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedDropSearchIndexStmtBuilder&& add_hint_list(TBuilder&& b) && {
+  ResolvedDropIndexStmtBuilder&& add_hint_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
       add_hint_list(std::move(*status_or_node));
@@ -40736,7 +43170,7 @@ class ResolvedDropSearchIndexStmtBuilder final {
   }
 
   template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedDropSearchIndexStmtBuilder& add_hint_list(TBuilder&& b) & {
+  ResolvedDropIndexStmtBuilder& add_hint_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
       add_hint_list(std::move(*status_or_node));
@@ -40753,37 +43187,37 @@ class ResolvedDropSearchIndexStmtBuilder final {
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropSearchIndexStmtBuilder&& set_hint_list(T v) && {
+  ResolvedDropIndexStmtBuilder&& set_hint_list(T v) && {
     node_->set_hint_list(std::move(v));
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedDropSearchIndexStmtBuilder& set_hint_list(T v) & {
+  ResolvedDropIndexStmtBuilder& set_hint_list(T v) & {
     node_->set_hint_list(std::move(v));
 
     return *this;
   }
 
  private:
-  std::unique_ptr<ResolvedDropSearchIndexStmt> node_;
+  std::unique_ptr<ResolvedDropIndexStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<4> field_is_set_ = {0};
-  friend ResolvedDropSearchIndexStmtBuilder ToBuilder(
-      std::unique_ptr<const ResolvedDropSearchIndexStmt> node);
+  std::bitset<5> field_is_set_ = {0};
+  friend ResolvedDropIndexStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedDropIndexStmt> node);
 
-  ResolvedDropSearchIndexStmtBuilder(std::unique_ptr<ResolvedDropSearchIndexStmt> node)
+  ResolvedDropIndexStmtBuilder(std::unique_ptr<ResolvedDropIndexStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
-inline ResolvedDropSearchIndexStmtBuilder ToBuilder(
-    std::unique_ptr<const ResolvedDropSearchIndexStmt> node) {
-  ResolvedDropSearchIndexStmtBuilder builder(absl::WrapUnique<ResolvedDropSearchIndexStmt>(
-      const_cast<ResolvedDropSearchIndexStmt*>(node.release())));
+inline ResolvedDropIndexStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedDropIndexStmt> node) {
+  ResolvedDropIndexStmtBuilder builder(absl::WrapUnique<ResolvedDropIndexStmt>(
+      const_cast<ResolvedDropIndexStmt*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(1, true);
   builder.field_is_set_.set(2, true);
@@ -40823,17 +43257,17 @@ class ResolvedGrantToActionBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedExpr>>& grantee_expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list();
   }
 
   int grantee_expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list_size();
   }
 
   const ResolvedExpr* grantee_expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->grantee_expr_list(i);
   }
 
@@ -40904,7 +43338,7 @@ class ResolvedGrantToActionBuilder final {
 
   ResolvedGrantToActionBuilder(std::unique_ptr<ResolvedGrantToAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -40949,17 +43383,17 @@ class ResolvedRestrictToActionBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedExpr>>& restrictee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list();
   }
 
   int restrictee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list_size();
   }
 
   const ResolvedExpr* restrictee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list(i);
   }
 
@@ -41030,7 +43464,7 @@ class ResolvedRestrictToActionBuilder final {
 
   ResolvedRestrictToActionBuilder(std::unique_ptr<ResolvedRestrictToAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -41075,7 +43509,7 @@ class ResolvedAddToRestricteeListActionBuilder final {
 
   // Getters and chained setters
   bool is_if_not_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_not_exists();
   }
 
@@ -41092,17 +43526,17 @@ class ResolvedAddToRestricteeListActionBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& restrictee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list();
   }
 
   int restrictee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list_size();
   }
 
   const ResolvedExpr* restrictee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list(i);
   }
 
@@ -41173,7 +43607,7 @@ class ResolvedAddToRestricteeListActionBuilder final {
 
   ResolvedAddToRestricteeListActionBuilder(std::unique_ptr<ResolvedAddToRestricteeListAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -41218,7 +43652,7 @@ class ResolvedRemoveFromRestricteeListActionBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -41235,17 +43669,17 @@ class ResolvedRemoveFromRestricteeListActionBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& restrictee_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list();
   }
 
   int restrictee_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list_size();
   }
 
   const ResolvedExpr* restrictee_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->restrictee_list(i);
   }
 
@@ -41316,7 +43750,7 @@ class ResolvedRemoveFromRestricteeListActionBuilder final {
 
   ResolvedRemoveFromRestricteeListActionBuilder(std::unique_ptr<ResolvedRemoveFromRestricteeListAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -41357,13 +43791,13 @@ class ResolvedFilterUsingActionBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterUsingAction::predicate was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFilterUsingAction::predicate_str was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -41375,7 +43809,7 @@ class ResolvedFilterUsingActionBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* predicate() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->predicate();
   }
 
@@ -41428,7 +43862,7 @@ class ResolvedFilterUsingActionBuilder final {
   }
 
   const std::string& predicate_str() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->predicate_str();
   }
 
@@ -41456,7 +43890,7 @@ class ResolvedFilterUsingActionBuilder final {
 
   ResolvedFilterUsingActionBuilder(std::unique_ptr<ResolvedFilterUsingAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -41503,17 +43937,17 @@ class ResolvedRevokeFromActionBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedExpr>>& revokee_expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->revokee_expr_list();
   }
 
   int revokee_expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->revokee_expr_list_size();
   }
 
   const ResolvedExpr* revokee_expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->revokee_expr_list(i);
   }
 
@@ -41576,7 +44010,7 @@ class ResolvedRevokeFromActionBuilder final {
   }
 
   bool is_revoke_from_all() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_revoke_from_all();
   }
 
@@ -41601,7 +44035,7 @@ class ResolvedRevokeFromActionBuilder final {
 
   ResolvedRevokeFromActionBuilder(std::unique_ptr<ResolvedRevokeFromAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -41646,17 +44080,17 @@ class ResolvedRenameToActionBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& new_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_path();
   }
 
   int new_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_path_size();
   }
 
   const std::string& new_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->new_path(i);
   }
 
@@ -41693,7 +44127,7 @@ class ResolvedRenameToActionBuilder final {
 
   ResolvedRenameToActionBuilder(std::unique_ptr<ResolvedRenameToAction> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -41734,7 +44168,7 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterPrivilegeRestrictionStmt::object_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -41746,17 +44180,17 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& column_privilege_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list();
   }
 
   int column_privilege_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list_size();
   }
 
   const ResolvedPrivilege* column_privilege_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_privilege_list(i);
   }
 
@@ -41819,7 +44253,7 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::string& object_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->object_type();
   }
 
@@ -41838,17 +44272,17 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -41911,17 +44345,17 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -41950,17 +44384,17 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -42023,7 +44457,7 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -42049,7 +44483,7 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
 
   ResolvedAlterPrivilegeRestrictionStmtBuilder(std::unique_ptr<ResolvedAlterPrivilegeRestrictionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -42091,13 +44525,13 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterRowAccessPolicyStmt::name was not set on the builder");
     }
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterRowAccessPolicyStmt::table_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -42109,7 +44543,7 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -42128,7 +44562,7 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
   }
 
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -42181,17 +44615,17 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -42254,17 +44688,17 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -42293,17 +44727,17 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -42366,7 +44800,7 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -42392,7 +44826,7 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
 
   ResolvedAlterRowAccessPolicyStmtBuilder(std::unique_ptr<ResolvedAlterRowAccessPolicyStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -42435,7 +44869,7 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterAllRowAccessPoliciesStmt::table_scan was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -42447,7 +44881,7 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* table_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_scan();
   }
 
@@ -42500,17 +44934,17 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -42573,17 +45007,17 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -42612,17 +45046,17 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -42685,7 +45119,7 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -42711,7 +45145,7 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
 
   ResolvedAlterAllRowAccessPoliciesStmtBuilder(std::unique_ptr<ResolvedAlterAllRowAccessPoliciesStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -42753,7 +45187,7 @@ class ResolvedCreateConstantStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateConstantStmt::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -42765,7 +45199,7 @@ class ResolvedCreateConstantStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -42818,17 +45252,17 @@ class ResolvedCreateConstantStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -42891,17 +45325,17 @@ class ResolvedCreateConstantStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -42930,7 +45364,7 @@ class ResolvedCreateConstantStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -42947,7 +45381,7 @@ class ResolvedCreateConstantStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -42973,7 +45407,7 @@ class ResolvedCreateConstantStmtBuilder final {
 
   ResolvedCreateConstantStmtBuilder(std::unique_ptr<ResolvedCreateConstantStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -43022,31 +45456,31 @@ class ResolvedCreateFunctionStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateFunctionStmt::has_explicit_return_type was not set on the builder");
     }
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateFunctionStmt::signature was not set on the builder");
     }
     if (!field_is_set_.test(10)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateFunctionStmt::code was not set on the builder");
     }
     if (!field_is_set_.test(12)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateFunctionStmt::function_expression was not set on the builder");
     }
     if (!field_is_set_.test(16)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateFunctionStmt::is_remote was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -43058,7 +45492,7 @@ class ResolvedCreateFunctionStmtBuilder final {
 
   // Getters and chained setters
   bool has_explicit_return_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->has_explicit_return_type();
   }
 
@@ -43077,7 +45511,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const Type* return_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->return_type();
   }
 
@@ -43094,17 +45528,17 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::vector<std::string>& argument_name_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list();
   }
 
   int argument_name_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list_size();
   }
 
   const std::string& argument_name_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list(i);
   }
 
@@ -43133,7 +45567,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -43152,7 +45586,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   bool is_aggregate() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_aggregate();
   }
 
@@ -43169,7 +45603,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::string& language() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->language();
   }
 
@@ -43186,7 +45620,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::string& code() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->code();
   }
 
@@ -43205,17 +45639,17 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_expression_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_expression_list();
   }
 
   int aggregate_expression_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_expression_list_size();
   }
 
   const ResolvedComputedColumn* aggregate_expression_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_expression_list(i);
   }
 
@@ -43278,7 +45712,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const ResolvedExpr* function_expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->function_expression();
   }
 
@@ -43331,17 +45765,17 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -43404,7 +45838,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::SqlSecurity sql_security() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql_security();
   }
 
@@ -43421,7 +45855,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::DeterminismLevel determinism_level() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->determinism_level();
   }
 
@@ -43438,7 +45872,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   bool is_remote() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_remote();
   }
 
@@ -43457,7 +45891,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -43506,17 +45940,17 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -43579,17 +46013,17 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -43618,7 +46052,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -43635,7 +46069,7 @@ class ResolvedCreateFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -43661,7 +46095,7 @@ class ResolvedCreateFunctionStmtBuilder final {
 
   ResolvedCreateFunctionStmtBuilder(std::unique_ptr<ResolvedCreateFunctionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -43712,13 +46146,13 @@ class ResolvedArgumentDefBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedArgumentDef::name was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedArgumentDef::type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -43730,7 +46164,7 @@ class ResolvedArgumentDefBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -43749,7 +46183,7 @@ class ResolvedArgumentDefBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -43768,7 +46202,7 @@ class ResolvedArgumentDefBuilder final {
   }
 
   ResolvedArgumentDef::ArgumentKind argument_kind() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_kind();
   }
 
@@ -43794,7 +46228,7 @@ class ResolvedArgumentDefBuilder final {
 
   ResolvedArgumentDefBuilder(std::unique_ptr<ResolvedArgumentDef> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -43842,19 +46276,19 @@ class ResolvedArgumentRefBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedArgumentRef::type was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedArgumentRef::name was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedArgumentRef::argument_kind was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -43866,7 +46300,7 @@ class ResolvedArgumentRefBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -43885,7 +46319,7 @@ class ResolvedArgumentRefBuilder final {
   }
 
   ResolvedArgumentDef::ArgumentKind argument_kind() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_kind();
   }
 
@@ -43904,7 +46338,7 @@ class ResolvedArgumentRefBuilder final {
   }
 
   const Type* type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type();
   }
 
@@ -43923,7 +46357,7 @@ class ResolvedArgumentRefBuilder final {
   }
 
   const AnnotationMap* type_annotation_map() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->type_annotation_map();
   }
 
@@ -43949,7 +46383,7 @@ class ResolvedArgumentRefBuilder final {
 
   ResolvedArgumentRefBuilder(std::unique_ptr<ResolvedArgumentRef> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -43993,19 +46427,19 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateTableFunctionStmt::signature was not set on the builder");
     }
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateTableFunctionStmt::has_explicit_return_schema was not set on the builder");
     }
     if (!field_is_set_.test(9)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateTableFunctionStmt::code was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -44017,17 +46451,17 @@ class ResolvedCreateTableFunctionStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& argument_name_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list();
   }
 
   int argument_name_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list_size();
   }
 
   const std::string& argument_name_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list(i);
   }
 
@@ -44056,7 +46490,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -44075,7 +46509,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   bool has_explicit_return_schema() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->has_explicit_return_schema();
   }
 
@@ -44094,17 +46528,17 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -44167,7 +46601,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const std::string& language() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->language();
   }
 
@@ -44184,7 +46618,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const std::string& code() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->code();
   }
 
@@ -44203,7 +46637,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -44252,17 +46686,17 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -44325,7 +46759,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -44342,7 +46776,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::SqlSecurity sql_security() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql_security();
   }
 
@@ -44359,17 +46793,17 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -44432,17 +46866,17 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -44471,7 +46905,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -44488,7 +46922,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -44514,7 +46948,7 @@ class ResolvedCreateTableFunctionStmtBuilder final {
 
   ResolvedCreateTableFunctionStmtBuilder(std::unique_ptr<ResolvedCreateTableFunctionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -44555,10 +46989,10 @@ class ResolvedRelationArgumentScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedRelationArgumentScan::name was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -44574,20 +47008,20 @@ class ResolvedRelationArgumentScanBuilder final {
   // a TVF SQL function body with one of possibly several relation
   // arguments in the TVF call.
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
   ResolvedRelationArgumentScanBuilder&& set_name(const std::string& v) && {
     node_->set_name(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
   ResolvedRelationArgumentScanBuilder& set_name(const std::string& v) & {
     node_->set_name(v);
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -44596,7 +47030,7 @@ class ResolvedRelationArgumentScanBuilder final {
   // producing rows with named columns, it produces rows with a single
   // unnamed value type. See (broken link).
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -44613,17 +47047,17 @@ class ResolvedRelationArgumentScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -44652,17 +47086,17 @@ class ResolvedRelationArgumentScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -44725,7 +47159,7 @@ class ResolvedRelationArgumentScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -44741,17 +47175,34 @@ class ResolvedRelationArgumentScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedRelationArgumentScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedRelationArgumentScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedRelationArgumentScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedRelationArgumentScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedRelationArgumentScan> node);
 
   ResolvedRelationArgumentScanBuilder(std::unique_ptr<ResolvedRelationArgumentScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -44760,7 +47211,7 @@ inline ResolvedRelationArgumentScanBuilder ToBuilder(
   ResolvedRelationArgumentScanBuilder builder(absl::WrapUnique<ResolvedRelationArgumentScan>(
       const_cast<ResolvedRelationArgumentScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 
@@ -44797,17 +47248,17 @@ class ResolvedArgumentListBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedArgumentDef>>& arg_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->arg_list();
   }
 
   int arg_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->arg_list_size();
   }
 
   const ResolvedArgumentDef* arg_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->arg_list(i);
   }
 
@@ -44878,7 +47329,7 @@ class ResolvedArgumentListBuilder final {
 
   ResolvedArgumentListBuilder(std::unique_ptr<ResolvedArgumentList> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -44919,7 +47370,7 @@ class ResolvedFunctionSignatureHolderBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedFunctionSignatureHolder::signature was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -44931,7 +47382,7 @@ class ResolvedFunctionSignatureHolderBuilder final {
 
   // Getters and chained setters
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -44959,7 +47410,7 @@ class ResolvedFunctionSignatureHolderBuilder final {
 
   ResolvedFunctionSignatureHolderBuilder(std::unique_ptr<ResolvedFunctionSignatureHolder> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -45001,19 +47452,19 @@ class ResolvedDropFunctionStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropFunctionStmt::is_if_exists was not set on the builder");
     }
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropFunctionStmt::arguments was not set on the builder");
     }
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropFunctionStmt::signature was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -45025,7 +47476,7 @@ class ResolvedDropFunctionStmtBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -45044,17 +47495,17 @@ class ResolvedDropFunctionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -45087,7 +47538,7 @@ class ResolvedDropFunctionStmtBuilder final {
   // to the empty string irrespective of whether or not argument names
   // were given in the DROP FUNCTION statement.
   const ResolvedArgumentList* arguments() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->arguments();
   }
 
@@ -45144,7 +47595,7 @@ class ResolvedDropFunctionStmtBuilder final {
   // with this signature.  Additionally, the return type will always be
   // <void>, since return types are ignored for DROP FUNCTION.
   const ResolvedFunctionSignatureHolder* signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -45197,17 +47648,17 @@ class ResolvedDropFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -45279,7 +47730,7 @@ class ResolvedDropFunctionStmtBuilder final {
 
   ResolvedDropFunctionStmtBuilder(std::unique_ptr<ResolvedDropFunctionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -45323,7 +47774,7 @@ class ResolvedDropTableFunctionStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedDropTableFunctionStmt::is_if_exists was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -45335,7 +47786,7 @@ class ResolvedDropTableFunctionStmtBuilder final {
 
   // Getters and chained setters
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -45354,17 +47805,17 @@ class ResolvedDropTableFunctionStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -45393,17 +47844,17 @@ class ResolvedDropTableFunctionStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -45475,7 +47926,7 @@ class ResolvedDropTableFunctionStmtBuilder final {
 
   ResolvedDropTableFunctionStmtBuilder(std::unique_ptr<ResolvedDropTableFunctionStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -45517,13 +47968,13 @@ class ResolvedCallStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCallStmt::procedure was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCallStmt::signature was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -45535,7 +47986,7 @@ class ResolvedCallStmtBuilder final {
 
   // Getters and chained setters
   const Procedure* procedure() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->procedure();
   }
 
@@ -45554,7 +48005,7 @@ class ResolvedCallStmtBuilder final {
   }
 
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -45573,17 +48024,17 @@ class ResolvedCallStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list();
   }
 
   int argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list_size();
   }
 
   const ResolvedExpr* argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_list(i);
   }
 
@@ -45646,17 +48097,17 @@ class ResolvedCallStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -45728,7 +48179,7 @@ class ResolvedCallStmtBuilder final {
 
   ResolvedCallStmtBuilder(std::unique_ptr<ResolvedCallStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -45779,7 +48230,7 @@ class ResolvedImportStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedImportStmt::import_kind was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -45791,7 +48242,7 @@ class ResolvedImportStmtBuilder final {
 
   // Getters and chained setters
   ResolvedImportStmt::ImportKind import_kind() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->import_kind();
   }
 
@@ -45810,17 +48261,17 @@ class ResolvedImportStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -45849,7 +48300,7 @@ class ResolvedImportStmtBuilder final {
   }
 
   const std::string& file_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->file_path();
   }
 
@@ -45866,17 +48317,17 @@ class ResolvedImportStmtBuilder final {
   }
 
   const std::vector<std::string>& alias_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias_path();
   }
 
   int alias_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias_path_size();
   }
 
   const std::string& alias_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alias_path(i);
   }
 
@@ -45905,17 +48356,17 @@ class ResolvedImportStmtBuilder final {
   }
 
   const std::vector<std::string>& into_alias_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->into_alias_path();
   }
 
   int into_alias_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->into_alias_path_size();
   }
 
   const std::string& into_alias_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->into_alias_path(i);
   }
 
@@ -45944,17 +48395,17 @@ class ResolvedImportStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -46017,17 +48468,17 @@ class ResolvedImportStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -46099,7 +48550,7 @@ class ResolvedImportStmtBuilder final {
 
   ResolvedImportStmtBuilder(std::unique_ptr<ResolvedImportStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -46145,17 +48596,17 @@ class ResolvedModuleStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -46184,17 +48635,17 @@ class ResolvedModuleStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -46257,17 +48708,17 @@ class ResolvedModuleStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -46338,7 +48789,7 @@ class ResolvedModuleStmtBuilder final {
 
   ResolvedModuleStmtBuilder(std::unique_ptr<ResolvedModuleStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -46387,13 +48838,13 @@ class ResolvedAggregateHavingModifierBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregateHavingModifier::kind was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAggregateHavingModifier::having_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -46405,7 +48856,7 @@ class ResolvedAggregateHavingModifierBuilder final {
 
   // Getters and chained setters
   ResolvedAggregateHavingModifier::HavingModifierKind kind() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->kind();
   }
 
@@ -46424,7 +48875,7 @@ class ResolvedAggregateHavingModifierBuilder final {
   }
 
   const ResolvedExpr* having_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->having_expr();
   }
 
@@ -46486,7 +48937,7 @@ class ResolvedAggregateHavingModifierBuilder final {
 
   ResolvedAggregateHavingModifierBuilder(std::unique_ptr<ResolvedAggregateHavingModifier> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -46529,19 +48980,19 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateMaterializedViewStmt::query was not set on the builder");
     }
     if (!field_is_set_.test(8)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateMaterializedViewStmt::sql was not set on the builder");
     }
     if (!field_is_set_.test(11)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateMaterializedViewStmt::recursive was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -46553,17 +49004,17 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
   }
 
   int partition_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list_size();
   }
 
   const ResolvedExpr* partition_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list(i);
   }
 
@@ -46626,17 +49077,17 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
   }
 
   int cluster_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list_size();
   }
 
   const ResolvedExpr* cluster_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list(i);
   }
 
@@ -46698,18 +49149,67 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     return *this;
   }
 
+  const ResolvedScan* replica_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->replica_source();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_replica_source() {
+    return node_->release_replica_source();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder&& set_replica_source(T v) && {
+    node_->set_replica_source(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder& set_replica_source(T v) & {
+    node_->set_replica_source(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder&& set_replica_source(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_replica_source(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateMaterializedViewStmtBuilder& set_replica_source(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_replica_source(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -46772,17 +49272,17 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -46811,7 +49311,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -46828,7 +49328,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -46845,17 +49345,17 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -46918,17 +49418,17 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -46991,7 +49491,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   bool has_explicit_columns() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->has_explicit_columns();
   }
 
@@ -47008,7 +49508,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const ResolvedScan* query() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->query();
   }
 
@@ -47061,7 +49561,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const std::string& sql() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql();
   }
 
@@ -47080,7 +49580,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   ResolvedCreateStatement::SqlSecurity sql_security() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql_security();
   }
 
@@ -47101,7 +49601,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   // value type.  output_column_list will have exactly one column, with
   // an empty name. See (broken link).
   bool is_value_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_value_table();
   }
 
@@ -47120,7 +49620,7 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   // True if the view uses the RECURSIVE keyword. <query>
   // can be a ResolvedRecursiveScan only if this is true.
   bool recursive() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->recursive();
   }
 
@@ -47139,17 +49639,17 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -47215,13 +49715,13 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
   std::unique_ptr<ResolvedCreateMaterializedViewStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<15> field_is_set_ = {0};
+  std::bitset<16> field_is_set_ = {0};
   friend ResolvedCreateMaterializedViewStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateMaterializedViewStmt> node);
 
   ResolvedCreateMaterializedViewStmtBuilder(std::unique_ptr<ResolvedCreateMaterializedViewStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -47229,6 +49729,595 @@ inline ResolvedCreateMaterializedViewStmtBuilder ToBuilder(
     std::unique_ptr<const ResolvedCreateMaterializedViewStmt> node) {
   ResolvedCreateMaterializedViewStmtBuilder builder(absl::WrapUnique<ResolvedCreateMaterializedViewStmt>(
       const_cast<ResolvedCreateMaterializedViewStmt*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(7, true);
+  builder.field_is_set_.set(8, true);
+  builder.field_is_set_.set(11, true);
+  return builder;
+}
+
+class ResolvedCreateApproxViewStmtBuilder final {
+ public:
+  ResolvedCreateApproxViewStmtBuilder() : ResolvedCreateApproxViewStmtBuilder(absl::WrapUnique(new ResolvedCreateApproxViewStmt)) {}
+
+  ResolvedCreateApproxViewStmtBuilder(const ResolvedCreateApproxViewStmtBuilder&) = delete;
+  ResolvedCreateApproxViewStmtBuilder& operator=(const ResolvedCreateApproxViewStmtBuilder&) = delete;
+  ResolvedCreateApproxViewStmtBuilder(ResolvedCreateApproxViewStmtBuilder&& other)
+      : ResolvedCreateApproxViewStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& operator=(ResolvedCreateApproxViewStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateApproxViewStmt>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    if (!field_is_set_.test(7)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedCreateApproxViewStmt::query was not set on the builder");
+    }
+    if (!field_is_set_.test(8)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedCreateApproxViewStmt::sql was not set on the builder");
+    }
+    if (!field_is_set_.test(11)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedCreateApproxViewStmt::recursive was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::CreateScope create_scope() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->create_scope();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_create_scope(ResolvedCreateStatement::CreateScope v) && {
+    node_->set_create_scope(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_create_scope(ResolvedCreateStatement::CreateScope v) & {
+    node_->set_create_scope(v);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::CreateMode create_mode() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->create_mode();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_create_mode(ResolvedCreateStatement::CreateMode v) && {
+    node_->set_create_mode(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_create_mode(ResolvedCreateStatement::CreateMode v) & {
+    node_->set_create_mode(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->output_column_list();
+  }
+
+  int output_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->output_column_list_size();
+  }
+
+  const ResolvedOutputColumn* output_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->output_column_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_output_column_list(T v) && {
+    node_->add_output_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_output_column_list(T v) & {
+    node_->add_output_column_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_output_column_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_output_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOutputColumn>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_output_column_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_output_column_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOutputColumn>> release_output_column_list() {
+    return node_->release_output_column_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& set_output_column_list(T v) && {
+    node_->set_output_column_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOutputColumn>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& set_output_column_list(T v) & {
+    node_->set_output_column_list(std::move(v));
+
+    return *this;
+  }
+
+  bool has_explicit_columns() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->has_explicit_columns();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_has_explicit_columns(bool v) && {
+    node_->set_has_explicit_columns(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_has_explicit_columns(bool v) & {
+    node_->set_has_explicit_columns(v);
+
+    return *this;
+  }
+
+  const ResolvedScan* query() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->query();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_query() {
+    return node_->release_query();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& set_query(T v) && {
+    node_->set_query(std::move(v));
+    field_is_set_.set(7, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& set_query(T v) & {
+    node_->set_query(std::move(v));
+    field_is_set_.set(7, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& set_query(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_query(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(7, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedScan>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& set_query(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_query(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(7, true);
+
+    return *this;
+  }
+
+  const std::string& sql() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->sql();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_sql(const std::string& v) && {
+    node_->set_sql(v);
+    field_is_set_.set(8, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_sql(const std::string& v) & {
+    node_->set_sql(v);
+    field_is_set_.set(8, true);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::SqlSecurity sql_security() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->sql_security();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_sql_security(ResolvedCreateStatement::SqlSecurity v) && {
+    node_->set_sql_security(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_sql_security(ResolvedCreateStatement::SqlSecurity v) & {
+    node_->set_sql_security(v);
+
+    return *this;
+  }
+
+  // If true, this view produces a value table. Rather than producing
+  // rows with named columns, it produces rows with a single unnamed
+  // value type.  output_column_list will have exactly one column, with
+  // an empty name. See (broken link).
+  bool is_value_table() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_value_table();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_is_value_table(bool v) && {
+    node_->set_is_value_table(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_is_value_table(bool v) & {
+    node_->set_is_value_table(v);
+
+    return *this;
+  }
+
+  // True if the view uses the RECURSIVE keyword. <query>
+  // can be a ResolvedRecursiveScan only if this is true.
+  bool recursive() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->recursive();
+  }
+
+  ResolvedCreateApproxViewStmtBuilder&& set_recursive(bool v) && {
+    node_->set_recursive(v);
+    field_is_set_.set(11, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateApproxViewStmtBuilder& set_recursive(bool v) & {
+    node_->set_recursive(v);
+    field_is_set_.set(11, true);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list();
+  }
+
+  int column_definition_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list_size();
+  }
+
+  const ResolvedColumnDefinition* column_definition_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_definition_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_column_definition_list(T v) && {
+    node_->add_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_column_definition_list(T v) & {
+    node_->add_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& add_column_definition_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnDefinition>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& add_column_definition_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_column_definition_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedColumnDefinition>> release_column_definition_list() {
+    return node_->release_column_definition_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder&& set_column_definition_list(T v) && {
+    node_->set_column_definition_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedColumnDefinition>>>::value>>
+  ResolvedCreateApproxViewStmtBuilder& set_column_definition_list(T v) & {
+    node_->set_column_definition_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedCreateApproxViewStmt> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<13> field_is_set_ = {0};
+  friend ResolvedCreateApproxViewStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedCreateApproxViewStmt> node);
+
+  ResolvedCreateApproxViewStmtBuilder(std::unique_ptr<ResolvedCreateApproxViewStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedCreateApproxViewStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedCreateApproxViewStmt> node) {
+  ResolvedCreateApproxViewStmtBuilder builder(absl::WrapUnique<ResolvedCreateApproxViewStmt>(
+      const_cast<ResolvedCreateApproxViewStmt*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(7, true);
   builder.field_is_set_.set(8, true);
@@ -47265,7 +50354,7 @@ class ResolvedCreateProcedureStmtBuilder final {
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateProcedureStmt::signature was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -47277,17 +50366,17 @@ class ResolvedCreateProcedureStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::string>& argument_name_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list();
   }
 
   int argument_name_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list_size();
   }
 
   const std::string& argument_name_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->argument_name_list(i);
   }
 
@@ -47316,7 +50405,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const FunctionSignature& signature() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->signature();
   }
 
@@ -47335,17 +50424,17 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -47408,7 +50497,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const std::string& procedure_body() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->procedure_body();
   }
 
@@ -47425,7 +50514,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -47474,7 +50563,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const std::string& language() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->language();
   }
 
@@ -47491,7 +50580,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const std::string& code() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->code();
   }
 
@@ -47507,18 +50596,35 @@ class ResolvedCreateProcedureStmtBuilder final {
     return *this;
   }
 
+  ResolvedCreateStatement::SqlSecurity external_security() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->external_security();
+  }
+
+  ResolvedCreateProcedureStmtBuilder&& set_external_security(ResolvedCreateStatement::SqlSecurity v) && {
+    node_->set_external_security(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateProcedureStmtBuilder& set_external_security(ResolvedCreateStatement::SqlSecurity v) & {
+    node_->set_external_security(v);
+
+    return *this;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -47581,17 +50687,17 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -47620,7 +50726,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -47637,7 +50743,7 @@ class ResolvedCreateProcedureStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -47657,13 +50763,13 @@ class ResolvedCreateProcedureStmtBuilder final {
   std::unique_ptr<ResolvedCreateProcedureStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<11> field_is_set_ = {0};
+  std::bitset<12> field_is_set_ = {0};
   friend ResolvedCreateProcedureStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateProcedureStmt> node);
 
   ResolvedCreateProcedureStmtBuilder(std::unique_ptr<ResolvedCreateProcedureStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -47705,13 +50811,13 @@ class ResolvedExecuteImmediateArgumentBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExecuteImmediateArgument::name was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExecuteImmediateArgument::expression was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -47723,7 +50829,7 @@ class ResolvedExecuteImmediateArgumentBuilder final {
 
   // Getters and chained setters
   const std::string& name() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name();
   }
 
@@ -47742,7 +50848,7 @@ class ResolvedExecuteImmediateArgumentBuilder final {
   }
 
   const ResolvedExpr* expression() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expression();
   }
 
@@ -47804,7 +50910,7 @@ class ResolvedExecuteImmediateArgumentBuilder final {
 
   ResolvedExecuteImmediateArgumentBuilder(std::unique_ptr<ResolvedExecuteImmediateArgument> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -47847,7 +50953,7 @@ class ResolvedExecuteImmediateStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedExecuteImmediateStmt::sql was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -47859,7 +50965,7 @@ class ResolvedExecuteImmediateStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedExpr* sql() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->sql();
   }
 
@@ -47912,17 +51018,17 @@ class ResolvedExecuteImmediateStmtBuilder final {
   }
 
   const std::vector<std::string>& into_identifier_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->into_identifier_list();
   }
 
   int into_identifier_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->into_identifier_list_size();
   }
 
   const std::string& into_identifier_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->into_identifier_list(i);
   }
 
@@ -47951,17 +51057,17 @@ class ResolvedExecuteImmediateStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExecuteImmediateArgument>>& using_argument_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->using_argument_list();
   }
 
   int using_argument_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->using_argument_list_size();
   }
 
   const ResolvedExecuteImmediateArgument* using_argument_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->using_argument_list(i);
   }
 
@@ -48024,17 +51130,17 @@ class ResolvedExecuteImmediateStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -48106,7 +51212,7 @@ class ResolvedExecuteImmediateStmtBuilder final {
 
   ResolvedExecuteImmediateStmtBuilder(std::unique_ptr<ResolvedExecuteImmediateStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -48148,13 +51254,13 @@ class ResolvedAssignmentStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAssignmentStmt::target was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAssignmentStmt::expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -48165,9 +51271,11 @@ class ResolvedAssignmentStmtBuilder final {
   }
 
   // Getters and chained setters
-  // Target of the assignment.  Currently, this will be either ResolvedSystemVariable, or a chain of ResolveGetField operations around it.
+  // Target of the assignment.  Currently, this will be
+  // either ResolvedSystemVariable, or a chain of ResolveGetField
+  // operations around it.
   const ResolvedExpr* target() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target();
   }
 
@@ -48219,9 +51327,10 @@ class ResolvedAssignmentStmtBuilder final {
     return *this;
   }
 
-  // Value to assign into the target.  This will always be the same type as the target.
+  // Value to assign into the target.  This will always be
+  // the same type as the target.
   const ResolvedExpr* expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr();
   }
 
@@ -48274,17 +51383,17 @@ class ResolvedAssignmentStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -48356,7 +51465,7 @@ class ResolvedAssignmentStmtBuilder final {
 
   ResolvedAssignmentStmtBuilder(std::unique_ptr<ResolvedAssignmentStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -48399,7 +51508,7 @@ class ResolvedCreateEntityStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCreateEntityStmt::entity_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -48411,7 +51520,7 @@ class ResolvedCreateEntityStmtBuilder final {
 
   // Getters and chained setters
   const std::string& entity_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_type();
   }
 
@@ -48430,7 +51539,7 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   const std::string& entity_body_json() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_body_json();
   }
 
@@ -48447,7 +51556,7 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   const std::string& entity_body_text() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_body_text();
   }
 
@@ -48464,17 +51573,17 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -48537,17 +51646,17 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -48610,17 +51719,17 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -48649,7 +51758,7 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_scope();
   }
 
@@ -48666,7 +51775,7 @@ class ResolvedCreateEntityStmtBuilder final {
   }
 
   ResolvedCreateStatement::CreateMode create_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->create_mode();
   }
 
@@ -48692,7 +51801,7 @@ class ResolvedCreateEntityStmtBuilder final {
 
   ResolvedCreateEntityStmtBuilder(std::unique_ptr<ResolvedCreateEntityStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -48734,7 +51843,7 @@ class ResolvedAlterEntityStmtBuilder final {
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAlterEntityStmt::entity_type was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -48746,7 +51855,7 @@ class ResolvedAlterEntityStmtBuilder final {
 
   // Getters and chained setters
   const std::string& entity_type() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->entity_type();
   }
 
@@ -48765,17 +51874,17 @@ class ResolvedAlterEntityStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -48838,17 +51947,17 @@ class ResolvedAlterEntityStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -48877,17 +51986,17 @@ class ResolvedAlterEntityStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list();
   }
 
   int alter_action_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list_size();
   }
 
   const ResolvedAlterAction* alter_action_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->alter_action_list(i);
   }
 
@@ -48950,7 +52059,7 @@ class ResolvedAlterEntityStmtBuilder final {
   }
 
   bool is_if_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_exists();
   }
 
@@ -48976,7 +52085,7 @@ class ResolvedAlterEntityStmtBuilder final {
 
   ResolvedAlterEntityStmtBuilder(std::unique_ptr<ResolvedAlterEntityStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -49018,19 +52127,19 @@ class ResolvedPivotColumnBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedPivotColumn::column was not set on the builder");
     }
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedPivotColumn::pivot_expr_index was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedPivotColumn::pivot_value_index was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -49043,7 +52152,7 @@ class ResolvedPivotColumnBuilder final {
   // Getters and chained setters
   // The output column used to represent the result of the pivot.
   const ResolvedColumn& column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column();
   }
 
@@ -49065,7 +52174,7 @@ class ResolvedPivotColumnBuilder final {
   // within the enclosing ResolvedPivotScan's <pivot_expr_list> used to
   // determine the result of the column.
   int pivot_expr_index() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_expr_index();
   }
 
@@ -49088,7 +52197,7 @@ class ResolvedPivotColumnBuilder final {
   // determine the subset of input rows the pivot expression should be
   // evaluated over.
   int pivot_value_index() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_value_index();
   }
 
@@ -49116,7 +52225,7 @@ class ResolvedPivotColumnBuilder final {
 
   ResolvedPivotColumnBuilder(std::unique_ptr<ResolvedPivotColumn> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -49157,16 +52266,16 @@ class ResolvedPivotScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedPivotScan::input_scan was not set on the builder");
     }
-    if (!field_is_set_.test(6)) {
+    if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedPivotScan::for_expr was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -49179,7 +52288,7 @@ class ResolvedPivotScanBuilder final {
   // Getters and chained setters
   // Input to the PIVOT clause
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -49190,7 +52299,7 @@ class ResolvedPivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedPivotScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -49198,7 +52307,7 @@ class ResolvedPivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedPivotScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -49212,7 +52321,7 @@ class ResolvedPivotScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -49226,7 +52335,7 @@ class ResolvedPivotScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -49239,17 +52348,17 @@ class ResolvedPivotScanBuilder final {
   // Each element is a ResolvedComputedColumn. The expression is always
   // a ResolvedColumnRef that references a column from <input_scan>.
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list();
   }
 
   int group_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list_size();
   }
 
   const ResolvedComputedColumn* group_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->group_by_list(i);
   }
 
@@ -49315,17 +52424,17 @@ class ResolvedPivotScanBuilder final {
   // where <for_expr> matches each value in <pivot_value_list>, plus
   // all columns in <group_by_list>.
   const std::vector<std::unique_ptr<const ResolvedExpr>>& pivot_expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_expr_list();
   }
 
   int pivot_expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_expr_list_size();
   }
 
   const ResolvedExpr* pivot_expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_expr_list(i);
   }
 
@@ -49392,7 +52501,7 @@ class ResolvedPivotScanBuilder final {
   // <pivot_value_list> to determine which columns the aggregation
   // results of <pivot_expr_list> should go to.
   const ResolvedExpr* for_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->for_expr();
   }
 
@@ -49403,7 +52512,7 @@ class ResolvedPivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedPivotScanBuilder&& set_for_expr(T v) && {
     node_->set_for_expr(std::move(v));
-    field_is_set_.set(6, true);
+    field_is_set_.set(7, true);
 
     return std::move(*this);
   }
@@ -49411,7 +52520,7 @@ class ResolvedPivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedPivotScanBuilder& set_for_expr(T v) & {
     node_->set_for_expr(std::move(v));
-    field_is_set_.set(6, true);
+    field_is_set_.set(7, true);
 
     return *this;
   }
@@ -49425,7 +52534,7 @@ class ResolvedPivotScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(6, true);
+    field_is_set_.set(7, true);
 
     return std::move(*this);
   }
@@ -49439,7 +52548,7 @@ class ResolvedPivotScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(6, true);
+    field_is_set_.set(7, true);
 
     return *this;
   }
@@ -49454,17 +52563,17 @@ class ResolvedPivotScanBuilder final {
   // All pivot values in this list must have the same type as
   // <for_expr> and must be constant.
   const std::vector<std::unique_ptr<const ResolvedExpr>>& pivot_value_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_value_list();
   }
 
   int pivot_value_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_value_list_size();
   }
 
   const ResolvedExpr* pivot_value_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_value_list(i);
   }
 
@@ -49530,17 +52639,17 @@ class ResolvedPivotScanBuilder final {
   // Each is computed using one of pivot_expr_list and one of
   // pivot_value_list.
   const std::vector<std::unique_ptr<const ResolvedPivotColumn>>& pivot_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_column_list();
   }
 
   int pivot_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_column_list_size();
   }
 
   const ResolvedPivotColumn* pivot_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pivot_column_list(i);
   }
 
@@ -49603,17 +52712,17 @@ class ResolvedPivotScanBuilder final {
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -49642,17 +52751,17 @@ class ResolvedPivotScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -49715,7 +52824,7 @@ class ResolvedPivotScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -49731,17 +52840,34 @@ class ResolvedPivotScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedPivotScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedPivotScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedPivotScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<10> field_is_set_ = {0};
   friend ResolvedPivotScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedPivotScan> node);
 
   ResolvedPivotScanBuilder(std::unique_ptr<ResolvedPivotScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -49750,8 +52876,8 @@ inline ResolvedPivotScanBuilder ToBuilder(
   ResolvedPivotScanBuilder builder(absl::WrapUnique<ResolvedPivotScan>(
       const_cast<ResolvedPivotScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
-  builder.field_is_set_.set(6, true);
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(7, true);
   return builder;
 }
 
@@ -49784,7 +52910,7 @@ class ResolvedReturningClauseBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedReturningClause::action_column was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -49801,17 +52927,17 @@ class ResolvedReturningClauseBuilder final {
   // can have columns computed in the <expr_list> or an <action_column>
   // as the last column.
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -49877,7 +53003,7 @@ class ResolvedReturningClauseBuilder final {
   // string type column. There are four valid values for this action
   // column: "INSERT", "REPLACE", "UPDATE", and "DELETE".
   const ResolvedColumnHolder* action_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->action_column();
   }
 
@@ -49933,17 +53059,17 @@ class ResolvedReturningClauseBuilder final {
   // <output_column_list>. Worth noting, it can't see <action_column>
   // and can only access columns from the DML statement target table.
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& expr_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr_list();
   }
 
   int expr_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr_list_size();
   }
 
   const ResolvedComputedColumn* expr_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->expr_list(i);
   }
 
@@ -50015,7 +53141,7 @@ class ResolvedReturningClauseBuilder final {
 
   ResolvedReturningClauseBuilder(std::unique_ptr<ResolvedReturningClause> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -50064,17 +53190,17 @@ class ResolvedUnpivotArgBuilder final {
   // of ResolvedUnpivotScan. The size of this vector is
   // the same as <value_column_list>.
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumnRef* column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -50145,7 +53271,7 @@ class ResolvedUnpivotArgBuilder final {
 
   ResolvedUnpivotArgBuilder(std::unique_ptr<ResolvedUnpivotArg> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -50183,22 +53309,22 @@ class ResolvedUnpivotScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(3)) {
+    if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUnpivotScan::input_scan was not set on the builder");
     }
-    if (!field_is_set_.test(5)) {
+    if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUnpivotScan::label_column was not set on the builder");
     }
-    if (!field_is_set_.test(9)) {
+    if (!field_is_set_.test(10)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUnpivotScan::include_nulls was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -50210,7 +53336,7 @@ class ResolvedUnpivotScanBuilder final {
 
   // Getters and chained setters
   const ResolvedScan* input_scan() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->input_scan();
   }
 
@@ -50221,7 +53347,7 @@ class ResolvedUnpivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedUnpivotScanBuilder&& set_input_scan(T v) && {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -50229,7 +53355,7 @@ class ResolvedUnpivotScanBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedScan>>::value>>
   ResolvedUnpivotScanBuilder& set_input_scan(T v) & {
     node_->set_input_scan(std::move(v));
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -50243,7 +53369,7 @@ class ResolvedUnpivotScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return std::move(*this);
   }
@@ -50257,7 +53383,7 @@ class ResolvedUnpivotScanBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(3, true);
+    field_is_set_.set(4, true);
 
     return *this;
   }
@@ -50266,17 +53392,17 @@ class ResolvedUnpivotScanBuilder final {
   // These new column(s) store the value of input columns that are in
   // the UNPIVOT IN clause.
   const std::vector<ResolvedColumn>& value_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value_column_list();
   }
 
   int value_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value_column_list_size();
   }
 
   const ResolvedColumn& value_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->value_column_list(i);
   }
 
@@ -50308,20 +53434,20 @@ class ResolvedUnpivotScanBuilder final {
   // input columns groups that are present in the IN clause. Its
   // values are taken from <label_list>.
   const ResolvedColumn& label_column() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->label_column();
   }
 
   ResolvedUnpivotScanBuilder&& set_label_column(const ResolvedColumn& v) && {
     node_->set_label_column(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
 
   ResolvedUnpivotScanBuilder& set_label_column(const ResolvedColumn& v) & {
     node_->set_label_column(v);
-    field_is_set_.set(5, true);
+    field_is_set_.set(6, true);
 
     return *this;
   }
@@ -50329,17 +53455,17 @@ class ResolvedUnpivotScanBuilder final {
   // String or integer literal for each column group in
   // <unpivot_arg_list>.
   const std::vector<std::unique_ptr<const ResolvedLiteral>>& label_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->label_list();
   }
 
   int label_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->label_list_size();
   }
 
   const ResolvedLiteral* label_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->label_list(i);
   }
 
@@ -50407,17 +53533,17 @@ class ResolvedUnpivotScanBuilder final {
   // new <value_column_list> and the column group labels/names
   // in the <label_column>.
   const std::vector<std::unique_ptr<const ResolvedUnpivotArg>>& unpivot_arg_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unpivot_arg_list();
   }
 
   int unpivot_arg_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unpivot_arg_list_size();
   }
 
   const ResolvedUnpivotArg* unpivot_arg_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->unpivot_arg_list(i);
   }
 
@@ -50487,17 +53613,17 @@ class ResolvedUnpivotScanBuilder final {
   // The expression of each ResolvedComputedColumn is a
   // ResolvedColumnRef that references a column from <input_scan>.
   const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& projected_input_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->projected_input_column_list();
   }
 
   int projected_input_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->projected_input_column_list_size();
   }
 
   const ResolvedComputedColumn* projected_input_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->projected_input_column_list(i);
   }
 
@@ -50562,36 +53688,36 @@ class ResolvedUnpivotScanBuilder final {
   // Whether we need to include the rows from output where ALL columns
   // from <value_column_list> are null.
   bool include_nulls() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->include_nulls();
   }
 
   ResolvedUnpivotScanBuilder&& set_include_nulls(bool v) && {
     node_->set_include_nulls(v);
-    field_is_set_.set(9, true);
+    field_is_set_.set(10, true);
 
     return std::move(*this);
   }
 
   ResolvedUnpivotScanBuilder& set_include_nulls(bool v) & {
     node_->set_include_nulls(v);
-    field_is_set_.set(9, true);
+    field_is_set_.set(10, true);
 
     return *this;
   }
 
   const std::vector<ResolvedColumn>& column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
   }
 
   int column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list_size();
   }
 
   const ResolvedColumn& column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_list(i);
   }
 
@@ -50620,17 +53746,17 @@ class ResolvedUnpivotScanBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -50693,7 +53819,7 @@ class ResolvedUnpivotScanBuilder final {
   }
 
   bool is_ordered() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_ordered();
   }
 
@@ -50709,17 +53835,34 @@ class ResolvedUnpivotScanBuilder final {
     return *this;
   }
 
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedUnpivotScanBuilder&& set_node_source(const std::string& v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedUnpivotScanBuilder& set_node_source(const std::string& v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedUnpivotScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<10> field_is_set_ = {0};
+  std::bitset<11> field_is_set_ = {0};
   friend ResolvedUnpivotScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedUnpivotScan> node);
 
   ResolvedUnpivotScanBuilder(std::unique_ptr<ResolvedUnpivotScan> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -50728,9 +53871,9 @@ inline ResolvedUnpivotScanBuilder ToBuilder(
   ResolvedUnpivotScanBuilder builder(absl::WrapUnique<ResolvedUnpivotScan>(
       const_cast<ResolvedUnpivotScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(3, true);
-  builder.field_is_set_.set(5, true);
-  builder.field_is_set_.set(9, true);
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(6, true);
+  builder.field_is_set_.set(10, true);
   return builder;
 }
 
@@ -50763,13 +53906,13 @@ class ResolvedCloneDataStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCloneDataStmt::target_table was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedCloneDataStmt::clone_from was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -50781,7 +53924,7 @@ class ResolvedCloneDataStmtBuilder final {
 
   // Getters and chained setters
   const ResolvedTableScan* target_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->target_table();
   }
 
@@ -50834,7 +53977,7 @@ class ResolvedCloneDataStmtBuilder final {
   }
 
   const ResolvedScan* clone_from() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->clone_from();
   }
 
@@ -50887,17 +54030,17 @@ class ResolvedCloneDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -50969,7 +54112,7 @@ class ResolvedCloneDataStmtBuilder final {
 
   ResolvedCloneDataStmtBuilder(std::unique_ptr<ResolvedCloneDataStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -51016,7 +54159,7 @@ class ResolvedTableAndColumnInfoBuilder final {
 
   // Getters and chained setters
   const Table* table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table();
   }
 
@@ -51033,17 +54176,17 @@ class ResolvedTableAndColumnInfoBuilder final {
   }
 
   const std::vector<int>& column_index_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list();
   }
 
   int column_index_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list_size();
   }
 
   int column_index_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_index_list(i);
   }
 
@@ -51080,7 +54223,7 @@ class ResolvedTableAndColumnInfoBuilder final {
 
   ResolvedTableAndColumnInfoBuilder(std::unique_ptr<ResolvedTableAndColumnInfo> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -51125,17 +54268,17 @@ class ResolvedAnalyzeStmtBuilder final {
 
   // Getters and chained setters
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -51198,17 +54341,17 @@ class ResolvedAnalyzeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedTableAndColumnInfo>>& table_and_column_index_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_and_column_index_list();
   }
 
   int table_and_column_index_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_and_column_index_list_size();
   }
 
   const ResolvedTableAndColumnInfo* table_and_column_index_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->table_and_column_index_list(i);
   }
 
@@ -51271,17 +54414,17 @@ class ResolvedAnalyzeStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -51352,7 +54495,7 @@ class ResolvedAnalyzeStmtBuilder final {
 
   ResolvedAnalyzeStmtBuilder(std::unique_ptr<ResolvedAnalyzeStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -51393,7 +54536,7 @@ class ResolvedAuxLoadDataPartitionFilterBuilder final {
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAuxLoadDataPartitionFilter::filter was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -51410,7 +54553,7 @@ class ResolvedAuxLoadDataPartitionFilterBuilder final {
   // <filter> is always of type bool.
   // When this expression produces NULL, the query should fail.
   const ResolvedExpr* filter() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->filter();
   }
 
@@ -51465,7 +54608,7 @@ class ResolvedAuxLoadDataPartitionFilterBuilder final {
   // Indicates whether the load data will append to or overwrite the
   // selected partition.
   bool is_overwrite() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_overwrite();
   }
 
@@ -51491,7 +54634,7 @@ class ResolvedAuxLoadDataPartitionFilterBuilder final {
 
   ResolvedAuxLoadDataPartitionFilterBuilder(std::unique_ptr<ResolvedAuxLoadDataPartitionFilter> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -51538,13 +54681,13 @@ class ResolvedAuxLoadDataStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAuxLoadDataStmt::insertion_mode was not set on the builder");
     }
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedAuxLoadDataStmt::is_temp_table was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -51556,7 +54699,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
 
   // Getters and chained setters
   ResolvedAuxLoadDataStmt::InsertionMode insertion_mode() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->insertion_mode();
   }
 
@@ -51575,7 +54718,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   bool is_temp_table() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_temp_table();
   }
 
@@ -51594,17 +54737,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -51633,7 +54776,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const ResolvedAuxLoadDataPartitionFilter* partition_filter() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_filter();
   }
 
@@ -51682,17 +54825,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list();
   }
 
   int output_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list_size();
   }
 
   const ResolvedOutputColumn* output_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->output_column_list(i);
   }
 
@@ -51755,17 +54898,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnDefinition>>& column_definition_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list();
   }
 
   int column_definition_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list_size();
   }
 
   const ResolvedColumnDefinition* column_definition_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->column_definition_list(i);
   }
 
@@ -51828,17 +54971,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<ResolvedColumn>& pseudo_column_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list();
   }
 
   int pseudo_column_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list_size();
   }
 
   const ResolvedColumn& pseudo_column_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->pseudo_column_list(i);
   }
 
@@ -51867,7 +55010,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const ResolvedPrimaryKey* primary_key() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->primary_key();
   }
 
@@ -51916,17 +55059,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedForeignKey>>& foreign_key_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list();
   }
 
   int foreign_key_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list_size();
   }
 
   const ResolvedForeignKey* foreign_key_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->foreign_key_list(i);
   }
 
@@ -51989,17 +55132,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedCheckConstraint>>& check_constraint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list();
   }
 
   int check_constraint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list_size();
   }
 
   const ResolvedCheckConstraint* check_constraint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->check_constraint_list(i);
   }
 
@@ -52062,17 +55205,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list();
   }
 
   int partition_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list_size();
   }
 
   const ResolvedExpr* partition_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->partition_by_list(i);
   }
 
@@ -52135,17 +55278,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& cluster_by_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list();
   }
 
   int cluster_by_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list_size();
   }
 
   const ResolvedExpr* cluster_by_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->cluster_by_list(i);
   }
 
@@ -52208,17 +55351,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
   }
 
   int option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list_size();
   }
 
   const ResolvedOption* option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->option_list(i);
   }
 
@@ -52281,7 +55424,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const ResolvedWithPartitionColumns* with_partition_columns() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->with_partition_columns();
   }
 
@@ -52330,7 +55473,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const ResolvedConnection* connection() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->connection();
   }
 
@@ -52379,17 +55522,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& from_files_option_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_files_option_list();
   }
 
   int from_files_option_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_files_option_list_size();
   }
 
   const ResolvedOption* from_files_option_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->from_files_option_list(i);
   }
 
@@ -52452,17 +55595,17 @@ class ResolvedAuxLoadDataStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -52534,7 +55677,7 @@ class ResolvedAuxLoadDataStmtBuilder final {
 
   ResolvedAuxLoadDataStmtBuilder(std::unique_ptr<ResolvedAuxLoadDataStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 
@@ -52577,7 +55720,7 @@ class ResolvedUndropStmtBuilder final {
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(ZETASQL_LOC).LogError()
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
             << "ResolvedUndropStmt::schema_object_kind was not set on the builder");
     }
     if (deferred_build_status_.ok()) {
@@ -52589,7 +55732,7 @@ class ResolvedUndropStmtBuilder final {
 
   // Getters and chained setters
   const std::string& schema_object_kind() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->schema_object_kind();
   }
 
@@ -52608,7 +55751,7 @@ class ResolvedUndropStmtBuilder final {
   }
 
   bool is_if_not_exists() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->is_if_not_exists();
   }
 
@@ -52625,17 +55768,17 @@ class ResolvedUndropStmtBuilder final {
   }
 
   const std::vector<std::string>& name_path() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path();
   }
 
   int name_path_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path_size();
   }
 
   const std::string& name_path(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->name_path(i);
   }
 
@@ -52664,7 +55807,7 @@ class ResolvedUndropStmtBuilder final {
   }
 
   const ResolvedExpr* for_system_time_expr() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->for_system_time_expr();
   }
 
@@ -52713,17 +55856,17 @@ class ResolvedUndropStmtBuilder final {
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
   }
 
   int hint_list_size() const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list_size();
   }
 
   const ResolvedOption* hint_list(int i) const {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list(i);
   }
 
@@ -52795,7 +55938,7 @@ class ResolvedUndropStmtBuilder final {
 
   ResolvedUndropStmtBuilder(std::unique_ptr<ResolvedUndropStmt> node)
       : node_(std::move(node)) {
-    ZETASQL_DCHECK(node_ != nullptr);
+    ABSL_DCHECK(node_ != nullptr);
   }
 };
 

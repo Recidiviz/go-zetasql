@@ -4,330 +4,491 @@
 #include "zetasql/public/options.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr LanguageFeatureOptions::LanguageFeatureOptions(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : in_development_(false)
-  , ideally_enabled_(true){}
+template <typename>
+PROTOBUF_CONSTEXPR LanguageFeatureOptions::LanguageFeatureOptions(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.in_development_)*/ false
+
+  , /*decltype(_impl_.ideally_enabled_)*/ true
+} {}
 struct LanguageFeatureOptionsDefaultTypeInternal {
-  constexpr LanguageFeatureOptionsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR LanguageFeatureOptionsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~LanguageFeatureOptionsDefaultTypeInternal() {}
   union {
     LanguageFeatureOptions _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT LanguageFeatureOptionsDefaultTypeInternal _LanguageFeatureOptions_default_instance_;
-constexpr ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : default_enabled_(false)
-  , in_development_(false){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LanguageFeatureOptionsDefaultTypeInternal _LanguageFeatureOptions_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.default_enabled_)*/ false
+
+  , /*decltype(_impl_.in_development_)*/ false
+} {}
 struct ResolvedASTRewriteOptionsDefaultTypeInternal {
-  constexpr ResolvedASTRewriteOptionsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResolvedASTRewriteOptionsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResolvedASTRewriteOptionsDefaultTypeInternal() {}
   union {
     ResolvedASTRewriteOptions _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResolvedASTRewriteOptionsDefaultTypeInternal _ResolvedASTRewriteOptions_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResolvedASTRewriteOptionsDefaultTypeInternal _ResolvedASTRewriteOptions_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR RewriteOptions::RewriteOptions(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._extensions_)*/{}
+  , /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.grouping_set_rewrite_options_)*/nullptr} {}
+struct RewriteOptionsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR RewriteOptionsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~RewriteOptionsDefaultTypeInternal() {}
+  union {
+    RewriteOptions _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RewriteOptionsDefaultTypeInternal _RewriteOptions_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR GroupingSetRewriteOptions::GroupingSetRewriteOptions(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.max_grouping_sets_)*/ ::int64_t{65536}
+
+  , /*decltype(_impl_.max_columns_in_grouping_set_)*/ ::int64_t{65536}
+} {}
+struct GroupingSetRewriteOptionsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GroupingSetRewriteOptionsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GroupingSetRewriteOptionsDefaultTypeInternal() {}
+  union {
+    GroupingSetRewriteOptions _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GroupingSetRewriteOptionsDefaultTypeInternal _GroupingSetRewriteOptions_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ErrorMessageModeForPayload::ErrorMessageModeForPayload(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.mode_)*/ 0
+} {}
+struct ErrorMessageModeForPayloadDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ErrorMessageModeForPayloadDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ErrorMessageModeForPayloadDefaultTypeInternal() {}
+  union {
+    ErrorMessageModeForPayload _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ErrorMessageModeForPayloadDefaultTypeInternal _ErrorMessageModeForPayload_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2foptions_2eproto[2];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[9];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2foptions_2eproto = nullptr;
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2foptions_2eproto[5];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[9];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2foptions_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2foptions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _impl_.ideally_enabled_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _impl_.in_development_),
+    1,
+    0,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _impl_.default_enabled_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _impl_.in_development_),
+    0,
+    1,
+    PROTOBUF_FIELD_OFFSET(::zetasql::RewriteOptions, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::RewriteOptions, _internal_metadata_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::RewriteOptions, _impl_._extensions_),
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::RewriteOptions, _impl_.grouping_set_rewrite_options_),
+    0,
+    PROTOBUF_FIELD_OFFSET(::zetasql::GroupingSetRewriteOptions, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::GroupingSetRewriteOptions, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::GroupingSetRewriteOptions, _impl_.max_grouping_sets_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::GroupingSetRewriteOptions, _impl_.max_columns_in_grouping_set_),
+    0,
+    1,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorMessageModeForPayload, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorMessageModeForPayload, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorMessageModeForPayload, _impl_.mode_),
+    0,
+};
 
-const uint32_t TableStruct_zetasql_2fpublic_2foptions_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, ideally_enabled_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::LanguageFeatureOptions, in_development_),
-  1,
-  0,
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, default_enabled_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ResolvedASTRewriteOptions, in_development_),
-  0,
-  1,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 8, -1, sizeof(::zetasql::LanguageFeatureOptions)},
-  { 10, 18, -1, sizeof(::zetasql::ResolvedASTRewriteOptions)},
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 10, -1, sizeof(::zetasql::LanguageFeatureOptions)},
+        { 12, 22, -1, sizeof(::zetasql::ResolvedASTRewriteOptions)},
+        { 24, 33, -1, sizeof(::zetasql::RewriteOptions)},
+        { 34, 44, -1, sizeof(::zetasql::GroupingSetRewriteOptions)},
+        { 46, 55, -1, sizeof(::zetasql::ErrorMessageModeForPayload)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_LanguageFeatureOptions_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ResolvedASTRewriteOptions_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_LanguageFeatureOptions_default_instance_._instance,
+    &::zetasql::_ResolvedASTRewriteOptions_default_instance_._instance,
+    &::zetasql::_RewriteOptions_default_instance_._instance,
+    &::zetasql::_GroupingSetRewriteOptions_default_instance_._instance,
+    &::zetasql::_ErrorMessageModeForPayload_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fpublic_2foptions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\034zetasql/public/options.proto\022\007zetasql\032"
+    " google/protobuf/descriptor.proto\"V\n\026Lan"
+    "guageFeatureOptions\022\035\n\017ideally_enabled\030\001"
+    " \001(\010:\004true\022\035\n\016in_development\030\002 \001(\010:\005fals"
+    "e\"S\n\031ResolvedASTRewriteOptions\022\027\n\017defaul"
+    "t_enabled\030\001 \001(\010\022\035\n\016in_development\030\002 \001(\010:"
+    "\005false\"e\n\016RewriteOptions\022H\n\034grouping_set"
+    "_rewrite_options\030\027 \001(\0132\".zetasql.Groupin"
+    "gSetRewriteOptions*\t\010\220N\020\200\200\200\200\002\"i\n\031Groupin"
+    "gSetRewriteOptions\022 \n\021max_grouping_sets\030"
+    "\001 \001(\003:\00565536\022*\n\033max_columns_in_grouping_"
+    "set\030\002 \001(\003:\00565536\"E\n\032ErrorMessageModeForP"
+    "ayload\022\'\n\004mode\030\001 \001(\0162\031.zetasql.ErrorMess"
+    "ageMode*\276\001\n\017LanguageVersion\022\023\n\017VERSION_C"
+    "URRENT\020\001\022\020\n\013VERSION_1_0\020\220N\022\020\n\013VERSION_1_"
+    "1\020\370U\022\020\n\013VERSION_1_2\020\340]\022\020\n\013VERSION_1_3\020\310e"
+    "\022\020\n\013VERSION_1_4\020\260m\022<\n/__LanguageVersion_"
+    "_switch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001"
+    "*\362=\n\017LanguageFeature\022\036\n\032FEATURE_ANALYTIC"
+    "_FUNCTIONS\020\001\022\027\n\023FEATURE_TABLESAMPLE\020\002\022-\n"
+    "\037FEATURE_DISALLOW_GROUP_BY_FLOAT\020\003\032\010\332\361\252\211"
+    "\005\002\010\000\022\033\n\027FEATURE_TIMESTAMP_NANOS\020\005\022 \n\034FEA"
+    "TURE_DML_UPDATE_WITH_JOIN\020\006\022\"\n\036FEATURE_T"
+    "ABLE_VALUED_FUNCTIONS\020\010\022%\n!FEATURE_CREAT"
+    "E_AGGREGATE_FUNCTION\020\t\022!\n\035FEATURE_CREATE"
+    "_TABLE_FUNCTION\020\n\022\033\n\027FEATURE_GROUP_BY_RO"
+    "LLUP\020\014\022\036\n\032FEATURE_TEMPLATE_FUNCTIONS\020\r\022%"
+    "\n!FEATURE_CREATE_TABLE_PARTITION_BY\020\016\022#\n"
+    "\037FEATURE_CREATE_TABLE_CLUSTER_BY\020\017\022\030\n\024FE"
+    "ATURE_NUMERIC_TYPE\020\020\022!\n\035FEATURE_CREATE_T"
+    "ABLE_NOT_NULL\020\021\022*\n&FEATURE_CREATE_TABLE_"
+    "FIELD_ANNOTATIONS\020\022\022.\n*FEATURE_CREATE_TA"
+    "BLE_AS_SELECT_COLUMN_LIST\020\023\0220\n\"FEATURE_D"
+    "ISALLOW_NULL_PRIMARY_KEYS\020\024\032\010\332\361\252\211\005\002\010\000\0222\n"
+    "$FEATURE_DISALLOW_PRIMARY_KEY_UPDATES\020\025\032"
+    "\010\332\361\252\211\005\002\010\000\0223\n/FEATURE_TABLESAMPLE_FROM_TA"
+    "BLE_VALUED_FUNCTIONS\020\026\022\026\n\022FEATURE_ENCRYP"
+    "TION\020\027\022#\n\025FEATURE_ANONYMIZATION\020\030\032\010\332\361\252\211\005"
+    "\002\020\001\0220\n\"FEATURE_ANONYMIZATION_THRESHOLDIN"
+    "G\020S\032\010\332\361\252\211\005\002\020\001\022<\n.FEATURE_ANONYMIZATION_C"
+    "ASE_INSENSITIVE_OPTIONS\020U\032\010\332\361\252\211\005\002\010\001\022*\n\034F"
+    "EATURE_DIFFERENTIAL_PRIVACY\020X\032\010\332\361\252\211\005\002\020\001\022"
+    ";\n-FEATURE_DIFFERENTIAL_PRIVACY_REPORT_F"
+    "UNCTIONS\020Y\032\010\332\361\252\211\005\002\020\001\0227\n)FEATURE_DIFFEREN"
+    "TIAL_PRIVACY_THRESHOLDING\020Z\032\010\332\361\252\211\005\002\020\001\022\?\n"
+    "1FEATURE_DIFFERENTIAL_PRIVACY_MAX_ROWS_C"
+    "ONTRIBUTED\020_\032\010\332\361\252\211\005\002\020\001\0228\n*FEATURE_DIFFER"
+    "ENTIAL_PRIVACY_PUBLIC_GROUPS\020d\032\010\332\361\252\211\005\002\020\001"
+    "\022!\n\035FEATURE_AGGREGATION_THRESHOLD\020\\\022\025\n\021F"
+    "EATURE_GEOGRAPHY\020\031\022,\n(FEATURE_STRATIFIED"
+    "_RESERVOIR_TABLESAMPLE\020\032\022\030\n\024FEATURE_FORE"
+    "IGN_KEYS\020\033\022 \n\034FEATURE_BETWEEN_UINT64_INT"
+    "64\020\034\022\034\n\030FEATURE_CHECK_CONSTRAINT\020\035\022&\n\"FE"
+    "ATURE_PARAMETERS_IN_GRANTEE_LIST\020\036\022\033\n\027FE"
+    "ATURE_NAMED_ARGUMENTS\020\037\0221\n-FEATURE_ALLOW"
+    "_LEGACY_ROW_ACCESS_POLICY_SYNTAX\020 \0221\n-FE"
+    "ATURE_CREATE_MATERIALIZED_VIEW_PARTITION"
+    "_BY\020!\022/\n+FEATURE_CREATE_MATERIALIZED_VIE"
+    "W_CLUSTER_BY\020\"\0229\n5FEATURE_CREATE_EXTERNA"
+    "L_TABLE_WITH_TABLE_ELEMENT_LIST\020#\022#\n\037FEA"
+    "TURE_UNENFORCED_PRIMARY_KEYS\020(\022\033\n\027FEATUR"
+    "E_BIGNUMERIC_TYPE\020)\022\032\n\026FEATURE_EXTENDED_"
+    "TYPES\020*\022\025\n\021FEATURE_JSON_TYPE\020+\0220\n\"FEATUR"
+    "E_JSON_STRICT_NUMBER_PARSING\0204\032\010\332\361\252\211\005\002\010\000"
+    "\022 \n\034FEATURE_JSON_ARRAY_FUNCTIONS\020:\022+\n\'FE"
+    "ATURE_JSON_VALUE_EXTRACTION_FUNCTIONS\020D\022"
+    "/\n+FEATURE_JSON_LAX_VALUE_EXTRACTION_FUN"
+    "CTIONS\020Q\022&\n\"FEATURE_JSON_CONSTRUCTOR_FUN"
+    "CTIONS\020]\022\"\n\036FEATURE_JSON_MUTATOR_FUNCTIO"
+    "NS\020b\022B\n4FEATURE_CREATE_EXTERNAL_TABLE_WI"
+    "TH_PARTITION_COLUMNS\020/\032\010\332\361\252\211\005\002\020\001\022#\n\025FEAT"
+    "URE_INTERVAL_TYPE\0201\032\010\332\361\252\211\005\002\020\001\022\037\n\033FEATURE"
+    "_PARAMETERIZED_TYPES\0208\022\035\n\031FEATURE_CREATE"
+    "_TABLE_LIKE\0209\022(\n$FEATURE_CREATE_VIEW_WIT"
+    "H_COLUMN_LIST\020;\022:\n,FEATURE_ALTER_VIEWS_A"
+    "LTER_COLUMN_SET_OPTIONS\020W\032\010\332\361\252\211\005\002\020\001\022(\n\032F"
+    "EATURE_CREATE_TABLE_CLONE\020<\032\010\332\361\252\211\005\002\020\001\022 \n"
+    "\022FEATURE_CLONE_DATA\020=\032\010\332\361\252\211\005\002\020\001\0220\n\"FEATU"
+    "RE_ALTER_COLUMN_SET_DATA_TYPE\020>\032\010\332\361\252\211\005\002\020"
+    "\001\022!\n\035FEATURE_CREATE_SNAPSHOT_TABLE\020\?\022,\n("
+    "FEATURE_FUNCTION_ARGUMENTS_WITH_DEFAULTS"
+    "\020@\0221\n-FEATURE_CREATE_EXTERNAL_TABLE_WITH"
+    "_CONNECTION\020A\022\035\n\031FEATURE_CREATE_TABLE_CO"
+    "PY\020B\022%\n!FEATURE_ALTER_TABLE_RENAME_COLUM"
+    "N\020C\0229\n)FEATURE_DISALLOW_LEGACY_UNICODE_C"
+    "OLLATION\020E\032\n\332\361\252\211\005\004\010\000\020\001\0226\n2FEATURE_ALLOW_"
+    "MISSING_PATH_EXPRESSION_IN_ALTER_DDL\020F\022+"
+    "\n\035FEATURE_TIME_BUCKET_FUNCTIONS\020G\032\010\332\361\252\211\005"
+    "\002\020\001\022,\n\036FEATURE_INVERSE_TRIG_FUNCTIONS\020H\032"
+    "\010\332\361\252\211\005\002\020\001\022\026\n\022FEATURE_RANGE_TYPE\020I\022\'\n\031FEA"
+    "TURE_NON_SQL_PROCEDURE\020K\032\010\332\361\252\211\005\002\020\001\022$\n FE"
+    "ATURE_ROUND_WITH_ROUNDING_MODE\020L\022\032\n\026FEAT"
+    "URE_CBRT_FUNCTIONS\020M\022*\n\032FEATURE_SPANNER_"
+    "LEGACY_DDL\020N\032\n\332\361\252\211\005\004\010\000\020\001\022/\n!FEATURE_DISA"
+    "BLE_ARRAY_MIN_AND_MAX\020O\032\010\332\361\252\211\005\002\010\000\022\?\n1FEA"
+    "TURE_STRICT_FUNCTION_DEFAULT_ARG_TYPE_CO"
+    "ERCION\020P\032\010\332\361\252\211\005\002\010\000\022 \n\022FEATURE_PROTO_BASE"
+    "\020R\032\010\332\361\252\211\005\002\020\001\022/\n!FEATURE_DISABLE_ARRAY_SU"
+    "M_AND_AVG\020T\032\010\332\361\252\211\005\002\010\000\0226\n(FEATURE_CREATE_"
+    "VIEWS_WITH_COLUMN_OPTIONS\020V\032\010\332\361\252\211\005\002\020\001\0222\n"
+    "$FEATURE_CREATE_TABLE_WITH_CONNECTION\020[\032"
+    "\010\332\361\252\211\005\002\020\001\022.\n FEATURE_DISABLE_OUTER_JOIN_"
+    "ARRAY\020^\032\010\332\361\252\211\005\002\010\000\0221\n#FEATURE_EXTERNAL_SE"
+    "CURITY_PROCEDURE\020`\032\010\332\361\252\211\005\002\020\001\0222\n.FEATURE_"
+    "CREATE_MATERIALIZED_VIEW_AS_REPLICA_OF\020a"
+    "\022#\n\036FEATURE_V_1_1_ORDER_BY_COLLATE\020\371U\022#\n"
+    "\036FEATURE_V_1_1_WITH_ON_SUBQUERY\020\372U\022-\n(FE"
+    "ATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE\020\373"
+    "U\022(\n#FEATURE_V_1_1_ORDER_BY_IN_AGGREGATE"
+    "\020\374U\022-\n(FEATURE_V_1_1_CAST_DIFFERENT_ARRA"
+    "Y_TYPES\020\375U\022!\n\034FEATURE_V_1_1_ARRAY_EQUALI"
+    "TY\020\376U\022%\n FEATURE_V_1_1_LIMIT_IN_AGGREGAT"
+    "E\020\377U\022&\n!FEATURE_V_1_1_HAVING_IN_AGGREGAT"
+    "E\020\200V\0225\n0FEATURE_V_1_1_NULL_HANDLING_MODI"
+    "FIER_IN_ANALYTIC\020\201V\0226\n1FEATURE_V_1_1_NUL"
+    "L_HANDLING_MODIFIER_IN_AGGREGATE\020\202V\022(\n#F"
+    "EATURE_V_1_1_FOR_SYSTEM_TIME_AS_OF\020\203V\022\035\n"
+    "\030FEATURE_V_1_2_CIVIL_TIME\020\341]\022%\n FEATURE_"
+    "V_1_2_SAFE_FUNCTION_CALL\020\342]\022\"\n\035FEATURE_V"
+    "_1_2_GROUP_BY_STRUCT\020\343]\022,\n\'FEATURE_V_1_2"
+    "_PROTO_EXTENSIONS_WITH_NEW\020\344]\022!\n\034FEATURE"
+    "_V_1_2_GROUP_BY_ARRAY\020\345]\022,\n\'FEATURE_V_1_"
+    "2_PROTO_EXTENSIONS_WITH_SET\020\346]\0220\n+FEATUR"
+    "E_V_1_2_CORRELATED_REFS_IN_NESTED_DML\020\347]"
+    "\022$\n\037FEATURE_V_1_2_WEEK_WITH_WEEKDAY\020\350]\022*"
+    "\n%FEATURE_V_1_2_ARRAY_ELEMENTS_WITH_SET\020"
+    "\351]\0223\n.FEATURE_V_1_2_NESTED_UPDATE_DELETE"
+    "_WITH_OFFSET\020\352]\022$\n\037FEATURE_V_1_2_GENERAT"
+    "ED_COLUMNS\020\353]\022(\n#FEATURE_V_1_3_PROTO_DEF"
+    "AULT_IF_NULL\020\311e\022%\n FEATURE_V_1_3_EXTRACT"
+    "_FROM_PROTO\020\312e\022H\n9FEATURE_V_1_3_DEPRECAT"
+    "ED_DISALLOW_PROTO3_HAS_SCALAR_FIELD\020\313e\032\010"
+    "\332\361\252\211\005\002\010\000\022!\n\034FEATURE_V_1_3_ARRAY_ORDERING"
+    "\020\314e\022*\n%FEATURE_V_1_3_OMIT_INSERT_COLUMN_"
+    "LIST\020\315e\022-\n(FEATURE_V_1_3_IGNORE_PROTO3_U"
+    "SE_DEFAULTS\020\316e\022!\n\034FEATURE_V_1_3_REPLACE_"
+    "FIELDS\020\317e\022/\n*FEATURE_V_1_3_NULLS_FIRST_L"
+    "AST_IN_ORDER_BY\020\320e\022-\n(FEATURE_V_1_3_ALLO"
+    "W_DASHES_IN_TABLE_NAME\020\321e\022%\n FEATURE_V_1"
+    "_3_CONCAT_MIXED_TYPES\020\322e\022!\n\034FEATURE_V_1_"
+    "3_WITH_RECURSIVE\020\323e\022\035\n\030FEATURE_V_1_3_PRO"
+    "TO_MAPS\020\324e\022.\n)FEATURE_V_1_3_ENUM_VALUE_D"
+    "ESCRIPTOR_PROTO\020\325e\022 \n\033FEATURE_V_1_3_DECI"
+    "MAL_ALIAS\020\326e\022,\n\'FEATURE_V_1_3_UNNEST_AND"
+    "_FLATTEN_ARRAYS\020\327e\022\'\n\"FEATURE_V_1_3_ALLO"
+    "W_CONSECUTIVE_ON\020\330e\0221\n,FEATURE_V_1_3_ALL"
+    "OW_REGEXP_EXTRACT_OPTIONALS\020\331e\022)\n$FEATUR"
+    "E_V_1_3_DATE_TIME_CONSTRUCTORS\020\332e\022#\n\036FEA"
+    "TURE_V_1_3_DATE_ARITHMETICS\020\333e\022.\n)FEATUR"
+    "E_V_1_3_ADDITIONAL_STRING_FUNCTIONS\020\334e\022\""
+    "\n\035FEATURE_V_1_3_WITH_GROUP_ROWS\020\335e\0220\n+FE"
+    "ATURE_V_1_3_EXTENDED_DATE_TIME_SIGNATURE"
+    "S\020\336e\022-\n(FEATURE_V_1_3_EXTENDED_GEOGRAPHY"
+    "_PARSERS\020\337e\022)\n$FEATURE_V_1_3_INLINE_LAMB"
+    "DA_ARGUMENT\020\340e\022\030\n\023FEATURE_V_1_3_PIVOT\020\341e"
+    "\022\'\n\"FEATURE_V_1_3_ANNOTATION_FRAMEWORK\020\342"
+    "e\022.\n\037FEATURE_V_1_3_COLLATION_SUPPORT\020\343e\032"
+    "\010\332\361\252\211\005\002\020\001\022\036\n\031FEATURE_V_1_3_IS_DISTINCT\020\344"
+    "e\022!\n\034FEATURE_V_1_3_FORMAT_IN_CAST\020\345e\022\032\n\025"
+    "FEATURE_V_1_3_UNPIVOT\020\346e\022 \n\033FEATURE_V_1_"
+    "3_DML_RETURNING\020\347e\022 \n\033FEATURE_V_1_3_FILT"
+    "ER_FIELDS\020\350e\022\032\n\025FEATURE_V_1_3_QUALIFY\020\351e"
+    "\022\031\n\024FEATURE_V_1_3_REPEAT\020\352e\022\'\n\"FEATURE_V"
+    "_1_3_COLUMN_DEFAULT_VALUE\020\353e\022\031\n\024FEATURE_"
+    "V_1_3_FOR_IN\020\354e\022\036\n\031FEATURE_V_1_3_KLL_WEI"
+    "GHTS\020\355e\022$\n\037FEATURE_V_1_3_LIKE_ANY_SOME_A"
+    "LL\020\356e\022\034\n\027FEATURE_V_1_3_CASE_STMT\020\357e\022$\n\037F"
+    "EATURE_V_1_3_ALLOW_SLASH_PATHS\020\360e\022\"\n\035FEA"
+    "TURE_V_1_3_TYPEOF_FUNCTION\020\361e\022\037\n\032FEATURE"
+    "_V_1_3_SCRIPT_LABEL\020\362e\022\"\n\035FEATURE_V_1_3_"
+    "REMOTE_FUNCTION\020\363e\022\'\n\"FEATURE_V_1_3_ARRA"
+    "Y_GREATEST_LEAST\020\364e\022,\n\'FEATURE_V_1_3_BRA"
+    "CED_PROTO_CONSTRUCTORS\020\365e\022\"\n\035FEATURE_V_1"
+    "_4_WITH_EXPRESSION\020\260m\0221\n\"FEATURE_V_1_4_O"
+    "RDERED_PRIMARY_KEYS\020\262m\032\010\332\361\252\211\005\002\020\001\022 \n\021FEAT"
+    "URE_V_1_4_TTL\020\263m\032\010\332\361\252\211\005\002\020\001\022$\n\037FEATURE_V_"
+    "1_4_BARE_ARRAY_ACCESS\020\264m\022.\n)FEATURE_V_1_"
+    "4_ARRAY_AGGREGATION_FUNCTIONS\020\265m\022\'\n\"FEAT"
+    "URE_V_1_4_ARRAY_FIND_FUNCTIONS\020\266m\0226\n1FEA"
+    "TURE_V_1_4_SAFE_FUNCTION_CALL_WITH_LAMBD"
+    "A_ARGS\020\267m\022)\n\032FEATURE_V_1_4_REMOTE_MODEL\020"
+    "\271m\032\010\332\361\252\211\005\002\020\001\022-\n(FEATURE_V_1_4_STRUCT_POS"
+    "ITIONAL_ACCESSOR\020\272m\022/\n*FEATURE_V_1_4_SIN"
+    "GLE_TABLE_NAME_ARRAY_PATH\020\273m\022\'\n\030FEATURE_"
+    "V_1_4_SQL_MACROS\020\274m\032\010\332\361\252\211\005\002\020\001\0228\n)FEATURE"
+    "_V_1_4_COLLATION_IN_WITH_RECURSIVE\020\275m\032\010\332"
+    "\361\252\211\005\002\020\001\0227\n(FEATURE_V_1_4_COLLATION_IN_EX"
+    "PLICIT_CAST\020\276m\032\010\332\361\252\211\005\002\020\001\022\'\n\"FEATURE_V_1_"
+    "4_LOAD_DATA_PARTITIONS\020\277m\022A\n2FEATURE_V_1"
+    "_4_CREATE_MODEL_WITH_ALIASED_QUERY_LIST\020"
+    "\300m\032\010\332\361\252\211\005\002\020\001\022\'\n\"FEATURE_V_1_4_LOAD_DATA_"
+    "TEMP_TABLE\020\301m\022 \n\033FEATURE_V_1_4_CORRESPON"
+    "DING\020\302m\022)\n\032FEATURE_V_1_4_SEQUENCE_ARG\020\303m"
+    "\032\010\332\361\252\211\005\002\020\001\022-\n\036FEATURE_V_1_4_GROUPING_BUI"
+    "LTIN\020\304m\032\010\332\361\252\211\005\002\020\001\022*\n\033FEATURE_V_1_4_GROUP"
+    "ING_SETS\020\305m\032\010\332\361\252\211\005\002\020\001\022I\n:FEATURE_V_1_4_P"
+    "RESERVE_ANNOTATION_IN_IMPLICIT_CAST_IN_S"
+    "CAN\020\306m\032\010\332\361\252\211\005\002\020\001\022B\n3FEATURE_V_1_4_SET_OP"
+    "ERATION_COLUMN_PROPAGATION_MODE\020\307m\032\010\332\361\252\211"
+    "\005\002\020\001\022-\n\036FEATURE_V_1_4_CORRESPONDING_BY\020\310"
+    "m\032\010\332\361\252\211\005\002\020\001\0224\n%FEATURE_V_1_4_LIKE_ANY_SO"
+    "ME_ALL_ARRAY\020\311m\032\010\332\361\252\211\005\002\020\001\0227\n(FEATURE_V_1"
+    "_4_LIKE_ANY_SOME_ALL_SUBQUERY\020\312m\032\010\332\361\252\211\005\002"
+    "\020\001\022#\n\036FEATURE_V_1_4_FIRST_AND_LAST_N\020\313m\022"
+    "(\n#FEATURE_V_1_4_NULLIFZERO_ZEROIFNULL\020\314"
+    "m\022\037\n\032FEATURE_V_1_4_PI_FUNCTIONS\020\315m\022E\n6FE"
+    "ATURE_V_1_4_CREATE_FUNCTION_LANGUAGE_WIT"
+    "H_CONNECTION\020\316m\032\010\332\361\252\211\005\002\020\001\022\"\n\034FEATURE_EXP"
+    "ERIMENTAL_MODULES\020\332\374<\022\?\n/FEATURE_TEST_ID"
+    "EALLY_ENABLED_BUT_IN_DEVELOPMENT\020\267\204=\032\010\332\361"
+    "\252\211\005\002\020\001\022-\n\035FEATURE_TEST_IDEALLY_DISABLED\020"
+    "\270\204=\032\010\332\361\252\211\005\002\010\000\022B\n0FEATURE_TEST_IDEALLY_DI"
+    "SABLED_AND_IN_DEVELOPMENT\020\271\204=\032\n\332\361\252\211\005\004\010\000\020"
+    "\001\022<\n/__LanguageFeature__switch_must_have"
+    "_a_default__\020\377\377\377\377\377\377\377\377\377\001\"\004\010$\020\'\"\004\010,\020.\"\004\0100\020"
+    "0\"\004\0107\0207\"\004\010J\020J\"\004\010c\020c\"\006\010\366e\020\366e\"\006\010\261m\020\261m\"\010\010\333\374"
+    "<\020\333\374<*\204\006\n\022ResolvedASTRewrite\022\036\n\032REWRITE_"
+    "INVALID_DO_NOT_USE\020\000\022\035\n\017REWRITE_FLATTEN\020"
+    "\001\032\010\202\207\335\204\n\002\010\001\022#\n\025REWRITE_ANONYMIZATION\020\002\032\010"
+    "\202\207\335\204\n\002\010\000\022#\n\025REWRITE_PROTO_MAP_FNS\020\003\032\010\202\207\335"
+    "\204\n\002\010\001\022,\n\036REWRITE_ARRAY_FILTER_TRANSFORM\020"
+    "\004\032\010\202\207\335\204\n\002\010\001\022\035\n\017REWRITE_UNPIVOT\020\005\032\010\202\207\335\204\n\002"
+    "\010\001\022\033\n\rREWRITE_PIVOT\020\006\032\010\202\207\335\204\n\002\010\001\022$\n\026REWRI"
+    "TE_ARRAY_INCLUDES\020\007\032\010\202\207\335\204\n\002\010\001\022%\n\027REWRITE"
+    "_TYPEOF_FUNCTION\020\010\032\010\202\207\335\204\n\002\010\001\022\037\n\021REWRITE_"
+    "WITH_EXPR\020\t\032\010\202\207\335\204\n\002\010\001\022,\n\034REWRITE_INLINE_"
+    "SQL_FUNCTIONS\020\n\032\n\202\207\335\204\n\004\010\000\020\001\022\'\n\027REWRITE_I"
+    "NLINE_SQL_TVFS\020\013\032\n\202\207\335\204\n\004\010\000\020\001\022*\n\034REWRITE_"
+    "NULLIFERROR_FUNCTION\020\014\032\010\202\207\335\204\n\002\010\001\022\"\n\024REWR"
+    "ITE_LIKE_ANY_ALL\020\016\032\010\202\207\335\204\n\002\010\001\022.\n REWRITE_"
+    "BUILTIN_FUNCTION_INLINER\020\020\032\010\202\207\335\204\n\002\010\001\022(\n\030"
+    "REWRITE_INLINE_SQL_VIEWS\020\021\032\n\202\207\335\204\n\004\010\001\020\001\022\'"
+    "\n\027REWRITE_INLINE_SQL_UDAS\020\026\032\n\202\207\335\204\n\004\010\000\020\001\022"
+    "1\n#REWRITE_SET_OPERATION_CORRESPONDING\020\025"
+    "\032\010\202\207\335\204\n\002\010\001\022$\n\024REWRITE_GROUPING_SET\020\027\032\n\202\207"
+    "\335\204\n\004\010\001\020\001\"\004\010\r\020\r\"\004\010\017\020\017*M\n\022NameResolutionMo"
+    "de\022\033\n\027NAME_RESOLUTION_DEFAULT\020\000\022\032\n\026NAME_"
+    "RESOLUTION_STRICT\020\001*9\n\013ProductMode\022\024\n\020PR"
+    "ODUCT_INTERNAL\020\000\022\024\n\020PRODUCT_EXTERNAL\020\001*;"
+    "\n\020StatementContext\022\023\n\017CONTEXT_DEFAULT\020\000\022"
+    "\022\n\016CONTEXT_MODULE\020\001*w\n\020ErrorMessageMode\022"
+    "\036\n\032ERROR_MESSAGE_WITH_PAYLOAD\020\000\022\032\n\026ERROR"
+    "_MESSAGE_ONE_LINE\020\001\022\'\n#ERROR_MESSAGE_MUL"
+    "TI_LINE_WITH_CARET\020\002*R\n\rParameterMode\022\023\n"
+    "\017PARAMETER_NAMED\020\000\022\030\n\024PARAMETER_POSITION"
+    "AL\020\001\022\022\n\016PARAMETER_NONE\020\002*\213\001\n\027ParseLocati"
+    "onRecordType\022\036\n\032PARSE_LOCATION_RECORD_NO"
+    "NE\020\000\022)\n%PARSE_LOCATION_RECORD_FULL_NODE_"
+    "SCOPE\020\001\022%\n!PARSE_LOCATION_RECORD_CODE_SE"
+    "ARCH\020\002:g\n\030language_feature_options\022!.goo"
+    "gle.protobuf.EnumValueOptions\030\233\256\225Q \001(\0132\037"
+    ".zetasql.LanguageFeatureOptions:b\n\017rewri"
+    "te_options\022!.google.protobuf.EnumValueOp"
+    "tions\030\360\320\313\240\001 \001(\0132\".zetasql.ResolvedASTRew"
+    "riteOptionsB$\n\022com.google.zetasqlB\016ZetaS"
+    "QLOptions"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2foptions_2eproto_deps[1] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2foptions_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2foptions_2eproto = {
+    false,
+    false,
+    10209,
+    descriptor_table_protodef_zetasql_2fpublic_2foptions_2eproto,
+    "zetasql/public/options.proto",
+    &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
+    descriptor_table_zetasql_2fpublic_2foptions_2eproto_deps,
+    1,
+    5,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2foptions_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2foptions_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2foptions_2eproto,
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2foptions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\034zetasql/public/options.proto\022\007zetasql\032"
-  " google/protobuf/descriptor.proto\"V\n\026Lan"
-  "guageFeatureOptions\022\035\n\017ideally_enabled\030\001"
-  " \001(\010:\004true\022\035\n\016in_development\030\002 \001(\010:\005fals"
-  "e\"S\n\031ResolvedASTRewriteOptions\022\027\n\017defaul"
-  "t_enabled\030\001 \001(\010\022\035\n\016in_development\030\002 \001(\010:"
-  "\005false*\276\001\n\017LanguageVersion\022\023\n\017VERSION_CU"
-  "RRENT\020\001\022\020\n\013VERSION_1_0\020\220N\022\020\n\013VERSION_1_1"
-  "\020\370U\022\020\n\013VERSION_1_2\020\340]\022\020\n\013VERSION_1_3\020\310e\022"
-  "\020\n\013VERSION_1_4\020\260m\022<\n/__LanguageVersion__"
-  "switch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001*"
-  "\2049\n\017LanguageFeature\022\036\n\032FEATURE_ANALYTIC_"
-  "FUNCTIONS\020\001\022\027\n\023FEATURE_TABLESAMPLE\020\002\022-\n\037"
-  "FEATURE_DISALLOW_GROUP_BY_FLOAT\020\003\032\010\332\361\252\211\005"
-  "\002\010\000\022\033\n\027FEATURE_TIMESTAMP_NANOS\020\005\022 \n\034FEAT"
-  "URE_DML_UPDATE_WITH_JOIN\020\006\022\"\n\036FEATURE_TA"
-  "BLE_VALUED_FUNCTIONS\020\010\022%\n!FEATURE_CREATE"
-  "_AGGREGATE_FUNCTION\020\t\022!\n\035FEATURE_CREATE_"
-  "TABLE_FUNCTION\020\n\022\033\n\027FEATURE_GROUP_BY_ROL"
-  "LUP\020\014\022\036\n\032FEATURE_TEMPLATE_FUNCTIONS\020\r\022%\n"
-  "!FEATURE_CREATE_TABLE_PARTITION_BY\020\016\022#\n\037"
-  "FEATURE_CREATE_TABLE_CLUSTER_BY\020\017\022\030\n\024FEA"
-  "TURE_NUMERIC_TYPE\020\020\022!\n\035FEATURE_CREATE_TA"
-  "BLE_NOT_NULL\020\021\022*\n&FEATURE_CREATE_TABLE_F"
-  "IELD_ANNOTATIONS\020\022\022.\n*FEATURE_CREATE_TAB"
-  "LE_AS_SELECT_COLUMN_LIST\020\023\0220\n\"FEATURE_DI"
-  "SALLOW_NULL_PRIMARY_KEYS\020\024\032\010\332\361\252\211\005\002\010\000\0222\n$"
-  "FEATURE_DISALLOW_PRIMARY_KEY_UPDATES\020\025\032\010"
-  "\332\361\252\211\005\002\010\000\0223\n/FEATURE_TABLESAMPLE_FROM_TAB"
-  "LE_VALUED_FUNCTIONS\020\026\022\026\n\022FEATURE_ENCRYPT"
-  "ION\020\027\022#\n\025FEATURE_ANONYMIZATION\020\030\032\010\332\361\252\211\005\002"
-  "\020\001\0220\n\"FEATURE_ANONYMIZATION_THRESHOLDING"
-  "\020S\032\010\332\361\252\211\005\002\020\001\022<\n.FEATURE_ANONYMIZATION_CA"
-  "SE_INSENSITIVE_OPTIONS\020U\032\010\332\361\252\211\005\002\010\001\022*\n\034FE"
-  "ATURE_DIFFERENTIAL_PRIVACY\020X\032\010\332\361\252\211\005\002\020\001\022;"
-  "\n-FEATURE_DIFFERENTIAL_PRIVACY_REPORT_FU"
-  "NCTIONS\020Y\032\010\332\361\252\211\005\002\020\001\0227\n)FEATURE_DIFFERENT"
-  "IAL_PRIVACY_THRESHOLDING\020Z\032\010\332\361\252\211\005\002\020\001\022!\n\035"
-  "FEATURE_AGGREGATION_THRESHOLD\020\\\022\025\n\021FEATU"
-  "RE_GEOGRAPHY\020\031\022,\n(FEATURE_STRATIFIED_RES"
-  "ERVOIR_TABLESAMPLE\020\032\022\030\n\024FEATURE_FOREIGN_"
-  "KEYS\020\033\022*\n\034FEATURE_BETWEEN_UINT64_INT64\020\034"
-  "\032\010\332\361\252\211\005\002\020\001\022\034\n\030FEATURE_CHECK_CONSTRAINT\020\035"
-  "\022&\n\"FEATURE_PARAMETERS_IN_GRANTEE_LIST\020\036"
-  "\022\033\n\027FEATURE_NAMED_ARGUMENTS\020\037\0221\n-FEATURE"
-  "_ALLOW_LEGACY_ROW_ACCESS_POLICY_SYNTAX\020 "
-  "\0221\n-FEATURE_CREATE_MATERIALIZED_VIEW_PAR"
-  "TITION_BY\020!\022/\n+FEATURE_CREATE_MATERIALIZ"
-  "ED_VIEW_CLUSTER_BY\020\"\0229\n5FEATURE_CREATE_E"
-  "XTERNAL_TABLE_WITH_TABLE_ELEMENT_LIST\020#\022"
-  "#\n\037FEATURE_UNENFORCED_PRIMARY_KEYS\020(\022\033\n\027"
-  "FEATURE_BIGNUMERIC_TYPE\020)\022$\n\026FEATURE_EXT"
-  "ENDED_TYPES\020*\032\010\332\361\252\211\005\002\020\001\022\025\n\021FEATURE_JSON_"
-  "TYPE\020+\0220\n\"FEATURE_JSON_STRICT_NUMBER_PAR"
-  "SING\0204\032\010\332\361\252\211\005\002\010\000\022 \n\034FEATURE_JSON_ARRAY_F"
-  "UNCTIONS\020:\022+\n\'FEATURE_JSON_VALUE_EXTRACT"
-  "ION_FUNCTIONS\020D\0229\n+FEATURE_JSON_LAX_VALU"
-  "E_EXTRACTION_FUNCTIONS\020Q\032\010\332\361\252\211\005\002\020\001\0220\n\"FE"
-  "ATURE_JSON_CONSTRUCTOR_FUNCTIONS\020]\032\010\332\361\252\211"
-  "\005\002\020\001\022B\n4FEATURE_CREATE_EXTERNAL_TABLE_WI"
-  "TH_PARTITION_COLUMNS\020/\032\010\332\361\252\211\005\002\020\001\022#\n\025FEAT"
-  "URE_INTERVAL_TYPE\0201\032\010\332\361\252\211\005\002\020\001\0224\n0FEATURE"
-  "_FUNCTION_ARGUMENT_NAMES_HIDE_LOCAL_NAME"
-  "S\0207\022\037\n\033FEATURE_PARAMETERIZED_TYPES\0208\022\035\n\031"
-  "FEATURE_CREATE_TABLE_LIKE\0209\022(\n$FEATURE_C"
-  "REATE_VIEW_WITH_COLUMN_LIST\020;\022:\n,FEATURE"
-  "_ALTER_VIEWS_ALTER_COLUMN_SET_OPTIONS\020W\032"
-  "\010\332\361\252\211\005\002\020\001\022(\n\032FEATURE_CREATE_TABLE_CLONE\020"
-  "<\032\010\332\361\252\211\005\002\020\001\022 \n\022FEATURE_CLONE_DATA\020=\032\010\332\361\252"
-  "\211\005\002\020\001\0220\n\"FEATURE_ALTER_COLUMN_SET_DATA_T"
-  "YPE\020>\032\010\332\361\252\211\005\002\020\001\022!\n\035FEATURE_CREATE_SNAPSH"
-  "OT_TABLE\020\?\022,\n(FEATURE_FUNCTION_ARGUMENTS"
-  "_WITH_DEFAULTS\020@\0221\n-FEATURE_CREATE_EXTER"
-  "NAL_TABLE_WITH_CONNECTION\020A\022\035\n\031FEATURE_C"
-  "REATE_TABLE_COPY\020B\022%\n!FEATURE_ALTER_TABL"
-  "E_RENAME_COLUMN\020C\022\?\n)FEATURE_DISALLOW_LE"
-  "GACY_UNICODE_COLLATION\020E\032\020\332\361\252\211\005\002\020\001\332\361\252\211\005\002"
-  "\010\000\0226\n2FEATURE_ALLOW_MISSING_PATH_EXPRESS"
-  "ION_IN_ALTER_DDL\020F\022+\n\035FEATURE_TIME_BUCKE"
-  "T_FUNCTIONS\020G\032\010\332\361\252\211\005\002\020\001\022,\n\036FEATURE_INVER"
-  "SE_TRIG_FUNCTIONS\020H\032\010\332\361\252\211\005\002\020\001\022 \n\022FEATURE"
-  "_RANGE_TYPE\020I\032\010\332\361\252\211\005\002\020\001\022\'\n\031FEATURE_NON_S"
-  "QL_PROCEDURE\020K\032\010\332\361\252\211\005\002\020\001\022.\n FEATURE_ROUN"
-  "D_WITH_ROUNDING_MODE\020L\032\010\332\361\252\211\005\002\020\001\022$\n\026FEAT"
-  "URE_CBRT_FUNCTIONS\020M\032\010\332\361\252\211\005\002\020\001\022*\n\032FEATUR"
-  "E_SPANNER_LEGACY_DDL\020N\032\n\332\361\252\211\005\004\010\000\020\001\022/\n!FE"
-  "ATURE_DISABLE_ARRAY_MIN_AND_MAX\020O\032\010\332\361\252\211\005"
-  "\002\010\000\022\?\n1FEATURE_STRICT_FUNCTION_DEFAULT_A"
-  "RG_TYPE_COERCION\020P\032\010\332\361\252\211\005\002\010\000\022 \n\022FEATURE_"
-  "PROTO_BASE\020R\032\010\332\361\252\211\005\002\020\001\022/\n!FEATURE_DISABL"
-  "E_ARRAY_SUM_AND_AVG\020T\032\010\332\361\252\211\005\002\010\000\0226\n(FEATU"
-  "RE_CREATE_VIEWS_WITH_COLUMN_OPTIONS\020V\032\010\332"
-  "\361\252\211\005\002\020\001\0222\n$FEATURE_CREATE_TABLE_WITH_CON"
-  "NECTION\020[\032\010\332\361\252\211\005\002\020\001\022.\n FEATURE_DISABLE_O"
-  "UTER_JOIN_ARRAY\020^\032\010\332\361\252\211\005\002\010\000\022#\n\036FEATURE_V"
-  "_1_1_ORDER_BY_COLLATE\020\371U\022#\n\036FEATURE_V_1_"
-  "1_WITH_ON_SUBQUERY\020\372U\022-\n(FEATURE_V_1_1_S"
-  "ELECT_STAR_EXCEPT_REPLACE\020\373U\022(\n#FEATURE_"
-  "V_1_1_ORDER_BY_IN_AGGREGATE\020\374U\022-\n(FEATUR"
-  "E_V_1_1_CAST_DIFFERENT_ARRAY_TYPES\020\375U\022!\n"
-  "\034FEATURE_V_1_1_ARRAY_EQUALITY\020\376U\022%\n FEAT"
-  "URE_V_1_1_LIMIT_IN_AGGREGATE\020\377U\022&\n!FEATU"
-  "RE_V_1_1_HAVING_IN_AGGREGATE\020\200V\0225\n0FEATU"
-  "RE_V_1_1_NULL_HANDLING_MODIFIER_IN_ANALY"
-  "TIC\020\201V\0226\n1FEATURE_V_1_1_NULL_HANDLING_MO"
-  "DIFIER_IN_AGGREGATE\020\202V\022(\n#FEATURE_V_1_1_"
-  "FOR_SYSTEM_TIME_AS_OF\020\203V\022\035\n\030FEATURE_V_1_"
-  "2_CIVIL_TIME\020\341]\022%\n FEATURE_V_1_2_SAFE_FU"
-  "NCTION_CALL\020\342]\022\"\n\035FEATURE_V_1_2_GROUP_BY"
-  "_STRUCT\020\343]\022,\n\'FEATURE_V_1_2_PROTO_EXTENS"
-  "IONS_WITH_NEW\020\344]\022!\n\034FEATURE_V_1_2_GROUP_"
-  "BY_ARRAY\020\345]\022,\n\'FEATURE_V_1_2_PROTO_EXTEN"
-  "SIONS_WITH_SET\020\346]\0220\n+FEATURE_V_1_2_CORRE"
-  "LATED_REFS_IN_NESTED_DML\020\347]\022$\n\037FEATURE_V"
-  "_1_2_WEEK_WITH_WEEKDAY\020\350]\022*\n%FEATURE_V_1"
-  "_2_ARRAY_ELEMENTS_WITH_SET\020\351]\0223\n.FEATURE"
-  "_V_1_2_NESTED_UPDATE_DELETE_WITH_OFFSET\020"
-  "\352]\022$\n\037FEATURE_V_1_2_GENERATED_COLUMNS\020\353]"
-  "\022(\n#FEATURE_V_1_3_PROTO_DEFAULT_IF_NULL\020"
-  "\311e\022%\n FEATURE_V_1_3_EXTRACT_FROM_PROTO\020\312"
-  "e\022H\n9FEATURE_V_1_3_DEPRECATED_DISALLOW_P"
-  "ROTO3_HAS_SCALAR_FIELD\020\313e\032\010\332\361\252\211\005\002\010\000\022!\n\034F"
-  "EATURE_V_1_3_ARRAY_ORDERING\020\314e\022*\n%FEATUR"
-  "E_V_1_3_OMIT_INSERT_COLUMN_LIST\020\315e\022-\n(FE"
-  "ATURE_V_1_3_IGNORE_PROTO3_USE_DEFAULTS\020\316"
-  "e\022!\n\034FEATURE_V_1_3_REPLACE_FIELDS\020\317e\022/\n*"
-  "FEATURE_V_1_3_NULLS_FIRST_LAST_IN_ORDER_"
-  "BY\020\320e\022-\n(FEATURE_V_1_3_ALLOW_DASHES_IN_T"
-  "ABLE_NAME\020\321e\022%\n FEATURE_V_1_3_CONCAT_MIX"
-  "ED_TYPES\020\322e\022!\n\034FEATURE_V_1_3_WITH_RECURS"
-  "IVE\020\323e\022\035\n\030FEATURE_V_1_3_PROTO_MAPS\020\324e\022.\n"
-  ")FEATURE_V_1_3_ENUM_VALUE_DESCRIPTOR_PRO"
-  "TO\020\325e\022 \n\033FEATURE_V_1_3_DECIMAL_ALIAS\020\326e\022"
-  ",\n\'FEATURE_V_1_3_UNNEST_AND_FLATTEN_ARRA"
-  "YS\020\327e\022\'\n\"FEATURE_V_1_3_ALLOW_CONSECUTIVE"
-  "_ON\020\330e\0221\n,FEATURE_V_1_3_ALLOW_REGEXP_EXT"
-  "RACT_OPTIONALS\020\331e\022)\n$FEATURE_V_1_3_DATE_"
-  "TIME_CONSTRUCTORS\020\332e\022#\n\036FEATURE_V_1_3_DA"
-  "TE_ARITHMETICS\020\333e\022.\n)FEATURE_V_1_3_ADDIT"
-  "IONAL_STRING_FUNCTIONS\020\334e\022\"\n\035FEATURE_V_1"
-  "_3_WITH_GROUP_ROWS\020\335e\0220\n+FEATURE_V_1_3_E"
-  "XTENDED_DATE_TIME_SIGNATURES\020\336e\022-\n(FEATU"
-  "RE_V_1_3_EXTENDED_GEOGRAPHY_PARSERS\020\337e\022)"
-  "\n$FEATURE_V_1_3_INLINE_LAMBDA_ARGUMENT\020\340"
-  "e\022\030\n\023FEATURE_V_1_3_PIVOT\020\341e\022\'\n\"FEATURE_V"
-  "_1_3_ANNOTATION_FRAMEWORK\020\342e\022.\n\037FEATURE_"
-  "V_1_3_COLLATION_SUPPORT\020\343e\032\010\332\361\252\211\005\002\020\001\022\036\n\031"
-  "FEATURE_V_1_3_IS_DISTINCT\020\344e\022!\n\034FEATURE_"
-  "V_1_3_FORMAT_IN_CAST\020\345e\022\032\n\025FEATURE_V_1_3"
-  "_UNPIVOT\020\346e\022 \n\033FEATURE_V_1_3_DML_RETURNI"
-  "NG\020\347e\022 \n\033FEATURE_V_1_3_FILTER_FIELDS\020\350e\022"
-  "\032\n\025FEATURE_V_1_3_QUALIFY\020\351e\022\031\n\024FEATURE_V"
-  "_1_3_REPEAT\020\352e\022\'\n\"FEATURE_V_1_3_COLUMN_D"
-  "EFAULT_VALUE\020\353e\022\031\n\024FEATURE_V_1_3_FOR_IN\020"
-  "\354e\022\036\n\031FEATURE_V_1_3_KLL_WEIGHTS\020\355e\022.\n\037FE"
-  "ATURE_V_1_3_LIKE_ANY_SOME_ALL\020\356e\032\010\332\361\252\211\005\002"
-  "\020\001\022\034\n\027FEATURE_V_1_3_CASE_STMT\020\357e\022$\n\037FEAT"
-  "URE_V_1_3_ALLOW_SLASH_PATHS\020\360e\022\"\n\035FEATUR"
-  "E_V_1_3_TYPEOF_FUNCTION\020\361e\022\037\n\032FEATURE_V_"
-  "1_3_SCRIPT_LABEL\020\362e\022\"\n\035FEATURE_V_1_3_REM"
-  "OTE_FUNCTION\020\363e\022\'\n\"FEATURE_V_1_3_ARRAY_G"
-  "REATEST_LEAST\020\364e\022,\n\'FEATURE_V_1_3_BRACED"
-  "_PROTO_CONSTRUCTORS\020\365e\022\"\n\035FEATURE_V_1_4_"
-  "WITH_EXPRESSION\020\260m\0221\n\"FEATURE_V_1_4_ORDE"
-  "RED_PRIMARY_KEYS\020\262m\032\010\332\361\252\211\005\002\020\001\022 \n\021FEATURE"
-  "_V_1_4_TTL\020\263m\032\010\332\361\252\211\005\002\020\001\022$\n\037FEATURE_V_1_4"
-  "_BARE_ARRAY_ACCESS\020\264m\0228\n)FEATURE_V_1_4_A"
-  "RRAY_AGGREGATION_FUNCTIONS\020\265m\032\010\332\361\252\211\005\002\020\001\022"
-  "1\n\"FEATURE_V_1_4_ARRAY_FIND_FUNCTIONS\020\266m"
-  "\032\010\332\361\252\211\005\002\020\001\0226\n1FEATURE_V_1_4_SAFE_FUNCTIO"
-  "N_CALL_WITH_LAMBDA_ARGS\020\267m\022)\n\032FEATURE_V_"
-  "1_4_REMOTE_MODEL\020\271m\032\010\332\361\252\211\005\002\020\001\022-\n(FEATURE"
-  "_V_1_4_STRUCT_POSITIONAL_ACCESSOR\020\272m\022/\n*"
-  "FEATURE_V_1_4_SINGLE_TABLE_NAME_ARRAY_PA"
-  "TH\020\273m\022\'\n\030FEATURE_V_1_4_SQL_MACROS\020\274m\032\010\332\361"
-  "\252\211\005\002\020\001\0228\n)FEATURE_V_1_4_COLLATION_IN_WIT"
-  "H_RECURSIVE\020\275m\032\010\332\361\252\211\005\002\020\001\0227\n(FEATURE_V_1_"
-  "4_COLLATION_IN_EXPLICIT_CAST\020\276m\032\010\332\361\252\211\005\002\020"
-  "\001\022\'\n\"FEATURE_V_1_4_LOAD_DATA_PARTITIONS\020"
-  "\277m\022A\n2FEATURE_V_1_4_CREATE_MODEL_WITH_AL"
-  "IASED_QUERY_LIST\020\300m\032\010\332\361\252\211\005\002\020\001\022\'\n\"FEATURE"
-  "_V_1_4_LOAD_DATA_TEMP_TABLE\020\301m\022*\n\033FEATUR"
-  "E_V_1_4_CORRESPONDING\020\302m\032\010\332\361\252\211\005\002\020\001\022)\n\032FE"
-  "ATURE_V_1_4_SEQUENCE_ARG\020\303m\032\010\332\361\252\211\005\002\020\001\022-\n"
-  "\036FEATURE_V_1_4_GROUPING_BUILTIN\020\304m\032\010\332\361\252\211"
-  "\005\002\020\001\022,\n\034FEATURE_EXPERIMENTAL_MODULES\020\332\374<"
-  "\032\010\332\361\252\211\005\002\020\001\022\?\n/FEATURE_TEST_IDEALLY_ENABL"
-  "ED_BUT_IN_DEVELOPMENT\020\267\204=\032\010\332\361\252\211\005\002\020\001\022-\n\035F"
-  "EATURE_TEST_IDEALLY_DISABLED\020\270\204=\032\010\332\361\252\211\005\002"
-  "\010\000\022B\n0FEATURE_TEST_IDEALLY_DISABLED_AND_"
-  "IN_DEVELOPMENT\020\271\204=\032\n\332\361\252\211\005\004\010\000\020\001\022<\n/__Lang"
-  "uageFeature__switch_must_have_a_default_"
-  "_\020\377\377\377\377\377\377\377\377\377\001\"\004\010$\020\'\"\004\010,\020.\"\004\0100\0200\"\004\010J\020J\"\006\010\366"
-  "e\020\366e\"\006\010\261m\020\261m\"\010\010\333\374<\020\333\374<*\224\005\n\022ResolvedASTRe"
-  "write\022\036\n\032REWRITE_INVALID_DO_NOT_USE\020\000\022\035\n"
-  "\017REWRITE_FLATTEN\020\001\032\010\202\207\335\204\n\002\010\001\022#\n\025REWRITE_"
-  "ANONYMIZATION\020\002\032\010\202\207\335\204\n\002\010\000\022#\n\025REWRITE_PRO"
-  "TO_MAP_FNS\020\003\032\010\202\207\335\204\n\002\010\001\022,\n\036REWRITE_ARRAY_"
-  "FILTER_TRANSFORM\020\004\032\010\202\207\335\204\n\002\010\001\022\035\n\017REWRITE_"
-  "UNPIVOT\020\005\032\010\202\207\335\204\n\002\010\001\022\033\n\rREWRITE_PIVOT\020\006\032\010"
-  "\202\207\335\204\n\002\010\001\022$\n\026REWRITE_ARRAY_INCLUDES\020\007\032\010\202\207"
-  "\335\204\n\002\010\001\022%\n\027REWRITE_TYPEOF_FUNCTION\020\010\032\010\202\207\335"
-  "\204\n\002\010\001\022\037\n\021REWRITE_WITH_EXPR\020\t\032\010\202\207\335\204\n\002\010\001\0222"
-  "\n\034REWRITE_INLINE_SQL_FUNCTIONS\020\n\032\020\202\207\335\204\n\002"
-  "\010\000\202\207\335\204\n\002\020\001\022-\n\027REWRITE_INLINE_SQL_TVFS\020\013\032"
-  "\020\202\207\335\204\n\002\010\000\202\207\335\204\n\002\020\001\022*\n\034REWRITE_NULLIFERROR"
-  "_FUNCTION\020\014\032\010\202\207\335\204\n\002\010\001\022\"\n\024REWRITE_LIKE_AN"
-  "Y_ALL\020\016\032\010\202\207\335\204\n\002\010\001\022.\n REWRITE_BUILTIN_FUN"
-  "CTION_INLINER\020\020\032\010\202\207\335\204\n\002\010\001\022.\n\030REWRITE_INL"
-  "INE_SQL_VIEWS\020\021\032\020\202\207\335\204\n\002\010\001\202\207\335\204\n\002\020\001\"\004\010\r\020\r\""
-  "\004\010\017\020\017*M\n\022NameResolutionMode\022\033\n\027NAME_RESO"
-  "LUTION_DEFAULT\020\000\022\032\n\026NAME_RESOLUTION_STRI"
-  "CT\020\001*9\n\013ProductMode\022\024\n\020PRODUCT_INTERNAL\020"
-  "\000\022\024\n\020PRODUCT_EXTERNAL\020\001*;\n\020StatementCont"
-  "ext\022\023\n\017CONTEXT_DEFAULT\020\000\022\022\n\016CONTEXT_MODU"
-  "LE\020\001*w\n\020ErrorMessageMode\022\036\n\032ERROR_MESSAG"
-  "E_WITH_PAYLOAD\020\000\022\032\n\026ERROR_MESSAGE_ONE_LI"
-  "NE\020\001\022\'\n#ERROR_MESSAGE_MULTI_LINE_WITH_CA"
-  "RET\020\002*R\n\rParameterMode\022\023\n\017PARAMETER_NAME"
-  "D\020\000\022\030\n\024PARAMETER_POSITIONAL\020\001\022\022\n\016PARAMET"
-  "ER_NONE\020\002*\213\001\n\027ParseLocationRecordType\022\036\n"
-  "\032PARSE_LOCATION_RECORD_NONE\020\000\022)\n%PARSE_L"
-  "OCATION_RECORD_FULL_NODE_SCOPE\020\001\022%\n!PARS"
-  "E_LOCATION_RECORD_CODE_SEARCH\020\002:g\n\030langu"
-  "age_feature_options\022!.google.protobuf.En"
-  "umValueOptions\030\233\256\225Q \001(\0132\037.zetasql.Langua"
-  "geFeatureOptions:b\n\017rewrite_options\022!.go"
-  "ogle.protobuf.EnumValueOptions\030\360\320\313\240\001 \001(\013"
-  "2\".zetasql.ResolvedASTRewriteOptionsB$\n\022"
-  "com.google.zetasqlB\016ZetaSQLOptions"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2foptions_2eproto_deps[1] = {
-  &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
-};
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2foptions_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2foptions_2eproto = {
-  false, false, 9194, descriptor_table_protodef_zetasql_2fpublic_2foptions_2eproto, "zetasql/public/options.proto", 
-  &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once, descriptor_table_zetasql_2fpublic_2foptions_2eproto_deps, 1, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2foptions_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2foptions_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto, file_level_service_descriptors_zetasql_2fpublic_2foptions_2eproto,
-};
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter() {
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2foptions_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2foptions_2eproto(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2foptions_2eproto(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LanguageVersion_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
@@ -347,7 +508,6 @@ bool LanguageVersion_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LanguageFeature_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[1];
@@ -394,7 +554,6 @@ bool LanguageFeature_IsValid(int value) {
     case 47:
     case 49:
     case 52:
-    case 55:
     case 56:
     case 57:
     case 58:
@@ -433,6 +592,11 @@ bool LanguageFeature_IsValid(int value) {
     case 92:
     case 93:
     case 94:
+    case 95:
+    case 96:
+    case 97:
+    case 98:
+    case 100:
     case 11001:
     case 11002:
     case 11003:
@@ -519,6 +683,16 @@ bool LanguageFeature_IsValid(int value) {
     case 14018:
     case 14019:
     case 14020:
+    case 14021:
+    case 14022:
+    case 14023:
+    case 14024:
+    case 14025:
+    case 14026:
+    case 14027:
+    case 14028:
+    case 14029:
+    case 14030:
     case 999002:
     case 999991:
     case 999992:
@@ -528,7 +702,6 @@ bool LanguageFeature_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResolvedASTRewrite_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[2];
@@ -551,12 +724,14 @@ bool ResolvedASTRewrite_IsValid(int value) {
     case 14:
     case 16:
     case 17:
+    case 21:
+    case 22:
+    case 23:
       return true;
     default:
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NameResolutionMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[3];
@@ -570,7 +745,6 @@ bool NameResolutionMode_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ProductMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[4];
@@ -584,7 +758,6 @@ bool ProductMode_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* StatementContext_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[5];
@@ -598,7 +771,6 @@ bool StatementContext_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ErrorMessageMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[6];
@@ -613,7 +785,6 @@ bool ErrorMessageMode_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ParameterMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[7];
@@ -628,7 +799,6 @@ bool ParameterMode_IsValid(int value) {
       return false;
   }
 }
-
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ParseLocationRecordType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2foptions_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2foptions_2eproto[8];
@@ -643,13 +813,13 @@ bool ParseLocationRecordType_IsValid(int value) {
       return false;
   }
 }
-
-
 // ===================================================================
 
 class LanguageFeatureOptions::_Internal {
  public:
-  using HasBits = decltype(std::declval<LanguageFeatureOptions>()._has_bits_);
+  using HasBits = decltype(std::declval<LanguageFeatureOptions>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(LanguageFeatureOptions, _impl_._has_bits_);
   static void set_has_ideally_enabled(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
@@ -658,90 +828,88 @@ class LanguageFeatureOptions::_Internal {
   }
 };
 
-LanguageFeatureOptions::LanguageFeatureOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+LanguageFeatureOptions::LanguageFeatureOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.LanguageFeatureOptions)
 }
 LanguageFeatureOptions::LanguageFeatureOptions(const LanguageFeatureOptions& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&in_development_, &from.in_development_,
-    static_cast<size_t>(reinterpret_cast<char*>(&ideally_enabled_) -
-    reinterpret_cast<char*>(&in_development_)) + sizeof(ideally_enabled_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.LanguageFeatureOptions)
 }
 
-inline void LanguageFeatureOptions::SharedCtor() {
-in_development_ = false;
-ideally_enabled_ = true;
+inline void LanguageFeatureOptions::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.in_development_) { false }
+
+    , decltype(_impl_.ideally_enabled_) { true }
+
+  };
 }
 
 LanguageFeatureOptions::~LanguageFeatureOptions() {
   // @@protoc_insertion_point(destructor:zetasql.LanguageFeatureOptions)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void LanguageFeatureOptions::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void LanguageFeatureOptions::ArenaDtor(void* object) {
-  LanguageFeatureOptions* _this = reinterpret_cast< LanguageFeatureOptions* >(object);
-  (void)_this;
-}
-void LanguageFeatureOptions::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void LanguageFeatureOptions::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void LanguageFeatureOptions::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.LanguageFeatureOptions)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
-    in_development_ = false;
-    ideally_enabled_ = true;
+    _impl_.in_development_ = false;
+    _impl_.ideally_enabled_ = true;
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* LanguageFeatureOptions::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* LanguageFeatureOptions::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional bool ideally_enabled = 1 [default = true];
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_ideally_enabled(&has_bits);
-          ideally_enabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.ideally_enabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool in_development = 2 [default = false];
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _Internal::set_has_in_development(&has_bits);
-          in_development_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.in_development_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -759,7 +927,7 @@ const char* LanguageFeatureOptions::_InternalParse(const char* ptr, ::PROTOBUF_N
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -767,87 +935,85 @@ failure:
 #undef CHK_
 }
 
-uint8_t* LanguageFeatureOptions::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* LanguageFeatureOptions::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.LanguageFeatureOptions)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional bool ideally_enabled = 1 [default = true];
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_ideally_enabled(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        1, this->_internal_ideally_enabled(), target);
   }
 
   // optional bool in_development = 2 [default = false];
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_in_development(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        2, this->_internal_in_development(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.LanguageFeatureOptions)
   return target;
 }
 
-size_t LanguageFeatureOptions::ByteSizeLong() const {
+::size_t LanguageFeatureOptions::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.LanguageFeatureOptions)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     // optional bool in_development = 2 [default = false];
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
     // optional bool ideally_enabled = 1 [default = true];
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LanguageFeatureOptions::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     LanguageFeatureOptions::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LanguageFeatureOptions::GetClassData() const { return &_class_data_; }
 
-void LanguageFeatureOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<LanguageFeatureOptions *>(to)->MergeFrom(
-      static_cast<const LanguageFeatureOptions &>(from));
-}
 
-
-void LanguageFeatureOptions::MergeFrom(const LanguageFeatureOptions& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.LanguageFeatureOptions)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void LanguageFeatureOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LanguageFeatureOptions*>(&to_msg);
+  auto& from = static_cast<const LanguageFeatureOptions&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.LanguageFeatureOptions)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      in_development_ = from.in_development_;
+      _this->_impl_.in_development_ = from._impl_.in_development_;
     }
     if (cached_has_bits & 0x00000002u) {
-      ideally_enabled_ = from.ideally_enabled_;
+      _this->_impl_.ideally_enabled_ = from._impl_.ideally_enabled_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void LanguageFeatureOptions::CopyFrom(const LanguageFeatureOptions& from) {
@@ -864,22 +1030,27 @@ bool LanguageFeatureOptions::IsInitialized() const {
 void LanguageFeatureOptions::InternalSwap(LanguageFeatureOptions* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(in_development_, other->in_development_);
-  swap(ideally_enabled_, other->ideally_enabled_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(LanguageFeatureOptions, _impl_.ideally_enabled_)
+      + sizeof(LanguageFeatureOptions::_impl_.ideally_enabled_)
+      - PROTOBUF_FIELD_OFFSET(LanguageFeatureOptions, _impl_.in_development_)>(
+          reinterpret_cast<char*>(&_impl_.in_development_),
+          reinterpret_cast<char*>(&other->_impl_.in_development_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LanguageFeatureOptions::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2foptions_2eproto[0]);
 }
-
 // ===================================================================
 
 class ResolvedASTRewriteOptions::_Internal {
  public:
-  using HasBits = decltype(std::declval<ResolvedASTRewriteOptions>()._has_bits_);
+  using HasBits = decltype(std::declval<ResolvedASTRewriteOptions>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, _impl_._has_bits_);
   static void set_has_default_enabled(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -888,90 +1059,86 @@ class ResolvedASTRewriteOptions::_Internal {
   }
 };
 
-ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ResolvedASTRewriteOptions)
 }
 ResolvedASTRewriteOptions::ResolvedASTRewriteOptions(const ResolvedASTRewriteOptions& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&default_enabled_, &from.default_enabled_,
-    static_cast<size_t>(reinterpret_cast<char*>(&in_development_) -
-    reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ResolvedASTRewriteOptions)
 }
 
-inline void ResolvedASTRewriteOptions::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&default_enabled_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&in_development_) -
-    reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
+inline void ResolvedASTRewriteOptions::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.default_enabled_) { false }
+
+    , decltype(_impl_.in_development_) { false }
+
+  };
 }
 
 ResolvedASTRewriteOptions::~ResolvedASTRewriteOptions() {
   // @@protoc_insertion_point(destructor:zetasql.ResolvedASTRewriteOptions)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ResolvedASTRewriteOptions::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void ResolvedASTRewriteOptions::ArenaDtor(void* object) {
-  ResolvedASTRewriteOptions* _this = reinterpret_cast< ResolvedASTRewriteOptions* >(object);
-  (void)_this;
-}
-void ResolvedASTRewriteOptions::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ResolvedASTRewriteOptions::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ResolvedASTRewriteOptions::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ResolvedASTRewriteOptions)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&default_enabled_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&in_development_) -
-      reinterpret_cast<char*>(&default_enabled_)) + sizeof(in_development_));
-  _has_bits_.Clear();
+  ::memset(&_impl_.default_enabled_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.in_development_) -
+      reinterpret_cast<char*>(&_impl_.default_enabled_)) + sizeof(_impl_.in_development_));
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ResolvedASTRewriteOptions::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ResolvedASTRewriteOptions::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional bool default_enabled = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_default_enabled(&has_bits);
-          default_enabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.default_enabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool in_development = 2 [default = false];
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _Internal::set_has_in_development(&has_bits);
-          in_development_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.in_development_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -989,7 +1156,7 @@ const char* ResolvedASTRewriteOptions::_InternalParse(const char* ptr, ::PROTOBU
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -997,87 +1164,85 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ResolvedASTRewriteOptions::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ResolvedASTRewriteOptions::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ResolvedASTRewriteOptions)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional bool default_enabled = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_default_enabled(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        1, this->_internal_default_enabled(), target);
   }
 
   // optional bool in_development = 2 [default = false];
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_in_development(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        2, this->_internal_in_development(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ResolvedASTRewriteOptions)
   return target;
 }
 
-size_t ResolvedASTRewriteOptions::ByteSizeLong() const {
+::size_t ResolvedASTRewriteOptions::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ResolvedASTRewriteOptions)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     // optional bool default_enabled = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
     // optional bool in_development = 2 [default = false];
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ResolvedASTRewriteOptions::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ResolvedASTRewriteOptions::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResolvedASTRewriteOptions::GetClassData() const { return &_class_data_; }
 
-void ResolvedASTRewriteOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ResolvedASTRewriteOptions *>(to)->MergeFrom(
-      static_cast<const ResolvedASTRewriteOptions &>(from));
-}
 
-
-void ResolvedASTRewriteOptions::MergeFrom(const ResolvedASTRewriteOptions& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ResolvedASTRewriteOptions)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ResolvedASTRewriteOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ResolvedASTRewriteOptions*>(&to_msg);
+  auto& from = static_cast<const ResolvedASTRewriteOptions&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ResolvedASTRewriteOptions)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      default_enabled_ = from.default_enabled_;
+      _this->_impl_.default_enabled_ = from._impl_.default_enabled_;
     }
     if (cached_has_bits & 0x00000002u) {
-      in_development_ = from.in_development_;
+      _this->_impl_.in_development_ = from._impl_.in_development_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ResolvedASTRewriteOptions::CopyFrom(const ResolvedASTRewriteOptions& from) {
@@ -1094,37 +1259,700 @@ bool ResolvedASTRewriteOptions::IsInitialized() const {
 void ResolvedASTRewriteOptions::InternalSwap(ResolvedASTRewriteOptions* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, in_development_)
-      + sizeof(ResolvedASTRewriteOptions::in_development_)
-      - PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, default_enabled_)>(
-          reinterpret_cast<char*>(&default_enabled_),
-          reinterpret_cast<char*>(&other->default_enabled_));
+      PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, _impl_.in_development_)
+      + sizeof(ResolvedASTRewriteOptions::_impl_.in_development_)
+      - PROTOBUF_FIELD_OFFSET(ResolvedASTRewriteOptions, _impl_.default_enabled_)>(
+          reinterpret_cast<char*>(&_impl_.default_enabled_),
+          reinterpret_cast<char*>(&other->_impl_.default_enabled_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResolvedASTRewriteOptions::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2foptions_2eproto[1]);
 }
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::LanguageFeatureOptions >, 11, false >
-  language_feature_options(kLanguageFeatureOptionsFieldNumber, ::zetasql::LanguageFeatureOptions::default_instance());
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::ResolvedASTRewriteOptions >, 11, false >
-  rewrite_options(kRewriteOptionsFieldNumber, ::zetasql::ResolvedASTRewriteOptions::default_instance());
+// ===================================================================
 
+class RewriteOptions::_Internal {
+ public:
+  using HasBits = decltype(std::declval<RewriteOptions>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(RewriteOptions, _impl_._has_bits_);
+  static const ::zetasql::GroupingSetRewriteOptions& grouping_set_rewrite_options(const RewriteOptions* msg);
+  static void set_has_grouping_set_rewrite_options(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+const ::zetasql::GroupingSetRewriteOptions&
+RewriteOptions::_Internal::grouping_set_rewrite_options(const RewriteOptions* msg) {
+  return *msg->_impl_.grouping_set_rewrite_options_;
+}
+RewriteOptions::RewriteOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:zetasql.RewriteOptions)
+}
+RewriteOptions::RewriteOptions(const RewriteOptions& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  RewriteOptions* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{}
+    , decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.grouping_set_rewrite_options_){nullptr}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.grouping_set_rewrite_options_ = new ::zetasql::GroupingSetRewriteOptions(*from._impl_.grouping_set_rewrite_options_);
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.RewriteOptions)
+}
+
+inline void RewriteOptions::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{::_pbi::ArenaInitialized(), arena}
+    , decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.grouping_set_rewrite_options_){nullptr}
+  };
+}
+
+RewriteOptions::~RewriteOptions() {
+  // @@protoc_insertion_point(destructor:zetasql.RewriteOptions)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void RewriteOptions::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_._extensions_.~ExtensionSet();
+  if (this != internal_default_instance()) delete _impl_.grouping_set_rewrite_options_;
+}
+
+void RewriteOptions::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void RewriteOptions::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.RewriteOptions)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_._extensions_.Clear();
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    ABSL_DCHECK(_impl_.grouping_set_rewrite_options_ != nullptr);
+    _impl_.grouping_set_rewrite_options_->Clear();
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* RewriteOptions::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional .zetasql.GroupingSetRewriteOptions grouping_set_rewrite_options = 23;
+      case 23:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 186)) {
+          ptr = ctx->ParseMessage(_internal_mutable_grouping_set_rewrite_options(), ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    if ((80000u <= tag)) {
+      ptr = _impl_._extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
+      CHK_(ptr != nullptr);
+      continue;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* RewriteOptions::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.RewriteOptions)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // optional .zetasql.GroupingSetRewriteOptions grouping_set_rewrite_options = 23;
+  if (cached_has_bits & 0x00000001u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(23, _Internal::grouping_set_rewrite_options(this),
+        _Internal::grouping_set_rewrite_options(this).GetCachedSize(), target, stream);
+  }
+
+  // Extension range [10000, 536870912)
+  target = _impl_._extensions_._InternalSerialize(
+  internal_default_instance(), 10000, 536870912, target, stream);
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.RewriteOptions)
+  return target;
+}
+
+::size_t RewriteOptions::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.RewriteOptions)
+  ::size_t total_size = 0;
+
+  total_size += _impl_._extensions_.ByteSize();
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional .zetasql.GroupingSetRewriteOptions grouping_set_rewrite_options = 23;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 2 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.grouping_set_rewrite_options_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RewriteOptions::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    RewriteOptions::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RewriteOptions::GetClassData() const { return &_class_data_; }
+
+
+void RewriteOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<RewriteOptions*>(&to_msg);
+  auto& from = static_cast<const RewriteOptions&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.RewriteOptions)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_grouping_set_rewrite_options()->::zetasql::GroupingSetRewriteOptions::MergeFrom(
+        from._internal_grouping_set_rewrite_options());
+  }
+  _this->_impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void RewriteOptions::CopyFrom(const RewriteOptions& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.RewriteOptions)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RewriteOptions::IsInitialized() const {
+  if (!_impl_._extensions_.IsInitialized(internal_default_instance())) {
+    return false;
+  }
+
+  return true;
+}
+
+void RewriteOptions::InternalSwap(RewriteOptions* other) {
+  using std::swap;
+  _impl_._extensions_.InternalSwap(&other->_impl_._extensions_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.grouping_set_rewrite_options_, other->_impl_.grouping_set_rewrite_options_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata RewriteOptions::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2foptions_2eproto[2]);
+}
+// ===================================================================
+
+class GroupingSetRewriteOptions::_Internal {
+ public:
+  using HasBits = decltype(std::declval<GroupingSetRewriteOptions>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(GroupingSetRewriteOptions, _impl_._has_bits_);
+  static void set_has_max_grouping_sets(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_max_columns_in_grouping_set(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
+
+GroupingSetRewriteOptions::GroupingSetRewriteOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:zetasql.GroupingSetRewriteOptions)
+}
+GroupingSetRewriteOptions::GroupingSetRewriteOptions(const GroupingSetRewriteOptions& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.GroupingSetRewriteOptions)
+}
+
+inline void GroupingSetRewriteOptions::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.max_grouping_sets_) { ::int64_t{65536} }
+
+    , decltype(_impl_.max_columns_in_grouping_set_) { ::int64_t{65536} }
+
+  };
+}
+
+GroupingSetRewriteOptions::~GroupingSetRewriteOptions() {
+  // @@protoc_insertion_point(destructor:zetasql.GroupingSetRewriteOptions)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void GroupingSetRewriteOptions::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void GroupingSetRewriteOptions::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void GroupingSetRewriteOptions::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.GroupingSetRewriteOptions)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    _impl_.max_grouping_sets_ = ::int64_t{65536};
+    _impl_.max_columns_in_grouping_set_ = ::int64_t{65536};
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GroupingSetRewriteOptions::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional int64 max_grouping_sets = 1 [default = 65536];
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+          _Internal::set_has_max_grouping_sets(&has_bits);
+          _impl_.max_grouping_sets_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // optional int64 max_columns_in_grouping_set = 2 [default = 65536];
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
+          _Internal::set_has_max_columns_in_grouping_set(&has_bits);
+          _impl_.max_columns_in_grouping_set_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* GroupingSetRewriteOptions::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.GroupingSetRewriteOptions)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // optional int64 max_grouping_sets = 1 [default = 65536];
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_max_grouping_sets(), target);
+  }
+
+  // optional int64 max_columns_in_grouping_set = 2 [default = 65536];
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        2, this->_internal_max_columns_in_grouping_set(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.GroupingSetRewriteOptions)
+  return target;
+}
+
+::size_t GroupingSetRewriteOptions::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.GroupingSetRewriteOptions)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // optional int64 max_grouping_sets = 1 [default = 65536];
+    if (cached_has_bits & 0x00000001u) {
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_max_grouping_sets());
+    }
+
+    // optional int64 max_columns_in_grouping_set = 2 [default = 65536];
+    if (cached_has_bits & 0x00000002u) {
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_max_columns_in_grouping_set());
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GroupingSetRewriteOptions::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    GroupingSetRewriteOptions::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GroupingSetRewriteOptions::GetClassData() const { return &_class_data_; }
+
+
+void GroupingSetRewriteOptions::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GroupingSetRewriteOptions*>(&to_msg);
+  auto& from = static_cast<const GroupingSetRewriteOptions&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.GroupingSetRewriteOptions)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_impl_.max_grouping_sets_ = from._impl_.max_grouping_sets_;
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_impl_.max_columns_in_grouping_set_ = from._impl_.max_columns_in_grouping_set_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GroupingSetRewriteOptions::CopyFrom(const GroupingSetRewriteOptions& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.GroupingSetRewriteOptions)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GroupingSetRewriteOptions::IsInitialized() const {
+  return true;
+}
+
+void GroupingSetRewriteOptions::InternalSwap(GroupingSetRewriteOptions* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GroupingSetRewriteOptions, _impl_.max_columns_in_grouping_set_)
+      + sizeof(GroupingSetRewriteOptions::_impl_.max_columns_in_grouping_set_)
+      - PROTOBUF_FIELD_OFFSET(GroupingSetRewriteOptions, _impl_.max_grouping_sets_)>(
+          reinterpret_cast<char*>(&_impl_.max_grouping_sets_),
+          reinterpret_cast<char*>(&other->_impl_.max_grouping_sets_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GroupingSetRewriteOptions::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2foptions_2eproto[3]);
+}
+// ===================================================================
+
+class ErrorMessageModeForPayload::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ErrorMessageModeForPayload>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ErrorMessageModeForPayload, _impl_._has_bits_);
+  static void set_has_mode(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+ErrorMessageModeForPayload::ErrorMessageModeForPayload(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:zetasql.ErrorMessageModeForPayload)
+}
+ErrorMessageModeForPayload::ErrorMessageModeForPayload(const ErrorMessageModeForPayload& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.ErrorMessageModeForPayload)
+}
+
+inline void ErrorMessageModeForPayload::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.mode_) { 0 }
+
+  };
+}
+
+ErrorMessageModeForPayload::~ErrorMessageModeForPayload() {
+  // @@protoc_insertion_point(destructor:zetasql.ErrorMessageModeForPayload)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void ErrorMessageModeForPayload::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void ErrorMessageModeForPayload::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void ErrorMessageModeForPayload::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.ErrorMessageModeForPayload)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.mode_ = 0;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ErrorMessageModeForPayload::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional .zetasql.ErrorMessageMode mode = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+          if (PROTOBUF_PREDICT_TRUE(::zetasql::ErrorMessageMode_IsValid(static_cast<int>(val)))) {
+            _internal_set_mode(static_cast<::zetasql::ErrorMessageMode>(val));
+          } else {
+            ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(1, val, mutable_unknown_fields());
+          }
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* ErrorMessageModeForPayload::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.ErrorMessageModeForPayload)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // optional .zetasql.ErrorMessageMode mode = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        1, this->_internal_mode(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.ErrorMessageModeForPayload)
+  return target;
+}
+
+::size_t ErrorMessageModeForPayload::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.ErrorMessageModeForPayload)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional .zetasql.ErrorMessageMode mode = 1;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_mode());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ErrorMessageModeForPayload::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    ErrorMessageModeForPayload::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ErrorMessageModeForPayload::GetClassData() const { return &_class_data_; }
+
+
+void ErrorMessageModeForPayload::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ErrorMessageModeForPayload*>(&to_msg);
+  auto& from = static_cast<const ErrorMessageModeForPayload&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ErrorMessageModeForPayload)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_set_mode(from._internal_mode());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ErrorMessageModeForPayload::CopyFrom(const ErrorMessageModeForPayload& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.ErrorMessageModeForPayload)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ErrorMessageModeForPayload::IsInitialized() const {
+  return true;
+}
+
+void ErrorMessageModeForPayload::InternalSwap(ErrorMessageModeForPayload* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.mode_, other->_impl_.mode_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ErrorMessageModeForPayload::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2foptions_2eproto_getter, &descriptor_table_zetasql_2fpublic_2foptions_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2foptions_2eproto[4]);
+}
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::LanguageFeatureOptions >, 11, false>
+  language_feature_options(kLanguageFeatureOptionsFieldNumber, ::zetasql::LanguageFeatureOptions::default_instance(), nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumValueOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::ResolvedASTRewriteOptions >, 11, false>
+  rewrite_options(kRewriteOptionsFieldNumber, ::zetasql::ResolvedASTRewriteOptions::default_instance(), nullptr);
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::LanguageFeatureOptions* Arena::CreateMaybeMessage< ::zetasql::LanguageFeatureOptions >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::LanguageFeatureOptions*
+Arena::CreateMaybeMessage< ::zetasql::LanguageFeatureOptions >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::LanguageFeatureOptions >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ResolvedASTRewriteOptions* Arena::CreateMaybeMessage< ::zetasql::ResolvedASTRewriteOptions >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ResolvedASTRewriteOptions*
+Arena::CreateMaybeMessage< ::zetasql::ResolvedASTRewriteOptions >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ResolvedASTRewriteOptions >(arena);
 }
+template<> PROTOBUF_NOINLINE ::zetasql::RewriteOptions*
+Arena::CreateMaybeMessage< ::zetasql::RewriteOptions >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::RewriteOptions >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::GroupingSetRewriteOptions*
+Arena::CreateMaybeMessage< ::zetasql::GroupingSetRewriteOptions >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::GroupingSetRewriteOptions >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ErrorMessageModeForPayload*
+Arena::CreateMaybeMessage< ::zetasql::ErrorMessageModeForPayload >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ErrorMessageModeForPayload >(arena);
+}
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

@@ -31,7 +31,7 @@ namespace zetasql {
 inline absl::Cord SerializeToCord(const google::protobuf::Message& pb) {
   absl::Cord bytes;
   std::string bytes_str;
-  ZETASQL_CHECK(pb.SerializeToString(&bytes_str));
+  ABSL_CHECK(pb.SerializeToString(&bytes_str));
   bytes = absl::Cord(bytes_str);
   return bytes;
 }
@@ -39,7 +39,7 @@ inline absl::Cord SerializeToCord(const google::protobuf::Message& pb) {
 inline absl::Cord SerializePartialToCord(const google::protobuf::Message& pb) {
   absl::Cord bytes;
   std::string bytes_str;
-  ZETASQL_CHECK(pb.SerializePartialToString(&bytes_str));
+  ABSL_CHECK(pb.SerializePartialToString(&bytes_str));
   bytes = absl::Cord(bytes_str);
   return bytes;
 }
@@ -57,7 +57,6 @@ inline bool ParsePartialFromCord(absl::Cord bytes, google::protobuf::Message* pb
 inline std::unique_ptr<google::protobuf::compiler::DiskSourceTree>
 CreateProtoSourceTree() {
   auto source_tree = std::make_unique<google::protobuf::compiler::DiskSourceTree>();
-  // Support both sides of --noincompatible_generated_protos_in_virtual_imports.
   for (std::string vproto :
        {"any_proto",
         "api_proto",
@@ -72,10 +71,9 @@ CreateProtoSourceTree() {
         "wrappers_proto"}) {
     source_tree->MapPath("",
       zetasql_base::JoinPath(getenv("TEST_SRCDIR"), "com_google_protobuf",
-                             "_virtual_imports", vproto));
+                             "src", "google", "protobuf", "_virtual_imports",
+                             vproto));
   }
-  source_tree->MapPath(
-      "", zetasql_base::JoinPath(getenv("TEST_SRCDIR"), "com_google_protobuf"));
   source_tree->MapPath(
       "", zetasql_base::JoinPath(getenv("TEST_SRCDIR"), "com_google_googleapis"));
   source_tree->MapPath(

@@ -47,7 +47,7 @@ class InternalValue {
 
   // Creates an array of the given 'array_type' initialized by moving from
   // 'values'. The type of each value must be the same as
-  // array_type->element_type(). If we are in debug mode, this is ZETASQL_CHECK'd.
+  // array_type->element_type(). If we are in debug mode, this is ABSL_CHECK'd.
   static Value ArrayNotChecked(const ArrayType* array_type,
                                OrderPreservationKind order_kind,
                                std::vector<Value>&& values) {
@@ -57,7 +57,7 @@ class InternalValue {
     return std::move(value).value();
   }
 
-  // Same as ArrayNotChecked except we ZETASQL_CHECK the type of each element, even when
+  // Same as ArrayNotChecked except we ABSL_CHECK the type of each element, even when
   // not in debug mode.
   static Value ArrayChecked(const ArrayType* array_type,
                             OrderPreservationKind order_kind,
@@ -101,6 +101,19 @@ class InternalValue {
     if (x.type_kind() != TYPE_PROTO) return nullptr;
     return x.proto_ptr_;
   }
+
+  static std::string FormatInternal(const Value& x,
+                                    bool include_array_ordereness) {
+    return x.FormatInternal(
+        {.force_type_at_top_level = true,
+         .include_array_ordereness = include_array_ordereness,
+         .indent = 0});
+  }
+
+  // Returns true if `val` contains in its nested structure an array with two
+  // or more elements where the order between those elements is unknown because
+  // the array reports kIgnoresOrder.
+  static bool ContainsArrayWithUncertainOrder(const Value& val);
 };
 
 }  // namespace zetasql

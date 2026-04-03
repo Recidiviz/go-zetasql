@@ -4,10 +4,11 @@ package util
 #cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../
 #cgo CXXFLAGS: -I../../protobuf
+#cgo CXXFLAGS: -I../../utf8_range
 #cgo CXXFLAGS: -I../../gtest
 #cgo CXXFLAGS: -I../../icu
 #cgo CXXFLAGS: -I../../re2
-#cgo CXXFLAGS: -I../../json
+#cgo CXXFLAGS: -I${SRCDIR}/../../json
 #cgo CXXFLAGS: -I../../googleapis
 #cgo CXXFLAGS: -I../../boringssl
 #cgo CXXFLAGS: -I../../flex/src

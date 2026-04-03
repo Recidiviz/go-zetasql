@@ -330,7 +330,8 @@ void GetArrayAggregationFunctions(
   const Function::Mode SCALAR = Function::SCALAR;
 
   if (options.language_options.LanguageFeatureEnabled(
-          FEATURE_V_1_4_ARRAY_AGGREGATION_FUNCTIONS)) {
+          FEATURE_V_1_4_ARRAY_AGGREGATION_FUNCTIONS)
+  ) {
     // ARRAY_SUM follows the same input and output types mapping rule defined
     // for SUM, which implicitly coerced the following types:
     //   INT32 -> INT64, UINT32 -> UINT64, and FLOAT -> DOUBLE
@@ -437,7 +438,7 @@ void GetArrayAggregationFunctions(
 void GetArraySlicingFunctions(TypeFactory* type_factory,
                               const ZetaSQLBuiltinFunctionOptions& options,
                               NameToFunctionMap* functions) {
-  FunctionArgumentType input_array_arg(
+  FunctionArgumentType array_to_slice_arg(
       ARG_ARRAY_TYPE_ANY_1, FunctionArgumentTypeOptions().set_argument_name(
                                 "array_to_slice", kPositionalOnly));
   FunctionArgumentType start_offset_arg(
@@ -480,9 +481,117 @@ void GetArraySlicingFunctions(TypeFactory* type_factory,
     )sql";
   InsertFunction(functions, options, "array_slice", Function::SCALAR,
                  {{ARG_ARRAY_TYPE_ANY_1,
-                   {input_array_arg, start_offset_arg, end_offset_arg},
+                   {array_to_slice_arg, start_offset_arg, end_offset_arg},
                    FN_ARRAY_SLICE,
                    SetDefinitionForInlining(kArraySliceSql)}});
+
+  FunctionArgumentType input_array_arg(
+      ARG_ARRAY_TYPE_ANY_1, FunctionArgumentTypeOptions().set_argument_name(
+                                "input_array", kPositionalOnly));
+  FunctionArgumentType n_arg(
+      type_factory->get_int64(),
+      FunctionArgumentTypeOptions().set_argument_name("n", kPositionalOnly));
+
+  constexpr absl::string_view kArrayFirstNSql = R"sql(
+      CASE
+        WHEN input_array IS NULL OR n IS NULL
+          THEN NULL
+        WHEN n < 0
+          THEN
+            ERROR("The n argument to ARRAY_FIRST_N must not be negative.")
+        ELSE
+          ARRAY(
+            SELECT e
+            FROM UNNEST(input_array) AS e WITH OFFSET
+            WHERE offset < n
+            ORDER BY offset
+          )
+      END
+    )sql";
+  InsertFunction(
+      functions, options, "array_first_n", Function::SCALAR,
+      {{ARG_ARRAY_TYPE_ANY_1,
+        {input_array_arg, n_arg},
+        FN_ARRAY_FIRST_N,
+        SetDefinitionForInlining(kArrayFirstNSql, true)
+            .add_required_language_feature(FEATURE_V_1_4_FIRST_AND_LAST_N)}});
+
+  constexpr absl::string_view kArrayLastNSql = R"sql(
+      CASE
+        WHEN input_array IS NULL OR n IS NULL
+          THEN NULL
+        WHEN n < 0
+          THEN ERROR("The n argument to ARRAY_LAST_N must not be negative.")
+        ELSE
+          WITH (
+            start_offset AS ARRAY_LENGTH(input_array) - n,
+            ARRAY(
+              SELECT e
+              FROM UNNEST(input_array) AS e WITH OFFSET
+              WHERE offset >= start_offset
+              ORDER BY offset
+            )
+          )
+      END
+    )sql";
+  InsertFunction(
+      functions, options, "array_last_n", Function::SCALAR,
+      {{ARG_ARRAY_TYPE_ANY_1,
+        {input_array_arg, n_arg},
+        FN_ARRAY_LAST_N,
+        SetDefinitionForInlining(kArrayLastNSql, true)
+            .add_required_language_feature(FEATURE_V_1_4_FIRST_AND_LAST_N)}});
+
+  constexpr absl::string_view kArrayRemoveFirstNSql = R"sql(
+      CASE
+        WHEN input_array IS NULL OR n IS NULL
+          THEN NULL
+        WHEN n < 0
+          THEN ERROR(
+            "The n argument to ARRAY_REMOVE_FIRST_N must not be negative.")
+        ELSE
+          ARRAY(
+            SELECT e
+            FROM UNNEST(input_array) AS e WITH OFFSET
+            WHERE offset >= n
+            ORDER BY offset
+          )
+      END
+    )sql";
+  InsertFunction(
+      functions, options, "array_remove_first_n", Function::SCALAR,
+      {{ARG_ARRAY_TYPE_ANY_1,
+        {input_array_arg, n_arg},
+        FN_ARRAY_REMOVE_FIRST_N,
+        SetDefinitionForInlining(kArrayRemoveFirstNSql, true)
+            .add_required_language_feature(FEATURE_V_1_4_FIRST_AND_LAST_N)}});
+
+  constexpr absl::string_view kArrayRemoveLastNSql = R"sql(
+      CASE
+        WHEN input_array IS NULL OR n IS NULL
+          THEN NULL
+        WHEN n < 0
+          THEN ERROR(
+            "The n argument to ARRAY_REMOVE_LAST_N must not be negative.")
+        ELSE
+          WITH (
+            end_offset AS ARRAY_LENGTH(input_array) - n,
+            ARRAY(
+              SELECT e
+              FROM UNNEST(input_array) AS e WITH OFFSET
+              WHERE offset < end_offset
+              ORDER BY offset
+            )
+          )
+      END
+    )sql";
+  InsertFunction(
+      functions, options, "array_remove_last_n", Function::SCALAR,
+      {{ARG_ARRAY_TYPE_ANY_1,
+        {input_array_arg, n_arg},
+        FN_ARRAY_REMOVE_LAST_N,
+        SetDefinitionForInlining(kArrayRemoveLastNSql, true)
+            .add_required_language_feature(FEATURE_V_1_4_FIRST_AND_LAST_N)}});
 }
 
 absl::Status GetArrayFindFunctions(
@@ -589,7 +698,10 @@ absl::Status GetArrayFindFunctions(
         FN_ARRAY_OFFSET_LAMBDA,
         SetDefinitionForInlining(kArrayOffsetLambdaSql)
             .set_uses_operation_collation()}},
-      /*function_options=*/{}, /*types_to_insert=*/{array_find_mode_type}));
+      FunctionOptions().set_supports_safe_error_mode(
+          options.language_options.LanguageFeatureEnabled(
+              FEATURE_V_1_4_SAFE_FUNCTION_CALL_WITH_LAMBDA_ARGS)),
+      /*types_to_insert=*/{array_find_mode_type}));
 
   constexpr absl::string_view kArrayOffsetsSql = R"sql(
       IF(input_array IS NULL OR target_element IS NULL,
@@ -621,7 +733,10 @@ absl::Status GetArrayFindFunctions(
                    {input_array_arg_for_lambda_sig, lambda_arg},
                    FN_ARRAY_OFFSETS_LAMBDA,
                    SetDefinitionForInlining(kArrayOffsetsLambdaSql)
-                       .set_uses_operation_collation()}});
+                       .set_uses_operation_collation()}},
+                 FunctionOptions().set_supports_safe_error_mode(
+                     options.language_options.LanguageFeatureEnabled(
+                         FEATURE_V_1_4_SAFE_FUNCTION_CALL_WITH_LAMBDA_ARGS)));
 
   constexpr absl::string_view kArrayFindSql = R"sql(
       IF(
@@ -688,7 +803,10 @@ absl::Status GetArrayFindFunctions(
         FN_ARRAY_FIND_LAMBDA,
         SetDefinitionForInlining(kArrayFindLambdaSql)
             .set_uses_operation_collation()}},
-      /*function_options=*/{}, /*types_to_insert=*/{array_find_mode_type}));
+      FunctionOptions().set_supports_safe_error_mode(
+          options.language_options.LanguageFeatureEnabled(
+              FEATURE_V_1_4_SAFE_FUNCTION_CALL_WITH_LAMBDA_ARGS)),
+      /*types_to_insert=*/{array_find_mode_type}));
 
   constexpr absl::string_view kArrayFindAllSql = R"sql(
       IF(input_array IS NULL OR target_element IS NULL,
@@ -723,7 +841,10 @@ absl::Status GetArrayFindFunctions(
         {input_array_arg_for_lambda_sig, lambda_arg},
         FN_ARRAY_FIND_ALL_LAMBDA,
         SetDefinitionForInlining(kArrayFindAllLambdaSql)
-            .set_uses_operation_collation()}});
+            .set_uses_operation_collation()}},
+      FunctionOptions().set_supports_safe_error_mode(
+          options.language_options.LanguageFeatureEnabled(
+              FEATURE_V_1_4_SAFE_FUNCTION_CALL_WITH_LAMBDA_ARGS)));
 
   return absl::OkStatus();
 }

@@ -47,10 +47,6 @@
 #include <libgen.h> /* for XPG version of basename(3) */
 #include <string.h>
 #include <math.h>
-#include <stdlib.h>
-#if !defined(__APPLE__)
-#include <malloc.h>
-#endif
 
 #ifdef HAVE_ASSERT_H
 #include <assert.h>

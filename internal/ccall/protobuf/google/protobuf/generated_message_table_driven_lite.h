@@ -38,7 +38,6 @@
 #include <google/protobuf/inlined_string_field.h>
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/stubs/logging.h>
 #include <type_traits>
 
 
@@ -156,7 +155,8 @@ inline void ClearOneofField(const ParseTableField& field, Arena* arena,
 
     case WireFormatLite::TYPE_STRING:
     case WireFormatLite::TYPE_BYTES:
-      Raw<ArenaStringPtr>(msg, field.offset)->Destroy();
+      Raw<ArenaStringPtr>(msg, field.offset)
+          ->Destroy(ArenaStringPtr::EmptyDefault{}, arena);
       break;
 
     case TYPE_STRING_INLINED:
@@ -193,12 +193,10 @@ inline void ResetOneofField(const ParseTable& table, int field_number,
   *oneof_case = field_number;
 
   switch (field_type) {
-    case ProcessingType_STRING: {
-      ArenaStringPtr* p = Raw<ArenaStringPtr>(msg, offset);
-      p->Destroy();
-      p->InitExternal(static_cast<const std::string*>(default_ptr));
+    case ProcessingType_STRING:
+      Raw<ArenaStringPtr>(msg, offset)
+          ->UnsafeSetDefault(static_cast<const std::string*>(default_ptr));
       break;
-    }
     case ProcessingType_INLINED:
       new (Raw<InlinedStringField>(msg, offset))
           InlinedStringField(*static_cast<const std::string*>(default_ptr));
@@ -219,7 +217,7 @@ static inline bool HandleString(io::CodedInputStream* input, MessageLite* msg,
                                 uint32_t has_bit_index, int64_t offset,
                                 const void* default_ptr,
                                 const char* field_name) {
-  ::PROTOBUF_NAMESPACE_ID::StringPiece utf8_string_data;
+  StringPiece utf8_string_data;
 #ifdef GOOGLE_PROTOBUF_UTF8_VALIDATION_ENABLED
   constexpr bool kValidateUtf8 = is_string_type;
 #else
@@ -256,7 +254,8 @@ static inline bool HandleString(io::CodedInputStream* input, MessageLite* msg,
         case Cardinality_SINGULAR: {
           ArenaStringPtr* field = MutableField<ArenaStringPtr>(
               msg, has_bits, has_bit_index, offset);
-          std::string* value = field->Mutable(arena);
+          std::string* value = field->MutableNoCopy(
+              static_cast<const std::string*>(default_ptr), arena);
           if (PROTOBUF_PREDICT_FALSE(
                   !WireFormatLite::ReadString(input, value))) {
             return false;
@@ -273,7 +272,8 @@ static inline bool HandleString(io::CodedInputStream* input, MessageLite* msg,
         } break;
         case Cardinality_ONEOF: {
           ArenaStringPtr* field = Raw<ArenaStringPtr>(msg, offset);
-          std::string* value = field->Mutable(arena);
+          std::string* value = field->MutableNoCopy(
+              static_cast<const std::string*>(default_ptr), arena);
           if (PROTOBUF_PREDICT_FALSE(
                   !WireFormatLite::ReadString(input, value))) {
             return false;

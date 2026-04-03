@@ -60,6 +60,11 @@ class AnalyzerTestCase;
 //                      By default, we run strict mode but don't show output.
 //   parse_location_record_type - What parse location to record in Resolved AST
 //                                nodes.
+//   do_not_show_replaced_literals
+//       - The test framework assumes that if parse_location is recorded, then
+//         it should test the literal replacer. For tests that need parse
+//         locations but not literal replacement, this flag suppresses some
+//         noisy golden file output.
 //   parse_multiple - if true, use AnalyzeNextStatement to analyze a sequence
 //                    of statements from the same string.
 //   default_timezone - default timezone to use for analysis.
@@ -104,7 +109,7 @@ class AnalyzerTestCase;
 //   use_hints_allowlist
 //       - if true, fill in AllowedHintsAndOptions in AnalyzerOptions with a
 //         set of allowed hint/option names. (False by default)
-//   use_catalog
+//   use_database
 //       - must be either "SampleCatalog" (default) to use the standard catalog
 //         defined in sample_catalog.cc, or "SpecialCatalog" to use a hardcoded
 //         catalog defined in special_catalog.cc to test anonymous / duplicated
@@ -115,6 +120,10 @@ class AnalyzerTestCase;
 //   ddl_pseudo_column_mode
 //       - either "callback" or "list". Only "list" pseudo-columns are available
 //         in Java-based analyzer tests. "list" is the default.
+//   rewrite_options
+//       - A text proto string for RewriteOptions proto message, the default
+//         value is an empty RewriteOptions string. The parsed RewriteOptions
+//         is used for zetasql resolved ast rewriters.
 extern const char* const kAllowInternalError;
 extern const char* const kAllowUndeclaredParameters;
 extern const char* const kDefaultAnonKappaValue;
@@ -129,6 +138,7 @@ extern const char* const kParseMultiple;
 extern const char* const kPositionalParameters;
 extern const char* const kProductMode;
 extern const char* const kParseLocationRecordType;
+extern const char* const kDoNotShowReplacedLiterals;
 extern const char* const kCreateNewColumnForEachProjectedOutput;
 extern const char* const kRunInJava;
 extern const char* const kRunUnparser;
@@ -142,7 +152,7 @@ extern const char* const kStatementContext;
 extern const char* const kSupportedStatementKinds;
 extern const char* const kTestExtractTableNames;
 extern const char* const kUnparserPositionalParameterMode;
-extern const char* const kUseCatalog;
+extern const char* const kUseDatabase;
 extern const char* const kRunDeserializer;
 extern const char* const kUseHintsAllowlist;
 extern const char* const kUseSharedIdSequence;
@@ -158,10 +168,13 @@ extern const char* const kPrivilegeRestrictionTableNotScanned;
 extern const char* const kPreserveUnnecessaryCast;
 extern const char* const kEnableSampleAnnotation;
 extern const char* const kAdditionalAllowedAnonymizationOptions;
-extern const char* const kSuppressBuiltinFunctions;
+extern const char* const kSuppressFunctions;
 extern const char* const kOptionNamesToIgnoreInLiteralReplacement;
 extern const char* const kScrubLimitOffsetInLiteralReplacement;
 extern const char* const kAlsoShowSignatureMismatchDetails;
+extern const char* const kIdStringAllowUnicodeCharacters;
+extern const char* const kDisallowDuplicateOptions;
+extern const char* const kRewriteOptions;
 
 // set_flag
 // Causes a command line flag to be set to a particular value during the run

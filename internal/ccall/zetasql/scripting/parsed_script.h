@@ -23,6 +23,7 @@
 #include <optional>
 #include <set>
 #include <utility>
+#include <variant>
 
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parser.h"
@@ -33,6 +34,7 @@
 #include "zetasql/scripting/type_aliases.h"
 #include "zetasql/base/case.h"
 #include "absl/base/macros.h"
+#include "absl/container/btree_set.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/declare.h"
 #include "absl/status/statusor.h"
@@ -69,10 +71,10 @@ class ParsedScript {
 
   // Case-insensitive set of strings. Strings are not owned by the set.
   using StringSet =
-      std::set<absl::string_view, zetasql_base::CaseLess>;
+      absl::btree_set<absl::string_view, zetasql_base::CaseLess>;
 
   // Either a map of named parameters or the number of positional parameters.
-  using QueryParameters = std::optional<absl::variant<StringSet, int64_t>>;
+  using QueryParameters = std::optional<std::variant<StringSet, int64_t>>;
 
   // Performs preliminary analysis on the parse tree for a zetasql script
   // before execution.  Currently, this includes the following:

@@ -4,101 +4,133 @@
 #include "zetasql/public/function.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr FunctionEnums::FunctionEnums(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+template <typename>
+PROTOBUF_CONSTEXPR FunctionEnums::FunctionEnums(
+    ::_pbi::ConstantInitialized) {}
 struct FunctionEnumsDefaultTypeInternal {
-  constexpr FunctionEnumsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR FunctionEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~FunctionEnumsDefaultTypeInternal() {}
   union {
     FunctionEnums _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FunctionEnumsDefaultTypeInternal _FunctionEnums_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FunctionEnumsDefaultTypeInternal _FunctionEnums_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ffunction_2eproto[1];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[9];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::FunctionEnums, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::FunctionEnums)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FunctionEnums_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ffunction_2eproto[1];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[9];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::FunctionEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\035zetasql/public/function.proto\022\007zetasql"
-  "\"\227\006\n\rFunctionEnums\"\?\n\023ArgumentCardinalit"
-  "y\022\014\n\010REQUIRED\020\000\022\014\n\010REPEATED\020\001\022\014\n\010OPTIONA"
-  "L\020\002\"@\n\025ProcedureArgumentMode\022\013\n\007NOT_SET\020"
-  "\000\022\006\n\002IN\020\001\022\007\n\003OUT\020\002\022\t\n\005INOUT\020\003\"S\n\022WindowO"
-  "rderSupport\022\025\n\021ORDER_UNSUPPORTED\020\000\022\022\n\016OR"
-  "DER_OPTIONAL\020\001\022\022\n\016ORDER_REQUIRED\020\002\"/\n\004Mo"
-  "de\022\n\n\006SCALAR\020\001\022\r\n\tAGGREGATE\020\002\022\014\n\010ANALYTI"
-  "C\020\003\"5\n\nVolatility\022\r\n\tIMMUTABLE\020\000\022\n\n\006STAB"
-  "LE\020\001\022\014\n\010VOLATILE\020\002\"\312\001\n\027TableValuedFuncti"
-  "onType\022\013\n\007INVALID\020\000\022\033\n\027FIXED_OUTPUT_SCHE"
-  "MA_TVF\020\001\022-\n)FORWARD_INPUT_SCHEMA_TO_OUTP"
-  "UT_SCHEMA_TVF\020\002\022\025\n\021TEMPLATED_SQL_TVF\020\003\022\?"
-  "\n;FORWARD_INPUT_SCHEMA_TO_OUTPUT_SCHEMA_"
-  "WITH_APPENDED_COLUMNS\020\007\"\200\001\n\025ArgumentColl"
-  "ationMode\022\020\n\014AFFECTS_NONE\020\000\022\025\n\021AFFECTS_O"
-  "PERATION\020\001\022\027\n\023AFFECTS_PROPAGATION\020\002\022%\n!A"
-  "FFECTS_OPERATION_AND_PROPAGATION\020\003\"v\n\021Na"
-  "medArgumentKind\022#\n\037NAMED_ARGUMENT_KIND_U"
-  "NSPECIFIED\020\000\022\023\n\017POSITIONAL_ONLY\020\001\022\027\n\023POS"
-  "ITIONAL_OR_NAMED\020\002\022\016\n\nNAMED_ONLY\020\003*\210\004\n\025S"
-  "ignatureArgumentKind\022\022\n\016ARG_TYPE_FIXED\020\000"
-  "\022\022\n\016ARG_TYPE_ANY_1\020\001\022\022\n\016ARG_TYPE_ANY_2\020\002"
-  "\022\030\n\024ARG_ARRAY_TYPE_ANY_1\020\003\022\030\n\024ARG_ARRAY_"
-  "TYPE_ANY_2\020\004\022\025\n\021ARG_PROTO_MAP_ANY\020\016\022\031\n\025A"
-  "RG_PROTO_MAP_KEY_ANY\020\017\022\033\n\027ARG_PROTO_MAP_"
-  "VALUE_ANY\020\020\022\021\n\rARG_PROTO_ANY\020\005\022\022\n\016ARG_ST"
-  "RUCT_ANY\020\006\022\020\n\014ARG_ENUM_ANY\020\007\022\026\n\022ARG_TYPE"
-  "_ARBITRARY\020\010\022\025\n\021ARG_TYPE_RELATION\020\t\022\021\n\rA"
-  "RG_TYPE_VOID\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027\n\023AR"
-  "G_TYPE_CONNECTION\020\014\022\027\n\023ARG_TYPE_DESCRIPT"
-  "OR\020\r\022\023\n\017ARG_TYPE_LAMBDA\020\021\022\026\n\022ARG_RANGE_T"
-  "YPE_ANY\020\022\022B\n5__SignatureArgumentKind__sw"
-  "itch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001B&\n"
-  "\022com.google.zetasqlB\020ZetaSQLFunctions"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunction_2eproto = {
-  false, false, 1397, descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto, "zetasql/public/function.proto", 
-  &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2ffunction_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::FunctionEnums)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunction_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_FunctionEnums_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\035zetasql/public/function.proto\022\007zetasql"
+    "\"\227\006\n\rFunctionEnums\"\?\n\023ArgumentCardinalit"
+    "y\022\014\n\010REQUIRED\020\000\022\014\n\010REPEATED\020\001\022\014\n\010OPTIONA"
+    "L\020\002\"@\n\025ProcedureArgumentMode\022\013\n\007NOT_SET\020"
+    "\000\022\006\n\002IN\020\001\022\007\n\003OUT\020\002\022\t\n\005INOUT\020\003\"S\n\022WindowO"
+    "rderSupport\022\025\n\021ORDER_UNSUPPORTED\020\000\022\022\n\016OR"
+    "DER_OPTIONAL\020\001\022\022\n\016ORDER_REQUIRED\020\002\"/\n\004Mo"
+    "de\022\n\n\006SCALAR\020\001\022\r\n\tAGGREGATE\020\002\022\014\n\010ANALYTI"
+    "C\020\003\"5\n\nVolatility\022\r\n\tIMMUTABLE\020\000\022\n\n\006STAB"
+    "LE\020\001\022\014\n\010VOLATILE\020\002\"\312\001\n\027TableValuedFuncti"
+    "onType\022\013\n\007INVALID\020\000\022\033\n\027FIXED_OUTPUT_SCHE"
+    "MA_TVF\020\001\022-\n)FORWARD_INPUT_SCHEMA_TO_OUTP"
+    "UT_SCHEMA_TVF\020\002\022\025\n\021TEMPLATED_SQL_TVF\020\003\022\?"
+    "\n;FORWARD_INPUT_SCHEMA_TO_OUTPUT_SCHEMA_"
+    "WITH_APPENDED_COLUMNS\020\007\"\200\001\n\025ArgumentColl"
+    "ationMode\022\020\n\014AFFECTS_NONE\020\000\022\025\n\021AFFECTS_O"
+    "PERATION\020\001\022\027\n\023AFFECTS_PROPAGATION\020\002\022%\n!A"
+    "FFECTS_OPERATION_AND_PROPAGATION\020\003\"v\n\021Na"
+    "medArgumentKind\022#\n\037NAMED_ARGUMENT_KIND_U"
+    "NSPECIFIED\020\000\022\023\n\017POSITIONAL_ONLY\020\001\022\027\n\023POS"
+    "ITIONAL_OR_NAMED\020\002\022\016\n\nNAMED_ONLY\020\003*\237\004\n\025S"
+    "ignatureArgumentKind\022\022\n\016ARG_TYPE_FIXED\020\000"
+    "\022\022\n\016ARG_TYPE_ANY_1\020\001\022\022\n\016ARG_TYPE_ANY_2\020\002"
+    "\022\030\n\024ARG_ARRAY_TYPE_ANY_1\020\003\022\030\n\024ARG_ARRAY_"
+    "TYPE_ANY_2\020\004\022\025\n\021ARG_PROTO_MAP_ANY\020\016\022\031\n\025A"
+    "RG_PROTO_MAP_KEY_ANY\020\017\022\033\n\027ARG_PROTO_MAP_"
+    "VALUE_ANY\020\020\022\021\n\rARG_PROTO_ANY\020\005\022\022\n\016ARG_ST"
+    "RUCT_ANY\020\006\022\020\n\014ARG_ENUM_ANY\020\007\022\026\n\022ARG_TYPE"
+    "_ARBITRARY\020\010\022\025\n\021ARG_TYPE_RELATION\020\t\022\021\n\rA"
+    "RG_TYPE_VOID\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027\n\023AR"
+    "G_TYPE_CONNECTION\020\014\022\027\n\023ARG_TYPE_DESCRIPT"
+    "OR\020\r\022\023\n\017ARG_TYPE_LAMBDA\020\021\022\026\n\022ARG_RANGE_T"
+    "YPE_ANY\020\022\022\025\n\021ARG_TYPE_SEQUENCE\020\026\022B\n5__Si"
+    "gnatureArgumentKind__switch_must_have_a_"
+    "default__\020\377\377\377\377\377\377\377\377\377\001B&\n\022com.google.zetas"
+    "qlB\020ZetaSQLFunctions"
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunction_2eproto = {
+    false,
+    false,
+    1420,
+    descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto,
+    "zetasql/public/function.proto",
+    &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once,
+    nullptr,
+    0,
+    1,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2ffunction_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunction_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2ffunction_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunction_2eproto(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunction_2eproto(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_ArgumentCardinality_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
@@ -114,15 +146,18 @@ bool FunctionEnums_ArgumentCardinality_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_ArgumentCardinality FunctionEnums::REQUIRED;
 constexpr FunctionEnums_ArgumentCardinality FunctionEnums::REPEATED;
 constexpr FunctionEnums_ArgumentCardinality FunctionEnums::OPTIONAL;
 constexpr FunctionEnums_ArgumentCardinality FunctionEnums::ArgumentCardinality_MIN;
 constexpr FunctionEnums_ArgumentCardinality FunctionEnums::ArgumentCardinality_MAX;
 constexpr int FunctionEnums::ArgumentCardinality_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_ProcedureArgumentMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[1];
@@ -138,8 +173,9 @@ bool FunctionEnums_ProcedureArgumentMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_ProcedureArgumentMode FunctionEnums::NOT_SET;
 constexpr FunctionEnums_ProcedureArgumentMode FunctionEnums::IN;
 constexpr FunctionEnums_ProcedureArgumentMode FunctionEnums::OUT;
@@ -147,7 +183,9 @@ constexpr FunctionEnums_ProcedureArgumentMode FunctionEnums::INOUT;
 constexpr FunctionEnums_ProcedureArgumentMode FunctionEnums::ProcedureArgumentMode_MIN;
 constexpr FunctionEnums_ProcedureArgumentMode FunctionEnums::ProcedureArgumentMode_MAX;
 constexpr int FunctionEnums::ProcedureArgumentMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_WindowOrderSupport_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[2];
@@ -162,15 +200,18 @@ bool FunctionEnums_WindowOrderSupport_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_WindowOrderSupport FunctionEnums::ORDER_UNSUPPORTED;
 constexpr FunctionEnums_WindowOrderSupport FunctionEnums::ORDER_OPTIONAL;
 constexpr FunctionEnums_WindowOrderSupport FunctionEnums::ORDER_REQUIRED;
 constexpr FunctionEnums_WindowOrderSupport FunctionEnums::WindowOrderSupport_MIN;
 constexpr FunctionEnums_WindowOrderSupport FunctionEnums::WindowOrderSupport_MAX;
 constexpr int FunctionEnums::WindowOrderSupport_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_Mode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[3];
@@ -185,15 +226,18 @@ bool FunctionEnums_Mode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_Mode FunctionEnums::SCALAR;
 constexpr FunctionEnums_Mode FunctionEnums::AGGREGATE;
 constexpr FunctionEnums_Mode FunctionEnums::ANALYTIC;
 constexpr FunctionEnums_Mode FunctionEnums::Mode_MIN;
 constexpr FunctionEnums_Mode FunctionEnums::Mode_MAX;
 constexpr int FunctionEnums::Mode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_Volatility_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[4];
@@ -208,15 +252,18 @@ bool FunctionEnums_Volatility_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_Volatility FunctionEnums::IMMUTABLE;
 constexpr FunctionEnums_Volatility FunctionEnums::STABLE;
 constexpr FunctionEnums_Volatility FunctionEnums::VOLATILE;
 constexpr FunctionEnums_Volatility FunctionEnums::Volatility_MIN;
 constexpr FunctionEnums_Volatility FunctionEnums::Volatility_MAX;
 constexpr int FunctionEnums::Volatility_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_TableValuedFunctionType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[5];
@@ -233,8 +280,9 @@ bool FunctionEnums_TableValuedFunctionType_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_TableValuedFunctionType FunctionEnums::INVALID;
 constexpr FunctionEnums_TableValuedFunctionType FunctionEnums::FIXED_OUTPUT_SCHEMA_TVF;
 constexpr FunctionEnums_TableValuedFunctionType FunctionEnums::FORWARD_INPUT_SCHEMA_TO_OUTPUT_SCHEMA_TVF;
@@ -243,7 +291,9 @@ constexpr FunctionEnums_TableValuedFunctionType FunctionEnums::FORWARD_INPUT_SCH
 constexpr FunctionEnums_TableValuedFunctionType FunctionEnums::TableValuedFunctionType_MIN;
 constexpr FunctionEnums_TableValuedFunctionType FunctionEnums::TableValuedFunctionType_MAX;
 constexpr int FunctionEnums::TableValuedFunctionType_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_ArgumentCollationMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[6];
@@ -259,8 +309,9 @@ bool FunctionEnums_ArgumentCollationMode_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::AFFECTS_NONE;
 constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::AFFECTS_OPERATION;
 constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::AFFECTS_PROPAGATION;
@@ -268,7 +319,9 @@ constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::AFFECTS_OPERATION_A
 constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::ArgumentCollationMode_MIN;
 constexpr FunctionEnums_ArgumentCollationMode FunctionEnums::ArgumentCollationMode_MAX;
 constexpr int FunctionEnums::ArgumentCollationMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_NamedArgumentKind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[7];
@@ -284,8 +337,9 @@ bool FunctionEnums_NamedArgumentKind_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NAMED_ARGUMENT_KIND_UNSPECIFIED;
 constexpr FunctionEnums_NamedArgumentKind FunctionEnums::POSITIONAL_ONLY;
 constexpr FunctionEnums_NamedArgumentKind FunctionEnums::POSITIONAL_OR_NAMED;
@@ -293,7 +347,9 @@ constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NAMED_ONLY;
 constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NamedArgumentKind_MIN;
 constexpr FunctionEnums_NamedArgumentKind FunctionEnums::NamedArgumentKind_MAX;
 constexpr int FunctionEnums::NamedArgumentKind_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignatureArgumentKind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[8];
@@ -320,26 +376,25 @@ bool SignatureArgumentKind_IsValid(int value) {
     case 16:
     case 17:
     case 18:
+    case 22:
       return true;
     default:
       return false;
   }
 }
-
-
 // ===================================================================
 
 class FunctionEnums::_Internal {
  public:
 };
 
-FunctionEnums::FunctionEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+FunctionEnums::FunctionEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.FunctionEnums)
 }
 FunctionEnums::FunctionEnums(const FunctionEnums& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  FunctionEnums* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.FunctionEnums)
 }
@@ -361,18 +416,17 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*FunctionEnums::GetClassData() 
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FunctionEnums::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ffunction_2eproto[0]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::FunctionEnums* Arena::CreateMaybeMessage< ::zetasql::FunctionEnums >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::FunctionEnums*
+Arena::CreateMaybeMessage< ::zetasql::FunctionEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::FunctionEnums >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

@@ -227,7 +227,7 @@ class RunParserTest : public ::testing::Test {
 
   // Runs 'test_case' in multi-statement or single-statement mode depending on
   // the kParseMultiple option, and adds the outputs to 'test_outputs'.
-  void TestOneOrMulti(const std::string& test_case,
+  void TestOneOrMulti(absl::string_view test_case,
                       std::vector<std::string>* test_outputs) {
     const std::string mode = test_case_options_.GetString(kModeOption);
     if (test_case_options_.GetBool(kParseMultiple)) {
@@ -239,7 +239,7 @@ class RunParserTest : public ::testing::Test {
 
   // Runs 'test_case' in single-statement mode, in parser mode as indicated by
   // 'mode'. Adds the test outputs to 'test_outputs'.
-  void TestOne(const std::string& test_case, const std::string& mode,
+  void TestOne(absl::string_view test_case, absl::string_view mode,
                std::vector<std::string>* test_outputs) {
     std::unique_ptr<ParserOutput> parser_output;
     const ASTNode* root;
@@ -274,7 +274,7 @@ class RunParserTest : public ::testing::Test {
 
   // Runs 'test_case' in multi-statement mode, in parser mode as indicated by
   // 'mode'. Adds the test outputs to 'test_outputs'.
-  void TestMulti(const std::string& test_case, const std::string& mode,
+  void TestMulti(absl::string_view test_case, absl::string_view mode,
                  std::vector<std::string>* test_outputs) {
     ASSERT_EQ("statement", mode)
         << kParseMultiple << " only works on statements";
@@ -361,6 +361,9 @@ class RunParserTest : public ::testing::Test {
   // Given an AST, return its DebugString with some some string hacks applied
   // to make it more comparable by hiding some diffs we want to ignore.
   static std::string RedactedDebugString(const ASTNode* tree) {
+    if (tree == nullptr) {
+      return "<RedactedDebugString got NULL>";
+    }
     // Literals and identifiers may come out differently because of
     // normalization of quoting and formatting, so we erase the actual value
     // and just compare the shape of the tree for those. We also erase the
@@ -684,12 +687,12 @@ class RunParserTest : public ::testing::Test {
   }
 
   void HandleOneParseTree(
-      const std::string& test_case, const std::string& mode,
+      absl::string_view test_case, absl::string_view mode,
       const absl::Status& status, const ASTNode* parsed_root,
       const parser::ASTStatementProperties& extracted_statement_properties,
       bool is_single, std::vector<std::string>* test_outputs) {
     if (status.ok()) {
-      ZETASQL_CHECK(parsed_root != nullptr);
+      ABSL_CHECK(parsed_root != nullptr);
 
       // Check that the statement we parsed matches the statement kind we
       // extracted with ParseStatementKind.
@@ -728,7 +731,8 @@ class RunParserTest : public ::testing::Test {
 
       } else {
         out_status = MaybeUpdateErrorFromPayload(
-            ERROR_MESSAGE_MULTI_LINE_WITH_CARET, test_case, status);
+            ERROR_MESSAGE_MULTI_LINE_WITH_CARET,
+            /*keep_error_location_payload=*/false, test_case, status);
       }
       test_outputs->push_back(absl::StrCat("ERROR: ", FormatError(out_status)));
 
@@ -791,7 +795,7 @@ class RunParserTest : public ::testing::Test {
             << "\nRebuilt error: " << rebuilt_parse_status
             << "\nRebuilt query: " << rebuilt;
 
-        if (rebuilt_parse_status.ok()) {
+        if (status.ok() && rebuilt_parse_status.ok()) {
           EXPECT_EQ(RedactedDebugString(parsed_root),
                     RedactedDebugString(rebuilt_root));
         }
@@ -799,7 +803,7 @@ class RunParserTest : public ::testing::Test {
     }
   }
 
-  void TestUnparsing(absl::string_view test_case, const std::string& mode,
+  void TestUnparsing(absl::string_view test_case, absl::string_view mode,
                      const ASTNode* parsed_root, std::string* output) {
     const std::string unparsed = Unparse(parsed_root);
     if (absl::StrContains(unparsed, "<Complex nested expression truncated>")) {
@@ -843,8 +847,11 @@ class RunParserTest : public ::testing::Test {
     if (mode == "statement") {
       ZETASQL_RETURN_IF_ERROR(ParseStatement(test_case, parser_options, parser_output));
     } else if (mode == "script") {
-      ZETASQL_RETURN_IF_ERROR(ParseScript(test_case, parser_options,
-                                  ERROR_MESSAGE_WITH_PAYLOAD, parser_output));
+      ZETASQL_RETURN_IF_ERROR(ParseScript(
+          test_case, parser_options, ERROR_MESSAGE_WITH_PAYLOAD,
+          /*keep_error_location_payload=*/ERROR_MESSAGE_WITH_PAYLOAD ==
+              ErrorMessageMode::ERROR_MESSAGE_WITH_PAYLOAD,
+          parser_output));
     } else if (mode == "expression") {
       ZETASQL_ASSIGN_OR_RETURN(ParserOptions expr_parser_options, GetParserOptions());
       ZETASQL_RETURN_IF_ERROR(

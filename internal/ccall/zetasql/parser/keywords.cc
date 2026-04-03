@@ -86,7 +86,6 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"alter", KW_ALTER},
     {"analyze", KW_ANALYZE},
     {"and", KW_AND, kReserved},
-    {"anonymization", KW_ANONYMIZATION},
     {"any", KW_ANY, kReserved},
     {"approx", KW_APPROX},
     {"are", KW_ARE},
@@ -165,7 +164,6 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"files", KW_FILES},
     {"fill", KW_FILL},
     {"filter", KW_FILTER},
-    {"filter_fields", KW_FILTER_FIELDS},
     {"first", KW_FIRST},
     {"following", KW_FOLLOWING, kReserved},
     {"for", KW_FOR, kReserved},
@@ -223,6 +221,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"max", KW_MAX},
     {"merge", KW_MERGE, kReserved},
     {"message", KW_MESSAGE},
+    {"metadata", KW_METADATA},
     {"min", KW_MIN},
     {"model", KW_MODEL},
     {"module", KW_MODULE},
@@ -295,6 +294,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"select", KW_SELECT, kReserved},
     {"sequence", KW_SEQUENCE},
     {"set", KW_SET, kReserved},
+    {"sets", KW_SETS},
     {"show", KW_SHOW},
     {"simple", KW_SIMPLE},
     {"snapshot", KW_SNAPSHOT},
@@ -337,6 +337,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"using", KW_USING, kReserved},
     {"value", KW_VALUE},
     {"values", KW_VALUES},
+    {"vector", KW_VECTOR},
     {"view", KW_VIEW},
     {"views", KW_VIEWS},
     {"volatile", KW_VOLATILE},
@@ -371,18 +372,18 @@ class CaseInsensitiveAsciiAlphaTrie {
   void Insert(absl::string_view key, const ValueType* value) {
     int node_index = 0;
     for (int i = 0; i < key.size(); ++i) {
-      ZETASQL_CHECK(isalpha(key[i]) || key[i] == '_') << key;
+      ABSL_CHECK(isalpha(key[i]) || key[i] == '_') << key;
       unsigned char c = absl::ascii_toupper(key[i]) - '0';
       int next_node_index = nodes_[node_index].children[c];
       if (next_node_index == 0) {
-        ZETASQL_CHECK_LT(nodes_.size(), std::numeric_limits<uint16_t>::max());
+        ABSL_CHECK_LT(nodes_.size(), std::numeric_limits<uint16_t>::max());
         next_node_index = nodes_.size();
         nodes_[node_index].children[c] = next_node_index;
         nodes_.emplace_back();
       }
       node_index = next_node_index;
     }
-    ZETASQL_CHECK(nodes_[node_index].value == nullptr) << "Duplicate key " << key;
+    ABSL_CHECK(nodes_[node_index].value == nullptr) << "Duplicate key " << key;
     nodes_[node_index].value = value;
   }
 

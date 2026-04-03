@@ -29,6 +29,7 @@
 #include "zetasql/public/type.h"
 #include "zetasql/public/value.h"
 #include <cstdint>
+#include "absl/container/flat_hash_set.h"
 #include "absl/container/node_hash_set.h"
 #include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
@@ -65,7 +66,7 @@ absl::Status ValidateFirstColumnPrimaryKey(
            << " does not support grouping";
   }
 
-  absl::node_hash_set<Value> values_in_first_column;
+  absl::flat_hash_set<Value> values_in_first_column;
   for (int i = 0; i < array.num_elements(); i++) {
     const Value& first_column = array.element(i).field(0);
     if (first_column.is_null()) {
@@ -126,7 +127,7 @@ absl::Status EvaluationContext::VerifyNotAborted() const {
 
 void EvaluationContext::InitializeDefaultTimeZone() {
   absl::TimeZone timezone;
-  ZETASQL_CHECK(absl::LoadTimeZone("America/Los_Angeles", &timezone));
+  ABSL_CHECK(absl::LoadTimeZone("America/Los_Angeles", &timezone));
   default_timezone_ = timezone;
 }
 
@@ -186,9 +187,20 @@ static bool IsSafeModeConvertibleError(const absl::Status& status) {
 
 bool ShouldSuppressError(const absl::Status& error,
                          ResolvedFunctionCallBase::ErrorMode error_mode) {
-  ZETASQL_DCHECK(!error.ok());
+  ABSL_DCHECK(!error.ok());
   return error_mode == ResolvedFunctionCallBase::SAFE_ERROR_MODE &&
          IsSafeModeConvertibleError(error);
+}
+
+// Returns ResourceExhausted error when the statement should be aborted.
+absl::Status PeriodicallyVerifyNotAborted(EvaluationContext* context,
+                                          uint64_t num_steps) {
+  if (num_steps %
+          absl::GetFlag(FLAGS_zetasql_call_verify_not_aborted_rows_period) ==
+      0) {
+    return context->VerifyNotAborted();
+  }
+  return absl::OkStatus();
 }
 
 }  // namespace zetasql

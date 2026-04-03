@@ -58,9 +58,9 @@ namespace {
 // Populates <filter_parameters> and only includes values from <parameters> that
 // exist in <range>.
 void FilterParameters(
-    absl::variant<ParameterValueList, ParameterValueMap> parameters,
+    std::variant<ParameterValueList, ParameterValueMap> parameters,
     const ParsedScript* parsed_script, const ParseLocationRange& range,
-    absl::variant<ParameterValueList, ParameterValueMap>* filtered_parameters) {
+    std::variant<ParameterValueList, ParameterValueMap>* filtered_parameters) {
   if (std::holds_alternative<ParameterValueList>(parameters)) {
     const ParameterValueList& current_params =
         std::get<ParameterValueList>(parameters);
@@ -181,8 +181,8 @@ absl::Status StatementEvaluatorImpl::Evaluation::Evaluate(
 absl::Status StatementEvaluatorImpl::Evaluation::EvaluateInternal(
     const ScriptExecutor& script_executor, StatementEvaluatorImpl* evaluator,
     const ScriptSegment& segment) {
-  ZETASQL_CHECK(evaluator != nullptr);
-  ZETASQL_CHECK(evaluator_ == nullptr) << "StatementEvaluatorImpl::Evaluation::"
+  ABSL_CHECK(evaluator != nullptr);
+  ABSL_CHECK(evaluator_ == nullptr) << "StatementEvaluatorImpl::Evaluation::"
                                   "Evaluate() called multiple times.";
   evaluator_ = evaluator;
   AnalyzerOptions analyzer_options = evaluator->initial_analyzer_options_;
@@ -219,7 +219,7 @@ absl::Status StatementEvaluatorImpl::Evaluation::EvaluateInternal(
   EvaluatorOptions evaluator_options = evaluator_->options();
   evaluator_options.default_time_zone = analyzer_options.default_time_zone();
 
-  absl::variant<ParameterValueList, ParameterValueMap> filtered_parameters;
+  std::variant<ParameterValueList, ParameterValueMap> filtered_parameters;
   FilterParameters(script_executor.GetCurrentParameterValues().value_or(
                        evaluator->parameters()),
                    script_executor.GetCurrentStackFrame()->parsed_script(),
@@ -296,7 +296,7 @@ absl::StatusOr<Value> IteratorToValue(TypeFactory* type_factory,
   std::vector<Value> values;
   while (iterator->NextRow()) {
     if (is_value_table) {
-      ZETASQL_CHECK_EQ(iterator->NumColumns(), 1);
+      ABSL_CHECK_EQ(iterator->NumColumns(), 1);
       values.push_back(iterator->GetValue(0));
       ZETASQL_RET_CHECK(iterator->GetValue(0).is_valid());
     } else {
@@ -423,7 +423,7 @@ absl::Status StatementEvaluatorImpl::ExpressionEvaluation::EvaluateImpl(
     absl::string_view sql, const AnalyzerOptions& analyzer_options,
     Catalog* catalog, const EvaluatorOptions& evaluator_options,
     const SystemVariableValuesMap& system_variables,
-    absl::variant<ParameterValueList, ParameterValueMap> parameters) {
+    std::variant<ParameterValueList, ParameterValueMap> parameters) {
   ZETASQL_RETURN_IF_ERROR(AnalyzeExpressionForAssignmentToType(
       sql, analyzer_options, catalog, type_factory(), target_type_,
       &analyzer_output_));
@@ -447,7 +447,7 @@ absl::Status StatementEvaluatorImpl::StatementEvaluation::EvaluateImpl(
     absl::string_view sql, const AnalyzerOptions& analyzer_options,
     Catalog* catalog, const EvaluatorOptions& evaluator_options,
     const SystemVariableValuesMap& system_variables,
-    absl::variant<ParameterValueList, ParameterValueMap> parameters) {
+    std::variant<ParameterValueList, ParameterValueMap> parameters) {
   ZETASQL_RETURN_IF_ERROR(Analyze(sql, analyzer_options, catalog));
 
   // Use PreparedQuery to evaluate query statements to minimize dependencies on

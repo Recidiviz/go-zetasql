@@ -128,7 +128,7 @@ class FunctionArgumentTypeOptions {
   }
 
   const TVFRelation& relation_input_schema() const {
-    ZETASQL_DCHECK(has_relation_input_schema());
+    ABSL_DCHECK(has_relation_input_schema());
     return *relation_input_schema_;
   }
 
@@ -137,7 +137,7 @@ class FunctionArgumentTypeOptions {
   }
   bool has_argument_name() const { return !argument_name_.empty(); }
   const std::string& argument_name() const {
-    ZETASQL_DCHECK(has_argument_name());
+    ABSL_DCHECK(has_argument_name());
     return argument_name_;
   }
 
@@ -303,7 +303,7 @@ class FunctionArgumentTypeOptions {
   // Also note that the type of <default_value> must outlive this object as well
   // as all the FunctionSignature instances created using this object.
   FunctionArgumentTypeOptions& set_default(Value default_value) {
-    ZETASQL_DCHECK(default_value.is_valid()) << "Default value must be valid";
+    ABSL_DCHECK(default_value.is_valid()) << "Default value must be valid";
     default_ = std::move(default_value);
     return *this;
   }
@@ -560,6 +560,12 @@ class FunctionArgumentType {
       FunctionArgumentType lambda_body_type,
       FunctionArgumentTypeOptions options);
 
+  // Constructs a sequence argument type for a function. This argument will
+  // accept any sequence.
+  static FunctionArgumentType AnySequence() {
+    return FunctionArgumentType(ARG_TYPE_SEQUENCE);
+  }
+
   // Construct a relation argument type for a table-valued function.
   //
   // This argument accepts an input relation with the names of columns in
@@ -623,7 +629,7 @@ class FunctionArgumentType {
 
   // Returns information about a lambda typed function argument.
   const ArgumentTypeLambda& lambda() const {
-    ZETASQL_DCHECK(IsLambda());
+    ABSL_DCHECK(IsLambda());
     return *lambda_;
   }
 
@@ -638,6 +644,7 @@ class FunctionArgumentType {
   bool IsModel() const { return kind_ == ARG_TYPE_MODEL; }
   bool IsConnection() const { return kind_ == ARG_TYPE_CONNECTION; }
   bool IsLambda() const { return kind_ == ARG_TYPE_LAMBDA; }
+  bool IsSequence() const { return kind_ == ARG_TYPE_SEQUENCE; }
   bool IsFixedRelation() const {
     return kind_ == ARG_TYPE_RELATION &&
         options_->has_relation_input_schema();
@@ -678,7 +685,10 @@ class FunctionArgumentType {
   // This either would be a scalar short type name - DATE, INT64, BYTES etc. or
   // STRUCT, PROTO, ENUM for complex type names, or ANY when any data type is
   // allowed.
-  std::string UserFacingName(ProductMode product_mode) const;
+  // If `print_template_details` is true, template arguments ANY_1/2 are printed
+  // as T1/T2 rather than just as ANY.
+  std::string UserFacingName(ProductMode product_mode,
+                             bool print_template_details = false) const;
 
   // When printing the argument with cardinality, this enum controls whether
   // argument names are printed.
@@ -697,8 +707,11 @@ class FunctionArgumentType {
   //   - required, just argument type, e.g. INT64
   //   - optional, argument type enclosed in [], e.g. [INT64]
   //   - repeated, argument type enclosed in [] with ..., e.g. [INT64, ...]
+  // If `print_template_details` is true, template arguments ANY_1/2 are printed
+  // as T1/T2 rather than just as ANY.
   std::string UserFacingNameWithCardinality(
-      ProductMode product_mode, NamePrintingStyle print_style) const;
+      ProductMode product_mode, NamePrintingStyle print_style,
+      bool print_template_details = false) const;
 
   // Checks concrete arguments to validate the number of occurrences.
   absl::Status IsValid(ProductMode product_mode) const;
@@ -813,7 +826,7 @@ class FunctionArgumentType::ArgumentTypeLambda {
 // ## Inspecting rewrite configuration of built-in functions for an engine.
 //
 // Engine code that sets up a ZetaSQL `Catalog` typically calls
-// `GetZetaSQLFunctionsAndTypes` (found in ./builtin_function.h) to get the
+// `GetBuiltinFunctionsAndTypes` (found in ./builtin_function.h) to get the
 // function signatures for ZetaSQL core library functions. Some engines add
 // all the returned `FunctionSignature`s to the catalog, while other engines
 // filter the set to only implemented functions. Engines that filter might want
@@ -824,11 +837,11 @@ class FunctionArgumentType::ArgumentTypeLambda {
 // ```c++
 // zetasql::LanguageOptions language_opts = GetLanguageOptions();
 // zetasql::TypeFactory* type_factory = GetTypeFactory();
-// zetasql::ZetaSQLBuiltinFunctionOptions function_opts(language_opts);
 // zetasql::NameToFunctionMap function_map;
 // zetasql::NameToTypeMap types_map;
-// ZETASQL_CHECK_OK(zetasql::GetZetaSQLFunctionsAndTypes(
-//     &type_factory, function_opts, &function_map, &types_map));
+// ZETASQL_CHECK_OK(zetasql::GetBuiltinFunctionsAndTypes(
+//     zetasql::BuiltinFunctionOptions(language_opts), type_factory,
+//     function_map, types_map));
 //
 // for (const auto& [name, function] : function_map) {
 //   std::vector<zetasql::FunctionSignature> allowed_signatures;
@@ -850,15 +863,13 @@ class FunctionArgumentType::ArgumentTypeLambda {
 // ## Adjusting rewrite configuration of built-in functions for an engine.
 //
 // Engine code that sets up a ZetaSQL `Catalog` typically calls
-// `GetZetaSQLFunctionsAndTypes` (found in ./builtin_function.h) to get all
+// `GetBuiltinFunctionsAndTypes` (found in ./builtin_function.h) to get all
 // the function signatures for ZetaSQL core library functions. Some engines
 // might want to change some of the fields in `FunctionSignatureRewriteOptions`
 // to enable/disable the rewrite implementation for the function signature or to
 // change other fields in this configuration. The `FunctionSignature` API is not
 // conducive to adjusting rewrite configuration right now because it doesn't
 // have getters for mutable access.
-// TODO: Add mutable getters to enable this usecase and
-//     provide an example use here.
 class FunctionSignatureRewriteOptions {
  public:
   FunctionSignatureRewriteOptions() = default;
@@ -981,7 +992,7 @@ class FunctionSignatureOptions {
 
   // Add a LanguageFeature that must be enabled for this function to be enabled.
   // This is used only on built-in functions, and determines whether they will
-  // be loaded in GetZetaSQLFunctions.
+  // be loaded in GetBuiltinFunctionsAndTypes.
   FunctionSignatureOptions& add_required_language_feature(
       LanguageFeature feature) {
     zetasql_base::InsertIfNotPresent(&required_language_features_, feature);
@@ -1084,9 +1095,8 @@ class FunctionSignatureOptions {
   // Stores any deprecation warnings associated with the body of a SQL function.
   std::vector<FreestandingDeprecationWarning> additional_deprecation_warnings_;
 
-
   // A set of LanguageFeatures that need to be enabled for the signature to be
-  // loaded in GetZetaSQLFunctions.
+  // loaded in GetBuiltinFunctionsAndTypes.
   std::set<LanguageFeature> required_language_features_;
 
   bool is_deprecated_ = false;
@@ -1209,7 +1219,7 @@ class FunctionSignature {
   // arguments expanded.
   // Requires: HasConcreteArguments()
   int NumConcreteArguments() const {
-    ZETASQL_DCHECK(HasConcreteArguments());
+    ABSL_DCHECK(HasConcreteArguments());
     return concrete_arguments_.size();
   }
 
@@ -1218,7 +1228,7 @@ class FunctionSignature {
   // are fully expanded in a concrete signature.
   // Requires that the signature has concrete arguments.
   const FunctionArgumentType& ConcreteArgument(int concrete_idx) const {
-    ZETASQL_DCHECK(HasConcreteArguments());
+    ABSL_DCHECK(HasConcreteArguments());
     return concrete_arguments_[concrete_idx];
   }
 
@@ -1368,9 +1378,12 @@ class FunctionSignature {
   // Returns the list of arguments to be used in error messages by calling
   // FunctionArgumentType::UserFacingNameWithCardinality on each individual
   // argument of the signature.
+  // If `print_template_details` is true, template arguments ARG_ANY_1/2 are
+  // printed as T1/T2 rather than just as ANY.
   std::vector<std::string> GetArgumentsUserFacingTextWithCardinality(
       const LanguageOptions& language_options,
-      FunctionArgumentType::NamePrintingStyle print_style) const;
+      FunctionArgumentType::NamePrintingStyle print_style,
+      bool print_template_details = false) const;
 
  private:
   bool ComputeIsConcrete() const;

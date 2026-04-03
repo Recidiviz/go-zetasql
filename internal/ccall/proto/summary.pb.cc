@@ -4,503 +4,628 @@
 #include "proto/summary.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace differential_privacy {
-constexpr Summary::Summary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : data_(nullptr){}
+template <typename>
+PROTOBUF_CONSTEXPR Summary::Summary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.data_)*/nullptr} {}
 struct SummaryDefaultTypeInternal {
-  constexpr SummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR SummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~SummaryDefaultTypeInternal() {}
   union {
     Summary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SummaryDefaultTypeInternal _Summary_default_instance_;
-constexpr CountSummary::CountSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : count_(int64_t{0})
-  , epsilon_(0)
-  , delta_(0)
-  , mechanism_type_(0)
 
-  , max_partitions_contributed_(0)
-  , max_contributions_per_partition_(0){}
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SummaryDefaultTypeInternal _Summary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR CountSummary::CountSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.count_)*/ ::int64_t{0}
+
+  , /*decltype(_impl_.epsilon_)*/ 0
+
+  , /*decltype(_impl_.delta_)*/ 0
+
+  , /*decltype(_impl_.mechanism_type_)*/ 0
+
+  , /*decltype(_impl_.max_partitions_contributed_)*/ 0
+
+  , /*decltype(_impl_.max_contributions_per_partition_)*/ 0
+} {}
 struct CountSummaryDefaultTypeInternal {
-  constexpr CountSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR CountSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~CountSummaryDefaultTypeInternal() {}
   union {
     CountSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CountSummaryDefaultTypeInternal _CountSummary_default_instance_;
-constexpr BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CountSummaryDefaultTypeInternal _CountSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse(
+    ::_pbi::ConstantInitialized) {}
 struct BoundedQuantilesSummary_QuantileTreeEntry_DoNotUseDefaultTypeInternal {
-  constexpr BoundedQuantilesSummary_QuantileTreeEntry_DoNotUseDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BoundedQuantilesSummary_QuantileTreeEntry_DoNotUseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BoundedQuantilesSummary_QuantileTreeEntry_DoNotUseDefaultTypeInternal() {}
   union {
     BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BoundedQuantilesSummary_QuantileTreeEntry_DoNotUseDefaultTypeInternal _BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse_default_instance_;
-constexpr BoundedQuantilesSummary::BoundedQuantilesSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : quantile_tree_(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{})
-  , epsilon_(0)
-  , delta_(0)
-  , lower_(0)
-  , mechanism_type_(0)
 
-  , max_partitions_contributed_(0)
-  , upper_(0)
-  , max_contributions_per_partition_(0)
-  , tree_height_(0)
-  , branching_factor_(0){}
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BoundedQuantilesSummary_QuantileTreeEntry_DoNotUseDefaultTypeInternal _BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BoundedQuantilesSummary::BoundedQuantilesSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.quantile_tree_)*/{}
+  , /*decltype(_impl_.epsilon_)*/ 0
+
+  , /*decltype(_impl_.delta_)*/ 0
+
+  , /*decltype(_impl_.lower_)*/ 0
+
+  , /*decltype(_impl_.mechanism_type_)*/ 0
+
+  , /*decltype(_impl_.max_partitions_contributed_)*/ 0
+
+  , /*decltype(_impl_.upper_)*/ 0
+
+  , /*decltype(_impl_.max_contributions_per_partition_)*/ 0
+
+  , /*decltype(_impl_.tree_height_)*/ 0
+
+  , /*decltype(_impl_.branching_factor_)*/ 0
+} {}
 struct BoundedQuantilesSummaryDefaultTypeInternal {
-  constexpr BoundedQuantilesSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BoundedQuantilesSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BoundedQuantilesSummaryDefaultTypeInternal() {}
   union {
     BoundedQuantilesSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BoundedQuantilesSummaryDefaultTypeInternal _BoundedQuantilesSummary_default_instance_;
-constexpr BoundedSumSummary::BoundedSumSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : pos_sum_()
-  , neg_sum_()
-  , bounds_summary_(nullptr)
-  , partial_sum_(nullptr)
-  , epsilon_(0)
-  , delta_(0)
-  , lower_(0)
-  , mechanism_type_(0)
 
-  , max_partitions_contributed_(0)
-  , upper_(0)
-  , max_contributions_per_partition_(0){}
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BoundedQuantilesSummaryDefaultTypeInternal _BoundedQuantilesSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BoundedSumSummary::BoundedSumSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.pos_sum_)*/{}
+  , /*decltype(_impl_.neg_sum_)*/{}
+  , /*decltype(_impl_.bounds_summary_)*/nullptr
+  , /*decltype(_impl_.partial_sum_)*/nullptr
+  , /*decltype(_impl_.epsilon_)*/ 0
+
+  , /*decltype(_impl_.delta_)*/ 0
+
+  , /*decltype(_impl_.lower_)*/ 0
+
+  , /*decltype(_impl_.mechanism_type_)*/ 0
+
+  , /*decltype(_impl_.max_partitions_contributed_)*/ 0
+
+  , /*decltype(_impl_.upper_)*/ 0
+
+  , /*decltype(_impl_.max_contributions_per_partition_)*/ 0
+} {}
 struct BoundedSumSummaryDefaultTypeInternal {
-  constexpr BoundedSumSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BoundedSumSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BoundedSumSummaryDefaultTypeInternal() {}
   union {
     BoundedSumSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BoundedSumSummaryDefaultTypeInternal _BoundedSumSummary_default_instance_;
-constexpr BoundedMeanSummary::BoundedMeanSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : pos_sum_()
-  , neg_sum_()
-  , bounds_summary_(nullptr)
-  , sum_summary_(nullptr)
-  , count_summary_(nullptr)
-  , count_(int64_t{0}){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BoundedSumSummaryDefaultTypeInternal _BoundedSumSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BoundedMeanSummary::BoundedMeanSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.pos_sum_)*/{}
+  , /*decltype(_impl_.neg_sum_)*/{}
+  , /*decltype(_impl_.bounds_summary_)*/nullptr
+  , /*decltype(_impl_.sum_summary_)*/nullptr
+  , /*decltype(_impl_.count_summary_)*/nullptr
+  , /*decltype(_impl_.count_)*/ ::int64_t{0}
+} {}
 struct BoundedMeanSummaryDefaultTypeInternal {
-  constexpr BoundedMeanSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BoundedMeanSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BoundedMeanSummaryDefaultTypeInternal() {}
   union {
     BoundedMeanSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BoundedMeanSummaryDefaultTypeInternal _BoundedMeanSummary_default_instance_;
-constexpr BoundedVarianceSummary::BoundedVarianceSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : pos_sum_()
-  , neg_sum_()
-  , pos_sum_of_squares_()
-  , neg_sum_of_squares_()
-  , bounds_summary_(nullptr)
-  , sum_of_squares_summary_(nullptr)
-  , sum_summary_(nullptr)
-  , count_summary_(nullptr)
-  , count_(int64_t{0}){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BoundedMeanSummaryDefaultTypeInternal _BoundedMeanSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BoundedVarianceSummary::BoundedVarianceSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.pos_sum_)*/{}
+  , /*decltype(_impl_.neg_sum_)*/{}
+  , /*decltype(_impl_.pos_sum_of_squares_)*/ {}
+
+  , /*decltype(_impl_.neg_sum_of_squares_)*/ {}
+
+  , /*decltype(_impl_.bounds_summary_)*/nullptr
+  , /*decltype(_impl_.sum_of_squares_summary_)*/nullptr
+  , /*decltype(_impl_.sum_summary_)*/nullptr
+  , /*decltype(_impl_.count_summary_)*/nullptr
+  , /*decltype(_impl_.count_)*/ ::int64_t{0}
+} {}
 struct BoundedVarianceSummaryDefaultTypeInternal {
-  constexpr BoundedVarianceSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BoundedVarianceSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BoundedVarianceSummaryDefaultTypeInternal() {}
   union {
     BoundedVarianceSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BoundedVarianceSummaryDefaultTypeInternal _BoundedVarianceSummary_default_instance_;
-constexpr Elements::Elements(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : element_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BoundedVarianceSummaryDefaultTypeInternal _BoundedVarianceSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR Elements::Elements(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.element_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ElementsDefaultTypeInternal {
-  constexpr ElementsDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ElementsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ElementsDefaultTypeInternal() {}
   union {
     Elements _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ElementsDefaultTypeInternal _Elements_default_instance_;
-constexpr HistogramSummary::HistogramSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : bin_count_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ElementsDefaultTypeInternal _Elements_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR HistogramSummary::HistogramSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.bin_count_)*/ {}
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct HistogramSummaryDefaultTypeInternal {
-  constexpr HistogramSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR HistogramSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~HistogramSummaryDefaultTypeInternal() {}
   union {
     HistogramSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT HistogramSummaryDefaultTypeInternal _HistogramSummary_default_instance_;
-constexpr BinarySearchSummary::BinarySearchSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : input_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HistogramSummaryDefaultTypeInternal _HistogramSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR BinarySearchSummary::BinarySearchSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.input_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct BinarySearchSummaryDefaultTypeInternal {
-  constexpr BinarySearchSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR BinarySearchSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~BinarySearchSummaryDefaultTypeInternal() {}
   union {
     BinarySearchSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT BinarySearchSummaryDefaultTypeInternal _BinarySearchSummary_default_instance_;
-constexpr ApproxBoundsSummary::ApproxBoundsSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : pos_bin_count_()
-  , neg_bin_count_(){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BinarySearchSummaryDefaultTypeInternal _BinarySearchSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ApproxBoundsSummary::ApproxBoundsSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.pos_bin_count_)*/ {}
+
+  , /*decltype(_impl_.neg_bin_count_)*/ {}
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ApproxBoundsSummaryDefaultTypeInternal {
-  constexpr ApproxBoundsSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ApproxBoundsSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ApproxBoundsSummaryDefaultTypeInternal() {}
   union {
     ApproxBoundsSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ApproxBoundsSummaryDefaultTypeInternal _ApproxBoundsSummary_default_instance_;
-constexpr PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : ids_count_(int64_t{0})
-  , epsilon_(0)
-  , delta_(0)
-  , max_partitions_contributed_(0)
-  , pre_threshold_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ApproxBoundsSummaryDefaultTypeInternal _ApproxBoundsSummary_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.ids_count_)*/ ::int64_t{0}
+
+  , /*decltype(_impl_.epsilon_)*/ 0
+
+  , /*decltype(_impl_.delta_)*/ 0
+
+  , /*decltype(_impl_.max_partitions_contributed_)*/ 0
+
+  , /*decltype(_impl_.pre_threshold_)*/ 0
+} {}
 struct PreAggSelectPartitionSummaryDefaultTypeInternal {
-  constexpr PreAggSelectPartitionSummaryDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR PreAggSelectPartitionSummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~PreAggSelectPartitionSummaryDefaultTypeInternal() {}
   union {
     PreAggSelectPartitionSummary _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PreAggSelectPartitionSummaryDefaultTypeInternal _PreAggSelectPartitionSummary_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PreAggSelectPartitionSummaryDefaultTypeInternal _PreAggSelectPartitionSummary_default_instance_;
 }  // namespace differential_privacy
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_proto_2fsummary_2eproto[12];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_proto_2fsummary_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_proto_2fsummary_2eproto = nullptr;
-
-const uint32_t TableStruct_proto_2fsummary_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::Summary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::Summary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::Summary, data_),
-  0,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, count_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, epsilon_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, delta_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, mechanism_type_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, max_partitions_contributed_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, max_contributions_per_partition_),
-  0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, key_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, value_),
-  0,
-  1,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, quantile_tree_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, epsilon_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, delta_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, mechanism_type_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, lower_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, upper_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, max_partitions_contributed_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, max_contributions_per_partition_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, tree_height_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, branching_factor_),
-  ~0u,
-  0,
-  1,
-  3,
-  2,
-  5,
-  4,
-  6,
-  7,
-  8,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, pos_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, neg_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, bounds_summary_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, partial_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, epsilon_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, delta_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, mechanism_type_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, lower_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, upper_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, max_partitions_contributed_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, max_contributions_per_partition_),
-  ~0u,
-  ~0u,
-  0,
-  1,
-  2,
-  3,
-  5,
-  4,
-  7,
-  6,
-  8,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, count_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, pos_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, neg_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, bounds_summary_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, sum_summary_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, count_summary_),
-  3,
-  ~0u,
-  ~0u,
-  0,
-  1,
-  2,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, count_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, pos_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, neg_sum_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, pos_sum_of_squares_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, neg_sum_of_squares_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, bounds_summary_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, sum_of_squares_summary_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, sum_summary_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, count_summary_),
-  4,
-  ~0u,
-  ~0u,
-  ~0u,
-  ~0u,
-  0,
-  1,
-  2,
-  3,
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::Elements, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::Elements, element_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::HistogramSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::HistogramSummary, bin_count_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BinarySearchSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::BinarySearchSummary, input_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, pos_bin_count_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, neg_bin_count_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, ids_count_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, epsilon_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, delta_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, max_partitions_contributed_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, pre_threshold_),
-  0,
-  1,
-  2,
-  3,
-  4,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 7, -1, sizeof(::differential_privacy::Summary)},
-  { 8, 20, -1, sizeof(::differential_privacy::CountSummary)},
-  { 26, 34, -1, sizeof(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse)},
-  { 36, 52, -1, sizeof(::differential_privacy::BoundedQuantilesSummary)},
-  { 62, 79, -1, sizeof(::differential_privacy::BoundedSumSummary)},
-  { 90, 102, -1, sizeof(::differential_privacy::BoundedMeanSummary)},
-  { 108, 123, -1, sizeof(::differential_privacy::BoundedVarianceSummary)},
-  { 132, -1, -1, sizeof(::differential_privacy::Elements)},
-  { 139, -1, -1, sizeof(::differential_privacy::HistogramSummary)},
-  { 146, -1, -1, sizeof(::differential_privacy::BinarySearchSummary)},
-  { 153, -1, -1, sizeof(::differential_privacy::ApproxBoundsSummary)},
-  { 161, 172, -1, sizeof(::differential_privacy::PreAggSelectPartitionSummary)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_Summary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_CountSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BoundedQuantilesSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BoundedSumSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BoundedMeanSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BoundedVarianceSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_Elements_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_HistogramSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_BinarySearchSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_ApproxBoundsSummary_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::_PreAggSelectPartitionSummary_default_instance_),
+static ::_pb::Metadata file_level_metadata_proto_2fsummary_2eproto[12];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_proto_2fsummary_2eproto[1];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_proto_2fsummary_2eproto = nullptr;
+const ::uint32_t TableStruct_proto_2fsummary_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::Summary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::Summary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::Summary, _impl_.data_),
+    0,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_.count_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_.epsilon_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_.delta_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_.mechanism_type_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_.max_partitions_contributed_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::CountSummary, _impl_.max_contributions_per_partition_),
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, _has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, key_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse, value_),
+    0,
+    1,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.quantile_tree_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.epsilon_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.delta_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.mechanism_type_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.lower_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.upper_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.max_partitions_contributed_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.max_contributions_per_partition_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.tree_height_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedQuantilesSummary, _impl_.branching_factor_),
+    ~0u,
+    0,
+    1,
+    3,
+    2,
+    5,
+    4,
+    6,
+    7,
+    8,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.pos_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.neg_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.bounds_summary_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.partial_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.epsilon_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.delta_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.mechanism_type_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.lower_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.upper_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.max_partitions_contributed_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedSumSummary, _impl_.max_contributions_per_partition_),
+    ~0u,
+    ~0u,
+    0,
+    1,
+    2,
+    3,
+    5,
+    4,
+    7,
+    6,
+    8,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_.count_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_.pos_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_.neg_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_.bounds_summary_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_.sum_summary_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedMeanSummary, _impl_.count_summary_),
+    3,
+    ~0u,
+    ~0u,
+    0,
+    1,
+    2,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.count_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.pos_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.neg_sum_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.pos_sum_of_squares_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.neg_sum_of_squares_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.bounds_summary_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.sum_of_squares_summary_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.sum_summary_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BoundedVarianceSummary, _impl_.count_summary_),
+    4,
+    ~0u,
+    ~0u,
+    ~0u,
+    ~0u,
+    0,
+    1,
+    2,
+    3,
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::Elements, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::Elements, _impl_.element_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::HistogramSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::HistogramSummary, _impl_.bin_count_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BinarySearchSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::BinarySearchSummary, _impl_.input_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, _impl_.pos_bin_count_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::ApproxBoundsSummary, _impl_.neg_bin_count_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _impl_.ids_count_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _impl_.epsilon_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _impl_.delta_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _impl_.max_partitions_contributed_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::PreAggSelectPartitionSummary, _impl_.pre_threshold_),
+    0,
+    1,
+    2,
+    3,
+    4,
 };
 
-const char descriptor_table_protodef_proto_2fsummary_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\023proto/summary.proto\022\024differential_priv"
-  "acy\032\031google/protobuf/any.proto\032\020proto/da"
-  "ta.proto\"-\n\007Summary\022\"\n\004data\030\002 \001(\0132\024.goog"
-  "le.protobuf.Any\"\307\001\n\014CountSummary\022\r\n\005coun"
-  "t\030\001 \001(\003\022\017\n\007epsilon\030\003 \001(\001\022\r\n\005delta\030\004 \001(\001\022"
-  ";\n\016mechanism_type\030\005 \001(\0162#.differential_p"
-  "rivacy.MechanismType\022\"\n\032max_partitions_c"
-  "ontributed\030\006 \001(\005\022\'\n\037max_contributions_pe"
-  "r_partition\030\007 \001(\005\"\235\003\n\027BoundedQuantilesSu"
-  "mmary\022V\n\rquantile_tree\030\001 \003(\0132\?.different"
-  "ial_privacy.BoundedQuantilesSummary.Quan"
-  "tileTreeEntry\022\017\n\007epsilon\030\002 \001(\001\022\r\n\005delta\030"
-  "\003 \001(\001\022;\n\016mechanism_type\030\004 \001(\0162#.differen"
-  "tial_privacy.MechanismType\022\r\n\005lower\030\005 \001("
-  "\001\022\r\n\005upper\030\006 \001(\001\022\"\n\032max_partitions_contr"
-  "ibuted\030\007 \001(\005\022\'\n\037max_contributions_per_pa"
-  "rtition\030\010 \001(\005\022\023\n\013tree_height\030\t \001(\005\022\030\n\020br"
-  "anching_factor\030\n \001(\005\0323\n\021QuantileTreeEntr"
-  "y\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\003:\0028\001\"\270\003\n\021Bo"
-  "undedSumSummary\0220\n\007pos_sum\030\001 \003(\0132\037.diffe"
-  "rential_privacy.ValueType\0220\n\007neg_sum\030\002 \003"
-  "(\0132\037.differential_privacy.ValueType\022A\n\016b"
-  "ounds_summary\030\003 \001(\0132).differential_priva"
-  "cy.ApproxBoundsSummary\0224\n\013partial_sum\030\004 "
-  "\001(\0132\037.differential_privacy.ValueType\022\017\n\007"
-  "epsilon\030\005 \001(\001\022\r\n\005delta\030\006 \001(\001\022;\n\016mechanis"
-  "m_type\030\007 \001(\0162#.differential_privacy.Mech"
-  "anismType\022\r\n\005lower\030\010 \001(\001\022\r\n\005upper\030\t \001(\001\022"
-  "\"\n\032max_partitions_contributed\030\n \001(\005\022\'\n\037m"
-  "ax_contributions_per_partition\030\013 \001(\005\"\303\002\n"
-  "\022BoundedMeanSummary\022\r\n\005count\030\001 \001(\003\0220\n\007po"
-  "s_sum\030\002 \003(\0132\037.differential_privacy.Value"
-  "Type\0220\n\007neg_sum\030\003 \003(\0132\037.differential_pri"
-  "vacy.ValueType\022A\n\016bounds_summary\030\004 \001(\0132)"
-  ".differential_privacy.ApproxBoundsSummar"
-  "y\022<\n\013sum_summary\030\005 \001(\0132\'.differential_pr"
-  "ivacy.BoundedSumSummary\0229\n\rcount_summary"
-  "\030\006 \001(\0132\".differential_privacy.CountSumma"
-  "ry\"\310\003\n\026BoundedVarianceSummary\022\r\n\005count\030\001"
-  " \001(\003\0220\n\007pos_sum\030\002 \003(\0132\037.differential_pri"
-  "vacy.ValueType\0220\n\007neg_sum\030\003 \003(\0132\037.differ"
-  "ential_privacy.ValueType\022\032\n\022pos_sum_of_s"
-  "quares\030\004 \003(\001\022\032\n\022neg_sum_of_squares\030\005 \003(\001"
-  "\022A\n\016bounds_summary\030\006 \001(\0132).differential_"
-  "privacy.ApproxBoundsSummary\022G\n\026sum_of_sq"
-  "uares_summary\030\007 \001(\0132\'.differential_priva"
-  "cy.BoundedSumSummary\022<\n\013sum_summary\030\010 \001("
-  "\0132\'.differential_privacy.BoundedSumSumma"
-  "ry\0229\n\rcount_summary\030\t \001(\0132\".differential"
-  "_privacy.CountSummary\"\033\n\010Elements\022\017\n\007ele"
-  "ment\030\001 \003(\t\"%\n\020HistogramSummary\022\021\n\tbin_co"
-  "unt\030\001 \003(\003\"K\n\023BinarySearchSummary\022.\n\005inpu"
-  "t\030\002 \003(\0132\037.differential_privacy.ValueType"
-  "J\004\010\001\020\002\"C\n\023ApproxBoundsSummary\022\025\n\rpos_bin"
-  "_count\030\001 \003(\003\022\025\n\rneg_bin_count\030\002 \003(\003\"\214\001\n\034"
-  "PreAggSelectPartitionSummary\022\021\n\tids_coun"
-  "t\030\001 \001(\003\022\017\n\007epsilon\030\002 \001(\001\022\r\n\005delta\030\003 \001(\001\022"
-  "\"\n\032max_partitions_contributed\030\004 \001(\005\022\025\n\rp"
-  "re_threshold\030\005 \001(\005*e\n\rMechanismType\022\t\n\005E"
-  "MPTY\020\000\022\013\n\007LAPLACE\020\001\022\014\n\010GAUSSIAN\020\002\022\024\n\020DIS"
-  "CRETE_LAPLACE\020\003\022\022\n\016MECHANISM_NONE\020\005\"\004\010\004\020"
-  "\004B.\n,com.google.privacy.differentialpriv"
-  "acy.proto"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_proto_2fsummary_2eproto_deps[2] = {
-  &::descriptor_table_google_2fprotobuf_2fany_2eproto,
-  &::descriptor_table_proto_2fdata_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 9, -1, sizeof(::differential_privacy::Summary)},
+        { 10, 24, -1, sizeof(::differential_privacy::CountSummary)},
+        { 30, 40, -1, sizeof(::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse)},
+        { 42, 60, -1, sizeof(::differential_privacy::BoundedQuantilesSummary)},
+        { 70, 89, -1, sizeof(::differential_privacy::BoundedSumSummary)},
+        { 100, 114, -1, sizeof(::differential_privacy::BoundedMeanSummary)},
+        { 120, 137, -1, sizeof(::differential_privacy::BoundedVarianceSummary)},
+        { 146, -1, -1, sizeof(::differential_privacy::Elements)},
+        { 155, -1, -1, sizeof(::differential_privacy::HistogramSummary)},
+        { 164, -1, -1, sizeof(::differential_privacy::BinarySearchSummary)},
+        { 173, -1, -1, sizeof(::differential_privacy::ApproxBoundsSummary)},
+        { 183, 196, -1, sizeof(::differential_privacy::PreAggSelectPartitionSummary)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_proto_2fsummary_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_proto_2fsummary_2eproto = {
-  false, false, 2489, descriptor_table_protodef_proto_2fsummary_2eproto, "proto/summary.proto", 
-  &descriptor_table_proto_2fsummary_2eproto_once, descriptor_table_proto_2fsummary_2eproto_deps, 2, 12,
-  schemas, file_default_instances, TableStruct_proto_2fsummary_2eproto::offsets,
-  file_level_metadata_proto_2fsummary_2eproto, file_level_enum_descriptors_proto_2fsummary_2eproto, file_level_service_descriptors_proto_2fsummary_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::differential_privacy::_Summary_default_instance_._instance,
+    &::differential_privacy::_CountSummary_default_instance_._instance,
+    &::differential_privacy::_BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse_default_instance_._instance,
+    &::differential_privacy::_BoundedQuantilesSummary_default_instance_._instance,
+    &::differential_privacy::_BoundedSumSummary_default_instance_._instance,
+    &::differential_privacy::_BoundedMeanSummary_default_instance_._instance,
+    &::differential_privacy::_BoundedVarianceSummary_default_instance_._instance,
+    &::differential_privacy::_Elements_default_instance_._instance,
+    &::differential_privacy::_HistogramSummary_default_instance_._instance,
+    &::differential_privacy::_BinarySearchSummary_default_instance_._instance,
+    &::differential_privacy::_ApproxBoundsSummary_default_instance_._instance,
+    &::differential_privacy::_PreAggSelectPartitionSummary_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_proto_2fsummary_2eproto_getter() {
+const char descriptor_table_protodef_proto_2fsummary_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\023proto/summary.proto\022\024differential_priv"
+    "acy\032\031google/protobuf/any.proto\032\020proto/da"
+    "ta.proto\"-\n\007Summary\022\"\n\004data\030\002 \001(\0132\024.goog"
+    "le.protobuf.Any\"\307\001\n\014CountSummary\022\r\n\005coun"
+    "t\030\001 \001(\003\022\017\n\007epsilon\030\003 \001(\001\022\r\n\005delta\030\004 \001(\001\022"
+    ";\n\016mechanism_type\030\005 \001(\0162#.differential_p"
+    "rivacy.MechanismType\022\"\n\032max_partitions_c"
+    "ontributed\030\006 \001(\005\022\'\n\037max_contributions_pe"
+    "r_partition\030\007 \001(\005\"\235\003\n\027BoundedQuantilesSu"
+    "mmary\022V\n\rquantile_tree\030\001 \003(\0132\?.different"
+    "ial_privacy.BoundedQuantilesSummary.Quan"
+    "tileTreeEntry\022\017\n\007epsilon\030\002 \001(\001\022\r\n\005delta\030"
+    "\003 \001(\001\022;\n\016mechanism_type\030\004 \001(\0162#.differen"
+    "tial_privacy.MechanismType\022\r\n\005lower\030\005 \001("
+    "\001\022\r\n\005upper\030\006 \001(\001\022\"\n\032max_partitions_contr"
+    "ibuted\030\007 \001(\005\022\'\n\037max_contributions_per_pa"
+    "rtition\030\010 \001(\005\022\023\n\013tree_height\030\t \001(\005\022\030\n\020br"
+    "anching_factor\030\n \001(\005\0323\n\021QuantileTreeEntr"
+    "y\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\003:\0028\001\"\270\003\n\021Bo"
+    "undedSumSummary\0220\n\007pos_sum\030\001 \003(\0132\037.diffe"
+    "rential_privacy.ValueType\0220\n\007neg_sum\030\002 \003"
+    "(\0132\037.differential_privacy.ValueType\022A\n\016b"
+    "ounds_summary\030\003 \001(\0132).differential_priva"
+    "cy.ApproxBoundsSummary\0224\n\013partial_sum\030\004 "
+    "\001(\0132\037.differential_privacy.ValueType\022\017\n\007"
+    "epsilon\030\005 \001(\001\022\r\n\005delta\030\006 \001(\001\022;\n\016mechanis"
+    "m_type\030\007 \001(\0162#.differential_privacy.Mech"
+    "anismType\022\r\n\005lower\030\010 \001(\001\022\r\n\005upper\030\t \001(\001\022"
+    "\"\n\032max_partitions_contributed\030\n \001(\005\022\'\n\037m"
+    "ax_contributions_per_partition\030\013 \001(\005\"\303\002\n"
+    "\022BoundedMeanSummary\022\r\n\005count\030\001 \001(\003\0220\n\007po"
+    "s_sum\030\002 \003(\0132\037.differential_privacy.Value"
+    "Type\0220\n\007neg_sum\030\003 \003(\0132\037.differential_pri"
+    "vacy.ValueType\022A\n\016bounds_summary\030\004 \001(\0132)"
+    ".differential_privacy.ApproxBoundsSummar"
+    "y\022<\n\013sum_summary\030\005 \001(\0132\'.differential_pr"
+    "ivacy.BoundedSumSummary\0229\n\rcount_summary"
+    "\030\006 \001(\0132\".differential_privacy.CountSumma"
+    "ry\"\310\003\n\026BoundedVarianceSummary\022\r\n\005count\030\001"
+    " \001(\003\0220\n\007pos_sum\030\002 \003(\0132\037.differential_pri"
+    "vacy.ValueType\0220\n\007neg_sum\030\003 \003(\0132\037.differ"
+    "ential_privacy.ValueType\022\032\n\022pos_sum_of_s"
+    "quares\030\004 \003(\001\022\032\n\022neg_sum_of_squares\030\005 \003(\001"
+    "\022A\n\016bounds_summary\030\006 \001(\0132).differential_"
+    "privacy.ApproxBoundsSummary\022G\n\026sum_of_sq"
+    "uares_summary\030\007 \001(\0132\'.differential_priva"
+    "cy.BoundedSumSummary\022<\n\013sum_summary\030\010 \001("
+    "\0132\'.differential_privacy.BoundedSumSumma"
+    "ry\0229\n\rcount_summary\030\t \001(\0132\".differential"
+    "_privacy.CountSummary\"\033\n\010Elements\022\017\n\007ele"
+    "ment\030\001 \003(\t\"%\n\020HistogramSummary\022\021\n\tbin_co"
+    "unt\030\001 \003(\003\"K\n\023BinarySearchSummary\022.\n\005inpu"
+    "t\030\002 \003(\0132\037.differential_privacy.ValueType"
+    "J\004\010\001\020\002\"C\n\023ApproxBoundsSummary\022\025\n\rpos_bin"
+    "_count\030\001 \003(\003\022\025\n\rneg_bin_count\030\002 \003(\003\"\214\001\n\034"
+    "PreAggSelectPartitionSummary\022\021\n\tids_coun"
+    "t\030\001 \001(\003\022\017\n\007epsilon\030\002 \001(\001\022\r\n\005delta\030\003 \001(\001\022"
+    "\"\n\032max_partitions_contributed\030\004 \001(\005\022\025\n\rp"
+    "re_threshold\030\005 \001(\005*e\n\rMechanismType\022\t\n\005E"
+    "MPTY\020\000\022\013\n\007LAPLACE\020\001\022\014\n\010GAUSSIAN\020\002\022\024\n\020DIS"
+    "CRETE_LAPLACE\020\003\022\022\n\016MECHANISM_NONE\020\005\"\004\010\004\020"
+    "\004B.\n,com.google.privacy.differentialpriv"
+    "acy.proto"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_proto_2fsummary_2eproto_deps[2] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fany_2eproto,
+        &::descriptor_table_proto_2fdata_2eproto,
+};
+static ::absl::once_flag descriptor_table_proto_2fsummary_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_proto_2fsummary_2eproto = {
+    false,
+    false,
+    2489,
+    descriptor_table_protodef_proto_2fsummary_2eproto,
+    "proto/summary.proto",
+    &descriptor_table_proto_2fsummary_2eproto_once,
+    descriptor_table_proto_2fsummary_2eproto_deps,
+    2,
+    12,
+    schemas,
+    file_default_instances,
+    TableStruct_proto_2fsummary_2eproto::offsets,
+    file_level_metadata_proto_2fsummary_2eproto,
+    file_level_enum_descriptors_proto_2fsummary_2eproto,
+    file_level_service_descriptors_proto_2fsummary_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_proto_2fsummary_2eproto_getter() {
   return &descriptor_table_proto_2fsummary_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_proto_2fsummary_2eproto(&descriptor_table_proto_2fsummary_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_proto_2fsummary_2eproto(&descriptor_table_proto_2fsummary_2eproto);
 namespace differential_privacy {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MechanismType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_proto_2fsummary_2eproto);
@@ -518,13 +643,13 @@ bool MechanismType_IsValid(int value) {
       return false;
   }
 }
-
-
 // ===================================================================
 
 class Summary::_Internal {
  public:
-  using HasBits = decltype(std::declval<Summary>()._has_bits_);
+  using HasBits = decltype(std::declval<Summary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(Summary, _impl_._has_bits_);
   static const ::PROTOBUF_NAMESPACE_ID::Any& data(const Summary* msg);
   static void set_has_data(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -533,88 +658,89 @@ class Summary::_Internal {
 
 const ::PROTOBUF_NAMESPACE_ID::Any&
 Summary::_Internal::data(const Summary* msg) {
-  return *msg->data_;
+  return *msg->_impl_.data_;
 }
 void Summary::clear_data() {
-  if (data_ != nullptr) data_->Clear();
-  _has_bits_[0] &= ~0x00000001u;
+  if (_impl_.data_ != nullptr) _impl_.data_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
-Summary::Summary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+Summary::Summary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.Summary)
 }
 Summary::Summary(const Summary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  Summary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.data_){nullptr}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_data()) {
-    data_ = new ::PROTOBUF_NAMESPACE_ID::Any(*from.data_);
-  } else {
-    data_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.data_ = new ::PROTOBUF_NAMESPACE_ID::Any(*from._impl_.data_);
   }
   // @@protoc_insertion_point(copy_constructor:differential_privacy.Summary)
 }
 
-inline void Summary::SharedCtor() {
-data_ = nullptr;
+inline void Summary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.data_){nullptr}
+  };
 }
 
 Summary::~Summary() {
   // @@protoc_insertion_point(destructor:differential_privacy.Summary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void Summary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete data_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.data_;
 }
 
-void Summary::ArenaDtor(void* object) {
-  Summary* _this = reinterpret_cast< Summary* >(object);
-  (void)_this;
-}
-void Summary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void Summary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void Summary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.Summary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    GOOGLE_DCHECK(data_ != nullptr);
-    data_->Clear();
+    ABSL_DCHECK(_impl_.data_ != nullptr);
+    _impl_.data_->Clear();
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* Summary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* Summary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .google.protobuf.Any data = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_data(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -632,7 +758,7 @@ const char* Summary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -640,71 +766,67 @@ failure:
 #undef CHK_
 }
 
-uint8_t* Summary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* Summary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.Summary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .google.protobuf.Any data = 2;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::data(this), target, stream);
+      InternalWriteMessage(2, _Internal::data(this),
+        _Internal::data(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.Summary)
   return target;
 }
 
-size_t Summary::ByteSizeLong() const {
+::size_t Summary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.Summary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional .google.protobuf.Any data = 2;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *data_);
+        *_impl_.data_);
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Summary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     Summary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Summary::GetClassData() const { return &_class_data_; }
 
-void Summary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<Summary *>(to)->MergeFrom(
-      static_cast<const Summary &>(from));
-}
 
-
-void Summary::MergeFrom(const Summary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.Summary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void Summary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<Summary*>(&to_msg);
+  auto& from = static_cast<const Summary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.Summary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_data()) {
-    _internal_mutable_data()->::PROTOBUF_NAMESPACE_ID::Any::MergeFrom(from._internal_data());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_data()->::PROTOBUF_NAMESPACE_ID::Any::MergeFrom(
+        from._internal_data());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void Summary::CopyFrom(const Summary& from) {
@@ -721,21 +843,22 @@ bool Summary::IsInitialized() const {
 void Summary::InternalSwap(Summary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(data_, other->data_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.data_, other->_impl_.data_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Summary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[0]);
 }
-
 // ===================================================================
 
 class CountSummary::_Internal {
  public:
-  using HasBits = decltype(std::declval<CountSummary>()._has_bits_);
+  using HasBits = decltype(std::declval<CountSummary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(CountSummary, _impl_._has_bits_);
   static void set_has_count(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -756,133 +879,141 @@ class CountSummary::_Internal {
   }
 };
 
-CountSummary::CountSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+CountSummary::CountSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.CountSummary)
 }
 CountSummary::CountSummary(const CountSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&count_, &from.count_,
-    static_cast<size_t>(reinterpret_cast<char*>(&max_contributions_per_partition_) -
-    reinterpret_cast<char*>(&count_)) + sizeof(max_contributions_per_partition_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.CountSummary)
 }
 
-inline void CountSummary::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&count_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&max_contributions_per_partition_) -
-    reinterpret_cast<char*>(&count_)) + sizeof(max_contributions_per_partition_));
+inline void CountSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.count_) { ::int64_t{0} }
+
+    , decltype(_impl_.epsilon_) { 0 }
+
+    , decltype(_impl_.delta_) { 0 }
+
+    , decltype(_impl_.mechanism_type_) { 0 }
+
+    , decltype(_impl_.max_partitions_contributed_) { 0 }
+
+    , decltype(_impl_.max_contributions_per_partition_) { 0 }
+
+  };
 }
 
 CountSummary::~CountSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.CountSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void CountSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void CountSummary::ArenaDtor(void* object) {
-  CountSummary* _this = reinterpret_cast< CountSummary* >(object);
-  (void)_this;
-}
-void CountSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void CountSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void CountSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.CountSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000003fu) {
-    ::memset(&count_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&max_contributions_per_partition_) -
-        reinterpret_cast<char*>(&count_)) + sizeof(max_contributions_per_partition_));
+    ::memset(&_impl_.count_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.max_contributions_per_partition_) -
+        reinterpret_cast<char*>(&_impl_.count_)) + sizeof(_impl_.max_contributions_per_partition_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* CountSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* CountSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int64 count = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_count(&has_bits);
-          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double epsilon = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_epsilon(&has_bits);
-          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double delta = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 33)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 33)) {
           _Internal::set_has_delta(&has_bits);
-          delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.MechanismType mechanism_type = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-          if (PROTOBUF_PREDICT_TRUE(::differential_privacy::MechanismType_IsValid(val))) {
+          if (PROTOBUF_PREDICT_TRUE(::differential_privacy::MechanismType_IsValid(static_cast<int>(val)))) {
             _internal_set_mechanism_type(static_cast<::differential_privacy::MechanismType>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(5, val, mutable_unknown_fields());
           }
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_partitions_contributed = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
           _Internal::set_has_max_partitions_contributed(&has_bits);
-          max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_contributions_per_partition = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
           _Internal::set_has_max_contributions_per_partition(&has_bits);
-          max_contributions_per_partition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_contributions_per_partition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -900,7 +1031,7 @@ const char* CountSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -908,145 +1039,149 @@ failure:
 #undef CHK_
 }
 
-uint8_t* CountSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* CountSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.CountSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int64 count = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_count(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_count(), target);
   }
 
   // optional double epsilon = 3;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_epsilon(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_epsilon(), target);
   }
 
   // optional double delta = 4;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(4, this->_internal_delta(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        4, this->_internal_delta(), target);
   }
 
   // optional .differential_privacy.MechanismType mechanism_type = 5;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      5, this->_internal_mechanism_type(), target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        5, this->_internal_mechanism_type(), target);
   }
 
   // optional int32 max_partitions_contributed = 6;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(6, this->_internal_max_partitions_contributed(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        6, this->_internal_max_partitions_contributed(), target);
   }
 
   // optional int32 max_contributions_per_partition = 7;
   if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_max_contributions_per_partition(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        7, this->_internal_max_contributions_per_partition(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.CountSummary)
   return target;
 }
 
-size_t CountSummary::ByteSizeLong() const {
+::size_t CountSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.CountSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000003fu) {
     // optional int64 count = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_count());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_count());
     }
 
     // optional double epsilon = 3;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double delta = 4;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional .differential_privacy.MechanismType mechanism_type = 5;
     if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_mechanism_type());
+                    ::_pbi::WireFormatLite::EnumSize(this->_internal_mechanism_type());
     }
 
     // optional int32 max_partitions_contributed = 6;
     if (cached_has_bits & 0x00000010u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_partitions_contributed());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_max_partitions_contributed());
     }
 
     // optional int32 max_contributions_per_partition = 7;
     if (cached_has_bits & 0x00000020u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_contributions_per_partition());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_max_contributions_per_partition());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CountSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     CountSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CountSummary::GetClassData() const { return &_class_data_; }
 
-void CountSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<CountSummary *>(to)->MergeFrom(
-      static_cast<const CountSummary &>(from));
-}
 
-
-void CountSummary::MergeFrom(const CountSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.CountSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void CountSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<CountSummary*>(&to_msg);
+  auto& from = static_cast<const CountSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.CountSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
-      count_ = from.count_;
+      _this->_impl_.count_ = from._impl_.count_;
     }
     if (cached_has_bits & 0x00000002u) {
-      epsilon_ = from.epsilon_;
+      _this->_impl_.epsilon_ = from._impl_.epsilon_;
     }
     if (cached_has_bits & 0x00000004u) {
-      delta_ = from.delta_;
+      _this->_impl_.delta_ = from._impl_.delta_;
     }
     if (cached_has_bits & 0x00000008u) {
-      mechanism_type_ = from.mechanism_type_;
+      _this->_impl_.mechanism_type_ = from._impl_.mechanism_type_;
     }
     if (cached_has_bits & 0x00000010u) {
-      max_partitions_contributed_ = from.max_partitions_contributed_;
+      _this->_impl_.max_partitions_contributed_ = from._impl_.max_partitions_contributed_;
     }
     if (cached_has_bits & 0x00000020u) {
-      max_contributions_per_partition_ = from.max_contributions_per_partition_;
+      _this->_impl_.max_contributions_per_partition_ = from._impl_.max_contributions_per_partition_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void CountSummary::CopyFrom(const CountSummary& from) {
@@ -1063,21 +1198,20 @@ bool CountSummary::IsInitialized() const {
 void CountSummary::InternalSwap(CountSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(CountSummary, max_contributions_per_partition_)
-      + sizeof(CountSummary::max_contributions_per_partition_)
-      - PROTOBUF_FIELD_OFFSET(CountSummary, count_)>(
-          reinterpret_cast<char*>(&count_),
-          reinterpret_cast<char*>(&other->count_));
+      PROTOBUF_FIELD_OFFSET(CountSummary, _impl_.max_contributions_per_partition_)
+      + sizeof(CountSummary::_impl_.max_contributions_per_partition_)
+      - PROTOBUF_FIELD_OFFSET(CountSummary, _impl_.count_)>(
+          reinterpret_cast<char*>(&_impl_.count_),
+          reinterpret_cast<char*>(&other->_impl_.count_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CountSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[1]);
 }
-
 // ===================================================================
 
 BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse() {}
@@ -1087,16 +1221,17 @@ void BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::MergeFrom(const Bounded
   MergeFromInternal(other);
 }
 ::PROTOBUF_NAMESPACE_ID::Metadata BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[2]);
 }
-
 // ===================================================================
 
 class BoundedQuantilesSummary::_Internal {
  public:
-  using HasBits = decltype(std::declval<BoundedQuantilesSummary>()._has_bits_);
+  using HasBits = decltype(std::declval<BoundedQuantilesSummary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(BoundedQuantilesSummary, _impl_._has_bits_);
   static void set_has_epsilon(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -1126,181 +1261,222 @@ class BoundedQuantilesSummary::_Internal {
   }
 };
 
-BoundedQuantilesSummary::BoundedQuantilesSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  quantile_tree_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+BoundedQuantilesSummary::BoundedQuantilesSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.BoundedQuantilesSummary)
 }
 BoundedQuantilesSummary::BoundedQuantilesSummary(const BoundedQuantilesSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BoundedQuantilesSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_.quantile_tree_)*/{}
+    , decltype(_impl_.epsilon_) {}
+
+    , decltype(_impl_.delta_) {}
+
+    , decltype(_impl_.lower_) {}
+
+    , decltype(_impl_.mechanism_type_) {}
+
+    , decltype(_impl_.max_partitions_contributed_) {}
+
+    , decltype(_impl_.upper_) {}
+
+    , decltype(_impl_.max_contributions_per_partition_) {}
+
+    , decltype(_impl_.tree_height_) {}
+
+    , decltype(_impl_.branching_factor_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  quantile_tree_.MergeFrom(from.quantile_tree_);
-  ::memcpy(&epsilon_, &from.epsilon_,
-    static_cast<size_t>(reinterpret_cast<char*>(&branching_factor_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(branching_factor_));
+  _this->_impl_.quantile_tree_.MergeFrom(from._impl_.quantile_tree_);
+  ::memcpy(&_impl_.epsilon_, &from._impl_.epsilon_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.branching_factor_) -
+    reinterpret_cast<char*>(&_impl_.epsilon_)) + sizeof(_impl_.branching_factor_));
   // @@protoc_insertion_point(copy_constructor:differential_privacy.BoundedQuantilesSummary)
 }
 
-inline void BoundedQuantilesSummary::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&epsilon_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&branching_factor_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(branching_factor_));
+inline void BoundedQuantilesSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_.quantile_tree_)*/{::_pbi::ArenaInitialized(), arena}
+    , decltype(_impl_.epsilon_) { 0 }
+
+    , decltype(_impl_.delta_) { 0 }
+
+    , decltype(_impl_.lower_) { 0 }
+
+    , decltype(_impl_.mechanism_type_) { 0 }
+
+    , decltype(_impl_.max_partitions_contributed_) { 0 }
+
+    , decltype(_impl_.upper_) { 0 }
+
+    , decltype(_impl_.max_contributions_per_partition_) { 0 }
+
+    , decltype(_impl_.tree_height_) { 0 }
+
+    , decltype(_impl_.branching_factor_) { 0 }
+
+  };
 }
 
 BoundedQuantilesSummary::~BoundedQuantilesSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.BoundedQuantilesSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void BoundedQuantilesSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.quantile_tree_.~MapField();
 }
 
-void BoundedQuantilesSummary::ArenaDtor(void* object) {
-  BoundedQuantilesSummary* _this = reinterpret_cast< BoundedQuantilesSummary* >(object);
-  (void)_this;
-  _this->quantile_tree_. ~MapField();
-}
-inline void BoundedQuantilesSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena) {
-  if (arena != nullptr) {
-    arena->OwnCustomDestructor(this, &BoundedQuantilesSummary::ArenaDtor);
-  }
-}
 void BoundedQuantilesSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void BoundedQuantilesSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.BoundedQuantilesSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  quantile_tree_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _impl_.quantile_tree_.Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
-    ::memset(&epsilon_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&tree_height_) -
-        reinterpret_cast<char*>(&epsilon_)) + sizeof(tree_height_));
+    ::memset(&_impl_.epsilon_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.tree_height_) -
+        reinterpret_cast<char*>(&_impl_.epsilon_)) + sizeof(_impl_.tree_height_));
   }
-  branching_factor_ = 0;
-  _has_bits_.Clear();
+  _impl_.branching_factor_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* BoundedQuantilesSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* BoundedQuantilesSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // map<int32, int64> quantile_tree = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
-            ptr = ctx->ParseMessage(&quantile_tree_, ptr);
+            ptr = ctx->ParseMessage(&_impl_.quantile_tree_, ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double epsilon = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _Internal::set_has_epsilon(&has_bits);
-          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double delta = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_delta(&has_bits);
-          delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.MechanismType mechanism_type = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-          if (PROTOBUF_PREDICT_TRUE(::differential_privacy::MechanismType_IsValid(val))) {
+          if (PROTOBUF_PREDICT_TRUE(::differential_privacy::MechanismType_IsValid(static_cast<int>(val)))) {
             _internal_set_mechanism_type(static_cast<::differential_privacy::MechanismType>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(4, val, mutable_unknown_fields());
           }
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double lower = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 41)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 41)) {
           _Internal::set_has_lower(&has_bits);
-          lower_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.lower_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double upper = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 49)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 49)) {
           _Internal::set_has_upper(&has_bits);
-          upper_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.upper_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_partitions_contributed = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
           _Internal::set_has_max_partitions_contributed(&has_bits);
-          max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_contributions_per_partition = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 64)) {
           _Internal::set_has_max_contributions_per_partition(&has_bits);
-          max_contributions_per_partition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_contributions_per_partition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 tree_height = 9;
       case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 72)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 72)) {
           _Internal::set_has_tree_height(&has_bits);
-          tree_height_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.tree_height_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 branching_factor = 10;
       case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 80)) {
           _Internal::set_has_branching_factor(&has_bits);
-          branching_factor_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.branching_factor_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1318,7 +1494,7 @@ const char* BoundedQuantilesSummary::_InternalParse(const char* ptr, ::PROTOBUF_
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1326,228 +1502,222 @@ failure:
 #undef CHK_
 }
 
-uint8_t* BoundedQuantilesSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* BoundedQuantilesSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.BoundedQuantilesSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // map<int32, int64> quantile_tree = 1;
   if (!this->_internal_quantile_tree().empty()) {
-    typedef ::PROTOBUF_NAMESPACE_ID::Map< int32_t, int64_t >::const_pointer
-        ConstPtr;
-    typedef ::PROTOBUF_NAMESPACE_ID::internal::SortItem< int32_t, ConstPtr > SortItem;
-    typedef ::PROTOBUF_NAMESPACE_ID::internal::CompareByFirstField<SortItem> Less;
+    using MapType = ::_pb::Map<::int32_t, ::int64_t>;
+    using WireHelper = BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::Funcs;
+    const auto& map_field = this->_internal_quantile_tree();
 
-    if (stream->IsSerializationDeterministic() &&
-        this->_internal_quantile_tree().size() > 1) {
-      ::std::unique_ptr<SortItem[]> items(
-          new SortItem[this->_internal_quantile_tree().size()]);
-      typedef ::PROTOBUF_NAMESPACE_ID::Map< int32_t, int64_t >::size_type size_type;
-      size_type n = 0;
-      for (::PROTOBUF_NAMESPACE_ID::Map< int32_t, int64_t >::const_iterator
-          it = this->_internal_quantile_tree().begin();
-          it != this->_internal_quantile_tree().end(); ++it, ++n) {
-        items[static_cast<ptrdiff_t>(n)] = SortItem(&*it);
-      }
-      ::std::sort(&items[0], &items[static_cast<ptrdiff_t>(n)], Less());
-      for (size_type i = 0; i < n; i++) {
-        target = BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::Funcs::InternalSerialize(1, items[static_cast<ptrdiff_t>(i)].second->first, items[static_cast<ptrdiff_t>(i)].second->second, target, stream);
+    if (stream->IsSerializationDeterministic() && map_field.size() > 1) {
+      for (const auto& entry : ::_pbi::MapSorterFlat<MapType>(map_field)) {
+        target = WireHelper::InternalSerialize(1, entry.first, entry.second, target, stream);
       }
     } else {
-      for (::PROTOBUF_NAMESPACE_ID::Map< int32_t, int64_t >::const_iterator
-          it = this->_internal_quantile_tree().begin();
-          it != this->_internal_quantile_tree().end(); ++it) {
-        target = BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::Funcs::InternalSerialize(1, it->first, it->second, target, stream);
+      for (const auto& entry : map_field) {
+        target = WireHelper::InternalSerialize(1, entry.first, entry.second, target, stream);
       }
     }
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional double epsilon = 2;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_epsilon(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        2, this->_internal_epsilon(), target);
   }
 
   // optional double delta = 3;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_delta(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_delta(), target);
   }
 
   // optional .differential_privacy.MechanismType mechanism_type = 4;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      4, this->_internal_mechanism_type(), target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        4, this->_internal_mechanism_type(), target);
   }
 
   // optional double lower = 5;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(5, this->_internal_lower(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        5, this->_internal_lower(), target);
   }
 
   // optional double upper = 6;
   if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(6, this->_internal_upper(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        6, this->_internal_upper(), target);
   }
 
   // optional int32 max_partitions_contributed = 7;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_max_partitions_contributed(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        7, this->_internal_max_partitions_contributed(), target);
   }
 
   // optional int32 max_contributions_per_partition = 8;
   if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(8, this->_internal_max_contributions_per_partition(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        8, this->_internal_max_contributions_per_partition(), target);
   }
 
   // optional int32 tree_height = 9;
   if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(9, this->_internal_tree_height(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        9, this->_internal_tree_height(), target);
   }
 
   // optional int32 branching_factor = 10;
   if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(10, this->_internal_branching_factor(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        10, this->_internal_branching_factor(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.BoundedQuantilesSummary)
   return target;
 }
 
-size_t BoundedQuantilesSummary::ByteSizeLong() const {
+::size_t BoundedQuantilesSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.BoundedQuantilesSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // map<int32, int64> quantile_tree = 1;
   total_size += 1 *
       ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_quantile_tree_size());
-  for (::PROTOBUF_NAMESPACE_ID::Map< int32_t, int64_t >::const_iterator
+  for (::PROTOBUF_NAMESPACE_ID::Map< ::int32_t, ::int64_t >::const_iterator
       it = this->_internal_quantile_tree().begin();
       it != this->_internal_quantile_tree().end(); ++it) {
     total_size += BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse::Funcs::ByteSizeLong(it->first, it->second);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     // optional double epsilon = 2;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double delta = 3;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double lower = 5;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional .differential_privacy.MechanismType mechanism_type = 4;
     if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_mechanism_type());
+                    ::_pbi::WireFormatLite::EnumSize(this->_internal_mechanism_type());
     }
 
     // optional int32 max_partitions_contributed = 7;
     if (cached_has_bits & 0x00000010u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_partitions_contributed());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_max_partitions_contributed());
     }
 
     // optional double upper = 6;
     if (cached_has_bits & 0x00000020u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional int32 max_contributions_per_partition = 8;
     if (cached_has_bits & 0x00000040u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_contributions_per_partition());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_max_contributions_per_partition());
     }
 
     // optional int32 tree_height = 9;
     if (cached_has_bits & 0x00000080u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_tree_height());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_tree_height());
     }
 
   }
   // optional int32 branching_factor = 10;
   if (cached_has_bits & 0x00000100u) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_branching_factor());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_branching_factor());
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BoundedQuantilesSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     BoundedQuantilesSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BoundedQuantilesSummary::GetClassData() const { return &_class_data_; }
 
-void BoundedQuantilesSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<BoundedQuantilesSummary *>(to)->MergeFrom(
-      static_cast<const BoundedQuantilesSummary &>(from));
-}
 
-
-void BoundedQuantilesSummary::MergeFrom(const BoundedQuantilesSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedQuantilesSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void BoundedQuantilesSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BoundedQuantilesSummary*>(&to_msg);
+  auto& from = static_cast<const BoundedQuantilesSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedQuantilesSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  quantile_tree_.MergeFrom(from.quantile_tree_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_impl_.quantile_tree_.MergeFrom(from._impl_.quantile_tree_);
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
-      epsilon_ = from.epsilon_;
+      _this->_impl_.epsilon_ = from._impl_.epsilon_;
     }
     if (cached_has_bits & 0x00000002u) {
-      delta_ = from.delta_;
+      _this->_impl_.delta_ = from._impl_.delta_;
     }
     if (cached_has_bits & 0x00000004u) {
-      lower_ = from.lower_;
+      _this->_impl_.lower_ = from._impl_.lower_;
     }
     if (cached_has_bits & 0x00000008u) {
-      mechanism_type_ = from.mechanism_type_;
+      _this->_impl_.mechanism_type_ = from._impl_.mechanism_type_;
     }
     if (cached_has_bits & 0x00000010u) {
-      max_partitions_contributed_ = from.max_partitions_contributed_;
+      _this->_impl_.max_partitions_contributed_ = from._impl_.max_partitions_contributed_;
     }
     if (cached_has_bits & 0x00000020u) {
-      upper_ = from.upper_;
+      _this->_impl_.upper_ = from._impl_.upper_;
     }
     if (cached_has_bits & 0x00000040u) {
-      max_contributions_per_partition_ = from.max_contributions_per_partition_;
+      _this->_impl_.max_contributions_per_partition_ = from._impl_.max_contributions_per_partition_;
     }
     if (cached_has_bits & 0x00000080u) {
-      tree_height_ = from.tree_height_;
+      _this->_impl_.tree_height_ = from._impl_.tree_height_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
   if (cached_has_bits & 0x00000100u) {
-    _internal_set_branching_factor(from._internal_branching_factor());
+    _this->_internal_set_branching_factor(from._internal_branching_factor());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void BoundedQuantilesSummary::CopyFrom(const BoundedQuantilesSummary& from) {
@@ -1564,27 +1734,28 @@ bool BoundedQuantilesSummary::IsInitialized() const {
 void BoundedQuantilesSummary::InternalSwap(BoundedQuantilesSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  quantile_tree_.InternalSwap(&other->quantile_tree_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.quantile_tree_.InternalSwap(&other->_impl_.quantile_tree_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BoundedQuantilesSummary, branching_factor_)
-      + sizeof(BoundedQuantilesSummary::branching_factor_)
-      - PROTOBUF_FIELD_OFFSET(BoundedQuantilesSummary, epsilon_)>(
-          reinterpret_cast<char*>(&epsilon_),
-          reinterpret_cast<char*>(&other->epsilon_));
+      PROTOBUF_FIELD_OFFSET(BoundedQuantilesSummary, _impl_.branching_factor_)
+      + sizeof(BoundedQuantilesSummary::_impl_.branching_factor_)
+      - PROTOBUF_FIELD_OFFSET(BoundedQuantilesSummary, _impl_.epsilon_)>(
+          reinterpret_cast<char*>(&_impl_.epsilon_),
+          reinterpret_cast<char*>(&other->_impl_.epsilon_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BoundedQuantilesSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[3]);
 }
-
 // ===================================================================
 
 class BoundedSumSummary::_Internal {
  public:
-  using HasBits = decltype(std::declval<BoundedSumSummary>()._has_bits_);
+  using HasBits = decltype(std::declval<BoundedSumSummary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(BoundedSumSummary, _impl_._has_bits_);
   static const ::differential_privacy::ApproxBoundsSummary& bounds_summary(const BoundedSumSummary* msg);
   static void set_has_bounds_summary(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -1618,124 +1789,151 @@ class BoundedSumSummary::_Internal {
 
 const ::differential_privacy::ApproxBoundsSummary&
 BoundedSumSummary::_Internal::bounds_summary(const BoundedSumSummary* msg) {
-  return *msg->bounds_summary_;
+  return *msg->_impl_.bounds_summary_;
 }
 const ::differential_privacy::ValueType&
 BoundedSumSummary::_Internal::partial_sum(const BoundedSumSummary* msg) {
-  return *msg->partial_sum_;
+  return *msg->_impl_.partial_sum_;
 }
 void BoundedSumSummary::clear_pos_sum() {
-  pos_sum_.Clear();
+  _internal_mutable_pos_sum()->Clear();
 }
 void BoundedSumSummary::clear_neg_sum() {
-  neg_sum_.Clear();
+  _internal_mutable_neg_sum()->Clear();
 }
 void BoundedSumSummary::clear_partial_sum() {
-  if (partial_sum_ != nullptr) partial_sum_->Clear();
-  _has_bits_[0] &= ~0x00000002u;
+  if (_impl_.partial_sum_ != nullptr) _impl_.partial_sum_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
-BoundedSumSummary::BoundedSumSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  pos_sum_(arena),
-  neg_sum_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+BoundedSumSummary::BoundedSumSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.BoundedSumSummary)
 }
 BoundedSumSummary::BoundedSumSummary(const BoundedSumSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      pos_sum_(from.pos_sum_),
-      neg_sum_(from.neg_sum_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BoundedSumSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.pos_sum_){from._impl_.pos_sum_}
+    , decltype(_impl_.neg_sum_){from._impl_.neg_sum_}
+    , decltype(_impl_.bounds_summary_){nullptr}
+    , decltype(_impl_.partial_sum_){nullptr}
+    , decltype(_impl_.epsilon_) {}
+
+    , decltype(_impl_.delta_) {}
+
+    , decltype(_impl_.lower_) {}
+
+    , decltype(_impl_.mechanism_type_) {}
+
+    , decltype(_impl_.max_partitions_contributed_) {}
+
+    , decltype(_impl_.upper_) {}
+
+    , decltype(_impl_.max_contributions_per_partition_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_bounds_summary()) {
-    bounds_summary_ = new ::differential_privacy::ApproxBoundsSummary(*from.bounds_summary_);
-  } else {
-    bounds_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.bounds_summary_ = new ::differential_privacy::ApproxBoundsSummary(*from._impl_.bounds_summary_);
   }
-  if (from._internal_has_partial_sum()) {
-    partial_sum_ = new ::differential_privacy::ValueType(*from.partial_sum_);
-  } else {
-    partial_sum_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.partial_sum_ = new ::differential_privacy::ValueType(*from._impl_.partial_sum_);
   }
-  ::memcpy(&epsilon_, &from.epsilon_,
-    static_cast<size_t>(reinterpret_cast<char*>(&max_contributions_per_partition_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(max_contributions_per_partition_));
+  ::memcpy(&_impl_.epsilon_, &from._impl_.epsilon_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.max_contributions_per_partition_) -
+    reinterpret_cast<char*>(&_impl_.epsilon_)) + sizeof(_impl_.max_contributions_per_partition_));
   // @@protoc_insertion_point(copy_constructor:differential_privacy.BoundedSumSummary)
 }
 
-inline void BoundedSumSummary::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&bounds_summary_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&max_contributions_per_partition_) -
-    reinterpret_cast<char*>(&bounds_summary_)) + sizeof(max_contributions_per_partition_));
+inline void BoundedSumSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.pos_sum_){arena}
+    , decltype(_impl_.neg_sum_){arena}
+    , decltype(_impl_.bounds_summary_){nullptr}
+    , decltype(_impl_.partial_sum_){nullptr}
+    , decltype(_impl_.epsilon_) { 0 }
+
+    , decltype(_impl_.delta_) { 0 }
+
+    , decltype(_impl_.lower_) { 0 }
+
+    , decltype(_impl_.mechanism_type_) { 0 }
+
+    , decltype(_impl_.max_partitions_contributed_) { 0 }
+
+    , decltype(_impl_.upper_) { 0 }
+
+    , decltype(_impl_.max_contributions_per_partition_) { 0 }
+
+  };
 }
 
 BoundedSumSummary::~BoundedSumSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.BoundedSumSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void BoundedSumSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete bounds_summary_;
-  if (this != internal_default_instance()) delete partial_sum_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_pos_sum()->~RepeatedPtrField();
+  _internal_mutable_neg_sum()->~RepeatedPtrField();
+  if (this != internal_default_instance()) delete _impl_.bounds_summary_;
+  if (this != internal_default_instance()) delete _impl_.partial_sum_;
 }
 
-void BoundedSumSummary::ArenaDtor(void* object) {
-  BoundedSumSummary* _this = reinterpret_cast< BoundedSumSummary* >(object);
-  (void)_this;
-}
-void BoundedSumSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void BoundedSumSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void BoundedSumSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.BoundedSumSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  pos_sum_.Clear();
-  neg_sum_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_pos_sum()->Clear();
+  _internal_mutable_neg_sum()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(bounds_summary_ != nullptr);
-      bounds_summary_->Clear();
+      ABSL_DCHECK(_impl_.bounds_summary_ != nullptr);
+      _impl_.bounds_summary_->Clear();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(partial_sum_ != nullptr);
-      partial_sum_->Clear();
+      ABSL_DCHECK(_impl_.partial_sum_ != nullptr);
+      _impl_.partial_sum_->Clear();
     }
   }
   if (cached_has_bits & 0x000000fcu) {
-    ::memset(&epsilon_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&upper_) -
-        reinterpret_cast<char*>(&epsilon_)) + sizeof(upper_));
+    ::memset(&_impl_.epsilon_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.upper_) -
+        reinterpret_cast<char*>(&_impl_.epsilon_)) + sizeof(_impl_.upper_));
   }
-  max_contributions_per_partition_ = 0;
-  _has_bits_.Clear();
+  _impl_.max_contributions_per_partition_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* BoundedSumSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* BoundedSumSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated .differential_privacy.ValueType pos_sum = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1743,12 +1941,13 @@ const char* BoundedSumSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .differential_privacy.ValueType neg_sum = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1756,91 +1955,101 @@ const char* BoundedSumSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_bounds_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.ValueType partial_sum = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_partial_sum(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double epsilon = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 41)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 41)) {
           _Internal::set_has_epsilon(&has_bits);
-          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double delta = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 49)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 49)) {
           _Internal::set_has_delta(&has_bits);
-          delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.MechanismType mechanism_type = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-          if (PROTOBUF_PREDICT_TRUE(::differential_privacy::MechanismType_IsValid(val))) {
+          if (PROTOBUF_PREDICT_TRUE(::differential_privacy::MechanismType_IsValid(static_cast<int>(val)))) {
             _internal_set_mechanism_type(static_cast<::differential_privacy::MechanismType>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(7, val, mutable_unknown_fields());
           }
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double lower = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 65)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 65)) {
           _Internal::set_has_lower(&has_bits);
-          lower_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.lower_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double upper = 9;
       case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 73)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 73)) {
           _Internal::set_has_upper(&has_bits);
-          upper_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.upper_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_partitions_contributed = 10;
       case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 80)) {
           _Internal::set_has_max_partitions_contributed(&has_bits);
-          max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_contributions_per_partition = 11;
       case 11:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 88)) {
           _Internal::set_has_max_contributions_per_partition(&has_bits);
-          max_contributions_per_partition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_contributions_per_partition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1858,7 +2067,7 @@ const char* BoundedSumSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1866,227 +2075,231 @@ failure:
 #undef CHK_
 }
 
-uint8_t* BoundedSumSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* BoundedSumSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.BoundedSumSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .differential_privacy.ValueType pos_sum = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_pos_sum_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_pos_sum_size()); i < n; i++) {
+    const auto& repfield = this->_internal_pos_sum(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, this->_internal_pos_sum(i), target, stream);
+        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .differential_privacy.ValueType neg_sum = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_neg_sum_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_neg_sum_size()); i < n; i++) {
+    const auto& repfield = this->_internal_neg_sum(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_neg_sum(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 3;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        3, _Internal::bounds_summary(this), target, stream);
+      InternalWriteMessage(3, _Internal::bounds_summary(this),
+        _Internal::bounds_summary(this).GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.ValueType partial_sum = 4;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        4, _Internal::partial_sum(this), target, stream);
+      InternalWriteMessage(4, _Internal::partial_sum(this),
+        _Internal::partial_sum(this).GetCachedSize(), target, stream);
   }
 
   // optional double epsilon = 5;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(5, this->_internal_epsilon(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        5, this->_internal_epsilon(), target);
   }
 
   // optional double delta = 6;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(6, this->_internal_delta(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        6, this->_internal_delta(), target);
   }
 
   // optional .differential_privacy.MechanismType mechanism_type = 7;
   if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      7, this->_internal_mechanism_type(), target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        7, this->_internal_mechanism_type(), target);
   }
 
   // optional double lower = 8;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(8, this->_internal_lower(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        8, this->_internal_lower(), target);
   }
 
   // optional double upper = 9;
   if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(9, this->_internal_upper(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        9, this->_internal_upper(), target);
   }
 
   // optional int32 max_partitions_contributed = 10;
   if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(10, this->_internal_max_partitions_contributed(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        10, this->_internal_max_partitions_contributed(), target);
   }
 
   // optional int32 max_contributions_per_partition = 11;
   if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(11, this->_internal_max_contributions_per_partition(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        11, this->_internal_max_contributions_per_partition(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.BoundedSumSummary)
   return target;
 }
 
-size_t BoundedSumSummary::ByteSizeLong() const {
+::size_t BoundedSumSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.BoundedSumSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .differential_privacy.ValueType pos_sum = 1;
   total_size += 1UL * this->_internal_pos_sum_size();
-  for (const auto& msg : this->pos_sum_) {
+  for (const auto& msg : this->_internal_pos_sum()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .differential_privacy.ValueType neg_sum = 2;
   total_size += 1UL * this->_internal_neg_sum_size();
-  for (const auto& msg : this->neg_sum_) {
+  for (const auto& msg : this->_internal_neg_sum()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 3;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *bounds_summary_);
+          *_impl_.bounds_summary_);
     }
 
     // optional .differential_privacy.ValueType partial_sum = 4;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *partial_sum_);
+          *_impl_.partial_sum_);
     }
 
     // optional double epsilon = 5;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double delta = 6;
     if (cached_has_bits & 0x00000008u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double lower = 8;
     if (cached_has_bits & 0x00000010u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional .differential_privacy.MechanismType mechanism_type = 7;
     if (cached_has_bits & 0x00000020u) {
       total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_mechanism_type());
+                    ::_pbi::WireFormatLite::EnumSize(this->_internal_mechanism_type());
     }
 
     // optional int32 max_partitions_contributed = 10;
     if (cached_has_bits & 0x00000040u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_partitions_contributed());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_max_partitions_contributed());
     }
 
     // optional double upper = 9;
     if (cached_has_bits & 0x00000080u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
   }
   // optional int32 max_contributions_per_partition = 11;
   if (cached_has_bits & 0x00000100u) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_contributions_per_partition());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_max_contributions_per_partition());
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BoundedSumSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     BoundedSumSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BoundedSumSummary::GetClassData() const { return &_class_data_; }
 
-void BoundedSumSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<BoundedSumSummary *>(to)->MergeFrom(
-      static_cast<const BoundedSumSummary &>(from));
-}
 
-
-void BoundedSumSummary::MergeFrom(const BoundedSumSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedSumSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void BoundedSumSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BoundedSumSummary*>(&to_msg);
+  auto& from = static_cast<const BoundedSumSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedSumSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  pos_sum_.MergeFrom(from.pos_sum_);
-  neg_sum_.MergeFrom(from.neg_sum_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_pos_sum()->MergeFrom(from._internal_pos_sum());
+  _this->_internal_mutable_neg_sum()->MergeFrom(from._internal_neg_sum());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_mutable_bounds_summary()->::differential_privacy::ApproxBoundsSummary::MergeFrom(from._internal_bounds_summary());
+      _this->_internal_mutable_bounds_summary()->::differential_privacy::ApproxBoundsSummary::MergeFrom(
+          from._internal_bounds_summary());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_partial_sum()->::differential_privacy::ValueType::MergeFrom(from._internal_partial_sum());
+      _this->_internal_mutable_partial_sum()->::differential_privacy::ValueType::MergeFrom(
+          from._internal_partial_sum());
     }
     if (cached_has_bits & 0x00000004u) {
-      epsilon_ = from.epsilon_;
+      _this->_impl_.epsilon_ = from._impl_.epsilon_;
     }
     if (cached_has_bits & 0x00000008u) {
-      delta_ = from.delta_;
+      _this->_impl_.delta_ = from._impl_.delta_;
     }
     if (cached_has_bits & 0x00000010u) {
-      lower_ = from.lower_;
+      _this->_impl_.lower_ = from._impl_.lower_;
     }
     if (cached_has_bits & 0x00000020u) {
-      mechanism_type_ = from.mechanism_type_;
+      _this->_impl_.mechanism_type_ = from._impl_.mechanism_type_;
     }
     if (cached_has_bits & 0x00000040u) {
-      max_partitions_contributed_ = from.max_partitions_contributed_;
+      _this->_impl_.max_partitions_contributed_ = from._impl_.max_partitions_contributed_;
     }
     if (cached_has_bits & 0x00000080u) {
-      upper_ = from.upper_;
+      _this->_impl_.upper_ = from._impl_.upper_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
   if (cached_has_bits & 0x00000100u) {
-    _internal_set_max_contributions_per_partition(from._internal_max_contributions_per_partition());
+    _this->_internal_set_max_contributions_per_partition(from._internal_max_contributions_per_partition());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void BoundedSumSummary::CopyFrom(const BoundedSumSummary& from) {
@@ -2103,28 +2316,29 @@ bool BoundedSumSummary::IsInitialized() const {
 void BoundedSumSummary::InternalSwap(BoundedSumSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  pos_sum_.InternalSwap(&other->pos_sum_);
-  neg_sum_.InternalSwap(&other->neg_sum_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_pos_sum()->InternalSwap(other->_internal_mutable_pos_sum());
+  _internal_mutable_neg_sum()->InternalSwap(other->_internal_mutable_neg_sum());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BoundedSumSummary, max_contributions_per_partition_)
-      + sizeof(BoundedSumSummary::max_contributions_per_partition_)
-      - PROTOBUF_FIELD_OFFSET(BoundedSumSummary, bounds_summary_)>(
-          reinterpret_cast<char*>(&bounds_summary_),
-          reinterpret_cast<char*>(&other->bounds_summary_));
+      PROTOBUF_FIELD_OFFSET(BoundedSumSummary, _impl_.max_contributions_per_partition_)
+      + sizeof(BoundedSumSummary::_impl_.max_contributions_per_partition_)
+      - PROTOBUF_FIELD_OFFSET(BoundedSumSummary, _impl_.bounds_summary_)>(
+          reinterpret_cast<char*>(&_impl_.bounds_summary_),
+          reinterpret_cast<char*>(&other->_impl_.bounds_summary_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BoundedSumSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[4]);
 }
-
 // ===================================================================
 
 class BoundedMeanSummary::_Internal {
  public:
-  using HasBits = decltype(std::declval<BoundedMeanSummary>()._has_bits_);
+  using HasBits = decltype(std::declval<BoundedMeanSummary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(BoundedMeanSummary, _impl_._has_bits_);
   static void set_has_count(HasBits* has_bits) {
     (*has_bits)[0] |= 8u;
   }
@@ -2144,136 +2358,140 @@ class BoundedMeanSummary::_Internal {
 
 const ::differential_privacy::ApproxBoundsSummary&
 BoundedMeanSummary::_Internal::bounds_summary(const BoundedMeanSummary* msg) {
-  return *msg->bounds_summary_;
+  return *msg->_impl_.bounds_summary_;
 }
 const ::differential_privacy::BoundedSumSummary&
 BoundedMeanSummary::_Internal::sum_summary(const BoundedMeanSummary* msg) {
-  return *msg->sum_summary_;
+  return *msg->_impl_.sum_summary_;
 }
 const ::differential_privacy::CountSummary&
 BoundedMeanSummary::_Internal::count_summary(const BoundedMeanSummary* msg) {
-  return *msg->count_summary_;
+  return *msg->_impl_.count_summary_;
 }
 void BoundedMeanSummary::clear_pos_sum() {
-  pos_sum_.Clear();
+  _internal_mutable_pos_sum()->Clear();
 }
 void BoundedMeanSummary::clear_neg_sum() {
-  neg_sum_.Clear();
+  _internal_mutable_neg_sum()->Clear();
 }
-BoundedMeanSummary::BoundedMeanSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  pos_sum_(arena),
-  neg_sum_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+BoundedMeanSummary::BoundedMeanSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.BoundedMeanSummary)
 }
 BoundedMeanSummary::BoundedMeanSummary(const BoundedMeanSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      pos_sum_(from.pos_sum_),
-      neg_sum_(from.neg_sum_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BoundedMeanSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.pos_sum_){from._impl_.pos_sum_}
+    , decltype(_impl_.neg_sum_){from._impl_.neg_sum_}
+    , decltype(_impl_.bounds_summary_){nullptr}
+    , decltype(_impl_.sum_summary_){nullptr}
+    , decltype(_impl_.count_summary_){nullptr}
+    , decltype(_impl_.count_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_bounds_summary()) {
-    bounds_summary_ = new ::differential_privacy::ApproxBoundsSummary(*from.bounds_summary_);
-  } else {
-    bounds_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.bounds_summary_ = new ::differential_privacy::ApproxBoundsSummary(*from._impl_.bounds_summary_);
   }
-  if (from._internal_has_sum_summary()) {
-    sum_summary_ = new ::differential_privacy::BoundedSumSummary(*from.sum_summary_);
-  } else {
-    sum_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.sum_summary_ = new ::differential_privacy::BoundedSumSummary(*from._impl_.sum_summary_);
   }
-  if (from._internal_has_count_summary()) {
-    count_summary_ = new ::differential_privacy::CountSummary(*from.count_summary_);
-  } else {
-    count_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000004u) != 0) {
+    _this->_impl_.count_summary_ = new ::differential_privacy::CountSummary(*from._impl_.count_summary_);
   }
-  count_ = from.count_;
+  _this->_impl_.count_ = from._impl_.count_;
   // @@protoc_insertion_point(copy_constructor:differential_privacy.BoundedMeanSummary)
 }
 
-inline void BoundedMeanSummary::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&bounds_summary_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&count_) -
-    reinterpret_cast<char*>(&bounds_summary_)) + sizeof(count_));
+inline void BoundedMeanSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.pos_sum_){arena}
+    , decltype(_impl_.neg_sum_){arena}
+    , decltype(_impl_.bounds_summary_){nullptr}
+    , decltype(_impl_.sum_summary_){nullptr}
+    , decltype(_impl_.count_summary_){nullptr}
+    , decltype(_impl_.count_) { ::int64_t{0} }
+
+  };
 }
 
 BoundedMeanSummary::~BoundedMeanSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.BoundedMeanSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void BoundedMeanSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete bounds_summary_;
-  if (this != internal_default_instance()) delete sum_summary_;
-  if (this != internal_default_instance()) delete count_summary_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_pos_sum()->~RepeatedPtrField();
+  _internal_mutable_neg_sum()->~RepeatedPtrField();
+  if (this != internal_default_instance()) delete _impl_.bounds_summary_;
+  if (this != internal_default_instance()) delete _impl_.sum_summary_;
+  if (this != internal_default_instance()) delete _impl_.count_summary_;
 }
 
-void BoundedMeanSummary::ArenaDtor(void* object) {
-  BoundedMeanSummary* _this = reinterpret_cast< BoundedMeanSummary* >(object);
-  (void)_this;
-}
-void BoundedMeanSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void BoundedMeanSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void BoundedMeanSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.BoundedMeanSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  pos_sum_.Clear();
-  neg_sum_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_pos_sum()->Clear();
+  _internal_mutable_neg_sum()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(bounds_summary_ != nullptr);
-      bounds_summary_->Clear();
+      ABSL_DCHECK(_impl_.bounds_summary_ != nullptr);
+      _impl_.bounds_summary_->Clear();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(sum_summary_ != nullptr);
-      sum_summary_->Clear();
+      ABSL_DCHECK(_impl_.sum_summary_ != nullptr);
+      _impl_.sum_summary_->Clear();
     }
     if (cached_has_bits & 0x00000004u) {
-      GOOGLE_DCHECK(count_summary_ != nullptr);
-      count_summary_->Clear();
+      ABSL_DCHECK(_impl_.count_summary_ != nullptr);
+      _impl_.count_summary_->Clear();
     }
   }
-  count_ = int64_t{0};
-  _has_bits_.Clear();
+  _impl_.count_ = ::int64_t{0};
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* BoundedMeanSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* BoundedMeanSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int64 count = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_count(&has_bits);
-          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .differential_privacy.ValueType pos_sum = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -2281,12 +2499,13 @@ const char* BoundedMeanSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .differential_privacy.ValueType neg_sum = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -2294,32 +2513,36 @@ const char* BoundedMeanSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_bounds_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.BoundedSumSummary sum_summary = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_sum_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.CountSummary count_summary = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 50)) {
           ptr = ctx->ParseMessage(_internal_mutable_count_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -2337,7 +2560,7 @@ const char* BoundedMeanSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -2345,159 +2568,157 @@ failure:
 #undef CHK_
 }
 
-uint8_t* BoundedMeanSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* BoundedMeanSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.BoundedMeanSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int64 count = 1;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_count(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_count(), target);
   }
 
   // repeated .differential_privacy.ValueType pos_sum = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_pos_sum_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_pos_sum_size()); i < n; i++) {
+    const auto& repfield = this->_internal_pos_sum(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_pos_sum(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .differential_privacy.ValueType neg_sum = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_neg_sum_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_neg_sum_size()); i < n; i++) {
+    const auto& repfield = this->_internal_neg_sum(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(3, this->_internal_neg_sum(i), target, stream);
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 4;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        4, _Internal::bounds_summary(this), target, stream);
+      InternalWriteMessage(4, _Internal::bounds_summary(this),
+        _Internal::bounds_summary(this).GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.BoundedSumSummary sum_summary = 5;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        5, _Internal::sum_summary(this), target, stream);
+      InternalWriteMessage(5, _Internal::sum_summary(this),
+        _Internal::sum_summary(this).GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.CountSummary count_summary = 6;
   if (cached_has_bits & 0x00000004u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        6, _Internal::count_summary(this), target, stream);
+      InternalWriteMessage(6, _Internal::count_summary(this),
+        _Internal::count_summary(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.BoundedMeanSummary)
   return target;
 }
 
-size_t BoundedMeanSummary::ByteSizeLong() const {
+::size_t BoundedMeanSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.BoundedMeanSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .differential_privacy.ValueType pos_sum = 2;
   total_size += 1UL * this->_internal_pos_sum_size();
-  for (const auto& msg : this->pos_sum_) {
+  for (const auto& msg : this->_internal_pos_sum()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .differential_privacy.ValueType neg_sum = 3;
   total_size += 1UL * this->_internal_neg_sum_size();
-  for (const auto& msg : this->neg_sum_) {
+  for (const auto& msg : this->_internal_neg_sum()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 4;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *bounds_summary_);
+          *_impl_.bounds_summary_);
     }
 
     // optional .differential_privacy.BoundedSumSummary sum_summary = 5;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *sum_summary_);
+          *_impl_.sum_summary_);
     }
 
     // optional .differential_privacy.CountSummary count_summary = 6;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *count_summary_);
+          *_impl_.count_summary_);
     }
 
     // optional int64 count = 1;
     if (cached_has_bits & 0x00000008u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_count());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_count());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BoundedMeanSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     BoundedMeanSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BoundedMeanSummary::GetClassData() const { return &_class_data_; }
 
-void BoundedMeanSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<BoundedMeanSummary *>(to)->MergeFrom(
-      static_cast<const BoundedMeanSummary &>(from));
-}
 
-
-void BoundedMeanSummary::MergeFrom(const BoundedMeanSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedMeanSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void BoundedMeanSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BoundedMeanSummary*>(&to_msg);
+  auto& from = static_cast<const BoundedMeanSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedMeanSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  pos_sum_.MergeFrom(from.pos_sum_);
-  neg_sum_.MergeFrom(from.neg_sum_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_pos_sum()->MergeFrom(from._internal_pos_sum());
+  _this->_internal_mutable_neg_sum()->MergeFrom(from._internal_neg_sum());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_mutable_bounds_summary()->::differential_privacy::ApproxBoundsSummary::MergeFrom(from._internal_bounds_summary());
+      _this->_internal_mutable_bounds_summary()->::differential_privacy::ApproxBoundsSummary::MergeFrom(
+          from._internal_bounds_summary());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_sum_summary()->::differential_privacy::BoundedSumSummary::MergeFrom(from._internal_sum_summary());
+      _this->_internal_mutable_sum_summary()->::differential_privacy::BoundedSumSummary::MergeFrom(
+          from._internal_sum_summary());
     }
     if (cached_has_bits & 0x00000004u) {
-      _internal_mutable_count_summary()->::differential_privacy::CountSummary::MergeFrom(from._internal_count_summary());
+      _this->_internal_mutable_count_summary()->::differential_privacy::CountSummary::MergeFrom(
+          from._internal_count_summary());
     }
     if (cached_has_bits & 0x00000008u) {
-      count_ = from.count_;
+      _this->_impl_.count_ = from._impl_.count_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void BoundedMeanSummary::CopyFrom(const BoundedMeanSummary& from) {
@@ -2514,28 +2735,29 @@ bool BoundedMeanSummary::IsInitialized() const {
 void BoundedMeanSummary::InternalSwap(BoundedMeanSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  pos_sum_.InternalSwap(&other->pos_sum_);
-  neg_sum_.InternalSwap(&other->neg_sum_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_pos_sum()->InternalSwap(other->_internal_mutable_pos_sum());
+  _internal_mutable_neg_sum()->InternalSwap(other->_internal_mutable_neg_sum());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BoundedMeanSummary, count_)
-      + sizeof(BoundedMeanSummary::count_)
-      - PROTOBUF_FIELD_OFFSET(BoundedMeanSummary, bounds_summary_)>(
-          reinterpret_cast<char*>(&bounds_summary_),
-          reinterpret_cast<char*>(&other->bounds_summary_));
+      PROTOBUF_FIELD_OFFSET(BoundedMeanSummary, _impl_.count_)
+      + sizeof(BoundedMeanSummary::_impl_.count_)
+      - PROTOBUF_FIELD_OFFSET(BoundedMeanSummary, _impl_.bounds_summary_)>(
+          reinterpret_cast<char*>(&_impl_.bounds_summary_),
+          reinterpret_cast<char*>(&other->_impl_.bounds_summary_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BoundedMeanSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[5]);
 }
-
 // ===================================================================
 
 class BoundedVarianceSummary::_Internal {
  public:
-  using HasBits = decltype(std::declval<BoundedVarianceSummary>()._has_bits_);
+  using HasBits = decltype(std::declval<BoundedVarianceSummary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(BoundedVarianceSummary, _impl_._has_bits_);
   static void set_has_count(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
@@ -2559,156 +2781,166 @@ class BoundedVarianceSummary::_Internal {
 
 const ::differential_privacy::ApproxBoundsSummary&
 BoundedVarianceSummary::_Internal::bounds_summary(const BoundedVarianceSummary* msg) {
-  return *msg->bounds_summary_;
+  return *msg->_impl_.bounds_summary_;
 }
 const ::differential_privacy::BoundedSumSummary&
 BoundedVarianceSummary::_Internal::sum_of_squares_summary(const BoundedVarianceSummary* msg) {
-  return *msg->sum_of_squares_summary_;
+  return *msg->_impl_.sum_of_squares_summary_;
 }
 const ::differential_privacy::BoundedSumSummary&
 BoundedVarianceSummary::_Internal::sum_summary(const BoundedVarianceSummary* msg) {
-  return *msg->sum_summary_;
+  return *msg->_impl_.sum_summary_;
 }
 const ::differential_privacy::CountSummary&
 BoundedVarianceSummary::_Internal::count_summary(const BoundedVarianceSummary* msg) {
-  return *msg->count_summary_;
+  return *msg->_impl_.count_summary_;
 }
 void BoundedVarianceSummary::clear_pos_sum() {
-  pos_sum_.Clear();
+  _internal_mutable_pos_sum()->Clear();
 }
 void BoundedVarianceSummary::clear_neg_sum() {
-  neg_sum_.Clear();
+  _internal_mutable_neg_sum()->Clear();
 }
-BoundedVarianceSummary::BoundedVarianceSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  pos_sum_(arena),
-  neg_sum_(arena),
-  pos_sum_of_squares_(arena),
-  neg_sum_of_squares_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+BoundedVarianceSummary::BoundedVarianceSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.BoundedVarianceSummary)
 }
 BoundedVarianceSummary::BoundedVarianceSummary(const BoundedVarianceSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      pos_sum_(from.pos_sum_),
-      neg_sum_(from.neg_sum_),
-      pos_sum_of_squares_(from.pos_sum_of_squares_),
-      neg_sum_of_squares_(from.neg_sum_of_squares_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BoundedVarianceSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.pos_sum_){from._impl_.pos_sum_}
+    , decltype(_impl_.neg_sum_){from._impl_.neg_sum_}
+    , decltype(_impl_.pos_sum_of_squares_) { from._impl_.pos_sum_of_squares_ }
+
+    , decltype(_impl_.neg_sum_of_squares_) { from._impl_.neg_sum_of_squares_ }
+
+    , decltype(_impl_.bounds_summary_){nullptr}
+    , decltype(_impl_.sum_of_squares_summary_){nullptr}
+    , decltype(_impl_.sum_summary_){nullptr}
+    , decltype(_impl_.count_summary_){nullptr}
+    , decltype(_impl_.count_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_bounds_summary()) {
-    bounds_summary_ = new ::differential_privacy::ApproxBoundsSummary(*from.bounds_summary_);
-  } else {
-    bounds_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.bounds_summary_ = new ::differential_privacy::ApproxBoundsSummary(*from._impl_.bounds_summary_);
   }
-  if (from._internal_has_sum_of_squares_summary()) {
-    sum_of_squares_summary_ = new ::differential_privacy::BoundedSumSummary(*from.sum_of_squares_summary_);
-  } else {
-    sum_of_squares_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.sum_of_squares_summary_ = new ::differential_privacy::BoundedSumSummary(*from._impl_.sum_of_squares_summary_);
   }
-  if (from._internal_has_sum_summary()) {
-    sum_summary_ = new ::differential_privacy::BoundedSumSummary(*from.sum_summary_);
-  } else {
-    sum_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000004u) != 0) {
+    _this->_impl_.sum_summary_ = new ::differential_privacy::BoundedSumSummary(*from._impl_.sum_summary_);
   }
-  if (from._internal_has_count_summary()) {
-    count_summary_ = new ::differential_privacy::CountSummary(*from.count_summary_);
-  } else {
-    count_summary_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000008u) != 0) {
+    _this->_impl_.count_summary_ = new ::differential_privacy::CountSummary(*from._impl_.count_summary_);
   }
-  count_ = from.count_;
+  _this->_impl_.count_ = from._impl_.count_;
   // @@protoc_insertion_point(copy_constructor:differential_privacy.BoundedVarianceSummary)
 }
 
-inline void BoundedVarianceSummary::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&bounds_summary_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&count_) -
-    reinterpret_cast<char*>(&bounds_summary_)) + sizeof(count_));
+inline void BoundedVarianceSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.pos_sum_){arena}
+    , decltype(_impl_.neg_sum_){arena}
+    , decltype(_impl_.pos_sum_of_squares_) { arena }
+
+    , decltype(_impl_.neg_sum_of_squares_) { arena }
+
+    , decltype(_impl_.bounds_summary_){nullptr}
+    , decltype(_impl_.sum_of_squares_summary_){nullptr}
+    , decltype(_impl_.sum_summary_){nullptr}
+    , decltype(_impl_.count_summary_){nullptr}
+    , decltype(_impl_.count_) { ::int64_t{0} }
+
+  };
 }
 
 BoundedVarianceSummary::~BoundedVarianceSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.BoundedVarianceSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void BoundedVarianceSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete bounds_summary_;
-  if (this != internal_default_instance()) delete sum_of_squares_summary_;
-  if (this != internal_default_instance()) delete sum_summary_;
-  if (this != internal_default_instance()) delete count_summary_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_pos_sum()->~RepeatedPtrField();
+  _internal_mutable_neg_sum()->~RepeatedPtrField();
+  _impl_.pos_sum_of_squares_.~RepeatedField();
+  _impl_.neg_sum_of_squares_.~RepeatedField();
+  if (this != internal_default_instance()) delete _impl_.bounds_summary_;
+  if (this != internal_default_instance()) delete _impl_.sum_of_squares_summary_;
+  if (this != internal_default_instance()) delete _impl_.sum_summary_;
+  if (this != internal_default_instance()) delete _impl_.count_summary_;
 }
 
-void BoundedVarianceSummary::ArenaDtor(void* object) {
-  BoundedVarianceSummary* _this = reinterpret_cast< BoundedVarianceSummary* >(object);
-  (void)_this;
-}
-void BoundedVarianceSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void BoundedVarianceSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void BoundedVarianceSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.BoundedVarianceSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  pos_sum_.Clear();
-  neg_sum_.Clear();
-  pos_sum_of_squares_.Clear();
-  neg_sum_of_squares_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_pos_sum()->Clear();
+  _internal_mutable_neg_sum()->Clear();
+  _internal_mutable_pos_sum_of_squares()->Clear();
+  _internal_mutable_neg_sum_of_squares()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(bounds_summary_ != nullptr);
-      bounds_summary_->Clear();
+      ABSL_DCHECK(_impl_.bounds_summary_ != nullptr);
+      _impl_.bounds_summary_->Clear();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(sum_of_squares_summary_ != nullptr);
-      sum_of_squares_summary_->Clear();
+      ABSL_DCHECK(_impl_.sum_of_squares_summary_ != nullptr);
+      _impl_.sum_of_squares_summary_->Clear();
     }
     if (cached_has_bits & 0x00000004u) {
-      GOOGLE_DCHECK(sum_summary_ != nullptr);
-      sum_summary_->Clear();
+      ABSL_DCHECK(_impl_.sum_summary_ != nullptr);
+      _impl_.sum_summary_->Clear();
     }
     if (cached_has_bits & 0x00000008u) {
-      GOOGLE_DCHECK(count_summary_ != nullptr);
-      count_summary_->Clear();
+      ABSL_DCHECK(_impl_.count_summary_ != nullptr);
+      _impl_.count_summary_->Clear();
     }
   }
-  count_ = int64_t{0};
-  _has_bits_.Clear();
+  _impl_.count_ = ::int64_t{0};
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int64 count = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_count(&has_bits);
-          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .differential_privacy.ValueType pos_sum = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -2716,12 +2948,13 @@ const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::PROTOBUF_N
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .differential_privacy.ValueType neg_sum = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -2729,12 +2962,13 @@ const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::PROTOBUF_N
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated double pos_sum_of_squares = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 33)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 33)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -2742,15 +2976,16 @@ const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::PROTOBUF_N
             ptr += sizeof(double);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<33>(ptr));
-        } else if (static_cast<uint8_t>(tag) == 34) {
+        } else if (static_cast<::uint8_t>(tag) == 34) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_pos_sum_of_squares(), ptr, ctx);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated double neg_sum_of_squares = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 41)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 41)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -2758,43 +2993,48 @@ const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::PROTOBUF_N
             ptr += sizeof(double);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<41>(ptr));
-        } else if (static_cast<uint8_t>(tag) == 42) {
+        } else if (static_cast<::uint8_t>(tag) == 42) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_neg_sum_of_squares(), ptr, ctx);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 50)) {
           ptr = ctx->ParseMessage(_internal_mutable_bounds_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.BoundedSumSummary sum_of_squares_summary = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 58)) {
           ptr = ctx->ParseMessage(_internal_mutable_sum_of_squares_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.BoundedSumSummary sum_summary = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 66)) {
           ptr = ctx->ParseMessage(_internal_mutable_sum_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .differential_privacy.CountSummary count_summary = 9;
       case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 74)) {
           ptr = ctx->ParseMessage(_internal_mutable_count_summary(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -2812,7 +3052,7 @@ const char* BoundedVarianceSummary::_InternalParse(const char* ptr, ::PROTOBUF_N
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -2820,209 +3060,213 @@ failure:
 #undef CHK_
 }
 
-uint8_t* BoundedVarianceSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* BoundedVarianceSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.BoundedVarianceSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int64 count = 1;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_count(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_count(), target);
   }
 
   // repeated .differential_privacy.ValueType pos_sum = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_pos_sum_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_pos_sum_size()); i < n; i++) {
+    const auto& repfield = this->_internal_pos_sum(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_pos_sum(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .differential_privacy.ValueType neg_sum = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_neg_sum_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_neg_sum_size()); i < n; i++) {
+    const auto& repfield = this->_internal_neg_sum(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(3, this->_internal_neg_sum(i), target, stream);
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated double pos_sum_of_squares = 4;
-  for (int i = 0, n = this->_internal_pos_sum_of_squares_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_pos_sum_of_squares_size(); i < n; ++i) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(4, this->_internal_pos_sum_of_squares(i), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        4, this->_internal_pos_sum_of_squares(i), target);
   }
 
   // repeated double neg_sum_of_squares = 5;
-  for (int i = 0, n = this->_internal_neg_sum_of_squares_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_neg_sum_of_squares_size(); i < n; ++i) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(5, this->_internal_neg_sum_of_squares(i), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        5, this->_internal_neg_sum_of_squares(i), target);
   }
 
   // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 6;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        6, _Internal::bounds_summary(this), target, stream);
+      InternalWriteMessage(6, _Internal::bounds_summary(this),
+        _Internal::bounds_summary(this).GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.BoundedSumSummary sum_of_squares_summary = 7;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        7, _Internal::sum_of_squares_summary(this), target, stream);
+      InternalWriteMessage(7, _Internal::sum_of_squares_summary(this),
+        _Internal::sum_of_squares_summary(this).GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.BoundedSumSummary sum_summary = 8;
   if (cached_has_bits & 0x00000004u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        8, _Internal::sum_summary(this), target, stream);
+      InternalWriteMessage(8, _Internal::sum_summary(this),
+        _Internal::sum_summary(this).GetCachedSize(), target, stream);
   }
 
   // optional .differential_privacy.CountSummary count_summary = 9;
   if (cached_has_bits & 0x00000008u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        9, _Internal::count_summary(this), target, stream);
+      InternalWriteMessage(9, _Internal::count_summary(this),
+        _Internal::count_summary(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.BoundedVarianceSummary)
   return target;
 }
 
-size_t BoundedVarianceSummary::ByteSizeLong() const {
+::size_t BoundedVarianceSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.BoundedVarianceSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .differential_privacy.ValueType pos_sum = 2;
   total_size += 1UL * this->_internal_pos_sum_size();
-  for (const auto& msg : this->pos_sum_) {
+  for (const auto& msg : this->_internal_pos_sum()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .differential_privacy.ValueType neg_sum = 3;
   total_size += 1UL * this->_internal_neg_sum_size();
-  for (const auto& msg : this->neg_sum_) {
+  for (const auto& msg : this->_internal_neg_sum()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated double pos_sum_of_squares = 4;
   {
-    unsigned int count = static_cast<unsigned int>(this->_internal_pos_sum_of_squares_size());
-    size_t data_size = 8UL * count;
-    total_size += 1 *
-                  ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_pos_sum_of_squares_size());
-    total_size += data_size;
+    std::size_t data_size = std::size_t{8} *
+        ::_pbi::FromIntSize(this->_internal_pos_sum_of_squares_size())
+    ;
+    std::size_t tag_size = std::size_t{1} *
+        ::_pbi::FromIntSize(this->_internal_pos_sum_of_squares_size());
+    ;
+    total_size += tag_size + data_size;
   }
 
   // repeated double neg_sum_of_squares = 5;
   {
-    unsigned int count = static_cast<unsigned int>(this->_internal_neg_sum_of_squares_size());
-    size_t data_size = 8UL * count;
-    total_size += 1 *
-                  ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_neg_sum_of_squares_size());
-    total_size += data_size;
+    std::size_t data_size = std::size_t{8} *
+        ::_pbi::FromIntSize(this->_internal_neg_sum_of_squares_size())
+    ;
+    std::size_t tag_size = std::size_t{1} *
+        ::_pbi::FromIntSize(this->_internal_neg_sum_of_squares_size());
+    ;
+    total_size += tag_size + data_size;
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
     // optional .differential_privacy.ApproxBoundsSummary bounds_summary = 6;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *bounds_summary_);
+          *_impl_.bounds_summary_);
     }
 
     // optional .differential_privacy.BoundedSumSummary sum_of_squares_summary = 7;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *sum_of_squares_summary_);
+          *_impl_.sum_of_squares_summary_);
     }
 
     // optional .differential_privacy.BoundedSumSummary sum_summary = 8;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *sum_summary_);
+          *_impl_.sum_summary_);
     }
 
     // optional .differential_privacy.CountSummary count_summary = 9;
     if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *count_summary_);
+          *_impl_.count_summary_);
     }
 
     // optional int64 count = 1;
     if (cached_has_bits & 0x00000010u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_count());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_count());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BoundedVarianceSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     BoundedVarianceSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BoundedVarianceSummary::GetClassData() const { return &_class_data_; }
 
-void BoundedVarianceSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<BoundedVarianceSummary *>(to)->MergeFrom(
-      static_cast<const BoundedVarianceSummary &>(from));
-}
 
-
-void BoundedVarianceSummary::MergeFrom(const BoundedVarianceSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedVarianceSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void BoundedVarianceSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BoundedVarianceSummary*>(&to_msg);
+  auto& from = static_cast<const BoundedVarianceSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BoundedVarianceSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  pos_sum_.MergeFrom(from.pos_sum_);
-  neg_sum_.MergeFrom(from.neg_sum_);
-  pos_sum_of_squares_.MergeFrom(from.pos_sum_of_squares_);
-  neg_sum_of_squares_.MergeFrom(from.neg_sum_of_squares_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_pos_sum()->MergeFrom(from._internal_pos_sum());
+  _this->_internal_mutable_neg_sum()->MergeFrom(from._internal_neg_sum());
+  _this->_impl_.pos_sum_of_squares_.MergeFrom(from._impl_.pos_sum_of_squares_);
+  _this->_impl_.neg_sum_of_squares_.MergeFrom(from._impl_.neg_sum_of_squares_);
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_mutable_bounds_summary()->::differential_privacy::ApproxBoundsSummary::MergeFrom(from._internal_bounds_summary());
+      _this->_internal_mutable_bounds_summary()->::differential_privacy::ApproxBoundsSummary::MergeFrom(
+          from._internal_bounds_summary());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_sum_of_squares_summary()->::differential_privacy::BoundedSumSummary::MergeFrom(from._internal_sum_of_squares_summary());
+      _this->_internal_mutable_sum_of_squares_summary()->::differential_privacy::BoundedSumSummary::MergeFrom(
+          from._internal_sum_of_squares_summary());
     }
     if (cached_has_bits & 0x00000004u) {
-      _internal_mutable_sum_summary()->::differential_privacy::BoundedSumSummary::MergeFrom(from._internal_sum_summary());
+      _this->_internal_mutable_sum_summary()->::differential_privacy::BoundedSumSummary::MergeFrom(
+          from._internal_sum_summary());
     }
     if (cached_has_bits & 0x00000008u) {
-      _internal_mutable_count_summary()->::differential_privacy::CountSummary::MergeFrom(from._internal_count_summary());
+      _this->_internal_mutable_count_summary()->::differential_privacy::CountSummary::MergeFrom(
+          from._internal_count_summary());
     }
     if (cached_has_bits & 0x00000010u) {
-      count_ = from.count_;
+      _this->_impl_.count_ = from._impl_.count_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void BoundedVarianceSummary::CopyFrom(const BoundedVarianceSummary& from) {
@@ -3039,104 +3283,105 @@ bool BoundedVarianceSummary::IsInitialized() const {
 void BoundedVarianceSummary::InternalSwap(BoundedVarianceSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  pos_sum_.InternalSwap(&other->pos_sum_);
-  neg_sum_.InternalSwap(&other->neg_sum_);
-  pos_sum_of_squares_.InternalSwap(&other->pos_sum_of_squares_);
-  neg_sum_of_squares_.InternalSwap(&other->neg_sum_of_squares_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_pos_sum()->InternalSwap(other->_internal_mutable_pos_sum());
+  _internal_mutable_neg_sum()->InternalSwap(other->_internal_mutable_neg_sum());
+  _impl_.pos_sum_of_squares_.InternalSwap(&other->_impl_.pos_sum_of_squares_);
+  _impl_.neg_sum_of_squares_.InternalSwap(&other->_impl_.neg_sum_of_squares_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(BoundedVarianceSummary, count_)
-      + sizeof(BoundedVarianceSummary::count_)
-      - PROTOBUF_FIELD_OFFSET(BoundedVarianceSummary, bounds_summary_)>(
-          reinterpret_cast<char*>(&bounds_summary_),
-          reinterpret_cast<char*>(&other->bounds_summary_));
+      PROTOBUF_FIELD_OFFSET(BoundedVarianceSummary, _impl_.count_)
+      + sizeof(BoundedVarianceSummary::_impl_.count_)
+      - PROTOBUF_FIELD_OFFSET(BoundedVarianceSummary, _impl_.bounds_summary_)>(
+          reinterpret_cast<char*>(&_impl_.bounds_summary_),
+          reinterpret_cast<char*>(&other->_impl_.bounds_summary_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BoundedVarianceSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[6]);
 }
-
 // ===================================================================
 
 class Elements::_Internal {
  public:
 };
 
-Elements::Elements(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  element_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+Elements::Elements(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.Elements)
 }
 Elements::Elements(const Elements& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      element_(from.element_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  Elements* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.element_){from._impl_.element_}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.Elements)
 }
 
-inline void Elements::SharedCtor() {
+inline void Elements::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.element_){arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 Elements::~Elements() {
   // @@protoc_insertion_point(destructor:differential_privacy.Elements)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void Elements::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_element()->~RepeatedPtrField();
 }
 
-void Elements::ArenaDtor(void* object) {
-  Elements* _this = reinterpret_cast< Elements* >(object);
-  (void)_this;
-}
-void Elements::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void Elements::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void Elements::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.Elements)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  element_.Clear();
+  _internal_mutable_element()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* Elements::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* Elements::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated string element = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
             auto str = _internal_add_element();
-            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-            #ifndef NDEBUG
-            ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "differential_privacy.Elements.element");
-            #endif  // !NDEBUG
+            ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
             CHK_(ptr);
+            #ifndef NDEBUG
+            ::_pbi::VerifyUTF8(str, "differential_privacy.Elements.element");
+            #endif  // !NDEBUG
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -3161,70 +3406,63 @@ failure:
 #undef CHK_
 }
 
-uint8_t* Elements::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* Elements::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.Elements)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated string element = 1;
-  for (int i = 0, n = this->_internal_element_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_element_size(); i < n; ++i) {
     const auto& s = this->_internal_element(i);
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      s.data(), static_cast<int>(s.length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "differential_privacy.Elements.element");
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(s.data(), static_cast<int>(s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "differential_privacy.Elements.element");
     target = stream->WriteString(1, s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.Elements)
   return target;
 }
 
-size_t Elements::ByteSizeLong() const {
+::size_t Elements::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.Elements)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated string element = 1;
-  total_size += 1 *
-      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(element_.size());
-  for (int i = 0, n = element_.size(); i < n; i++) {
+  total_size += 1 * ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(_internal_element().size());
+  for (int i = 0, n = _internal_element().size(); i < n; ++i) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-      element_.Get(i));
+        _internal_element().Get(i));
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Elements::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     Elements::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Elements::GetClassData() const { return &_class_data_; }
 
-void Elements::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<Elements *>(to)->MergeFrom(
-      static_cast<const Elements &>(from));
-}
 
-
-void Elements::MergeFrom(const Elements& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.Elements)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void Elements::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<Elements*>(&to_msg);
+  auto& from = static_cast<const Elements&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.Elements)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  element_.MergeFrom(from.element_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_mutable_element()->MergeFrom(from._internal_element());
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void Elements::CopyFrom(const Elements& from) {
@@ -3241,81 +3479,84 @@ bool Elements::IsInitialized() const {
 void Elements::InternalSwap(Elements* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  element_.InternalSwap(&other->element_);
+  _internal_mutable_element()->InternalSwap(
+      other->_internal_mutable_element());
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Elements::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[7]);
 }
-
 // ===================================================================
 
 class HistogramSummary::_Internal {
  public:
 };
 
-HistogramSummary::HistogramSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  bin_count_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+HistogramSummary::HistogramSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.HistogramSummary)
 }
 HistogramSummary::HistogramSummary(const HistogramSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      bin_count_(from.bin_count_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  HistogramSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.bin_count_) { from._impl_.bin_count_ }
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.HistogramSummary)
 }
 
-inline void HistogramSummary::SharedCtor() {
+inline void HistogramSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.bin_count_) { arena }
+
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 HistogramSummary::~HistogramSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.HistogramSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void HistogramSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.bin_count_.~RepeatedField();
 }
 
-void HistogramSummary::ArenaDtor(void* object) {
-  HistogramSummary* _this = reinterpret_cast< HistogramSummary* >(object);
-  (void)_this;
-}
-void HistogramSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void HistogramSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void HistogramSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.HistogramSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  bin_count_.Clear();
+  _internal_mutable_bin_count()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* HistogramSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* HistogramSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated int64 bin_count = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -3323,11 +3564,12 @@ const char* HistogramSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<8>(ptr));
-        } else if (static_cast<uint8_t>(tag) == 10) {
+        } else if (static_cast<::uint8_t>(tag) == 10) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt64Parser(_internal_mutable_bin_count(), ptr, ctx);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -3352,67 +3594,66 @@ failure:
 #undef CHK_
 }
 
-uint8_t* HistogramSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* HistogramSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.HistogramSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated int64 bin_count = 1;
-  for (int i = 0, n = this->_internal_bin_count_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_bin_count_size(); i < n; ++i) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_bin_count(i), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_bin_count(i), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.HistogramSummary)
   return target;
 }
 
-size_t HistogramSummary::ByteSizeLong() const {
+::size_t HistogramSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.HistogramSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated int64 bin_count = 1;
   {
-    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      Int64Size(this->bin_count_);
-    total_size += 1 *
-                  ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_bin_count_size());
-    total_size += data_size;
+    std::size_t data_size = ::_pbi::WireFormatLite::Int64Size(
+        this->_internal_bin_count())
+    ;
+    std::size_t tag_size = std::size_t{1} *
+        ::_pbi::FromIntSize(this->_internal_bin_count_size());
+    ;
+    total_size += tag_size + data_size;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData HistogramSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     HistogramSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*HistogramSummary::GetClassData() const { return &_class_data_; }
 
-void HistogramSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<HistogramSummary *>(to)->MergeFrom(
-      static_cast<const HistogramSummary &>(from));
-}
 
-
-void HistogramSummary::MergeFrom(const HistogramSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.HistogramSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void HistogramSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<HistogramSummary*>(&to_msg);
+  auto& from = static_cast<const HistogramSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.HistogramSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  bin_count_.MergeFrom(from.bin_count_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.bin_count_.MergeFrom(from._impl_.bin_count_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void HistogramSummary::CopyFrom(const HistogramSummary& from) {
@@ -3429,15 +3670,14 @@ bool HistogramSummary::IsInitialized() const {
 void HistogramSummary::InternalSwap(HistogramSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  bin_count_.InternalSwap(&other->bin_count_);
+  _impl_.bin_count_.InternalSwap(&other->_impl_.bin_count_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata HistogramSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[8]);
 }
-
 // ===================================================================
 
 class BinarySearchSummary::_Internal {
@@ -3445,68 +3685,69 @@ class BinarySearchSummary::_Internal {
 };
 
 void BinarySearchSummary::clear_input() {
-  input_.Clear();
+  _internal_mutable_input()->Clear();
 }
-BinarySearchSummary::BinarySearchSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  input_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+BinarySearchSummary::BinarySearchSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.BinarySearchSummary)
 }
 BinarySearchSummary::BinarySearchSummary(const BinarySearchSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      input_(from.input_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  BinarySearchSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.input_){from._impl_.input_}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.BinarySearchSummary)
 }
 
-inline void BinarySearchSummary::SharedCtor() {
+inline void BinarySearchSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.input_){arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 BinarySearchSummary::~BinarySearchSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.BinarySearchSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void BinarySearchSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_input()->~RepeatedPtrField();
 }
 
-void BinarySearchSummary::ArenaDtor(void* object) {
-  BinarySearchSummary* _this = reinterpret_cast< BinarySearchSummary* >(object);
-  (void)_this;
-}
-void BinarySearchSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void BinarySearchSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void BinarySearchSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.BinarySearchSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  input_.Clear();
+  _internal_mutable_input()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* BinarySearchSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* BinarySearchSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated .differential_privacy.ValueType input = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -3514,8 +3755,9 @@ const char* BinarySearchSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAME
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -3540,67 +3782,63 @@ failure:
 #undef CHK_
 }
 
-uint8_t* BinarySearchSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* BinarySearchSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.BinarySearchSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .differential_privacy.ValueType input = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_input_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_input_size()); i < n; i++) {
+    const auto& repfield = this->_internal_input(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_input(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.BinarySearchSummary)
   return target;
 }
 
-size_t BinarySearchSummary::ByteSizeLong() const {
+::size_t BinarySearchSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.BinarySearchSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .differential_privacy.ValueType input = 2;
   total_size += 1UL * this->_internal_input_size();
-  for (const auto& msg : this->input_) {
+  for (const auto& msg : this->_internal_input()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BinarySearchSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     BinarySearchSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BinarySearchSummary::GetClassData() const { return &_class_data_; }
 
-void BinarySearchSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<BinarySearchSummary *>(to)->MergeFrom(
-      static_cast<const BinarySearchSummary &>(from));
-}
 
-
-void BinarySearchSummary::MergeFrom(const BinarySearchSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BinarySearchSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void BinarySearchSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BinarySearchSummary*>(&to_msg);
+  auto& from = static_cast<const BinarySearchSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.BinarySearchSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  input_.MergeFrom(from.input_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_mutable_input()->MergeFrom(from._internal_input());
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void BinarySearchSummary::CopyFrom(const BinarySearchSummary& from) {
@@ -3617,84 +3855,89 @@ bool BinarySearchSummary::IsInitialized() const {
 void BinarySearchSummary::InternalSwap(BinarySearchSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  input_.InternalSwap(&other->input_);
+  _internal_mutable_input()->InternalSwap(other->_internal_mutable_input());
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata BinarySearchSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[9]);
 }
-
 // ===================================================================
 
 class ApproxBoundsSummary::_Internal {
  public:
 };
 
-ApproxBoundsSummary::ApproxBoundsSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  pos_bin_count_(arena),
-  neg_bin_count_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ApproxBoundsSummary::ApproxBoundsSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.ApproxBoundsSummary)
 }
 ApproxBoundsSummary::ApproxBoundsSummary(const ApproxBoundsSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      pos_bin_count_(from.pos_bin_count_),
-      neg_bin_count_(from.neg_bin_count_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ApproxBoundsSummary* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pos_bin_count_) { from._impl_.pos_bin_count_ }
+
+    , decltype(_impl_.neg_bin_count_) { from._impl_.neg_bin_count_ }
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.ApproxBoundsSummary)
 }
 
-inline void ApproxBoundsSummary::SharedCtor() {
+inline void ApproxBoundsSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.pos_bin_count_) { arena }
+
+    , decltype(_impl_.neg_bin_count_) { arena }
+
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 ApproxBoundsSummary::~ApproxBoundsSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.ApproxBoundsSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ApproxBoundsSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.pos_bin_count_.~RepeatedField();
+  _impl_.neg_bin_count_.~RepeatedField();
 }
 
-void ApproxBoundsSummary::ArenaDtor(void* object) {
-  ApproxBoundsSummary* _this = reinterpret_cast< ApproxBoundsSummary* >(object);
-  (void)_this;
-}
-void ApproxBoundsSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ApproxBoundsSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ApproxBoundsSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.ApproxBoundsSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  pos_bin_count_.Clear();
-  neg_bin_count_.Clear();
+  _internal_mutable_pos_bin_count()->Clear();
+  _internal_mutable_neg_bin_count()->Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ApproxBoundsSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ApproxBoundsSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated int64 pos_bin_count = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -3702,15 +3945,16 @@ const char* ApproxBoundsSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAME
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<8>(ptr));
-        } else if (static_cast<uint8_t>(tag) == 10) {
+        } else if (static_cast<::uint8_t>(tag) == 10) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt64Parser(_internal_mutable_pos_bin_count(), ptr, ctx);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated int64 neg_bin_count = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -3718,11 +3962,12 @@ const char* ApproxBoundsSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAME
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<16>(ptr));
-        } else if (static_cast<uint8_t>(tag) == 18) {
+        } else if (static_cast<::uint8_t>(tag) == 18) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt64Parser(_internal_mutable_neg_bin_count(), ptr, ctx);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -3747,83 +3992,85 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ApproxBoundsSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ApproxBoundsSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.ApproxBoundsSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated int64 pos_bin_count = 1;
-  for (int i = 0, n = this->_internal_pos_bin_count_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_pos_bin_count_size(); i < n; ++i) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_pos_bin_count(i), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_pos_bin_count(i), target);
   }
 
   // repeated int64 neg_bin_count = 2;
-  for (int i = 0, n = this->_internal_neg_bin_count_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_neg_bin_count_size(); i < n; ++i) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(2, this->_internal_neg_bin_count(i), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        2, this->_internal_neg_bin_count(i), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.ApproxBoundsSummary)
   return target;
 }
 
-size_t ApproxBoundsSummary::ByteSizeLong() const {
+::size_t ApproxBoundsSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.ApproxBoundsSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated int64 pos_bin_count = 1;
   {
-    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      Int64Size(this->pos_bin_count_);
-    total_size += 1 *
-                  ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_pos_bin_count_size());
-    total_size += data_size;
+    std::size_t data_size = ::_pbi::WireFormatLite::Int64Size(
+        this->_internal_pos_bin_count())
+    ;
+    std::size_t tag_size = std::size_t{1} *
+        ::_pbi::FromIntSize(this->_internal_pos_bin_count_size());
+    ;
+    total_size += tag_size + data_size;
   }
 
   // repeated int64 neg_bin_count = 2;
   {
-    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      Int64Size(this->neg_bin_count_);
-    total_size += 1 *
-                  ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_neg_bin_count_size());
-    total_size += data_size;
+    std::size_t data_size = ::_pbi::WireFormatLite::Int64Size(
+        this->_internal_neg_bin_count())
+    ;
+    std::size_t tag_size = std::size_t{1} *
+        ::_pbi::FromIntSize(this->_internal_neg_bin_count_size());
+    ;
+    total_size += tag_size + data_size;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ApproxBoundsSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ApproxBoundsSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ApproxBoundsSummary::GetClassData() const { return &_class_data_; }
 
-void ApproxBoundsSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ApproxBoundsSummary *>(to)->MergeFrom(
-      static_cast<const ApproxBoundsSummary &>(from));
-}
 
-
-void ApproxBoundsSummary::MergeFrom(const ApproxBoundsSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.ApproxBoundsSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ApproxBoundsSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ApproxBoundsSummary*>(&to_msg);
+  auto& from = static_cast<const ApproxBoundsSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.ApproxBoundsSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  pos_bin_count_.MergeFrom(from.pos_bin_count_);
-  neg_bin_count_.MergeFrom(from.neg_bin_count_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.pos_bin_count_.MergeFrom(from._impl_.pos_bin_count_);
+  _this->_impl_.neg_bin_count_.MergeFrom(from._impl_.neg_bin_count_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ApproxBoundsSummary::CopyFrom(const ApproxBoundsSummary& from) {
@@ -3840,21 +4087,22 @@ bool ApproxBoundsSummary::IsInitialized() const {
 void ApproxBoundsSummary::InternalSwap(ApproxBoundsSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  pos_bin_count_.InternalSwap(&other->pos_bin_count_);
-  neg_bin_count_.InternalSwap(&other->neg_bin_count_);
+  _impl_.pos_bin_count_.InternalSwap(&other->_impl_.pos_bin_count_);
+  _impl_.neg_bin_count_.InternalSwap(&other->_impl_.neg_bin_count_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ApproxBoundsSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[10]);
 }
-
 // ===================================================================
 
 class PreAggSelectPartitionSummary::_Internal {
  public:
-  using HasBits = decltype(std::declval<PreAggSelectPartitionSummary>()._has_bits_);
+  using HasBits = decltype(std::declval<PreAggSelectPartitionSummary>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, _impl_._has_bits_);
   static void set_has_ids_count(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -3872,120 +4120,125 @@ class PreAggSelectPartitionSummary::_Internal {
   }
 };
 
-PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.PreAggSelectPartitionSummary)
 }
 PreAggSelectPartitionSummary::PreAggSelectPartitionSummary(const PreAggSelectPartitionSummary& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&ids_count_, &from.ids_count_,
-    static_cast<size_t>(reinterpret_cast<char*>(&pre_threshold_) -
-    reinterpret_cast<char*>(&ids_count_)) + sizeof(pre_threshold_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.PreAggSelectPartitionSummary)
 }
 
-inline void PreAggSelectPartitionSummary::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&ids_count_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&pre_threshold_) -
-    reinterpret_cast<char*>(&ids_count_)) + sizeof(pre_threshold_));
+inline void PreAggSelectPartitionSummary::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.ids_count_) { ::int64_t{0} }
+
+    , decltype(_impl_.epsilon_) { 0 }
+
+    , decltype(_impl_.delta_) { 0 }
+
+    , decltype(_impl_.max_partitions_contributed_) { 0 }
+
+    , decltype(_impl_.pre_threshold_) { 0 }
+
+  };
 }
 
 PreAggSelectPartitionSummary::~PreAggSelectPartitionSummary() {
   // @@protoc_insertion_point(destructor:differential_privacy.PreAggSelectPartitionSummary)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void PreAggSelectPartitionSummary::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void PreAggSelectPartitionSummary::ArenaDtor(void* object) {
-  PreAggSelectPartitionSummary* _this = reinterpret_cast< PreAggSelectPartitionSummary* >(object);
-  (void)_this;
-}
-void PreAggSelectPartitionSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void PreAggSelectPartitionSummary::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void PreAggSelectPartitionSummary::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.PreAggSelectPartitionSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
-    ::memset(&ids_count_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&pre_threshold_) -
-        reinterpret_cast<char*>(&ids_count_)) + sizeof(pre_threshold_));
+    ::memset(&_impl_.ids_count_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.pre_threshold_) -
+        reinterpret_cast<char*>(&_impl_.ids_count_)) + sizeof(_impl_.pre_threshold_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* PreAggSelectPartitionSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* PreAggSelectPartitionSummary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int64 ids_count = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_ids_count(&has_bits);
-          ids_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.ids_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double epsilon = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _Internal::set_has_epsilon(&has_bits);
-          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double delta = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_delta(&has_bits);
-          delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 max_partitions_contributed = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
           _Internal::set_has_max_partitions_contributed(&has_bits);
-          max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.max_partitions_contributed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 pre_threshold = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
           _Internal::set_has_pre_threshold(&has_bits);
-          pre_threshold_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.pre_threshold_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -4003,7 +4256,7 @@ const char* PreAggSelectPartitionSummary::_InternalParse(const char* ptr, ::PROT
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -4011,129 +4264,133 @@ failure:
 #undef CHK_
 }
 
-uint8_t* PreAggSelectPartitionSummary::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* PreAggSelectPartitionSummary::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.PreAggSelectPartitionSummary)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int64 ids_count = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_ids_count(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        1, this->_internal_ids_count(), target);
   }
 
   // optional double epsilon = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_epsilon(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        2, this->_internal_epsilon(), target);
   }
 
   // optional double delta = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_delta(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_delta(), target);
   }
 
   // optional int32 max_partitions_contributed = 4;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_max_partitions_contributed(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        4, this->_internal_max_partitions_contributed(), target);
   }
 
   // optional int32 pre_threshold = 5;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_pre_threshold(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        5, this->_internal_pre_threshold(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.PreAggSelectPartitionSummary)
   return target;
 }
 
-size_t PreAggSelectPartitionSummary::ByteSizeLong() const {
+::size_t PreAggSelectPartitionSummary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.PreAggSelectPartitionSummary)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
     // optional int64 ids_count = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_ids_count());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_ids_count());
     }
 
     // optional double epsilon = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double delta = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional int32 max_partitions_contributed = 4;
     if (cached_has_bits & 0x00000008u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_max_partitions_contributed());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_max_partitions_contributed());
     }
 
     // optional int32 pre_threshold = 5;
     if (cached_has_bits & 0x00000010u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_pre_threshold());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_pre_threshold());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PreAggSelectPartitionSummary::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     PreAggSelectPartitionSummary::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PreAggSelectPartitionSummary::GetClassData() const { return &_class_data_; }
 
-void PreAggSelectPartitionSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<PreAggSelectPartitionSummary *>(to)->MergeFrom(
-      static_cast<const PreAggSelectPartitionSummary &>(from));
-}
 
-
-void PreAggSelectPartitionSummary::MergeFrom(const PreAggSelectPartitionSummary& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.PreAggSelectPartitionSummary)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void PreAggSelectPartitionSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<PreAggSelectPartitionSummary*>(&to_msg);
+  auto& from = static_cast<const PreAggSelectPartitionSummary&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.PreAggSelectPartitionSummary)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
-      ids_count_ = from.ids_count_;
+      _this->_impl_.ids_count_ = from._impl_.ids_count_;
     }
     if (cached_has_bits & 0x00000002u) {
-      epsilon_ = from.epsilon_;
+      _this->_impl_.epsilon_ = from._impl_.epsilon_;
     }
     if (cached_has_bits & 0x00000004u) {
-      delta_ = from.delta_;
+      _this->_impl_.delta_ = from._impl_.delta_;
     }
     if (cached_has_bits & 0x00000008u) {
-      max_partitions_contributed_ = from.max_partitions_contributed_;
+      _this->_impl_.max_partitions_contributed_ = from._impl_.max_partitions_contributed_;
     }
     if (cached_has_bits & 0x00000010u) {
-      pre_threshold_ = from.pre_threshold_;
+      _this->_impl_.pre_threshold_ = from._impl_.pre_threshold_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void PreAggSelectPartitionSummary::CopyFrom(const PreAggSelectPartitionSummary& from) {
@@ -4150,61 +4407,71 @@ bool PreAggSelectPartitionSummary::IsInitialized() const {
 void PreAggSelectPartitionSummary::InternalSwap(PreAggSelectPartitionSummary* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, pre_threshold_)
-      + sizeof(PreAggSelectPartitionSummary::pre_threshold_)
-      - PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, ids_count_)>(
-          reinterpret_cast<char*>(&ids_count_),
-          reinterpret_cast<char*>(&other->ids_count_));
+      PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, _impl_.pre_threshold_)
+      + sizeof(PreAggSelectPartitionSummary::_impl_.pre_threshold_)
+      - PROTOBUF_FIELD_OFFSET(PreAggSelectPartitionSummary, _impl_.ids_count_)>(
+          reinterpret_cast<char*>(&_impl_.ids_count_),
+          reinterpret_cast<char*>(&other->_impl_.ids_count_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PreAggSelectPartitionSummary::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fsummary_2eproto_getter, &descriptor_table_proto_2fsummary_2eproto_once,
       file_level_metadata_proto_2fsummary_2eproto[11]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace differential_privacy
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::differential_privacy::Summary* Arena::CreateMaybeMessage< ::differential_privacy::Summary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::Summary*
+Arena::CreateMaybeMessage< ::differential_privacy::Summary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::Summary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::CountSummary* Arena::CreateMaybeMessage< ::differential_privacy::CountSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::CountSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::CountSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::CountSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse* Arena::CreateMaybeMessage< ::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse*
+Arena::CreateMaybeMessage< ::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::BoundedQuantilesSummary_QuantileTreeEntry_DoNotUse >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedQuantilesSummary* Arena::CreateMaybeMessage< ::differential_privacy::BoundedQuantilesSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedQuantilesSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::BoundedQuantilesSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::BoundedQuantilesSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedSumSummary* Arena::CreateMaybeMessage< ::differential_privacy::BoundedSumSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedSumSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::BoundedSumSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::BoundedSumSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedMeanSummary* Arena::CreateMaybeMessage< ::differential_privacy::BoundedMeanSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedMeanSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::BoundedMeanSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::BoundedMeanSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedVarianceSummary* Arena::CreateMaybeMessage< ::differential_privacy::BoundedVarianceSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::BoundedVarianceSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::BoundedVarianceSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::BoundedVarianceSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::Elements* Arena::CreateMaybeMessage< ::differential_privacy::Elements >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::Elements*
+Arena::CreateMaybeMessage< ::differential_privacy::Elements >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::Elements >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::HistogramSummary* Arena::CreateMaybeMessage< ::differential_privacy::HistogramSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::HistogramSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::HistogramSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::HistogramSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::BinarySearchSummary* Arena::CreateMaybeMessage< ::differential_privacy::BinarySearchSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::BinarySearchSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::BinarySearchSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::BinarySearchSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::ApproxBoundsSummary* Arena::CreateMaybeMessage< ::differential_privacy::ApproxBoundsSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::ApproxBoundsSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::ApproxBoundsSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::ApproxBoundsSummary >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::PreAggSelectPartitionSummary* Arena::CreateMaybeMessage< ::differential_privacy::PreAggSelectPartitionSummary >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::PreAggSelectPartitionSummary*
+Arena::CreateMaybeMessage< ::differential_privacy::PreAggSelectPartitionSummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::PreAggSelectPartitionSummary >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

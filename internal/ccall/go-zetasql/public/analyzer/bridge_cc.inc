@@ -147,6 +147,26 @@ std::vector<std::string> slice_to_strs(void *slice)
     list(std::move(vec));                                           \
   } while (0)
 
+// ResolvedAggregateScan stores grouping_set_list as unique_ptr<const ResolvedGroupingSetBase>.
+#define SET_UNIQUE_PTR_GROUPING_SET_LIST(list, v) do {              \
+    std::vector<std::unique_ptr<const zetasql::ResolvedGroupingSet>> vec; \
+    GoSlice *goslice = (GoSlice *)v;                                \
+    zetasql::ResolvedGroupingSet **data =                           \
+        (zetasql::ResolvedGroupingSet **)goslice->data;             \
+    for (int i = 0; i < goslice->len; i++) {                        \
+      auto p = zetasql::MakeResolvedGroupingSet();                  \
+      memcpy((void *)p.get(), (void *)data[i],                      \
+             sizeof(zetasql::ResolvedGroupingSet));                 \
+      vec.push_back(std::move(p));                                  \
+    }                                                               \
+    std::vector<std::unique_ptr<const zetasql::ResolvedGroupingSetBase>> base_vec; \
+    base_vec.reserve(vec.size());                                   \
+    for (size_t i = 0; i < vec.size(); i++) {                       \
+      base_vec.push_back(std::move(vec[i]));                        \
+    }                                                               \
+    list(std::move(base_vec));                                      \
+  } while (0)
+
 #define SET_UNIQUE_PTR_EXPR_LIST(list, v) do {                      \
     std::vector<std::unique_ptr<const zetasql::ResolvedExpr>> vec;  \
     GoSlice *goslice = (GoSlice *)v;                                \
@@ -190,6 +210,13 @@ std::vector<std::string> slice_to_strs(void *slice)
 #define ADD_UNIQUE_PTR_LIST(list, T, v) do {                \
     auto p = zetasql::Make ## T();                          \
     memcpy((void *)p.get(), (void *)v, sizeof(zetasql::T)); \
+    list(std::move(p));                                     \
+  } while (0)
+
+#define ADD_UNIQUE_PTR_GROUPING_SET_LIST(list, v) do {      \
+    auto p = zetasql::MakeResolvedGroupingSet();            \
+    memcpy((void *)p.get(), (void *)v,                      \
+           sizeof(zetasql::ResolvedGroupingSet));           \
     list(std::move(p));                                     \
   } while (0)
 

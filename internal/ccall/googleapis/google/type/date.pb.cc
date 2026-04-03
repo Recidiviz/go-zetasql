@@ -4,175 +4,209 @@
 #include "google/type/date.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace google {
 namespace type {
-constexpr Date::Date(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : year_(0)
-  , month_(0)
-  , day_(0){}
+template <typename>
+PROTOBUF_CONSTEXPR Date::Date(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.year_)*/ 0
+
+  , /*decltype(_impl_.month_)*/ 0
+
+  , /*decltype(_impl_.day_)*/ 0
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct DateDefaultTypeInternal {
-  constexpr DateDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DateDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DateDefaultTypeInternal() {}
   union {
     Date _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DateDefaultTypeInternal _Date_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DateDefaultTypeInternal _Date_default_instance_;
 }  // namespace type
 }  // namespace google
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_google_2ftype_2fdate_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_google_2ftype_2fdate_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_google_2ftype_2fdate_2eproto = nullptr;
-
-const uint32_t TableStruct_google_2ftype_2fdate_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::google::type::Date, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::google::type::Date, year_),
-  PROTOBUF_FIELD_OFFSET(::google::type::Date, month_),
-  PROTOBUF_FIELD_OFFSET(::google::type::Date, day_),
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::google::type::Date)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::google::type::_Date_default_instance_),
+static ::_pb::Metadata file_level_metadata_google_2ftype_2fdate_2eproto[1];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_google_2ftype_2fdate_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_google_2ftype_2fdate_2eproto = nullptr;
+const ::uint32_t TableStruct_google_2ftype_2fdate_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::google::type::Date, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::google::type::Date, _impl_.year_),
+    PROTOBUF_FIELD_OFFSET(::google::type::Date, _impl_.month_),
+    PROTOBUF_FIELD_OFFSET(::google::type::Date, _impl_.day_),
 };
 
-const char descriptor_table_protodef_google_2ftype_2fdate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\026google/type/date.proto\022\013google.type\"0\n"
-  "\004Date\022\014\n\004year\030\001 \001(\005\022\r\n\005month\030\002 \001(\005\022\013\n\003da"
-  "y\030\003 \001(\005B]\n\017com.google.typeB\tDateProtoP\001Z"
-  "4google.golang.org/genproto/googleapis/t"
-  "ype/date;date\370\001\001\242\002\003GTPb\006proto3"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_google_2ftype_2fdate_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_google_2ftype_2fdate_2eproto = {
-  false, false, 190, descriptor_table_protodef_google_2ftype_2fdate_2eproto, "google/type/date.proto", 
-  &descriptor_table_google_2ftype_2fdate_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_google_2ftype_2fdate_2eproto::offsets,
-  file_level_metadata_google_2ftype_2fdate_2eproto, file_level_enum_descriptors_google_2ftype_2fdate_2eproto, file_level_service_descriptors_google_2ftype_2fdate_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::google::type::Date)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_google_2ftype_2fdate_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::google::type::_Date_default_instance_._instance,
+};
+const char descriptor_table_protodef_google_2ftype_2fdate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\026google/type/date.proto\022\013google.type\"0\n"
+    "\004Date\022\014\n\004year\030\001 \001(\005\022\r\n\005month\030\002 \001(\005\022\013\n\003da"
+    "y\030\003 \001(\005B]\n\017com.google.typeB\tDateProtoP\001Z"
+    "4google.golang.org/genproto/googleapis/t"
+    "ype/date;date\370\001\001\242\002\003GTPb\006proto3"
+};
+static ::absl::once_flag descriptor_table_google_2ftype_2fdate_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_google_2ftype_2fdate_2eproto = {
+    false,
+    false,
+    190,
+    descriptor_table_protodef_google_2ftype_2fdate_2eproto,
+    "google/type/date.proto",
+    &descriptor_table_google_2ftype_2fdate_2eproto_once,
+    nullptr,
+    0,
+    1,
+    schemas,
+    file_default_instances,
+    TableStruct_google_2ftype_2fdate_2eproto::offsets,
+    file_level_metadata_google_2ftype_2fdate_2eproto,
+    file_level_enum_descriptors_google_2ftype_2fdate_2eproto,
+    file_level_service_descriptors_google_2ftype_2fdate_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_google_2ftype_2fdate_2eproto_getter() {
   return &descriptor_table_google_2ftype_2fdate_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_google_2ftype_2fdate_2eproto(&descriptor_table_google_2ftype_2fdate_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_google_2ftype_2fdate_2eproto(&descriptor_table_google_2ftype_2fdate_2eproto);
 namespace google {
 namespace type {
-
 // ===================================================================
 
 class Date::_Internal {
  public:
 };
 
-Date::Date(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+Date::Date(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:google.type.Date)
 }
 Date::Date(const Date& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&year_, &from.year_,
-    static_cast<size_t>(reinterpret_cast<char*>(&day_) -
-    reinterpret_cast<char*>(&year_)) + sizeof(day_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:google.type.Date)
 }
 
-inline void Date::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&year_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&day_) -
-    reinterpret_cast<char*>(&year_)) + sizeof(day_));
+inline void Date::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.year_) { 0 }
+
+    , decltype(_impl_.month_) { 0 }
+
+    , decltype(_impl_.day_) { 0 }
+
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 Date::~Date() {
   // @@protoc_insertion_point(destructor:google.type.Date)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void Date::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void Date::ArenaDtor(void* object) {
-  Date* _this = reinterpret_cast< Date* >(object);
-  (void)_this;
-}
-void Date::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void Date::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void Date::Clear() {
 // @@protoc_insertion_point(message_clear_start:google.type.Date)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&year_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&day_) -
-      reinterpret_cast<char*>(&year_)) + sizeof(day_));
+  ::memset(&_impl_.year_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.day_) -
+      reinterpret_cast<char*>(&_impl_.year_)) + sizeof(_impl_.day_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* Date::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* Date::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // int32 year = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          year_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+          _impl_.year_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // int32 month = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          month_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
+          _impl_.month_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // int32 day = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          day_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
+          _impl_.day_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -197,93 +231,95 @@ failure:
 #undef CHK_
 }
 
-uint8_t* Date::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* Date::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:google.type.Date)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // int32 year = 1;
   if (this->_internal_year() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_year(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        1, this->_internal_year(), target);
   }
 
   // int32 month = 2;
   if (this->_internal_month() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_month(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        2, this->_internal_month(), target);
   }
 
   // int32 day = 3;
   if (this->_internal_day() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_day(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        3, this->_internal_day(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:google.type.Date)
   return target;
 }
 
-size_t Date::ByteSizeLong() const {
+::size_t Date::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:google.type.Date)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // int32 year = 1;
   if (this->_internal_year() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_year());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_year());
   }
 
   // int32 month = 2;
   if (this->_internal_month() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_month());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_month());
   }
 
   // int32 day = 3;
   if (this->_internal_day() != 0) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_day());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_day());
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Date::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     Date::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Date::GetClassData() const { return &_class_data_; }
 
-void Date::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<Date *>(to)->MergeFrom(
-      static_cast<const Date &>(from));
-}
 
-
-void Date::MergeFrom(const Date& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:google.type.Date)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void Date::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<Date*>(&to_msg);
+  auto& from = static_cast<const Date&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:google.type.Date)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_year() != 0) {
-    _internal_set_year(from._internal_year());
+    _this->_internal_set_year(from._internal_year());
   }
   if (from._internal_month() != 0) {
-    _internal_set_month(from._internal_month());
+    _this->_internal_set_month(from._internal_month());
   }
   if (from._internal_day() != 0) {
-    _internal_set_day(from._internal_day());
+    _this->_internal_set_day(from._internal_day());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void Date::CopyFrom(const Date& from) {
@@ -301,27 +337,26 @@ void Date::InternalSwap(Date* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Date, day_)
-      + sizeof(Date::day_)
-      - PROTOBUF_FIELD_OFFSET(Date, year_)>(
-          reinterpret_cast<char*>(&year_),
-          reinterpret_cast<char*>(&other->year_));
+      PROTOBUF_FIELD_OFFSET(Date, _impl_.day_)
+      + sizeof(Date::_impl_.day_)
+      - PROTOBUF_FIELD_OFFSET(Date, _impl_.year_)>(
+          reinterpret_cast<char*>(&_impl_.year_),
+          reinterpret_cast<char*>(&other->_impl_.year_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Date::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_google_2ftype_2fdate_2eproto_getter, &descriptor_table_google_2ftype_2fdate_2eproto_once,
       file_level_metadata_google_2ftype_2fdate_2eproto[0]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace type
 }  // namespace google
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::google::type::Date* Arena::CreateMaybeMessage< ::google::type::Date >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::google::type::Date*
+Arena::CreateMaybeMessage< ::google::type::Date >(Arena* arena) {
   return Arena::CreateMessageInternal< ::google::type::Date >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

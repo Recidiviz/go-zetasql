@@ -14,16 +14,14 @@
 #include "zetasql/parser/visit_result.h"
 // include sources
 #include "zetasql/parser/ast_node_internal.h"
+#include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
+#include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
 #include "zetasql/parser/bison_parser.cc"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/bison_parser_mode.h"
 #include "zetasql/parser/flex_tokenizer.cc"
-#include "zetasql/parser/flex_tokenizer.h"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
-// include dependencies
-#include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
-#include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
 #include "go-zetasql/parser/flex_istream/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"

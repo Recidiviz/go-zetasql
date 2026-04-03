@@ -50,13 +50,13 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
+#include "zetasql/base/source_location.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/wire_format_lite.h"
 #include "zetasql/base/map_util.h"
-#include "zetasql/base/source_location.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
@@ -73,7 +73,8 @@ namespace zetasql {
 
 #define RETURN_ERROR_IF_INVALID_DEFAULT_VALUE(valid, field)                 \
   while (ABSL_PREDICT_FALSE(!(valid)))                                      \
-  return ::zetasql_base::InvalidArgumentErrorBuilder(ZETASQL_LOC)                       \
+  return ::zetasql_base::InvalidArgumentErrorBuilder(                               \
+             ::zetasql_base::SourceLocation::current())                             \
          << "Unable to decode default value for " << (field)->DebugString() \
          << "\n(value out of valid range)"
 
@@ -81,10 +82,8 @@ ProtoFieldDefaultOptions ProtoFieldDefaultOptions::FromFieldAndLanguage(
     const google::protobuf::FieldDescriptor* field,
     const LanguageOptions& language_options) {
   ProtoFieldDefaultOptions options;
-    if (field->containing_type()->file()->syntax() ==
-            google::protobuf::FileDescriptor::SYNTAX_PROTO3 &&
-        language_options.LanguageFeatureEnabled(
-            FEATURE_V_1_3_IGNORE_PROTO3_USE_DEFAULTS)) {
+  if (!field->has_presence() && language_options.LanguageFeatureEnabled(
+                                    FEATURE_V_1_3_IGNORE_PROTO3_USE_DEFAULTS)) {
     options.ignore_use_default_annotations = true;
   }
   if (field->containing_type()->options().map_entry() &&
@@ -302,12 +301,20 @@ absl::Status GetProtoFieldDefault(const ProtoFieldDefaultOptions& options,
       *default_value = Value::Json(JSONValue());
       break;
     }
-    case TYPE_INTERVAL:
+    case TYPE_INTERVAL: {
       *default_value = Value::Interval(IntervalValue());
       break;
-    default:
+    }
+    case TYPE_RANGE: {
+      const Type* range_element_type = type->AsRange()->element_type();
+      *default_value = Value::Null(
+          types::RangeTypeFromSimpleTypeKind(range_element_type->kind()));
+      break;
+    }
+    default: {
       return ::zetasql_base::InvalidArgumentErrorBuilder()
              << "No default value for " << field->DebugString();
+    }
   }
   return absl::OkStatus();
 }
@@ -323,7 +330,7 @@ absl::Status GetProtoFieldTypeAndDefault(
     ZETASQL_RETURN_IF_ERROR(GetProtoFieldDefault(options, field, *type, default_value));
   }
 
-  ZETASQL_DCHECK(default_value == nullptr || !default_value->is_valid() ||
+  ABSL_DCHECK(default_value == nullptr || !default_value->is_valid() ||
          default_value->type_kind() == (*type)->kind());
 
   if (ZETASQL_DEBUG_MODE) {
@@ -416,9 +423,7 @@ bool WireValueShouldBeHidden(const ProtoFieldInfo& info,
     return false;
   }
 
-  // TODO: Update to use feature.enum when that is available.
-  if (enum_descriptor->file()->syntax() ==
-          google::protobuf::FileDescriptor::SYNTAX_PROTO2 &&
+  if (enum_descriptor->is_closed() &&
       !enum_descriptor->FindValueByNumber(*value)) {
     // Proto2 hides unknown enums, and returns false for has_.
     return true;
@@ -477,7 +482,7 @@ absl::Status RemoveDupsByKeyIfProtoMap(std::vector<Value>& values) {
       std::remove_if(
           values.begin(), values.end(),
           [&](const Value& value) {
-            ZETASQL_DCHECK(value.type()->IsProto()) << value.DebugString(true);
+            ABSL_DCHECK(value.type()->IsProto()) << value.DebugString(true);
             Value key;
             if (value.is_valid() && !value.is_null()) {
               status.Update(ReadProtoField(
@@ -833,6 +838,13 @@ static absl::StatusOr<Value> TranslateWireValue(
       ZETASQL_RET_CHECK_NE(value, nullptr);
 
       return Value::Proto(type->AsProto(), *value);
+    }
+    case TYPE_NUMERIC: {
+      const std::string* const value = std::get_if<std::string>(&wire_value);
+      ZETASQL_RET_CHECK_NE(value, nullptr);
+      ZETASQL_ASSIGN_OR_RETURN(NumericValue numeric_value,
+                       NumericValue::DeserializeFromProtoBytes(*value));
+      return Value::Numeric(numeric_value);
     }
     case TYPE_ARRAY:
     case TYPE_STRUCT:

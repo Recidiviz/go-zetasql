@@ -4,261 +4,337 @@
 #include "zetasql/scripting/script_executor_state.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_ProcedureDefinition(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : argument_name_list_()
-  , name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , body_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , signature_(nullptr)
-  , extension_(nullptr)
-  , is_dynamic_sql_(false){}
+template <typename>
+PROTOBUF_CONSTEXPR ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_ProcedureDefinition(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.argument_name_list_)*/{}
+  , /*decltype(_impl_.name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.body_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.signature_)*/nullptr
+  , /*decltype(_impl_.extension_)*/nullptr
+  , /*decltype(_impl_.is_dynamic_sql_)*/ false
+} {}
 struct ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal {
-  constexpr ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal() {}
   union {
     ScriptExecutorStateProto_ProcedureDefinition _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal _ScriptExecutorStateProto_ProcedureDefinition_default_instance_;
-constexpr ScriptExecutorStateProto_StackFrame_Parameters::ScriptExecutorStateProto_StackFrame_Parameters(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : variables_()
-  , mode_(0)
-{}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ScriptExecutorStateProto_ProcedureDefinitionDefaultTypeInternal _ScriptExecutorStateProto_ProcedureDefinition_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ScriptExecutorStateProto_StackFrame_Parameters::ScriptExecutorStateProto_StackFrame_Parameters(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.variables_)*/{}
+  , /*decltype(_impl_.mode_)*/ 0
+} {}
 struct ScriptExecutorStateProto_StackFrame_ParametersDefaultTypeInternal {
-  constexpr ScriptExecutorStateProto_StackFrame_ParametersDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ScriptExecutorStateProto_StackFrame_ParametersDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ScriptExecutorStateProto_StackFrame_ParametersDefaultTypeInternal() {}
   union {
     ScriptExecutorStateProto_StackFrame_Parameters _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptExecutorStateProto_StackFrame_ParametersDefaultTypeInternal _ScriptExecutorStateProto_StackFrame_Parameters_default_instance_;
-constexpr ScriptExecutorStateProto_StackFrame::ScriptExecutorStateProto_StackFrame(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : variables_()
-  , for_loop_stack_()
-  , procedure_definition_(nullptr)
-  , parameters_(nullptr)
-  , current_location_byte_offset_(0)
-  , control_flow_node_kind_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ScriptExecutorStateProto_StackFrame_ParametersDefaultTypeInternal _ScriptExecutorStateProto_StackFrame_Parameters_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ScriptExecutorStateProto_StackFrame::ScriptExecutorStateProto_StackFrame(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.variables_)*/{}
+  , /*decltype(_impl_.for_loop_stack_)*/{}
+  , /*decltype(_impl_.procedure_definition_)*/nullptr
+  , /*decltype(_impl_.parameters_)*/nullptr
+  , /*decltype(_impl_.current_location_byte_offset_)*/ 0
+
+  , /*decltype(_impl_.control_flow_node_kind_)*/ 0
+} {}
 struct ScriptExecutorStateProto_StackFrameDefaultTypeInternal {
-  constexpr ScriptExecutorStateProto_StackFrameDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ScriptExecutorStateProto_StackFrameDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ScriptExecutorStateProto_StackFrameDefaultTypeInternal() {}
   union {
     ScriptExecutorStateProto_StackFrame _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptExecutorStateProto_StackFrameDefaultTypeInternal _ScriptExecutorStateProto_StackFrame_default_instance_;
-constexpr ScriptExecutorStateProto_ScriptFeatureUsage::ScriptExecutorStateProto_ScriptFeatureUsage(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : exception_(0)
-  , call_stmt_(0)
-  , execute_immediate_stmt_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ScriptExecutorStateProto_StackFrameDefaultTypeInternal _ScriptExecutorStateProto_StackFrame_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ScriptExecutorStateProto_ScriptFeatureUsage::ScriptExecutorStateProto_ScriptFeatureUsage(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.exception_)*/ 0
+
+  , /*decltype(_impl_.call_stmt_)*/ 0
+
+  , /*decltype(_impl_.execute_immediate_stmt_)*/ 0
+} {}
 struct ScriptExecutorStateProto_ScriptFeatureUsageDefaultTypeInternal {
-  constexpr ScriptExecutorStateProto_ScriptFeatureUsageDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ScriptExecutorStateProto_ScriptFeatureUsageDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ScriptExecutorStateProto_ScriptFeatureUsageDefaultTypeInternal() {}
   union {
     ScriptExecutorStateProto_ScriptFeatureUsage _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptExecutorStateProto_ScriptFeatureUsageDefaultTypeInternal _ScriptExecutorStateProto_ScriptFeatureUsage_default_instance_;
-constexpr ScriptExecutorStateProto::ScriptExecutorStateProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : callstack_()
-  , pending_exceptions_()
-  , triggered_features_()
-  , timezone_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , sql_feature_usage_(nullptr)
-  , case_stmt_true_branch_index_(int64_t{0})
-  , case_stmt_current_branch_index_(int64_t{0}){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ScriptExecutorStateProto_ScriptFeatureUsageDefaultTypeInternal _ScriptExecutorStateProto_ScriptFeatureUsage_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ScriptExecutorStateProto::ScriptExecutorStateProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.callstack_)*/{}
+  , /*decltype(_impl_.pending_exceptions_)*/{}
+  , /*decltype(_impl_.triggered_features_)*/ {}
+
+  , /*decltype(_impl_.timezone_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.sql_feature_usage_)*/nullptr
+  , /*decltype(_impl_.case_stmt_true_branch_index_)*/ ::int64_t{0}
+
+  , /*decltype(_impl_.case_stmt_current_branch_index_)*/ ::int64_t{0}
+} {}
 struct ScriptExecutorStateProtoDefaultTypeInternal {
-  constexpr ScriptExecutorStateProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ScriptExecutorStateProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ScriptExecutorStateProtoDefaultTypeInternal() {}
   union {
     ScriptExecutorStateProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ScriptExecutorStateProtoDefaultTypeInternal _ScriptExecutorStateProto_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ScriptExecutorStateProtoDefaultTypeInternal _ScriptExecutorStateProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[5];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, name_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, signature_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, argument_name_list_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, body_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, is_dynamic_sql_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, extension_),
-  0,
-  2,
-  ~0u,
-  1,
-  4,
-  3,
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, mode_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, variables_),
-  0,
-  ~0u,
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, procedure_definition_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, variables_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, current_location_byte_offset_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, control_flow_node_kind_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, parameters_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, for_loop_stack_),
-  0,
-  ~0u,
-  2,
-  3,
-  1,
-  ~0u,
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, exception_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, call_stmt_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, execute_immediate_stmt_),
-  0,
-  1,
-  2,
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, callstack_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, pending_exceptions_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, triggered_features_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, timezone_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, case_stmt_true_branch_index_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, case_stmt_current_branch_index_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, sql_feature_usage_),
-  ~0u,
-  ~0u,
-  ~0u,
-  0,
-  2,
-  3,
-  1,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 12, -1, sizeof(::zetasql::ScriptExecutorStateProto_ProcedureDefinition)},
-  { 18, 26, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters)},
-  { 28, 40, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame)},
-  { 46, 55, -1, sizeof(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage)},
-  { 58, 71, -1, sizeof(::zetasql::ScriptExecutorStateProto)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_ProcedureDefinition_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_StackFrame_Parameters_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_StackFrame_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_ScriptFeatureUsage_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ScriptExecutorStateProto_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[5];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[2];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_.name_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_.signature_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_.argument_name_list_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_.body_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_.is_dynamic_sql_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ProcedureDefinition, _impl_.extension_),
+    0,
+    2,
+    ~0u,
+    1,
+    4,
+    3,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _impl_.mode_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters, _impl_.variables_),
+    0,
+    ~0u,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_.procedure_definition_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_.variables_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_.current_location_byte_offset_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_.control_flow_node_kind_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_.parameters_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_StackFrame, _impl_.for_loop_stack_),
+    0,
+    ~0u,
+    2,
+    3,
+    1,
+    ~0u,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _impl_.exception_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _impl_.call_stmt_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage, _impl_.execute_immediate_stmt_),
+    0,
+    1,
+    2,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.callstack_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.pending_exceptions_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.triggered_features_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.timezone_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.case_stmt_true_branch_index_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.case_stmt_current_branch_index_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ScriptExecutorStateProto, _impl_.sql_feature_usage_),
+    ~0u,
+    ~0u,
+    ~0u,
+    0,
+    2,
+    3,
+    1,
 };
 
-const char descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n-zetasql/scripting/script_executor_stat"
-  "e.proto\022\007zetasql\032\031google/protobuf/any.pr"
-  "oto\032\034zetasql/proto/function.proto\032+zetas"
-  "ql/scripting/procedure_extension.proto\032("
-  "zetasql/scripting/script_exception.proto"
-  "\032 zetasql/scripting/variable.proto\"\252\n\n\030S"
-  "criptExecutorStateProto\022\?\n\tcallstack\030\001 \003"
-  "(\0132,.zetasql.ScriptExecutorStateProto.St"
-  "ackFrame\0224\n\022pending_exceptions\030\002 \003(\0132\030.z"
-  "etasql.ScriptException\022K\n\022triggered_feat"
-  "ures\030\003 \003(\0162/.zetasql.ScriptExecutorState"
-  "Proto.ScriptFeature\022\020\n\010timezone\030\004 \001(\t\022#\n"
-  "\033case_stmt_true_branch_index\030\005 \001(\003\022&\n\036ca"
-  "se_stmt_current_branch_index\030\006 \001(\003\022O\n\021sq"
-  "l_feature_usage\030\007 \001(\01324.zetasql.ScriptEx"
-  "ecutorStateProto.ScriptFeatureUsage\032\311\001\n\023"
-  "ProcedureDefinition\022\014\n\004name\030\001 \001(\t\0222\n\tsig"
-  "nature\030\002 \001(\0132\037.zetasql.FunctionSignature"
-  "Proto\022\032\n\022argument_name_list\030\003 \003(\t\022\014\n\004bod"
-  "y\030\004 \001(\t\022\026\n\016is_dynamic_sql\030\005 \001(\010\022.\n\texten"
-  "sion\030\006 \001(\0132\033.zetasql.ProcedureExtension\032"
-  "\210\004\n\nStackFrame\022S\n\024procedure_definition\030\001"
-  " \001(\01325.zetasql.ScriptExecutorStateProto."
-  "ProcedureDefinition\022$\n\tvariables\030\002 \003(\0132\021"
-  ".zetasql.Variable\022$\n\034current_location_by"
-  "te_offset\030\003 \001(\005\022\036\n\026control_flow_node_kin"
-  "d\030\005 \001(\005\022K\n\nparameters\030\004 \001(\01327.zetasql.Sc"
-  "riptExecutorStateProto.StackFrame.Parame"
-  "ters\022,\n\016for_loop_stack\030\006 \003(\0132\024.google.pr"
-  "otobuf.Any\032\275\001\n\nParameters\022S\n\004mode\030\004 \001(\0162"
-  "E.zetasql.ScriptExecutorStateProto.Stack"
-  "Frame.Parameters.ParameterMode\022$\n\tvariab"
-  "les\030\005 \003(\0132\021.zetasql.Variable\"4\n\rParamete"
-  "rMode\022\010\n\004NONE\020\000\022\t\n\005NAMED\020\001\022\016\n\nPOSITIONAL"
-  "\020\002\032Z\n\022ScriptFeatureUsage\022\021\n\texception\030\001 "
-  "\001(\005\022\021\n\tcall_stmt\030\002 \001(\005\022\036\n\026execute_immedi"
-  "ate_stmt\030\003 \001(\005\"g\n\rScriptFeature\022\013\n\007INVAL"
-  "ID\020\000\022\024\n\020EXCEPTION_CAUGHT\020\001\022\022\n\016CALL_STATE"
-  "MENT\020\002\022\037\n\033EXECUTE_IMMEDIATE_STATEMENT\020\003"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps[5] = {
-  &::descriptor_table_google_2fprotobuf_2fany_2eproto,
-  &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
-  &::descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
-  &::descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto,
-  &::descriptor_table_zetasql_2fscripting_2fvariable_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 14, -1, sizeof(::zetasql::ScriptExecutorStateProto_ProcedureDefinition)},
+        { 20, 30, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters)},
+        { 32, 46, -1, sizeof(::zetasql::ScriptExecutorStateProto_StackFrame)},
+        { 52, 63, -1, sizeof(::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage)},
+        { 66, 81, -1, sizeof(::zetasql::ScriptExecutorStateProto)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = {
-  false, false, 1559, descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, "zetasql/scripting/script_executor_state.proto", 
-  &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once, descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps, 5, 5,
-  schemas, file_default_instances, TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets,
-  file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto, file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_ScriptExecutorStateProto_ProcedureDefinition_default_instance_._instance,
+    &::zetasql::_ScriptExecutorStateProto_StackFrame_Parameters_default_instance_._instance,
+    &::zetasql::_ScriptExecutorStateProto_StackFrame_default_instance_._instance,
+    &::zetasql::_ScriptExecutorStateProto_ScriptFeatureUsage_default_instance_._instance,
+    &::zetasql::_ScriptExecutorStateProto_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n-zetasql/scripting/script_executor_stat"
+    "e.proto\022\007zetasql\032\031google/protobuf/any.pr"
+    "oto\032\034zetasql/proto/function.proto\032+zetas"
+    "ql/scripting/procedure_extension.proto\032("
+    "zetasql/scripting/script_exception.proto"
+    "\032 zetasql/scripting/variable.proto\"\252\n\n\030S"
+    "criptExecutorStateProto\022\?\n\tcallstack\030\001 \003"
+    "(\0132,.zetasql.ScriptExecutorStateProto.St"
+    "ackFrame\0224\n\022pending_exceptions\030\002 \003(\0132\030.z"
+    "etasql.ScriptException\022K\n\022triggered_feat"
+    "ures\030\003 \003(\0162/.zetasql.ScriptExecutorState"
+    "Proto.ScriptFeature\022\020\n\010timezone\030\004 \001(\t\022#\n"
+    "\033case_stmt_true_branch_index\030\005 \001(\003\022&\n\036ca"
+    "se_stmt_current_branch_index\030\006 \001(\003\022O\n\021sq"
+    "l_feature_usage\030\007 \001(\01324.zetasql.ScriptEx"
+    "ecutorStateProto.ScriptFeatureUsage\032\311\001\n\023"
+    "ProcedureDefinition\022\014\n\004name\030\001 \001(\t\0222\n\tsig"
+    "nature\030\002 \001(\0132\037.zetasql.FunctionSignature"
+    "Proto\022\032\n\022argument_name_list\030\003 \003(\t\022\014\n\004bod"
+    "y\030\004 \001(\t\022\026\n\016is_dynamic_sql\030\005 \001(\010\022.\n\texten"
+    "sion\030\006 \001(\0132\033.zetasql.ProcedureExtension\032"
+    "\210\004\n\nStackFrame\022S\n\024procedure_definition\030\001"
+    " \001(\01325.zetasql.ScriptExecutorStateProto."
+    "ProcedureDefinition\022$\n\tvariables\030\002 \003(\0132\021"
+    ".zetasql.Variable\022$\n\034current_location_by"
+    "te_offset\030\003 \001(\005\022\036\n\026control_flow_node_kin"
+    "d\030\005 \001(\005\022K\n\nparameters\030\004 \001(\01327.zetasql.Sc"
+    "riptExecutorStateProto.StackFrame.Parame"
+    "ters\022,\n\016for_loop_stack\030\006 \003(\0132\024.google.pr"
+    "otobuf.Any\032\275\001\n\nParameters\022S\n\004mode\030\004 \001(\0162"
+    "E.zetasql.ScriptExecutorStateProto.Stack"
+    "Frame.Parameters.ParameterMode\022$\n\tvariab"
+    "les\030\005 \003(\0132\021.zetasql.Variable\"4\n\rParamete"
+    "rMode\022\010\n\004NONE\020\000\022\t\n\005NAMED\020\001\022\016\n\nPOSITIONAL"
+    "\020\002\032Z\n\022ScriptFeatureUsage\022\021\n\texception\030\001 "
+    "\001(\005\022\021\n\tcall_stmt\030\002 \001(\005\022\036\n\026execute_immedi"
+    "ate_stmt\030\003 \001(\005\"g\n\rScriptFeature\022\013\n\007INVAL"
+    "ID\020\000\022\024\n\020EXCEPTION_CAUGHT\020\001\022\022\n\016CALL_STATE"
+    "MENT\020\002\022\037\n\033EXECUTE_IMMEDIATE_STATEMENT\020\003"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps[5] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fany_2eproto,
+        &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
+        &::descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
+        &::descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto,
+        &::descriptor_table_zetasql_2fscripting_2fvariable_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = {
+    false,
+    false,
+    1559,
+    descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
+    "zetasql/scripting/script_executor_state.proto",
+    &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,
+    descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps,
+    5,
+    5,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto::offsets,
+    file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
+    file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
+    file_level_service_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter() {
   return &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto(&descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto(&descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto);
@@ -274,15 +350,18 @@ bool ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode_IsValid(int va
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode ScriptExecutorStateProto_StackFrame_Parameters::NONE;
 constexpr ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode ScriptExecutorStateProto_StackFrame_Parameters::NAMED;
 constexpr ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode ScriptExecutorStateProto_StackFrame_Parameters::POSITIONAL;
 constexpr ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode ScriptExecutorStateProto_StackFrame_Parameters::ParameterMode_MIN;
 constexpr ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode ScriptExecutorStateProto_StackFrame_Parameters::ParameterMode_MAX;
 constexpr int ScriptExecutorStateProto_StackFrame_Parameters::ParameterMode_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ScriptExecutorStateProto_ScriptFeature_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto);
   return file_level_enum_descriptors_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[1];
@@ -298,8 +377,9 @@ bool ScriptExecutorStateProto_ScriptFeature_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr ScriptExecutorStateProto_ScriptFeature ScriptExecutorStateProto::INVALID;
 constexpr ScriptExecutorStateProto_ScriptFeature ScriptExecutorStateProto::EXCEPTION_CAUGHT;
 constexpr ScriptExecutorStateProto_ScriptFeature ScriptExecutorStateProto::CALL_STATEMENT;
@@ -307,13 +387,16 @@ constexpr ScriptExecutorStateProto_ScriptFeature ScriptExecutorStateProto::EXECU
 constexpr ScriptExecutorStateProto_ScriptFeature ScriptExecutorStateProto::ScriptFeature_MIN;
 constexpr ScriptExecutorStateProto_ScriptFeature ScriptExecutorStateProto::ScriptFeature_MAX;
 constexpr int ScriptExecutorStateProto::ScriptFeature_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 // ===================================================================
 
 class ScriptExecutorStateProto_ProcedureDefinition::_Internal {
  public:
-  using HasBits = decltype(std::declval<ScriptExecutorStateProto_ProcedureDefinition>()._has_bits_);
+  using HasBits = decltype(std::declval<ScriptExecutorStateProto_ProcedureDefinition>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ProcedureDefinition, _impl_._has_bits_);
   static void set_has_name(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -335,206 +418,220 @@ class ScriptExecutorStateProto_ProcedureDefinition::_Internal {
 
 const ::zetasql::FunctionSignatureProto&
 ScriptExecutorStateProto_ProcedureDefinition::_Internal::signature(const ScriptExecutorStateProto_ProcedureDefinition* msg) {
-  return *msg->signature_;
+  return *msg->_impl_.signature_;
 }
 const ::zetasql::ProcedureExtension&
 ScriptExecutorStateProto_ProcedureDefinition::_Internal::extension(const ScriptExecutorStateProto_ProcedureDefinition* msg) {
-  return *msg->extension_;
+  return *msg->_impl_.extension_;
 }
 void ScriptExecutorStateProto_ProcedureDefinition::clear_signature() {
-  if (signature_ != nullptr) signature_->Clear();
-  _has_bits_[0] &= ~0x00000004u;
+  if (_impl_.signature_ != nullptr) _impl_.signature_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 void ScriptExecutorStateProto_ProcedureDefinition::clear_extension() {
-  if (extension_ != nullptr) extension_->Clear();
-  _has_bits_[0] &= ~0x00000008u;
+  if (_impl_.extension_ != nullptr) _impl_.extension_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
-ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_ProcedureDefinition(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  argument_name_list_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_ProcedureDefinition(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
 }
 ScriptExecutorStateProto_ProcedureDefinition::ScriptExecutorStateProto_ProcedureDefinition(const ScriptExecutorStateProto_ProcedureDefinition& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      argument_name_list_(from.argument_name_list_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ScriptExecutorStateProto_ProcedureDefinition* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.argument_name_list_){from._impl_.argument_name_list_}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.body_) {}
+
+    , decltype(_impl_.signature_){nullptr}
+    , decltype(_impl_.extension_){nullptr}
+    , decltype(_impl_.is_dynamic_sql_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_name()) {
-    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
-      GetArenaForAllocation());
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.name_.Set(from._internal_name(), _this->GetArenaForAllocation());
   }
-  body_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.body_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    body_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_body()) {
-    body_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_body(), 
-      GetArenaForAllocation());
+        _impl_.body_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.body_.Set(from._internal_body(), _this->GetArenaForAllocation());
   }
-  if (from._internal_has_signature()) {
-    signature_ = new ::zetasql::FunctionSignatureProto(*from.signature_);
-  } else {
-    signature_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000004u) != 0) {
+    _this->_impl_.signature_ = new ::zetasql::FunctionSignatureProto(*from._impl_.signature_);
   }
-  if (from._internal_has_extension()) {
-    extension_ = new ::zetasql::ProcedureExtension(*from.extension_);
-  } else {
-    extension_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000008u) != 0) {
+    _this->_impl_.extension_ = new ::zetasql::ProcedureExtension(*from._impl_.extension_);
   }
-  is_dynamic_sql_ = from.is_dynamic_sql_;
+  _this->_impl_.is_dynamic_sql_ = from._impl_.is_dynamic_sql_;
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
 }
 
-inline void ScriptExecutorStateProto_ProcedureDefinition::SharedCtor() {
-name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-body_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  body_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&signature_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&is_dynamic_sql_) -
-    reinterpret_cast<char*>(&signature_)) + sizeof(is_dynamic_sql_));
+inline void ScriptExecutorStateProto_ProcedureDefinition::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.argument_name_list_){arena}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.body_) {}
+
+    , decltype(_impl_.signature_){nullptr}
+    , decltype(_impl_.extension_){nullptr}
+    , decltype(_impl_.is_dynamic_sql_) { false }
+
+  };
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.body_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.body_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ScriptExecutorStateProto_ProcedureDefinition::~ScriptExecutorStateProto_ProcedureDefinition() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ScriptExecutorStateProto_ProcedureDefinition::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  body_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete signature_;
-  if (this != internal_default_instance()) delete extension_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_argument_name_list()->~RepeatedPtrField();
+  _impl_.name_.Destroy();
+  _impl_.body_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.signature_;
+  if (this != internal_default_instance()) delete _impl_.extension_;
 }
 
-void ScriptExecutorStateProto_ProcedureDefinition::ArenaDtor(void* object) {
-  ScriptExecutorStateProto_ProcedureDefinition* _this = reinterpret_cast< ScriptExecutorStateProto_ProcedureDefinition* >(object);
-  (void)_this;
-}
-void ScriptExecutorStateProto_ProcedureDefinition::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ScriptExecutorStateProto_ProcedureDefinition::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ScriptExecutorStateProto_ProcedureDefinition::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  argument_name_list_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_argument_name_list()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      name_.ClearNonDefaultToEmpty();
+      _impl_.name_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      body_.ClearNonDefaultToEmpty();
+      _impl_.body_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000004u) {
-      GOOGLE_DCHECK(signature_ != nullptr);
-      signature_->Clear();
+      ABSL_DCHECK(_impl_.signature_ != nullptr);
+      _impl_.signature_->Clear();
     }
     if (cached_has_bits & 0x00000008u) {
-      GOOGLE_DCHECK(extension_ != nullptr);
-      extension_->Clear();
+      ABSL_DCHECK(_impl_.extension_ != nullptr);
+      _impl_.extension_->Clear();
     }
   }
-  is_dynamic_sql_ = false;
-  _has_bits_.Clear();
+  _impl_.is_dynamic_sql_ = false;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ScriptExecutorStateProto_ProcedureDefinition::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ScriptExecutorStateProto_ProcedureDefinition::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional string name = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.ProcedureDefinition.name");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.ProcedureDefinition.name");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.FunctionSignatureProto signature = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_signature(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated string argument_name_list = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
             auto str = _internal_add_argument_name_list();
-            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-            #ifndef NDEBUG
-            ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.ProcedureDefinition.argument_name_list");
-            #endif  // !NDEBUG
+            ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
             CHK_(ptr);
+            #ifndef NDEBUG
+            ::_pbi::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.ProcedureDefinition.argument_name_list");
+            #endif  // !NDEBUG
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional string body = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_body();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.ProcedureDefinition.body");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.ProcedureDefinition.body");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional bool is_dynamic_sql = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
           _Internal::set_has_is_dynamic_sql(&has_bits);
-          is_dynamic_sql_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.is_dynamic_sql_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.ProcedureExtension extension = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 50)) {
           ptr = ctx->ParseMessage(_internal_mutable_extension(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -552,7 +649,7 @@ const char* ScriptExecutorStateProto_ProcedureDefinition::_InternalParse(const c
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -560,168 +657,156 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ScriptExecutorStateProto_ProcedureDefinition::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ScriptExecutorStateProto_ProcedureDefinition::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string name = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptExecutorStateProto.ProcedureDefinition.name");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_name(), target);
+    const std::string& _s = this->_internal_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ScriptExecutorStateProto.ProcedureDefinition.name");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // optional .zetasql.FunctionSignatureProto signature = 2;
   if (cached_has_bits & 0x00000004u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        2, _Internal::signature(this), target, stream);
+      InternalWriteMessage(2, _Internal::signature(this),
+        _Internal::signature(this).GetCachedSize(), target, stream);
   }
 
   // repeated string argument_name_list = 3;
-  for (int i = 0, n = this->_internal_argument_name_list_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_argument_name_list_size(); i < n; ++i) {
     const auto& s = this->_internal_argument_name_list(i);
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      s.data(), static_cast<int>(s.length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptExecutorStateProto.ProcedureDefinition.argument_name_list");
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(s.data(), static_cast<int>(s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ScriptExecutorStateProto.ProcedureDefinition.argument_name_list");
     target = stream->WriteString(3, s, target);
   }
 
   // optional string body = 4;
   if (cached_has_bits & 0x00000002u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_body().data(), static_cast<int>(this->_internal_body().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptExecutorStateProto.ProcedureDefinition.body");
-    target = stream->WriteStringMaybeAliased(
-        4, this->_internal_body(), target);
+    const std::string& _s = this->_internal_body();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ScriptExecutorStateProto.ProcedureDefinition.body");
+    target = stream->WriteStringMaybeAliased(4, _s, target);
   }
 
   // optional bool is_dynamic_sql = 5;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_is_dynamic_sql(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        5, this->_internal_is_dynamic_sql(), target);
   }
 
   // optional .zetasql.ProcedureExtension extension = 6;
   if (cached_has_bits & 0x00000008u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        6, _Internal::extension(this), target, stream);
+      InternalWriteMessage(6, _Internal::extension(this),
+        _Internal::extension(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
   return target;
 }
 
-size_t ScriptExecutorStateProto_ProcedureDefinition::ByteSizeLong() const {
+::size_t ScriptExecutorStateProto_ProcedureDefinition::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated string argument_name_list = 3;
-  total_size += 1 *
-      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(argument_name_list_.size());
-  for (int i = 0, n = argument_name_list_.size(); i < n; i++) {
+  total_size += 1 * ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(_internal_argument_name_list().size());
+  for (int i = 0, n = _internal_argument_name_list().size(); i < n; ++i) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-      argument_name_list_.Get(i));
+        _internal_argument_name_list().Get(i));
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_name());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_name());
     }
 
     // optional string body = 4;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_body());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_body());
     }
 
     // optional .zetasql.FunctionSignatureProto signature = 2;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *signature_);
+          *_impl_.signature_);
     }
 
     // optional .zetasql.ProcedureExtension extension = 6;
     if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *extension_);
+          *_impl_.extension_);
     }
 
     // optional bool is_dynamic_sql = 5;
     if (cached_has_bits & 0x00000010u) {
-      total_size += 1 + 1;
+      total_size += 2;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptExecutorStateProto_ProcedureDefinition::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ScriptExecutorStateProto_ProcedureDefinition::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptExecutorStateProto_ProcedureDefinition::GetClassData() const { return &_class_data_; }
 
-void ScriptExecutorStateProto_ProcedureDefinition::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ScriptExecutorStateProto_ProcedureDefinition *>(to)->MergeFrom(
-      static_cast<const ScriptExecutorStateProto_ProcedureDefinition &>(from));
-}
 
-
-void ScriptExecutorStateProto_ProcedureDefinition::MergeFrom(const ScriptExecutorStateProto_ProcedureDefinition& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ScriptExecutorStateProto_ProcedureDefinition::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ScriptExecutorStateProto_ProcedureDefinition*>(&to_msg);
+  auto& from = static_cast<const ScriptExecutorStateProto_ProcedureDefinition&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.ProcedureDefinition)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  argument_name_list_.MergeFrom(from.argument_name_list_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_argument_name_list()->MergeFrom(from._internal_argument_name_list());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_name(from._internal_name());
+      _this->_internal_set_name(from._internal_name());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_set_body(from._internal_body());
+      _this->_internal_set_body(from._internal_body());
     }
     if (cached_has_bits & 0x00000004u) {
-      _internal_mutable_signature()->::zetasql::FunctionSignatureProto::MergeFrom(from._internal_signature());
+      _this->_internal_mutable_signature()->::zetasql::FunctionSignatureProto::MergeFrom(
+          from._internal_signature());
     }
     if (cached_has_bits & 0x00000008u) {
-      _internal_mutable_extension()->::zetasql::ProcedureExtension::MergeFrom(from._internal_extension());
+      _this->_internal_mutable_extension()->::zetasql::ProcedureExtension::MergeFrom(
+          from._internal_extension());
     }
     if (cached_has_bits & 0x00000010u) {
-      is_dynamic_sql_ = from.is_dynamic_sql_;
+      _this->_impl_.is_dynamic_sql_ = from._impl_.is_dynamic_sql_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptExecutorStateProto_ProcedureDefinition::CopyFrom(const ScriptExecutorStateProto_ProcedureDefinition& from) {
@@ -732,11 +817,11 @@ void ScriptExecutorStateProto_ProcedureDefinition::CopyFrom(const ScriptExecutor
 }
 
 bool ScriptExecutorStateProto_ProcedureDefinition::IsInitialized() const {
-  if (_internal_has_signature()) {
-    if (!signature_->IsInitialized()) return false;
+  if ((_impl_._has_bits_[0] & 0x00000004u) != 0) {
+    if (!_impl_.signature_->IsInitialized()) return false;
   }
-  if (_internal_has_extension()) {
-    if (!extension_->IsInitialized()) return false;
+  if ((_impl_._has_bits_[0] & 0x00000008u) != 0) {
+    if (!_impl_.extension_->IsInitialized()) return false;
   }
   return true;
 }
@@ -746,124 +831,126 @@ void ScriptExecutorStateProto_ProcedureDefinition::InternalSwap(ScriptExecutorSt
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  argument_name_list_.InternalSwap(&other->argument_name_list_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &name_, lhs_arena,
-      &other->name_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &body_, lhs_arena,
-      &other->body_, rhs_arena
-  );
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_argument_name_list()->InternalSwap(
+      other->_internal_mutable_argument_name_list());
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,
+                                       &other->_impl_.name_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.body_, lhs_arena,
+                                       &other->_impl_.body_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ProcedureDefinition, is_dynamic_sql_)
-      + sizeof(ScriptExecutorStateProto_ProcedureDefinition::is_dynamic_sql_)
-      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ProcedureDefinition, signature_)>(
-          reinterpret_cast<char*>(&signature_),
-          reinterpret_cast<char*>(&other->signature_));
+      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ProcedureDefinition, _impl_.is_dynamic_sql_)
+      + sizeof(ScriptExecutorStateProto_ProcedureDefinition::_impl_.is_dynamic_sql_)
+      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ProcedureDefinition, _impl_.signature_)>(
+          reinterpret_cast<char*>(&_impl_.signature_),
+          reinterpret_cast<char*>(&other->_impl_.signature_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ScriptExecutorStateProto_ProcedureDefinition::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,
       file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[0]);
 }
-
 // ===================================================================
 
 class ScriptExecutorStateProto_StackFrame_Parameters::_Internal {
  public:
-  using HasBits = decltype(std::declval<ScriptExecutorStateProto_StackFrame_Parameters>()._has_bits_);
+  using HasBits = decltype(std::declval<ScriptExecutorStateProto_StackFrame_Parameters>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_StackFrame_Parameters, _impl_._has_bits_);
   static void set_has_mode(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
 void ScriptExecutorStateProto_StackFrame_Parameters::clear_variables() {
-  variables_.Clear();
+  _internal_mutable_variables()->Clear();
 }
-ScriptExecutorStateProto_StackFrame_Parameters::ScriptExecutorStateProto_StackFrame_Parameters(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  variables_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ScriptExecutorStateProto_StackFrame_Parameters::ScriptExecutorStateProto_StackFrame_Parameters(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
 }
 ScriptExecutorStateProto_StackFrame_Parameters::ScriptExecutorStateProto_StackFrame_Parameters(const ScriptExecutorStateProto_StackFrame_Parameters& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      variables_(from.variables_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ScriptExecutorStateProto_StackFrame_Parameters* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.variables_){from._impl_.variables_}
+    , decltype(_impl_.mode_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  mode_ = from.mode_;
+  _this->_impl_.mode_ = from._impl_.mode_;
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
 }
 
-inline void ScriptExecutorStateProto_StackFrame_Parameters::SharedCtor() {
-mode_ = 0;
+inline void ScriptExecutorStateProto_StackFrame_Parameters::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.variables_){arena}
+    , decltype(_impl_.mode_) { 0 }
+
+  };
 }
 
 ScriptExecutorStateProto_StackFrame_Parameters::~ScriptExecutorStateProto_StackFrame_Parameters() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ScriptExecutorStateProto_StackFrame_Parameters::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_variables()->~RepeatedPtrField();
 }
 
-void ScriptExecutorStateProto_StackFrame_Parameters::ArenaDtor(void* object) {
-  ScriptExecutorStateProto_StackFrame_Parameters* _this = reinterpret_cast< ScriptExecutorStateProto_StackFrame_Parameters* >(object);
-  (void)_this;
-}
-void ScriptExecutorStateProto_StackFrame_Parameters::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ScriptExecutorStateProto_StackFrame_Parameters::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ScriptExecutorStateProto_StackFrame_Parameters::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  variables_.Clear();
-  mode_ = 0;
-  _has_bits_.Clear();
+  _internal_mutable_variables()->Clear();
+  _impl_.mode_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ScriptExecutorStateProto_StackFrame_Parameters::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ScriptExecutorStateProto_StackFrame_Parameters::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .zetasql.ScriptExecutorStateProto.StackFrame.Parameters.ParameterMode mode = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-          if (PROTOBUF_PREDICT_TRUE(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode_IsValid(val))) {
+          if (PROTOBUF_PREDICT_TRUE(::zetasql::ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode_IsValid(static_cast<int>(val)))) {
             _internal_set_mode(static_cast<::zetasql::ScriptExecutorStateProto_StackFrame_Parameters_ParameterMode>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(4, val, mutable_unknown_fields());
           }
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.Variable variables = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 42)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -871,8 +958,9 @@ const char* ScriptExecutorStateProto_StackFrame_Parameters::_InternalParse(const
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -890,7 +978,7 @@ const char* ScriptExecutorStateProto_StackFrame_Parameters::_InternalParse(const
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -898,85 +986,81 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ScriptExecutorStateProto_StackFrame_Parameters::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ScriptExecutorStateProto_StackFrame_Parameters::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.ScriptExecutorStateProto.StackFrame.Parameters.ParameterMode mode = 4;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      4, this->_internal_mode(), target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        4, this->_internal_mode(), target);
   }
 
   // repeated .zetasql.Variable variables = 5;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_variables_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_variables_size()); i < n; i++) {
+    const auto& repfield = this->_internal_variables(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(5, this->_internal_variables(i), target, stream);
+        InternalWriteMessage(5, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
   return target;
 }
 
-size_t ScriptExecutorStateProto_StackFrame_Parameters::ByteSizeLong() const {
+::size_t ScriptExecutorStateProto_StackFrame_Parameters::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.Variable variables = 5;
   total_size += 1UL * this->_internal_variables_size();
-  for (const auto& msg : this->variables_) {
+  for (const auto& msg : this->_internal_variables()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // optional .zetasql.ScriptExecutorStateProto.StackFrame.Parameters.ParameterMode mode = 4;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_mode());
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_mode());
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptExecutorStateProto_StackFrame_Parameters::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ScriptExecutorStateProto_StackFrame_Parameters::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptExecutorStateProto_StackFrame_Parameters::GetClassData() const { return &_class_data_; }
 
-void ScriptExecutorStateProto_StackFrame_Parameters::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ScriptExecutorStateProto_StackFrame_Parameters *>(to)->MergeFrom(
-      static_cast<const ScriptExecutorStateProto_StackFrame_Parameters &>(from));
-}
 
-
-void ScriptExecutorStateProto_StackFrame_Parameters::MergeFrom(const ScriptExecutorStateProto_StackFrame_Parameters& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ScriptExecutorStateProto_StackFrame_Parameters::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ScriptExecutorStateProto_StackFrame_Parameters*>(&to_msg);
+  auto& from = static_cast<const ScriptExecutorStateProto_StackFrame_Parameters&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.StackFrame.Parameters)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  variables_.MergeFrom(from.variables_);
-  if (from._internal_has_mode()) {
-    _internal_set_mode(from._internal_mode());
+  _this->_internal_mutable_variables()->MergeFrom(from._internal_variables());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_set_mode(from._internal_mode());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptExecutorStateProto_StackFrame_Parameters::CopyFrom(const ScriptExecutorStateProto_StackFrame_Parameters& from) {
@@ -987,7 +1071,7 @@ void ScriptExecutorStateProto_StackFrame_Parameters::CopyFrom(const ScriptExecut
 }
 
 bool ScriptExecutorStateProto_StackFrame_Parameters::IsInitialized() const {
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(variables_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_variables()))
     return false;
   return true;
 }
@@ -995,22 +1079,23 @@ bool ScriptExecutorStateProto_StackFrame_Parameters::IsInitialized() const {
 void ScriptExecutorStateProto_StackFrame_Parameters::InternalSwap(ScriptExecutorStateProto_StackFrame_Parameters* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  variables_.InternalSwap(&other->variables_);
-  swap(mode_, other->mode_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_variables()->InternalSwap(other->_internal_mutable_variables());
+  swap(_impl_.mode_, other->_impl_.mode_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ScriptExecutorStateProto_StackFrame_Parameters::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,
       file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[1]);
 }
-
 // ===================================================================
 
 class ScriptExecutorStateProto_StackFrame::_Internal {
  public:
-  using HasBits = decltype(std::declval<ScriptExecutorStateProto_StackFrame>()._has_bits_);
+  using HasBits = decltype(std::declval<ScriptExecutorStateProto_StackFrame>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_StackFrame, _impl_._has_bits_);
   static const ::zetasql::ScriptExecutorStateProto_ProcedureDefinition& procedure_definition(const ScriptExecutorStateProto_StackFrame* msg);
   static void set_has_procedure_definition(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -1029,127 +1114,135 @@ class ScriptExecutorStateProto_StackFrame::_Internal {
 
 const ::zetasql::ScriptExecutorStateProto_ProcedureDefinition&
 ScriptExecutorStateProto_StackFrame::_Internal::procedure_definition(const ScriptExecutorStateProto_StackFrame* msg) {
-  return *msg->procedure_definition_;
+  return *msg->_impl_.procedure_definition_;
 }
 const ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters&
 ScriptExecutorStateProto_StackFrame::_Internal::parameters(const ScriptExecutorStateProto_StackFrame* msg) {
-  return *msg->parameters_;
+  return *msg->_impl_.parameters_;
 }
 void ScriptExecutorStateProto_StackFrame::clear_variables() {
-  variables_.Clear();
+  _internal_mutable_variables()->Clear();
 }
 void ScriptExecutorStateProto_StackFrame::clear_for_loop_stack() {
-  for_loop_stack_.Clear();
+  _internal_mutable_for_loop_stack()->Clear();
 }
-ScriptExecutorStateProto_StackFrame::ScriptExecutorStateProto_StackFrame(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  variables_(arena),
-  for_loop_stack_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ScriptExecutorStateProto_StackFrame::ScriptExecutorStateProto_StackFrame(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ScriptExecutorStateProto.StackFrame)
 }
 ScriptExecutorStateProto_StackFrame::ScriptExecutorStateProto_StackFrame(const ScriptExecutorStateProto_StackFrame& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      variables_(from.variables_),
-      for_loop_stack_(from.for_loop_stack_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ScriptExecutorStateProto_StackFrame* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.variables_){from._impl_.variables_}
+    , decltype(_impl_.for_loop_stack_){from._impl_.for_loop_stack_}
+    , decltype(_impl_.procedure_definition_){nullptr}
+    , decltype(_impl_.parameters_){nullptr}
+    , decltype(_impl_.current_location_byte_offset_) {}
+
+    , decltype(_impl_.control_flow_node_kind_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_procedure_definition()) {
-    procedure_definition_ = new ::zetasql::ScriptExecutorStateProto_ProcedureDefinition(*from.procedure_definition_);
-  } else {
-    procedure_definition_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.procedure_definition_ = new ::zetasql::ScriptExecutorStateProto_ProcedureDefinition(*from._impl_.procedure_definition_);
   }
-  if (from._internal_has_parameters()) {
-    parameters_ = new ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters(*from.parameters_);
-  } else {
-    parameters_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.parameters_ = new ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters(*from._impl_.parameters_);
   }
-  ::memcpy(&current_location_byte_offset_, &from.current_location_byte_offset_,
-    static_cast<size_t>(reinterpret_cast<char*>(&control_flow_node_kind_) -
-    reinterpret_cast<char*>(&current_location_byte_offset_)) + sizeof(control_flow_node_kind_));
+  ::memcpy(&_impl_.current_location_byte_offset_, &from._impl_.current_location_byte_offset_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.control_flow_node_kind_) -
+    reinterpret_cast<char*>(&_impl_.current_location_byte_offset_)) + sizeof(_impl_.control_flow_node_kind_));
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptExecutorStateProto.StackFrame)
 }
 
-inline void ScriptExecutorStateProto_StackFrame::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&procedure_definition_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&control_flow_node_kind_) -
-    reinterpret_cast<char*>(&procedure_definition_)) + sizeof(control_flow_node_kind_));
+inline void ScriptExecutorStateProto_StackFrame::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.variables_){arena}
+    , decltype(_impl_.for_loop_stack_){arena}
+    , decltype(_impl_.procedure_definition_){nullptr}
+    , decltype(_impl_.parameters_){nullptr}
+    , decltype(_impl_.current_location_byte_offset_) { 0 }
+
+    , decltype(_impl_.control_flow_node_kind_) { 0 }
+
+  };
 }
 
 ScriptExecutorStateProto_StackFrame::~ScriptExecutorStateProto_StackFrame() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptExecutorStateProto.StackFrame)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ScriptExecutorStateProto_StackFrame::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete procedure_definition_;
-  if (this != internal_default_instance()) delete parameters_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_variables()->~RepeatedPtrField();
+  _internal_mutable_for_loop_stack()->~RepeatedPtrField();
+  if (this != internal_default_instance()) delete _impl_.procedure_definition_;
+  if (this != internal_default_instance()) delete _impl_.parameters_;
 }
 
-void ScriptExecutorStateProto_StackFrame::ArenaDtor(void* object) {
-  ScriptExecutorStateProto_StackFrame* _this = reinterpret_cast< ScriptExecutorStateProto_StackFrame* >(object);
-  (void)_this;
-}
-void ScriptExecutorStateProto_StackFrame::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ScriptExecutorStateProto_StackFrame::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ScriptExecutorStateProto_StackFrame::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptExecutorStateProto.StackFrame)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  variables_.Clear();
-  for_loop_stack_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_variables()->Clear();
+  _internal_mutable_for_loop_stack()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(procedure_definition_ != nullptr);
-      procedure_definition_->Clear();
+      ABSL_DCHECK(_impl_.procedure_definition_ != nullptr);
+      _impl_.procedure_definition_->Clear();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(parameters_ != nullptr);
-      parameters_->Clear();
+      ABSL_DCHECK(_impl_.parameters_ != nullptr);
+      _impl_.parameters_->Clear();
     }
   }
   if (cached_has_bits & 0x0000000cu) {
-    ::memset(&current_location_byte_offset_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&control_flow_node_kind_) -
-        reinterpret_cast<char*>(&current_location_byte_offset_)) + sizeof(control_flow_node_kind_));
+    ::memset(&_impl_.current_location_byte_offset_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.control_flow_node_kind_) -
+        reinterpret_cast<char*>(&_impl_.current_location_byte_offset_)) + sizeof(_impl_.control_flow_node_kind_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ScriptExecutorStateProto_StackFrame::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ScriptExecutorStateProto_StackFrame::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .zetasql.ScriptExecutorStateProto.ProcedureDefinition procedure_definition = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_procedure_definition(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.Variable variables = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1157,38 +1250,42 @@ const char* ScriptExecutorStateProto_StackFrame::_InternalParse(const char* ptr,
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 current_location_byte_offset = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
           _Internal::set_has_current_location_byte_offset(&has_bits);
-          current_location_byte_offset_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.current_location_byte_offset_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.ScriptExecutorStateProto.StackFrame.Parameters parameters = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_parameters(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 control_flow_node_kind = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
           _Internal::set_has_control_flow_node_kind(&has_bits);
-          control_flow_node_kind_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.control_flow_node_kind_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .google.protobuf.Any for_loop_stack = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 50)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1196,8 +1293,9 @@ const char* ScriptExecutorStateProto_StackFrame::_InternalParse(const char* ptr,
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<50>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1215,7 +1313,7 @@ const char* ScriptExecutorStateProto_StackFrame::_InternalParse(const char* ptr,
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1223,155 +1321,155 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ScriptExecutorStateProto_StackFrame::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ScriptExecutorStateProto_StackFrame::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptExecutorStateProto.StackFrame)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.ScriptExecutorStateProto.ProcedureDefinition procedure_definition = 1;
   if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        1, _Internal::procedure_definition(this), target, stream);
+      InternalWriteMessage(1, _Internal::procedure_definition(this),
+        _Internal::procedure_definition(this).GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.Variable variables = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_variables_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_variables_size()); i < n; i++) {
+    const auto& repfield = this->_internal_variables(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_variables(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // optional int32 current_location_byte_offset = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_current_location_byte_offset(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        3, this->_internal_current_location_byte_offset(), target);
   }
 
   // optional .zetasql.ScriptExecutorStateProto.StackFrame.Parameters parameters = 4;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        4, _Internal::parameters(this), target, stream);
+      InternalWriteMessage(4, _Internal::parameters(this),
+        _Internal::parameters(this).GetCachedSize(), target, stream);
   }
 
   // optional int32 control_flow_node_kind = 5;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_control_flow_node_kind(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        5, this->_internal_control_flow_node_kind(), target);
   }
 
   // repeated .google.protobuf.Any for_loop_stack = 6;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_for_loop_stack_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_for_loop_stack_size()); i < n; i++) {
+    const auto& repfield = this->_internal_for_loop_stack(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(6, this->_internal_for_loop_stack(i), target, stream);
+        InternalWriteMessage(6, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptExecutorStateProto.StackFrame)
   return target;
 }
 
-size_t ScriptExecutorStateProto_StackFrame::ByteSizeLong() const {
+::size_t ScriptExecutorStateProto_StackFrame::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptExecutorStateProto.StackFrame)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.Variable variables = 2;
   total_size += 1UL * this->_internal_variables_size();
-  for (const auto& msg : this->variables_) {
+  for (const auto& msg : this->_internal_variables()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .google.protobuf.Any for_loop_stack = 6;
   total_size += 1UL * this->_internal_for_loop_stack_size();
-  for (const auto& msg : this->for_loop_stack_) {
+  for (const auto& msg : this->_internal_for_loop_stack()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     // optional .zetasql.ScriptExecutorStateProto.ProcedureDefinition procedure_definition = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *procedure_definition_);
+          *_impl_.procedure_definition_);
     }
 
     // optional .zetasql.ScriptExecutorStateProto.StackFrame.Parameters parameters = 4;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *parameters_);
+          *_impl_.parameters_);
     }
 
     // optional int32 current_location_byte_offset = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_current_location_byte_offset());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_current_location_byte_offset());
     }
 
     // optional int32 control_flow_node_kind = 5;
     if (cached_has_bits & 0x00000008u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_control_flow_node_kind());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_control_flow_node_kind());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptExecutorStateProto_StackFrame::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ScriptExecutorStateProto_StackFrame::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptExecutorStateProto_StackFrame::GetClassData() const { return &_class_data_; }
 
-void ScriptExecutorStateProto_StackFrame::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ScriptExecutorStateProto_StackFrame *>(to)->MergeFrom(
-      static_cast<const ScriptExecutorStateProto_StackFrame &>(from));
-}
 
-
-void ScriptExecutorStateProto_StackFrame::MergeFrom(const ScriptExecutorStateProto_StackFrame& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.StackFrame)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ScriptExecutorStateProto_StackFrame::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ScriptExecutorStateProto_StackFrame*>(&to_msg);
+  auto& from = static_cast<const ScriptExecutorStateProto_StackFrame&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.StackFrame)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  variables_.MergeFrom(from.variables_);
-  for_loop_stack_.MergeFrom(from.for_loop_stack_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_variables()->MergeFrom(from._internal_variables());
+  _this->_internal_mutable_for_loop_stack()->MergeFrom(from._internal_for_loop_stack());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_mutable_procedure_definition()->::zetasql::ScriptExecutorStateProto_ProcedureDefinition::MergeFrom(from._internal_procedure_definition());
+      _this->_internal_mutable_procedure_definition()->::zetasql::ScriptExecutorStateProto_ProcedureDefinition::MergeFrom(
+          from._internal_procedure_definition());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_parameters()->::zetasql::ScriptExecutorStateProto_StackFrame_Parameters::MergeFrom(from._internal_parameters());
+      _this->_internal_mutable_parameters()->::zetasql::ScriptExecutorStateProto_StackFrame_Parameters::MergeFrom(
+          from._internal_parameters());
     }
     if (cached_has_bits & 0x00000004u) {
-      current_location_byte_offset_ = from.current_location_byte_offset_;
+      _this->_impl_.current_location_byte_offset_ = from._impl_.current_location_byte_offset_;
     }
     if (cached_has_bits & 0x00000008u) {
-      control_flow_node_kind_ = from.control_flow_node_kind_;
+      _this->_impl_.control_flow_node_kind_ = from._impl_.control_flow_node_kind_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptExecutorStateProto_StackFrame::CopyFrom(const ScriptExecutorStateProto_StackFrame& from) {
@@ -1382,13 +1480,13 @@ void ScriptExecutorStateProto_StackFrame::CopyFrom(const ScriptExecutorStateProt
 }
 
 bool ScriptExecutorStateProto_StackFrame::IsInitialized() const {
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(variables_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_variables()))
     return false;
-  if (_internal_has_procedure_definition()) {
-    if (!procedure_definition_->IsInitialized()) return false;
+  if ((_impl_._has_bits_[0] & 0x00000001u) != 0) {
+    if (!_impl_.procedure_definition_->IsInitialized()) return false;
   }
-  if (_internal_has_parameters()) {
-    if (!parameters_->IsInitialized()) return false;
+  if ((_impl_._has_bits_[0] & 0x00000002u) != 0) {
+    if (!_impl_.parameters_->IsInitialized()) return false;
   }
   return true;
 }
@@ -1396,28 +1494,29 @@ bool ScriptExecutorStateProto_StackFrame::IsInitialized() const {
 void ScriptExecutorStateProto_StackFrame::InternalSwap(ScriptExecutorStateProto_StackFrame* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  variables_.InternalSwap(&other->variables_);
-  for_loop_stack_.InternalSwap(&other->for_loop_stack_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_variables()->InternalSwap(other->_internal_mutable_variables());
+  _internal_mutable_for_loop_stack()->InternalSwap(other->_internal_mutable_for_loop_stack());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_StackFrame, control_flow_node_kind_)
-      + sizeof(ScriptExecutorStateProto_StackFrame::control_flow_node_kind_)
-      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_StackFrame, procedure_definition_)>(
-          reinterpret_cast<char*>(&procedure_definition_),
-          reinterpret_cast<char*>(&other->procedure_definition_));
+      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_StackFrame, _impl_.control_flow_node_kind_)
+      + sizeof(ScriptExecutorStateProto_StackFrame::_impl_.control_flow_node_kind_)
+      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_StackFrame, _impl_.procedure_definition_)>(
+          reinterpret_cast<char*>(&_impl_.procedure_definition_),
+          reinterpret_cast<char*>(&other->_impl_.procedure_definition_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ScriptExecutorStateProto_StackFrame::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,
       file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[2]);
 }
-
 // ===================================================================
 
 class ScriptExecutorStateProto_ScriptFeatureUsage::_Internal {
  public:
-  using HasBits = decltype(std::declval<ScriptExecutorStateProto_ScriptFeatureUsage>()._has_bits_);
+  using HasBits = decltype(std::declval<ScriptExecutorStateProto_ScriptFeatureUsage>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ScriptFeatureUsage, _impl_._has_bits_);
   static void set_has_exception(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -1429,102 +1528,101 @@ class ScriptExecutorStateProto_ScriptFeatureUsage::_Internal {
   }
 };
 
-ScriptExecutorStateProto_ScriptFeatureUsage::ScriptExecutorStateProto_ScriptFeatureUsage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ScriptExecutorStateProto_ScriptFeatureUsage::ScriptExecutorStateProto_ScriptFeatureUsage(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
 }
 ScriptExecutorStateProto_ScriptFeatureUsage::ScriptExecutorStateProto_ScriptFeatureUsage(const ScriptExecutorStateProto_ScriptFeatureUsage& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&exception_, &from.exception_,
-    static_cast<size_t>(reinterpret_cast<char*>(&execute_immediate_stmt_) -
-    reinterpret_cast<char*>(&exception_)) + sizeof(execute_immediate_stmt_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
 }
 
-inline void ScriptExecutorStateProto_ScriptFeatureUsage::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&exception_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&execute_immediate_stmt_) -
-    reinterpret_cast<char*>(&exception_)) + sizeof(execute_immediate_stmt_));
+inline void ScriptExecutorStateProto_ScriptFeatureUsage::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.exception_) { 0 }
+
+    , decltype(_impl_.call_stmt_) { 0 }
+
+    , decltype(_impl_.execute_immediate_stmt_) { 0 }
+
+  };
 }
 
 ScriptExecutorStateProto_ScriptFeatureUsage::~ScriptExecutorStateProto_ScriptFeatureUsage() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ScriptExecutorStateProto_ScriptFeatureUsage::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void ScriptExecutorStateProto_ScriptFeatureUsage::ArenaDtor(void* object) {
-  ScriptExecutorStateProto_ScriptFeatureUsage* _this = reinterpret_cast< ScriptExecutorStateProto_ScriptFeatureUsage* >(object);
-  (void)_this;
-}
-void ScriptExecutorStateProto_ScriptFeatureUsage::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ScriptExecutorStateProto_ScriptFeatureUsage::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ScriptExecutorStateProto_ScriptFeatureUsage::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
-    ::memset(&exception_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&execute_immediate_stmt_) -
-        reinterpret_cast<char*>(&exception_)) + sizeof(execute_immediate_stmt_));
+    ::memset(&_impl_.exception_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.execute_immediate_stmt_) -
+        reinterpret_cast<char*>(&_impl_.exception_)) + sizeof(_impl_.execute_immediate_stmt_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ScriptExecutorStateProto_ScriptFeatureUsage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ScriptExecutorStateProto_ScriptFeatureUsage::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int32 exception = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_exception(&has_bits);
-          exception_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.exception_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 call_stmt = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _Internal::set_has_call_stmt(&has_bits);
-          call_stmt_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.call_stmt_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 execute_immediate_stmt = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
           _Internal::set_has_execute_immediate_stmt(&has_bits);
-          execute_immediate_stmt_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.execute_immediate_stmt_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1542,7 +1640,7 @@ const char* ScriptExecutorStateProto_ScriptFeatureUsage::_InternalParse(const ch
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1550,101 +1648,103 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ScriptExecutorStateProto_ScriptFeatureUsage::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ScriptExecutorStateProto_ScriptFeatureUsage::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int32 exception = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_exception(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        1, this->_internal_exception(), target);
   }
 
   // optional int32 call_stmt = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_call_stmt(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        2, this->_internal_call_stmt(), target);
   }
 
   // optional int32 execute_immediate_stmt = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_execute_immediate_stmt(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        3, this->_internal_execute_immediate_stmt(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
   return target;
 }
 
-size_t ScriptExecutorStateProto_ScriptFeatureUsage::ByteSizeLong() const {
+::size_t ScriptExecutorStateProto_ScriptFeatureUsage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional int32 exception = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_exception());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_exception());
     }
 
     // optional int32 call_stmt = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_call_stmt());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_call_stmt());
     }
 
     // optional int32 execute_immediate_stmt = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_execute_immediate_stmt());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_execute_immediate_stmt());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptExecutorStateProto_ScriptFeatureUsage::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ScriptExecutorStateProto_ScriptFeatureUsage::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptExecutorStateProto_ScriptFeatureUsage::GetClassData() const { return &_class_data_; }
 
-void ScriptExecutorStateProto_ScriptFeatureUsage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ScriptExecutorStateProto_ScriptFeatureUsage *>(to)->MergeFrom(
-      static_cast<const ScriptExecutorStateProto_ScriptFeatureUsage &>(from));
-}
 
-
-void ScriptExecutorStateProto_ScriptFeatureUsage::MergeFrom(const ScriptExecutorStateProto_ScriptFeatureUsage& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ScriptExecutorStateProto_ScriptFeatureUsage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ScriptExecutorStateProto_ScriptFeatureUsage*>(&to_msg);
+  auto& from = static_cast<const ScriptExecutorStateProto_ScriptFeatureUsage&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto.ScriptFeatureUsage)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      exception_ = from.exception_;
+      _this->_impl_.exception_ = from._impl_.exception_;
     }
     if (cached_has_bits & 0x00000002u) {
-      call_stmt_ = from.call_stmt_;
+      _this->_impl_.call_stmt_ = from._impl_.call_stmt_;
     }
     if (cached_has_bits & 0x00000004u) {
-      execute_immediate_stmt_ = from.execute_immediate_stmt_;
+      _this->_impl_.execute_immediate_stmt_ = from._impl_.execute_immediate_stmt_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptExecutorStateProto_ScriptFeatureUsage::CopyFrom(const ScriptExecutorStateProto_ScriptFeatureUsage& from) {
@@ -1661,26 +1761,27 @@ bool ScriptExecutorStateProto_ScriptFeatureUsage::IsInitialized() const {
 void ScriptExecutorStateProto_ScriptFeatureUsage::InternalSwap(ScriptExecutorStateProto_ScriptFeatureUsage* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ScriptFeatureUsage, execute_immediate_stmt_)
-      + sizeof(ScriptExecutorStateProto_ScriptFeatureUsage::execute_immediate_stmt_)
-      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ScriptFeatureUsage, exception_)>(
-          reinterpret_cast<char*>(&exception_),
-          reinterpret_cast<char*>(&other->exception_));
+      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ScriptFeatureUsage, _impl_.execute_immediate_stmt_)
+      + sizeof(ScriptExecutorStateProto_ScriptFeatureUsage::_impl_.execute_immediate_stmt_)
+      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto_ScriptFeatureUsage, _impl_.exception_)>(
+          reinterpret_cast<char*>(&_impl_.exception_),
+          reinterpret_cast<char*>(&other->_impl_.exception_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ScriptExecutorStateProto_ScriptFeatureUsage::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,
       file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[3]);
 }
-
 // ===================================================================
 
 class ScriptExecutorStateProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<ScriptExecutorStateProto>()._has_bits_);
+  using HasBits = decltype(std::declval<ScriptExecutorStateProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto, _impl_._has_bits_);
   static void set_has_timezone(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -1698,121 +1799,134 @@ class ScriptExecutorStateProto::_Internal {
 
 const ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage&
 ScriptExecutorStateProto::_Internal::sql_feature_usage(const ScriptExecutorStateProto* msg) {
-  return *msg->sql_feature_usage_;
+  return *msg->_impl_.sql_feature_usage_;
 }
 void ScriptExecutorStateProto::clear_pending_exceptions() {
-  pending_exceptions_.Clear();
+  _internal_mutable_pending_exceptions()->Clear();
 }
-ScriptExecutorStateProto::ScriptExecutorStateProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  callstack_(arena),
-  pending_exceptions_(arena),
-  triggered_features_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ScriptExecutorStateProto::ScriptExecutorStateProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ScriptExecutorStateProto)
 }
 ScriptExecutorStateProto::ScriptExecutorStateProto(const ScriptExecutorStateProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      callstack_(from.callstack_),
-      pending_exceptions_(from.pending_exceptions_),
-      triggered_features_(from.triggered_features_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ScriptExecutorStateProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.callstack_){from._impl_.callstack_}
+    , decltype(_impl_.pending_exceptions_){from._impl_.pending_exceptions_}
+    , decltype(_impl_.triggered_features_) { from._internal_triggered_features() }
+
+    , decltype(_impl_.timezone_) {}
+
+    , decltype(_impl_.sql_feature_usage_){nullptr}
+    , decltype(_impl_.case_stmt_true_branch_index_) {}
+
+    , decltype(_impl_.case_stmt_current_branch_index_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  timezone_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.timezone_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    timezone_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_timezone()) {
-    timezone_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_timezone(), 
-      GetArenaForAllocation());
+        _impl_.timezone_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.timezone_.Set(from._internal_timezone(), _this->GetArenaForAllocation());
   }
-  if (from._internal_has_sql_feature_usage()) {
-    sql_feature_usage_ = new ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage(*from.sql_feature_usage_);
-  } else {
-    sql_feature_usage_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.sql_feature_usage_ = new ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage(*from._impl_.sql_feature_usage_);
   }
-  ::memcpy(&case_stmt_true_branch_index_, &from.case_stmt_true_branch_index_,
-    static_cast<size_t>(reinterpret_cast<char*>(&case_stmt_current_branch_index_) -
-    reinterpret_cast<char*>(&case_stmt_true_branch_index_)) + sizeof(case_stmt_current_branch_index_));
+  ::memcpy(&_impl_.case_stmt_true_branch_index_, &from._impl_.case_stmt_true_branch_index_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.case_stmt_current_branch_index_) -
+    reinterpret_cast<char*>(&_impl_.case_stmt_true_branch_index_)) + sizeof(_impl_.case_stmt_current_branch_index_));
   // @@protoc_insertion_point(copy_constructor:zetasql.ScriptExecutorStateProto)
 }
 
-inline void ScriptExecutorStateProto::SharedCtor() {
-timezone_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  timezone_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&sql_feature_usage_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&case_stmt_current_branch_index_) -
-    reinterpret_cast<char*>(&sql_feature_usage_)) + sizeof(case_stmt_current_branch_index_));
+inline void ScriptExecutorStateProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.callstack_){arena}
+    , decltype(_impl_.pending_exceptions_){arena}
+    , decltype(_impl_.triggered_features_) { arena }
+
+    , decltype(_impl_.timezone_) {}
+
+    , decltype(_impl_.sql_feature_usage_){nullptr}
+    , decltype(_impl_.case_stmt_true_branch_index_) { ::int64_t{0} }
+
+    , decltype(_impl_.case_stmt_current_branch_index_) { ::int64_t{0} }
+
+  };
+  _impl_.timezone_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.timezone_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ScriptExecutorStateProto::~ScriptExecutorStateProto() {
   // @@protoc_insertion_point(destructor:zetasql.ScriptExecutorStateProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ScriptExecutorStateProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  timezone_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete sql_feature_usage_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_callstack()->~RepeatedPtrField();
+  _internal_mutable_pending_exceptions()->~RepeatedPtrField();
+  _internal_mutable_triggered_features()->~RepeatedField();
+  _impl_.timezone_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.sql_feature_usage_;
 }
 
-void ScriptExecutorStateProto::ArenaDtor(void* object) {
-  ScriptExecutorStateProto* _this = reinterpret_cast< ScriptExecutorStateProto* >(object);
-  (void)_this;
-}
-void ScriptExecutorStateProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ScriptExecutorStateProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ScriptExecutorStateProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ScriptExecutorStateProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  callstack_.Clear();
-  pending_exceptions_.Clear();
-  triggered_features_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_callstack()->Clear();
+  _internal_mutable_pending_exceptions()->Clear();
+  _internal_mutable_triggered_features()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      timezone_.ClearNonDefaultToEmpty();
+      _impl_.timezone_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(sql_feature_usage_ != nullptr);
-      sql_feature_usage_->Clear();
+      ABSL_DCHECK(_impl_.sql_feature_usage_ != nullptr);
+      _impl_.sql_feature_usage_->Clear();
     }
   }
   if (cached_has_bits & 0x0000000cu) {
-    ::memset(&case_stmt_true_branch_index_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&case_stmt_current_branch_index_) -
-        reinterpret_cast<char*>(&case_stmt_true_branch_index_)) + sizeof(case_stmt_current_branch_index_));
+    ::memset(&_impl_.case_stmt_true_branch_index_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.case_stmt_current_branch_index_) -
+        reinterpret_cast<char*>(&_impl_.case_stmt_true_branch_index_)) + sizeof(_impl_.case_stmt_current_branch_index_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ScriptExecutorStateProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ScriptExecutorStateProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // repeated .zetasql.ScriptExecutorStateProto.StackFrame callstack = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1820,12 +1934,13 @@ const char* ScriptExecutorStateProto::_InternalParse(const char* ptr, ::PROTOBUF
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.ScriptException pending_exceptions = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1833,67 +1948,73 @@ const char* ScriptExecutorStateProto::_InternalParse(const char* ptr, ::PROTOBUF
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.ScriptExecutorStateProto.ScriptFeature triggered_features = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
           ptr -= 1;
           do {
             ptr += 1;
-            uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+            ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
             CHK_(ptr);
-            if (PROTOBUF_PREDICT_TRUE(::zetasql::ScriptExecutorStateProto_ScriptFeature_IsValid(val))) {
+            if (PROTOBUF_PREDICT_TRUE(::zetasql::ScriptExecutorStateProto_ScriptFeature_IsValid(static_cast<int>(val)))) {
               _internal_add_triggered_features(static_cast<::zetasql::ScriptExecutorStateProto_ScriptFeature>(val));
             } else {
               ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(3, val, mutable_unknown_fields());
             }
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<24>(ptr));
-        } else if (static_cast<uint8_t>(tag) == 26) {
+        } else if (static_cast<::uint8_t>(tag) == 26) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(_internal_mutable_triggered_features(), ptr, ctx, ::zetasql::ScriptExecutorStateProto_ScriptFeature_IsValid, &_internal_metadata_, 3);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional string timezone = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_timezone();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.timezone");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.ScriptExecutorStateProto.timezone");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int64 case_stmt_true_branch_index = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
           _Internal::set_has_case_stmt_true_branch_index(&has_bits);
-          case_stmt_true_branch_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.case_stmt_true_branch_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int64 case_stmt_current_branch_index = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
           _Internal::set_has_case_stmt_current_branch_index(&has_bits);
-          case_stmt_current_branch_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.case_stmt_current_branch_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.ScriptExecutorStateProto.ScriptFeatureUsage sql_feature_usage = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 58)) {
           ptr = ctx->ParseMessage(_internal_mutable_sql_feature_usage(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -1911,7 +2032,7 @@ const char* ScriptExecutorStateProto::_InternalParse(const char* ptr, ::PROTOBUF
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1919,175 +2040,175 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ScriptExecutorStateProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ScriptExecutorStateProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ScriptExecutorStateProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // repeated .zetasql.ScriptExecutorStateProto.StackFrame callstack = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_callstack_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_callstack_size()); i < n; i++) {
+    const auto& repfield = this->_internal_callstack(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, this->_internal_callstack(i), target, stream);
+        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.ScriptException pending_exceptions = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_pending_exceptions_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_pending_exceptions_size()); i < n; i++) {
+    const auto& repfield = this->_internal_pending_exceptions(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, this->_internal_pending_exceptions(i), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   // repeated .zetasql.ScriptExecutorStateProto.ScriptFeature triggered_features = 3;
-  for (int i = 0, n = this->_internal_triggered_features_size(); i < n; i++) {
+  for (int i = 0, n = this->_internal_triggered_features_size(); i < n; ++i) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
         3, this->_internal_triggered_features(i), target);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string timezone = 4;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_timezone().data(), static_cast<int>(this->_internal_timezone().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ScriptExecutorStateProto.timezone");
-    target = stream->WriteStringMaybeAliased(
-        4, this->_internal_timezone(), target);
+    const std::string& _s = this->_internal_timezone();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ScriptExecutorStateProto.timezone");
+    target = stream->WriteStringMaybeAliased(4, _s, target);
   }
 
   // optional int64 case_stmt_true_branch_index = 5;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(5, this->_internal_case_stmt_true_branch_index(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        5, this->_internal_case_stmt_true_branch_index(), target);
   }
 
   // optional int64 case_stmt_current_branch_index = 6;
   if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(6, this->_internal_case_stmt_current_branch_index(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(
+        6, this->_internal_case_stmt_current_branch_index(), target);
   }
 
   // optional .zetasql.ScriptExecutorStateProto.ScriptFeatureUsage sql_feature_usage = 7;
   if (cached_has_bits & 0x00000002u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        7, _Internal::sql_feature_usage(this), target, stream);
+      InternalWriteMessage(7, _Internal::sql_feature_usage(this),
+        _Internal::sql_feature_usage(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ScriptExecutorStateProto)
   return target;
 }
 
-size_t ScriptExecutorStateProto::ByteSizeLong() const {
+::size_t ScriptExecutorStateProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ScriptExecutorStateProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.ScriptExecutorStateProto.StackFrame callstack = 1;
   total_size += 1UL * this->_internal_callstack_size();
-  for (const auto& msg : this->callstack_) {
+  for (const auto& msg : this->_internal_callstack()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.ScriptException pending_exceptions = 2;
   total_size += 1UL * this->_internal_pending_exceptions_size();
-  for (const auto& msg : this->pending_exceptions_) {
+  for (const auto& msg : this->_internal_pending_exceptions()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // repeated .zetasql.ScriptExecutorStateProto.ScriptFeature triggered_features = 3;
   {
-    size_t data_size = 0;
-    unsigned int count = static_cast<unsigned int>(this->_internal_triggered_features_size());for (unsigned int i = 0; i < count; i++) {
-      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
-        this->_internal_triggered_features(static_cast<int>(i)));
+    std::size_t data_size = 0;
+    auto count = static_cast<std::size_t>(this->_internal_triggered_features_size());
+
+    for (std::size_t i = 0; i < count; ++i) {
+      data_size += ::_pbi::WireFormatLite::EnumSize(
+          this->_internal_triggered_features(static_cast<int>(i)));
     }
-    total_size += (1UL * count) + data_size;
+    total_size += data_size;
+    total_size += std::size_t{1} * count;
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     // optional string timezone = 4;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_timezone());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_timezone());
     }
 
     // optional .zetasql.ScriptExecutorStateProto.ScriptFeatureUsage sql_feature_usage = 7;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *sql_feature_usage_);
+          *_impl_.sql_feature_usage_);
     }
 
     // optional int64 case_stmt_true_branch_index = 5;
     if (cached_has_bits & 0x00000004u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_case_stmt_true_branch_index());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_case_stmt_true_branch_index());
     }
 
     // optional int64 case_stmt_current_branch_index = 6;
     if (cached_has_bits & 0x00000008u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_case_stmt_current_branch_index());
+      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+          this->_internal_case_stmt_current_branch_index());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ScriptExecutorStateProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ScriptExecutorStateProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ScriptExecutorStateProto::GetClassData() const { return &_class_data_; }
 
-void ScriptExecutorStateProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ScriptExecutorStateProto *>(to)->MergeFrom(
-      static_cast<const ScriptExecutorStateProto &>(from));
-}
 
-
-void ScriptExecutorStateProto::MergeFrom(const ScriptExecutorStateProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ScriptExecutorStateProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ScriptExecutorStateProto*>(&to_msg);
+  auto& from = static_cast<const ScriptExecutorStateProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ScriptExecutorStateProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  callstack_.MergeFrom(from.callstack_);
-  pending_exceptions_.MergeFrom(from.pending_exceptions_);
-  triggered_features_.MergeFrom(from.triggered_features_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_callstack()->MergeFrom(from._internal_callstack());
+  _this->_internal_mutable_pending_exceptions()->MergeFrom(from._internal_pending_exceptions());
+  _this->_internal_mutable_triggered_features()->MergeFrom(from._internal_triggered_features());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_timezone(from._internal_timezone());
+      _this->_internal_set_timezone(from._internal_timezone());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_mutable_sql_feature_usage()->::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage::MergeFrom(from._internal_sql_feature_usage());
+      _this->_internal_mutable_sql_feature_usage()->::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage::MergeFrom(
+          from._internal_sql_feature_usage());
     }
     if (cached_has_bits & 0x00000004u) {
-      case_stmt_true_branch_index_ = from.case_stmt_true_branch_index_;
+      _this->_impl_.case_stmt_true_branch_index_ = from._impl_.case_stmt_true_branch_index_;
     }
     if (cached_has_bits & 0x00000008u) {
-      case_stmt_current_branch_index_ = from.case_stmt_current_branch_index_;
+      _this->_impl_.case_stmt_current_branch_index_ = from._impl_.case_stmt_current_branch_index_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ScriptExecutorStateProto::CopyFrom(const ScriptExecutorStateProto& from) {
@@ -2098,9 +2219,9 @@ void ScriptExecutorStateProto::CopyFrom(const ScriptExecutorStateProto& from) {
 }
 
 bool ScriptExecutorStateProto::IsInitialized() const {
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(callstack_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_callstack()))
     return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(pending_exceptions_))
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_pending_exceptions()))
     return false;
   return true;
 }
@@ -2110,48 +2231,49 @@ void ScriptExecutorStateProto::InternalSwap(ScriptExecutorStateProto* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  callstack_.InternalSwap(&other->callstack_);
-  pending_exceptions_.InternalSwap(&other->pending_exceptions_);
-  triggered_features_.InternalSwap(&other->triggered_features_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &timezone_, lhs_arena,
-      &other->timezone_, rhs_arena
-  );
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_callstack()->InternalSwap(other->_internal_mutable_callstack());
+  _internal_mutable_pending_exceptions()->InternalSwap(other->_internal_mutable_pending_exceptions());
+  _internal_mutable_triggered_features()->InternalSwap(
+      other->_internal_mutable_triggered_features());
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.timezone_, lhs_arena,
+                                       &other->_impl_.timezone_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto, case_stmt_current_branch_index_)
-      + sizeof(ScriptExecutorStateProto::case_stmt_current_branch_index_)
-      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto, sql_feature_usage_)>(
-          reinterpret_cast<char*>(&sql_feature_usage_),
-          reinterpret_cast<char*>(&other->sql_feature_usage_));
+      PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto, _impl_.case_stmt_current_branch_index_)
+      + sizeof(ScriptExecutorStateProto::_impl_.case_stmt_current_branch_index_)
+      - PROTOBUF_FIELD_OFFSET(ScriptExecutorStateProto, _impl_.sql_feature_usage_)>(
+          reinterpret_cast<char*>(&_impl_.sql_feature_usage_),
+          reinterpret_cast<char*>(&other->_impl_.sql_feature_usage_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ScriptExecutorStateProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_getter, &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,
       file_level_metadata_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[4]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_ProcedureDefinition* Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_ProcedureDefinition >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_ProcedureDefinition*
+Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_ProcedureDefinition >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ScriptExecutorStateProto_ProcedureDefinition >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters* Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters*
+Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ScriptExecutorStateProto_StackFrame_Parameters >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_StackFrame* Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_StackFrame >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_StackFrame*
+Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_StackFrame >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ScriptExecutorStateProto_StackFrame >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage* Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage*
+Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ScriptExecutorStateProto_ScriptFeatureUsage >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto* Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ScriptExecutorStateProto*
+Arena::CreateMaybeMessage< ::zetasql::ScriptExecutorStateProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ScriptExecutorStateProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

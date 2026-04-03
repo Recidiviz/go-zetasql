@@ -4,116 +4,162 @@
 #include "proto/numerical-mechanism.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace differential_privacy {
 namespace serialization {
-constexpr GaussianMechanism::GaussianMechanism(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : epsilon_(0)
-  , delta_(0)
-  , l2_sensitivity_(0){}
+template <typename>
+PROTOBUF_CONSTEXPR GaussianMechanism::GaussianMechanism(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.epsilon_)*/ 0
+
+  , /*decltype(_impl_.delta_)*/ 0
+
+  , /*decltype(_impl_.l2_sensitivity_)*/ 0
+} {}
 struct GaussianMechanismDefaultTypeInternal {
-  constexpr GaussianMechanismDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR GaussianMechanismDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~GaussianMechanismDefaultTypeInternal() {}
   union {
     GaussianMechanism _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GaussianMechanismDefaultTypeInternal _GaussianMechanism_default_instance_;
-constexpr LaplaceMechanism::LaplaceMechanism(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : epsilon_(0)
-  , l1_sensitivity_(0){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GaussianMechanismDefaultTypeInternal _GaussianMechanism_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR LaplaceMechanism::LaplaceMechanism(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.epsilon_)*/ 0
+
+  , /*decltype(_impl_.l1_sensitivity_)*/ 0
+} {}
 struct LaplaceMechanismDefaultTypeInternal {
-  constexpr LaplaceMechanismDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR LaplaceMechanismDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~LaplaceMechanismDefaultTypeInternal() {}
   union {
     LaplaceMechanism _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT LaplaceMechanismDefaultTypeInternal _LaplaceMechanism_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LaplaceMechanismDefaultTypeInternal _LaplaceMechanism_default_instance_;
 }  // namespace serialization
 }  // namespace differential_privacy
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_proto_2fnumerical_2dmechanism_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_proto_2fnumerical_2dmechanism_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_proto_2fnumerical_2dmechanism_2eproto = nullptr;
-
-const uint32_t TableStruct_proto_2fnumerical_2dmechanism_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, epsilon_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, delta_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, l2_sensitivity_),
-  0,
-  1,
-  2,
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, epsilon_),
-  PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, l1_sensitivity_),
-  0,
-  1,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 9, -1, sizeof(::differential_privacy::serialization::GaussianMechanism)},
-  { 12, 20, -1, sizeof(::differential_privacy::serialization::LaplaceMechanism)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::serialization::_GaussianMechanism_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::differential_privacy::serialization::_LaplaceMechanism_default_instance_),
+static ::_pb::Metadata file_level_metadata_proto_2fnumerical_2dmechanism_2eproto[2];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_proto_2fnumerical_2dmechanism_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_proto_2fnumerical_2dmechanism_2eproto = nullptr;
+const ::uint32_t TableStruct_proto_2fnumerical_2dmechanism_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _impl_.epsilon_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _impl_.delta_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::GaussianMechanism, _impl_.l2_sensitivity_),
+    0,
+    1,
+    2,
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, _impl_.epsilon_),
+    PROTOBUF_FIELD_OFFSET(::differential_privacy::serialization::LaplaceMechanism, _impl_.l1_sensitivity_),
+    0,
+    1,
 };
 
-const char descriptor_table_protodef_proto_2fnumerical_2dmechanism_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\037proto/numerical-mechanism.proto\022\"diffe"
-  "rential_privacy.serialization\"K\n\021Gaussia"
-  "nMechanism\022\017\n\007epsilon\030\001 \001(\001\022\r\n\005delta\030\002 \001"
-  "(\001\022\026\n\016l2_sensitivity\030\003 \001(\001\";\n\020LaplaceMec"
-  "hanism\022\017\n\007epsilon\030\001 \001(\001\022\026\n\016l1_sensitivit"
-  "y\030\002 \001(\001"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_proto_2fnumerical_2dmechanism_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_proto_2fnumerical_2dmechanism_2eproto = {
-  false, false, 207, descriptor_table_protodef_proto_2fnumerical_2dmechanism_2eproto, "proto/numerical-mechanism.proto", 
-  &descriptor_table_proto_2fnumerical_2dmechanism_2eproto_once, nullptr, 0, 2,
-  schemas, file_default_instances, TableStruct_proto_2fnumerical_2dmechanism_2eproto::offsets,
-  file_level_metadata_proto_2fnumerical_2dmechanism_2eproto, file_level_enum_descriptors_proto_2fnumerical_2dmechanism_2eproto, file_level_service_descriptors_proto_2fnumerical_2dmechanism_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 11, -1, sizeof(::differential_privacy::serialization::GaussianMechanism)},
+        { 14, 24, -1, sizeof(::differential_privacy::serialization::LaplaceMechanism)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_proto_2fnumerical_2dmechanism_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::differential_privacy::serialization::_GaussianMechanism_default_instance_._instance,
+    &::differential_privacy::serialization::_LaplaceMechanism_default_instance_._instance,
+};
+const char descriptor_table_protodef_proto_2fnumerical_2dmechanism_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\037proto/numerical-mechanism.proto\022\"diffe"
+    "rential_privacy.serialization\"K\n\021Gaussia"
+    "nMechanism\022\017\n\007epsilon\030\001 \001(\001\022\r\n\005delta\030\002 \001"
+    "(\001\022\026\n\016l2_sensitivity\030\003 \001(\001\";\n\020LaplaceMec"
+    "hanism\022\017\n\007epsilon\030\001 \001(\001\022\026\n\016l1_sensitivit"
+    "y\030\002 \001(\001"
+};
+static ::absl::once_flag descriptor_table_proto_2fnumerical_2dmechanism_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_proto_2fnumerical_2dmechanism_2eproto = {
+    false,
+    false,
+    207,
+    descriptor_table_protodef_proto_2fnumerical_2dmechanism_2eproto,
+    "proto/numerical-mechanism.proto",
+    &descriptor_table_proto_2fnumerical_2dmechanism_2eproto_once,
+    nullptr,
+    0,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_proto_2fnumerical_2dmechanism_2eproto::offsets,
+    file_level_metadata_proto_2fnumerical_2dmechanism_2eproto,
+    file_level_enum_descriptors_proto_2fnumerical_2dmechanism_2eproto,
+    file_level_service_descriptors_proto_2fnumerical_2dmechanism_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_proto_2fnumerical_2dmechanism_2eproto_getter() {
   return &descriptor_table_proto_2fnumerical_2dmechanism_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_proto_2fnumerical_2dmechanism_2eproto(&descriptor_table_proto_2fnumerical_2dmechanism_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_proto_2fnumerical_2dmechanism_2eproto(&descriptor_table_proto_2fnumerical_2dmechanism_2eproto);
 namespace differential_privacy {
 namespace serialization {
-
 // ===================================================================
 
 class GaussianMechanism::_Internal {
  public:
-  using HasBits = decltype(std::declval<GaussianMechanism>()._has_bits_);
+  using HasBits = decltype(std::declval<GaussianMechanism>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(GaussianMechanism, _impl_._has_bits_);
   static void set_has_epsilon(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -125,102 +171,101 @@ class GaussianMechanism::_Internal {
   }
 };
 
-GaussianMechanism::GaussianMechanism(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+GaussianMechanism::GaussianMechanism(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.serialization.GaussianMechanism)
 }
 GaussianMechanism::GaussianMechanism(const GaussianMechanism& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&epsilon_, &from.epsilon_,
-    static_cast<size_t>(reinterpret_cast<char*>(&l2_sensitivity_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(l2_sensitivity_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.serialization.GaussianMechanism)
 }
 
-inline void GaussianMechanism::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&epsilon_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&l2_sensitivity_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(l2_sensitivity_));
+inline void GaussianMechanism::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.epsilon_) { 0 }
+
+    , decltype(_impl_.delta_) { 0 }
+
+    , decltype(_impl_.l2_sensitivity_) { 0 }
+
+  };
 }
 
 GaussianMechanism::~GaussianMechanism() {
   // @@protoc_insertion_point(destructor:differential_privacy.serialization.GaussianMechanism)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void GaussianMechanism::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void GaussianMechanism::ArenaDtor(void* object) {
-  GaussianMechanism* _this = reinterpret_cast< GaussianMechanism* >(object);
-  (void)_this;
-}
-void GaussianMechanism::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void GaussianMechanism::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void GaussianMechanism::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.serialization.GaussianMechanism)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
-    ::memset(&epsilon_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&l2_sensitivity_) -
-        reinterpret_cast<char*>(&epsilon_)) + sizeof(l2_sensitivity_));
+    ::memset(&_impl_.epsilon_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.l2_sensitivity_) -
+        reinterpret_cast<char*>(&_impl_.epsilon_)) + sizeof(_impl_.l2_sensitivity_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* GaussianMechanism::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* GaussianMechanism::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional double epsilon = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 9)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 9)) {
           _Internal::set_has_epsilon(&has_bits);
-          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double delta = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _Internal::set_has_delta(&has_bits);
-          delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.delta_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double l2_sensitivity = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 25)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 25)) {
           _Internal::set_has_l2_sensitivity(&has_bits);
-          l2_sensitivity_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.l2_sensitivity_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -238,7 +283,7 @@ const char* GaussianMechanism::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -246,101 +291,100 @@ failure:
 #undef CHK_
 }
 
-uint8_t* GaussianMechanism::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* GaussianMechanism::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.serialization.GaussianMechanism)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional double epsilon = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(1, this->_internal_epsilon(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        1, this->_internal_epsilon(), target);
   }
 
   // optional double delta = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_delta(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        2, this->_internal_delta(), target);
   }
 
   // optional double l2_sensitivity = 3;
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_l2_sensitivity(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        3, this->_internal_l2_sensitivity(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.serialization.GaussianMechanism)
   return target;
 }
 
-size_t GaussianMechanism::ByteSizeLong() const {
+::size_t GaussianMechanism::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.serialization.GaussianMechanism)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional double epsilon = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double delta = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double l2_sensitivity = 3;
     if (cached_has_bits & 0x00000004u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GaussianMechanism::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     GaussianMechanism::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GaussianMechanism::GetClassData() const { return &_class_data_; }
 
-void GaussianMechanism::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<GaussianMechanism *>(to)->MergeFrom(
-      static_cast<const GaussianMechanism &>(from));
-}
 
-
-void GaussianMechanism::MergeFrom(const GaussianMechanism& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.serialization.GaussianMechanism)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void GaussianMechanism::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<GaussianMechanism*>(&to_msg);
+  auto& from = static_cast<const GaussianMechanism&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.serialization.GaussianMechanism)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      epsilon_ = from.epsilon_;
+      _this->_impl_.epsilon_ = from._impl_.epsilon_;
     }
     if (cached_has_bits & 0x00000002u) {
-      delta_ = from.delta_;
+      _this->_impl_.delta_ = from._impl_.delta_;
     }
     if (cached_has_bits & 0x00000004u) {
-      l2_sensitivity_ = from.l2_sensitivity_;
+      _this->_impl_.l2_sensitivity_ = from._impl_.l2_sensitivity_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void GaussianMechanism::CopyFrom(const GaussianMechanism& from) {
@@ -357,26 +401,27 @@ bool GaussianMechanism::IsInitialized() const {
 void GaussianMechanism::InternalSwap(GaussianMechanism* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GaussianMechanism, l2_sensitivity_)
-      + sizeof(GaussianMechanism::l2_sensitivity_)
-      - PROTOBUF_FIELD_OFFSET(GaussianMechanism, epsilon_)>(
-          reinterpret_cast<char*>(&epsilon_),
-          reinterpret_cast<char*>(&other->epsilon_));
+      PROTOBUF_FIELD_OFFSET(GaussianMechanism, _impl_.l2_sensitivity_)
+      + sizeof(GaussianMechanism::_impl_.l2_sensitivity_)
+      - PROTOBUF_FIELD_OFFSET(GaussianMechanism, _impl_.epsilon_)>(
+          reinterpret_cast<char*>(&_impl_.epsilon_),
+          reinterpret_cast<char*>(&other->_impl_.epsilon_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GaussianMechanism::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fnumerical_2dmechanism_2eproto_getter, &descriptor_table_proto_2fnumerical_2dmechanism_2eproto_once,
       file_level_metadata_proto_2fnumerical_2dmechanism_2eproto[0]);
 }
-
 // ===================================================================
 
 class LaplaceMechanism::_Internal {
  public:
-  using HasBits = decltype(std::declval<LaplaceMechanism>()._has_bits_);
+  using HasBits = decltype(std::declval<LaplaceMechanism>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(LaplaceMechanism, _impl_._has_bits_);
   static void set_has_epsilon(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -385,93 +430,89 @@ class LaplaceMechanism::_Internal {
   }
 };
 
-LaplaceMechanism::LaplaceMechanism(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+LaplaceMechanism::LaplaceMechanism(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:differential_privacy.serialization.LaplaceMechanism)
 }
 LaplaceMechanism::LaplaceMechanism(const LaplaceMechanism& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&epsilon_, &from.epsilon_,
-    static_cast<size_t>(reinterpret_cast<char*>(&l1_sensitivity_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(l1_sensitivity_));
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:differential_privacy.serialization.LaplaceMechanism)
 }
 
-inline void LaplaceMechanism::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&epsilon_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&l1_sensitivity_) -
-    reinterpret_cast<char*>(&epsilon_)) + sizeof(l1_sensitivity_));
+inline void LaplaceMechanism::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.epsilon_) { 0 }
+
+    , decltype(_impl_.l1_sensitivity_) { 0 }
+
+  };
 }
 
 LaplaceMechanism::~LaplaceMechanism() {
   // @@protoc_insertion_point(destructor:differential_privacy.serialization.LaplaceMechanism)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void LaplaceMechanism::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void LaplaceMechanism::ArenaDtor(void* object) {
-  LaplaceMechanism* _this = reinterpret_cast< LaplaceMechanism* >(object);
-  (void)_this;
-}
-void LaplaceMechanism::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void LaplaceMechanism::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void LaplaceMechanism::Clear() {
 // @@protoc_insertion_point(message_clear_start:differential_privacy.serialization.LaplaceMechanism)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
-    ::memset(&epsilon_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&l1_sensitivity_) -
-        reinterpret_cast<char*>(&epsilon_)) + sizeof(l1_sensitivity_));
+    ::memset(&_impl_.epsilon_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.l1_sensitivity_) -
+        reinterpret_cast<char*>(&_impl_.epsilon_)) + sizeof(_impl_.l1_sensitivity_));
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* LaplaceMechanism::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* LaplaceMechanism::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional double epsilon = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 9)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 9)) {
           _Internal::set_has_epsilon(&has_bits);
-          epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.epsilon_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional double l1_sensitivity = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 17)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 17)) {
           _Internal::set_has_l1_sensitivity(&has_bits);
-          l1_sensitivity_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          _impl_.l1_sensitivity_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -489,7 +530,7 @@ const char* LaplaceMechanism::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -497,87 +538,85 @@ failure:
 #undef CHK_
 }
 
-uint8_t* LaplaceMechanism::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* LaplaceMechanism::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:differential_privacy.serialization.LaplaceMechanism)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional double epsilon = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(1, this->_internal_epsilon(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        1, this->_internal_epsilon(), target);
   }
 
   // optional double l1_sensitivity = 2;
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(2, this->_internal_l1_sensitivity(), target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        2, this->_internal_l1_sensitivity(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:differential_privacy.serialization.LaplaceMechanism)
   return target;
 }
 
-size_t LaplaceMechanism::ByteSizeLong() const {
+::size_t LaplaceMechanism::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:differential_privacy.serialization.LaplaceMechanism)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     // optional double epsilon = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
     // optional double l1_sensitivity = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 + 8;
+      total_size += 9;
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LaplaceMechanism::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     LaplaceMechanism::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LaplaceMechanism::GetClassData() const { return &_class_data_; }
 
-void LaplaceMechanism::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<LaplaceMechanism *>(to)->MergeFrom(
-      static_cast<const LaplaceMechanism &>(from));
-}
 
-
-void LaplaceMechanism::MergeFrom(const LaplaceMechanism& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.serialization.LaplaceMechanism)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void LaplaceMechanism::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LaplaceMechanism*>(&to_msg);
+  auto& from = static_cast<const LaplaceMechanism&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:differential_privacy.serialization.LaplaceMechanism)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      epsilon_ = from.epsilon_;
+      _this->_impl_.epsilon_ = from._impl_.epsilon_;
     }
     if (cached_has_bits & 0x00000002u) {
-      l1_sensitivity_ = from.l1_sensitivity_;
+      _this->_impl_.l1_sensitivity_ = from._impl_.l1_sensitivity_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void LaplaceMechanism::CopyFrom(const LaplaceMechanism& from) {
@@ -594,32 +633,32 @@ bool LaplaceMechanism::IsInitialized() const {
 void LaplaceMechanism::InternalSwap(LaplaceMechanism* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(LaplaceMechanism, l1_sensitivity_)
-      + sizeof(LaplaceMechanism::l1_sensitivity_)
-      - PROTOBUF_FIELD_OFFSET(LaplaceMechanism, epsilon_)>(
-          reinterpret_cast<char*>(&epsilon_),
-          reinterpret_cast<char*>(&other->epsilon_));
+      PROTOBUF_FIELD_OFFSET(LaplaceMechanism, _impl_.l1_sensitivity_)
+      + sizeof(LaplaceMechanism::_impl_.l1_sensitivity_)
+      - PROTOBUF_FIELD_OFFSET(LaplaceMechanism, _impl_.epsilon_)>(
+          reinterpret_cast<char*>(&_impl_.epsilon_),
+          reinterpret_cast<char*>(&other->_impl_.epsilon_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LaplaceMechanism::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_proto_2fnumerical_2dmechanism_2eproto_getter, &descriptor_table_proto_2fnumerical_2dmechanism_2eproto_once,
       file_level_metadata_proto_2fnumerical_2dmechanism_2eproto[1]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace serialization
 }  // namespace differential_privacy
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::differential_privacy::serialization::GaussianMechanism* Arena::CreateMaybeMessage< ::differential_privacy::serialization::GaussianMechanism >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::serialization::GaussianMechanism*
+Arena::CreateMaybeMessage< ::differential_privacy::serialization::GaussianMechanism >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::serialization::GaussianMechanism >(arena);
 }
-template<> PROTOBUF_NOINLINE ::differential_privacy::serialization::LaplaceMechanism* Arena::CreateMaybeMessage< ::differential_privacy::serialization::LaplaceMechanism >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::differential_privacy::serialization::LaplaceMechanism*
+Arena::CreateMaybeMessage< ::differential_privacy::serialization::LaplaceMechanism >(Arena* arena) {
   return Arena::CreateMessageInternal< ::differential_privacy::serialization::LaplaceMechanism >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

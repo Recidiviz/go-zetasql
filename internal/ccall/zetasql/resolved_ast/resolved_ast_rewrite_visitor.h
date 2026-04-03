@@ -160,6 +160,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedGroupingSetMultiColumn(
+      const ResolvedGroupingSetMultiColumn&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedGroupingSetMultiColumn (
+      std::unique_ptr<const ResolvedGroupingSetMultiColumn> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedConstant(
       const ResolvedConstant&) {
     return absl::OkStatus();
@@ -190,6 +201,17 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedInlineLambda (
       std::unique_ptr<const ResolvedInlineLambda> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedSequence(
+      const ResolvedSequence&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedSequence (
+      std::unique_ptr<const ResolvedSequence> node) {
     return node;
   }
 
@@ -523,6 +545,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedGroupingCall(
+      const ResolvedGroupingCall&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedGroupingCall (
+      std::unique_ptr<const ResolvedGroupingCall> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedGroupingSet(
       const ResolvedGroupingSet&) {
     return absl::OkStatus();
@@ -531,6 +564,28 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedGroupingSet (
       std::unique_ptr<const ResolvedGroupingSet> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedRollup(
+      const ResolvedRollup&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedRollup (
+      std::unique_ptr<const ResolvedRollup> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedCube(
+      const ResolvedCube&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedCube (
+      std::unique_ptr<const ResolvedCube> node) {
     return node;
   }
 
@@ -996,6 +1051,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedExportMetadataStmt(
+      const ResolvedExportMetadataStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedExportMetadataStmt (
+      std::unique_ptr<const ResolvedExportMetadataStmt> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedDefineTableStmt(
       const ResolvedDefineTableStmt&) {
     return absl::OkStatus();
@@ -1458,6 +1524,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedAlterApproxViewStmt(
+      const ResolvedAlterApproxViewStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAlterApproxViewStmt (
+      std::unique_ptr<const ResolvedAlterApproxViewStmt> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt&) {
     return absl::OkStatus();
@@ -1755,14 +1832,14 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedDropSearchIndexStmt(
-      const ResolvedDropSearchIndexStmt&) {
+  virtual absl::Status PreVisitResolvedDropIndexStmt(
+      const ResolvedDropIndexStmt&) {
     return absl::OkStatus();
   }
 
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedDropSearchIndexStmt (
-      std::unique_ptr<const ResolvedDropSearchIndexStmt> node) {
+  PostVisitResolvedDropIndexStmt (
+      std::unique_ptr<const ResolvedDropIndexStmt> node) {
     return node;
   }
 
@@ -2041,6 +2118,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedCreateApproxViewStmt(
+      const ResolvedCreateApproxViewStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedCreateApproxViewStmt (
+      std::unique_ptr<const ResolvedCreateApproxViewStmt> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedCreateProcedureStmt(
       const ResolvedCreateProcedureStmt&) {
     return absl::OkStatus();
@@ -2262,11 +2350,15 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedColumnRef> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedGroupingSetMultiColumn> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedConstant> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSystemVariable> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedInlineLambda> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedSequence> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedFilterFieldArg> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2328,7 +2420,13 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedFilterScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedGroupingCall> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedGroupingSet> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedRollup> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedCube> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAggregateScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2414,6 +2512,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedExportDataStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedExportMetadataStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedDefineTableStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedDescribeStmt> node);
@@ -2498,6 +2598,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterMaterializedViewStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAlterApproxViewStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterSchemaStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterModelStmt> node);
@@ -2552,7 +2654,7 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedDropRowAccessPolicyStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedDropSearchIndexStmt> node);
+      std::unique_ptr<const ResolvedDropIndexStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedGrantToAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2603,6 +2705,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAggregateHavingModifier> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateMaterializedViewStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedCreateApproxViewStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateProcedureStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2684,6 +2788,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedGroupingSetMultiColumn::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedGroupingSetMultiColumn>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedGroupingSetMultiColumn>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedConstant::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedConstant>) {
@@ -2702,6 +2813,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedInlineLambda>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedInlineLambda>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedSequence::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedSequence>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedSequence>(std::move(node)));
         }
         break;
       }
@@ -2915,10 +3033,31 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedGroupingCall::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedGroupingCall>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedGroupingCall>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedGroupingSet::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedGroupingSet>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedGroupingSet>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedRollup::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedRollup>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedRollup>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedCube::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedCube>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedCube>(std::move(node)));
         }
         break;
       }
@@ -3216,6 +3355,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedExportMetadataStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedExportMetadataStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedExportMetadataStmt>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedDefineTableStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedDefineTableStmt>) {
@@ -3510,6 +3656,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedAlterApproxViewStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAlterApproxViewStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterApproxViewStmt>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedAlterSchemaStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterSchemaStmt>) {
@@ -3699,10 +3852,10 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedDropSearchIndexStmt::TYPE: {
+      case ResolvedDropIndexStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedDropSearchIndexStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedDropSearchIndexStmt>(std::move(node)));
+                                        ResolvedDropIndexStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedDropIndexStmt>(std::move(node)));
         }
         break;
       }
@@ -3878,6 +4031,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedCreateMaterializedViewStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateMaterializedViewStmt>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedCreateApproxViewStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedCreateApproxViewStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateApproxViewStmt>(std::move(node)));
         }
         break;
       }

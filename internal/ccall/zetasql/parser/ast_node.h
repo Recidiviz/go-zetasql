@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "zetasql/base/arena_allocator.h"
+
 #include "zetasql/parser/ast_enums.pb.h"
 #include "zetasql/parser/ast_node_internal.h"
 #include "zetasql/parser/ast_node_kind.h"
@@ -148,7 +149,7 @@ class ASTNode : public zetasql_base::ArenaOnlyGladiator {
   template <typename NodeType>
   const NodeType* GetAsOrDie() const {
     const NodeType* as_node_type = GetAsOrNull<NodeType>();
-    ZETASQL_CHECK(as_node_type != nullptr) << "Could not cast " << GetNodeKindString()
+    ABSL_CHECK(as_node_type != nullptr) << "Could not cast " << GetNodeKindString()
                                    << " to the specified NodeType";
     return as_node_type;
   }
@@ -158,7 +159,7 @@ class ASTNode : public zetasql_base::ArenaOnlyGladiator {
   template <typename NodeType>
   NodeType* GetAsOrDie() {
     NodeType* as_node_type = GetAsOrNull<NodeType>();
-    ZETASQL_CHECK(as_node_type != nullptr) << "Could not cast " << GetNodeKindString()
+    ABSL_CHECK(as_node_type != nullptr) << "Could not cast " << GetNodeKindString()
                                    << " to the specified NodeType";
     return as_node_type;
   }
@@ -295,7 +296,7 @@ class ASTNode : public zetasql_base::ArenaOnlyGladiator {
         : node_(node), index_(0), end_(node_->num_children()) {
       if (ZETASQL_DEBUG_MODE) {
         for (int i = 0; i < end_; ++i) {
-          ZETASQL_DCHECK(node_->child(i) != nullptr);
+          ABSL_DCHECK(node_->child(i) != nullptr);
         }
       }
     }
@@ -303,7 +304,7 @@ class ASTNode : public zetasql_base::ArenaOnlyGladiator {
     FieldLoader(const FieldLoader&) = delete;
     FieldLoader& operator=(const FieldLoader&) = delete;
 
-    ~FieldLoader() { ZETASQL_DCHECK(was_finalized_); }
+    ~FieldLoader() { ABSL_DCHECK(was_finalized_); }
 
     // Gets the next child element into *v. Crashes if not available.
     template <typename T>

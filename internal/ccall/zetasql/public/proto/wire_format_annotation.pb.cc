@@ -4,85 +4,117 @@
 #include "zetasql/public/proto/wire_format_annotation.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+template <typename>
+PROTOBUF_CONSTEXPR WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(
+    ::_pbi::ConstantInitialized) {}
 struct WireFormatAnnotationEmptyMessageDefaultTypeInternal {
-  constexpr WireFormatAnnotationEmptyMessageDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR WireFormatAnnotationEmptyMessageDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~WireFormatAnnotationEmptyMessageDefaultTypeInternal() {}
   union {
     WireFormatAnnotationEmptyMessage _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT WireFormatAnnotationEmptyMessageDefaultTypeInternal _WireFormatAnnotationEmptyMessage_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 WireFormatAnnotationEmptyMessageDefaultTypeInternal _WireFormatAnnotationEmptyMessage_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[1];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::zetasql::WireFormatAnnotationEmptyMessage, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::zetasql::WireFormatAnnotationEmptyMessage)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_WireFormatAnnotationEmptyMessage_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[1];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[1];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::WireFormatAnnotationEmptyMessage, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n1zetasql/public/proto/wire_format_annot"
-  "ation.proto\022\007zetasql\032 google/protobuf/de"
-  "scriptor.proto\"\"\n WireFormatAnnotationEm"
-  "ptyMessage*C\n\tTableType\022\026\n\022DEFAULT_TABLE"
-  "_TYPE\020\000\022\r\n\tSQL_TABLE\020\001\022\017\n\013VALUE_TABLE\020\002:"
-  ";\n\021struct_field_name\022\035.google.protobuf.F"
-  "ieldOptions\030\325\346\233! \001(\t:6\n\014is_raw_proto\022\035.g"
-  "oogle.protobuf.FieldOptions\030\212\220\213N \001(\010:;\n\020"
-  "is_hidden_column\022\035.google.protobuf.Field"
-  "Options\030\347\301\223\241\001 \001(\010:6\n\nis_wrapper\022\037.google"
-  ".protobuf.MessageOptions\030\342\243\333\027 \001(\010:5\n\tis_"
-  "struct\022\037.google.protobuf.MessageOptions\030"
-  "\302\222\333\027 \001(\010:J\n\ntable_type\022\037.google.protobuf"
-  ".MessageOptions\030\204\337\263) \001(\0162\022.zetasql.Table"
-  "TypeB/\n\022com.google.zetasqlB\031WireFormatAn"
-  "notationProto"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_deps[1] = {
-  &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::WireFormatAnnotationEmptyMessage)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto = {
-  false, false, 613, descriptor_table_protodef_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto, "zetasql/public/proto/wire_format_annotation.proto", 
-  &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once, descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_deps, 1, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_WireFormatAnnotationEmptyMessage_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n1zetasql/public/proto/wire_format_annot"
+    "ation.proto\022\007zetasql\032 google/protobuf/de"
+    "scriptor.proto\"\"\n WireFormatAnnotationEm"
+    "ptyMessage*C\n\tTableType\022\026\n\022DEFAULT_TABLE"
+    "_TYPE\020\000\022\r\n\tSQL_TABLE\020\001\022\017\n\013VALUE_TABLE\020\002:"
+    ";\n\021struct_field_name\022\035.google.protobuf.F"
+    "ieldOptions\030\325\346\233! \001(\t:6\n\014is_raw_proto\022\035.g"
+    "oogle.protobuf.FieldOptions\030\212\220\213N \001(\010:;\n\020"
+    "is_hidden_column\022\035.google.protobuf.Field"
+    "Options\030\347\301\223\241\001 \001(\010:6\n\nis_wrapper\022\037.google"
+    ".protobuf.MessageOptions\030\342\243\333\027 \001(\010:5\n\tis_"
+    "struct\022\037.google.protobuf.MessageOptions\030"
+    "\302\222\333\027 \001(\010:J\n\ntable_type\022\037.google.protobuf"
+    ".MessageOptions\030\204\337\263) \001(\0162\022.zetasql.Table"
+    "TypeB/\n\022com.google.zetasqlB\031WireFormatAn"
+    "notationProto"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_deps[1] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto = {
+    false,
+    false,
+    613,
+    descriptor_table_protodef_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto,
+    "zetasql/public/proto/wire_format_annotation.proto",
+    &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once,
+    descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_deps,
+    1,
+    1,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto(&descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TableType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto);
@@ -98,21 +130,19 @@ bool TableType_IsValid(int value) {
       return false;
   }
 }
-
-
 // ===================================================================
 
 class WireFormatAnnotationEmptyMessage::_Internal {
  public:
 };
 
-WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:zetasql.WireFormatAnnotationEmptyMessage)
 }
 WireFormatAnnotationEmptyMessage::WireFormatAnnotationEmptyMessage(const WireFormatAnnotationEmptyMessage& from)
   : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  WireFormatAnnotationEmptyMessage* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.WireFormatAnnotationEmptyMessage)
 }
@@ -134,37 +164,36 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*WireFormatAnnotationEmptyMessa
 
 
 ::PROTOBUF_NAMESPACE_ID::Metadata WireFormatAnnotationEmptyMessage::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto[0]);
 }
 const std::string struct_field_name_default("");
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::StringTypeTraits, 9, false >
-  struct_field_name(kStructFieldNameFieldNumber, struct_field_name_default);
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  is_raw_proto(kIsRawProtoFieldNumber, false);
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  is_hidden_column(kIsHiddenColumnFieldNumber, false);
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  is_wrapper(kIsWrapperFieldNumber, false);
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  is_struct(kIsStructFieldNumber, false);
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::TableType, ::zetasql::TableType_IsValid>, 14, false >
-  table_type(kTableTypeFieldNumber, static_cast< ::zetasql::TableType >(0));
-
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::StringTypeTraits, 9, false>
+  struct_field_name(kStructFieldNameFieldNumber, struct_field_name_default, nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false>
+  is_raw_proto(kIsRawProtoFieldNumber, false, nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::FieldOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false>
+  is_hidden_column(kIsHiddenColumnFieldNumber, false, nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false>
+  is_wrapper(kIsWrapperFieldNumber, false, nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false>
+  is_struct(kIsStructFieldNumber, false, nullptr);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::EnumTypeTraits< ::zetasql::TableType, ::zetasql::TableType_IsValid>, 14, false>
+  table_type(kTableTypeFieldNumber, static_cast< ::zetasql::TableType >(0), nullptr);
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::WireFormatAnnotationEmptyMessage* Arena::CreateMaybeMessage< ::zetasql::WireFormatAnnotationEmptyMessage >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::WireFormatAnnotationEmptyMessage*
+Arena::CreateMaybeMessage< ::zetasql::WireFormatAnnotationEmptyMessage >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::WireFormatAnnotationEmptyMessage >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

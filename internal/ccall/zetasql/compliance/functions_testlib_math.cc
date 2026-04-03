@@ -1533,7 +1533,7 @@ std::vector<FunctionTestCall> GetFunctionTestsMath() {
       {"log", {double_neg_inf}, double_nan},
       {"log", {double_pos_inf}, double_pos_inf},
 
-      // ZETASQL_LOG(X, Y)
+      // ABSL_LOG(X, Y)
       {"log", {NullDouble(), NullDouble()}, NullDouble()},
       {"log", {NullDouble(), 0.0}, NullDouble()},
       {"log", {0.0, NullDouble()}, NullDouble()},
@@ -2047,6 +2047,59 @@ std::vector<FunctionTestCall> GetFunctionTestsCbrt() {
 
   for (auto& test_case : all_tests) {
     test_case.params.AddRequiredFeature(FEATURE_CBRT_FUNCTIONS);
+  }
+
+  return all_tests;
+}
+
+std::vector<FunctionTestCall> GetFunctionTestsPi(bool include_safe_calls) {
+  std::vector<FunctionTestCall> all_tests;
+
+  FunctionTestCall double_test = {"pi", /*arguments=*/{}, M_PI};
+  double_test.params.AddRequiredFeature(FEATURE_V_1_4_PI_FUNCTIONS);
+  all_tests.emplace_back(double_test);
+
+  FunctionTestCall numeric_test = {
+      "pi_numeric", /*arguments=*/{},
+      NumericValue::FromString("3.141592654").value()};
+  numeric_test.params.AddRequiredFeatures(
+      {FEATURE_NUMERIC_TYPE, FEATURE_V_1_4_PI_FUNCTIONS});
+  all_tests.emplace_back(numeric_test);
+
+  FunctionTestCall bignumeric_test{
+      "pi_bignumeric",
+      /*arguments=*/{},
+      BigNumericValue::FromString("3.14159265358979323846264338327950288420")
+          .value()};
+  bignumeric_test.params.AddRequiredFeatures(
+      {FEATURE_BIGNUMERIC_TYPE, FEATURE_V_1_4_PI_FUNCTIONS});
+  all_tests.emplace_back(bignumeric_test);
+
+  // Safe versions of the above tests
+  FunctionTestCall safe_double_test = {"safe.pi", /*arguments=*/{}, M_PI};
+  safe_double_test.params.AddRequiredFeatures(
+      {FEATURE_V_1_4_PI_FUNCTIONS, FEATURE_V_1_2_SAFE_FUNCTION_CALL});
+
+  FunctionTestCall safe_numeric_test = {
+      "safe.pi_numeric", /*arguments=*/{},
+      NumericValue::FromString("3.141592654").value()};
+  safe_numeric_test.params.AddRequiredFeatures(
+      {FEATURE_NUMERIC_TYPE, FEATURE_V_1_4_PI_FUNCTIONS,
+       FEATURE_V_1_2_SAFE_FUNCTION_CALL});
+
+  FunctionTestCall safe_bignumeric_test{
+      "safe.pi_bignumeric",
+      /*arguments=*/{},
+      BigNumericValue::FromString("3.14159265358979323846264338327950288420")
+          .value()};
+  safe_bignumeric_test.params.AddRequiredFeatures(
+      {FEATURE_BIGNUMERIC_TYPE, FEATURE_V_1_4_PI_FUNCTIONS,
+       FEATURE_V_1_2_SAFE_FUNCTION_CALL});
+
+  if (include_safe_calls) {
+    all_tests.emplace_back(safe_double_test);
+    all_tests.emplace_back(safe_numeric_test);
+    all_tests.emplace_back(safe_bignumeric_test);
   }
 
   return all_tests;

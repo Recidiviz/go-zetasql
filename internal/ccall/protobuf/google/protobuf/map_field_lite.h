@@ -32,14 +32,17 @@
 #define GOOGLE_PROTOBUF_MAP_FIELD_LITE_H__
 
 #include <type_traits>
-#include <google/protobuf/parse_context.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/map.h>
-#include <google/protobuf/map_entry_lite.h>
-#include <google/protobuf/port.h>
-#include <google/protobuf/wire_format_lite.h>
 
-#include <google/protobuf/port_def.inc>
+#include "google/protobuf/port.h"
+#include "absl/log/absl_check.h"
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/map.h"
+#include "google/protobuf/map_entry_lite.h"
+#include "google/protobuf/parse_context.h"
+#include "google/protobuf/wire_format_lite.h"
+
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 
 #ifdef SWIG
 #error "You cannot SWIG proto headers"
@@ -58,15 +61,32 @@ template <typename Derived, typename Key, typename T,
 class MapFieldLite {
   // Define message type for internal repeated field.
   typedef Derived EntryType;
+  // Alias used by table-driven map serialization (generated_message_table_driven.h).
+  typedef Derived EntryTypeTrait;
 
  public:
   typedef Map<Key, T> MapType;
-  typedef EntryType EntryTypeTrait;
+  static constexpr WireFormatLite::FieldType kKeyFieldType = key_wire_type;
+  static constexpr WireFormatLite::FieldType kValueFieldType = value_wire_type;
 
-  constexpr MapFieldLite() {}
-
+  constexpr MapFieldLite() : map_() {}
   explicit MapFieldLite(Arena* arena) : map_(arena) {}
+  MapFieldLite(ArenaInitialized, Arena* arena) : MapFieldLite(arena) {}
 
+#ifdef NDEBUG
+  ~MapFieldLite() { map_.~Map(); }
+#else
+  ~MapFieldLite() {
+    ABSL_DCHECK_EQ(map_.arena(), nullptr);
+    // We want to destruct the map in such a way that we can verify
+    // that we've done that, but also be sure that we've deallocated
+    // everything (as opposed to leaving an allocation behind with no
+    // data in it, as would happen if a vector was resize'd to zero.
+    // Map::Swap with an empty map accomplishes that.
+    decltype(map_) swapped_map(map_.arena());
+    map_.InternalSwap(&swapped_map);
+  }
+#endif
   // Accessors
   const Map<Key, T>& GetMap() const { return map_; }
   Map<Key, T>* MutableMap() { return &map_; }
@@ -75,28 +95,15 @@ class MapFieldLite {
   int size() const { return static_cast<int>(map_.size()); }
   void Clear() { return map_.clear(); }
   void MergeFrom(const MapFieldLite& other) {
-    for (typename Map<Key, T>::const_iterator it = other.map_.begin();
-         it != other.map_.end(); ++it) {
-      map_[it->first] = it->second;
-    }
+    internal::MapMergeFrom(map_, other.map_);
   }
   void Swap(MapFieldLite* other) { map_.swap(other->map_); }
-  void InternalSwap(MapFieldLite* other) { map_.InternalSwap(other->map_); }
+  void InternalSwap(MapFieldLite* other) { map_.InternalSwap(&other->map_); }
 
   // Used in the implementation of parsing. Caller should take the ownership iff
   // arena_ is nullptr.
   EntryType* NewEntry() const {
     return Arena::CreateMessage<EntryType>(map_.arena());
-  }
-  // Used in the implementation of serializing enum value type. Caller should
-  // take the ownership iff arena_ is nullptr.
-  EntryType* NewEnumEntryWrapper(const Key& key, const T t) const {
-    return EntryType::EnumWrap(key, t, map_.arena_);
-  }
-  // Used in the implementation of serializing other value types. Caller should
-  // take the ownership iff arena_ is nullptr.
-  EntryType* NewEntryWrapper(const Key& key, const T& t) const {
-    return EntryType::Wrap(key, t, map_.arena_);
   }
 
   const char* _InternalParse(const char* ptr, ParseContext* ctx) {
@@ -116,7 +123,11 @@ class MapFieldLite {
  private:
   typedef void DestructorSkippable_;
 
-  Map<Key, T> map_;
+  // map_ is inside an anonymous union so we can explicitly control its
+  // destruction
+  union {
+    Map<Key, T> map_;
+  };
 
   friend class ::PROTOBUF_NAMESPACE_ID::Arena;
 };
@@ -179,6 +190,6 @@ struct MapEntryToMapField<
 }  // namespace protobuf
 }  // namespace google
 
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"
 
 #endif  // GOOGLE_PROTOBUF_MAP_FIELD_LITE_H__

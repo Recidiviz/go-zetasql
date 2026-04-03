@@ -45,6 +45,7 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
+#include "absl/strings/string_view.h"
 #include "absl/time/civil_time.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/stl_util.h"
@@ -159,9 +160,9 @@ static std::vector<Type> ConcatTests(
   return result;
 }
 
-static Value KitchenSink_equivalent(const std::string& proto_str) {
+static Value KitchenSink_equivalent(absl::string_view proto_str) {
   zetasql_test__::KitchenSinkPB kitchen_sink_message;
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(proto_str,
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString(proto_str,
                                             &kitchen_sink_message));
   return Value::Proto(KitchenSinkProtoType_equivalent(),
                       SerializeToCord(kitchen_sink_message));
@@ -2160,7 +2161,7 @@ static std::string u8tostring(const std::u8string& s) {
   return std::string(s.begin(), s.end());
 }
 #endif
-static std::string u8tostring(const std::string& s) { return s; }
+static std::string u8tostring(absl::string_view s) { return std::string(s); }
 }  // namespace
 
 std::vector<QueryParamsWithResult> GetFunctionTestsCastComplex() {
@@ -2193,47 +2194,47 @@ std::vector<QueryParamsWithResult> GetFunctionTestsCastComplex() {
   // Scratch message.
   zetasql_test__::KitchenSinkPB kitchen_sink_message;
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_1,
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_1,
                                             &kitchen_sink_message));
   absl::Cord kitchen_sink_cord_1 = SerializeToCord(kitchen_sink_message);
 
   const google::protobuf::Reflection* reflection = kitchen_sink_message.GetReflection();
   google::protobuf::UnknownFieldSet* unknown_fields =
       reflection->MutableUnknownFields(&kitchen_sink_message);
-  ZETASQL_CHECK(unknown_fields->empty());
+  ABSL_CHECK(unknown_fields->empty());
   const int reserved_tag_number = 103;
-  ZETASQL_CHECK(kitchen_sink_message.GetDescriptor()->IsReservedNumber(
+  ABSL_CHECK(kitchen_sink_message.GetDescriptor()->IsReservedNumber(
       reserved_tag_number));
   unknown_fields->AddVarint(reserved_tag_number, /*value=*/1000);
   absl::Cord kitchen_sink_cord_5 = SerializeToCord(kitchen_sink_message);
 
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_2,
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_2,
                                             &kitchen_sink_message));
   absl::Cord kitchen_sink_cord_2 = SerializeToCord(kitchen_sink_message);
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_3,
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_3,
                                             &kitchen_sink_message));
   absl::Cord kitchen_sink_cord_3 = SerializeToCord(kitchen_sink_message);
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_4,
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString(kitchen_sink_string_4,
                                             &kitchen_sink_message));
   absl::Cord kitchen_sink_cord_4 = SerializeToCord(kitchen_sink_message);
 
   zetasql_test__::NullableInt nullable_int_message;
   const std::string nullable_int_string_1("value: 1");
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString(nullable_int_string_1,
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString(nullable_int_string_1,
                                             &nullable_int_message));
   absl::Cord nullable_int_cord_1 = SerializeToCord(nullable_int_message);
 
   // Set up some equivalent but not equal enums and protos, both null and
   // non-null.
-  ZETASQL_CHECK(!enum_value.type()->Equals(TestEnumType_equivalent()));
-  ZETASQL_CHECK(enum_value.type()->Equivalent(TestEnumType_equivalent()));
+  ABSL_CHECK(!enum_value.type()->Equals(TestEnumType_equivalent()));
+  ABSL_CHECK(enum_value.type()->Equivalent(TestEnumType_equivalent()));
 
-  ZETASQL_CHECK(!null_proto.type()->Equals(KitchenSinkProtoType_equivalent()));
-  ZETASQL_CHECK(null_proto.type()->Equivalent(KitchenSinkProtoType_equivalent()));
+  ABSL_CHECK(!null_proto.type()->Equals(KitchenSinkProtoType_equivalent()));
+  ABSL_CHECK(null_proto.type()->Equivalent(KitchenSinkProtoType_equivalent()));
 
-  ZETASQL_CHECK(!KitchenSink(kitchen_sink_string_1).type()->Equals(
+  ABSL_CHECK(!KitchenSink(kitchen_sink_string_1).type()->Equals(
           KitchenSink_equivalent(kitchen_sink_string_1).type()));
-  ZETASQL_CHECK(KitchenSink(kitchen_sink_string_1).type()->Equivalent(
+  ABSL_CHECK(KitchenSink(kitchen_sink_string_1).type()->Equivalent(
           KitchenSink_equivalent(kitchen_sink_string_1).type()));
 
   const Value enum_value_equivalent = Value::Enum(TestEnumType_equivalent(), 1);
@@ -2259,7 +2260,7 @@ std::vector<QueryParamsWithResult> GetFunctionTestsCastComplex() {
       google::protobuf::MessageFactory::generated_factory()
           ->GetPrototype(string_int32_descriptor)
           ->New());
-  ZETASQL_CHECK(google::protobuf::TextFormat::ParseFromString("key: 'aaa' value: 777",
+  ABSL_CHECK(google::protobuf::TextFormat::ParseFromString("key: 'aaa' value: 777",
                                             string_int32_message.get()));
   const Value string_int32_map_entry = Value::Proto(
       StringInt32MapEntryType(), SerializeToCord(*string_int32_message));
@@ -2475,8 +2476,8 @@ std::vector<QueryParamsWithResult> GetFunctionTestsCast() {
 std::vector<QueryParamsWithResult> GetFunctionTestsSafeCast() {
   std::vector<QueryParamsWithResult> tests;
   for (QueryParamsWithResult& test : GetFunctionTestsCast()) {
-    ZETASQL_CHECK_GE(test.params().size(), 1) << test;
-    ZETASQL_CHECK_LE(test.params().size(), 3) << test;
+    ABSL_CHECK_GE(test.params().size(), 1) << test;
+    ABSL_CHECK_LE(test.params().size(), 3) << test;
     test.MutateResult([](QueryParamsWithResult::Result& result_struct) {
       if (result_struct.status.code() == OUT_OF_RANGE) {
         result_struct.status = absl::OkStatus();
@@ -2502,7 +2503,7 @@ GetFunctionTestsCastBetweenDifferentArrayTypes(bool arrays_with_nulls) {
     if (test.params().size() > 1) {
       continue;
     }
-    ZETASQL_CHECK_EQ(1, test.params().size()) << test;
+    ABSL_CHECK_EQ(1, test.params().size()) << test;
 
     const Value& cast_value = test.param(0);
     const Value& result_value = test.result();
@@ -2519,7 +2520,7 @@ GetFunctionTestsCastBetweenDifferentArrayTypes(bool arrays_with_nulls) {
       Value from_array = Value::Array(from_array_type, {cast_value});
       Value to_array = Value::Array(to_array_type, {result_value});
 
-      ZETASQL_CHECK(!zetasql_base::ContainsKey(test.required_features(),
+      ABSL_CHECK(!zetasql_base::ContainsKey(test.required_features(),
                               FEATURE_V_1_1_CAST_DIFFERENT_ARRAY_TYPES));
       tests.push_back(
           QueryParamsWithResult({from_array}, to_array, test.status())

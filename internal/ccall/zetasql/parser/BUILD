@@ -34,7 +34,7 @@ genrule(
         "parse_tree_accept_methods.inc",
     ],
     cmd = "$(location :gen_extra_files_tool) $(SRCS) $(OUTS)",
-    exec_tools = [":gen_extra_files_tool"],
+    tools = [":gen_extra_files_tool"],
 )
 
 py_binary(
@@ -45,13 +45,33 @@ py_binary(
 )
 
 genrule(
-    name = "gen_headers",
+    name = "gen_parse_tree_h",
     srcs = [
         "parse_tree_generated.h.template",
     ],
     outs = ["parse_tree_generated.h"],
     cmd = "$(location :gen_parse_tree) $(OUTS) $(SRCS)",
-    exec_tools = [":gen_parse_tree"],
+    tools = [":gen_parse_tree"],
+)
+
+genrule(
+    name = "gen_parse_tree_cc",
+    srcs = [
+        "parse_tree_generated.cc.template",
+    ],
+    outs = ["parse_tree_generated.cc"],
+    cmd = "$(location :gen_parse_tree) $(OUTS) $(SRCS)",
+    tools = [":gen_parse_tree"],
+)
+
+genrule(
+    name = "gen_ast_node_kind_h",
+    srcs = [
+        "ast_node_kind.h.template",
+    ],
+    outs = ["ast_node_kind.h"],
+    cmd = "$(location :gen_parse_tree) $(OUTS) $(SRCS)",
+    tools = [":gen_parse_tree"],
 )
 
 genrule(
@@ -61,7 +81,7 @@ genrule(
     ],
     outs = ["parse_tree.proto"],
     cmd = "$(location :gen_parse_tree) $(OUTS) $(SRCS)",
-    exec_tools = [":gen_parse_tree"],
+    tools = [":gen_parse_tree"],
 )
 
 genrule(
@@ -71,7 +91,7 @@ genrule(
     ],
     outs = ["parse_tree_serializer.cc"],
     cmd = "$(location :gen_parse_tree) $(OUTS) $(SRCS)",
-    exec_tools = [":gen_parse_tree"],
+    tools = [":gen_parse_tree"],
 )
 
 genrule(
@@ -81,7 +101,7 @@ genrule(
     ],
     outs = ["parse_tree_serializer.h"],
     cmd = "$(location :gen_parse_tree) $(OUTS) $(SRCS)",
-    exec_tools = [":gen_parse_tree"],
+    tools = [":gen_parse_tree"],
 )
 
 proto_library(
@@ -209,6 +229,7 @@ cc_library(
         "//zetasql/public:strings",
         "//zetasql/public:type",
         "//zetasql/public:type_cc_proto",
+        "//zetasql/public/proto:logging_cc_proto",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/cleanup",
         "@com_google_absl//absl/container:flat_hash_map",
@@ -277,6 +298,7 @@ cc_library(
         "flex_tokenizer.h",
         "join_processor.h",
         "location.hh",
+        "parser_internal.h",
         "parser_runtime_info.h",
         "statement_properties.h",
     ],
@@ -294,13 +316,13 @@ cc_library(
     ],
     tags = ["nofixdeps"],  # generated and real files are interdependent
     deps = [
-        ":flex_istream",
         ":keywords",
         ":parse_tree",
         "//bazel:flex",
         "//zetasql/base",
         "//zetasql/base:arena",
         "//zetasql/base:arena_allocator",
+        "//zetasql/base:ret_check",
         "//zetasql/base:status",
         "//zetasql/base:strings",
         "//zetasql/common:errors",
@@ -311,6 +333,7 @@ cc_library(
         "//zetasql/public:parse_location",
         "//zetasql/public:strings",
         "//zetasql/public:type_cc_proto",
+        "//zetasql/public/proto:logging_cc_proto",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/container:inlined_vector",
         "@com_google_absl//absl/flags:flag",
@@ -361,6 +384,7 @@ cc_library(
         "//zetasql/base:status",
         "//zetasql/public:language_options",
         "//zetasql/public:options_cc_proto",
+        "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:variant",
@@ -374,6 +398,7 @@ cc_library(
         "parse_tree.cc",
         "parse_tree_accept_methods.inc",
         "parse_tree_errors.cc",
+        "parse_tree_generated.cc",
     ],
     hdrs = [
         "ast_node.h",

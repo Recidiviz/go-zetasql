@@ -46,6 +46,7 @@
 #include "zetasql/public/types/value_equality_check_options.h"
 #include "zetasql/public/value_content.h"
 #include "absl/base/optimization.h"
+#include "absl/flags/flag.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -62,6 +63,10 @@
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
 
+// TODO: Remove flag once no longer required.
+ABSL_FLAG(bool, zetasql_allow_proto3_unknown_enum_values, true,
+          "Accept enum values without names in proto3 enums");
+
 using zetasql::types::BigNumericArrayType;
 using zetasql::types::BoolArrayType;
 using zetasql::types::BytesArrayType;
@@ -71,8 +76,8 @@ using zetasql::types::Int32ArrayType;
 using zetasql::types::Int64ArrayType;
 using zetasql::types::JsonArrayType;
 using zetasql::types::NumericArrayType;
-using zetasql::types::TimestampArrayType;
 using zetasql::types::StringArrayType;
+using zetasql::types::TimestampArrayType;
 using zetasql::types::Uint32ArrayType;
 using zetasql::types::Uint64ArrayType;
 
@@ -90,14 +95,14 @@ std::ostream& operator<<(std::ostream& out, const Value& value) {
 
 void Value::SetMetadataForNonSimpleType(const Type* type, bool is_null,
                                         bool preserves_order) {
-  ZETASQL_DCHECK(!type->IsSimpleType());
+  ABSL_DCHECK(!type->IsSimpleType());
   metadata_ = Metadata(type, is_null, preserves_order);
   internal::TypeStoreHelper::RefFromValue(type->type_store_);
 }
 
 // Null value constructor.
 Value::Value(const Type* type, bool is_null, OrderPreservationKind order_kind) {
-  ZETASQL_CHECK(type != nullptr);
+  ABSL_CHECK(type != nullptr);
 
   if (type->IsSimpleType()) {
     metadata_ = Metadata(type->kind(), is_null, order_kind,
@@ -108,8 +113,8 @@ Value::Value(const Type* type, bool is_null, OrderPreservationKind order_kind) {
 }
 
 void Value::CopyFrom(const Value& that) {
-  // Self-copy check is done in the copy constructor. Here we just ZETASQL_DCHECK that.
-  ZETASQL_DCHECK_NE(this, &that);
+  // Self-copy check is done in the copy constructor. Here we just ABSL_DCHECK that.
+  ABSL_DCHECK_NE(this, &that);
   memcpy(this, &that, sizeof(Value));
   if (!is_valid()) {
     return;
@@ -143,17 +148,17 @@ void Value::CopyFrom(const Value& that) {
 Value::Value(TypeKind type_kind, int64_t value) : metadata_(type_kind) {
   switch (type_kind) {
     case TYPE_DATE:
-      ZETASQL_CHECK_LE(value, types::kDateMax);
-      ZETASQL_CHECK_GE(value, types::kDateMin);
+      ABSL_CHECK_LE(value, types::kDateMax);
+      ABSL_CHECK_GE(value, types::kDateMin);
       int32_value_ = value;
       break;
     default:
-      ZETASQL_LOG(FATAL) << "Invalid use of private constructor: " << type_kind;
+      ABSL_LOG(FATAL) << "Invalid use of private constructor: " << type_kind;
   }
 }
 
 Value::Value(absl::Time t) {
-  ZETASQL_CHECK(functions::IsValidTime(t));
+  ABSL_CHECK(functions::IsValidTime(t));
   timestamp_seconds_ = absl::ToUnixSeconds(t);
   const int32_t subsecond_nanos =
       (t - absl::FromUnixSeconds(timestamp_seconds_)) / absl::Nanoseconds(1);
@@ -163,13 +168,18 @@ Value::Value(absl::Time t) {
 Value::Value(TimeValue time)
     : metadata_(TypeKind::TYPE_TIME, time.Nanoseconds()),
       bit_field_32_value_(time.Packed32TimeSeconds()) {
-  ZETASQL_CHECK(time.IsValid());
+  ABSL_CHECK(time.IsValid());
 }
 
 Value::Value(DatetimeValue datetime)
     : metadata_(TypeKind::TYPE_DATETIME, datetime.Nanoseconds()),
       bit_field_64_value_(datetime.Packed64DatetimeSeconds()) {
-  ZETASQL_CHECK(datetime.IsValid());
+  ABSL_CHECK(datetime.IsValid());
+}
+
+Value Value::Enum(const EnumType* type, int64_t value) {
+  return Value(type, value,
+               absl::GetFlag(FLAGS_zetasql_allow_proto3_unknown_enum_values));
 }
 
 Value::Value(const EnumType* enum_type, int64_t value,
@@ -181,9 +191,7 @@ Value::Value(const EnumType* enum_type, int64_t value,
   const int32_t int32_value = static_cast<int32_t>(value);
 
   if (static_cast<int64_t>(int32_value) == value &&
-      ((allow_unknown_enum_values &&
-        enum_type->enum_descriptor()->file()->syntax() !=
-            google::protobuf::FileDescriptor::SYNTAX_PROTO2) ||
+      ((allow_unknown_enum_values && enum_type->EnumAllowsUnnamedValues()) ||
        enum_type->FindName(int32_value, &unused))) {
     SetMetadataForNonSimpleType(enum_type);
     enum_value_ = int32_value;
@@ -208,7 +216,7 @@ Value::Value(const ProtoType* proto_type, absl::Cord value)
 }
 
 Value::Value(const ExtendedType* extended_type, const ValueContent& value) {
-  ZETASQL_DCHECK_EQ(value.simple_type_extended_content_, 0);
+  ABSL_DCHECK_EQ(value.simple_type_extended_content_, 0);
   SetMetadataForNonSimpleType(extended_type);
   SetContent(value);
 }
@@ -267,7 +275,7 @@ absl::StatusOr<Value> Value::MakeRange(const Value& start, const Value& end) {
       types::RangeTypeFromSimpleTypeKind(start.type_kind());
   // If both ends are not unbounded, then enforce that start < end.
   if (!start.is_null() && !end.is_null() && !start.LessThan(end)) {
-    return absl::InternalError(
+    return absl::InvalidArgumentError(
         "Range start element must be smaller than range end element");
   }
 
@@ -282,13 +290,13 @@ absl::StatusOr<Value> Value::MakeRange(const Value& start, const Value& end) {
 }
 
 const Type* Value::type() const {
-  ZETASQL_CHECK(is_valid()) << DebugString();
+  ABSL_CHECK(is_valid()) << DebugString();
   return metadata_.type();
 }
 
 const std::vector<Value>& Value::fields() const {
-  ZETASQL_CHECK_EQ(TYPE_STRUCT, metadata_.type_kind());
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK_EQ(TYPE_STRUCT, metadata_.type_kind());
+  ABSL_CHECK(!is_null()) << "Null value";
   const internal::ValueContentContainer* const container_ptr =
       container_ptr_->value();
   const TypedList* const list_ptr =
@@ -297,8 +305,8 @@ const std::vector<Value>& Value::fields() const {
 }
 
 const std::vector<Value>& Value::elements() const {
-  ZETASQL_CHECK_EQ(TYPE_ARRAY, metadata_.type_kind());
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK_EQ(TYPE_ARRAY, metadata_.type_kind());
+  ABSL_CHECK(!is_null()) << "Null value";
   const internal::ValueContentContainer* const container_ptr =
       container_ptr_->value();
   const TypedList* const list_ptr =
@@ -307,13 +315,13 @@ const std::vector<Value>& Value::elements() const {
 }
 
 Value Value::TimestampFromUnixMicros(int64_t v) {
-  ZETASQL_CHECK(functions::IsValidTimestamp(v, functions::kMicroseconds)) << v;
+  ABSL_CHECK(functions::IsValidTimestamp(v, functions::kMicroseconds)) << v;
   return Value(absl::FromUnixMicros(v));
 }
 
 Value Value::TimeFromPacked64Micros(int64_t v) {
   TimeValue time = TimeValue::FromPacked64Micros(v);
-  ZETASQL_CHECK(time.IsValid()) << "int64 " << v
+  ABSL_CHECK(time.IsValid()) << "int64 " << v
                         << " decodes to an invalid time value: "
                         << time.DebugString();
   return Value(time);
@@ -321,20 +329,10 @@ Value Value::TimeFromPacked64Micros(int64_t v) {
 
 Value Value::DatetimeFromPacked64Micros(int64_t v) {
   DatetimeValue datetime = DatetimeValue::FromPacked64Micros(v);
-  ZETASQL_CHECK(datetime.IsValid())
+  ABSL_CHECK(datetime.IsValid())
       << "int64 " << v
       << " decodes to an invalid datetime value: " << datetime.DebugString();
   return Value(datetime);
-}
-
-const std::string& Value::enum_name() const {
-  ZETASQL_CHECK_EQ(TYPE_ENUM, metadata_.type_kind()) << "Not an enum value";
-  ZETASQL_CHECK(!is_null()) << "Null value";
-  const std::string* enum_name = nullptr;
-  ZETASQL_CHECK(type()->AsEnum()->FindName(enum_value(), &enum_name))
-      << "Value " << enum_value() << " not in "
-      << type()->AsEnum()->enum_descriptor()->DebugString();
-  return *enum_name;
 }
 
 absl::StatusOr<std::string_view> Value::EnumName() const {
@@ -352,8 +350,8 @@ absl::StatusOr<std::string_view> Value::EnumName() const {
   return *enum_name;
 }
 std::string Value::EnumDisplayName() const {
-  ZETASQL_CHECK_EQ(TYPE_ENUM, metadata_.type_kind()) << "Not an enum value";
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK_EQ(TYPE_ENUM, metadata_.type_kind()) << "Not an enum value";
+  ABSL_CHECK(!is_null()) << "Null value";
   const std::string* enum_name = nullptr;
   if (type()->AsEnum()->FindName(enum_value(), &enum_name)) {
     return *enum_name;
@@ -362,7 +360,7 @@ std::string Value::EnumDisplayName() const {
 }
 
 int64_t Value::ToInt64() const {
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK(!is_null()) << "Null value";
   switch (metadata_.type_kind()) {
     case TYPE_INT64: return int64_value_;
     case TYPE_INT32: return int32_value_;
@@ -381,26 +379,26 @@ int64_t Value::ToInt64() const {
     case TYPE_TIME:
     case TYPE_DATETIME:
     default:
-      ZETASQL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
+      ABSL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
                  << " to int64";
   }
 }
 
 uint64_t Value::ToUint64() const {
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK(!is_null()) << "Null value";
   switch (metadata_.type_kind()) {
     case TYPE_UINT64: return uint64_value_;
     case TYPE_UINT32: return uint32_value_;
     case TYPE_BOOL: return bool_value_;
     default:
-      ZETASQL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
+      ABSL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
                  << " to uint64";
       return 0;
   }
 }
 
 double Value::ToDouble() const {
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK(!is_null()) << "Null value";
   switch (metadata_.type_kind()) {
     case TYPE_BOOL: return bool_value_;
     case TYPE_DATE: return int32_value_;
@@ -426,7 +424,7 @@ double Value::ToDouble() const {
     case TYPE_TIME:
     case TYPE_DATETIME:
     default:
-      ZETASQL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
+      ABSL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
                  << " to double";
   }
 }
@@ -448,7 +446,7 @@ uint64_t Value::physical_byte_size() const {
 }
 
 absl::Cord Value::ToCord() const {
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK(!is_null()) << "Null value";
   switch (metadata_.type_kind()) {
     case TYPE_STRING:
     case TYPE_BYTES:
@@ -456,15 +454,15 @@ absl::Cord Value::ToCord() const {
     case TYPE_PROTO:
       return proto_ptr_->value();
     default:
-      ZETASQL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
+      ABSL_LOG(FATAL) << "Cannot coerce " << TypeKind_Name(type_kind())
                  << " to Cord";
       return absl::Cord();
   }
 }
 
 absl::Time Value::ToTime() const {
-  ZETASQL_CHECK(!is_null()) << "Null value";
-  ZETASQL_CHECK_EQ(TYPE_TIMESTAMP, metadata_.type_kind()) << "Not a timestamp value";
+  ABSL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK_EQ(TYPE_TIMESTAMP, metadata_.type_kind()) << "Not a timestamp value";
   return absl::FromUnixSeconds(timestamp_seconds_) +
          absl::Nanoseconds(subsecond_nanos());
 }
@@ -491,15 +489,15 @@ absl::Status Value::ToUnixNanos(int64_t* nanos) const {
 }
 
 ValueContent Value::extended_value() const {
-  ZETASQL_CHECK_EQ(type_kind(), TYPE_EXTENDED);
+  ABSL_CHECK_EQ(type_kind(), TYPE_EXTENDED);
   return GetContent();
 }
 
 google::protobuf::Message* Value::ToMessage(
     google::protobuf::DynamicMessageFactory* message_factory,
     bool return_null_on_error) const {
-  ZETASQL_CHECK(type()->IsProto());
-  ZETASQL_CHECK(!is_null());
+  ABSL_CHECK(type()->IsProto());
+  ABSL_CHECK(!is_null());
   std::unique_ptr<google::protobuf::Message> m(
       message_factory->GetPrototype(type()->AsProto()->descriptor())->New());
   const bool success = m->ParsePartialFromString(std::string(ToCord()));
@@ -508,8 +506,8 @@ google::protobuf::Message* Value::ToMessage(
 }
 
 const Value& Value::FindFieldByName(absl::string_view name) const {
-  ZETASQL_CHECK(type()->IsStruct());
-  ZETASQL_CHECK(!is_null()) << "Null value";
+  ABSL_CHECK(type()->IsStruct());
+  ABSL_CHECK(!is_null()) << "Null value";
   if (!name.empty()) {
     // Find field position.
     for (int i = 0; i < type()->AsStruct()->num_fields(); i++) {
@@ -558,7 +556,7 @@ void Value::FillDeepOrderKindSpec(const Value& v, DeepOrderKindSpec* spec) {
       if (spec->children.empty()) {
         spec->children.resize(v.num_fields());
       }
-      ZETASQL_DCHECK_EQ(spec->children.size(), v.num_fields());
+      ABSL_DCHECK_EQ(spec->children.size(), v.num_fields());
       for (int i = 0; i < v.num_fields(); i++) {
         Value::FillDeepOrderKindSpec(v.field(i), &spec->children[i]);
       }
@@ -645,7 +643,7 @@ static bool TypesSupportSqlEquals(const Type* type1, const Type* type2) {
       return TypesSupportSqlEquals(type1->AsArray()->element_type(),
                                    type2->AsArray()->element_type());
     case TYPE_KIND_PAIR(TYPE_RANGE, TYPE_RANGE):
-      ZETASQL_DCHECK(TypesSupportSqlEquals(type1->AsRange()->element_type(),
+      ABSL_DCHECK(TypesSupportSqlEquals(type1->AsRange()->element_type(),
                                    type2->AsRange()->element_type()));
       return true;
     default:
@@ -787,7 +785,7 @@ static bool TypesSupportSqlLessThan(const Type* type1, const Type* type2) {
       return TypesSupportSqlLessThan(type1->AsArray()->element_type(),
                                      type2->AsArray()->element_type());
     case TYPE_KIND_PAIR(TYPE_RANGE, TYPE_RANGE):
-      ZETASQL_DCHECK(TypesSupportSqlLessThan(type1->AsRange()->element_type(),
+      ABSL_DCHECK(TypesSupportSqlLessThan(type1->AsRange()->element_type(),
                                      type2->AsRange()->element_type()));
       return true;
     default:
@@ -921,7 +919,8 @@ std::string Value::DebugString(bool verbose) const {
 
 // Format will wrap arrays and structs.
 std::string Value::Format(bool print_top_level_type) const {
-  return FormatInternal(0, print_top_level_type);
+  return FormatInternal(
+      {.force_type_at_top_level = print_top_level_type, .indent = 0});
 }
 
 // NOTE: There is a similar method in ../resolved_ast/sql_builder.cc.
@@ -962,7 +961,7 @@ std::string Value::GetSQLInternal(ProductMode mode) const {
 }
 
 std::string RepeatString(absl::string_view text, int times) {
-  ZETASQL_CHECK_GE(times, 0);
+  ABSL_CHECK_GE(times, 0);
   std::string result;
   result.reserve(text.size() * times);
   for (int i = 0; i < times; ++i) {
@@ -971,8 +970,6 @@ std::string RepeatString(absl::string_view text, int times) {
   return result;
 }
 
-// Number of columns per indentation.
-const int kIndentStep = 2;
 // Character used to indent.
 const char* kIndentChar = " ";
 
@@ -1044,7 +1041,7 @@ static int FindSubstitutionMarker(absl::string_view block_template) {
 std::string FormatBlock(absl::string_view block_template,
                         const std::vector<std::string>& elements,
                         absl::string_view separator, int block_indent_cols,
-                        WrapStyle wrap_style) {
+                        WrapStyle wrap_style, int indent_step) {
   // The length of the template string preceding the substitution marker.
   // This prefix may or may not have line returns.
   int prefix_len = FindSubstitutionMarker(block_template);
@@ -1054,7 +1051,7 @@ std::string FormatBlock(absl::string_view block_template,
   // The column at which "COLUMN" style will wrap.
   int column_wrap_len = block_indent_cols + prefix_len - last_line_start;
   // The column at which "INDENT" style will wrap.
-  int indent_wrap_len = block_indent_cols + kIndentStep;
+  int indent_wrap_len = block_indent_cols + indent_step;
 
   if (wrap_style == WrapStyle::AUTO) {
     int count = elements.size();
@@ -1107,7 +1104,7 @@ std::string FormatBlock(absl::string_view block_template,
       sep = absl::StrCat(",\n", Indent(column_wrap_len));
       // Multi-line elements were formatted assuming they are at
       // block_indent_cols. They are actually at column_wrap_len.  Fix.
-      int additional_indent = column_wrap_len - indent_wrap_len + kIndentStep;
+      int additional_indent = column_wrap_len - indent_wrap_len + indent_step;
       for (const std::string& elem : elements) {
         indented_elements.push_back(ReIndentTail(elem, additional_indent));
       }
@@ -1128,7 +1125,7 @@ const int kStructIndent = 7;  // Length of "STRUCT<"
 // Helps FormatInternal print value types. This is a specific format for
 // types, so we choose not to add this as a generally used method on Type.
 std::string FormatType(const Type* type, ArrayElemFormat elem_format,
-                       int indent_cols) {
+                       int indent_cols, int indent_step) {
   ArrayElemFormat continue_elem_format =
       elem_format == ArrayElemFormat::FIRST_LEVEL_ONLY ? ArrayElemFormat::NONE
                                                        : elem_format;
@@ -1136,7 +1133,7 @@ std::string FormatType(const Type* type, ArrayElemFormat elem_format,
     std::string element_type =
         elem_format != ArrayElemFormat::NONE
             ? FormatType(type->AsArray()->element_type(), continue_elem_format,
-                         indent_cols + kArrayIndent)
+                         indent_cols + kArrayIndent, indent_step)
             : "";
     return Substitute("ARRAY<$0>", element_type);
   } else if (type->IsStruct()) {
@@ -1145,14 +1142,15 @@ std::string FormatType(const Type* type, ArrayElemFormat elem_format,
     for (int i = 0; i < struct_type->num_fields(); ++i) {
       const StructType::StructField& field = struct_type->field(i);
       fields[i] = FormatType(field.type, continue_elem_format,
-                             indent_cols + kStructIndent);
+                             indent_cols + kStructIndent, indent_step);
       if (!field.name.empty()) {
         fields[i] = Substitute("$0 $1", field.name, fields[i]);
       }
     }
-    return FormatBlock("STRUCT<$0>", fields, ",", indent_cols, WrapStyle::AUTO);
+    return FormatBlock("STRUCT<$0>", fields, ",", indent_cols, WrapStyle::AUTO,
+                       indent_step);
   } else if (type->IsProto()) {
-    ZETASQL_CHECK(type->AsProto()->descriptor() != nullptr);
+    ABSL_CHECK(type->AsProto()->descriptor() != nullptr);
     return Substitute("PROTO<$0>", type->AsProto()->descriptor()->full_name());
   } else if (type->IsEnum()) {
     return Substitute("ENUM<$0>",
@@ -1162,7 +1160,8 @@ std::string FormatType(const Type* type, ArrayElemFormat elem_format,
   }
 }
 
-std::string Value::FormatInternal(int indent, bool force_type) const {
+std::string Value::FormatInternal(
+    Type::FormatValueContentOptions options) const {
   if (type()->IsArray()) {
     // If the array is null or empty, print the whole type because there
     // are no printed elements that provide type information of nested arrays.
@@ -1171,51 +1170,76 @@ std::string Value::FormatInternal(int indent, bool force_type) const {
     ArrayElemFormat elem_style = (is_null() || elements().empty())
                                      ? ArrayElemFormat::ALL
                                      : ArrayElemFormat::FIRST_LEVEL_ONLY;
-    std::string type_string = FormatType(type(), elem_style, indent);
+    std::string type_string =
+        FormatType(type(), elem_style, options.indent,
+                   Type::FormatValueContentOptions::kIndentStep);
     if (is_null()) {
       return absl::StrCat(type_string, "(NULL)");
     }
     std::vector<std::string> element_strings(elements().size());
     for (int i = 0; i < elements().size(); ++i) {
-      element_strings[i] = elements()[i].FormatInternal(indent + kIndentStep,
-                                                        false /* force_type */);
+      element_strings[i] =
+          elements()[i].FormatInternal(options.IncreaseIndent());
     }
     // Sanitize any '$' characters before creating substitution template. "$$"
     // is replaced by "$" in the output from absl::Substitute.
     std::string sanitized_type_string =
         absl::StrReplaceAll(type_string, {{"$", "$$"}});
-    std::string templ = absl::StrCat(sanitized_type_string, "[$0]");
+    std::string array_orderedness = "";
+    if (options.include_array_ordereness && elements().size() > 1) {
+      if (order_kind() == kPreservesOrder) {
+        array_orderedness = "known order:";
+      } else {
+        array_orderedness = "unknown order:";
+      }
+    }
+    std::string templ =
+        absl::StrCat(sanitized_type_string, "[", array_orderedness, "$0]");
     // Force a wrap after the type if the type consumes multiple lines and
     // there is more than one element (or one element over multiple lines).
     if (absl::StrContains(type_string, '\n') &&
         (elements().size() > 1 ||
          (!elements().empty() &&
           absl::StrContains(element_strings[0], '\n')))) {
-      templ = absl::StrCat(sanitized_type_string, "\n", Indent(indent), "[$0]");
+      templ = absl::StrCat(sanitized_type_string, "\n", Indent(options.indent),
+                           "[", array_orderedness, "$0]");
     }
-    return FormatBlock(templ, element_strings, ",", indent, WrapStyle::AUTO);
+    return FormatBlock(templ, element_strings, ",", options.indent,
+                       WrapStyle::AUTO,
+                       Type::FormatValueContentOptions::kIndentStep);
   } else if (type()->IsStruct()) {
     std::string type_string =
-        force_type ? FormatType(type(), ArrayElemFormat::NONE, indent) : "";
+        options.force_type_at_top_level
+            ? FormatType(type(), ArrayElemFormat::NONE, options.indent,
+                         Type::FormatValueContentOptions::kIndentStep)
+            : "";
     if (is_null()) {
-      return force_type ? Substitute("$0(NULL)", type_string) : "NULL";
+      return options.force_type_at_top_level
+                 ? Substitute("$0(NULL)", type_string)
+                 : "NULL";
     }
     const StructType* struct_type = type()->AsStruct();
     std::vector<std::string> field_strings(struct_type->num_fields());
     for (int i = 0; i < struct_type->num_fields(); i++) {
-      field_strings[i] = fields()[i].FormatInternal(indent + kIndentStep,
-                                                    false /* force_type */);
+      field_strings[i] = fields()[i].FormatInternal(options.IncreaseIndent());
     }
     // Sanitize any '$' characters before creating substitution template. "$$"
     // is replaced by "$" in the output from absl::Substitute.
     std::string templ =
         absl::StrCat(absl::StrReplaceAll(type_string, {{"$", "$$"}}), "{$0}");
-    return FormatBlock(templ, field_strings, ",", indent, WrapStyle::AUTO);
+    return FormatBlock(templ, field_strings, ",", options.indent,
+                       WrapStyle::AUTO,
+                       Type::FormatValueContentOptions::kIndentStep);
   } else if (type()->IsProto()) {
     std::string type_string =
-        force_type ? FormatType(type(), ArrayElemFormat::NONE, indent) : "";
+        options.force_type_at_top_level
+            ? FormatType(type(), ArrayElemFormat::NONE, options.indent,
+                         Type::FormatValueContentOptions::kIndentStep)
+            : "";
     if (is_null()) {
-      return force_type ? Substitute("$0(NULL)", type_string) : "NULL";
+      return options.force_type_at_top_level
+                 ? Substitute("$0(NULL)", type_string)
+                 : "NULL";
     }
     google::protobuf::DynamicMessageFactory message_factory;
     std::unique_ptr<google::protobuf::Message> m(this->ToMessage(&message_factory));
@@ -1227,25 +1251,34 @@ std::string Value::FormatInternal(int indent, bool force_type) const {
     // We don't need to sanitize the type string here since proto field names
     // cannot contain '$' characters.
     return FormatBlock(absl::StrCat(type_string, "{$0}"), field_strings, "",
-                       indent, wraps ? WrapStyle::INDENT : WrapStyle::NONE);
+                       options.indent,
+                       wraps ? WrapStyle::INDENT : WrapStyle::NONE,
+                       Type::FormatValueContentOptions::kIndentStep);
   } else if (type()->IsRangeType()) {
     std::string type_string =
-        force_type ? FormatType(type(), ArrayElemFormat::NONE, indent) : "";
+        options.force_type_at_top_level
+            ? FormatType(type(), ArrayElemFormat::NONE, options.indent,
+                         Type::FormatValueContentOptions::kIndentStep)
+            : "";
     if (is_null()) {
-      return force_type ? Substitute("$0(NULL)", type_string) : "NULL";
+      return options.force_type_at_top_level
+                 ? Substitute("$0(NULL)", type_string)
+                 : "NULL";
     }
     std::vector<std::string> boundaries_strings;
     boundaries_strings.push_back(
-        start().FormatInternal(indent + kIndentStep, false /* force_type */));
+        start().FormatInternal(options.IncreaseIndent()));
     boundaries_strings.push_back(
-        end().FormatInternal(indent + kIndentStep, false /* force_type */));
+        end().FormatInternal(options.IncreaseIndent()));
     // Sanitize any '$' characters before creating substitution template. "$$"
     // is replaced by "$" in the output from absl::Substitute.
     std::string templ =
         absl::StrCat(absl::StrReplaceAll(type_string, {{"$", "$$"}}), "[$0)");
-    return FormatBlock(templ, boundaries_strings, ",", indent, WrapStyle::AUTO);
+    return FormatBlock(templ, boundaries_strings, ",", options.indent,
+                       WrapStyle::AUTO,
+                       Type::FormatValueContentOptions::kIndentStep);
   } else {
-    return DebugString(force_type);
+    return DebugString(options.force_type_at_top_level);
   }
 }
 
@@ -1503,7 +1536,7 @@ absl::StatusOr<Value> Value::Deserialize(const ValueProto& value_proto,
 }
 
 ValueContent Value::GetContent() const {
-  ZETASQL_DCHECK(has_content());
+  ABSL_DCHECK(has_content());
   // If type is less than 64bit, the padding bytes of the union uninitialized.
   // The first byte must be initialized in any case.
   // Suppress msan check for the potentially uninitialized bytes.
@@ -1516,7 +1549,7 @@ ValueContent Value::GetContent() const {
 }
 
 void Value::SetContent(const ValueContent& content) {
-  ZETASQL_DCHECK(metadata_.is_valid());
+  ABSL_DCHECK(metadata_.is_valid());
 
   int64_value_ = content.content_;
   metadata_ = metadata_.has_type_pointer()
@@ -1562,7 +1595,7 @@ bool Value::Metadata::can_store_value_extended_content() const {
 }
 
 int32_t Value::Metadata::value_extended_content() const {
-  ZETASQL_CHECK(can_store_value_extended_content());
+  ABSL_CHECK(can_store_value_extended_content());
   return content()->value_extended_content();
 }
 
@@ -1574,10 +1607,10 @@ bool Value::Metadata::is_valid() const {
 Value::Metadata::Metadata(const Type* type, bool is_null,
                           bool preserves_order) {
   *content() = Content(type, is_null, preserves_order);
-  ZETASQL_DCHECK(content()->has_type_pointer());
-  ZETASQL_DCHECK(content()->type() == type);
-  ZETASQL_DCHECK(content()->preserves_order() == preserves_order);
-  ZETASQL_DCHECK(content()->is_null() == is_null);
+  ABSL_DCHECK(content()->has_type_pointer());
+  ABSL_DCHECK(content()->type() == type);
+  ABSL_DCHECK(content()->preserves_order() == preserves_order);
+  ABSL_DCHECK(content()->is_null() == is_null);
 }
 
 Value::TypedList::~TypedList() {

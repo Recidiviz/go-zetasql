@@ -1,10 +1,10 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_BISON_PARSER_GENERATED_LIB_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_BISON_PARSER_GENERATED_LIB_EXPORT_H
 
+#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/bison_parser.bison.h"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/flex_tokenizer.h"
 #include "zetasql/parser/join_processor.h"
 #include "zetasql/parser/location.hh"
 #include "zetasql/parser/parser_internal.h"
@@ -12,7 +12,6 @@
 #include "zetasql/parser/statement_properties.h"
 // include sources
 #include "zetasql/parser/bison_parser.bison.cc"
-#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/join_processor.cc"
 // include dependencies
 #include "go-zetasql/parser/keywords/export.inc"

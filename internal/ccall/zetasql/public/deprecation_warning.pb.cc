@@ -4,120 +4,166 @@
 #include "zetasql/public/deprecation_warning.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr DeprecationWarning::DeprecationWarning(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : kind_(-1)
-{}
+template <typename>
+PROTOBUF_CONSTEXPR DeprecationWarning::DeprecationWarning(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.kind_)*/ -1
+} {}
 struct DeprecationWarningDefaultTypeInternal {
-  constexpr DeprecationWarningDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR DeprecationWarningDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DeprecationWarningDefaultTypeInternal() {}
   union {
     DeprecationWarning _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeprecationWarningDefaultTypeInternal _DeprecationWarning_default_instance_;
-constexpr FreestandingDeprecationWarning::FreestandingDeprecationWarning(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : message_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , caret_string_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , error_location_(nullptr)
-  , deprecation_warning_(nullptr){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DeprecationWarningDefaultTypeInternal _DeprecationWarning_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR FreestandingDeprecationWarning::FreestandingDeprecationWarning(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.message_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.caret_string_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.error_location_)*/nullptr
+  , /*decltype(_impl_.deprecation_warning_)*/nullptr} {}
 struct FreestandingDeprecationWarningDefaultTypeInternal {
-  constexpr FreestandingDeprecationWarningDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR FreestandingDeprecationWarningDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~FreestandingDeprecationWarningDefaultTypeInternal() {}
   union {
     FreestandingDeprecationWarning _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FreestandingDeprecationWarningDefaultTypeInternal _FreestandingDeprecationWarning_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FreestandingDeprecationWarningDefaultTypeInternal _FreestandingDeprecationWarning_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[2];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::DeprecationWarning, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::DeprecationWarning, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::DeprecationWarning, kind_),
-  0,
-  PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, message_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, caret_string_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, error_location_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, deprecation_warning_),
-  0,
-  1,
-  2,
-  3,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 7, -1, sizeof(::zetasql::DeprecationWarning)},
-  { 8, 18, -1, sizeof(::zetasql::FreestandingDeprecationWarning)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_DeprecationWarning_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_FreestandingDeprecationWarning_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[1];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::DeprecationWarning, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::DeprecationWarning, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::DeprecationWarning, _impl_.kind_),
+    0,
+    PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _impl_.message_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _impl_.caret_string_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _impl_.error_location_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FreestandingDeprecationWarning, _impl_.deprecation_warning_),
+    0,
+    1,
+    2,
+    3,
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n(zetasql/public/deprecation_warning.pro"
-  "to\022\007zetasql\032#zetasql/public/error_locati"
-  "on.proto\"\246\002\n\022DeprecationWarning\022.\n\004kind\030"
-  "\001 \001(\0162 .zetasql.DeprecationWarning.Kind\""
-  "\337\001\n\004Kind\0221\n$__Kind__switch_must_have_a_d"
-  "efault__\020\377\377\377\377\377\377\377\377\377\001\022\013\n\007UNKNOWN\020\000\022\027\n\023DEPR"
-  "ECATED_FUNCTION\020\001\022!\n\035DEPRECATED_FUNCTION"
-  "_SIGNATURE\020\002\022\031\n\025PROTO3_FIELD_PRESENCE\020\003\022"
-  "\025\n\021QUERY_TOO_COMPLEX\020\004\022)\n%DEPRECATED_ANO"
-  "NYMIZATION_OPTION_KAPPA\020\005\"\261\001\n\036Freestandi"
-  "ngDeprecationWarning\022\017\n\007message\030\001 \001(\t\022\024\n"
-  "\014caret_string\030\002 \001(\t\022.\n\016error_location\030\003 "
-  "\001(\0132\026.zetasql.ErrorLocation\0228\n\023deprecati"
-  "on_warning\030\004 \001(\0132\033.zetasql.DeprecationWa"
-  "rningB.\n\022com.google.zetasqlB\030Deprecation"
-  "WarningProtos"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps[1] = {
-  &::descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 9, -1, sizeof(::zetasql::DeprecationWarning)},
+        { 10, 22, -1, sizeof(::zetasql::FreestandingDeprecationWarning)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto = {
-  false, false, 613, descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, "zetasql/public/deprecation_warning.proto", 
-  &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once, descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps, 1, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto, file_level_service_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_DeprecationWarning_default_instance_._instance,
+    &::zetasql::_FreestandingDeprecationWarning_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n(zetasql/public/deprecation_warning.pro"
+    "to\022\007zetasql\032#zetasql/public/error_locati"
+    "on.proto\"\246\002\n\022DeprecationWarning\022.\n\004kind\030"
+    "\001 \001(\0162 .zetasql.DeprecationWarning.Kind\""
+    "\337\001\n\004Kind\0221\n$__Kind__switch_must_have_a_d"
+    "efault__\020\377\377\377\377\377\377\377\377\377\001\022\013\n\007UNKNOWN\020\000\022\027\n\023DEPR"
+    "ECATED_FUNCTION\020\001\022!\n\035DEPRECATED_FUNCTION"
+    "_SIGNATURE\020\002\022\031\n\025PROTO3_FIELD_PRESENCE\020\003\022"
+    "\025\n\021QUERY_TOO_COMPLEX\020\004\022)\n%DEPRECATED_ANO"
+    "NYMIZATION_OPTION_KAPPA\020\005\"\261\001\n\036Freestandi"
+    "ngDeprecationWarning\022\017\n\007message\030\001 \001(\t\022\024\n"
+    "\014caret_string\030\002 \001(\t\022.\n\016error_location\030\003 "
+    "\001(\0132\026.zetasql.ErrorLocation\0228\n\023deprecati"
+    "on_warning\030\004 \001(\0132\033.zetasql.DeprecationWa"
+    "rningB.\n\022com.google.zetasqlB\030Deprecation"
+    "WarningProtos"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps[1] =
+    {
+        &::descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto = {
+    false,
+    false,
+    613,
+    descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
+    "zetasql/public/deprecation_warning.proto",
+    &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once,
+    descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps,
+    1,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto(&descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto(&descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto);
 namespace zetasql {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DeprecationWarning_Kind_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto);
@@ -137,8 +183,9 @@ bool DeprecationWarning_Kind_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr DeprecationWarning_Kind DeprecationWarning::__Kind__switch_must_have_a_default__;
 constexpr DeprecationWarning_Kind DeprecationWarning::UNKNOWN;
 constexpr DeprecationWarning_Kind DeprecationWarning::DEPRECATED_FUNCTION;
@@ -149,90 +196,91 @@ constexpr DeprecationWarning_Kind DeprecationWarning::DEPRECATED_ANONYMIZATION_O
 constexpr DeprecationWarning_Kind DeprecationWarning::Kind_MIN;
 constexpr DeprecationWarning_Kind DeprecationWarning::Kind_MAX;
 constexpr int DeprecationWarning::Kind_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 // ===================================================================
 
 class DeprecationWarning::_Internal {
  public:
-  using HasBits = decltype(std::declval<DeprecationWarning>()._has_bits_);
+  using HasBits = decltype(std::declval<DeprecationWarning>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(DeprecationWarning, _impl_._has_bits_);
   static void set_has_kind(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
-DeprecationWarning::DeprecationWarning(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+DeprecationWarning::DeprecationWarning(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.DeprecationWarning)
 }
 DeprecationWarning::DeprecationWarning(const DeprecationWarning& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  kind_ = from.kind_;
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.DeprecationWarning)
 }
 
-inline void DeprecationWarning::SharedCtor() {
-kind_ = -1;
+inline void DeprecationWarning::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.kind_) { -1 }
+
+  };
 }
 
 DeprecationWarning::~DeprecationWarning() {
   // @@protoc_insertion_point(destructor:zetasql.DeprecationWarning)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void DeprecationWarning::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void DeprecationWarning::ArenaDtor(void* object) {
-  DeprecationWarning* _this = reinterpret_cast< DeprecationWarning* >(object);
-  (void)_this;
-}
-void DeprecationWarning::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void DeprecationWarning::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void DeprecationWarning::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.DeprecationWarning)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  kind_ = -1;
-  _has_bits_.Clear();
+  _impl_.kind_ = -1;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DeprecationWarning::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* DeprecationWarning::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .zetasql.DeprecationWarning.Kind kind = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-          if (PROTOBUF_PREDICT_TRUE(::zetasql::DeprecationWarning_Kind_IsValid(val))) {
+          if (PROTOBUF_PREDICT_TRUE(::zetasql::DeprecationWarning_Kind_IsValid(static_cast<int>(val)))) {
             _internal_set_kind(static_cast<::zetasql::DeprecationWarning_Kind>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(1, val, mutable_unknown_fields());
           }
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -250,7 +298,7 @@ const char* DeprecationWarning::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -258,69 +306,65 @@ failure:
 #undef CHK_
 }
 
-uint8_t* DeprecationWarning::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* DeprecationWarning::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.DeprecationWarning)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.DeprecationWarning.Kind kind = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      1, this->_internal_kind(), target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        1, this->_internal_kind(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.DeprecationWarning)
   return target;
 }
 
-size_t DeprecationWarning::ByteSizeLong() const {
+::size_t DeprecationWarning::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.DeprecationWarning)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional .zetasql.DeprecationWarning.Kind kind = 1;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_kind());
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_kind());
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeprecationWarning::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     DeprecationWarning::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeprecationWarning::GetClassData() const { return &_class_data_; }
 
-void DeprecationWarning::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<DeprecationWarning *>(to)->MergeFrom(
-      static_cast<const DeprecationWarning &>(from));
-}
 
-
-void DeprecationWarning::MergeFrom(const DeprecationWarning& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.DeprecationWarning)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void DeprecationWarning::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DeprecationWarning*>(&to_msg);
+  auto& from = static_cast<const DeprecationWarning&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.DeprecationWarning)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_kind()) {
-    _internal_set_kind(from._internal_kind());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_set_kind(from._internal_kind());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void DeprecationWarning::CopyFrom(const DeprecationWarning& from) {
@@ -337,21 +381,22 @@ bool DeprecationWarning::IsInitialized() const {
 void DeprecationWarning::InternalSwap(DeprecationWarning* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(kind_, other->kind_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.kind_, other->_impl_.kind_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DeprecationWarning::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[0]);
 }
-
 // ===================================================================
 
 class FreestandingDeprecationWarning::_Internal {
  public:
-  using HasBits = decltype(std::declval<FreestandingDeprecationWarning>()._has_bits_);
+  using HasBits = decltype(std::declval<FreestandingDeprecationWarning>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(FreestandingDeprecationWarning, _impl_._has_bits_);
   static void set_has_message(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -370,171 +415,178 @@ class FreestandingDeprecationWarning::_Internal {
 
 const ::zetasql::ErrorLocation&
 FreestandingDeprecationWarning::_Internal::error_location(const FreestandingDeprecationWarning* msg) {
-  return *msg->error_location_;
+  return *msg->_impl_.error_location_;
 }
 const ::zetasql::DeprecationWarning&
 FreestandingDeprecationWarning::_Internal::deprecation_warning(const FreestandingDeprecationWarning* msg) {
-  return *msg->deprecation_warning_;
+  return *msg->_impl_.deprecation_warning_;
 }
 void FreestandingDeprecationWarning::clear_error_location() {
-  if (error_location_ != nullptr) error_location_->Clear();
-  _has_bits_[0] &= ~0x00000004u;
+  if (_impl_.error_location_ != nullptr) _impl_.error_location_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
-FreestandingDeprecationWarning::FreestandingDeprecationWarning(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+FreestandingDeprecationWarning::FreestandingDeprecationWarning(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.FreestandingDeprecationWarning)
 }
 FreestandingDeprecationWarning::FreestandingDeprecationWarning(const FreestandingDeprecationWarning& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  FreestandingDeprecationWarning* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.message_) {}
+
+    , decltype(_impl_.caret_string_) {}
+
+    , decltype(_impl_.error_location_){nullptr}
+    , decltype(_impl_.deprecation_warning_){nullptr}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.message_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_message()) {
-    message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_message(), 
-      GetArenaForAllocation());
+        _impl_.message_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.message_.Set(from._internal_message(), _this->GetArenaForAllocation());
   }
-  caret_string_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.caret_string_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    caret_string_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_caret_string()) {
-    caret_string_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_caret_string(), 
-      GetArenaForAllocation());
+        _impl_.caret_string_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.caret_string_.Set(from._internal_caret_string(), _this->GetArenaForAllocation());
   }
-  if (from._internal_has_error_location()) {
-    error_location_ = new ::zetasql::ErrorLocation(*from.error_location_);
-  } else {
-    error_location_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000004u) != 0) {
+    _this->_impl_.error_location_ = new ::zetasql::ErrorLocation(*from._impl_.error_location_);
   }
-  if (from._internal_has_deprecation_warning()) {
-    deprecation_warning_ = new ::zetasql::DeprecationWarning(*from.deprecation_warning_);
-  } else {
-    deprecation_warning_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000008u) != 0) {
+    _this->_impl_.deprecation_warning_ = new ::zetasql::DeprecationWarning(*from._impl_.deprecation_warning_);
   }
   // @@protoc_insertion_point(copy_constructor:zetasql.FreestandingDeprecationWarning)
 }
 
-inline void FreestandingDeprecationWarning::SharedCtor() {
-message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-caret_string_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  caret_string_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&error_location_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&deprecation_warning_) -
-    reinterpret_cast<char*>(&error_location_)) + sizeof(deprecation_warning_));
+inline void FreestandingDeprecationWarning::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.message_) {}
+
+    , decltype(_impl_.caret_string_) {}
+
+    , decltype(_impl_.error_location_){nullptr}
+    , decltype(_impl_.deprecation_warning_){nullptr}
+  };
+  _impl_.message_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.message_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.caret_string_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.caret_string_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 FreestandingDeprecationWarning::~FreestandingDeprecationWarning() {
   // @@protoc_insertion_point(destructor:zetasql.FreestandingDeprecationWarning)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void FreestandingDeprecationWarning::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  message_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  caret_string_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete error_location_;
-  if (this != internal_default_instance()) delete deprecation_warning_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.message_.Destroy();
+  _impl_.caret_string_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.error_location_;
+  if (this != internal_default_instance()) delete _impl_.deprecation_warning_;
 }
 
-void FreestandingDeprecationWarning::ArenaDtor(void* object) {
-  FreestandingDeprecationWarning* _this = reinterpret_cast< FreestandingDeprecationWarning* >(object);
-  (void)_this;
-}
-void FreestandingDeprecationWarning::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void FreestandingDeprecationWarning::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void FreestandingDeprecationWarning::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.FreestandingDeprecationWarning)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      message_.ClearNonDefaultToEmpty();
+      _impl_.message_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      caret_string_.ClearNonDefaultToEmpty();
+      _impl_.caret_string_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000004u) {
-      GOOGLE_DCHECK(error_location_ != nullptr);
-      error_location_->Clear();
+      ABSL_DCHECK(_impl_.error_location_ != nullptr);
+      _impl_.error_location_->Clear();
     }
     if (cached_has_bits & 0x00000008u) {
-      GOOGLE_DCHECK(deprecation_warning_ != nullptr);
-      deprecation_warning_->Clear();
+      ABSL_DCHECK(_impl_.deprecation_warning_ != nullptr);
+      _impl_.deprecation_warning_->Clear();
     }
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* FreestandingDeprecationWarning::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* FreestandingDeprecationWarning::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional string message = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_message();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.FreestandingDeprecationWarning.message");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.FreestandingDeprecationWarning.message");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional string caret_string = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_caret_string();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.FreestandingDeprecationWarning.caret_string");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.FreestandingDeprecationWarning.caret_string");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.ErrorLocation error_location = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_error_location(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.DeprecationWarning deprecation_warning = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_deprecation_warning(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -552,7 +604,7 @@ const char* FreestandingDeprecationWarning::_InternalParse(const char* ptr, ::PR
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -560,134 +612,124 @@ failure:
 #undef CHK_
 }
 
-uint8_t* FreestandingDeprecationWarning::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* FreestandingDeprecationWarning::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.FreestandingDeprecationWarning)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string message = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.FreestandingDeprecationWarning.message");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_message(), target);
+    const std::string& _s = this->_internal_message();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.FreestandingDeprecationWarning.message");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // optional string caret_string = 2;
   if (cached_has_bits & 0x00000002u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_caret_string().data(), static_cast<int>(this->_internal_caret_string().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.FreestandingDeprecationWarning.caret_string");
-    target = stream->WriteStringMaybeAliased(
-        2, this->_internal_caret_string(), target);
+    const std::string& _s = this->_internal_caret_string();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.FreestandingDeprecationWarning.caret_string");
+    target = stream->WriteStringMaybeAliased(2, _s, target);
   }
 
   // optional .zetasql.ErrorLocation error_location = 3;
   if (cached_has_bits & 0x00000004u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        3, _Internal::error_location(this), target, stream);
+      InternalWriteMessage(3, _Internal::error_location(this),
+        _Internal::error_location(this).GetCachedSize(), target, stream);
   }
 
   // optional .zetasql.DeprecationWarning deprecation_warning = 4;
   if (cached_has_bits & 0x00000008u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        4, _Internal::deprecation_warning(this), target, stream);
+      InternalWriteMessage(4, _Internal::deprecation_warning(this),
+        _Internal::deprecation_warning(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.FreestandingDeprecationWarning)
   return target;
 }
 
-size_t FreestandingDeprecationWarning::ByteSizeLong() const {
+::size_t FreestandingDeprecationWarning::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.FreestandingDeprecationWarning)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     // optional string message = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_message());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_message());
     }
 
     // optional string caret_string = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_caret_string());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_caret_string());
     }
 
     // optional .zetasql.ErrorLocation error_location = 3;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *error_location_);
+          *_impl_.error_location_);
     }
 
     // optional .zetasql.DeprecationWarning deprecation_warning = 4;
     if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *deprecation_warning_);
+          *_impl_.deprecation_warning_);
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData FreestandingDeprecationWarning::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     FreestandingDeprecationWarning::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*FreestandingDeprecationWarning::GetClassData() const { return &_class_data_; }
 
-void FreestandingDeprecationWarning::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<FreestandingDeprecationWarning *>(to)->MergeFrom(
-      static_cast<const FreestandingDeprecationWarning &>(from));
-}
 
-
-void FreestandingDeprecationWarning::MergeFrom(const FreestandingDeprecationWarning& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.FreestandingDeprecationWarning)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void FreestandingDeprecationWarning::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<FreestandingDeprecationWarning*>(&to_msg);
+  auto& from = static_cast<const FreestandingDeprecationWarning&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.FreestandingDeprecationWarning)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_message(from._internal_message());
+      _this->_internal_set_message(from._internal_message());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_set_caret_string(from._internal_caret_string());
+      _this->_internal_set_caret_string(from._internal_caret_string());
     }
     if (cached_has_bits & 0x00000004u) {
-      _internal_mutable_error_location()->::zetasql::ErrorLocation::MergeFrom(from._internal_error_location());
+      _this->_internal_mutable_error_location()->::zetasql::ErrorLocation::MergeFrom(
+          from._internal_error_location());
     }
     if (cached_has_bits & 0x00000008u) {
-      _internal_mutable_deprecation_warning()->::zetasql::DeprecationWarning::MergeFrom(from._internal_deprecation_warning());
+      _this->_internal_mutable_deprecation_warning()->::zetasql::DeprecationWarning::MergeFrom(
+          from._internal_deprecation_warning());
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void FreestandingDeprecationWarning::CopyFrom(const FreestandingDeprecationWarning& from) {
@@ -706,41 +748,35 @@ void FreestandingDeprecationWarning::InternalSwap(FreestandingDeprecationWarning
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &message_, lhs_arena,
-      &other->message_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &caret_string_, lhs_arena,
-      &other->caret_string_, rhs_arena
-  );
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.message_, lhs_arena,
+                                       &other->_impl_.message_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.caret_string_, lhs_arena,
+                                       &other->_impl_.caret_string_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FreestandingDeprecationWarning, deprecation_warning_)
-      + sizeof(FreestandingDeprecationWarning::deprecation_warning_)
-      - PROTOBUF_FIELD_OFFSET(FreestandingDeprecationWarning, error_location_)>(
-          reinterpret_cast<char*>(&error_location_),
-          reinterpret_cast<char*>(&other->error_location_));
+      PROTOBUF_FIELD_OFFSET(FreestandingDeprecationWarning, _impl_.deprecation_warning_)
+      + sizeof(FreestandingDeprecationWarning::_impl_.deprecation_warning_)
+      - PROTOBUF_FIELD_OFFSET(FreestandingDeprecationWarning, _impl_.error_location_)>(
+          reinterpret_cast<char*>(&_impl_.error_location_),
+          reinterpret_cast<char*>(&other->_impl_.error_location_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FreestandingDeprecationWarning::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[1]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::DeprecationWarning* Arena::CreateMaybeMessage< ::zetasql::DeprecationWarning >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::DeprecationWarning*
+Arena::CreateMaybeMessage< ::zetasql::DeprecationWarning >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::DeprecationWarning >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::FreestandingDeprecationWarning* Arena::CreateMaybeMessage< ::zetasql::FreestandingDeprecationWarning >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::FreestandingDeprecationWarning*
+Arena::CreateMaybeMessage< ::zetasql::FreestandingDeprecationWarning >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::FreestandingDeprecationWarning >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

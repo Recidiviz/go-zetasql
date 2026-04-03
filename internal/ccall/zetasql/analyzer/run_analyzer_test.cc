@@ -18,8 +18,8 @@
 
 #include <algorithm>
 #include <functional>
-#include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
@@ -28,10 +28,13 @@
 #include "zetasql/base/atomic_sequence_num.h"
 #include "zetasql/base/logging.h"
 #include "zetasql/base/enum_utils.h"
+#include "google/protobuf/text_format.h"
 #include "zetasql/analyzer/analyzer_output_mutator.h"
 #include "zetasql/analyzer/analyzer_test_options.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/base/testing/status_matchers.h"  
+#include "zetasql/common/unicode_utils.h"
+#include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/parser.h"
 #include "zetasql/public/analyzer.h"
 #include "zetasql/public/analyzer_options.h"
@@ -46,6 +49,7 @@
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_helpers.h"
 #include "zetasql/public/parse_resume_location.h"
+#include "zetasql/public/proto/logging.pb.h"
 #include "zetasql/public/simple_catalog.h"
 #include "zetasql/public/sql_formatter.h"
 #include "zetasql/public/strings.h"
@@ -81,17 +85,18 @@
 #include "absl/algorithm/container.h"
 #include "absl/container/btree_map.h"
 #include "absl/container/flat_hash_map.h"
-#include "absl/container/node_hash_set.h"
 #include "absl/flags/commandlineflag.h"
 #include "absl/flags/flag.h"
 #include "absl/flags/reflection.h"
 #include "absl/functional/bind_front.h"
+#include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
+#include "absl/strings/str_replace.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
@@ -103,8 +108,6 @@
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
-
-ABSL_DECLARE_FLAG(bool, zetasql_show_function_signature_mismatch_details);
 
 ABSL_FLAG(std::string, test_file, "", "location of test data file.");
 
@@ -134,9 +137,9 @@ class SQLBuilderWithNestedCatalogSupport : public SQLBuilder {
 
 // Make the unittest fail with message <str>, and also return <str> so it
 // can be used in the file-based output to make it easy to find.
-static std::string AddFailure(const std::string& str) {
+static std::string AddFailure(absl::string_view str) {
   ADD_FAILURE() << str;
-  return str;
+  return std::string(str);
 }
 
 static AllowedHintsAndOptions GetAllowedHintsAndOptions(
@@ -221,7 +224,7 @@ static std::string FormatTableResolutionTimeInfoMap(
     const absl::Status& status,
     const TableResolutionTimeInfoMap& table_resolution_time_info_map) {
   if (!status.ok()) {
-    return absl::StrCat("ERROR: ", internal::StatusToString(status));
+    return absl::StrCat("ERROR: ", FormatError(status));
   }
   std::string result;
   for (const auto& entry : table_resolution_time_info_map) {
@@ -277,48 +280,6 @@ absl::StatusOr<std::unique_ptr<AnalyzerOutput>> CopyAnalyzerOutput(
 
 }  // namespace
 
-namespace {
-// Adds information from 'table_scan_groups' (if not empty) to '*output'.
-template <class NodeType>
-void OutputAnonymizationTableScanGroups(
-    const absl::flat_hash_map<const ResolvedTableScan*, const NodeType*>&
-        table_scan_groups,
-    std::string* output) {
-  if (table_scan_groups.empty()) return;
-  absl::StrAppend(output, "\n[TableScan Groups]\n");
-
-  // To output the map ordered by the key's debug string, we use btree_map
-  // here.
-  absl::btree_map<const std::string, std::multiset<std::string>>
-      table_scan_string_map;
-  for (auto resolved_table_scan_map_entry : table_scan_groups) {
-    const std::string table_scan =
-        resolved_table_scan_map_entry.first->DebugString();
-    const std::string anonymized_aggregate_scan =
-        resolved_table_scan_map_entry.second->DebugString();
-
-    if (table_scan_string_map.find(anonymized_aggregate_scan) !=
-        table_scan_string_map.end()) {
-      std::multiset<std::string> table_scans;
-      table_scan_string_map.emplace(anonymized_aggregate_scan, table_scans);
-    }
-    table_scan_string_map[anonymized_aggregate_scan].insert(table_scan);
-  }
-  bool first_table_group = true;
-  for (auto table_scan_string_map_entry : table_scan_string_map) {
-    const std::multiset<std::string>& table_scans =
-        table_scan_string_map_entry.second;
-    if (first_table_group) {
-      first_table_group = false;
-    } else {
-      absl::StrAppend(output, ",\n");
-    }
-    absl::StrAppend(output, "{\n  ", absl::StrJoin(table_scans, "  "), "}");
-  }
-  absl::StrAppend(output, "\n");
-}
-}  // namespace
-
 class AnalyzerTestRunner {
  public:   // Pointer-to-member-function usage requires public member functions
   explicit AnalyzerTestRunner(TestDumperCallback test_dumper_callback)
@@ -340,56 +301,98 @@ class AnalyzerTestRunner {
    public:
     // "suppressed_functions" is a comma separated list of built-in function
     // names to exclude when using "SampleCatalog".
-    CatalogHolder(const std::string& catalog_name,
-                  absl::string_view suppressed_functions,
-                  const AnalyzerOptions& analyzer_options,
-                  TypeFactory* type_factory) {
-      Init(catalog_name, suppressed_functions, analyzer_options, type_factory);
-    }
+    explicit CatalogHolder(Catalog* catalog) : catalog_(catalog) {}
     Catalog* catalog() { return catalog_; }
 
    private:
-    void Init(const std::string& catalog_name,
-              absl::string_view suppressed_functions,
-              const AnalyzerOptions& analyzer_options,
-              TypeFactory* type_factory) {
-      if (catalog_name == "SampleCatalog") {
-        sample_catalog_ = std::make_unique<SampleCatalog>(
-            analyzer_options.language(), type_factory);
-        for (absl::string_view fn_name :
-             absl::StrSplit(suppressed_functions, ',', absl::SkipEmpty())) {
-          sample_catalog_->catalog()->RemoveFunctions(
-              [fn_name](const Function* fn) {
-                return zetasql_base::CaseEqual(fn->Name(), fn_name);
-              });
+    Catalog* catalog_;
+  };
+
+  CatalogHolder CreateCatalog(const AnalyzerOptions& analyzer_options) {
+    const std::string catalog_name = test_case_options_.GetString(kUseDatabase);
+    std::vector<std::string> suppressed_functions =
+        absl::StrSplit(test_case_options_.GetString(kSuppressFunctions), ',',
+                       absl::SkipEmpty());
+    auto result = catalog_factory_.GetCatalog(
+        catalog_name, analyzer_options.language(), suppressed_functions);
+    ZETASQL_CHECK_OK(result);
+    return CatalogHolder(*result);
+  }
+
+  static constexpr absl::string_view kSampleCatalogName = "SampleCatalog";
+  static constexpr absl::string_view kSpecialCatalogName = "SpecialCatalog";
+
+  // Acts as a cache for catalog instances.
+  // Constructing SampleCatalog instances is extremely slow, this class.
+  // virtually eliminates this cost.
+  class CatalogFactory {
+   public:
+    // Returns a catalog matching the given catalog_name (which must
+    // be either 'SampleCatalog' or 'SpecialCatalog'.
+    //
+    // The returned Catalog remains owned by CatalogFactory.
+    absl::StatusOr<Catalog*> GetCatalog(
+        absl::string_view catalog_name, const LanguageOptions& language,
+        const std::vector<std::string>& suppressed_functions) const {
+      if (catalog_name == kSampleCatalogName) {
+        return GetSampleCatalog(language, suppressed_functions);
+      } else if (catalog_name == kSpecialCatalogName) {
+        ZETASQL_RET_CHECK(suppressed_functions.empty());
+        if (special_catalog_ == nullptr) {
+          special_catalog_ = GetSpecialCatalog();
         }
-        catalog_ = sample_catalog_->catalog();
-      } else if (catalog_name == "SpecialCatalog") {
-        special_catalog_ = GetSpecialCatalog();
-        catalog_ = special_catalog_.get();
+        return special_catalog_.get();
       } else {
-        FAIL() << "Unsupported use_catalog: " << catalog_name;
+        return absl::NotFoundError(catalog_name);
       }
     }
 
-    Catalog* catalog_;
-    std::unique_ptr<SampleCatalog> sample_catalog_;
-    std::unique_ptr<SimpleCatalog> special_catalog_;
+   private:
+    absl::StatusOr<Catalog*> GetSampleCatalog(
+        const LanguageOptions& language,
+        const std::vector<std::string>& suppressed_functions) const {
+      CacheKey key = {language, suppressed_functions};
+      auto it = sample_catalog_cache_.find(key);
+      if (it != sample_catalog_cache_.end()) {
+        return it->second->catalog();
+      }
+      auto sample_catalog = std::make_unique<SampleCatalog>(language);
+      for (absl::string_view fn_name : suppressed_functions) {
+        sample_catalog->catalog()->RemoveFunctions(
+            [fn_name](const Function* fn) {
+              return zetasql_base::CaseEqual(fn->Name(), fn_name);
+            });
+      }
+      Catalog* output = sample_catalog->catalog();
+      sample_catalog_cache_.emplace(std::move(key), std::move(sample_catalog));
+      return output;
+    }
 
-    CatalogHolder(const CatalogHolder&) = delete;
-    CatalogHolder& operator=(const CatalogHolder&) = delete;
+    struct CacheKey {
+      LanguageOptions options;
+      std::vector<std::string> suppressed_functions;
+      bool operator==(const CacheKey& rhs) const {
+        if (options != rhs.options ||
+            suppressed_functions.size() != rhs.suppressed_functions.size()) {
+          return false;
+        }
+        for (int i = 0; i < suppressed_functions.size(); ++i) {
+          if (suppressed_functions[i] != rhs.suppressed_functions[i]) {
+            return false;
+          }
+        }
+        return true;
+      }
+      template <typename H>
+      friend H AbslHashValue(H h, const CacheKey& key) {
+        return H::combine(std::move(h), key.options, key.suppressed_functions);
+      }
+    };
+
+    mutable std::unique_ptr<SimpleCatalog> special_catalog_;
+    mutable absl::node_hash_map<CacheKey, std::unique_ptr<SampleCatalog>>
+        sample_catalog_cache_;
   };
-
-  std::unique_ptr<CatalogHolder> CreateCatalog(
-      const AnalyzerOptions& analyzer_options,
-      TypeFactory* type_factory) {
-    const std::string catalog_name = test_case_options_.GetString(kUseCatalog);
-    absl::string_view suppressed_functions =
-        test_case_options_.GetString(kSuppressBuiltinFunctions);
-    auto holder = std::make_unique<CatalogHolder>(
-        catalog_name, suppressed_functions, analyzer_options, type_factory);
-    return holder;
-  }
 
   void InitializeLiteralReplacementOptions() {
     literal_replacement_options_.ignored_option_names = absl::StrSplit(
@@ -427,6 +430,10 @@ class AnalyzerTestRunner {
           engine_specific_annotation_specs_.back().get());
 
       options.set_annotation_specs(annotation_specs);
+    }
+
+    if (test_case_options_.GetBool(kIdStringAllowUnicodeCharacters)) {
+      absl::SetFlag(&FLAGS_zetasql_idstring_allow_unicode_characters, true);
     }
 
     // Turn off AST rewrites. We'll run them later so we can show both ASTs.
@@ -472,9 +479,24 @@ class AnalyzerTestRunner {
     // product mode.
     options.mutable_language()->set_product_mode(PRODUCT_INTERNAL);
 
+    // Set rewriter options
+    const std::string& rewrite_options_str =
+        test_case_options_.GetString(kRewriteOptions);
+    if (!rewrite_options_str.empty()) {
+      ASSERT_TRUE(google::protobuf::TextFormat::ParseFromString(
+          rewrite_options_str, options.mutable_rewrite_options()))
+          << "Invalid rewrite_options: " << rewrite_options_str;
+    }
+
     if (test_case_options_.GetBool(kUseHintsAllowlist)) {
       options.set_allowed_hints_and_options(
           GetAllowedHintsAndOptions(&type_factory));
+    }
+
+    if (test_case_options_.GetBool(kDisallowDuplicateOptions)) {
+      AllowedHintsAndOptions copy = options.allowed_hints_and_options();
+      copy.disallow_duplicate_option_names = true;
+      options.set_allowed_hints_and_options(copy);
     }
 
     if (!test_case_options_.GetString(kParameterMode).empty()) {
@@ -623,10 +645,10 @@ class AnalyzerTestRunner {
         test_case_options_.IsExplicitlySet(kInScopeExpressionColumnType)) {
       const Type* type = proto_type;  // Use KitchenSinkPB by default.
       if (test_case_options_.IsExplicitlySet(kInScopeExpressionColumnType)) {
-        auto catalog_holder = CreateCatalog(options, &type_factory);
+        auto catalog_holder = CreateCatalog(options);
         const absl::Status type_status = AnalyzeType(
             test_case_options_.GetString(kInScopeExpressionColumnType), options,
-            catalog_holder->catalog(), &type_factory, &type);
+            catalog_holder.catalog(), &type_factory, &type);
         if (!type_status.ok()) {
           test_result->AddTestOutput(AddFailure(absl::StrCat(
               "FAILED: Invalid type name in in_scope_expression_column_type: ",
@@ -640,10 +662,10 @@ class AnalyzerTestRunner {
 
     if (!test_case_options_.GetString(kCoercedQueryOutputTypes).empty()) {
       const Type* type;
-      auto catalog_holder = CreateCatalog(options, &type_factory);
+      auto catalog_holder = CreateCatalog(options);
       const absl::Status type_status =
           AnalyzeType(test_case_options_.GetString(kCoercedQueryOutputTypes),
-                      options, catalog_holder->catalog(), &type_factory, &type);
+                      options, catalog_holder.catalog(), &type_factory, &type);
       if (!type_status.ok()) {
         test_result->AddTestOutput(AddFailure(absl::StrCat(
             "FAILED: Invalid type name in expected_query_output_types: ",
@@ -734,14 +756,14 @@ class AnalyzerTestRunner {
     }
 
     SetupSampleSystemVariables(&type_factory, &options);
-    auto catalog_holder = CreateCatalog(options, &type_factory);
+    auto catalog_holder = CreateCatalog(options);
 
     if (test_case_options_.GetBool(kParseMultiple)) {
-      TestMulti(test_case, options, mode, catalog_holder->catalog(),
+      TestMulti(test_case, options, mode, catalog_holder.catalog(),
                 &type_factory, test_result);
     } else {
-      TestOne(test_case, options, mode, catalog_holder->catalog(),
-              &type_factory, test_result);
+      TestOne(test_case, options, mode, catalog_holder.catalog(), &type_factory,
+              test_result);
     }
   }
 
@@ -754,17 +776,18 @@ class AnalyzerTestRunner {
     absl::Status status;
     absl::Status detailed_sig_mismatch_status;
     if (mode == "statement") {
-      status = AnalyzeStatement(test_case, options, catalog, type_factory,
-                                &output);
+      status =
+          AnalyzeStatement(test_case, options, catalog, type_factory, &output);
       if (!status.ok() &&
           test_case_options_.GetBool(kAlsoShowSignatureMismatchDetails) &&
-          absl::StrContains(status.message(), "No matching signature")) {
-        absl::FlagSaver flag_saver;
-        absl::SetFlag(&FLAGS_zetasql_show_function_signature_mismatch_details,
-                      true);
+          (absl::StrContains(status.message(), "No matching signature") ||
+           absl::StrContainsIgnoreCase(status.message(), "argument") ||
+           absl::StrContainsIgnoreCase(status.message(), "function"))) {
+        AnalyzerOptions case_options = options;
+        case_options.set_show_function_signature_mismatch_details(true);
         detailed_sig_mismatch_status = AnalyzeStatement(
-            test_case, options, catalog, type_factory, &output);
-        ZETASQL_CHECK(!detailed_sig_mismatch_status.ok())
+            test_case, case_options, catalog, type_factory, &output);
+        ABSL_CHECK(!detailed_sig_mismatch_status.ok())
             << "Expecting 'No matching signature' error";
       }
 
@@ -843,12 +866,12 @@ class AnalyzerTestRunner {
       if (!status.ok() &&
           test_case_options_.GetBool(kAlsoShowSignatureMismatchDetails) &&
           absl::StrContains(status.message(), "No matching signature")) {
-        absl::FlagSaver flag_saver;
-        absl::SetFlag(&FLAGS_zetasql_show_function_signature_mismatch_details,
-                      true);
+        AnalyzerOptions case_analyzer_options = options;
+        case_analyzer_options.set_show_function_signature_mismatch_details(
+            true);
         detailed_sig_mismatch_status = AnalyzeExpression(
-            test_case, options, catalog, type_factory, &output);
-        ZETASQL_CHECK(!detailed_sig_mismatch_status.ok())
+            test_case, case_analyzer_options, catalog, type_factory, &output);
+        ABSL_CHECK(!detailed_sig_mismatch_status.ok())
             << "Expecting 'No matching signature' error";
       }
     } else if (mode == "type") {
@@ -967,41 +990,94 @@ class AnalyzerTestRunner {
     }
   }
 
+  void AddDescendantFunctionCalls(
+      const ResolvedNode* node,
+      std::vector<const ResolvedNode*>& future_nodes) {
+    // We do not add directly to 'future_nodes' because GetDescendantsSatisfying
+    // clears its argument vector.
+    std::vector<const ResolvedNode*> more_nodes;
+    node->GetDescendantsSatisfying(&ResolvedNode::Is<ResolvedFunctionCallBase>,
+                                   &more_nodes);
+    future_nodes.insert(future_nodes.end(), more_nodes.begin(),
+                        more_nodes.end());
+  }
+
+  // Acts as a helper for VisitResolvedTemplatedSQLUDFObjects. Takes a node off
+  // the front of `future_nodes` and if it is a node that needs more information
+  // attached to the analyzer test output we attach that info. If that object
+  // itself contains more nodes needing more information attached to the test
+  // output those are added to `future_nodes`.
+  // `debug_strings` is used to prevent duplicate function template expansions
+  //     from appearing with the same test case.
+  // `test_result_string` is the golden file output that we are appending to.
+  void VisitFirstResolvedTemplatedSQLUDFObject(
+      std::vector<const ResolvedNode*>& future_nodes,
+      absl::flat_hash_set<std::string>& debug_strings,
+      std::string& test_result_string) {
+    const ResolvedNode* node = future_nodes.front();
+    future_nodes.erase(future_nodes.begin());
+    const TemplatedSQLFunctionCall* sql_function_call = nullptr;
+    std::string signature_string = "";
+    if (node->node_kind() == RESOLVED_FUNCTION_CALL) {
+      const auto* function_call = static_cast<const ResolvedFunctionCall*>(node);
+      if (!function_call->function()->Is<TemplatedSQLFunction>()) {
+        return;  // uninteresting
+      }
+      sql_function_call = static_cast<const TemplatedSQLFunctionCall*>(
+          function_call->function_call_info().get());
+      signature_string = function_call->signature().DebugString(
+          function_call->function()->FullName(),
+          /*verbose=*/true);
+    } else if (node->node_kind() == RESOLVED_AGGREGATE_FUNCTION_CALL) {
+      const auto* function_call = node->GetAs<ResolvedAggregateFunctionCall>();
+      if (!function_call->function()->Is<TemplatedSQLFunction>()) {
+        return;  // uninteresting
+      }
+      sql_function_call = static_cast<const TemplatedSQLFunctionCall*>(
+          function_call->function_call_info().get());
+      signature_string = function_call->signature().DebugString(
+          function_call->function()->FullName(),
+          /*verbose=*/true);
+      for (const auto& agg_expr :
+           sql_function_call->aggregate_expression_list()) {
+        AddDescendantFunctionCalls(agg_expr.get(), future_nodes);
+      }
+    } else {
+      // Other descendants of ResolvedFunctionCallBase can exit here.
+      return;
+    }
+    std::string templated_expr_debug_str =
+        sql_function_call->expr()->DebugString();
+    std::string debug_string = absl::StrCat(
+        "\nWith Templated SQL function call:\n  ", signature_string,
+        "\ncontaining resolved templated expression:\n",
+        templated_expr_debug_str);
+    for (const auto& agg_expr :
+         sql_function_call->aggregate_expression_list()) {
+      absl::StrAppend(
+          &debug_string, "\n  ",
+          absl::StripSuffix(
+              absl::StrReplaceAll(agg_expr->DebugString(), {{"\n", "\n    "}}),
+              "    "));
+    }
+    if (debug_strings.insert(debug_string).second) {
+      absl::StrAppend(&test_result_string, debug_string);
+    }
+    AddDescendantFunctionCalls(sql_function_call->expr(), future_nodes);
+  }
+
   // Visits a ResolvedNode 'node' and traverses it to search for resolved
   // templated scalar function calls. If any are found, adds additional debug
   // strings to 'debug_strings' and appends them to 'test_result_string' if not
   // already present in the former.
-  void VisitResolvedTemplatedSQLUDFObjects(const ResolvedNode* node,
-                                           std::set<std::string>* debug_strings,
-                                           std::string* test_result_string) {
+  void VisitResolvedTemplatedSQLUDFObjects(
+      const ResolvedNode* node, absl::flat_hash_set<std::string>* debug_strings,
+      std::string* test_result_string) {
     std::vector<const ResolvedNode*> future_nodes;
-    if (node->node_kind() == RESOLVED_FUNCTION_CALL) {
-      node->GetChildNodes(&future_nodes);
-      const auto* function_call = static_cast<const ResolvedFunctionCall*>(node);
-      if (function_call->function()->Is<TemplatedSQLFunction>()) {
-        const auto* sql_function_call =
-            static_cast<const TemplatedSQLFunctionCall*>(
-                function_call->function_call_info().get());
-        std::string templated_expr_debug_str =
-            sql_function_call->expr()->DebugString();
-        std::string debug_string =
-            absl::StrCat("\nWith Templated SQL function call:\n  ",
-                         function_call->signature().DebugString(
-                             function_call->function()->FullName(),
-                             /*verbose=*/true),
-                         "\ncontaining resolved templated expression:\n",
-                         templated_expr_debug_str);
-        if (zetasql_base::InsertIfNotPresent(debug_strings, debug_string)) {
-          absl::StrAppend(test_result_string, debug_string);
-        }
-        future_nodes.push_back(sql_function_call->expr());
-      }
-    } else {
-      node->GetDescendantsWithKinds({RESOLVED_FUNCTION_CALL}, &future_nodes);
-    }
-    for (const ResolvedNode* future_node : future_nodes) {
-      VisitResolvedTemplatedSQLUDFObjects(future_node, debug_strings,
-                                          test_result_string);
+    AddDescendantFunctionCalls(node, future_nodes);
+    while (!future_nodes.empty()) {
+      VisitFirstResolvedTemplatedSQLUDFObject(future_nodes, *debug_strings,
+                                              *test_result_string);
     }
   }
 
@@ -1009,9 +1085,9 @@ class AnalyzerTestRunner {
   // templated table-valued function calls. If any are found, adds additional
   // debug strings to 'debug_strings' and appends them to 'test_result_string'
   // if not already present in the former.
-  void VisitResolvedTemplatedSQLTVFObjects(const ResolvedNode* node,
-                                           std::set<std::string>* debug_strings,
-                                           std::string* test_result_string) {
+  void VisitResolvedTemplatedSQLTVFObjects(
+      const ResolvedNode* node, absl::flat_hash_set<std::string>* debug_strings,
+      std::string* test_result_string) {
     std::vector<const ResolvedNode*> future_nodes;
     if (node->node_kind() == RESOLVED_TVFSCAN) {
       node->GetChildNodes(&future_nodes);
@@ -1040,7 +1116,7 @@ class AnalyzerTestRunner {
     }
   }
 
-  void ExtractTableResolutionTimeInfoMapAsString(const std::string& test_case,
+  void ExtractTableResolutionTimeInfoMapAsString(absl::string_view test_case,
                                                  const AnalyzerOptions& options,
                                                  TypeFactory* type_factory,
                                                  Catalog* catalog,
@@ -1056,24 +1132,25 @@ class AnalyzerTestRunner {
   }
 
   void ExtractTableResolutionTimeInfoMapFromASTAsString(
-      const std::string& test_case, const AnalyzerOptions& options,
+      absl::string_view test_case, const AnalyzerOptions& options,
       TypeFactory* type_factory, Catalog* catalog, std::string* output,
       std::string* output_with_deferred_analysis) {
     std::unique_ptr<ParserOutput> parser_output;
     absl::Status status =
         ParseStatement(test_case, options.GetParserOptions(), &parser_output);
     status = MaybeUpdateErrorFromPayload(
-        options.error_message_mode(), test_case, status);
+        options.error_message_mode(), options.attach_error_location_payload(),
+        test_case, status);
     TableResolutionTimeInfoMap table_resolution_time_info_map;
     if (status.ok()) {
       absl::Status status = ExtractTableResolutionTimeFromASTStatement(
           *parser_output->statement(), options, test_case, type_factory,
-              catalog, &table_resolution_time_info_map);
+          catalog, &table_resolution_time_info_map);
       *output = FormatTableResolutionTimeInfoMap(
           status, table_resolution_time_info_map);
 
       auto deferred_extract_helper =
-          [&parser_output, &options, &test_case, type_factory, catalog,
+          [&parser_output, &options, test_case, type_factory, catalog,
            &table_resolution_time_info_map]() -> absl::Status {
         ZETASQL_RETURN_IF_ERROR(ExtractTableResolutionTimeFromASTStatement(
             *parser_output->statement(), options, test_case,
@@ -1168,7 +1245,7 @@ class AnalyzerTestRunner {
 
   void HandleOneResult(
       const std::string& test_case, const AnalyzerOptions& options,
-      TypeFactory* type_factory, Catalog* catalog, const std::string& mode,
+      TypeFactory* type_factory, Catalog* catalog, absl::string_view mode,
       const absl::Status& status,
       const absl::Status& detailed_sig_mismatch_status,
       const std::unique_ptr<const AnalyzerOutput>& output,
@@ -1203,9 +1280,14 @@ class AnalyzerTestRunner {
       }
 
       // Append strings for any resolved templated objects in 'output'.
-      std::set<std::string> debug_strings;
+      absl::flat_hash_set<std::string> debug_strings;
       VisitResolvedTemplatedSQLUDFObjects(node, &debug_strings,
                                           &test_result_string);
+      // The algorithm used for SQLTVFs doesn't deal with TVFs that invoke
+      // UDFs or UDAs. The easiest way to show such function templates invoked
+      // by TVF templates and vice versa would be to combine TVFs into the
+      // existing process for UDFs and UDAs which is more easily generalized.
+      // TODO: Extend VisitResolvedTemplatedSQLUDFObjects to cover TVFs.
       VisitResolvedTemplatedSQLTVFObjects(node, &debug_strings,
                                           &test_result_string);
 
@@ -1254,7 +1336,7 @@ class AnalyzerTestRunner {
       std::string table_names_string = "Extracted table names:\n";
       if (!extract_status.ok()) {
         absl::StrAppend(&table_names_string,
-                        "ERROR: ", internal::StatusToString(extract_status));
+                        "ERROR: ", FormatError(extract_status));
       } else {
         for (const std::vector<std::string>& path : table_names) {
           absl::StrAppend(&table_names_string, IdentifierPathToString(path),
@@ -1292,13 +1374,14 @@ class AnalyzerTestRunner {
         // We do not run the unparser if the original query failed analysis.
         output != nullptr) {
       std::string result_string;
-      TestUnparsing(test_case, options, mode == "statement",
+      TestUnparsing(test_case, options, catalog, mode == "statement",
                     output.get(), &result_string);
       absl::StrAppend(&test_result_string, "\n", result_string);
       absl::StripAsciiWhitespace(&test_result_string);
     }
 
     if (mode == "statement" &&
+        !test_case_options_.GetBool(kDoNotShowReplacedLiterals) &&
         !test_case_options_.GetString(kParseLocationRecordType).empty() &&
         !zetasql_base::CaseEqual(
             test_case_options_.GetString(kParseLocationRecordType),
@@ -1332,7 +1415,6 @@ class AnalyzerTestRunner {
       struct RewriteGroupOutcome {
         absl::Status status;
         std::string ast_debug;
-        std::string anon_table_scan_groups;
         std::string unparsed;
         std::vector<std::string> rewrite_group_keys;
         std::string key() {
@@ -1361,7 +1443,7 @@ class AnalyzerTestRunner {
             continue;
           }
           if (test_case_options_.GetBool(kRunUnparser)) {
-            TestUnparsing(test_case, options, /*is_statement=*/true,
+            TestUnparsing(test_case, options, catalog, /*is_statement=*/true,
                           rewrite_output.get(), &outcome.unparsed);
           }
         } else if (outcome.status.ok()) {
@@ -1371,19 +1453,9 @@ class AnalyzerTestRunner {
             continue;
           }
           if (test_case_options_.GetBool(kRunUnparser)) {
-            TestUnparsing(test_case, options, /*is_statement=*/false,
+            TestUnparsing(test_case, options, catalog, /*is_statement=*/false,
                           rewrite_output.get(), &outcome.unparsed);
           }
-        }
-        if (outcome.status.ok()) {
-          OutputAnonymizationTableScanGroups(
-              rewrite_output->analyzer_output_properties()
-                  .resolved_table_scan_to_anonymized_aggregate_scan_map,
-              &outcome.anon_table_scan_groups);
-          OutputAnonymizationTableScanGroups(
-              rewrite_output->analyzer_output_properties()
-                  .resolved_table_scan_to_dp_aggregate_scan_map,
-              &outcome.anon_table_scan_groups);
         }
         std::string outcome_key = outcome.key();
         size_t outcome_index = 0;
@@ -1420,8 +1492,7 @@ class AnalyzerTestRunner {
               absl::StrAppend(&test_result_string, "[REWRITTEN AST]\n",
                               outcome.ast_debug);
             }
-            absl::StrAppend(&test_result_string, outcome.anon_table_scan_groups,
-                            outcome.unparsed);
+            absl::StrAppend(&test_result_string, outcome.unparsed);
             absl::StripAsciiWhitespace(&test_result_string);
           }
         }
@@ -1464,7 +1535,7 @@ class AnalyzerTestRunner {
     return result;
   }
 
-  void CheckExtractTableNames(const std::string& test_case,
+  void CheckExtractTableNames(absl::string_view test_case,
                               const AnalyzerOptions& options,
                               const AnalyzerOutput* analyzer_output) {
     {
@@ -1620,7 +1691,7 @@ class AnalyzerTestRunner {
     }
   }
 
-  void CheckStrictMode(const std::string& test_case,
+  void CheckStrictMode(absl::string_view test_case,
                        const AnalyzerOptions& orig_options,
                        const absl::Status& orig_status,
                        const AnalyzerOutput* orig_output, Catalog* catalog,
@@ -1934,7 +2005,7 @@ class AnalyzerTestRunner {
                    unparsed_create_stmt->from_files_option_list());
       }
       default:
-        ZETASQL_LOG(ERROR) << "Statement type " << unparsed_stmt->node_kind_string()
+        ABSL_LOG(ERROR) << "Statement type " << unparsed_stmt->node_kind_string()
                    << " not supported";
         return false;
     }
@@ -2046,6 +2117,16 @@ class AnalyzerTestRunner {
                CompareOptionList(output_export_stmt->option_list(),
                                  unparsed_export_stmt->option_list());
       }
+      case RESOLVED_EXPORT_METADATA_STMT: {
+        const ResolvedExportMetadataStmt* output_export_stmt =
+            output_stmt->GetAs<ResolvedExportMetadataStmt>();
+        const ResolvedExportMetadataStmt* unparsed_export_stmt =
+            unparsed_stmt->GetAs<ResolvedExportMetadataStmt>();
+        return ComparePath(output_export_stmt->name_path(),
+                           unparsed_export_stmt->name_path()) &&
+               CompareOptionList(output_export_stmt->option_list(),
+                                 unparsed_export_stmt->option_list());
+      }
       case RESOLVED_CREATE_CONSTANT_STMT: {
         return CompareNode(output_stmt, unparsed_stmt);
       }
@@ -2072,6 +2153,7 @@ class AnalyzerTestRunner {
       case RESOLVED_ALTER_ALL_ROW_ACCESS_POLICIES_STMT:
       case RESOLVED_ALTER_DATABASE_STMT:
       case RESOLVED_ALTER_MATERIALIZED_VIEW_STMT:
+      case RESOLVED_ALTER_APPROX_VIEW_STMT:
       case RESOLVED_ALTER_PRIVILEGE_RESTRICTION_STMT:
       case RESOLVED_ALTER_MODEL_STMT:
       case RESOLVED_ALTER_ROW_ACCESS_POLICY_STMT:
@@ -2089,6 +2171,7 @@ class AnalyzerTestRunner {
       case RESOLVED_CREATE_EXTERNAL_TABLE_STMT:
       case RESOLVED_CREATE_FUNCTION_STMT:
       case RESOLVED_CREATE_MATERIALIZED_VIEW_STMT:
+      case RESOLVED_CREATE_APPROX_VIEW_STMT:
       case RESOLVED_CREATE_MODEL_STMT:
       case RESOLVED_CREATE_PROCEDURE_STMT:
       case RESOLVED_CREATE_PRIVILEGE_RESTRICTION_STMT:
@@ -2101,10 +2184,10 @@ class AnalyzerTestRunner {
       case RESOLVED_DELETE_STMT:
       case RESOLVED_DESCRIBE_STMT:
       case RESOLVED_DROP_FUNCTION_STMT:
+      case RESOLVED_DROP_INDEX_STMT:
       case RESOLVED_DROP_TABLE_FUNCTION_STMT:
       case RESOLVED_DROP_PRIVILEGE_RESTRICTION_STMT:
       case RESOLVED_DROP_ROW_ACCESS_POLICY_STMT:
-      case RESOLVED_DROP_SEARCH_INDEX_STMT:
       case RESOLVED_DROP_STMT:
       case RESOLVED_DROP_MATERIALIZED_VIEW_STMT:
       case RESOLVED_DROP_SNAPSHOT_TABLE_STMT:
@@ -2127,16 +2210,36 @@ class AnalyzerTestRunner {
         return true;
 
       default:
-        ZETASQL_LOG(ERROR) << "Statement type " << unparsed_stmt->node_kind_string()
+        ABSL_LOG(ERROR) << "Statement type " << unparsed_stmt->node_kind_string()
                    << " not supported";
         return false;
     }
   }
 
   bool CompareExpressionShape(const ResolvedExpr* output_expr,
-                              const ResolvedExpr* unparsed_expr) {
+                              const ResolvedExpr* unparsed_expr,
+                              const bool mark_fields_accessed = false) {
+    if (mark_fields_accessed) {
+      output_expr->MarkFieldsAccessed();
+      unparsed_expr->MarkFieldsAccessed();
+    }
     return output_expr->type()->DebugString() ==
            unparsed_expr->type()->DebugString();
+  }
+
+  // returns true if `output_expr` produces the same type of output as
+  // `unparsed_expr`. Other fields in these expressions are ignored and marked
+  // as accessed.
+  bool ExpressionShapeEqual(const ResolvedExpr* output_expr,
+                            const ResolvedExpr* unparsed_expr) {
+    return CompareExpressionShape(output_expr, unparsed_expr,
+                                  /*mark_fields_accessed=*/true);
+  }
+
+  bool ExpressionPtrShapeEqual(
+      const std::unique_ptr<const ResolvedExpr>& output_expr,
+      const std::unique_ptr<const ResolvedExpr>& unparsed_expr) {
+    return ExpressionShapeEqual(output_expr.get(), unparsed_expr.get());
   }
 
   // We do custom comparison of output_column_list of the statement node where
@@ -2295,8 +2398,8 @@ class AnalyzerTestRunner {
       // (and not the expressions themselves).
       if (output_option->qualifier() != unparsed_option->qualifier() ||
           output_option->name() != unparsed_option->name() ||
-          !output_option->value()->type()->Equals(
-              unparsed_option->value()->type())) {
+          !ExpressionShapeEqual(output_option->value(),
+                                unparsed_option->value())) {
         return false;
       }
     }
@@ -2367,8 +2470,7 @@ class AnalyzerTestRunner {
     }
   }
 
-  void CheckSupportedStatementKind(const std::string& sql,
-                                   ResolvedNodeKind kind,
+  void CheckSupportedStatementKind(absl::string_view sql, ResolvedNodeKind kind,
                                    AnalyzerOptions options) {
     // This is used so that we only test each statement kind once.
     static std::set<ResolvedNodeKind> statement_kinds_to_be_skipped = {
@@ -2387,16 +2489,16 @@ class AnalyzerTestRunner {
     TypeFactory factory;
     std::unique_ptr<const AnalyzerOutput> output;
 
-    auto catalog_holder = CreateCatalog(options, &factory);
+    auto catalog_holder = CreateCatalog(options);
 
     // Analyzer should work when the statement kind is supported.
-    ZETASQL_EXPECT_OK(AnalyzeStatement(sql, options, catalog_holder->catalog(),
-                               &factory, &output));
+    ZETASQL_EXPECT_OK(AnalyzeStatement(sql, options, catalog_holder.catalog(), &factory,
+                               &output));
 
     // Analyzer should fail when the statement kind is not supported.
     options.mutable_language()->SetSupportedStatementKinds(
         {RESOLVED_EXPLAIN_STMT});
-    EXPECT_FALSE(AnalyzeStatement(sql, options, catalog_holder->catalog(),
+    EXPECT_FALSE(AnalyzeStatement(sql, options, catalog_holder.catalog(),
                                   &factory, &output)
                      .ok());
 
@@ -2425,6 +2527,8 @@ class AnalyzerTestRunner {
             RESOLVED_CREATE_VIEW_STMT ||
         original_analyzer_output->resolved_statement()->node_kind() ==
             RESOLVED_CREATE_MATERIALIZED_VIEW_STMT ||
+        original_analyzer_output->resolved_statement()->node_kind() ==
+            RESOLVED_CREATE_APPROX_VIEW_STMT ||
         original_options.statement_context() ==
             StatementContext::CONTEXT_MODULE) {
       return absl::OkStatus();
@@ -2444,8 +2548,8 @@ class AnalyzerTestRunner {
 
     TypeFactory type_factory;
     std::unique_ptr<const AnalyzerOutput> analyzer_output;
-    auto catalog_holder = CreateCatalog(options, &type_factory);
-    ZETASQL_CHECK_OK(AnalyzeStatement(sql, options, catalog_holder->catalog(),
+    auto catalog_holder = CreateCatalog(options);
+    ZETASQL_CHECK_OK(AnalyzeStatement(sql, options, catalog_holder.catalog(),
                               &type_factory, &analyzer_output));
 
     std::string dbg_info = absl::StrCat(
@@ -2475,9 +2579,9 @@ class AnalyzerTestRunner {
       ZETASQL_CHECK_OK(new_options.AddQueryParameter(parameter_name, parameter_type))
           << dbg_info;
     }
-    auto new_catalog_holder = CreateCatalog(new_options, &type_factory);
+    auto new_catalog_holder = CreateCatalog(new_options);
     status =
-        AnalyzeStatement(new_sql, new_options, new_catalog_holder->catalog(),
+        AnalyzeStatement(new_sql, new_options, new_catalog_holder.catalog(),
                          &new_type_factory, &new_analyzer_output);
     // analyzer_function_test.cc has a test that introduces a test function
     // NULL_OF_TYPE that only accepts literals, no parameters. Conversion to
@@ -2531,11 +2635,11 @@ class AnalyzerTestRunner {
     return absl::OkStatus();
   }
 
-  void TestUnparsing(const std::string& test_case,
-                     const AnalyzerOptions& orig_options, bool is_statement,
-                     const AnalyzerOutput* analyzer_output,
+  void TestUnparsing(absl::string_view test_case,
+                     const AnalyzerOptions& orig_options, Catalog* catalog,
+                     bool is_statement, const AnalyzerOutput* analyzer_output,
                      std::string* result_string) {
-    ZETASQL_CHECK(analyzer_output != nullptr);
+    ABSL_CHECK(analyzer_output != nullptr);
     result_string->clear();
 
     AnalyzerOptions options = orig_options;
@@ -2552,6 +2656,7 @@ class AnalyzerTestRunner {
         analyzer_output->undeclared_parameters();
     builder_options.undeclared_positional_parameters =
         analyzer_output->undeclared_positional_parameters();
+    builder_options.catalog = catalog;
     const std::string positional_parameter_mode =
         test_case_options_.GetString(kUnparserPositionalParameterMode);
     if (positional_parameter_mode == "question_mark") {
@@ -2573,7 +2678,7 @@ class AnalyzerTestRunner {
     } else {
       ast = analyzer_output->resolved_expr();
     }
-    ZETASQL_CHECK(ast != nullptr)
+    ABSL_CHECK(ast != nullptr)
         << "ResolvedAST passed to SQLBuilder should be either a "
         "ResolvedStatement or a ResolvedExpr";
 
@@ -2597,16 +2702,15 @@ class AnalyzerTestRunner {
     }
 
     TypeFactory type_factory;
-    auto catalog_holder = CreateCatalog(options, &type_factory);
+    auto catalog_holder = CreateCatalog(options);
 
     std::unique_ptr<const AnalyzerOutput> unparsed_output;
     absl::Status re_analyze_status =
         is_statement
-            ? AnalyzeStatement(builder.sql(), options,
-                               catalog_holder->catalog(), &type_factory,
-                               &unparsed_output)
+            ? AnalyzeStatement(builder.sql(), options, catalog_holder.catalog(),
+                               &type_factory, &unparsed_output)
             : AnalyzeExpression(builder.sql(), options,
-                                catalog_holder->catalog(), &type_factory,
+                                catalog_holder.catalog(), &type_factory,
                                 &unparsed_output);
     bool unparsed_tree_matches_original_tree = false;
     // Re-analyzing the query should never fail.
@@ -2679,6 +2783,7 @@ class AnalyzerTestRunner {
       engine_specific_annotation_specs_;
   std::vector<AnalyzerRuntimeInfo> runtime_info_list_;
   LiteralReplacementOptions literal_replacement_options_;
+  CatalogFactory catalog_factory_;
 };
 
 void ValidateRuntimeInfo(const AnalyzerRuntimeInfo& info) {
@@ -2698,7 +2803,28 @@ void ValidateRuntimeInfo(const AnalyzerRuntimeInfo& info) {
             absl::ZeroDuration());
   EXPECT_GT(info.overall_timed_value().elapsed_duration(),
             absl::ZeroDuration());
-  EXPECT_GT(info.log_entry().num_lexical_tokens(), 0);
+
+  AnalyzerLogEntry log_entry = info.log_entry();
+
+  EXPECT_GT(log_entry.num_lexical_tokens(), 0);
+
+  std::vector<AnalyzerLogEntry::LoggedOperationCategory> expected_categories = {
+      AnalyzerLogEntry::RESOLVER, AnalyzerLogEntry::PARSER};
+
+  for (auto& stage : expected_categories) {
+    int count = 0;
+    for (const AnalyzerLogEntry::ExecutionStatsByOpEntry& op :
+         log_entry.execution_stats_by_op()) {
+      if (op.key() == stage) {
+        const auto& stats = op.value();
+        EXPECT_GT(1e9 * stats.wall_time().seconds() + stats.wall_time().nanos(),
+                  0)
+            << stage << " has " << stats.DebugString();
+        ++count;
+      }
+    }
+    EXPECT_EQ(count, 1) << stage;
+  }
 }
 
 bool RunAllTests(TestDumperCallback callback) {
@@ -2713,7 +2839,7 @@ bool RunAllTests(TestDumperCallback callback) {
     aggregate_info.AccumulateAll(info);
   }
 
-  ZETASQL_LOG(INFO) << "Aggregate Runtime Info:\n"
+  ABSL_LOG(INFO) << "Aggregate Runtime Info:\n"
             << aggregate_info.DebugString(runner.runtime_info_list().size());
 
   return result;

@@ -20,7 +20,7 @@ import (
 
 var (
 	bazelSupportedLibs = []string{"zetasql", "absl", "algorithms", "base", "proto"}
-	includeDirs        = []string{"protobuf", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
+	includeDirs        = []string{"protobuf", "utf8_range", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
 )
 
 type Generator struct {
@@ -591,6 +591,40 @@ type SourceParam struct {
 	AfterIncludeHook  string
 }
 
+// amalgamationExcludePaths returns paths to omit from bind.cc includes for a
+// Bazel lib (BasePkg/Name). Applies to both hdrs and srcs (e.g. .h listed only
+// in srcs for optional).
+func (g *Generator) amalgamationExcludePaths(lib *Lib) map[string]struct{} {
+	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	var exclude map[string]struct{}
+	for _, ex := range g.cfg.CCLib.ExcludeAmalgamationHeaders {
+		if ex.Pkg != pkgKey {
+			continue
+		}
+		if exclude == nil {
+			exclude = map[string]struct{}{}
+		}
+		for _, h := range ex.Headers {
+			exclude[h] = struct{}{}
+		}
+	}
+	return exclude
+}
+
+func filterStrings(paths []string, exclude map[string]struct{}) []string {
+	if exclude == nil {
+		return paths
+	}
+	out := make([]string, 0, len(paths))
+	for _, p := range paths {
+		if _, drop := exclude[p]; drop {
+			continue
+		}
+		out = append(out, p)
+	}
+	return out
+}
+
 func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param := &BindCCParam{}
 
@@ -604,9 +638,10 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 		),
 		g.internalExportNames...,
 	)
-	param.Headers = lib.HeaderPaths()
+	excludeAmalg := g.amalgamationExcludePaths(lib)
+	param.Headers = filterStrings(lib.HeaderPaths(), excludeAmalg)
 	sources := make([]SourceParam, 0, len(lib.Sources))
-	for _, src := range lib.SourcePaths() {
+	for _, src := range filterStrings(lib.SourcePaths(), excludeAmalg) {
 		sourceParam := SourceParam{Value: src}
 		if symbols, exists := g.containsConflictSymbolFileMap[src]; exists {
 			for _, symbol := range symbols {

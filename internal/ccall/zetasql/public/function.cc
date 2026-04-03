@@ -34,14 +34,11 @@
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/types/type_deserializer.h"
 #include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
-#include "zetasql/base/case.h"
-#include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_replace.h"
-#include "absl/strings/strip.h"
 #include "absl/types/span.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
@@ -268,8 +265,8 @@ absl::Status Function::Serialize(
 // static
 void Function::RegisterDeserializer(const std::string& group_name,
                                     FunctionDeserializer deserializer) {
-  // ZETASQL_CHECK validated -- This is used at initialization time only.
-  ZETASQL_CHECK(zetasql_base::InsertIfNotPresent(FunctionDeserializers(), group_name,
+  // ABSL_CHECK validated -- This is used at initialization time only.
+  ABSL_CHECK(zetasql_base::InsertIfNotPresent(FunctionDeserializers(), group_name,
                                 deserializer));
 }
 
@@ -463,17 +460,33 @@ std::string Function::DebugString(bool verbose) const {
 std::string Function::GetSQL(std::vector<std::string> inputs,
                              const FunctionSignature* signature) const {
   if (signature != nullptr) {
+    int arg_index = 0;
     // If the argument is mandatory-named, we have to use that name.
-    for (int i = 0; i < signature->arguments().size(); ++i) {
-      if (i >= inputs.size() || signature->argument(i).repeated()) {
+    for (int i = 0;
+         i < signature->arguments().size() && arg_index < inputs.size(); ++i) {
+      const FunctionArgumentType& arg = signature->argument(i);
+      if (!arg.repeated()) {
+        if (arg.options().named_argument_kind() == kNamedOnly) {
+          ABSL_DCHECK(!arg.argument_name().empty());
+          inputs[arg_index] =
+              absl::StrCat(signature->argument(i).argument_name(), " => ",
+                           inputs[arg_index]);
+        }
+        ++arg_index;
+        continue;
+      }
+      if (!signature->IsConcrete()) {
+        // In order to properly match the inputs to arguments positions
+        // we must have a concrete signature, otherwise we don't know
+        // how many occurrences we have and we might get 'lost'. So, in this
+        // case, we just give up and hope for the best.
         break;
       }
-      if (signature->argument(i).options().named_argument_kind() ==
-          kNamedOnly) {
-        ZETASQL_DCHECK(!signature->argument(i).argument_name().empty());
-        inputs[i] = absl::StrCat(signature->argument(i).argument_name(), " => ",
-                                 inputs[i]);
-      }
+      // Note, the actual pattern is ..., A, B, A, B, A, B
+      // But since we don't actually care about the repeated arguments
+      // and they must all have matching num_occurrences, we can simplify
+      // the logic by just pretending is ..., A, A, A, B, B, B
+      arg_index += arg.num_occurrences();
     }
   }
   if (GetSQLCallback() != nullptr) {
@@ -516,25 +529,29 @@ absl::Status Function::CheckPostResolutionArgumentConstraints(
 const std::string Function::GetGenericNoMatchingFunctionSignatureErrorMessage(
     const std::string& qualified_function_name,
     const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
-    absl::Span<const absl::string_view> argument_names) {
+    absl::Span<const absl::string_view> argument_names,
+    bool argument_types_on_new_line) {
   return absl::StrCat(
       "No matching signature for ", qualified_function_name,
       (arguments.empty()
            ? " with no arguments"
-           : absl::StrCat(" for argument types: ",
+           : absl::StrCat(argument_types_on_new_line ? "\n  Argument types: "
+                                                     : " for argument types: ",
                           InputArgumentType::ArgumentsToString(
                               arguments, product_mode, argument_names))));
 }
 
 std::string Function::GetNoMatchingFunctionSignatureErrorMessage(
     const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
-    absl::Span<const absl::string_view> argument_names) const {
+    absl::Span<const absl::string_view> argument_names,
+    bool argument_types_on_new_line) const {
   if (GetNoMatchingSignatureCallback() != nullptr) {
     return GetNoMatchingSignatureCallback()(QualifiedSQLName(), arguments,
                                             product_mode);
   }
   return GetGenericNoMatchingFunctionSignatureErrorMessage(
-      QualifiedSQLName(), arguments, product_mode, argument_names);
+      QualifiedSQLName(), arguments, product_mode, argument_names,
+      argument_types_on_new_line);
 }
 
 // TODO: When we use this to make error messages for signatures that
@@ -542,8 +559,8 @@ std::string Function::GetNoMatchingFunctionSignatureErrorMessage(
 // this.
 std::string Function::GetSupportedSignaturesUserFacingText(
     const LanguageOptions& language_options,
-    FunctionArgumentType::NamePrintingStyle print_style,
-    int* num_signatures) const {
+    FunctionArgumentType::NamePrintingStyle print_style, int* num_signatures,
+    bool print_template_details) const {
   // Make a good guess
   *num_signatures = NumSignatures();
   if (GetSupportedSignaturesCallback() != nullptr) {
@@ -561,8 +578,8 @@ std::string Function::GetSupportedSignaturesUserFacingText(
       absl::StrAppend(&supported_signatures, "; ");
     }
     std::vector<std::string> argument_texts =
-        signature.GetArgumentsUserFacingTextWithCardinality(language_options,
-                                                            print_style);
+        signature.GetArgumentsUserFacingTextWithCardinality(
+            language_options, print_style, print_template_details);
     (*num_signatures)++;
     absl::StrAppend(&supported_signatures, GetSQL(argument_texts));
   }

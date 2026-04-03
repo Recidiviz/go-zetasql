@@ -166,7 +166,7 @@ bool Type::IsSimpleType(TypeKind kind) {
 
 bool Type::IsSupportedSimpleTypeKind(TypeKind kind,
                                      const LanguageOptions& language_options) {
-  ZETASQL_DCHECK(IsSimpleType(kind));
+  ABSL_DCHECK(IsSimpleType(kind));
   const zetasql::Type* type = types::TypeFromSimpleTypeKind(kind);
   return type->IsSupportedType(language_options);
 }
@@ -217,12 +217,21 @@ std::string Type::TypeListToString(TypeListView types, ProductMode mode) {
   return absl::StrJoin(type_strings, ", ");
 }
 
+Type::FormatValueContentOptions
+Type::FormatValueContentOptions::IncreaseIndent() {
+  FormatValueContentOptions ret = *this;
+  ret.indent += kIndentStep;
+  // `force_type` only applies at the topmost level
+  ret.force_type_at_top_level = false;
+  return ret;
+}
+
 int Type::KindSpecificity(TypeKind kind) {
   if (ABSL_PREDICT_TRUE(GetTypeKindInfoMap().contains(kind))) {
     return GetTypeKindInfoMap().at(kind).specificity;
   }
 
-  ZETASQL_LOG(FATAL) << "Out of range: " << kind;
+  ABSL_LOG(FATAL) << "Out of range: " << kind;
 }
 
 static int KindCost(TypeKind kind) {
@@ -230,7 +239,7 @@ static int KindCost(TypeKind kind) {
     return GetTypeKindInfoMap().at(kind).cost;
   }
 
-  ZETASQL_LOG(FATAL) << "Out of range: " << kind;
+  ABSL_LOG(FATAL) << "Out of range: " << kind;
 }
 
 int Type::GetTypeCoercionCost(TypeKind kind1, TypeKind kind2) {
@@ -238,8 +247,8 @@ int Type::GetTypeCoercionCost(TypeKind kind1, TypeKind kind2) {
 }
 
 bool Type::KindSpecificityLess(TypeKind kind1, TypeKind kind2) {
-  ZETASQL_DCHECK_NE(kind1, TypeKind::TYPE_EXTENDED);
-  ZETASQL_DCHECK_NE(kind2, TypeKind::TYPE_EXTENDED);
+  ABSL_DCHECK_NE(kind1, TypeKind::TYPE_EXTENDED);
+  ABSL_DCHECK_NE(kind2, TypeKind::TYPE_EXTENDED);
 
   return KindSpecificity(kind1) < KindSpecificity(kind2);
 }
@@ -423,7 +432,7 @@ std::string Type::CapitalizedName() const {
     case TYPE_STRUCT:
       return "Struct";
     case TYPE_PROTO:
-      ZETASQL_CHECK(AsProto()->descriptor() != nullptr);
+      ABSL_CHECK(AsProto()->descriptor() != nullptr);
       return absl::StrCat("Proto<", AsProto()->descriptor()->full_name(), ">");
     case TYPE_EXTENDED:
       // TODO: move this logic into an appropriate function of
@@ -431,7 +440,7 @@ std::string Type::CapitalizedName() const {
       return ShortTypeName(ProductMode::PRODUCT_EXTERNAL);
     case TYPE_UNKNOWN:
     case __TypeKind__switch_must_have_a_default__:
-      ZETASQL_LOG(FATAL) << "Unexpected type kind expected internally only: " << kind();
+      ABSL_LOG(FATAL) << "Unexpected type kind expected internally only: " << kind();
   }
 }
 
@@ -601,12 +610,6 @@ absl::Status Type::ValidateResolvedTypeParameters(
   ZETASQL_RET_CHECK(type_parameters.IsEmpty())
       << "Type " << ShortTypeName(mode) << "does not support type parameters";
   return absl::OkStatus();
-}
-
-absl::StatusOr<std::string> Type::TypeNameWithParameters(
-    const TypeParameters& type_params, ProductMode mode) const {
-  return TypeNameWithModifiers(
-      TypeModifiers::MakeTypeModifiers(type_params, Collation()), mode);
 }
 
 std::string Type::AddCapitalizedTypePrefix(const std::string& input,

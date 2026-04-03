@@ -4,48 +4,73 @@
 #include "zetasql/public/functions/normalize_mode.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
 namespace functions {
 }  // namespace functions
 }  // namespace zetasql
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto = nullptr;
-const uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto::offsets[1] = {};
-static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
-
-const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n-zetasql/public/functions/normalize_mod"
-  "e.proto\022\021zetasql.functions*5\n\rNormalizeM"
-  "ode\022\007\n\003NFC\020\000\022\010\n\004NFKC\020\001\022\007\n\003NFD\020\002\022\010\n\004NFKD\020"
-  "\003B4\n\034com.google.zetasql.functionsB\024ZetaS"
-  "QLNormalizeMode"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto = {
-  false, false, 175, descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto, "zetasql/public/functions/normalize_mode.proto", 
-  &descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto_once, nullptr, 0, 0,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto::offsets,
-  nullptr, file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto,
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto[1];
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto::offsets[1] = {};
+static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
+static constexpr ::_pb::Message* const* file_default_instances = nullptr;
+const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n-zetasql/public/functions/normalize_mod"
+    "e.proto\022\021zetasql.functions*5\n\rNormalizeM"
+    "ode\022\007\n\003NFC\020\000\022\010\n\004NFKC\020\001\022\007\n\003NFD\020\002\022\010\n\004NFKD\020"
+    "\003B4\n\034com.google.zetasql.functionsB\024ZetaS"
+    "QLNormalizeMode"
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto_getter() {
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto = {
+    false,
+    false,
+    175,
+    descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto,
+    "zetasql/public/functions/normalize_mode.proto",
+    &descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto_once,
+    nullptr,
+    0,
+    0,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto::offsets,
+    nullptr,
+    file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto(&descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto(&descriptor_table_zetasql_2fpublic_2ffunctions_2fnormalize_5fmode_2eproto);
 namespace zetasql {
 namespace functions {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* NormalizeMode_descriptor() {
@@ -63,13 +88,10 @@ bool NormalizeMode_IsValid(int value) {
       return false;
   }
 }
-
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace functions
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

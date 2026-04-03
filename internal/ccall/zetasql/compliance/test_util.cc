@@ -25,6 +25,8 @@
 #include "absl/container/btree_map.h"
 #include "absl/flags/commandlineflag.h"
 #include "absl/flags/reflection.h"
+#include "absl/strings/escaping.h"
+#include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
@@ -76,8 +78,7 @@ absl::Status ComputeTransitiveClosure(const google::protobuf::DescriptorPool* po
   std::set<std::string> delta_proto;  // dP
   std::set<std::string> delta_enum;   // dE
   for (absl::string_view proto : protos) {
-    const google::protobuf::Descriptor* descriptor =
-        pool->FindMessageTypeByName(std::string(proto));
+    const google::protobuf::Descriptor* descriptor = pool->FindMessageTypeByName(proto);
     if (!descriptor) {
       return absl::Status(absl::StatusCode::kNotFound,
                           absl::StrCat("Proto Message Type: ", proto));
@@ -170,7 +171,7 @@ static int64_t GetInt64FromEnv(absl::string_view env_var, int64_t def) {
   const char* env_val = getenv(std::string(env_var).c_str());
   if (env_val == nullptr) {return def;}
   int64_t val;
-  ZETASQL_CHECK(absl::SimpleAtoi(env_val, &val));
+  ABSL_CHECK(absl::SimpleAtoi(env_val, &val));
   return val;
 }
 
@@ -195,13 +196,45 @@ ReproCommand::ReproCommand() {
 }
 
 bool ReproCommand::RemoveFromMapIfPresent(
-    const std::string& key, absl::btree_map<std::string, std::string>* map) {
+    absl::string_view key, absl::btree_map<std::string, std::string>* map) {
   auto it = map->find(key);
   if (it != map->end()) {
     map->erase(it);
     return true;
   }
   return false;
+}
+
+static const char kDontNeedShellEscapeChars[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789+-_.=/:,@";
+
+std::string ShellEscape(absl::string_view src) {
+  if (!src.empty() &&  // empty string needs quotes
+      src.find_first_not_of(kDontNeedShellEscapeChars) ==
+          absl::string_view::npos) {
+    // only contains chars that don't need quotes; it's fine
+    return std::string(src);
+  } else if (!absl::StrContains(src, '\'')) {
+    // no single quotes; just wrap it in single quotes
+    return absl::StrCat("'", src, "'");
+  } else {
+    // needs double quote escaping
+    std::string result = "\"";
+    for (const char c : src) {
+      switch (c) {
+        case '\\':
+        case '$':
+        case '"':
+        case '`':
+          result.push_back('\\');
+      }
+      result.push_back(c);
+    }
+    result.push_back('"');
+    return result;
+  }
 }
 
 std::string ReproCommand::get() const {
@@ -213,7 +246,7 @@ std::string ReproCommand::get() const {
   }
   for (const auto& test_arg_flag : test_arg_flags_) {
     absl::StrAppendFormat(&command, " --test_arg=--%s=%s", test_arg_flag.first,
-                          test_arg_flag.second);
+                          ShellEscape(test_arg_flag.second));
   }
   for (const auto& test_env : test_envs_) {
     if (!test_env.second.empty()) {

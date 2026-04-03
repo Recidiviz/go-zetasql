@@ -905,8 +905,10 @@ class DMLValueExprEvalTest : public EvalTest {
  public:
   DMLValueExprEvalTest() {
     ZETASQL_CHECK_OK(table_.SetPrimaryKey({0}));
-    GetZetaSQLFunctions(type_factory(), ZetaSQLBuiltinFunctionOptions{},
-                          &functions_);
+    absl::flat_hash_map<std::string, const Type*> types_ignored;
+    ZETASQL_CHECK_OK(GetBuiltinFunctionsAndTypes(
+        BuiltinFunctionOptions::AllReleasedFunctions(), *type_factory(),
+        functions_, types_ignored));
   }
 
   const Table* table() { return &table_; }
@@ -918,7 +920,7 @@ class DMLValueExprEvalTest : public EvalTest {
  private:
   SimpleTable table_{"test_table",
                      {{"int_val", Int64Type()}, {"str_val", StringType()}}};
-  std::map<std::string, std::unique_ptr<Function>> functions_;
+  absl::flat_hash_map<std::string, std::unique_ptr<Function>> functions_;
 };
 
 TEST_F(DMLValueExprEvalTest, DMLInsertValueExpr) {
@@ -2014,7 +2016,7 @@ class ProtoEvalTest : public ::testing::Test {
       const std::string& field_name = p.first;
       const Value& value = p.second;
       const auto descr = out->GetDescriptor()->FindFieldByName(field_name);
-      ZETASQL_CHECK(descr != nullptr)
+      ABSL_CHECK(descr != nullptr)
           << "No field '" << field_name << "' in proto of type "
           << out->GetDescriptor()->full_name();
       field_and_formats.emplace_back(descr,
@@ -2029,7 +2031,7 @@ class ProtoEvalTest : public ::testing::Test {
                                                              field_and_formats),
                          std::move(arguments)));
     ZETASQL_ASSIGN_OR_RETURN(Value result, EvalExpr(*fct_op, EmptyParams()));
-    ZETASQL_CHECK(result.type()->IsProto());
+    ABSL_CHECK(result.type()->IsProto());
     out->Clear();
     if (!result.is_null()) {
       EXPECT_TRUE(ParsePartialFromCord(result.ToCord(), out))
@@ -3047,7 +3049,7 @@ TEST_F(ProtoEvalTest, GetProtoFieldExprsMultipleFieldsMultipleRows) {
   // node). Evaluate all three GetProtoFieldExpr nodes on three protos to
   // ensure the ProtoFieldValueMap is used in the appropriate ways.
   for (bool use_shared_states : {false, true}) {
-    ZETASQL_LOG(INFO) << "use_shared_states: " << use_shared_states;
+    ABSL_LOG(INFO) << "use_shared_states: " << use_shared_states;
     zetasql_test__::KitchenSinkPB p1;
     p1.set_int64_key_1(1);
     p1.set_int64_key_2(2);

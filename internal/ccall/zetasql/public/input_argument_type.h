@@ -132,6 +132,7 @@ class InputArgumentType {
   bool is_model() const { return category_ == kModel; }
   bool is_connection() const { return category_ == kConnection; }
   bool is_lambda() const { return category_ == kLambda; }
+  bool is_sequence() const { return category_ == kSequence; }
 
   bool is_default_argument_value() const {
     return is_default_argument_value_;
@@ -208,11 +209,14 @@ class InputArgumentType {
   // arguments.
   static InputArgumentType LambdaInputArgumentType();
 
+  // Constructor for Sequence arguments.
+  static InputArgumentType SequenceInputArgumentType();
+
   bool has_relation_input_schema() const {
     return relation_input_schema_ != nullptr;
   }
   const TVFRelation& relation_input_schema() const {
-    ZETASQL_DCHECK(has_relation_input_schema());
+    ABSL_DCHECK(has_relation_input_schema());
     return *relation_input_schema_;
   }
 
@@ -235,6 +239,7 @@ class InputArgumentType {
     kConnection,
     kDescriptor,
     kLambda,
+    kSequence
   };
 
   explicit InputArgumentType(Category category, const Type* type)

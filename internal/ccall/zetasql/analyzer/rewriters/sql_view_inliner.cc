@@ -21,11 +21,11 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/rewriters/rewriter_interface.h"
 #include "zetasql/public/analyzer_options.h"
 #include "zetasql/public/analyzer_output_properties.h"
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/options.pb.h"
+#include "zetasql/public/rewriter_interface.h"
 #include "zetasql/public/sql_view.h"
 #include "zetasql/public/types/type_factory.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
@@ -96,7 +96,7 @@ class SqlViewInlineVistor : public ResolvedASTDeepCopyVisitor {
   absl::Status InlineSqlView(const ResolvedTableScan* scan,
                              const SQLView* view) {
     ZETASQL_RET_CHECK_NE(column_factory_, nullptr);
-    ZETASQL_DCHECK(scan->table()->Is<SQLView>());
+    ABSL_DCHECK(scan->table()->Is<SQLView>());
 
     const ResolvedScan* const view_def = view->view_query();
     ZETASQL_RET_CHECK_NE(view_def, nullptr);

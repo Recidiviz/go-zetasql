@@ -185,7 +185,9 @@ go run .
 
 After any **`com_google_protobuf` full copy**, re-apply at minimum: **`port_def.inc` / `port_undef.inc` amalgamation guards**, **`export.inc`**, and the rows in the table above if upstream still omits them.
 
-**Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later zetasql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** Also **`#undef GO_EXPORT`** at the end stripped the host `bind.cc` rename macro and broke ICU; wrap protobuf’s `GO_EXPORT` in **`#pragma push_macro("GO_EXPORT")` / `pop_macro`.**
+**Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later zetasql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** The amalgamation must **not** redefine the host `bind.cc` **`GO_EXPORT`** (ICU’s `U_ICU_ENTRY_POINT_RENAME` depends on it); protobuf symbol wrapping in this file uses **`GO_ZETASQL_PB_EXPORT(sym)`** (`export_protobuf_##sym`) instead.
+
+**Abseil `optional` (generator [`config.yaml`](../internal/cmd/generator/config.yaml)):** Bazel lists `internal/optional.h` as a `src` for `absl/types/optional`, so the generator used to emit a second `#include` after `optional.h`. Under C++17, Abseil uses **`using std::optional`**, and that extra include conflicts. **`cclib.exclude_amalgamation_headers`** drops `absl/types/internal/optional.h` for that lib (it is already pulled in by `optional.h` when using the non-std implementation).
 
 ### Regenerating `parse_tree` (protoc vs vendored runtime)
 
@@ -211,6 +213,7 @@ These are **not** fixed by protobuf amalgamation alone; treat them as separate u
 - **Generated `.pb.cc` / macros**: unknown **`PROTOBUF_PRAGMA_INIT_SEG`** / **`PROTOBUF_NAMESPACE_ID`** in a zetasql `*.pb.cc` after **`go-protobuf/export.inc`** usually means **amalgamation left `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` on** after the final `port_undef` — see **`export.inc`** notes above. If macros are present but still wrong, `.pb.*` may be from the **wrong protoc** vs **4023003** headers — regenerate with **protoc 23.3** or copy from the matching Bazel output.
 - **Parser / flex amalgamation**: do not splice **`flex_tokenizer_base.inc`** on top of a full **`flex_tokenizer.flex.cc`** (generator **`add_sources`** for that pair was removed). Older failures from mixed **`darwin-fastbuild`** vs **`k8-fastbuild`** layouts used the same symptom (`yy_ec`, `yy_base`, …); keep a **single** generated lexer tree.
 - **`parse_tree` skew**: serializer C++ referencing **`ASTWithClauseEntry`** / **`anonymization_options`** when **`parse_tree.pb.h`** does not match — rerun updater + generator against the same ZetaSQL revision until C++ and `.pb.h` agree.
+- **Raw `internal/ccall/absl/strings`**: the vendored tree is not a stand-alone Go cgo package; [`strings.go`](../internal/ccall/absl/strings/strings.go) uses **`//go:build ignore`** so **`go test ./...`** does not treat `*.cc` as illegal in a non-cgo package.
 
 ### Optional cleanup
 

@@ -4,160 +4,195 @@
 #include "zetasql/proto/placeholder_descriptor.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr PlaceholderDescriptorProto::PlaceholderDescriptorProto(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : is_placeholder_(false){}
+template <typename>
+PROTOBUF_CONSTEXPR PlaceholderDescriptorProto::PlaceholderDescriptorProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.is_placeholder_)*/ false
+} {}
 struct PlaceholderDescriptorProtoDefaultTypeInternal {
-  constexpr PlaceholderDescriptorProtoDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR PlaceholderDescriptorProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~PlaceholderDescriptorProtoDefaultTypeInternal() {}
   union {
     PlaceholderDescriptorProto _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PlaceholderDescriptorProtoDefaultTypeInternal _PlaceholderDescriptorProto_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PlaceholderDescriptorProtoDefaultTypeInternal _PlaceholderDescriptorProto_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::PlaceholderDescriptorProto, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::PlaceholderDescriptorProto, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::PlaceholderDescriptorProto, is_placeholder_),
-  0,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 7, -1, sizeof(::zetasql::PlaceholderDescriptorProto)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_PlaceholderDescriptorProto_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto[1];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::PlaceholderDescriptorProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::PlaceholderDescriptorProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::PlaceholderDescriptorProto, _impl_.is_placeholder_),
+    0,
 };
 
-const char descriptor_table_protodef_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n*zetasql/proto/placeholder_descriptor.p"
-  "roto\022\007zetasql\032 google/protobuf/descripto"
-  "r.proto\"\233\001\n\032PlaceholderDescriptorProto\022\026"
-  "\n\016is_placeholder\030\001 \001(\0102e\n\026placeholder_de"
-  "scriptor\022\037.google.protobuf.MessageOption"
-  "s\030\264m \001(\0132#.zetasql.PlaceholderDescriptor"
-  "ProtoB1\n\022com.google.zetasqlB\033Placeholder"
-  "DescriptorProtos"
-  ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_deps[1] = {
-  &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 9, -1, sizeof(::zetasql::PlaceholderDescriptorProto)},
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto = {
-  false, false, 296, descriptor_table_protodef_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto, "zetasql/proto/placeholder_descriptor.proto", 
-  &descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_once, descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_deps, 1, 1,
-  schemas, file_default_instances, TableStruct_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto::offsets,
-  file_level_metadata_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto, file_level_enum_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto, file_level_service_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto,
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_PlaceholderDescriptorProto_default_instance_._instance,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_getter() {
+const char descriptor_table_protodef_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n*zetasql/proto/placeholder_descriptor.p"
+    "roto\022\007zetasql\032 google/protobuf/descripto"
+    "r.proto\"\233\001\n\032PlaceholderDescriptorProto\022\026"
+    "\n\016is_placeholder\030\001 \001(\0102e\n\026placeholder_de"
+    "scriptor\022\037.google.protobuf.MessageOption"
+    "s\030\264m \001(\0132#.zetasql.PlaceholderDescriptor"
+    "ProtoB1\n\022com.google.zetasqlB\033Placeholder"
+    "DescriptorProtos"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_deps[1] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
+};
+static ::absl::once_flag descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto = {
+    false,
+    false,
+    296,
+    descriptor_table_protodef_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto,
+    "zetasql/proto/placeholder_descriptor.proto",
+    &descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_once,
+    descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_deps,
+    1,
+    1,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto::offsets,
+    file_level_metadata_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto,
+    file_level_enum_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto,
+    file_level_service_descriptors_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_getter() {
   return &descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto(&descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto(&descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class PlaceholderDescriptorProto::_Internal {
  public:
-  using HasBits = decltype(std::declval<PlaceholderDescriptorProto>()._has_bits_);
+  using HasBits = decltype(std::declval<PlaceholderDescriptorProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(PlaceholderDescriptorProto, _impl_._has_bits_);
   static void set_has_is_placeholder(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
-PlaceholderDescriptorProto::PlaceholderDescriptorProto(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+PlaceholderDescriptorProto::PlaceholderDescriptorProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.PlaceholderDescriptorProto)
 }
 PlaceholderDescriptorProto::PlaceholderDescriptorProto(const PlaceholderDescriptorProto& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  is_placeholder_ = from.is_placeholder_;
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:zetasql.PlaceholderDescriptorProto)
 }
 
-inline void PlaceholderDescriptorProto::SharedCtor() {
-is_placeholder_ = false;
+inline void PlaceholderDescriptorProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.is_placeholder_) { false }
+
+  };
 }
 
 PlaceholderDescriptorProto::~PlaceholderDescriptorProto() {
   // @@protoc_insertion_point(destructor:zetasql.PlaceholderDescriptorProto)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void PlaceholderDescriptorProto::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void PlaceholderDescriptorProto::ArenaDtor(void* object) {
-  PlaceholderDescriptorProto* _this = reinterpret_cast< PlaceholderDescriptorProto* >(object);
-  (void)_this;
-}
-void PlaceholderDescriptorProto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void PlaceholderDescriptorProto::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void PlaceholderDescriptorProto::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.PlaceholderDescriptorProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  is_placeholder_ = false;
-  _has_bits_.Clear();
+  _impl_.is_placeholder_ = false;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* PlaceholderDescriptorProto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* PlaceholderDescriptorProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional bool is_placeholder = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_is_placeholder(&has_bits);
-          is_placeholder_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.is_placeholder_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -175,7 +210,7 @@ const char* PlaceholderDescriptorProto::_InternalParse(const char* ptr, ::PROTOB
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -183,67 +218,64 @@ failure:
 #undef CHK_
 }
 
-uint8_t* PlaceholderDescriptorProto::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* PlaceholderDescriptorProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.PlaceholderDescriptorProto)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional bool is_placeholder = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_is_placeholder(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        1, this->_internal_is_placeholder(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.PlaceholderDescriptorProto)
   return target;
 }
 
-size_t PlaceholderDescriptorProto::ByteSizeLong() const {
+::size_t PlaceholderDescriptorProto::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.PlaceholderDescriptorProto)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional bool is_placeholder = 1;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    total_size += 1 + 1;
+    total_size += 2;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PlaceholderDescriptorProto::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     PlaceholderDescriptorProto::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PlaceholderDescriptorProto::GetClassData() const { return &_class_data_; }
 
-void PlaceholderDescriptorProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<PlaceholderDescriptorProto *>(to)->MergeFrom(
-      static_cast<const PlaceholderDescriptorProto &>(from));
-}
 
-
-void PlaceholderDescriptorProto::MergeFrom(const PlaceholderDescriptorProto& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.PlaceholderDescriptorProto)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void PlaceholderDescriptorProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<PlaceholderDescriptorProto*>(&to_msg);
+  auto& from = static_cast<const PlaceholderDescriptorProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.PlaceholderDescriptorProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_is_placeholder()) {
-    _internal_set_is_placeholder(from._internal_is_placeholder());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_set_is_placeholder(from._internal_is_placeholder());
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void PlaceholderDescriptorProto::CopyFrom(const PlaceholderDescriptorProto& from) {
@@ -260,29 +292,29 @@ bool PlaceholderDescriptorProto::IsInitialized() const {
 void PlaceholderDescriptorProto::InternalSwap(PlaceholderDescriptorProto* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(is_placeholder_, other->is_placeholder_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+
+  swap(_impl_.is_placeholder_, other->_impl_.is_placeholder_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlaceholderDescriptorProto::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_getter, &descriptor_table_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto_once,
       file_level_metadata_zetasql_2fproto_2fplaceholder_5fdescriptor_2eproto[0]);
 }
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912)
 const int PlaceholderDescriptorProto::kPlaceholderDescriptorFieldNumber;
 #endif
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::PlaceholderDescriptorProto >, 11, false >
-  PlaceholderDescriptorProto::placeholder_descriptor(kPlaceholderDescriptorFieldNumber, ::zetasql::PlaceholderDescriptorProto::default_instance());
-
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::PlaceholderDescriptorProto >, 11, false>
+  PlaceholderDescriptorProto::placeholder_descriptor(kPlaceholderDescriptorFieldNumber, ::zetasql::PlaceholderDescriptorProto::default_instance(), nullptr);
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::PlaceholderDescriptorProto* Arena::CreateMaybeMessage< ::zetasql::PlaceholderDescriptorProto >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::PlaceholderDescriptorProto*
+Arena::CreateMaybeMessage< ::zetasql::PlaceholderDescriptorProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::PlaceholderDescriptorProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

@@ -139,7 +139,7 @@ AnalyticFunctionResolver::AnalyticFunctionResolver(
 
 AnalyticFunctionResolver::~AnalyticFunctionResolver() {
   if (is_create_analytic_scan_successful_) {
-    ZETASQL_DCHECK(window_columns_to_compute_.empty())
+    ABSL_DCHECK(window_columns_to_compute_.empty())
         << "Output columns for window expressions have not been attached to "
            "the tree";
   }
@@ -154,7 +154,7 @@ absl::Status AnalyticFunctionResolver::SetWindowClause(
   for (const ASTWindowDefinition* named_window : named_windows) {
     const std::string named_window_name =
         absl::AsciiStrToLower(named_window->name()->GetAsString());
-    if (zetasql_base::ContainsKey(*named_window_info_map_, named_window_name)) {
+    if (named_window_info_map_->contains(named_window_name)) {
       return MakeSqlErrorAt(named_window)
              << "Duplicate window alias "
              << named_window->name()->GetAsString();
@@ -179,7 +179,7 @@ AnalyticFunctionResolver::NamedWindowInfoMap*
 
 void AnalyticFunctionResolver::DisableNamedWindowRefs(
     const char* clause_name) {
-  ZETASQL_CHECK_NE(clause_name[0], '\0');
+  ABSL_CHECK_NE(clause_name[0], '\0');
   named_window_not_allowed_here_name_ = clause_name;
 }
 
@@ -588,7 +588,7 @@ absl::Status AnalyticFunctionResolver::ResolveWindowExpression(
 absl::Status AnalyticFunctionResolver::ValidateOrderByInRangeBasedWindow(
     const ASTOrderBy* ast_order_by, const ASTWindowFrame* ast_window_frame,
     WindowExprInfoList* order_by_info) {
-  ZETASQL_DCHECK_EQ(ast_window_frame->frame_unit(), ASTWindowFrame::RANGE);
+  ABSL_DCHECK_EQ(ast_window_frame->frame_unit(), ASTWindowFrame::RANGE);
   if (order_by_info == nullptr) {
     if (ast_window_frame->start_expr()->boundary_type() ==
             ASTWindowFrameExpr::UNBOUNDED_PRECEDING &&
@@ -781,8 +781,8 @@ absl::Status AnalyticFunctionResolver::ResolveWindowFrameOffsetExpr(
         "has type $1",
         resolved_offset_expr));
   } else {
-    ZETASQL_DCHECK_EQ(frame_unit, ResolvedWindowFrame::RANGE);
-    ZETASQL_DCHECK(ordering_expr_type != nullptr);
+    ABSL_DCHECK_EQ(frame_unit, ResolvedWindowFrame::RANGE);
+    ABSL_DCHECK(ordering_expr_type != nullptr);
 
     ZETASQL_RETURN_IF_ERROR(resolver_->CoerceExprToType(
         ast_frame_expr->expression(), ordering_expr_type,
@@ -1000,6 +1000,29 @@ absl::Status AnalyticFunctionResolver::ResolveWindowPartitionByPostAggregation(
       std::move(resolved_partition_by_exprs));
   // Avoid deletion after ownership transfer.
   resolved_partition_by_exprs.clear();
+
+  // Populate the <collation_list> based on <resolved_partition_by_exprs> if
+  // the feature is enabled.
+  if (resolver_->language().LanguageFeatureEnabled(
+          FEATURE_V_1_3_COLLATION_SUPPORT)) {
+    std::vector<ResolvedCollation> collation_list;
+    bool empty = true;
+    for (const auto& partition_by_expr :
+         resolved_window_partitioning->partition_by_list()) {
+      ResolvedCollation resolved_collation;
+      if (partition_by_expr->type_annotation_map() != nullptr) {
+        ZETASQL_ASSIGN_OR_RETURN(resolved_collation,
+                         ResolvedCollation::MakeResolvedCollation(
+                             *partition_by_expr->type_annotation_map()));
+        empty &= resolved_collation.Empty();
+      }
+      collation_list.push_back(std::move(resolved_collation));
+    }
+    if (!empty) {
+      resolved_window_partitioning->set_collation_list(
+          std::move(collation_list));
+    }
+  }
 
   if (ast_partition_by->hint() != nullptr) {
     ZETASQL_RETURN_IF_ERROR(resolver_->ResolveHintAndAppend(

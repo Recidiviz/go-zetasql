@@ -98,7 +98,7 @@ absl::Status* ResolvedASTComparator::stack_overflow_status_ =
 
 #define RETURN_ERROR_IF_OUT_OF_STACK_SPACE()                                  \
   if (!ThreadHasEnoughStack()) {                                              \
-    ZETASQL_LOG(INFO) << "Out of stack space due to deeply nested query expressions"  \
+    ABSL_LOG(INFO) << "Out of stack space due to deeply nested query expressions"  \
               << " when comparing";                                           \
     return *ResolvedASTComparator::stack_overflow_status_;                    \
   }
@@ -125,6 +125,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_COLUMN_REF:
       return CompareResolvedColumnRef(node1->GetAs<ResolvedColumnRef>(),
                                    node2->GetAs<ResolvedColumnRef>());
+    case RESOLVED_GROUPING_SET_MULTI_COLUMN:
+      return CompareResolvedGroupingSetMultiColumn(node1->GetAs<ResolvedGroupingSetMultiColumn>(),
+                                   node2->GetAs<ResolvedGroupingSetMultiColumn>());
     case RESOLVED_CONSTANT:
       return CompareResolvedConstant(node1->GetAs<ResolvedConstant>(),
                                    node2->GetAs<ResolvedConstant>());
@@ -134,6 +137,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_INLINE_LAMBDA:
       return CompareResolvedInlineLambda(node1->GetAs<ResolvedInlineLambda>(),
                                    node2->GetAs<ResolvedInlineLambda>());
+    case RESOLVED_SEQUENCE:
+      return CompareResolvedSequence(node1->GetAs<ResolvedSequence>(),
+                                   node2->GetAs<ResolvedSequence>());
     case RESOLVED_FILTER_FIELD_ARG:
       return CompareResolvedFilterFieldArg(node1->GetAs<ResolvedFilterFieldArg>(),
                                    node2->GetAs<ResolvedFilterFieldArg>());
@@ -224,9 +230,18 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_FILTER_SCAN:
       return CompareResolvedFilterScan(node1->GetAs<ResolvedFilterScan>(),
                                    node2->GetAs<ResolvedFilterScan>());
+    case RESOLVED_GROUPING_CALL:
+      return CompareResolvedGroupingCall(node1->GetAs<ResolvedGroupingCall>(),
+                                   node2->GetAs<ResolvedGroupingCall>());
     case RESOLVED_GROUPING_SET:
       return CompareResolvedGroupingSet(node1->GetAs<ResolvedGroupingSet>(),
                                    node2->GetAs<ResolvedGroupingSet>());
+    case RESOLVED_ROLLUP:
+      return CompareResolvedRollup(node1->GetAs<ResolvedRollup>(),
+                                   node2->GetAs<ResolvedRollup>());
+    case RESOLVED_CUBE:
+      return CompareResolvedCube(node1->GetAs<ResolvedCube>(),
+                                   node2->GetAs<ResolvedCube>());
     case RESOLVED_AGGREGATE_SCAN:
       return CompareResolvedAggregateScan(node1->GetAs<ResolvedAggregateScan>(),
                                    node2->GetAs<ResolvedAggregateScan>());
@@ -353,6 +368,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_EXPORT_DATA_STMT:
       return CompareResolvedExportDataStmt(node1->GetAs<ResolvedExportDataStmt>(),
                                    node2->GetAs<ResolvedExportDataStmt>());
+    case RESOLVED_EXPORT_METADATA_STMT:
+      return CompareResolvedExportMetadataStmt(node1->GetAs<ResolvedExportMetadataStmt>(),
+                                   node2->GetAs<ResolvedExportMetadataStmt>());
     case RESOLVED_DEFINE_TABLE_STMT:
       return CompareResolvedDefineTableStmt(node1->GetAs<ResolvedDefineTableStmt>(),
                                    node2->GetAs<ResolvedDefineTableStmt>());
@@ -479,6 +497,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ALTER_MATERIALIZED_VIEW_STMT:
       return CompareResolvedAlterMaterializedViewStmt(node1->GetAs<ResolvedAlterMaterializedViewStmt>(),
                                    node2->GetAs<ResolvedAlterMaterializedViewStmt>());
+    case RESOLVED_ALTER_APPROX_VIEW_STMT:
+      return CompareResolvedAlterApproxViewStmt(node1->GetAs<ResolvedAlterApproxViewStmt>(),
+                                   node2->GetAs<ResolvedAlterApproxViewStmt>());
     case RESOLVED_ALTER_SCHEMA_STMT:
       return CompareResolvedAlterSchemaStmt(node1->GetAs<ResolvedAlterSchemaStmt>(),
                                    node2->GetAs<ResolvedAlterSchemaStmt>());
@@ -560,9 +581,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_DROP_ROW_ACCESS_POLICY_STMT:
       return CompareResolvedDropRowAccessPolicyStmt(node1->GetAs<ResolvedDropRowAccessPolicyStmt>(),
                                    node2->GetAs<ResolvedDropRowAccessPolicyStmt>());
-    case RESOLVED_DROP_SEARCH_INDEX_STMT:
-      return CompareResolvedDropSearchIndexStmt(node1->GetAs<ResolvedDropSearchIndexStmt>(),
-                                   node2->GetAs<ResolvedDropSearchIndexStmt>());
+    case RESOLVED_DROP_INDEX_STMT:
+      return CompareResolvedDropIndexStmt(node1->GetAs<ResolvedDropIndexStmt>(),
+                                   node2->GetAs<ResolvedDropIndexStmt>());
     case RESOLVED_GRANT_TO_ACTION:
       return CompareResolvedGrantToAction(node1->GetAs<ResolvedGrantToAction>(),
                                    node2->GetAs<ResolvedGrantToAction>());
@@ -638,6 +659,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_CREATE_MATERIALIZED_VIEW_STMT:
       return CompareResolvedCreateMaterializedViewStmt(node1->GetAs<ResolvedCreateMaterializedViewStmt>(),
                                    node2->GetAs<ResolvedCreateMaterializedViewStmt>());
+    case RESOLVED_CREATE_APPROX_VIEW_STMT:
+      return CompareResolvedCreateApproxViewStmt(node1->GetAs<ResolvedCreateApproxViewStmt>(),
+                                   node2->GetAs<ResolvedCreateApproxViewStmt>());
     case RESOLVED_CREATE_PROCEDURE_STMT:
       return CompareResolvedCreateProcedureStmt(node1->GetAs<ResolvedCreateProcedureStmt>(),
                                    node2->GetAs<ResolvedCreateProcedureStmt>());
@@ -786,6 +810,21 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnRef(
   }
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSetMultiColumn(
+    const ResolvedGroupingSetMultiColumn* node1, const ResolvedGroupingSetMultiColumn* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->column_list(i),
+                                  node2->column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedConstant(
     const ResolvedConstant* node1, const ResolvedConstant* node2) {
 
@@ -846,6 +885,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInlineLambda(
                                 node2->body());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSequence(
+    const ResolvedSequence* node1, const ResolvedSequence* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->sequence(), node2->sequence())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterFieldArg(
@@ -1501,6 +1549,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExecuteAsRoleScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
@@ -1577,6 +1628,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSingleRowScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTableScan(
@@ -1601,6 +1655,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTableScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   if (!Equals(node1->table(), node2->table())) {
@@ -1647,6 +1704,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedJoinScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   if (!Equals(node1->join_type(), node2->join_type())) {
     return false;
   }
@@ -1686,6 +1746,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
@@ -1745,6 +1808,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
@@ -1753,6 +1819,19 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterScan(
                                 node2->filter_expr());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingCall(
+    const ResolvedGroupingCall* node1, const ResolvedGroupingCall* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->group_by_column(),
+                                node2->group_by_column());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->output_column(), node2->output_column())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSet(
@@ -1765,6 +1844,36 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSet(
   for (int i = 0; i < node1->group_by_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_column_list(i),
                                   node2->group_by_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRollup(
+    const ResolvedRollup* node1, const ResolvedRollup* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->rollup_column_list(i),
+                                  node2->rollup_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCube(
+    const ResolvedCube* node1, const ResolvedCube* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->cube_column_list().size() != node2->cube_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->cube_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->cube_column_list(i),
+                                  node2->cube_column_list(i));
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
@@ -1792,6 +1901,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
@@ -1842,6 +1954,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
+  if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_call_list(i),
+                                  node2->grouping_call_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateScan(
@@ -1866,6 +1987,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
@@ -1895,6 +2019,33 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_set_list(i),
+                                  node2->grouping_set_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->rollup_column_list(i),
+                                  node2->rollup_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_call_list(i),
+                                  node2->grouping_call_list(i));
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
@@ -1937,6 +2088,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
@@ -1964,6 +2118,33 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_set_list(i),
+                                  node2->grouping_set_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->rollup_column_list(i),
+                                  node2->rollup_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_call_list(i),
+                                  node2->grouping_call_list(i));
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
@@ -2006,6 +2187,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
@@ -2033,6 +2217,33 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_set_list(i),
+                                  node2->grouping_set_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->rollup_column_list(i),
+                                  node2->rollup_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
+    result = CompareResolvedAST(node1->grouping_call_list(i),
+                                  node2->grouping_call_list(i));
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
@@ -2089,6 +2300,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetOperationScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   if (!Equals(node1->op_type(), node2->op_type())) {
     return false;
   }
@@ -2133,6 +2347,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
@@ -2170,6 +2387,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLimitOffsetScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
@@ -2210,6 +2430,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithRefScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   if (!Equals(node1->with_query_name(), node2->with_query_name())) {
     return false;
   }
@@ -2237,6 +2460,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
@@ -2276,6 +2502,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSampleScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
@@ -2592,6 +2821,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedProjectScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   if (node1->expr_list().size() != node2->expr_list().size()) {
     return false;
   }
@@ -2629,6 +2861,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTVFScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   if (!Equals(node1->tvf(), node2->tvf())) {
@@ -2686,6 +2921,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupRowsScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   if (node1->input_column_list().size() != node2->input_column_list().size()) {
     return false;
   }
@@ -2734,6 +2972,10 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionArgument(
   }
   result = CompareResolvedAST(node1->inline_lambda(),
                                 node2->inline_lambda());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->sequence(),
+                                node2->sequence());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
@@ -2893,6 +3135,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
     return false;
   }
   if (!Equals(node1->is_search(), node2->is_search())) {
+    return false;
+  }
+  if (!Equals(node1->is_vector(), node2->is_vector())) {
     return false;
   }
   if (!Equals(node1->index_all_columns(), node2->index_all_columns())) {
@@ -3676,6 +3921,45 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportDataStmt(
   if (!*result) return false;
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportMetadataStmt(
+    const ResolvedExportMetadataStmt* node1, const ResolvedExportMetadataStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->schema_object_kind(), node2->schema_object_kind())) {
+    return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  result = CompareResolvedAST(node1->connection(),
+                                node2->connection());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDefineTableStmt(
     const ResolvedDefineTableStmt* node1, const ResolvedDefineTableStmt* node2) {
 
@@ -4010,6 +4294,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveRefScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
@@ -4034,6 +4321,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   if (!Equals(node1->op_type(), node2->op_type())) {
@@ -4071,6 +4361,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   if (node1->with_entry_list().size() != node2->with_entry_list().size()) {
@@ -4141,6 +4434,14 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowPartitioning(
                                   node2->hint_list(i));
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
+  }
+  if (node1->collation_list().size() != node2->collation_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->collation_list().size(); ++i) {
+    if (!Equals(node1->collation_list(i), node2->collation_list(i))) {
+      return false;
+    }
   }
   return true;
 }
@@ -4691,8 +4992,13 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGrantStmt(
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
-  if (!Equals(node1->object_type(), node2->object_type())) {
+  if (node1->object_type_list().size() != node2->object_type_list().size()) {
     return false;
+  }
+  for (int i = 0; i < node1->object_type_list().size(); ++i) {
+    if (!Equals(node1->object_type_list(i), node2->object_type_list(i))) {
+      return false;
+    }
   }
   if (node1->name_path().size() != node2->name_path().size()) {
     return false;
@@ -4743,8 +5049,13 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRevokeStmt(
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
-  if (!Equals(node1->object_type(), node2->object_type())) {
+  if (node1->object_type_list().size() != node2->object_type_list().size()) {
     return false;
+  }
+  for (int i = 0; i < node1->object_type_list().size(); ++i) {
+    if (!Equals(node1->object_type_list(i), node2->object_type_list(i))) {
+      return false;
+    }
   }
   if (node1->name_path().size() != node2->name_path().size()) {
     return false;
@@ -4810,6 +5121,41 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterDatabaseStmt(
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterMaterializedViewStmt(
     const ResolvedAlterMaterializedViewStmt* node1, const ResolvedAlterMaterializedViewStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterApproxViewStmt(
+    const ResolvedAlterApproxViewStmt* node1, const ResolvedAlterApproxViewStmt* node2) {
 
   absl::StatusOr<bool> result;
   if (node1->hint_list().size() != node2->hint_list().size()) {
@@ -5484,8 +5830,8 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropRowAccessPolicySt
   }
   return true;
 }
-absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropSearchIndexStmt(
-    const ResolvedDropSearchIndexStmt* node1, const ResolvedDropSearchIndexStmt* node2) {
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropIndexStmt(
+    const ResolvedDropIndexStmt* node1, const ResolvedDropIndexStmt* node2) {
 
   absl::StatusOr<bool> result;
   if (node1->hint_list().size() != node2->hint_list().size()) {
@@ -5510,6 +5856,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropSearchIndexStmt(
     if (!Equals(node1->table_name_path(i), node2->table_name_path(i))) {
       return false;
     }
+  }
+  if (!Equals(node1->index_type(), node2->index_type())) {
+    return false;
   }
   return true;
 }
@@ -6009,6 +6358,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRelationArgumentScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   if (!Equals(node1->name(), node2->name())) {
     return false;
   }
@@ -6321,6 +6673,85 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
+  result = CompareResolvedAST(node1->replica_source(),
+                                node2->replica_source());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateApproxViewStmt(
+    const ResolvedCreateApproxViewStmt* node1, const ResolvedCreateApproxViewStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->output_column_list().size() != node2->output_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->output_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->output_column_list(i),
+                                  node2->output_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->has_explicit_columns(), node2->has_explicit_columns())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->query(),
+                                node2->query());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->sql(), node2->sql())) {
+    return false;
+  }
+  if (!Equals(node1->sql_security(), node2->sql_security())) {
+    return false;
+  }
+  if (!Equals(node1->is_value_table(), node2->is_value_table())) {
+    return false;
+  }
+  if (!Equals(node1->recursive(), node2->recursive())) {
+    return false;
+  }
+  if (node1->column_definition_list().size() != node2->column_definition_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_definition_list().size(); ++i) {
+    result = CompareResolvedAST(node1->column_definition_list(i),
+                                  node2->column_definition_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateProcedureStmt(
@@ -6381,6 +6812,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateProcedureStmt(
     return false;
   }
   if (!Equals(node1->code(), node2->code())) {
+    return false;
+  }
+  if (!Equals(node1->external_security(), node2->external_security())) {
     return false;
   }
   return true;
@@ -6581,6 +7015,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
     return false;
   }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
@@ -6692,6 +7129,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
   result = CompareResolvedAST(node1->input_scan(),

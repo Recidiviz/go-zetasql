@@ -24,6 +24,7 @@
 #include <utility>
 #include <vector>
 
+
 #include "google/protobuf/descriptor.h"
 #include "zetasql/public/function.pb.h"
 #include "zetasql/public/function_signature.h"
@@ -340,7 +341,7 @@ struct FunctionOptions {
 
   // Add a LanguageFeature that must be enabled for this function to be enabled.
   // This is used only on built-in functions, and determines whether they will
-  // be loaded in GetZetaSQLFunctions.
+  // be loaded in GetBuiltinFunctionsAndTypes.
   FunctionOptions& add_required_language_feature(LanguageFeature feature) {
     zetasql_base::InsertIfNotPresent(&required_language_features, feature);
     return *this;
@@ -482,7 +483,7 @@ struct FunctionOptions {
   bool uses_upper_case_sql_name = true;
 
   // A set of LanguageFeatures that need to be enabled for the function to be
-  // loaded in GetZetaSQLFunctions.
+  // loaded in GetBuiltinFunctionsAndTypes.
   std::set<LanguageFeature> required_language_features;
 
   // Copyable.
@@ -521,7 +522,7 @@ class Function {
   // <function_name_path>, identifying the full path name of the function
   // including its containing catalog names.
   //
-  // These constructors perform ZETASQL_CHECK validations of basic invariants:
+  // These constructors perform ABSL_CHECK validations of basic invariants:
   // * Scalar functions cannot support the OVER clause.
   // * Analytic functions must support OVER clause.
   // * Signatures must satisfy FunctionSignature::IsValidForFunction().
@@ -689,14 +690,16 @@ class Function {
   // argument names if the argument names are not positional-only.
   std::string GetNoMatchingFunctionSignatureErrorMessage(
       const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
-      absl::Span<const absl::string_view> argument_names) const;
+      absl::Span<const absl::string_view> argument_names,
+      bool argument_types_on_new_line = false) const;
 
   // Returns a generic error message for the no matching function signature
   // error condition.
   static const std::string GetGenericNoMatchingFunctionSignatureErrorMessage(
       const std::string& qualified_function_name,
       const std::vector<InputArgumentType>& arguments, ProductMode product_mode,
-      absl::Span<const absl::string_view> argument_names = {});
+      absl::Span<const absl::string_view> argument_names = {},
+      bool argument_types_on_new_line = false);
 
   const SupportedSignaturesCallback& GetSupportedSignaturesCallback() const;
 
@@ -707,10 +710,12 @@ class Function {
   // In num_signatures returns number of signatures used to build a string.
   //
   // `print_style` controls the way function argument names are printed.
+  // If `print_template_details` is true, template arguments ARG_ANY_1/2 are
+  // printed as T1/T2 rather than just as ANY.
   std::string GetSupportedSignaturesUserFacingText(
       const LanguageOptions& language_options,
-      FunctionArgumentType::NamePrintingStyle print_style,
-      int* num_signatures) const;
+      FunctionArgumentType::NamePrintingStyle print_style, int* num_signatures,
+      bool print_template_details = false) const;
 
   const BadArgumentErrorPrefixCallback&
   GetBadArgumentErrorPrefixCallback() const;

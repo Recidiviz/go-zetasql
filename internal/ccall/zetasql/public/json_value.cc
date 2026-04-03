@@ -17,11 +17,13 @@
 #include "zetasql/public/json_value.h"
 
 #define JSON_NOEXCEPTION
-#define JSON_THROW_USER(exception) ZETASQL_LOG(FATAL) << (exception).what();
+#define JSON_THROW_USER(exception) ABSL_LOG(FATAL) << (exception).what();
 
 #include <stddef.h>
 #include <stdint.h>
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
 #include <optional>
 #include <queue>
@@ -43,6 +45,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "single_include/nlohmann/json.hpp"
+#include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_builder.h"
 #include "zetasql/base/status_macros.h"
@@ -91,14 +94,14 @@ class JSONValueBuilder {
 
   absl::Status EndObject() {
     ref_stack_.pop_back();
-    ZETASQL_DCHECK(GetSkippingNodeMarker()->is_null());
+    ABSL_DCHECK(GetSkippingNodeMarker()->is_null());
     return absl::OkStatus();
   }
 
   absl::Status BeginMember(const std::string& key) {
     // Skipping mode
     if (ref_stack_.back() == GetSkippingNodeMarker()) {
-       return absl::OkStatus();
+      return absl::OkStatus();
     }
 
     // Insert JSON null at the `key` spot, if an element with such `key` doesn't
@@ -188,7 +191,7 @@ class JSONValueBuilder {
       ref_stack_.back()->emplace_back(std::forward<Value>(v));
       return &(ref_stack_.back()->back());
     }
-    ZETASQL_CHECK(object_member_);
+    ABSL_CHECK(object_member_);
     // If here, the subtree should not be skipped, and the subtree is an object.
     // Since the subtree is an object, this code can only be reached if the key
     // associated with the value v has already been seen. If the key is a
@@ -474,6 +477,12 @@ JSONValue JSONValue::CopyFrom(JSONValueConstRef value) {
   return copy;
 }
 
+JSONValue JSONValue::MoveFrom(JSONValueRef value) {
+  JSONValue moved_json;
+  moved_json.impl_->value = std::move(value.impl_->value);
+  return moved_json;
+}
+
 JSONValue::JSONValue() : impl_(std::make_unique<Impl>()) {}
 
 JSONValue::JSONValue(int64_t value) : impl_(new Impl{value}) {}
@@ -484,7 +493,7 @@ JSONValue::JSONValue(std::string_view value) : impl_(new Impl{value}) {}
 
 JSONValue::JSONValue(JSONValue&& value) : impl_(std::move(value.impl_)) {}
 
-JSONValue::~JSONValue() {}
+JSONValue::~JSONValue() = default;
 
 JSONValue& JSONValue::operator=(JSONValue&& value) {
   impl_ = std::move(value.impl_);
@@ -548,7 +557,7 @@ bool JSONValueConstRef::GetBoolean() const { return impl_->value.get<bool>(); }
 
 size_t JSONValueConstRef::GetObjectSize() const {
   if (ABSL_PREDICT_FALSE(!IsObject())) {
-    ZETASQL_LOG(FATAL) << "JSON value is not an object";
+    ABSL_LOG(FATAL) << "JSON value is not an object";
   }
   return impl_->value.size();
 }
@@ -586,7 +595,7 @@ JSONValueConstRef::GetMembers() const {
 
 size_t JSONValueConstRef::GetArraySize() const {
   if (ABSL_PREDICT_FALSE(!IsArray())) {
-    ZETASQL_LOG(FATAL) << "JSON value is not an array";
+    ABSL_LOG(FATAL) << "JSON value is not an array";
   }
   return impl_->value.size();
 }
@@ -706,6 +715,15 @@ JSONValueRef JSONValueRef::GetMember(absl::string_view key) {
       reinterpret_cast<JSONValue::Impl*>(&impl_->value[std::string(key)]));
 }
 
+std::optional<JSONValueRef> JSONValueRef::GetMemberIfExists(
+    absl::string_view key) {
+  auto iter = impl_->value.find(key);
+  if (iter == impl_->value.end()) {
+    return std::nullopt;
+  }
+  return JSONValueRef(reinterpret_cast<JSONValue::Impl*>(&iter.value()));
+}
+
 std::vector<std::pair<absl::string_view, JSONValueRef>>
 JSONValueRef::GetMembers() {
   std::vector<std::pair<absl::string_view, JSONValueRef>> members;
@@ -715,6 +733,13 @@ JSONValueRef::GetMembers() {
          JSONValueRef(reinterpret_cast<JSONValue::Impl*>(&member.value()))});
   }
   return members;
+}
+
+absl::StatusOr<bool> JSONValueRef::RemoveMember(absl::string_view key) {
+  if (ABSL_PREDICT_FALSE(!IsObject())) {
+    return absl::InvalidArgumentError("JSON value is not an object");
+  }
+  return impl_->value.erase(std::string(key)) > 0;
 }
 
 JSONValueRef JSONValueRef::GetArrayElement(size_t index) {
@@ -728,6 +753,171 @@ std::vector<JSONValueRef> JSONValueRef::GetArrayElements() {
         JSONValueRef(reinterpret_cast<JSONValue::Impl*>(&element)));
   }
   return elements;
+}
+
+absl::Status JSONValueRef::InsertArrayElement(JSONValue json_value,
+                                              size_t index) {
+  if (ABSL_PREDICT_FALSE(!IsArray())) {
+    return absl::InvalidArgumentError("JSON value is not an array");
+  }
+
+  if (ABSL_PREDICT_FALSE(std::max(index, GetArraySize()) >=
+                         kJSONMaxArraySize)) {
+    return absl::OutOfRangeError(
+        absl::StrCat("Exceeded maximum array size of ", kJSONMaxArraySize));
+  }
+
+  if (index > impl_->value.size()) {
+    // This will expand the array and fills it with JSON nulls.
+    impl_->value[index - 1];
+  }
+
+  // insert(const_iterator pos, basic_json&& val) is actually calling
+  // insert(const_iterator pos, const basic_json& val), thus makes a copy...
+  //
+  // insert_iterator will forward the value to std::vector::insert which
+  // accepts a rvalue and therefore avoids a copy.
+  impl_->value.insert_iterator(std::next(impl_->value.begin(), index),
+                               std::move(json_value.impl_->value));
+  return absl::OkStatus();
+}
+
+absl::Status JSONValueRef::InsertArrayElements(
+    std::vector<JSONValue> json_values, size_t index) {
+  if (ABSL_PREDICT_FALSE(!IsArray())) {
+    return absl::InvalidArgumentError("JSON value is not an array");
+  }
+
+  if (json_values.empty()) {
+    if (index >= impl_->value.size()) {
+      if (ABSL_PREDICT_FALSE(index >= kJSONMaxArraySize)) {
+        return absl::OutOfRangeError(
+            absl::StrCat("Exceeded maximum array size of ", kJSONMaxArraySize));
+      }
+      // This will expand the array and fills it with JSON nulls.
+      impl_->value[index];
+    }
+    return absl::OkStatus();
+  } else if (ABSL_PREDICT_FALSE(
+                 json_values.size() >= kJSONMaxArraySize ||
+                 std::max(index, GetArraySize()) >=
+                     (kJSONMaxArraySize + 1 - json_values.size()))) {
+    return absl::OutOfRangeError(
+        absl::StrCat("Exceeded maximum array size of ", kJSONMaxArraySize));
+  }
+
+  if (index > impl_->value.size()) {
+    // This will expand the array and fills it with JSON nulls.
+    impl_->value[index - 1];
+  }
+
+  std::vector<JSON> raw_values;
+  raw_values.reserve(json_values.size());
+  for (JSONValue& value : json_values) {
+    raw_values.push_back(std::move(value.impl_->value));
+  }
+
+  // insert_iterator will forward the move iterators to std::vector::insert
+  // (range version) which will perform the insert without copy.
+  impl_->value.insert_iterator(std::next(impl_->value.begin(), index),
+                               std::make_move_iterator(raw_values.begin()),
+                               std::make_move_iterator(raw_values.end()));
+  return absl::OkStatus();
+}
+
+absl::Status JSONValueRef::AppendArrayElement(JSONValue json_value) {
+  if (ABSL_PREDICT_FALSE(!IsArray())) {
+    return absl::InvalidArgumentError("JSON value is not an array");
+  }
+  if (ABSL_PREDICT_FALSE(GetArraySize() >= kJSONMaxArraySize)) {
+    return absl::OutOfRangeError(
+        absl::StrCat("Exceeded maximum array size of ", kJSONMaxArraySize));
+  }
+  impl_->value.push_back(std::move(json_value.impl_->value));
+  return absl::OkStatus();
+}
+
+absl::Status JSONValueRef::AppendArrayElements(
+    std::vector<JSONValue> json_values) {
+  if (ABSL_PREDICT_FALSE(!IsArray())) {
+    return absl::InvalidArgumentError("JSON value is not an array");
+  }
+  if (json_values.empty()) {
+    return absl::OkStatus();
+  }
+  return InsertArrayElements(std::move(json_values), impl_->value.size());
+}
+
+absl::StatusOr<bool> JSONValueRef::RemoveArrayElement(int64_t index) {
+  if (ABSL_PREDICT_FALSE(!IsArray())) {
+    return absl::InvalidArgumentError("JSON value is not an array");
+  }
+
+  if (index < 0 || index >= impl_->value.size()) {
+    return false;
+  }
+  impl_->value.erase(index);
+  return true;
+}
+
+absl::Status JSONValueRef::CleanupJsonObject(RemoveEmptyOptions options) {
+  if (ABSL_PREDICT_FALSE(!IsObject())) {
+    return absl::InvalidArgumentError("JSON value is not an object.");
+  }
+
+  auto* map = impl_->value.get_ptr<nlohmann::json::object_t*>();
+
+  zetasql_base::AssociativeEraseIf(map, [&options](const auto& entry) {
+    const JSON& val = entry.second;
+    if (val.is_null()) {
+      return true;
+    }
+    if (!val.empty()) {
+      return false;
+    }
+    if (val.is_object()) {
+      return options == RemoveEmptyOptions::kObject ||
+             options == RemoveEmptyOptions::kObjectAndArray;
+    }
+    if (val.is_array()) {
+      return options == RemoveEmptyOptions::kArray ||
+             options == RemoveEmptyOptions::kObjectAndArray;
+    }
+    return false;
+  });
+  return absl::OkStatus();
+}
+
+absl::Status JSONValueRef::CleanupJsonArray(
+    RemoveEmptyOptions remove_empty_options) {
+  if (ABSL_PREDICT_FALSE(!IsArray())) {
+    return absl::InvalidArgumentError("JSON value is not an array.");
+  }
+
+  impl_->value.erase(
+      std::remove_if(
+          impl_->value.begin(), impl_->value.end(),
+          [&remove_empty_options](JSON json) {
+            if (json.is_null()) {
+              return true;
+            }
+            if (!json.empty()) {
+              return false;
+            }
+            if (json.is_object()) {
+              return remove_empty_options == RemoveEmptyOptions::kObject ||
+                     remove_empty_options ==
+                         RemoveEmptyOptions::kObjectAndArray;
+            }
+            if (json.is_array()) {
+              return remove_empty_options == RemoveEmptyOptions::kArray ||
+                     remove_empty_options ==
+                         RemoveEmptyOptions::kObjectAndArray;
+            }
+            return false;
+          }),
+      impl_->value.end());
+  return absl::OkStatus();
 }
 
 void JSONValueRef::SetNull() { impl_->value = nlohmann::detail::value_t::null; }
@@ -758,7 +948,7 @@ absl::Status CheckNumberRoundtrip(absl::string_view lhs, double val) {
            << "Input number " << lhs << " is too long.";
   }
 
-  // Serialize 'val' to it's string representation.
+  // Serialize 'val' to its string representation.
   const std::string rhs = JSONValue(val).GetConstRef().ToString();
   // Simple check - if strings are equal, return early.
   if (rhs == lhs) {

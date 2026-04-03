@@ -38,6 +38,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_split.h"
+#include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
 #include "absl/strings/substitute.h"
 #include "absl/time/time.h"
@@ -75,7 +76,7 @@ void JsonFromFloatImpl(FloatType value, std::string* output,
     output->append("\"NaN\"");
   } else {
     // !isfinite implies isnan or isinf.
-    ZETASQL_DCHECK(std::isinf(value)) << value;
+    ABSL_DCHECK(std::isinf(value)) << value;
     if (value > 0) {
       output->append("\"Infinity\"");
     } else {

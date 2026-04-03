@@ -1,27 +1,37 @@
 package protobuf
 
 /*
+#cgo CFLAGS: -x c++
+#cgo CFLAGS: -std=c++17
+#cgo CFLAGS: -I${SRCDIR}/../../
+#cgo CFLAGS: -I${SRCDIR}/../../protobuf
+#cgo CFLAGS: -I${SRCDIR}/../../gtest
+#cgo CFLAGS: -I${SRCDIR}/../../icu
+#cgo CFLAGS: -I${SRCDIR}/../../utf8_range
+#cgo CFLAGS: -Wno-char-subscripts
+#cgo CFLAGS: -Wno-sign-compare
+#cgo CFLAGS: -Wno-switch
+#cgo CFLAGS: -Wno-unused-function
+#cgo CFLAGS: -Wno-deprecated-declarations
+#cgo CFLAGS: -Wno-inconsistent-missing-override
+#cgo CFLAGS: -Wno-unknown-attributes
+#cgo CFLAGS: -Wno-macro-redefined
+#cgo CFLAGS: -Wno-shift-count-overflow
+#cgo CFLAGS: -Wno-enum-compare-switch
+#cgo CFLAGS: -Wno-return-type
+#cgo CFLAGS: -Wno-subobject-linkage
+#cgo CFLAGS: -Wno-unknown-warning-option
+#cgo CFLAGS: -DHAVE_PTHREAD
+#cgo CFLAGS: -DHAVE_ZLIB
+#cgo CFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo CXXFLAGS: -std=c++17
-#cgo CXXFLAGS: -I../../
-#cgo CXXFLAGS: -I../../protobuf
-#cgo CXXFLAGS: -I../../gtest
-#cgo CXXFLAGS: -I../../icu
-#cgo CXXFLAGS: -Wno-char-subscripts
-#cgo CXXFLAGS: -Wno-sign-compare
-#cgo CXXFLAGS: -Wno-switch
-#cgo CXXFLAGS: -Wno-unused-function
-#cgo CXXFLAGS: -Wno-deprecated-declarations
-#cgo CXXFLAGS: -Wno-inconsistent-missing-override
-#cgo CXXFLAGS: -Wno-unknown-attributes
+#cgo CXXFLAGS: -I${SRCDIR}/../../
+#cgo CXXFLAGS: -I${SRCDIR}/../../protobuf
+#cgo CXXFLAGS: -I${SRCDIR}/../../gtest
+#cgo CXXFLAGS: -I${SRCDIR}/../../icu
+#cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
 #cgo CXXFLAGS: -Wno-macro-redefined
-#cgo CXXFLAGS: -Wno-shift-count-overflow
-#cgo CXXFLAGS: -Wno-enum-compare-switch
-#cgo CXXFLAGS: -Wno-return-type
-#cgo CXXFLAGS: -Wno-subobject-linkage
-#cgo CXXFLAGS: -Wno-unknown-warning-option
-#cgo CXXFLAGS: -DHAVE_PTHREAD
-#cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
-#cgo LDFLAGS: -ldl
+#cgo LDFLAGS: -ldl -lz -lstdc++
 
 #include "export.inc"
 */

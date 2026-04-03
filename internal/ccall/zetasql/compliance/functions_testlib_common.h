@@ -118,14 +118,14 @@ Value DatetimeMicros(int year, int month, int day, int hour, int minute,
 Value DatetimeNanos(int year, int month, int day, int hour, int minute,
                     int second, int nanoseconds);
 
-Value KitchenSink(const std::string& proto_str);
+Value KitchenSink(absl::string_view proto_str);
 Value Proto3Timestamp(int64_t seconds, int32_t nanos);
 Value Proto3Date(int32_t year, int32_t month, int32_t day);
 Value Proto3LatLng(double latitude, double longitude);
 Value Proto3TimeOfDay(int32_t hour, int32_t minute, int32_t seconds,
                       int32_t nanos);
-Value CivilTimeTypesSink(const std::string& proto_str);
-Value NullableInt(const std::string& proto_str);
+Value CivilTimeTypesSink(absl::string_view proto_str);
+Value NullableInt(absl::string_view proto_str);
 
 // Creates a Value for one of the Proto3 wrapper messages defined in
 // google/protobuf/wrappers.proto. The input argument type must correspond to
@@ -181,11 +181,11 @@ struct ComparisonTest {
         required_features(required_features) {}
   // Returns NaN of the correct type when result == UNORDERED.
   Value GetNaN() const {
-    ZETASQL_CHECK_EQ(result, UNORDERED_BUT_ARRAY_ORDERS_LESS);
+    ABSL_CHECK_EQ(result, UNORDERED_BUT_ARRAY_ORDERS_LESS);
     if (left.type_kind() == TYPE_DOUBLE) {
       return Value::Double(double_nan);
     }
-    ZETASQL_CHECK_EQ(left.type_kind(), TYPE_FLOAT);
+    ABSL_CHECK_EQ(left.type_kind(), TYPE_FLOAT);
     return Value::Float(float_nan);
   }
   Value left;
@@ -262,7 +262,7 @@ struct NormalizeTestCase {
   const bool is_casefold;
 };
 
-const std::string EscapeKey(bool sql_standard_mode, const std::string& key);
+const std::string EscapeKey(bool sql_standard_mode, absl::string_view key);
 
 Value StringToBytes(const Value& value);
 

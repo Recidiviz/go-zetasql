@@ -38,6 +38,7 @@
 #include "zetasql/public/type.h"
 #include "zetasql/public/types/annotation.h"
 #include "zetasql/public/value.h"
+#include "absl/strings/string_view.h"
 #include "google/protobuf/io/zero_copy_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "absl/status/status.h"
@@ -92,7 +93,7 @@ inline std::string PrimaryKeyModeName(PrimaryKeyMode mode) {
     case PrimaryKeyMode::NO_PRIMARY_KEY:
       return "NO_PRIMARY_KEY";
     default:
-      ZETASQL_LOG(FATAL) << "Unknown PrimaryKeyMode: " << static_cast<int>(mode);
+      ABSL_LOG(FATAL) << "Unknown PrimaryKeyMode: " << static_cast<int>(mode);
   }
 }
 
@@ -114,8 +115,8 @@ class TestTableOptions {
 
   // Sets expected table size range.
   void set_expected_table_size_range(int min, int max) {
-    ZETASQL_CHECK_GE(max, min);
-    ZETASQL_CHECK_GE(min, 0);
+    ABSL_CHECK_GE(max, min);
+    ABSL_CHECK_GE(min, 0);
     expected_table_size_min_ = min;
     expected_table_size_max_ = max;
   }
@@ -404,7 +405,7 @@ class TestDriver {
 
   static absl::TimeZone GetDefaultDefaultTimeZone() {
     absl::TimeZone time_zone;
-    ZETASQL_CHECK(absl::LoadTimeZone(default_default_time_zone, &time_zone));
+    ABSL_CHECK(absl::LoadTimeZone(default_default_time_zone, &time_zone));
     return time_zone;
   }
 
@@ -437,10 +438,9 @@ class TestDriver {
   // import process.
   class ProtoSourceTree : public google::protobuf::compiler::SourceTree {
    public:
-    explicit ProtoSourceTree(const std::string& base_dir)
+    explicit ProtoSourceTree(absl::string_view base_dir)
         : base_dir_(base_dir) {}
-      google::protobuf::io::ZeroCopyInputStream* Open(
-          const std::string& filename) override {
+    google::protobuf::io::ZeroCopyInputStream* Open(absl::string_view filename) override {
       std::string contents;
       if (internal::GetContents(zetasql_base::JoinPath(base_dir_, filename), &contents)
               .ok()) {
@@ -461,8 +461,8 @@ class TestDriver {
    public:
     explicit ProtoErrorCollector(std::vector<std::string>* errors)
         : errors_(errors) {}
-    void AddError(const std::string& file, int line, int col,
-                  const std::string& detail) override {
+    void RecordError(absl::string_view file, int line, int col,
+                     absl::string_view detail) override {
       if (line > 0) {
         errors_->push_back(absl::StrCat(file, ":", line, ": ", detail));
       } else {
@@ -488,5 +488,8 @@ class TestDriver {
 TestDriver* GetComplianceTestDriver();
 
 }  // namespace zetasql
+
+// TODO: Remove when geography crashes are resolved.
+ABSL_DECLARE_FLAG(bool, zetasql_test___driver_enable_geography);
 
 #endif  // ZETASQL_COMPLIANCE_TEST_DRIVER_H_

@@ -43,7 +43,7 @@ static void FindMinimalErrorLocation(const ASTNode* parent_node,
   const ASTNode* node = parent_node;
   while (node->num_children() > 0) {
     node = node->child(0);
-    ZETASQL_DCHECK(node != nullptr);
+    ABSL_DCHECK(node != nullptr);
     if (node->GetParseLocationRange().start() < *error_location) {
       *error_location = node->GetParseLocationRange().start();
     }
@@ -53,7 +53,7 @@ static void FindMinimalErrorLocation(const ASTNode* parent_node,
 ParseLocationPoint GetErrorLocationPoint(const ASTNode* ast_node,
                                          bool include_leftmost_child) {
   // For extra safety, try not to crash while constructing errors.
-  ZETASQL_DCHECK(ast_node != nullptr);
+  ABSL_DCHECK(ast_node != nullptr);
   if (ast_node != nullptr) {
     ParseLocationPoint error_location =
         ast_node->GetParseLocationRange().start();
@@ -81,7 +81,7 @@ absl::Status MakeStatusWithErrorLocation(absl::StatusCode code,
                                          const ASTNode* ast_node,
                                          bool include_leftmost_child) {
   const absl::Status status =
-      zetasql_base::StatusBuilder(code).Attach(
+      zetasql_base::StatusBuilder(code).AttachPayload(
           MakeInternalErrorLocation(ast_node, filename, include_leftmost_child))
       << message;
   return ConvertInternalErrorLocationToExternal(status, query);
@@ -106,7 +106,7 @@ absl::Status WrapNestedErrorStatus(const ASTNode* ast_location,
   zetasql_base::StatusBuilder error_status_builder =
       absl::IsInternal(input_status) ? zetasql_base::StatusBuilder(input_status)
                                      : MakeSqlError();
-  return error_status_builder.Attach(
+  return error_status_builder.AttachPayload(
              SetErrorSourcesFromStatus(MakeInternalErrorLocation(ast_location),
                                        input_status, error_source_mode))
          << error_message;

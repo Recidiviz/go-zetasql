@@ -17,6 +17,7 @@
 #include "zetasql/reference_impl/functions/json.h"
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <string>
 #include <utility>
@@ -25,6 +26,7 @@
 #include "zetasql/common/errors.h"
 #include "zetasql/public/functions/json.h"
 #include "zetasql/public/functions/json_format.h"
+#include "zetasql/public/functions/json_internal.h"
 #include "zetasql/public/functions/to_json.h"
 #include "zetasql/public/json_value.h"
 #include "zetasql/public/type.pb.h"
@@ -35,6 +37,8 @@
 
 namespace zetasql {
 namespace {
+
+using functions::json_internal::StrictJSONPathIterator;
 
 absl::StatusOr<JSONValueConstRef> GetJSONValueConstRef(
     const Value& json, const JSONParsingOptions& json_parsing_options,
@@ -48,6 +52,35 @@ absl::StatusOr<JSONValueConstRef> GetJSONValueConstRef(
   return json_storage.GetConstRef();
 }
 
+absl::StatusOr<JSONValue> GetJSONValueCopy(
+    const Value& json, const LanguageOptions& language_options) {
+  JSONParsingOptions json_parsing_options = JSONParsingOptions{
+      .wide_number_mode = (language_options.LanguageFeatureEnabled(
+                               FEATURE_JSON_STRICT_NUMBER_PARSING)
+                               ? JSONParsingOptions::WideNumberMode::kExact
+                               : JSONParsingOptions::WideNumberMode::kRound)};
+
+  if (json.is_validated_json()) {
+    return JSONValue::CopyFrom(json.json_value());
+  }
+  return JSONValue::ParseJSONString(json.json_value_unparsed(),
+                                    json_parsing_options);
+}
+
+// Create a StrictJSONPathIterator from `path`. Returns an error if
+// the path is invalid.
+// `function_name` is used in the error message.
+absl::StatusOr<std::unique_ptr<StrictJSONPathIterator>>
+BuildStrictJSONPathIterator(absl::string_view path,
+                            absl::string_view function_name) {
+  auto path_iterator = StrictJSONPathIterator::Create(path);
+  if (!path_iterator.ok()) {
+    return MakeEvalError() << "Invalid input to " << function_name << ": "
+                           << path_iterator.status().message();
+  }
+  return *std::move(path_iterator);
+}
+
 template <typename T>
 Value CreateValueFromOptional(std::optional<T> opt) {
   if (opt.has_value()) {
@@ -56,20 +89,16 @@ Value CreateValueFromOptional(std::optional<T> opt) {
   return Value::MakeNull<T>();
 }
 
-// Sets the provided EvaluationContext to have non-deterministic output based on
-// <arg> type.
+// Signal that statement evaluation encountered non-determinism if a potentially
+// imprecise value is converted to JSON or to JSON_STRING.
 void MaybeSetNonDeterministicContext(const Value& arg,
                                      EvaluationContext* context) {
   if (!context->IsDeterministicOutput()) {
     return;
   }
-  const Type* arg_type = arg.type();
-  if (HasFloatingPoint(arg_type)) {
+  if (HasFloatingPoint(arg.type()) ||
+      InternalValue::ContainsArrayWithUncertainOrder(arg)) {
     context->SetNonDeterministicOutput();
-  } else if (arg_type->IsArray()) {
-    // For non-order-preserving arrays, mark the current evaluation context
-    // as non-deterministic. (See e.g. b/38248983.)
-    MaybeSetNonDeterministicArrayOutput(arg, context);
   }
 }
 
@@ -82,7 +111,7 @@ class JsonExtractFunction : public SimpleBuiltinScalarFunction {
  public:
   JsonExtractFunction(FunctionKind kind, const Type* output_type)
       : SimpleBuiltinScalarFunction(kind, output_type) {
-    ZETASQL_DCHECK(output_type->Equals(types::JsonType()) ||
+    ABSL_DCHECK(output_type->Equals(types::JsonType()) ||
            output_type->Equals(types::StringType()));
   }
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
@@ -94,7 +123,7 @@ class JsonExtractArrayFunction : public SimpleBuiltinScalarFunction {
  public:
   JsonExtractArrayFunction(FunctionKind kind, const Type* output_type)
       : SimpleBuiltinScalarFunction(kind, output_type) {
-    ZETASQL_DCHECK(output_type->Equals(types::JsonArrayType()) ||
+    ABSL_DCHECK(output_type->Equals(types::JsonArrayType()) ||
            output_type->Equals(types::StringArrayType()));
   }
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
@@ -174,6 +203,56 @@ class JsonArrayFunction : public SimpleBuiltinScalarFunction {
   JsonArrayFunction()
       : SimpleBuiltinScalarFunction(FunctionKind::kJsonArray,
                                     types::JsonType()) {}
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
+class JsonObjectFunction : public SimpleBuiltinScalarFunction {
+ public:
+  JsonObjectFunction()
+      : SimpleBuiltinScalarFunction(FunctionKind::kJsonObject,
+                                    types::JsonType()) {}
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
+class JsonRemoveFunction : public SimpleBuiltinScalarFunction {
+ public:
+  JsonRemoveFunction()
+      : SimpleBuiltinScalarFunction(FunctionKind::kJsonRemove,
+                                    types::JsonType()) {}
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
+class JsonSetFunction : public SimpleBuiltinScalarFunction {
+ public:
+  JsonSetFunction()
+      : SimpleBuiltinScalarFunction(FunctionKind::kJsonSet, types::JsonType()) {
+  }
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
+class JsonStripNullsFunction : public SimpleBuiltinScalarFunction {
+ public:
+  JsonStripNullsFunction()
+      : SimpleBuiltinScalarFunction(FunctionKind::kJsonStripNulls,
+                                    types::JsonType()) {}
+  absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
+                             absl::Span<const Value> args,
+                             EvaluationContext* context) const override;
+};
+
+class JsonArrayInsertAppendFunction : public SimpleBuiltinScalarFunction {
+ public:
+  explicit JsonArrayInsertAppendFunction(FunctionKind kind)
+      : SimpleBuiltinScalarFunction(kind, types::JsonType()) {}
+
   absl::StatusOr<Value> Eval(absl::Span<const TupleData* const> params,
                              absl::Span<const Value> args,
                              EvaluationContext* context) const override;
@@ -671,6 +750,272 @@ absl::StatusOr<Value> JsonArrayFunction::Eval(
   return Value::Json(*std::move(result));
 }
 
+absl::StatusOr<Value> JsonObjectFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  // JSON_OBJECT has 2 signatures:
+  // 1. JSON_OBJECT(STRING, ANY, ...)
+  // 2. JSON_OBJECT(ARRAY<STRING>, ARRAY<ANY>)
+  // 'is_array_args' indicates it is the second one.
+  bool is_array_args = false;
+  if (args.size() == 2 && args[0].type()->IsArray()) {
+    is_array_args = true;
+    ZETASQL_RET_CHECK(args[0].type()->AsArray()->element_type()->IsString());
+    ZETASQL_RET_CHECK(args[1].type()->IsArray());
+    if (args[0].is_null()) {
+      return MakeEvalError()
+             << "Invalid input to JSON_OBJECT: The keys array cannot be NULL";
+    }
+    if (args[1].is_null()) {
+      return MakeEvalError()
+             << "Invalid input to JSON_OBJECT: The values array cannot be NULL";
+    }
+    if (args[0].num_elements() != args[1].num_elements()) {
+      return MakeEvalError() << "Invalid input to JSON_OBJECT: The number of "
+                                "keys and values must match";
+    }
+  }
+
+  for (const Value& arg : args) {
+    ZETASQL_RETURN_IF_ERROR(ValidateMicrosPrecision(arg, context));
+  }
+
+  const size_t num_keys =
+      is_array_args ? args[0].num_elements() : args.size() / 2;
+
+  std::vector<absl::string_view> keys;
+  std::vector<const Value*> values;
+  keys.reserve(num_keys);
+  values.reserve(num_keys);
+
+  if (is_array_args) {
+    for (const Value& key : args[0].elements()) {
+      if (key.is_null()) {
+        return MakeEvalError()
+               << "Invalid input to JSON_OBJECT: A key cannot be NULL";
+      }
+      keys.push_back(key.string_value());
+    }
+    for (const Value& value : args[1].elements()) {
+      values.push_back(&value);
+    }
+  } else {
+    for (int i = 0; i < args.size(); ++i) {
+      if (i % 2 == 0) {
+        if (args[i].is_null()) {
+          return MakeEvalError()
+                 << "Invalid input to JSON_OBJECT: A key cannot be NULL";
+        }
+        ZETASQL_RET_CHECK(args[i].type()->IsString());
+        keys.push_back(args[i].string_value());
+      } else {
+        values.push_back(&args[i]);
+      }
+    }
+  }
+
+  functions::JsonObjectBuilder builder(context->GetLanguageOptions(),
+                                       /*canonicalize_zero=*/true);
+  auto result = functions::JsonObject(keys, absl::MakeSpan(values), builder);
+
+  if (!result.ok()) {
+    return MakeEvalError() << "Invalid input to JSON_OBJECT: "
+                           << result.status().message();
+  }
+  for (const Value& arg : args) {
+    MaybeSetNonDeterministicContext(arg, context);
+  }
+  return Value::Json(*std::move(result));
+}
+
+absl::StatusOr<Value> JsonRemoveFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK_GE(args.size(), 2);
+  if (HasNulls(args)) {
+    return Value::Null(output_type());
+  }
+
+  ZETASQL_ASSIGN_OR_RETURN(JSONValue result,
+                   GetJSONValueCopy(args[0], context->GetLanguageOptions()));
+  JSONValueRef ref = result.GetRef();
+
+  for (int i = 1; i < args.size(); ++i) {
+    auto path_iterator = StrictJSONPathIterator::Create(args[i].string_value());
+    if (!path_iterator.ok()) {
+      return MakeEvalError() << "Invalid input to JSON_REMOVE: "
+                             << path_iterator.status().message();
+    }
+    auto status = functions::JsonRemove(ref, **path_iterator).status();
+    if (!status.ok()) {
+      return MakeEvalError()
+             << "Invalid input to JSON_REMOVE: " << status.message();
+    }
+  }
+
+  return Value::Json(std::move(result));
+}
+
+// JSON_ARRAY_{INSERT,APPEND}(JSON input, STRING path, ANY value
+//                            [, STRING path, ANY value...]
+//                            , BOOL {insert,append}_each_element=>true)
+absl::StatusOr<Value> JsonArrayInsertAppendFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  if (kind() != FunctionKind::kJsonArrayInsert &&
+      kind() != FunctionKind::kJsonArrayAppend) {
+    return zetasql_base::InvalidArgumentErrorBuilder() << "Unsupported function";
+  }
+
+  ZETASQL_RET_CHECK_GE(args.size(), 4);
+  // The number of arguments is 4 + 2*n
+  // TODO: ZETASQL_RET_CHECK for incorrect args size instead of error.
+  // ZETASQL_RET_CHECK((args.size() - 4) % 2 == 0);
+  if ((args.size() - 4) % 2 == 1) {
+    return zetasql_base::InvalidArgumentErrorBuilder()
+           << "Incorrect number of args for "
+           << (kind() == FunctionKind::kJsonArrayInsert ? "JSON_ARRAY_INSERT"
+                                                        : "JSON_ARRAY_APPEND")
+           << ": paths and values must come in pairs";
+  }
+  if (args[0].is_null() || args.back().is_null()) {
+    return Value::NullJson();
+  }
+
+  int64_t num_value_pairs = (args.size() - 2) / 2;
+
+  for (int i = 0; i < num_value_pairs; ++i) {
+    // If any JSONPath is NULL, return NULL.
+    if (args[2 * i + 1].is_null()) {
+      return Value::NullJson();
+    }
+  }
+
+  for (int i = 0; i < num_value_pairs; ++i) {
+    ZETASQL_RETURN_IF_ERROR(ValidateMicrosPrecision(args[2 * i + 2], context));
+  }
+  const LanguageOptions& language_options = context->GetLanguageOptions();
+
+  ZETASQL_ASSIGN_OR_RETURN(JSONValue result,
+                   GetJSONValueCopy(args[0], language_options));
+  JSONValueRef ref = result.GetRef();
+
+  ZETASQL_RET_CHECK(args.back().type()->IsBool());
+  const bool insert_each_element = args.back().bool_value();
+
+  // Function name in error message.
+  absl::string_view function_name;
+  if (kind() == FunctionKind::kJsonArrayInsert) {
+    function_name = "JSON_ARRAY_INSERT";
+  } else {
+    function_name = "JSON_ARRAY_APPEND";
+  }
+
+  for (int i = 0; i < num_value_pairs; ++i) {
+    ZETASQL_RET_CHECK(args[2 * i + 1].type()->IsString());
+    ZETASQL_ASSIGN_OR_RETURN(auto path_iterator,
+                     BuildStrictJSONPathIterator(args[2 * i + 1].string_value(),
+                                                 function_name));
+    absl::Status status;
+    if (kind() == FunctionKind::kJsonArrayInsert) {
+      status = functions::JsonInsertArrayElement(
+          ref, *path_iterator, args[2 * i + 2], language_options,
+          /*canonicalize_zero=*/true, insert_each_element);
+    } else {
+      status = functions::JsonAppendArrayElement(
+          ref, *path_iterator, args[2 * i + 2], language_options,
+          /*canonicalize_zero=*/true, insert_each_element);
+    }
+    if (!status.ok()) {
+      return MakeEvalError() << "Invalid input to " << function_name << ": "
+                             << status.message();
+    }
+  }
+
+  for (const Value& arg : args) {
+    MaybeSetNonDeterministicContext(arg, context);
+  }
+  return Value::Json(std::move(result));
+}
+
+absl::StatusOr<Value> JsonSetFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  // Num of args: 2n + 3, n >= 0
+  ZETASQL_RET_CHECK_GE(args.size(), 3);
+  ZETASQL_RET_CHECK_EQ(args.size() % 2, 1);
+  ZETASQL_RET_CHECK(args[0].type()->IsJson());
+
+  const size_t num_value_pairs = (args.size() - 1) / 2;
+
+  if (args[0].is_null()) {
+    return Value::NullJson();
+  }
+  for (int i = 0; i < num_value_pairs; ++i) {
+    if (args[2 * i + 1].is_null()) {
+      return Value::NullJson();
+    }
+  }
+
+  for (int i = 0; i < num_value_pairs; ++i) {
+    ZETASQL_RETURN_IF_ERROR(ValidateMicrosPrecision(args[2 * i + 2], context));
+  }
+
+  const LanguageOptions& language_options = context->GetLanguageOptions();
+  ZETASQL_ASSIGN_OR_RETURN(JSONValue result,
+                   GetJSONValueCopy(args[0], language_options));
+  JSONValueRef ref = result.GetRef();
+
+  for (int i = 0; i < num_value_pairs; ++i) {
+    ZETASQL_RET_CHECK(args[2 * i + 1].type()->IsString());
+    ZETASQL_ASSIGN_OR_RETURN(auto path_iterator,
+                     BuildStrictJSONPathIterator(args[2 * i + 1].string_value(),
+                                                 "JSON_SET"));
+    if (absl::Status status = functions::JsonSet(
+            ref, *path_iterator, args[2 * i + 2], language_options,
+            /*canonicalize_zero=*/true);
+        !status.ok()) {
+      return MakeEvalError()
+             << "Invalid input to JSON_SET: " << status.message();
+    }
+  }
+
+  for (const Value& arg : args) {
+    MaybeSetNonDeterministicContext(arg, context);
+  }
+  return Value::Json(std::move(result));
+}
+
+absl::StatusOr<Value> JsonStripNullsFunction::Eval(
+    absl::Span<const TupleData* const> params, absl::Span<const Value> args,
+    EvaluationContext* context) const {
+  ZETASQL_RET_CHECK_EQ(args.size(), 4);
+  if (HasNulls(args)) {
+    return Value::NullJson();
+  }
+  ZETASQL_RET_CHECK(args[0].type()->IsJson());
+  ZETASQL_RET_CHECK(args[1].type()->IsString());
+  ZETASQL_RET_CHECK(args[2].type()->IsBool());
+  ZETASQL_RET_CHECK(args[3].type()->IsBool());
+
+  const LanguageOptions& language_options = context->GetLanguageOptions();
+
+  ZETASQL_ASSIGN_OR_RETURN(JSONValue result,
+                   GetJSONValueCopy(args[0], language_options));
+  ZETASQL_ASSIGN_OR_RETURN(
+      auto path_iterator,
+      BuildStrictJSONPathIterator(args[1].string_value(), "JSON_STRIP_NULLS"));
+  if (absl::Status status =
+          functions::JsonStripNulls(result.GetRef(), *path_iterator,
+                                    args[2].bool_value(), args[3].bool_value());
+      !status.ok()) {
+    return MakeEvalError() << "Invalid input to JSON_STRIP_NULLS: "
+                           << status.message();
+  }
+
+  return Value::Json(std::move(result));
+}
+
 }  // namespace
 
 void RegisterBuiltinJsonFunctions() {
@@ -725,6 +1070,36 @@ void RegisterBuiltinJsonFunctions() {
       {FunctionKind::kJsonArray},
       [](FunctionKind kind, const zetasql::Type* output_type) {
         return new JsonArrayFunction();
+      });
+  BuiltinFunctionRegistry::RegisterScalarFunction(
+      {FunctionKind::kJsonObject},
+      [](FunctionKind kind, const zetasql::Type* output_type) {
+        return new JsonObjectFunction();
+      });
+  BuiltinFunctionRegistry::RegisterScalarFunction(
+      {FunctionKind::kJsonRemove},
+      [](FunctionKind kind, const zetasql::Type* output_type) {
+        return new JsonRemoveFunction();
+      });
+  BuiltinFunctionRegistry::RegisterScalarFunction(
+      {FunctionKind::kJsonSet},
+      [](FunctionKind kind, const zetasql::Type* output_type) {
+        return new JsonSetFunction();
+      });
+  BuiltinFunctionRegistry::RegisterScalarFunction(
+      {FunctionKind::kJsonStripNulls},
+      [](FunctionKind kind, const zetasql::Type* output_type) {
+        return new JsonStripNullsFunction();
+      });
+  BuiltinFunctionRegistry::RegisterScalarFunction(
+      {FunctionKind::kJsonArrayInsert},
+      [](FunctionKind kind, const zetasql::Type* output_type) {
+        return new JsonArrayInsertAppendFunction(kind);
+      });
+  BuiltinFunctionRegistry::RegisterScalarFunction(
+      {FunctionKind::kJsonArrayAppend},
+      [](FunctionKind kind, const zetasql::Type* output_type) {
+        return new JsonArrayInsertAppendFunction(kind);
       });
 }
 

@@ -4,121 +4,173 @@
 #include "zetasql/public/error_location.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
-constexpr ErrorLocation::ErrorLocation(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : error_source_()
-  , filename_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , line_(1)
-  , column_(1){}
+template <typename>
+PROTOBUF_CONSTEXPR ErrorLocation::ErrorLocation(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.error_source_)*/{}
+  , /*decltype(_impl_.filename_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.line_)*/ 1
+
+  , /*decltype(_impl_.column_)*/ 1
+} {}
 struct ErrorLocationDefaultTypeInternal {
-  constexpr ErrorLocationDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ErrorLocationDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ErrorLocationDefaultTypeInternal() {}
   union {
     ErrorLocation _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ErrorLocationDefaultTypeInternal _ErrorLocation_default_instance_;
-constexpr ErrorSource::ErrorSource(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : error_message_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , error_message_caret_string_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
-  , error_location_(nullptr){}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ErrorLocationDefaultTypeInternal _ErrorLocation_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ErrorSource::ErrorSource(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.error_message_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.error_message_caret_string_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.error_location_)*/nullptr} {}
 struct ErrorSourceDefaultTypeInternal {
-  constexpr ErrorSourceDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ErrorSourceDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ErrorSourceDefaultTypeInternal() {}
   union {
     ErrorSource _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ErrorSourceDefaultTypeInternal _ErrorSource_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ErrorSourceDefaultTypeInternal _ErrorSource_default_instance_;
 }  // namespace zetasql
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_zetasql_2fpublic_2ferror_5flocation_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto = nullptr;
-
-const uint32_t TableStruct_zetasql_2fpublic_2ferror_5flocation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, line_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, column_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, filename_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, error_source_),
-  1,
-  2,
-  0,
-  ~0u,
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _has_bits_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, error_message_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, error_message_caret_string_),
-  PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, error_location_),
-  0,
-  1,
-  2,
-};
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 10, -1, sizeof(::zetasql::ErrorLocation)},
-  { 14, 23, -1, sizeof(::zetasql::ErrorSource)},
-};
-
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ErrorLocation_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::zetasql::_ErrorSource_default_instance_),
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ferror_5flocation_2eproto[2];
+static constexpr const ::_pb::EnumDescriptor**
+    file_level_enum_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto = nullptr;
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2ferror_5flocation_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.line_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.column_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.filename_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.error_source_),
+    1,
+    2,
+    0,
+    ~0u,
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _impl_.error_message_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _impl_.error_message_caret_string_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _impl_.error_location_),
+    0,
+    1,
+    2,
 };
 
-const char descriptor_table_protodef_zetasql_2fpublic_2ferror_5flocation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n#zetasql/public/error_location.proto\022\007z"
-  "etasql\"q\n\rErrorLocation\022\017\n\004line\030\001 \001(\005:\0011"
-  "\022\021\n\006column\030\002 \001(\005:\0011\022\020\n\010filename\030\003 \001(\t\022*\n"
-  "\014error_source\030\004 \003(\0132\024.zetasql.ErrorSourc"
-  "e\"x\n\013ErrorSource\022\025\n\rerror_message\030\001 \001(\t\022"
-  "\"\n\032error_message_caret_string\030\002 \001(\t\022.\n\016e"
-  "rror_location\030\003 \001(\0132\026.zetasql.ErrorLocat"
-  "ionB\024\n\022com.google.zetasql"
-  ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto = {
-  false, false, 305, descriptor_table_protodef_zetasql_2fpublic_2ferror_5flocation_2eproto, "zetasql/public/error_location.proto", 
-  &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once, nullptr, 0, 2,
-  schemas, file_default_instances, TableStruct_zetasql_2fpublic_2ferror_5flocation_2eproto::offsets,
-  file_level_metadata_zetasql_2fpublic_2ferror_5flocation_2eproto, file_level_enum_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto, file_level_service_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto,
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, 12, -1, sizeof(::zetasql::ErrorLocation)},
+        { 16, 27, -1, sizeof(::zetasql::ErrorSource)},
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_getter() {
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::_ErrorLocation_default_instance_._instance,
+    &::zetasql::_ErrorSource_default_instance_._instance,
+};
+const char descriptor_table_protodef_zetasql_2fpublic_2ferror_5flocation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n#zetasql/public/error_location.proto\022\007z"
+    "etasql\"q\n\rErrorLocation\022\017\n\004line\030\001 \001(\005:\0011"
+    "\022\021\n\006column\030\002 \001(\005:\0011\022\020\n\010filename\030\003 \001(\t\022*\n"
+    "\014error_source\030\004 \003(\0132\024.zetasql.ErrorSourc"
+    "e\"x\n\013ErrorSource\022\025\n\rerror_message\030\001 \001(\t\022"
+    "\"\n\032error_message_caret_string\030\002 \001(\t\022.\n\016e"
+    "rror_location\030\003 \001(\0132\026.zetasql.ErrorLocat"
+    "ionB\024\n\022com.google.zetasql"
+};
+static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto = {
+    false,
+    false,
+    305,
+    descriptor_table_protodef_zetasql_2fpublic_2ferror_5flocation_2eproto,
+    "zetasql/public/error_location.proto",
+    &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once,
+    nullptr,
+    0,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_zetasql_2fpublic_2ferror_5flocation_2eproto::offsets,
+    file_level_metadata_zetasql_2fpublic_2ferror_5flocation_2eproto,
+    file_level_enum_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto,
+    file_level_service_descriptors_zetasql_2fpublic_2ferror_5flocation_2eproto,
+};
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_getter() {
   return &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ferror_5flocation_2eproto(&descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ferror_5flocation_2eproto(&descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto);
 namespace zetasql {
-
 // ===================================================================
 
 class ErrorLocation::_Internal {
  public:
-  using HasBits = decltype(std::declval<ErrorLocation>()._has_bits_);
+  using HasBits = decltype(std::declval<ErrorLocation>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_._has_bits_);
   static void set_has_line(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
@@ -130,125 +182,139 @@ class ErrorLocation::_Internal {
   }
 };
 
-ErrorLocation::ErrorLocation(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
-  error_source_(arena) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ErrorLocation::ErrorLocation(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ErrorLocation)
 }
 ErrorLocation::ErrorLocation(const ErrorLocation& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      error_source_(from.error_source_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ErrorLocation* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.error_source_){from._impl_.error_source_}
+    , decltype(_impl_.filename_) {}
+
+    , decltype(_impl_.line_) {}
+
+    , decltype(_impl_.column_) {}
+  };
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.filename_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_filename()) {
-    filename_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_filename(), 
-      GetArenaForAllocation());
+        _impl_.filename_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.filename_.Set(from._internal_filename(), _this->GetArenaForAllocation());
   }
-  ::memcpy(&line_, &from.line_,
-    static_cast<size_t>(reinterpret_cast<char*>(&column_) -
-    reinterpret_cast<char*>(&line_)) + sizeof(column_));
+  ::memcpy(&_impl_.line_, &from._impl_.line_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.column_) -
+    reinterpret_cast<char*>(&_impl_.line_)) + sizeof(_impl_.column_));
   // @@protoc_insertion_point(copy_constructor:zetasql.ErrorLocation)
 }
 
-inline void ErrorLocation::SharedCtor() {
-filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-line_ = 1;
-column_ = 1;
+inline void ErrorLocation::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.error_source_){arena}
+    , decltype(_impl_.filename_) {}
+
+    , decltype(_impl_.line_) { 1 }
+
+    , decltype(_impl_.column_) { 1 }
+
+  };
+  _impl_.filename_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.filename_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ErrorLocation::~ErrorLocation() {
   // @@protoc_insertion_point(destructor:zetasql.ErrorLocation)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ErrorLocation::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  filename_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _internal_mutable_error_source()->~RepeatedPtrField();
+  _impl_.filename_.Destroy();
 }
 
-void ErrorLocation::ArenaDtor(void* object) {
-  ErrorLocation* _this = reinterpret_cast< ErrorLocation* >(object);
-  (void)_this;
-}
-void ErrorLocation::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ErrorLocation::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ErrorLocation::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ErrorLocation)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  error_source_.Clear();
-  cached_has_bits = _has_bits_[0];
+  _internal_mutable_error_source()->Clear();
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      filename_.ClearNonDefaultToEmpty();
+      _impl_.filename_.ClearNonDefaultToEmpty();
     }
-    line_ = 1;
-    column_ = 1;
+    _impl_.line_ = 1;
+    _impl_.column_ = 1;
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ErrorLocation::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ErrorLocation::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int32 line = 1 [default = 1];
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           _Internal::set_has_line(&has_bits);
-          line_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.line_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional int32 column = 2 [default = 1];
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           _Internal::set_has_column(&has_bits);
-          column_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.column_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional string filename = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_filename();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ErrorLocation.filename");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.ErrorLocation.filename");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // repeated .zetasql.ErrorSource error_source = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -256,8 +322,9 @@ const char* ErrorLocation::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -275,7 +342,7 @@ const char* ErrorLocation::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -283,123 +350,120 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ErrorLocation::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ErrorLocation::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ErrorLocation)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int32 line = 1 [default = 1];
   if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_line(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        1, this->_internal_line(), target);
   }
 
   // optional int32 column = 2 [default = 1];
   if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_column(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        2, this->_internal_column(), target);
   }
 
   // optional string filename = 3;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_filename().data(), static_cast<int>(this->_internal_filename().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ErrorLocation.filename");
-    target = stream->WriteStringMaybeAliased(
-        3, this->_internal_filename(), target);
+    const std::string& _s = this->_internal_filename();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ErrorLocation.filename");
+    target = stream->WriteStringMaybeAliased(3, _s, target);
   }
 
   // repeated .zetasql.ErrorSource error_source = 4;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->_internal_error_source_size()); i < n; i++) {
-    target = stream->EnsureSpace(target);
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_error_source_size()); i < n; i++) {
+    const auto& repfield = this->_internal_error_source(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(4, this->_internal_error_source(i), target, stream);
+        InternalWriteMessage(4, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ErrorLocation)
   return target;
 }
 
-size_t ErrorLocation::ByteSizeLong() const {
+::size_t ErrorLocation::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ErrorLocation)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // repeated .zetasql.ErrorSource error_source = 4;
   total_size += 1UL * this->_internal_error_source_size();
-  for (const auto& msg : this->error_source_) {
+  for (const auto& msg : this->_internal_error_source()) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional string filename = 3;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_filename());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_filename());
     }
 
     // optional int32 line = 1 [default = 1];
     if (cached_has_bits & 0x00000002u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_line());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_line());
     }
 
     // optional int32 column = 2 [default = 1];
     if (cached_has_bits & 0x00000004u) {
-      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_column());
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_column());
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ErrorLocation::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ErrorLocation::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ErrorLocation::GetClassData() const { return &_class_data_; }
 
-void ErrorLocation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ErrorLocation *>(to)->MergeFrom(
-      static_cast<const ErrorLocation &>(from));
-}
 
-
-void ErrorLocation::MergeFrom(const ErrorLocation& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ErrorLocation)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ErrorLocation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ErrorLocation*>(&to_msg);
+  auto& from = static_cast<const ErrorLocation&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ErrorLocation)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  error_source_.MergeFrom(from.error_source_);
-  cached_has_bits = from._has_bits_[0];
+  _this->_internal_mutable_error_source()->MergeFrom(from._internal_error_source());
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_filename(from._internal_filename());
+      _this->_internal_set_filename(from._internal_filename());
     }
     if (cached_has_bits & 0x00000002u) {
-      line_ = from.line_;
+      _this->_impl_.line_ = from._impl_.line_;
     }
     if (cached_has_bits & 0x00000004u) {
-      column_ = from.column_;
+      _this->_impl_.column_ = from._impl_.column_;
     }
-    _has_bits_[0] |= cached_has_bits;
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ErrorLocation::CopyFrom(const ErrorLocation& from) {
@@ -418,28 +482,30 @@ void ErrorLocation::InternalSwap(ErrorLocation* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  error_source_.InternalSwap(&other->error_source_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &filename_, lhs_arena,
-      &other->filename_, rhs_arena
-  );
-  swap(line_, other->line_);
-  swap(column_, other->column_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _internal_mutable_error_source()->InternalSwap(other->_internal_mutable_error_source());
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.filename_, lhs_arena,
+                                       &other->_impl_.filename_, rhs_arena);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_.column_)
+      + sizeof(ErrorLocation::_impl_.column_)
+      - PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_.line_)>(
+          reinterpret_cast<char*>(&_impl_.line_),
+          reinterpret_cast<char*>(&other->_impl_.line_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ErrorLocation::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ferror_5flocation_2eproto[0]);
 }
-
 // ===================================================================
 
 class ErrorSource::_Internal {
  public:
-  using HasBits = decltype(std::declval<ErrorSource>()._has_bits_);
+  using HasBits = decltype(std::declval<ErrorSource>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ErrorSource, _impl_._has_bits_);
   static void set_has_error_message(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -454,142 +520,151 @@ class ErrorSource::_Internal {
 
 const ::zetasql::ErrorLocation&
 ErrorSource::_Internal::error_location(const ErrorSource* msg) {
-  return *msg->error_location_;
+  return *msg->_impl_.error_location_;
 }
-ErrorSource::ErrorSource(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor();
-  if (!is_message_owned) {
-    RegisterArenaDtor(arena);
-  }
+ErrorSource::ErrorSource(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:zetasql.ErrorSource)
 }
 ErrorSource::ErrorSource(const ErrorSource& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ErrorSource* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.error_message_) {}
+
+    , decltype(_impl_.error_message_caret_string_) {}
+
+    , decltype(_impl_.error_location_){nullptr}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  error_message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.error_message_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    error_message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_error_message()) {
-    error_message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_error_message(), 
-      GetArenaForAllocation());
+        _impl_.error_message_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.error_message_.Set(from._internal_error_message(), _this->GetArenaForAllocation());
   }
-  error_message_caret_string_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _impl_.error_message_caret_string_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    error_message_caret_string_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_error_message_caret_string()) {
-    error_message_caret_string_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_error_message_caret_string(), 
-      GetArenaForAllocation());
+        _impl_.error_message_caret_string_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.error_message_caret_string_.Set(from._internal_error_message_caret_string(), _this->GetArenaForAllocation());
   }
-  if (from._internal_has_error_location()) {
-    error_location_ = new ::zetasql::ErrorLocation(*from.error_location_);
-  } else {
-    error_location_ = nullptr;
+  if ((from._impl_._has_bits_[0] & 0x00000004u) != 0) {
+    _this->_impl_.error_location_ = new ::zetasql::ErrorLocation(*from._impl_.error_location_);
   }
   // @@protoc_insertion_point(copy_constructor:zetasql.ErrorSource)
 }
 
-inline void ErrorSource::SharedCtor() {
-error_message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  error_message_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-error_message_caret_string_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  error_message_caret_string_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-error_location_ = nullptr;
+inline void ErrorSource::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.error_message_) {}
+
+    , decltype(_impl_.error_message_caret_string_) {}
+
+    , decltype(_impl_.error_location_){nullptr}
+  };
+  _impl_.error_message_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.error_message_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.error_message_caret_string_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.error_message_caret_string_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ErrorSource::~ErrorSource() {
   // @@protoc_insertion_point(destructor:zetasql.ErrorSource)
-  if (GetArenaForAllocation() != nullptr) return;
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 inline void ErrorSource::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  error_message_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  error_message_caret_string_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete error_location_;
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.error_message_.Destroy();
+  _impl_.error_message_caret_string_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.error_location_;
 }
 
-void ErrorSource::ArenaDtor(void* object) {
-  ErrorSource* _this = reinterpret_cast< ErrorSource* >(object);
-  (void)_this;
-}
-void ErrorSource::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ErrorSource::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ErrorSource::Clear() {
 // @@protoc_insertion_point(message_clear_start:zetasql.ErrorSource)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      error_message_.ClearNonDefaultToEmpty();
+      _impl_.error_message_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000002u) {
-      error_message_caret_string_.ClearNonDefaultToEmpty();
+      _impl_.error_message_caret_string_.ClearNonDefaultToEmpty();
     }
     if (cached_has_bits & 0x00000004u) {
-      GOOGLE_DCHECK(error_location_ != nullptr);
-      error_location_->Clear();
+      ABSL_DCHECK(_impl_.error_location_ != nullptr);
+      _impl_.error_location_->Clear();
     }
   }
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ErrorSource::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ErrorSource::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional string error_message = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           auto str = _internal_mutable_error_message();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ErrorSource.error_message");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.ErrorSource.error_message");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional string error_message_caret_string = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_error_message_caret_string();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          #ifndef NDEBUG
-          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "zetasql.ErrorSource.error_message_caret_string");
-          #endif  // !NDEBUG
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-        } else
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.ErrorSource.error_message_caret_string");
+          #endif  // !NDEBUG
+        } else {
           goto handle_unusual;
+        }
         continue;
       // optional .zetasql.ErrorLocation error_location = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_error_location(), ptr);
           CHK_(ptr);
-        } else
+        } else {
           goto handle_unusual;
+        }
         continue;
       default:
         goto handle_unusual;
@@ -607,7 +682,7 @@ const char* ErrorSource::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _has_bits_.Or(has_bits);
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -615,116 +690,106 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ErrorSource::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::uint8_t* ErrorSource::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:zetasql.ErrorSource)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional string error_message = 1;
   if (cached_has_bits & 0x00000001u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_error_message().data(), static_cast<int>(this->_internal_error_message().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ErrorSource.error_message");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_error_message(), target);
+    const std::string& _s = this->_internal_error_message();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ErrorSource.error_message");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // optional string error_message_caret_string = 2;
   if (cached_has_bits & 0x00000002u) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->_internal_error_message_caret_string().data(), static_cast<int>(this->_internal_error_message_caret_string().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
-      "zetasql.ErrorSource.error_message_caret_string");
-    target = stream->WriteStringMaybeAliased(
-        2, this->_internal_error_message_caret_string(), target);
+    const std::string& _s = this->_internal_error_message_caret_string();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.ErrorSource.error_message_caret_string");
+    target = stream->WriteStringMaybeAliased(2, _s, target);
   }
 
   // optional .zetasql.ErrorLocation error_location = 3;
   if (cached_has_bits & 0x00000004u) {
-    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        3, _Internal::error_location(this), target, stream);
+      InternalWriteMessage(3, _Internal::error_location(this),
+        _Internal::error_location(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:zetasql.ErrorSource)
   return target;
 }
 
-size_t ErrorSource::ByteSizeLong() const {
+::size_t ErrorSource::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:zetasql.ErrorSource)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     // optional string error_message = 1;
     if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_error_message());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_error_message());
     }
 
     // optional string error_message_caret_string = 2;
     if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_error_message_caret_string());
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_error_message_caret_string());
     }
 
     // optional .zetasql.ErrorLocation error_location = 3;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *error_location_);
+          *_impl_.error_location_);
     }
 
   }
-  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ErrorSource::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
     ErrorSource::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ErrorSource::GetClassData() const { return &_class_data_; }
 
-void ErrorSource::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
-                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-  static_cast<ErrorSource *>(to)->MergeFrom(
-      static_cast<const ErrorSource &>(from));
-}
 
-
-void ErrorSource::MergeFrom(const ErrorSource& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ErrorSource)
-  GOOGLE_DCHECK_NE(&from, this);
-  uint32_t cached_has_bits = 0;
+void ErrorSource::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ErrorSource*>(&to_msg);
+  auto& from = static_cast<const ErrorSource&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.ErrorSource)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._has_bits_[0];
+  cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      _internal_set_error_message(from._internal_error_message());
+      _this->_internal_set_error_message(from._internal_error_message());
     }
     if (cached_has_bits & 0x00000002u) {
-      _internal_set_error_message_caret_string(from._internal_error_message_caret_string());
+      _this->_internal_set_error_message_caret_string(from._internal_error_message_caret_string());
     }
     if (cached_has_bits & 0x00000004u) {
-      _internal_mutable_error_location()->::zetasql::ErrorLocation::MergeFrom(from._internal_error_location());
+      _this->_internal_mutable_error_location()->::zetasql::ErrorLocation::MergeFrom(
+          from._internal_error_location());
     }
   }
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void ErrorSource::CopyFrom(const ErrorSource& from) {
@@ -743,36 +808,30 @@ void ErrorSource::InternalSwap(ErrorSource* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &error_message_, lhs_arena,
-      &other->error_message_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &error_message_caret_string_, lhs_arena,
-      &other->error_message_caret_string_, rhs_arena
-  );
-  swap(error_location_, other->error_location_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_message_, lhs_arena,
+                                       &other->_impl_.error_message_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_message_caret_string_, lhs_arena,
+                                       &other->_impl_.error_message_caret_string_, rhs_arena);
+  swap(_impl_.error_location_, other->_impl_.error_location_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ErrorSource::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ferror_5flocation_2eproto[1]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::zetasql::ErrorLocation* Arena::CreateMaybeMessage< ::zetasql::ErrorLocation >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ErrorLocation*
+Arena::CreateMaybeMessage< ::zetasql::ErrorLocation >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ErrorLocation >(arena);
 }
-template<> PROTOBUF_NOINLINE ::zetasql::ErrorSource* Arena::CreateMaybeMessage< ::zetasql::ErrorSource >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::zetasql::ErrorSource*
+Arena::CreateMaybeMessage< ::zetasql::ErrorSource >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ErrorSource >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
-
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

@@ -37,6 +37,7 @@
 #include "zetasql/public/analyzer_output.h"
 #include "zetasql/public/analyzer_output_properties.h"
 #include "zetasql/public/catalog.h"
+#include "zetasql/public/error_helpers.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/function.pb.h"
 #include "zetasql/public/id_string.h"
@@ -44,6 +45,7 @@
 #include "zetasql/public/literal_remover.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_resume_location.h"
+#include "zetasql/public/rewriter_interface.h"
 #include "zetasql/public/simple_catalog.h"
 #include "zetasql/public/sql_formatter.h"
 #include "zetasql/public/type.h"
@@ -71,14 +73,18 @@
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
+#include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/status.h"
+#include "zetasql/base/status_payload.h"
 
 namespace zetasql {
 
 using testing::_;
+using testing::Eq;
+using testing::ExplainMatchResult;
 using testing::HasSubstr;
 using testing::IsNull;
 using testing::Not;
@@ -101,7 +107,7 @@ class AnalyzerOptionsTest : public ::testing::Test {
   AnalyzerOptions options_;
   TypeFactory type_factory_;
 
-  void ValidateQueryParam(const std::string& name, const Type* type) {
+  void ValidateQueryParam(absl::string_view name, const Type* type) {
     const std::string& key = absl::AsciiStrToLower(name);
     const QueryParametersMap& query_parameters = options_.query_parameters();
     EXPECT_TRUE(zetasql_base::ContainsKey(query_parameters, key));
@@ -537,6 +543,57 @@ TEST_F(AnalyzerOptionsTest, AnalyzeExpressionWithPreRewriteCallback) {
       StatusIs(_, HasSubstr("Pre-rewrite callback called before rewrite")));
 }
 
+class ErrorRewriter : public Rewriter {
+ public:
+  explicit ErrorRewriter(absl::string_view name) : name_(name) {}
+
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> Rewrite(
+      const AnalyzerOptions& options, std::unique_ptr<const ResolvedNode> input,
+      Catalog& catalog, TypeFactory& type_factory,
+      AnalyzerOutputProperties& output_properties) const override {
+    return absl::InternalError(absl::StrCat(name_, " rewriter always fails"));
+  }
+
+  std::string Name() const override { return name_; }
+
+ private:
+  std::string name_;
+};
+
+TEST_F(AnalyzerOptionsTest, AnalyzeStatementWithTrailingRewriter) {
+  AnalyzerOptions options;
+  SampleCatalog catalog(options.language());
+  TypeFactory type_factory;
+  std::unique_ptr<const AnalyzerOutput> output;
+  options.add_trailing_rewriter(std::make_shared<ErrorRewriter>("Trailing"));
+
+  EXPECT_THAT(AnalyzeStatement("SELECT 1", options, catalog.catalog(),
+                               &type_factory, &output),
+              StatusIs(absl::StatusCode::kInternal,
+                       HasSubstr("Trailing rewriter always fails")));
+}
+
+TEST_F(AnalyzerOptionsTest, AnalyzeStatementWithLeadingRewriter) {
+  AnalyzerOptions options;
+  SampleCatalog catalog(options.language());
+  TypeFactory type_factory;
+  std::unique_ptr<const AnalyzerOutput> output;
+  options.add_leading_rewriter(std::make_shared<ErrorRewriter>("Leading"));
+  options.add_trailing_rewriter(std::make_shared<ErrorRewriter>("Trailing"));
+
+  EXPECT_THAT(AnalyzeStatement("SELECT 1", options, catalog.catalog(),
+                               &type_factory, &output),
+              StatusIs(absl::StatusCode::kInternal,
+                       HasSubstr("Leading rewriter always fails")));
+}
+
+MATCHER_P(HasInvalidArgumentError, expected_message, "") {
+  return ExplainMatchResult(Eq(absl::StatusCode::kInvalidArgument), arg.code(),
+                            result_listener) &&
+         ExplainMatchResult(Eq(expected_message), arg.message(),
+                            result_listener);
+}
+
 TEST_F(AnalyzerOptionsTest, ErrorMessageFormat) {
   std::unique_ptr<const AnalyzerOutput> output;
 
@@ -546,43 +603,37 @@ TEST_F(AnalyzerOptionsTest, ErrorMessageFormat) {
   EXPECT_EQ(ErrorMessageMode::ERROR_MESSAGE_ONE_LINE,
             options_.error_message_mode());
 
-  EXPECT_EQ(
-      "generic::invalid_argument: Table not found: BadTable; Did you mean "
-      "abTable? [at 2:6]",
-      zetasql::internal::StatusToString(AnalyzeStatement(
-          query, options_, catalog(), &type_factory_, &output)));
-  EXPECT_EQ("generic::invalid_argument: Unrecognized name: BadCol [at 2:5]",
-            zetasql::internal::StatusToString(AnalyzeExpression(
-                expr, options_, catalog(), &type_factory_, &output)));
+  EXPECT_THAT(
+      AnalyzeStatement(query, options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError(
+          "Table not found: BadTable; Did you mean abTable? [at 2:6]"));
+  EXPECT_THAT(
+      AnalyzeExpression(expr, options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError("Unrecognized name: BadCol [at 2:5]"));
 
   options_.set_error_message_mode(ErrorMessageMode::ERROR_MESSAGE_WITH_PAYLOAD);
-  EXPECT_EQ(
-      "generic::invalid_argument: Table not found: BadTable; Did you mean "
-      "abTable? "
-      "[zetasql.ErrorLocation] { line: 2 column: 6 }",
-      zetasql::internal::StatusToString(AnalyzeStatement(
-          query, options_, catalog(), &type_factory_, &output)));
-  EXPECT_EQ(
-      "generic::invalid_argument: Unrecognized name: BadCol "
-      "[zetasql.ErrorLocation] { line: 2 column: 5 }",
-      zetasql::internal::StatusToString(AnalyzeExpression(
-          expr, options_, catalog(), &type_factory_, &output)));
+  EXPECT_THAT(
+      AnalyzeStatement(query, options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError("Table not found: BadTable; Did you mean "
+                              "abTable?"));
+
+  EXPECT_THAT(
+      AnalyzeExpression(expr, options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError("Unrecognized name: BadCol"));
 
   options_.set_error_message_mode(
       ErrorMessageMode::ERROR_MESSAGE_MULTI_LINE_WITH_CARET);
-  EXPECT_EQ(
-      "generic::invalid_argument: Table not found: BadTable; Did you mean "
-      "abTable? [at 2:6]\n"
-      "from BadTable\n"
-      "     ^",
-      zetasql::internal::StatusToString(AnalyzeStatement(
-          query, options_, catalog(), &type_factory_, &output)));
-  EXPECT_EQ(
-      "generic::invalid_argument: Unrecognized name: BadCol [at 2:5]\n"
-      "2 + BadCol +\n"
-      "    ^",
-      zetasql::internal::StatusToString(AnalyzeExpression(
-          expr, options_, catalog(), &type_factory_, &output)));
+  EXPECT_THAT(
+      AnalyzeStatement(query, options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError(
+          "Table not found: BadTable; Did you mean abTable? [at 2:6]\n"
+          "from BadTable\n"
+          "     ^"));
+  EXPECT_THAT(
+      AnalyzeExpression(expr, options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError("Unrecognized name: BadCol [at 2:5]\n"
+                              "2 + BadCol +\n"
+                              "    ^"));
 }
 
 TEST_F(AnalyzerOptionsTest, NestedCatalogTypesErrorMessageFormat) {
@@ -604,20 +655,17 @@ TEST_F(AnalyzerOptionsTest, NestedCatalogTypesErrorMessageFormat) {
   leaf_catalog_2.AddType("zetasql.TypeProto", proto_type_without_catalog);
 
   // The catalog name is shown.
-  EXPECT_EQ(
-      "generic::invalid_argument: Invalid cast from INT64 to "
-      "catalog_name.zetasql.TypeProto [at 1:6]",
-      zetasql::internal::StatusToString(
-          AnalyzeExpression("CAST(1 AS leaf_catalog_1.zetasql.TypeProto)",
-                            options_, catalog(), &type_factory_, &output)));
+  EXPECT_THAT(
+      AnalyzeExpression("CAST(1 AS leaf_catalog_1.zetasql.TypeProto)",
+                        options_, catalog(), &type_factory_, &output),
+      HasInvalidArgumentError("Invalid cast from INT64 to "
+                              "catalog_name.zetasql.TypeProto [at 1:6]"));
 
   // The catalog name is not shown.
-  EXPECT_EQ(
-      "generic::invalid_argument: Invalid cast from INT64 to "
-      "zetasql.TypeProto [at 1:6]",
-      zetasql::internal::StatusToString(
-          AnalyzeExpression("CAST(1 AS leaf_catalog_2.zetasql.TypeProto)",
-                            options_, catalog(), &type_factory_, &output)));
+  EXPECT_THAT(AnalyzeExpression("CAST(1 AS leaf_catalog_2.zetasql.TypeProto)",
+                                options_, catalog(), &type_factory_, &output),
+              HasInvalidArgumentError("Invalid cast from INT64 to "
+                                      "zetasql.TypeProto [at 1:6]"));
 }
 
 // Some of these were previously dchecking because of bug 20010119.
@@ -629,13 +677,12 @@ TEST_F(AnalyzerOptionsTest, EofErrorMessageTrailingNewlinesAndWhitespace) {
 
   // Trailing newlines are ignored for unexpected end of statement errors.
   for (absl::string_view newline : {"\n", "\r\n", "\n\r", "\r"}) {
-    EXPECT_EQ(
-        "generic::invalid_argument: Syntax error: Unexpected end of "
-        "statement [at 1:1]\n"
-        "\n"
-        "^",
-        zetasql::internal::StatusToString(AnalyzeStatement(
-            newline, options_, catalog(), &type_factory_, &output)));
+    EXPECT_THAT(
+        AnalyzeStatement(newline, options_, catalog(), &type_factory_, &output),
+        HasInvalidArgumentError(
+            "Syntax error: Unexpected end of statement [at 1:1]\n"
+            "\n"
+            "^"));
   }
 
   // All of these instances of trailing whitespace are ignored for unexpected
@@ -645,19 +692,18 @@ TEST_F(AnalyzerOptionsTest, EofErrorMessageTrailingNewlinesAndWhitespace) {
   for (absl::string_view whitespace :
        {" ", "   ", "\342\200\200" /* EN QUAD */}) {
     for (absl::string_view newline : {"\n", "\r\n", "\n\r", "\r"}) {
-      for (const std::string& more_whitespace :
+      for (absl::string_view more_whitespace :
            {"", " ", "   ", "\342\200\200" /* EN QUAD */}) {
-        EXPECT_EQ(
-            absl::StrCat(
-                "generic::invalid_argument: Syntax error: Unexpected end of "
-                "statement [at 1:7]\n"
+        EXPECT_THAT(
+            AnalyzeStatement(
+                absl::StrCat("SELECT", whitespace, newline, more_whitespace),
+                options_, catalog(), &type_factory_, &output),
+            HasInvalidArgumentError(absl::StrCat(
+                "Syntax error: Unexpected end of statement [at 1:7]\n"
                 "SELECT",
                 whitespace,
                 "\n"
-                "      ^"),
-            zetasql::internal::StatusToString(AnalyzeStatement(
-                absl::StrCat("SELECT", whitespace, newline, more_whitespace),
-                options_, catalog(), &type_factory_, &output)));
+                "      ^")));
       }
     }
   }
@@ -706,8 +752,8 @@ TEST_F(AnalyzerOptionsTest, LiteralReplacementIgnoreAllowlistedOptions) {
   options_.set_record_parse_locations(true);
 
   std::string sql = "   \t@{ hint1=1, hint2=true, hint3='foo' }SELECT 1, 'Yes'";
-  ZETASQL_EXPECT_OK(AnalyzeStatement(sql, options_, catalog(),
-                             &type_factory_, &output));
+  ZETASQL_EXPECT_OK(
+      AnalyzeStatement(sql, options_, catalog(), &type_factory_, &output));
 
   std::string new_sql;
   LiteralReplacementMap literal_map;
@@ -738,6 +784,24 @@ TEST_F(AnalyzerOptionsTest, LiteralReplacementIgnoreAllowlistedOptions) {
   EXPECT_EQ(generated_parameters["_p2_STRING"], Value::String("Yes"));
 }
 
+MATCHER_P(HasDeprecationWarning, expected_message, "") {
+  std::optional<absl::Cord> warning =
+      arg.GetPayload(kErrorMessageModeUrl);
+  if (!warning.has_value()) {
+    *result_listener << "Expected a payload on the deprecation warning of type "
+                        "zetasql.DeprecationWarning";
+    return false;
+  }
+  zetasql::DeprecationWarning warning_proto;
+  warning_proto.ParseFromString(std::string(warning.value()));
+  return ExplainMatchResult(Eq(absl::StatusCode::kInvalidArgument), arg.code(),
+                            result_listener) &&
+         ExplainMatchResult(Eq(expected_message), arg.message(),
+                            result_listener) &&
+         ExplainMatchResult(Eq(zetasql::DeprecationWarning::DEPRECATED_FUNCTION),
+                            warning_proto.kind(),
+                            result_listener);
+}
 TEST_F(AnalyzerOptionsTest, DeprecationWarnings) {
   // Create some deprecated functions as a stable way to generate deprecation
   // errors.  (Real deprecated features in the language won't stick around.)
@@ -794,26 +858,19 @@ TEST_F(AnalyzerOptionsTest, DeprecationWarnings) {
       }
 
       if (with_errors == 1) {
-        EXPECT_EQ(
-            "generic::invalid_argument: Function TEST_GROUP:DEPR1 is "
-            "deprecated [at 2:1] [zetasql.DeprecationWarning] "
-            "{ kind: DEPRECATED_FUNCTION }",
-            zetasql::internal::StatusToString(status));
+        EXPECT_THAT(status,
+                    HasDeprecationWarning(
+                        "Function TEST_GROUP:DEPR1 is deprecated [at 2:1]"));
       } else {
         ZETASQL_EXPECT_OK(status);
         ASSERT_EQ(2, output->deprecation_warnings().size());
-        EXPECT_EQ(
-            "generic::invalid_argument: Function TEST_GROUP:DEPR1 is "
-            "deprecated [at 2:1] [zetasql.DeprecationWarning] "
-            "{ kind: DEPRECATED_FUNCTION }",
-            zetasql::internal::StatusToString(
-                output->deprecation_warnings()[0]));
-        EXPECT_EQ(
-            "generic::invalid_argument: Function TEST_GROUP:DEPR2 is "
-            "deprecated [at 2:23] [zetasql.DeprecationWarning] "
-            "{ kind: DEPRECATED_FUNCTION }",
-            zetasql::internal::StatusToString(
-                output->deprecation_warnings()[1]));
+        EXPECT_THAT(output->deprecation_warnings()[0],
+                    HasDeprecationWarning(
+                        "Function TEST_GROUP:DEPR1 is deprecated [at 2:1]"));
+        EXPECT_THAT(
+            output->deprecation_warnings()[1],
+            HasDeprecationWarning("Function TEST_GROUP:DEPR2 is deprecated [at "
+                                  "2:23]"));
       }
     }
   }
@@ -909,7 +966,7 @@ TEST_F(AnalyzerOptionsTest, Deserialize) {
       new google::protobuf::compiler::Importer(source_tree.get(), &error_collector));
 
   for (const std::string& test_file : test_files) {
-    ZETASQL_CHECK(proto_importer->Import(test_file) != nullptr)
+    ABSL_CHECK(proto_importer->Import(test_file) != nullptr)
         << "Error importing " << test_file << ": "
         << error_collector.GetError();
   }
@@ -1127,7 +1184,7 @@ TEST_F(AnalyzerOptionsTest, ClassAndProtoSize) {
   EXPECT_EQ(8, sizeof(AnalyzerOptions))
       << "The size of AnalyzerOptions class has changed, please also update "
       << "the proto and serialization code if you added/removed fields in it.";
-  EXPECT_EQ(22, AnalyzerOptionsProto::descriptor()->field_count())
+  EXPECT_EQ(24, AnalyzerOptionsProto::descriptor()->field_count())
       << "The number of fields in AnalyzerOptionsProto has changed, please "
       << "also update the serialization code accordingly.";
 }
@@ -1150,7 +1207,7 @@ TEST_F(AnalyzerOptionsTest, AllowedHintsAndOptionsSerializeAndDeserialize) {
       new google::protobuf::compiler::Importer(source_tree.get(), &error_collector));
 
   for (const std::string& test_file : test_files) {
-    ZETASQL_CHECK(proto_importer->Import(test_file) != nullptr)
+    ABSL_CHECK(proto_importer->Import(test_file) != nullptr)
         << "Error importing " << test_file << ": "
         << error_collector.GetError();
   }
@@ -1185,9 +1242,11 @@ TEST_F(AnalyzerOptionsTest, AllowedHintsAndOptionsSerializeAndDeserialize) {
   allowed.AddHint("", "untyped_qual", nullptr, true);
   allowed.AddOption("option1", generated_enum_type);
   allowed.AddOption("untyped_option", nullptr);
+  allowed.disallow_duplicate_option_names = true;
   ZETASQL_CHECK_OK(allowed.Serialize(&file_descriptor_set_map, &proto));
   EXPECT_EQ(2, proto.disallow_unknown_hints_with_qualifier_size());
   EXPECT_TRUE(proto.disallow_unknown_options());
+  EXPECT_TRUE(proto.disallow_duplicate_option_names());
   EXPECT_EQ(9, proto.hint_size());
   EXPECT_EQ(2, proto.option_size());
   AllowedHintsAndOptions generated_allowed;
@@ -1195,6 +1254,7 @@ TEST_F(AnalyzerOptionsTest, AllowedHintsAndOptionsSerializeAndDeserialize) {
       proto, pools, &factory, &generated_allowed));
   EXPECT_EQ(2, generated_allowed.disallow_unknown_hints_with_qualifiers.size());
   EXPECT_TRUE(generated_allowed.disallow_unknown_options);
+  EXPECT_TRUE(generated_allowed.disallow_duplicate_option_names);
   EXPECT_EQ(12, generated_allowed.hints_lower.size());
   EXPECT_EQ(2, generated_allowed.options_lower.size());
 }
@@ -1206,14 +1266,14 @@ TEST(AllowedHintsAndOptionsTest, ClassAndProtoSize) {
       << "The size of AllowedHintsAndOptions class has changed, please also "
       << "update the proto and serialization code if you added/removed fields "
       << "in it.";
-  EXPECT_EQ(6, AllowedHintsAndOptionsProto::descriptor()->field_count())
+  EXPECT_EQ(7, AllowedHintsAndOptionsProto::descriptor()->field_count())
       << "The number of fields in AllowedHintsAndOptionsProto has changed, "
       << "please also update the serialization code accordingly.";
 }
 
 // Defines a triple for testing the SupportedStatement feature in ZetaSQL.
 struct SupportedStatementTestInput {
-  SupportedStatementTestInput(const std::string& stmt, bool success,
+  SupportedStatementTestInput(absl::string_view stmt, bool success,
                               const std::set<ResolvedNodeKind>& statement_kinds)
       : statement(stmt),
         expect_success(success),
@@ -1291,10 +1351,10 @@ TEST(AnalyzerSupportedStatementsTest, AlterTableNotSupported) {
 // <expected_error_string> is only compared if it is non-empty and
 // <expect_success> is false.
 struct SupportedFeatureTestInput {
-  SupportedFeatureTestInput(const std::string& stmt,
+  SupportedFeatureTestInput(absl::string_view stmt,
                             const LanguageOptions::LanguageFeatureSet& features,
                             bool expect_success_in,
-                            const std::string& error_string = "")
+                            absl::string_view error_string = "")
       : statement(stmt),
         supported_features(features),
         expect_success(expect_success_in),
@@ -1366,7 +1426,7 @@ TEST(AnalyzerSupportedFeaturesTest, SupportedFeaturesTest) {
     AnalyzerOptions options;
     options.mutable_language()->SetEnabledLanguageFeatures(
         input.supported_features);
-    ZETASQL_LOG(INFO) << "Supported features: " << input.FeaturesToString();
+    ABSL_LOG(INFO) << "Supported features: " << input.FeaturesToString();
     SampleCatalog catalog(options.language());
     const absl::Status status = AnalyzeStatement(
         input.statement, options, catalog.catalog(), &type_factory, &output);
@@ -1447,7 +1507,7 @@ TEST(AnalyzerTest, ExternalExtension) {
       new google::protobuf::compiler::Importer(source_tree.get(), &error_collector));
 
   for (const std::string& test_file : test_files) {
-    ZETASQL_CHECK(proto_importer->Import(test_file) != nullptr)
+    ABSL_CHECK(proto_importer->Import(test_file) != nullptr)
         << "Error importing " << test_file << ": "
         << error_collector.GetError();
   }
@@ -1501,7 +1561,7 @@ TEST(AnalyzerTest, ExternalExtension) {
 }
 
 static void ExpectStatementHasAnonymization(
-    const std::string& sql, bool expect_anonymization = true,
+    absl::string_view sql, bool expect_anonymization = true,
     bool expect_analyzer_success = true) {
   AnalyzerOptions options;
   options.mutable_language()->SetSupportedStatementKinds(
@@ -1552,7 +1612,7 @@ TEST(AnalyzerTest, TestStatementHasAnonymization) {
                    "SELECT 'string_literal'"), false, false);
 }
 
-static void ExpectExpressionHasAnonymization(const std::string& sql,
+static void ExpectExpressionHasAnonymization(absl::string_view sql,
                                              bool expect_anonymization = true) {
   AnalyzerOptions options;
   options.mutable_language()->EnableLanguageFeature(FEATURE_ANONYMIZATION);
@@ -1594,6 +1654,28 @@ TEST(AnalyzerTest, AstRewriting) {
       // Otherwise it should remain.
       EXPECT_THAT(output->resolved_statement()->DebugString(),
                   HasSubstr("FlattenedArg"));
+    }
+  }
+}
+
+TEST(AnalyzerTest, AstRewritingLegacyAccessModeRespected) {
+  AnalyzerOptions options;
+  options.set_fields_accessed_mode(
+      AnalyzerOptions::FieldsAccessedMode::LEGACY_FIELDS_ACCESSED_MODE);
+  options.mutable_language()->EnableLanguageFeature(
+      FEATURE_V_1_3_UNNEST_AND_FLATTEN_ARRAYS);
+  SampleCatalog catalog(options.language());
+  TypeFactory type_factory;
+  std::unique_ptr<const AnalyzerOutput> output;
+
+  for (const bool should_rewrite : {true, false}) {
+    options.enable_rewrite(REWRITE_FLATTEN, should_rewrite);
+    ZETASQL_ASSERT_OK(AnalyzeStatement("SELECT FLATTEN([STRUCT([] AS X)].X)", options,
+                               catalog.catalog(), &type_factory, &output));
+    if (should_rewrite) {
+      ZETASQL_EXPECT_OK(output->resolved_statement()->CheckFieldsAccessed());
+    } else {
+      ZETASQL_EXPECT_OK(output->resolved_statement()->CheckNoFieldsAccessed());
     }
   }
 }
@@ -1868,7 +1950,7 @@ TEST(AnalyzerTest, AnalyzeStatementsOfScript) {
   std::string script = "SELECT * FROM KeyValue;\nSELECT garbage;";
   std::unique_ptr<ParserOutput> parser_output;
   ZETASQL_ASSERT_OK(ParseScript(script, ParserOptions(), ERROR_MESSAGE_ONE_LINE,
-                        &parser_output));
+                        /*keep_error_location_payload=*/false, &parser_output));
   ASSERT_EQ(parser_output->script()->statement_list().size(), 2);
 
   AnalyzerOptions analyzer_options;
@@ -1889,6 +1971,181 @@ TEST(AnalyzerTest, AnalyzeStatementsOfScript) {
       catalog.catalog(), catalog.type_factory(), &analyzer_output);
   ASSERT_THAT(status, StatusIs(absl::StatusCode::kInvalidArgument,
                                "Unrecognized name: garbage [at 2:8]"));
+}
+
+TEST(AnalyzerTest, AnalyzeInsertStatement) {
+  // Setup catalog and table.
+  // Table ddl representation
+  // CREATE TABLE test_table (
+  // id INT64,
+  // data INT64,
+  // ) PRIMARY KEY(id);
+  SimpleCatalog catalog{"test_catalog"};
+  catalog.AddBuiltinFunctions(BuiltinFunctionOptions::AllReleasedFunctions());
+  AnalyzerOptions analyzer_options;
+  analyzer_options.mutable_language()->SetSupportsAllStatementKinds();
+  auto test_table = std::make_unique<SimpleTable>(
+      "test_table",
+      std::vector<SimpleTable::NameAndType>{{"id", types::Int64Type()},
+                                            {"data", types::Int64Type()}});
+  test_table->SetContents(
+      {{values::Int64(1), values::Int64(2), values::Int64(8), values::Int64(4)},
+       {values::Int64(2), values::Int64(3), values::Int64(12),
+        values::Int64(6)}});
+  ZETASQL_ASSERT_OK(test_table->SetPrimaryKey({0}));
+  catalog.AddOwnedTable(std::move(test_table));
+
+  std::string sql = "INSERT into test_table(id,data) values(3,7);";
+  std::unique_ptr<ParserOutput> parser_output;
+  ZETASQL_ASSERT_OK(
+      ParseStatement(sql, analyzer_options.GetParserOptions(), &parser_output));
+  std::unique_ptr<const AnalyzerOutput> analyzer_output;
+  TypeFactory type_factory;
+
+  // Analyze the insert statement
+  ZETASQL_EXPECT_OK(AnalyzeStatementFromParserOutputOwnedOnSuccess(
+      &parser_output, analyzer_options, sql, &catalog, &type_factory,
+      &analyzer_output));
+}
+
+TEST(AnalyzerTest, AnalyzeInsertStatementWithGenColInTable) {
+  // Setup catalog and table.
+  // Table ddl representation
+  // CREATE TABLE test_table (
+  // id INT64,
+  // data INT64,
+  // gen1 AS data*2,
+  // gen2 AS gen1,
+  // ) PRIMARY KEY(id,gen1);
+  SimpleCatalog catalog{"test_catalog"};
+  catalog.AddBuiltinFunctions(BuiltinFunctionOptions::AllReleasedFunctions());
+  AnalyzerOptions analyzer_options;
+  analyzer_options.mutable_language()->SetSupportsAllStatementKinds();
+  auto test_table = std::make_unique<SimpleTable>(
+      "test_table",
+      std::vector<SimpleTable::NameAndType>{{"id", types::Int64Type()},
+                                            {"data", types::Int64Type()}});
+  // Adding column gen1 AS (data*2) to test_table.
+  std::unique_ptr<const AnalyzerOutput> output1;
+  const std::string generated_expr1 = "data*2";
+  zetasql::AnalyzerOptions new_options1 = analyzer_options;
+  ZETASQL_ASSERT_OK(new_options1.AddExpressionColumn("data", types::Int64Type()));
+  ZETASQL_ASSERT_OK(AnalyzeExpression(generated_expr1, new_options1, &catalog,
+                              catalog.type_factory(), &output1));
+  SimpleColumn::ExpressionAttributes expr_attributes1(
+      SimpleColumn::ExpressionAttributes::ExpressionKind::GENERATED,
+      generated_expr1, output1->resolved_expr());
+  ZETASQL_ASSERT_OK(test_table->AddColumn(
+      new SimpleColumn(test_table->Name(), "gen1", types::Int64Type(),
+                       {.column_expression = expr_attributes1}),
+      /*is_owned=*/true));
+
+  // Adding column gen2 AS (gen1) to test_table.
+  std::unique_ptr<const AnalyzerOutput> output2;
+  const std::string generated_expr2 = "gen1";
+  zetasql::AnalyzerOptions new_options2 = analyzer_options;
+  ZETASQL_ASSERT_OK(new_options2.AddExpressionColumn("gen1", types::Int64Type()));
+  ZETASQL_ASSERT_OK(AnalyzeExpression(generated_expr2, new_options2, &catalog,
+                              catalog.type_factory(), &output2));
+  SimpleColumn::ExpressionAttributes expr_attributes2(
+      SimpleColumn::ExpressionAttributes::ExpressionKind::GENERATED,
+      generated_expr1, output1->resolved_expr());
+  ZETASQL_ASSERT_OK(test_table->AddColumn(
+      new SimpleColumn(test_table->Name(), "gen2", types::Int64Type(),
+                       {.column_expression = expr_attributes2}),
+      /*is_owned=*/true));
+  test_table->SetContents(
+      {{values::Int64(1), values::Int64(2), values::Int64(4), values::Int64(4)},
+       {values::Int64(2), values::Int64(3), values::Int64(6),
+        values::Int64(6)}});
+  ZETASQL_ASSERT_OK(test_table->SetPrimaryKey({0, 2}));
+  catalog.AddOwnedTable(std::move(test_table));
+
+  std::string sql = "INSERT into test_table(id,data) values(3,7);";
+  std::unique_ptr<ParserOutput> parser_output;
+  ZETASQL_ASSERT_OK(
+      ParseStatement(sql, analyzer_options.GetParserOptions(), &parser_output));
+  std::unique_ptr<const AnalyzerOutput> analyzer_output;
+  TypeFactory type_factory;
+
+  // Analyze the insert statement.
+  ZETASQL_EXPECT_OK(AnalyzeStatementFromParserOutputOwnedOnSuccess(
+      &parser_output, analyzer_options, sql, &catalog, &type_factory,
+      &analyzer_output));
+}
+
+TEST(AnalyzerTest, AnalyzeInsertStatementFailsWithCyclicGenColInTable) {
+  // Setup catalog and table.
+  // Table ddl representation
+  // CREATE TABLE test_table (
+  // id INT64,
+  // data INT64,
+  // gen2 AS gen1*2,
+  // gen1 AS gen2*2,
+  // ) PRIMARY KEY(id,gen2);
+  SimpleCatalog catalog{"test_catalog"};
+  catalog.AddBuiltinFunctions(BuiltinFunctionOptions::AllReleasedFunctions());
+  AnalyzerOptions analyzer_options;
+  analyzer_options.mutable_language()->SetSupportsAllStatementKinds();
+  auto test_table = std::make_unique<SimpleTable>(
+      "test_table",
+      std::vector<SimpleTable::NameAndType>{{"id", types::Int64Type()},
+                                            {"data", types::Int64Type()}});
+  // Adding column gen2 AS (gen1*2) to test_table.
+  std::unique_ptr<const AnalyzerOutput> output2;
+  const std::string generated_expr2 = "gen1*2";
+  zetasql::AnalyzerOptions new_options2 = analyzer_options;
+  ZETASQL_ASSERT_OK(new_options2.AddExpressionColumn("gen1", types::Int64Type()));
+  ZETASQL_ASSERT_OK(AnalyzeExpression(generated_expr2, new_options2, &catalog,
+                              catalog.type_factory(), &output2));
+  SimpleColumn::ExpressionAttributes expr_attributes2(
+      SimpleColumn::ExpressionAttributes::ExpressionKind::GENERATED,
+      generated_expr2, output2->resolved_expr());
+  ZETASQL_ASSERT_OK(test_table->AddColumn(
+      new SimpleColumn(test_table->Name(), "gen2", types::Int64Type(),
+                       {.column_expression = expr_attributes2}),
+      /*is_owned=*/true));
+  // Adding column gen1 AS (gen2*2) to test_table.
+  const std::string generated_expr1 = "gen2*2";
+  std::unique_ptr<const AnalyzerOutput> output1;
+  zetasql::AnalyzerOptions new_options1 = analyzer_options;
+  ZETASQL_ASSERT_OK(new_options1.AddExpressionColumn("gen2", types::Int64Type()));
+  ZETASQL_ASSERT_OK(AnalyzeExpression(generated_expr1, new_options1, &catalog,
+                              catalog.type_factory(), &output1));
+  SimpleColumn::ExpressionAttributes expr_attributes1(
+      SimpleColumn::ExpressionAttributes::ExpressionKind::GENERATED,
+      generated_expr1, output1->resolved_expr());
+  ZETASQL_ASSERT_OK(test_table->AddColumn(
+      new SimpleColumn(test_table->Name(), "gen1", types::Int64Type(),
+                       {.column_expression = expr_attributes1}),
+      /*is_owned=*/true));
+  test_table->SetContents(
+      {{values::Int64(1), values::Int64(2), values::Int64(8), values::Int64(4)},
+       {values::Int64(2), values::Int64(3), values::Int64(12),
+        values::Int64(6)}});
+  ZETASQL_ASSERT_OK(test_table->SetPrimaryKey({0, 2}));
+  catalog.AddOwnedTable(std::move(test_table));
+
+  std::string sql = "INSERT into test_table(id,data) values(3,7);";
+  std::unique_ptr<ParserOutput> parser_output;
+  ZETASQL_ASSERT_OK(
+      ParseStatement(sql, analyzer_options.GetParserOptions(), &parser_output));
+  std::unique_ptr<const AnalyzerOutput> analyzer_output;
+  TypeFactory type_factory;
+
+  // Analyze the insert statement - this should fail as generated columns in
+  // table have cycles.
+  EXPECT_THAT(
+      AnalyzeStatementFromParserOutputOwnedOnSuccess(
+          &parser_output, analyzer_options, sql, &catalog, &type_factory,
+          &analyzer_output),
+      zetasql_base::testing::StatusIs(
+          absl::StatusCode::kInvalidArgument,
+          testing::MatchesRegex(
+              "Recursive dependencies detected while evaluating generated "
+              "column expression values for test_table.gen.. The expression "
+              "indicates the column depends on itself. Columns forming the "
+              "cycle : test_table.gen., test_table.gen.")));
 }
 
 // Verify the catalog name path of the outer proto type will be carried to its

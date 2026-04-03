@@ -27,28 +27,36 @@
 #include "zetasql/parser/parser.h"
 #include "zetasql/parser/statement_properties.h"
 #include "zetasql/public/error_helpers.h"
+#include "zetasql/public/language_options.h"
+#include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_resume_location.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
 
 namespace zetasql {
 
 absl::Status IsValidStatementSyntax(absl::string_view sql,
-                                    ErrorMessageMode error_message_mode) {
+                                    ErrorMessageMode error_message_mode,
+                                    const LanguageOptions& language_options) {
   std::unique_ptr<ParserOutput> parser_output;
-  // Nothing in ParserOptions affects syntax, so use the default ParserOptions.
   const absl::Status parse_status =
-      ParseStatement(sql, ParserOptions(), &parser_output);
-  return MaybeUpdateErrorFromPayload(error_message_mode, sql, parse_status);
+      ParseStatement(sql, ParserOptions(language_options), &parser_output);
+  return MaybeUpdateErrorFromPayload(
+      error_message_mode, /*keep_error_location_payload=*/error_message_mode ==
+                              ERROR_MESSAGE_WITH_PAYLOAD,
+      sql, parse_status);
 }
 
-absl::Status IsValidNextStatementSyntax(ParseResumeLocation* resume_location,
-                                        ErrorMessageMode error_message_mode,
-                                        bool* at_end_of_input) {
+absl::Status IsValidNextStatementSyntax(
+    ParseResumeLocation* resume_location, ErrorMessageMode error_message_mode,
+    bool* at_end_of_input, const LanguageOptions& language_options) {
   std::unique_ptr<ParserOutput> parser_output;
-  const absl::Status parse_status = ParseNextStatement(
-      resume_location, ParserOptions(), &parser_output, at_end_of_input);
-  return MaybeUpdateErrorFromPayload(error_message_mode,
-                                     resume_location->input(), parse_status);
+  const absl::Status parse_status =
+      ParseNextStatement(resume_location, ParserOptions(language_options),
+                         &parser_output, at_end_of_input);
+  return MaybeUpdateErrorFromPayload(
+      error_message_mode, /*keep_error_location_payload=*/error_message_mode ==
+                              ERROR_MESSAGE_WITH_PAYLOAD,
+      resume_location->input(), parse_status);
 }
 
 ResolvedNodeKind GetStatementKind(absl::string_view sql,
@@ -67,6 +75,8 @@ ResolvedNodeKind GetStatementKind(ASTNodeKind node_kind) {
       return RESOLVED_CLONE_DATA_STMT;
     case AST_EXPORT_DATA_STATEMENT:
       return RESOLVED_EXPORT_DATA_STMT;
+    case AST_EXPORT_METADATA_STATEMENT:
+      return RESOLVED_EXPORT_METADATA_STMT;
     case AST_EXPORT_MODEL_STATEMENT:
       return RESOLVED_EXPORT_MODEL_STMT;
     case AST_CALL_STATEMENT:
@@ -89,6 +99,8 @@ ResolvedNodeKind GetStatementKind(ASTNodeKind node_kind) {
       return RESOLVED_CREATE_VIEW_STMT;
     case AST_CREATE_MATERIALIZED_VIEW_STATEMENT:
       return RESOLVED_CREATE_MATERIALIZED_VIEW_STMT;
+    case AST_CREATE_APPROX_VIEW_STATEMENT:
+      return RESOLVED_CREATE_APPROX_VIEW_STMT;
     case AST_CREATE_SCHEMA_STATEMENT:
       return RESOLVED_CREATE_SCHEMA_STMT;
     case AST_CREATE_SNAPSHOT_TABLE_STATEMENT:
@@ -151,7 +163,9 @@ ResolvedNodeKind GetStatementKind(ASTNodeKind node_kind) {
     case AST_DROP_SNAPSHOT_TABLE_STATEMENT:
       return RESOLVED_DROP_SNAPSHOT_TABLE_STMT;
     case AST_DROP_SEARCH_INDEX_STATEMENT:
-      return RESOLVED_DROP_SEARCH_INDEX_STMT;
+      return RESOLVED_DROP_INDEX_STMT;
+    case AST_DROP_VECTOR_INDEX_STATEMENT:
+      return RESOLVED_DROP_INDEX_STMT;
     case AST_GRANT_STATEMENT:
       return RESOLVED_GRANT_STMT;
     case AST_REVOKE_STATEMENT:
@@ -166,6 +180,8 @@ ResolvedNodeKind GetStatementKind(ASTNodeKind node_kind) {
       return RESOLVED_ALTER_VIEW_STMT;
     case AST_ALTER_MATERIALIZED_VIEW_STATEMENT:
       return RESOLVED_ALTER_MATERIALIZED_VIEW_STMT;
+    case AST_ALTER_APPROX_VIEW_STATEMENT:
+      return RESOLVED_ALTER_APPROX_VIEW_STMT;
     case AST_ALTER_PRIVILEGE_RESTRICTION_STATEMENT:
       return RESOLVED_ALTER_PRIVILEGE_RESTRICTION_STMT;
     case AST_ALTER_MODEL_STATEMENT:
@@ -258,6 +274,7 @@ absl::Status GetNextStatementProperties(
     case AST_ALTER_DATABASE_STATEMENT:
     case AST_ALTER_ENTITY_STATEMENT:
     case AST_ALTER_MATERIALIZED_VIEW_STATEMENT:
+    case AST_ALTER_APPROX_VIEW_STATEMENT:
     case AST_ALTER_PRIVILEGE_RESTRICTION_STATEMENT:
     case AST_ALTER_ROW_ACCESS_POLICY_STATEMENT:
     case AST_ALTER_SCHEMA_STATEMENT:
@@ -271,10 +288,10 @@ absl::Status GetNextStatementProperties(
     case AST_CREATE_FUNCTION_STATEMENT:
     case AST_CREATE_INDEX_STATEMENT:
     case AST_CREATE_MATERIALIZED_VIEW_STATEMENT:
+    case AST_CREATE_APPROX_VIEW_STATEMENT:
     case AST_CREATE_MODEL_STATEMENT:
     case AST_CREATE_PROCEDURE_STATEMENT:
     case AST_CREATE_PRIVILEGE_RESTRICTION_STATEMENT:
-    case AST_CREATE_REPLICA_MATERIALIZED_VIEW_STATEMENT:
     case AST_CREATE_ROW_ACCESS_POLICY_STATEMENT:
     case AST_CREATE_SCHEMA_STATEMENT:
     case AST_CREATE_SNAPSHOT_TABLE_STATEMENT:
@@ -291,6 +308,7 @@ absl::Status GetNextStatementProperties(
     case AST_DROP_ROW_ACCESS_POLICY_STATEMENT:
     case AST_DROP_SNAPSHOT_TABLE_STATEMENT:
     case AST_DROP_SEARCH_INDEX_STATEMENT:
+    case AST_DROP_VECTOR_INDEX_STATEMENT:
     case AST_DROP_STATEMENT:
     case AST_UNDROP_STATEMENT:
     case AST_RENAME_STATEMENT:
@@ -319,6 +337,7 @@ absl::Status GetNextStatementProperties(
     case AST_CLONE_DATA_STATEMENT:
     case AST_EXPORT_DATA_STATEMENT:
     case AST_EXPORT_MODEL_STATEMENT:
+    case AST_EXPORT_METADATA_STATEMENT:
     case AST_FOR_IN_STATEMENT:
     case AST_GRANT_STATEMENT:
     case AST_IF_STATEMENT:
