@@ -388,6 +388,18 @@ const (
 	// JSON_TYPE(JSON) functions.
 	FeatureJsonValueExtractionFunctions LanguageFeature = 68
 
+	// Enables LAX_BOOL(JSON), LAX_INT64(JSON), LAX_FLOAT64(JSON), and
+	// LAX_STRING(JSON) functions.
+	FeatureJsonLaxValueExtractionFunctions LanguageFeature = 81
+
+	// Enables JSON_ARRAY, JSON_OBJECT(STRING, ANY, ...), and
+	// JSON_OBJECT(ARRAY<STRING>, ARRAY<ANY>).
+	FeatureJsonConstructorFunctions LanguageFeature = 93
+
+	// Enables JSON_REMOVE, JSON_SET, JSON_STRIP_NULLS, JSON_ARRAY_INSERT,
+	// JSON_ARRAY_APPEND.
+	FeatureJsonMutatorFunctions LanguageFeature = 98
+
 	// Disallows "unicode", "unicode:ci", "unicode:cs" in ORDER BY ... COLLATE and
 	// other collation features. "unicode" is a legacy feature, and the desired
 	// behavior is to allow only "binary" and valid icu language tags.
