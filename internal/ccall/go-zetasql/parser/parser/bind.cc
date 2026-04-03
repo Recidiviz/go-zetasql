@@ -42,7 +42,8 @@
 #define FLAGS_nozetasql_enough_stack_bytes zetasql_parser_parser_FLAGS_nozetasql_enough_stack_bytes
 #define FLAGS_zetasql_canonicalize_signed_zero_to_string zetasql_parser_parser_FLAGS_zetasql_canonicalize_signed_zero_to_string
 #define FLAGS_nozetasql_canonicalize_signed_zero_to_string zetasql_parser_parser_FLAGS_nozetasql_canonicalize_signed_zero_to_string
-#define ZetaSqlFlexTokenizerBase zetasql_parser_parser_ZetaSqlFlexTokenizerBase
+#define FLAGS_zetasql_idstring_allow_unicode_characters zetasql_parser_parser_FLAGS_zetasql_idstring_allow_unicode_characters
+#define FLAGS_nozetasql_idstring_allow_unicode_characters zetasql_parser_parser_FLAGS_nozetasql_idstring_allow_unicode_characters
 #define ZetaSqlFlexLexer zetasql_parser_parser_ZetaSqlFlexLexer
 #define UCaseMap zetasql_parser_parser_UCaseMap
 #define google_2fprotobuf_2fdescriptor_2eproto zetasql_parser_parser_google_2fprotobuf_2fdescriptor_2eproto
@@ -249,17 +250,16 @@
 
 // include sources
 #include "zetasql/parser/ast_node_internal.h"
+#include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
+#include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
 #include "zetasql/parser/bison_parser.cc"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/bison_parser_mode.h"
 #include "zetasql/parser/flex_tokenizer.cc"
-#include "zetasql/parser/flex_tokenizer.h"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
 
 // include dependencies
-#include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
-#include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
 #include "go-zetasql/parser/flex_istream/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"

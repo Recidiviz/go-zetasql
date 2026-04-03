@@ -42,6 +42,8 @@
 #define FLAGS_nozetasql_enough_stack_bytes zetasql_parser_bison_parser_generated_lib_FLAGS_nozetasql_enough_stack_bytes
 #define FLAGS_zetasql_canonicalize_signed_zero_to_string zetasql_parser_bison_parser_generated_lib_FLAGS_zetasql_canonicalize_signed_zero_to_string
 #define FLAGS_nozetasql_canonicalize_signed_zero_to_string zetasql_parser_bison_parser_generated_lib_FLAGS_nozetasql_canonicalize_signed_zero_to_string
+#define FLAGS_zetasql_idstring_allow_unicode_characters zetasql_parser_bison_parser_generated_lib_FLAGS_zetasql_idstring_allow_unicode_characters
+#define FLAGS_nozetasql_idstring_allow_unicode_characters zetasql_parser_bison_parser_generated_lib_FLAGS_nozetasql_idstring_allow_unicode_characters
 #define ZetaSqlFlexTokenizerBase zetasql_parser_bison_parser_generated_lib_ZetaSqlFlexTokenizerBase
 #define ZetaSqlFlexLexer zetasql_parser_bison_parser_generated_lib_ZetaSqlFlexLexer
 #define UCaseMap zetasql_parser_bison_parser_generated_lib_UCaseMap
@@ -232,12 +234,13 @@
 #define GO_EXPORT(def) export_zetasql_parser_bison_parser_generated_lib_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// include headers
+// Generated flex must be first so FlexLexer.h runs before bison_parser.h pulls
+// flex_tokenizer.h (see flex_tokenizer.h yyFlexLexerOnce guard).
 //#define private public
+#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/bison_parser.bison.h"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/flex_tokenizer.h"
 #include "zetasql/parser/join_processor.h"
 #include "zetasql/parser/location.hh"
 #include "zetasql/parser/parser_internal.h"
@@ -247,7 +250,6 @@
 
 // include sources
 #include "zetasql/parser/bison_parser.bison.cc"
-#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/join_processor.cc"
 
 // include dependencies
