@@ -1,5 +1,8 @@
 package protobuf
 
+// Protobuf is compiled via export.inc (single TU). Optional libprotobuf_cgo.a from
+// extract_protobuf_cgo_lib.sh is not linked here by default; see docs/protobuf-vendoring.md.
+
 /*
 #cgo CFLAGS: -x c++
 #cgo CFLAGS: -std=c++17

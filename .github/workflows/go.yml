@@ -12,6 +12,9 @@ jobs:
         os: [ "ubuntu-latest", "macos-latest" ]
         go-version: [ "1.24" ]
     runs-on: ${{ matrix.os }}
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_COMPRESS: "1"
     steps:
     - name: checkout
       uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -22,13 +25,21 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
         cache: true
-    - name: Build protobuf CGO static library (macOS)
+    - name: Install ccache (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ccache
+    - name: Install ccache (macOS)
       if: runner.os == 'macOS'
-      run: |
-        brew install bazelisk
-        bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
+      run: brew install ccache
+    - name: Cache ccache
+      uses: actions/cache@v4
+      with:
+        path: .ccache
+        key: ccache-${{ runner.os }}-${{ hashFiles('go.sum', 'go.mod') }}
+        restore-keys: |
+          ccache-${{ runner.os }}-
     - name: test
       run: go test -race -v ./ -count=1
       env:
-        CC: clang
-        CXX: clang++
+        CC: ccache clang
+        CXX: ccache clang++

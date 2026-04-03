@@ -64,6 +64,16 @@ mkdir -p "$GOCACHE" "$GOMODCACHE"
 
 Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
 
+**GitHub Actions** uses **`ccache clang`** / **`ccache clang++`** with a persisted **`CCACHE_DIR`** so CI gets incremental C++ compiles across runs, similar in spirit to **`make local/build`**.
+
+**Mold (Linux):** The **`go-zetasql:dev`** image installs **`mold`** and sets **`CGO_LDFLAGS=-fuse-ld=mold`**. On Linux hosts, if **`mold`** is on **`PATH`**, **`make local/build`** / **`local/test`** pass the same flag for faster linking.
+
+**Rough cold vs warm timing:** **`make profile-bottleneck`** runs two **`go test -c`** passes and prints **`ccache -s`** (install **`ccache`** locally for stats). Uses **`TESTPKG`** like other targets.
+
+**Optional Bazel protobuf archive (Linux/macOS):** **`make extract-protobuf-lib`** runs [`internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh`](internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh). Default **`bind_*.go`** still uses amalgamation; see [`docs/protobuf-vendoring.md`](docs/protobuf-vendoring.md).
+
+**Large structural changes (deferred):** Merging many CGO packages or switching to a single Bazel-built **`libzetasql.a`** would require a new bridge/export story and profiling evidence; see [`contrib/zetasql.pc.example`](contrib/zetasql.pc.example) and [`Dockerfile.prebaked`](Dockerfile.prebaked) for a future consolidated install prefix / artifact layout.
+
 **Docker-based tests (recommended):** Use **`make test`** or **`make test/linux`** — this builds a slim **`go-zetasql:dev`** image (**`--target dev`**: Go + clang + **ccache** only; no module compile in the image build) and runs **`go test`** with your **working tree** and **`GO_CACHE_ROOT`** (default **`~/.cache/go-zetasql`**) bind-mounted as **`gocache/`**, **`gomodcache/`**, and **`ccache/`** (Clang object cache for CGO). After a cold cache or toolchain change, run **`make docker/warm-cache`** once: it runs **`go test -race`** with **`-run '^$'`** (matches no tests) so you **pre-compile** the same **`-race`** graph without executing tests; later **`test/linux`** stays much faster. Set **`TESTPKG=./...`** to widen scope. **`go-zetasqlite`** and **`bigquery-emulator`** **`make test/linux`** use the same **`GO_CACHE_ROOT`** so the stack shares one warm cache. Host-only **`make local/build`** / **`local/test`** use the same default tree. Rebuild **`go-zetasql:dev`** after Dockerfile changes (**`make docker/build-dev`**). The default **`docker build`** (release image) still runs **`go install`** with BuildKit cache mounts for registry builds; that path is separate from local test caches.
 
 **Downstream Docker images:** `bigquery-emulator` accepts `GO_ZETASQL_BASE` (default: the Recidiviz base image). After building `go-zetasql:dev`, you can point the emulator at it, for example:

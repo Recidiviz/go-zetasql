@@ -132,10 +132,11 @@ After go-zetasql is green:
 2. **[go-zetasqlite](https://github.com/goccy/go-zetasqlite)** — same, after updating the `go-zetasql` module replace/version if needed.
 3. **[bigquery-emulator](https://github.com/goccy/bigquery-emulator)** — same.
 
-### Optional cleanup
+### CI vs optional `libprotobuf_cgo.a`
 
-- Remove or **gitignore** stray build artifacts (e.g. `libprotobuf_cgo.a` under `internal/ccall/go-protobuf/protobuf/lib/` if present).
-- Reconcile [`.github/workflows/go.yml`](../.github/workflows/go.yml) if macOS or static-library steps were added for an abandoned static-archive approach.
+- **Default build:** [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) compile protobuf via **`export.inc`** (single translation unit). This is what **`go test`** uses in [`.github/workflows/go.yml`](../.github/workflows/go.yml).
+- **Optional archive:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) builds **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the ZetaSQL submodule. It runs on **Linux and macOS** when `bazelisk`/`bazel` is available. From the repo root: **`make extract-protobuf-lib`**. The archive is **not** linked by the default `bind_*.go` files (Bazel’s object symbols do not match the **`GO_ZETASQL_PB_EXPORT`** renaming in amalgamation); the script remains for experiments or a future link-only path.
+- **Stray artifacts:** `*.a` is gitignored globally; local `lib/` trees from the extract script need not be committed.
 
 ### Risk notes
 
@@ -217,5 +218,4 @@ These are **not** fixed by protobuf amalgamation alone; treat them as separate u
 
 ### Optional cleanup
 
-- No `libprotobuf_cgo.a` was present under `internal/ccall/go-protobuf/protobuf/lib/` in a typical tree; add to **`.gitignore`** if it appears from local experiments.
-- Reconcile **[`.github/workflows/go.yml`](../.github/workflows/go.yml)** with the amalgamation-only CGO approach if macOS or static-archive steps are obsolete.
+- Prefer relying on the global **`*.a`** ignore rule rather than per-path gitignore entries for extract-script output under `internal/ccall/go-protobuf/protobuf/lib/`.

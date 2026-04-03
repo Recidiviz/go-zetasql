@@ -29,6 +29,9 @@ GO_BUILD_P ?= $(shell \
 	if [ "$$P" -gt "$$MAX" ] 2>/dev/null; then P=$$MAX; fi; \
 	echo "$$P")
 
+# When `mold` is on PATH (e.g. go-zetasql:dev image), speed up the final link step.
+MOLD_LD := $(shell command -v mold >/dev/null 2>&1 && echo -fuse-ld=mold)
+
 DOCKER_DEV_ENV := \
 	-e CGO_ENABLED=1 \
 	-e CC=clang \
@@ -43,7 +46,7 @@ DOCKER_DEV_VOLUMES := \
 	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
 
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
-	local/build local/test \
+	local/build local/test profile-bottleneck extract-protobuf-lib \
 	test test/linux test-docker
 
 cache-dirs:
@@ -64,6 +67,7 @@ docker/build-dev: cache-dirs
 # Example: make local/build BUILDPKG=./internal/ccall/go-zetasql
 local/build: cache-dirs
 	CGO_ENABLED=1 \
+	$(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD)) \
 	CC="ccache clang" \
 	CXX="ccache clang++" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -75,6 +79,7 @@ local/build: cache-dirs
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
 local/test: cache-dirs
 	CGO_ENABLED=1 \
+	$(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD)) \
 	CC="ccache clang" \
 	CXX="ccache clang++" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -82,6 +87,28 @@ local/test: cache-dirs
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go test -p "$(GO_BUILD_P)" -tags zetasql -v $(TESTPKG) -count=1
+
+# Rough cold vs warm timing + ccache stats. Uses TESTPKG (default ./). Requires ccache + clang on PATH.
+profile-bottleneck: cache-dirs
+	@echo "=== ccache stats (before) ==="; ccache -s 2>/dev/null || echo "(install ccache for stats)"
+	@echo "=== cold: zero ccache counters ==="; ccache -z 2>/dev/null || true
+	@echo "=== cold: compile test binary ==="; \
+		time env CGO_ENABLED=1 $(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD),) \
+		CC="ccache clang" CXX="ccache clang++" \
+		CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" CCACHE_COMPRESS=1 \
+		GOCACHE="$(GO_CACHE_ROOT)/gocache" GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+		go test -count=1 -c -o /dev/null $(TESTPKG)
+	@echo "=== warm: compile again ==="; \
+		time env CGO_ENABLED=1 $(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD),) \
+		CC="ccache clang" CXX="ccache clang++" \
+		CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" CCACHE_COMPRESS=1 \
+		GOCACHE="$(GO_CACHE_ROOT)/gocache" GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+		go test -count=1 -c -o /dev/null $(TESTPKG)
+	@echo "=== ccache stats (after) ==="; ccache -s 2>/dev/null || true
+
+# Optional: build libprotobuf_cgo.a via Bazel (Linux/macOS). Not used by default bind_*.go (amalgamation).
+extract-protobuf-lib:
+	bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
 
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
 # populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.

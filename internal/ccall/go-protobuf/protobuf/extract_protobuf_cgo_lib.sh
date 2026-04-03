@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Build @com_google_protobuf//:protobuf with Bazel in the ZetaSQL submodule, then merge all
 # non-test .pic.o objects (plus utf8_range) into lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a.
+#
+# Runs on Linux and macOS when bazelisk/bazel is installed. Default CGO bindings still compile
+# protobuf via amalgamation (export.inc); this archive is for experiments or a future link-only
+# path — see docs/protobuf-vendoring.md.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
