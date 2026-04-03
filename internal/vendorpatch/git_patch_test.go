@@ -70,6 +70,16 @@ func TestApplyProtobufGitPatches_appliesInSortedOrder(t *testing.T) {
 	if string(got) != want {
 		t.Fatalf("got %q want %q", string(got), want)
 	}
+	if err := ApplyProtobufGitPatches(dir); err != nil {
+		t.Fatalf("second apply (already patched): %v", err)
+	}
+	got2, err := os.ReadFile(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got2) != want {
+		t.Fatalf("after second apply got %q want %q", string(got2), want)
+	}
 }
 
 func TestApplyProtobufGitPatches_applyError(t *testing.T) {
@@ -86,8 +96,9 @@ func TestApplyProtobufGitPatches_applyError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error")
 	}
-	if !strings.Contains(err.Error(), "bad.patch") {
-		t.Fatalf("error should mention patch name: %v", err)
+	errStr := err.Error()
+	if !strings.Contains(errStr, "patches") && !strings.Contains(errStr, "patch") {
+		t.Fatalf("expected error about patch application: %v", err)
 	}
 }
 

@@ -76,7 +76,9 @@ assume **mixed revisions or incomplete post-copy patching** first. Re-copy a sin
 
 ## Git patches (beyond amalgamation)
 
-Optional unified diffs live under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md). [`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) runs **`git apply`** on each `*.patch` in **sorted filename order** (use numeric prefixes, e.g. `01-extension-set.patch`) **after** amalgamation guards are applied. Patches must use paths relative to the **repository root** (as in `git diff` from the repo root). If a patch no longer applies after a protobuf refresh, refresh the hunk from your edited tree or remove the patch if upstream absorbed the change—context drift is expected occasionally.
+Optional unified diffs live under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md). The main bundle is **`01-vendor-delta.patch`**, capturing the full delta between **upstream protobuf (from the updater cache) + amalgamation** and the vendored tree; regenerate it with **[`scripts/gen-protobuf-vendor-patches.sh`](../scripts/gen-protobuf-vendor-patches.sh)** when you change vendored sources or the cache pin.
+
+[`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) runs **`git apply`** on each `*.patch` in **sorted filename order** (use numeric prefixes for extra slices) **after** amalgamation guards are applied. Patches must use paths relative to the **repository root** (as in `git diff` from the repo root). If a patch no longer applies after a protobuf refresh, refresh the hunk from your edited tree or remove the patch if upstream absorbed the change—context drift is expected occasionally.
 
 ---
 

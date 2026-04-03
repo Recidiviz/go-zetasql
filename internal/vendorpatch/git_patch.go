@@ -1,6 +1,7 @@
 package vendorpatch
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -11,10 +12,13 @@ import (
 
 // ApplyProtobufGitPatches runs git apply on each *.patch file in
 // internal/ccall/protobuf/patches/ under repoRoot, in sorted filename order.
-// Patches must be unified diffs with paths relative to the repository root
+// All patches are concatenated and applied as one stream so idempotency works
+// when multiple patches touch the same files. Patches must be unified diffs with
+// paths relative to the repository root
 // (e.g. internal/ccall/protobuf/google/protobuf/foo.h). If the patches
 // directory is missing or contains no .patch files, it returns nil.
-// Requires git on PATH.
+// Re-applying on a tree that already contains the patch is a no-op (detected
+// via git apply --reverse --check on the combined patch). Requires git on PATH.
 func ApplyProtobufGitPatches(repoRoot string) error {
 	dir := filepath.Join(repoRoot, "internal", "ccall", "protobuf", "patches")
 	entries, err := os.ReadDir(dir)
@@ -37,18 +41,43 @@ func ApplyProtobufGitPatches(repoRoot string) error {
 		return nil
 	}
 	sort.Strings(names)
+
+	var combined bytes.Buffer
 	for _, name := range names {
-		patchPath := filepath.Join(dir, name)
-		if err := gitApply(repoRoot, patchPath, name); err != nil {
-			return err
+		p := filepath.Join(dir, name)
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return fmt.Errorf("vendorpatch: read %s: %w", name, err)
+		}
+		combined.Write(b)
+		if !bytes.HasSuffix(b, []byte("\n")) {
+			combined.WriteByte('\n')
 		}
 	}
-	return nil
+
+	return gitApplyCombined(repoRoot, combined.Bytes(), "patches/*.patch")
 }
 
-func gitApply(repoRoot, patchPath, displayName string) error {
-	cmd := exec.Command("git", "apply", "--whitespace=nowarn", patchPath)
+func gitApplyCombined(repoRoot string, patch []byte, displayName string) error {
+	cmdCheck := exec.Command("git", "apply", "--check", "-")
+	cmdCheck.Dir = repoRoot
+	cmdCheck.Stdin = bytes.NewReader(patch)
+	if err := cmdCheck.Run(); err == nil {
+		return gitApplyCombinedForward(repoRoot, patch, displayName)
+	}
+	cmdRev := exec.Command("git", "apply", "--reverse", "--check", "-")
+	cmdRev.Dir = repoRoot
+	cmdRev.Stdin = bytes.NewReader(patch)
+	if err := cmdRev.Run(); err == nil {
+		return nil
+	}
+	return gitApplyCombinedForward(repoRoot, patch, displayName)
+}
+
+func gitApplyCombinedForward(repoRoot string, patch []byte, displayName string) error {
+	cmd := exec.Command("git", "apply", "--whitespace=nowarn", "-")
 	cmd.Dir = repoRoot
+	cmd.Stdin = bytes.NewReader(patch)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		msg := strings.TrimSpace(string(out))
