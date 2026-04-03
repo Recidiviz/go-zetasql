@@ -52,6 +52,8 @@ The first time you run it, it takes time to build all the ZetaSQL code used by g
 
 ## Development
 
+**Fast path (stack work):** `make docker/build-dev` in this repo → optional `make docker/warm-cache` → use the same **`GO_CACHE_ROOT`** (default `~/.cache/go-zetasql`) when running **`make test/linux`** in sibling checkouts **`go-zetasqlite`** and **`bigquery-emulator`**. Those READMEs document **`GO_CACHE_ROOT`**, **ccache**, **mold** (Linux), and optional warm-up for host and Docker workflows.
+
 **Sequential tests (multi-repo):** If you work in `go-zetasql`, `go-zetasqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.
 
 **Reuse local compile cache:** Point the same Go caches at all three checkouts so `go-zetasql` objects are not rebuilt for every downstream test:
