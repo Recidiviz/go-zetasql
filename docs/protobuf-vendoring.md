@@ -42,7 +42,11 @@ This file is **not** copied from upstream; treat it as part of the go-zetasql em
 | ZetaSQL | `internal/ccall/zetasql/public/types/BUILD` | Appends a missing proto dependency line if absent. |
 | ZetaSQL | `internal/ccall/zetasql/public/functions/date_time_util.cc` | Restores an `#undef FCT` after a specific `MakeEvalError` block when missing. |
 
-**Gap (high value for automation):** protobuf **`port_def.inc` / `port_undef.inc` amalgamation guards are not re-applied here.** Any full refresh of `com_google_protobuf` should either run a dedicated post-step (see below) or be followed by a manual re-application of those wrappers.
+**Protobuf amalgamation:** after `applyPostCopyOverlays()`, the updater runs **`go run ./internal/cmd/vendorpatch`** from the repository root (the nested updater module cannot import [`internal/vendorpatch`](../internal/vendorpatch/amalgamation.go) directly). That applies [`ApplyProtobufAmalgamationPatches()`](../internal/vendorpatch/amalgamation.go) to [`port_def.inc`](../internal/ccall/protobuf/google/protobuf/port_def.inc) and [`port_undef.inc`](../internal/ccall/protobuf/google/protobuf/port_undef.inc), restoring the `GO_ZETASQL_PROTOBUF_AMALGAMATION_*` guards when a full copy has removed them. The patch is **idempotent** (if the markers are already present, files are unchanged). Anchors rely on stable upstream comment lines; if a future protobuf release rewrites those headers, update the anchors in [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go) (and the tests).
+
+**Standalone:** after a manual protobuf tree copy (without running the full updater), from the repo root run **`go run ./internal/cmd/vendorpatch`** or **[`scripts/apply-vendor-patches.sh`](../scripts/apply-vendor-patches.sh)** to apply the same logic.
+
+**Still manual:** larger protobuf deltas (e.g. `ExtensionSet` / table-driven compatibility) remain a review-and-merge checklist—see **Local deltas that may track upstream over time** below and the runbook section.
 
 ## Local deltas that may track upstream over time
 
@@ -60,25 +64,19 @@ If you see errors such as:
 - missing `PROTOBUF_*` macros or duplicate definitions from `port_def.inc`,
 - missing or duplicate symbols in `ExtensionSet` / table-driven parsing,
 
-assume **mixed revisions or incomplete post-copy patching** first. Re-copy a single protobuf tree, re-apply amalgamation guards, and regenerate or re-copy generated protos consistently.
+assume **mixed revisions or incomplete post-copy patching** first. Re-copy a single protobuf tree, run **`go run ./internal/cmd/vendorpatch`** (or the updater) to restore amalgamation guards on `port_def.inc` / `port_undef.inc`, and regenerate or re-copy generated protos consistently.
 
 ## Upgrade playbook
 
 1. Update the updater **cache** / pins so `com_google_protobuf` matches the ZetaSQL release you target.
 2. Run the updater with `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when **preserving** local protobuf edits, or unset it when **forcing** a full refresh from cache.
-3. Re-apply **amalgamation** patches to `port_def.inc` and `port_undef.inc` (or implement automation; see below).
+3. The updater applies **amalgamation** patches to `port_def.inc` and `port_undef.inc` automatically; if you skipped the updater, run `go run ./internal/cmd/vendorpatch` (or `scripts/apply-vendor-patches.sh`).
 4. Run `CGO_ENABLED=1 go test -count=1 ./internal/ccall/go-protobuf/protobuf/`, then broader tests as needed.
 5. Inspect `extension_set*` and any other files previously touched for merge duplication or API drift.
 
-## Future automation options
+## Future automation options (optional)
 
-These are implementation choices for maintainers; none are required for a correct manual process.
-
-| Approach | Idea | Tradeoffs |
-|----------|------|-----------|
-| **A. Updater hooks** | Add e.g. `applyProtobufAmalgamationPatches()` next to `applyPostCopyOverlays()`, using the same idempotent `replaceIfMissing` / `appendLineIfMissing` style. | Stable if anchored on unique substrings; must be updated if upstream rewrites those anchors. |
-| **B. Patch files** | Store `git apply`/`patch -p1` patches under e.g. `internal/ccall/protobuf/patches/`. | Breaks when upstream context shifts; good for reviewable, explicit diffs. |
-| **C. Anchor-based script** | Rewrite using stable comments (e.g. the “no include guard” paragraph in `port_def.inc`) rather than line numbers. | More resilient than line-based edits; still needs tests when protobuf changes structure. |
+For edits **beyond** `port_def.inc` / `port_undef.inc` guards, maintainers may still use explicit **`git apply`** patches under e.g. `internal/ccall/protobuf/patches/` for reviewable diffs, at the cost of rebasing when upstream context shifts.
 
 ---
 
@@ -145,7 +143,7 @@ After go-zetasql is green:
 
 ---
 
-**Related code**: updater [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`copyExternalLibMapForRun`, `applyPostCopyOverlays`, `copyExternalLibMap`).
+**Related code**: updater [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) (`copyExternalLibMapForRun`, `applyPostCopyOverlays`, `runVendorpatchCLI`, `copyExternalLibMap`); patch helpers [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go), CLI [`internal/cmd/vendorpatch`](../internal/cmd/vendorpatch/main.go).
 
 ---
 
@@ -184,7 +182,7 @@ cd ../generator
 go run .
 ```
 
-After any **`com_google_protobuf` full copy**, re-apply at minimum: **`port_def.inc` / `port_undef.inc` amalgamation guards**, **`export.inc`**, and the rows in the table above if upstream still omits them.
+After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then validate **`export.inc`** and the rows in the table above if upstream still omits those edits.
 
 **Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later zetasql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** The amalgamation must **not** redefine the host `bind.cc` **`GO_EXPORT`** (ICU’s `U_ICU_ENTRY_POINT_RENAME` depends on it); protobuf symbol wrapping in this file uses **`GO_ZETASQL_PB_EXPORT(sym)`** (`export_protobuf_##sym`) instead.
 

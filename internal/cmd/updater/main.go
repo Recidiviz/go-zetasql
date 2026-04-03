@@ -4,6 +4,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -252,4 +253,19 @@ func main() {
 	if err := applyPostCopyOverlays(); err != nil {
 		panic(err)
 	}
+	if err := runVendorpatchCLI(); err != nil {
+		panic(err)
+	}
+}
+
+// runVendorpatchCLI applies protobuf amalgamation patches via the root module's
+// internal/cmd/vendorpatch (same logic as scripts/apply-vendor-patches.sh). The
+// updater lives in a nested module and cannot import internal/vendorpatch directly.
+func runVendorpatchCLI() error {
+	cmd := exec.Command("go", "run", filepath.Join(repoRootDir(), "internal/cmd/vendorpatch"))
+	cmd.Dir = repoRootDir()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Env = os.Environ()
+	return cmd.Run()
 }
