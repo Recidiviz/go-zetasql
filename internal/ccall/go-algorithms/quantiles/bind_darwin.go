@@ -8,7 +8,7 @@ package quantiles
 #cgo CXXFLAGS: -I../../gtest
 #cgo CXXFLAGS: -I../../icu
 #cgo CXXFLAGS: -I../../re2
-#cgo CXXFLAGS: -I${SRCDIR}/../../json
+#cgo CXXFLAGS: -I../../json
 #cgo CXXFLAGS: -I../../googleapis
 #cgo CXXFLAGS: -I../../boringssl
 #cgo CXXFLAGS: -I../../flex/src
@@ -24,6 +24,7 @@ package quantiles
 #cgo CXXFLAGS: -Wno-enum-compare-switch
 #cgo CXXFLAGS: -Wno-return-type
 #cgo CXXFLAGS: -Wno-subobject-linkage
+#cgo CXXFLAGS: -Wno-defaulted-function-deleted
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION

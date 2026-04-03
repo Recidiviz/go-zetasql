@@ -20,6 +20,7 @@ package protobuf
 #cgo CFLAGS: -Wno-enum-compare-switch
 #cgo CFLAGS: -Wno-return-type
 #cgo CFLAGS: -Wno-subobject-linkage
+#cgo CFLAGS: -Wno-defaulted-function-deleted
 #cgo CFLAGS: -Wno-unknown-warning-option
 #cgo CFLAGS: -DHAVE_PTHREAD
 #cgo CFLAGS: -DHAVE_ZLIB
@@ -31,6 +32,7 @@ package protobuf
 #cgo CXXFLAGS: -I${SRCDIR}/../../icu
 #cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
 #cgo CXXFLAGS: -Wno-macro-redefined
+#cgo CXXFLAGS: -Wno-defaulted-function-deleted
 #cgo LDFLAGS: -ldl -lz -lstdc++
 
 #include "export.inc"

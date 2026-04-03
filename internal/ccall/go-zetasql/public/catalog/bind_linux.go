@@ -26,6 +26,7 @@ package catalog
 #cgo CXXFLAGS: -Wno-enum-compare-switch
 #cgo CXXFLAGS: -Wno-return-type
 #cgo CXXFLAGS: -Wno-subobject-linkage
+#cgo CXXFLAGS: -Wno-defaulted-function-deleted
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
@@ -38,7 +39,6 @@ package catalog
 import "C"
 import (
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
-	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql"
 	"unsafe"
 )
 
@@ -63,118 +63,6 @@ func GoTable_new(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 func catalog_GoTable_new(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	C.export_zetasql_public_catalog_GoTable_new(arg0, arg1)
 }
-
-//export GoCatalog_FullName
-//go:linkname GoCatalog_FullName github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FullName
-func GoCatalog_FullName(v unsafe.Pointer) *C.char
-
-//export GoCatalog_FindTable
-//go:linkname GoCatalog_FindTable github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindTable
-func GoCatalog_FindTable(v unsafe.Pointer, pathPtr unsafe.Pointer, table *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindModel
-//go:linkname GoCatalog_FindModel github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindModel
-func GoCatalog_FindModel(v unsafe.Pointer, pathPtr unsafe.Pointer, model *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindConnection
-//go:linkname GoCatalog_FindConnection github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindConnection
-func GoCatalog_FindConnection(v unsafe.Pointer, pathPtr unsafe.Pointer, conn *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindFunction
-//go:linkname GoCatalog_FindFunction github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindFunction
-func GoCatalog_FindFunction(v unsafe.Pointer, pathPtr unsafe.Pointer, fn *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindTableValuedFunction
-//go:linkname GoCatalog_FindTableValuedFunction github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindTableValuedFunction
-func GoCatalog_FindTableValuedFunction(v unsafe.Pointer, pathPtr unsafe.Pointer, fn *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindProcedure
-//go:linkname GoCatalog_FindProcedure github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindProcedure
-func GoCatalog_FindProcedure(v unsafe.Pointer, pathPtr unsafe.Pointer, proc *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindType
-//go:linkname GoCatalog_FindType github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindType
-func GoCatalog_FindType(v unsafe.Pointer, pathPtr unsafe.Pointer, typ *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindConstant
-//go:linkname GoCatalog_FindConstant github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindConstant
-func GoCatalog_FindConstant(v unsafe.Pointer, pathPtr unsafe.Pointer, numNamesConsumed *C.int, constant *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_FindConversion
-//go:linkname GoCatalog_FindConversion github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_FindConversion
-func GoCatalog_FindConversion(v unsafe.Pointer, from unsafe.Pointer, to unsafe.Pointer, conv *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_ExtendedTypeSuperTypes
-//go:linkname GoCatalog_ExtendedTypeSuperTypes github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_ExtendedTypeSuperTypes
-func GoCatalog_ExtendedTypeSuperTypes(v unsafe.Pointer, typ unsafe.Pointer, list *unsafe.Pointer, ret **C.char)
-
-//export GoCatalog_SuggestTable
-//go:linkname GoCatalog_SuggestTable github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_SuggestTable
-func GoCatalog_SuggestTable(v unsafe.Pointer, pathPtr unsafe.Pointer) *C.char
-
-//export GoCatalog_SuggestModel
-//go:linkname GoCatalog_SuggestModel github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_SuggestModel
-func GoCatalog_SuggestModel(v unsafe.Pointer, pathPtr unsafe.Pointer) *C.char
-
-//export GoCatalog_SuggestFunction
-//go:linkname GoCatalog_SuggestFunction github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_SuggestFunction
-func GoCatalog_SuggestFunction(v unsafe.Pointer, pathPtr unsafe.Pointer) *C.char
-
-//export GoCatalog_SuggestTableValuedFunction
-//go:linkname GoCatalog_SuggestTableValuedFunction github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_SuggestTableValuedFunction
-func GoCatalog_SuggestTableValuedFunction(v unsafe.Pointer, pathPtr unsafe.Pointer) *C.char
-
-//export GoCatalog_SuggestConstant
-//go:linkname GoCatalog_SuggestConstant github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoCatalog_SuggestConstant
-func GoCatalog_SuggestConstant(v unsafe.Pointer, pathPtr unsafe.Pointer) *C.char
-
-//export GoTable_Name
-//go:linkname GoTable_Name github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_Name
-func GoTable_Name(v unsafe.Pointer) *C.char
-
-//export GoTable_FullName
-//go:linkname GoTable_FullName github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_FullName
-func GoTable_FullName(v unsafe.Pointer) *C.char
-
-//export GoTable_NumColumns
-//go:linkname GoTable_NumColumns github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_NumColumns
-func GoTable_NumColumns(v unsafe.Pointer) C.int
-
-//export GoTable_Column
-//go:linkname GoTable_Column github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_Column
-func GoTable_Column(v unsafe.Pointer, idx C.int) unsafe.Pointer
-
-//export GoTable_PrimaryKey
-//go:linkname GoTable_PrimaryKey github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_PrimaryKey
-func GoTable_PrimaryKey(v unsafe.Pointer) unsafe.Pointer
-
-//export GoTable_FindColumnByName
-//go:linkname GoTable_FindColumnByName github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_FindColumnByName
-func GoTable_FindColumnByName(v unsafe.Pointer, name *C.char) unsafe.Pointer
-
-//export GoTable_IsValueTable
-//go:linkname GoTable_IsValueTable github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_IsValueTable
-func GoTable_IsValueTable(v unsafe.Pointer) C.int
-
-//export GoTable_SerializationID
-//go:linkname GoTable_SerializationID github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_SerializationID
-func GoTable_SerializationID(v unsafe.Pointer) C.int64_t
-
-//export GoTable_CreateEvaluatorTableIterator
-//go:linkname GoTable_CreateEvaluatorTableIterator github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_CreateEvaluatorTableIterator
-func GoTable_CreateEvaluatorTableIterator(v unsafe.Pointer, columnIdxsPtr unsafe.Pointer, iter *unsafe.Pointer, ret **C.char)
-
-//export GoTable_AnonymizationInfo
-//go:linkname GoTable_AnonymizationInfo github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_AnonymizationInfo
-func GoTable_AnonymizationInfo(v unsafe.Pointer) unsafe.Pointer
-
-//export GoTable_SupportsAnonymization
-//go:linkname GoTable_SupportsAnonymization github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_SupportsAnonymization
-func GoTable_SupportsAnonymization(v unsafe.Pointer) C.int
-
-//export GoTable_TableTypeName
-//go:linkname GoTable_TableTypeName github.com/goccy/go-zetasql/internal/ccall/go-zetasql.GoTable_TableTypeName
-func GoTable_TableTypeName(v unsafe.Pointer, mode C.int) *C.char
 
 //export export_zetasql_public_catalog_cctz_FixedOffsetFromName
 //go:linkname export_zetasql_public_catalog_cctz_FixedOffsetFromName github.com/goccy/go-zetasql/internal/ccall/go-absl/time/go_internal/cctz/time_zone.time_zone_cctz_FixedOffsetFromName

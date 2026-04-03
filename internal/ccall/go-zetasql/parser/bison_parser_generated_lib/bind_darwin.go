@@ -24,6 +24,7 @@ package bison_parser_generated_lib
 #cgo CXXFLAGS: -Wno-enum-compare-switch
 #cgo CXXFLAGS: -Wno-return-type
 #cgo CXXFLAGS: -Wno-subobject-linkage
+#cgo CXXFLAGS: -Wno-defaulted-function-deleted
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
