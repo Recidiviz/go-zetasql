@@ -27,6 +27,7 @@
 #define yyFlexLexer S1_FlexLexer
 #include <FlexLexer.h>
 
+#undef yyFlexLexerOnce
 #undef yyFlexLexer
 #define yyFlexLexer S2_FlexLexer
 #include <FlexLexer.h>

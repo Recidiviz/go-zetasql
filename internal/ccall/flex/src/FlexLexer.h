@@ -108,10 +108,12 @@ protected:
 }
 #endif // FLEXLEXER_H
 
-#if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
-// Either this is the first time through (yyFlexLexerOnce not defined),
-// or this is a repeated include to define a different flavor of
-// yyFlexLexer, as discussed in the flex manual.
+// Emit at most one yyFlexLexer-derived class per include stack unless the
+// caller #undef yyFlexLexerOnce before a new #define yyFlexLexer / #include
+// (multi-scanner). The stock flex condition also used defined(yyFlexLexer),
+// which re-emits the class on every #include while yyFlexLexer stays defined,
+// breaking amalgamations that include FlexLexer.h twice for the same lexer.
+#if ! defined(yyFlexLexerOnce)
 # define yyFlexLexerOnce
 
 extern "C++" {
@@ -217,4 +219,4 @@ protected:
 
 }
 
-#endif // yyFlexLexer || ! yyFlexLexerOnce
+#endif // ! yyFlexLexerOnce
