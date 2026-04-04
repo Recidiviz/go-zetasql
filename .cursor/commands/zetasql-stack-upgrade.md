@@ -1,5 +1,7 @@
 **Cursor:** Use the slash command **`/zetasql-stack-upgrade`** to insert this prompt in chat or Agent.
 
+**Required — Plan mode:** The **user** must switch this conversation to **Plan** mode before you proceed with any repo edits, submodule bumps, or test runs. Stay in Plan mode until there is an agreed upgrade plan (tag, `from`/`to`, branch names, and order of operations); only then switch to Agent mode to execute. If the session is not in Plan mode, stop and ask the user to enable Plan mode first.
+
 This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator** to a new ZetaSQL/googlesql release tag. It covers upstream delta review, submodule bump, protobuf-safe regeneration, builtin parity, emulator integration tests, and sequential CGO test runs. Take the target **tag** from the user in this chat (canonical `YYYY.MM.P`, e.g. `2023.09.1`); normalize input (strip `v`, collapse spaces). Follow the phases below in order; downstream assumes upstream is green.
 
 # ZetaSQL stack upgrade
@@ -8,6 +10,7 @@ End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and
 
 ## Triggers and inputs
 
+- **Cursor Plan mode (mandatory):** User has enabled **Plan** mode for this chat before starting; agent does not begin Phase 0+ implementation until planning is complete and mode allows execution.
 - **Phrases:** `zetasql-upgrade to <tag>`, `upgrade zetasql to <tag>`, `bump googlesql to <tag>`.
 - **Required:** Target **tag** (canonical form `YYYY.MM.P`, e.g. `2023.09.1`). Normalize user input (strip `v`, collapse spaces) to that form.
 - **Optional `from` tag:** If omitted, derive from the current submodule commit in [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) (`git describe --tags`) or from the latest [docs/googlesql-upgrade-delta-*.md](../../docs/) baseline.
