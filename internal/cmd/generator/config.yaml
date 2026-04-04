@@ -366,6 +366,11 @@ exclude_zetasql_dirs:
   - proto/accounting
   - proto/testing
 
+add_sources:
+  # bison_parser.bison.cc references flex helpers implemented in flex_tokenizer.cc; include after bison.
+  - file: zetasql/parser/bison_parser.bison.cc
+    source: zetasql/parser/flex_tokenizer.cc
+
 protobuf_internal_export_name_files:
   - protobuf/google/protobuf/descriptor.pb.h
   - protobuf/google/protobuf/timestamp.pb.h
@@ -397,6 +402,37 @@ cclib:
     - pkg: absl/types/optional
       headers:
         - absl/types/internal/optional.h
+    # flex_tokenizer.flex.cc / flex_tokenizer.cc already pull in the tokenizer interface.
+    - pkg: zetasql/parser/bison_parser_generated_lib
+      headers:
+        - zetasql/parser/flex_tokenizer.h
+  # Generated flex is pulled in before headers (see bind_cc_prelude_before_headers); omit from // include sources.
+  exclude_amalgamation_sources:
+    - pkg: zetasql/parser/bison_parser_generated_lib
+      sources:
+        - zetasql/parser/flex_tokenizer.flex.cc
+    # flex_tokenizer.cc includes flex_tokenizer.h; omit duplicate amalgamation include.
+    - pkg: zetasql/parser/parser
+      sources:
+        - zetasql/parser/flex_tokenizer.h
+  bind_cc_prelude_before_headers:
+    - pkg: zetasql/parser/bison_parser_generated_lib
+      lines: |
+        #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+        #include "zetasql/parser/flex_tokenizer.flex.cc"
+        #undef ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+  symbol_define_overrides:
+    - pkg: zetasql/parser/bison_parser_generated_lib
+      symbol: ZetaSqlFlexTokenizerBase
+      replacement: zetasql_parser_parser_ZetaSqlFlexTokenizerBase
+      comment: Must match parser/bind.cc so flex base symbols resolve in the parser package.
+  # id_string / unicode_utils flags — only the parser amalgamation needs these defines.
+  inject_replace_names:
+    - pkg: zetasql/parser/parser
+      after: FLAGS_nozetasql_canonicalize_signed_zero_to_string
+      names:
+        - FLAGS_zetasql_idstring_allow_unicode_characters
+        - FLAGS_nozetasql_idstring_allow_unicode_characters
 
 protoc:
   - name: zetasql/resolved_ast/serialization_cc_proto

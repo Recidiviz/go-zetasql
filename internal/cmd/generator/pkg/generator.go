@@ -576,13 +576,20 @@ func (g *Generator) generateGoSourceByTemplate(tmplPath string, param interface{
 	return buf, nil
 }
 
+type ReplaceNameEntry struct {
+	Name              string
+	CustomReplacement string // if set, emit #define Name CustomReplacement (else fqdn_Name)
+	Comment           string // optional // line before a custom #define
+}
+
 type BindCCParam struct {
-	FQDN         string
-	PkgPath      string
-	ReplaceNames []string
-	Headers      []string
-	Sources      []SourceParam
-	Deps         []string
+	FQDN                 string
+	PkgPath              string
+	ReplaceNameEntries   []ReplaceNameEntry
+	PreludeBeforeHeaders string // optional; before "// include headers"
+	Headers              []string
+	Sources              []SourceParam
+	Deps                 []string
 }
 
 type SourceParam struct {
@@ -611,6 +618,89 @@ func (g *Generator) amalgamationExcludePaths(lib *Lib) map[string]struct{} {
 	return exclude
 }
 
+// amalgamationExcludeSourcePaths returns source paths to omit from bind.cc for a Bazel lib.
+func (g *Generator) amalgamationExcludeSourcePaths(lib *Lib) map[string]struct{} {
+	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	var exclude map[string]struct{}
+	for _, ex := range g.cfg.CCLib.ExcludeAmalgamationSources {
+		if ex.Pkg != pkgKey {
+			continue
+		}
+		if exclude == nil {
+			exclude = map[string]struct{}{}
+		}
+		for _, s := range ex.Sources {
+			exclude[s] = struct{}{}
+		}
+	}
+	return exclude
+}
+
+func bindCCPreludeBeforeHeaders(cfg *Config, lib *Lib) string {
+	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	for _, ph := range cfg.CCLib.BindCCPreludeBeforeHeaders {
+		if ph.Pkg != pkgKey {
+			continue
+		}
+		s := strings.TrimSpace(ph.Lines)
+		if s == "" {
+			return ""
+		}
+		// Blank line before "// include headers" matches hand-curated bind.cc layout.
+		return s + "\n\n"
+	}
+	return ""
+}
+
+func (g *Generator) buildReplaceNameEntries(pkgKey string) []ReplaceNameEntry {
+	names := append(
+		append(
+			append([]string{}, g.cfg.TopLevelNamespaces...),
+			g.cfg.GlobalSymbols...,
+		),
+		g.internalExportNames...,
+	)
+	for _, inj := range g.cfg.CCLib.InjectReplaceNames {
+		if inj.Pkg != pkgKey {
+			continue
+		}
+		idx := -1
+		for i, n := range names {
+			if n == inj.After {
+				idx = i
+				break
+			}
+		}
+		if idx < 0 {
+			log.Fatalf("inject_replace_names: after symbol %q not found for pkg %s", inj.After, pkgKey)
+		}
+		inserted := append([]string{}, names[:idx+1]...)
+		inserted = append(inserted, inj.Names...)
+		inserted = append(inserted, names[idx+1:]...)
+		names = inserted
+	}
+	overrideBySymbol := map[string]SymbolDefineOverride{}
+	for _, o := range g.cfg.CCLib.SymbolDefineOverrides {
+		if o.Pkg != pkgKey {
+			continue
+		}
+		overrideBySymbol[o.Symbol] = o
+	}
+	out := make([]ReplaceNameEntry, 0, len(names))
+	for _, name := range names {
+		if o, ok := overrideBySymbol[name]; ok {
+			out = append(out, ReplaceNameEntry{
+				Name:              name,
+				CustomReplacement: o.Replacement,
+				Comment:           o.Comment,
+			})
+			continue
+		}
+		out = append(out, ReplaceNameEntry{Name: name})
+	}
+	return out
+}
+
 func filterStrings(paths []string, exclude map[string]struct{}) []string {
 	if exclude == nil {
 		return paths
@@ -631,17 +721,14 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	basePrefix := sanitizeIdentifier(strings.ReplaceAll(lib.BasePkg, "/", "_"))
 	param.FQDN = fmt.Sprintf("%s_%s", basePrefix, sanitizeIdentifier(lib.Name))
 	param.PkgPath = lib.BasePkg
-	param.ReplaceNames = append(
-		append(
-			append([]string{}, g.cfg.TopLevelNamespaces...),
-			g.cfg.GlobalSymbols...,
-		),
-		g.internalExportNames...,
-	)
+	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	param.ReplaceNameEntries = g.buildReplaceNameEntries(pkgKey)
+	param.PreludeBeforeHeaders = bindCCPreludeBeforeHeaders(g.cfg, lib)
 	excludeAmalg := g.amalgamationExcludePaths(lib)
+	excludeSrc := g.amalgamationExcludeSourcePaths(lib)
 	param.Headers = filterStrings(lib.HeaderPaths(), excludeAmalg)
 	sources := make([]SourceParam, 0, len(lib.Sources))
-	for _, src := range filterStrings(lib.SourcePaths(), excludeAmalg) {
+	for _, src := range filterStrings(filterStrings(lib.SourcePaths(), excludeAmalg), excludeSrc) {
 		sourceParam := SourceParam{Value: src}
 		if symbols, exists := g.containsConflictSymbolFileMap[src]; exists {
 			for _, symbol := range symbols {

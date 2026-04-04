@@ -44,9 +44,44 @@ type AmalgamationHeaderExclude struct {
 	Headers []string `yaml:"headers"` // e.g. absl/types/internal/optional.h as emitted by HeaderPaths
 }
 
+// AmalgamationSourceExclude drops .cc/.c sources from bind.cc amalgamation for a Bazel lib
+// (paths as emitted by Lib.SourcePaths(), e.g. zetasql/parser/flex_tokenizer.flex.cc).
+type AmalgamationSourceExclude struct {
+	Pkg     string   `yaml:"pkg"`
+	Sources []string `yaml:"sources"`
+}
+
+// BindCCPreludeBeforeHeaders is inserted immediately before the "// include headers" line
+// (after GO_EXPORT / ICU rename macros). Use for ordering-sensitive includes such as generated flex.
+type BindCCPreludeBeforeHeaders struct {
+	Pkg   string `yaml:"pkg"`
+	Lines string `yaml:"lines"`
+}
+
+// SymbolDefineOverride replaces the default #define <sym> <fqdn>_<sym> for one global symbol in a
+// single package (e.g. point ZetaSqlFlexTokenizerBase at another package's mangled symbol).
+type SymbolDefineOverride struct {
+	Pkg         string `yaml:"pkg"`
+	Symbol      string `yaml:"symbol"`
+	Replacement string `yaml:"replacement"`
+	Comment     string `yaml:"comment"`
+}
+
+// InjectReplaceNames inserts extra #define names (same expansion as global_symbols) immediately
+// after After in the replace-name list for one package only.
+type InjectReplaceNames struct {
+	Pkg   string   `yaml:"pkg"`
+	After string   `yaml:"after"` // symbol name to insert after (must exist in the base list)
+	Names []string `yaml:"names"`
+}
+
 type CCLibConfig struct {
-	Excludes                   []string                      `yaml:"excludes"`
-	ExcludeAmalgamationHeaders []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
+	Excludes                     []string                     `yaml:"excludes"`
+	ExcludeAmalgamationHeaders   []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
+	ExcludeAmalgamationSources   []AmalgamationSourceExclude  `yaml:"exclude_amalgamation_sources"`
+	BindCCPreludeBeforeHeaders   []BindCCPreludeBeforeHeaders `yaml:"bind_cc_prelude_before_headers"`
+	SymbolDefineOverrides        []SymbolDefineOverride       `yaml:"symbol_define_overrides"`
+	InjectReplaceNames           []InjectReplaceNames         `yaml:"inject_replace_names"`
 }
 
 type ProtocConfig struct {
