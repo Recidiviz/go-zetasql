@@ -21,6 +21,10 @@ full_export.inc
 # Ephemeral tree for scripts/gen-protobuf-vendor-patches.sh (upstream + amalgamation)
 .genpatch-baseline/
 
+# Local Python deps / resolved_ast codegen output (not checked in)
+internal/gen/
+__pycache__/
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
