@@ -1,8 +1,10 @@
-Run the full ZetaSQL stack upgrade for **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator** to the target release tag the user specifies in this chat (canonical `YYYY.MM.P`, e.g. `2023.09.1`). Follow the phases below in order.
+**Cursor:** Use the slash command **`/zetasql-stack-upgrade`** to insert this prompt in chat or Agent.
+
+This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator** to a new ZetaSQL/googlesql release tag. It covers upstream delta review, submodule bump, protobuf-safe regeneration, builtin parity, emulator integration tests, and sequential CGO test runs. Take the target **tag** from the user in this chat (canonical `YYYY.MM.P`, e.g. `2023.09.1`); normalize input (strip `v`, collapse spaces). Follow the phases below in order; downstream assumes upstream is green.
 
 # ZetaSQL stack upgrade
 
-End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and keeping **go-zetasqlite** and **bigquery-emulator** aligned. Follow phases in order; downstream assumes upstream is green.
+End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and keeping **go-zetasqlite** and **bigquery-emulator** aligned.
 
 ## Triggers and inputs
 
