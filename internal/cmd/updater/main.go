@@ -203,7 +203,30 @@ int yyFlexLexer::yylex()
 	}
 
 #define YY_DECL int FlexTokenizer::yylex()`,
+		``,
+	); err != nil {
+		return err
+	}
+	// Bazel/flex may leave a stray YY_DECL before the tables; flex_tokenizer.cc.inc redefines it.
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
 		`#define YY_DECL int FlexTokenizer::yylex()`,
+		``,
+	); err != nil {
+		return err
+	}
+	// Out-of-line ctor/dtor names must match the renamed lexer class (yyFlexLexer macro is unreliable here).
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		`ZetaSqlFlexTokenizerBase::yyFlexLexer(`,
+		`ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase(`,
+	); err != nil {
+		return err
+	}
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		`ZetaSqlFlexTokenizerBase::~yyFlexLexer(`,
+		`ZetaSqlFlexTokenizerBase::~ZetaSqlFlexTokenizerBase(`,
 	); err != nil {
 		return err
 	}
