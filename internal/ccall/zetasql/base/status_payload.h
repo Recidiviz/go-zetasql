@@ -35,9 +35,8 @@ std::string GetTypeUrl() {
   if (ABSL_PREDICT_TRUE(d != nullptr)) {
     return absl::StrCat(kZetaSqlTypeUrlPrefix, d->full_name());
   }
-  // Descriptor tables may not be initialized yet in some CGO link orders; leave
-  // URL empty so HasPayloadWithType does not dereference a null descriptor.
-  return std::string();
+  // Descriptor tables may not be initialized in every CGO amalgamation shard.
+  return absl::StrCat(kZetaSqlTypeUrlPrefix, "zetasql.__missing_descriptor__");
 }
 
 // Attaches the given payload. This will overwrite any previous payload with

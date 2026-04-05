@@ -363,18 +363,21 @@ absl::Status UpdateErrorLocationPayloadWithFilenameIfNotPresent(
 
 absl::Status ConvertInternalErrorLocationToExternal(absl::Status status,
                                                     absl::string_view query) {
-  // OK statuses never carry InternalErrorLocation payloads; skip before
-  // HasPayloadWithType, which uses GetTypeUrl() and requires protobuf
-  // descriptors to be initialized (see go-zetasql amalgamation).
-  if (status.ok()) {
+  // Fixed type URLs — do not use zetasql_base::GetTypeUrl<T>() here; in some
+  // CGO shards T::descriptor() is null until reflection is fully linked.
+  constexpr absl::string_view kInternalErrorLocationPayloadUrl =
+      "type.googleapis.com/zetasql.InternalErrorLocation";
+  constexpr absl::string_view kErrorLocationPayloadUrl =
+      "type.googleapis.com/zetasql.ErrorLocation";
+
+  std::optional<absl::Cord> raw = status.GetPayload(kInternalErrorLocationPayloadUrl);
+  if (!raw.has_value()) {
     return status;
   }
-  if (!internal::HasPayloadWithType<InternalErrorLocation>(status)) {
-    // Nothing to do.
+  InternalErrorLocation internal_error_location;
+  if (!internal_error_location.ParseFromString(std::string(*raw))) {
     return status;
   }
-  const InternalErrorLocation internal_error_location =
-      internal::GetPayload<InternalErrorLocation>(status);
 
   const ParseLocationPoint error_point =
       ParseLocationPoint::FromInternalErrorLocation(internal_error_location);
@@ -399,8 +402,9 @@ absl::Status ConvertInternalErrorLocationToExternal(absl::Status status,
       internal_error_location.error_source();
 
   absl::Status copy = status;
-  internal::ErasePayloadTyped<InternalErrorLocation>(&copy);
-  internal::AttachPayload(&copy, error_location);
+  copy.ErasePayload(kInternalErrorLocationPayloadUrl);
+  copy.SetPayload(kErrorLocationPayloadUrl,
+                  absl::Cord(error_location.SerializeAsString()));
   return copy;
 }
 
