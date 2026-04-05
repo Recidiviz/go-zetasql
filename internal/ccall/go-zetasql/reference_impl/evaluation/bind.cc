@@ -241,6 +241,18 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_reference_impl_evaluation_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_reference_impl_evaluation_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_reference_impl_evaluation_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_reference_impl_evaluation_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_reference_impl_evaluation_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_reference_impl_evaluation_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_reference_impl_evaluation_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_reference_impl_evaluation_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_reference_impl_evaluation_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_reference_impl_evaluation_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_reference_impl_evaluation_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_reference_impl_evaluation_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_reference_impl_evaluation_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_reference_impl_evaluation_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_reference_impl_evaluation_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_reference_impl_evaluation_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -329,6 +341,7 @@
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/base/strings/export.inc"
+#include "go-googletest/googletest/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
@@ -365,6 +378,7 @@
 #include "go-algorithms/quantiles/export.inc"
 #include "go-zetasql/base/flat_set/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
+#include "go-zetasql/base/optional_ref/export.inc"
 #include "go-zetasql/base/stl_util/export.inc"
 #include "go-zetasql/base/exactfloat/export.inc"
 #include "go-re2/re2/export.inc"

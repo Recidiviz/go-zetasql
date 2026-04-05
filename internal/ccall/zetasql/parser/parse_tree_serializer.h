@@ -679,6 +679,24 @@ class ParseTreeSerializer {
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
 
+  static absl::Status Serialize(const ASTPostfixTableOperator* node,
+                                ASTPostfixTableOperatorProto* proto);
+  static absl::Status DeserializeFields(
+      ASTPostfixTableOperator* node, const ASTPostfixTableOperatorProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::Status Serialize(const ASTPostfixTableOperator* node,
+                                AnyASTPostfixTableOperatorProto* proto);
+  static absl::StatusOr<ASTPostfixTableOperator*> Deserialize(
+      const AnyASTPostfixTableOperatorProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::Status DeserializeAbstract(
+      ASTPostfixTableOperator* node, const ASTPostfixTableOperatorProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
   static absl::Status Serialize(const ASTTableExpression* node,
                                 ASTTableExpressionProto* proto);
   static absl::Status DeserializeFields(
@@ -2561,6 +2579,8 @@ class ParseTreeSerializer {
 
   static absl::Status Serialize(const ASTPivotClause* node,
                                 ASTPivotClauseProto* proto);
+  static absl::Status Serialize(const ASTPivotClause* node,
+                                AnyASTPostfixTableOperatorProto* proto);
   static absl::Status DeserializeFields(
       ASTPivotClause* node, const ASTPivotClauseProto& proto,
       IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
@@ -2597,6 +2617,8 @@ class ParseTreeSerializer {
 
   static absl::Status Serialize(const ASTUnpivotClause* node,
                                 ASTUnpivotClauseProto* proto);
+  static absl::Status Serialize(const ASTUnpivotClause* node,
+                                AnyASTPostfixTableOperatorProto* proto);
   static absl::Status DeserializeFields(
       ASTUnpivotClause* node, const ASTUnpivotClauseProto& proto,
       IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
@@ -2633,6 +2655,8 @@ class ParseTreeSerializer {
 
   static absl::Status Serialize(const ASTMatchRecognizeClause* node,
                                 ASTMatchRecognizeClauseProto* proto);
+  static absl::Status Serialize(const ASTMatchRecognizeClause* node,
+                                AnyASTPostfixTableOperatorProto* proto);
   static absl::Status DeserializeFields(
       ASTMatchRecognizeClause* node, const ASTMatchRecognizeClauseProto& proto,
       IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
@@ -2869,6 +2893,20 @@ class ParseTreeSerializer {
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
   static absl::StatusOr<ASTNewConstructor*> Deserialize(
       const ASTNewConstructorProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+
+  static absl::Status Serialize(const ASTBracedConstructorLhs* node,
+                                ASTBracedConstructorLhsProto* proto);
+  static absl::Status Serialize(const ASTBracedConstructorLhs* node,
+                                AnyASTExpressionProto* proto);
+  static absl::Status DeserializeFields(
+      ASTBracedConstructorLhs* node, const ASTBracedConstructorLhsProto& proto,
+      IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
+  static absl::StatusOr<ASTBracedConstructorLhs*> Deserialize(
+      const ASTBracedConstructorLhsProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes);
@@ -4171,6 +4209,8 @@ class ParseTreeSerializer {
 
   static absl::Status Serialize(const ASTSampleClause* node,
                                 ASTSampleClauseProto* proto);
+  static absl::Status Serialize(const ASTSampleClause* node,
+                                AnyASTPostfixTableOperatorProto* proto);
   static absl::Status DeserializeFields(
       ASTSampleClause* node, const ASTSampleClauseProto& proto,
       IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,

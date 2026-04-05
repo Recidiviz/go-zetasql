@@ -20,37 +20,74 @@ namespace _pb = ::PROTOBUF_NAMESPACE_ID;
 namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace zetasql {
 namespace functions {
+template <typename>
+PROTOBUF_CONSTEXPR UnsupportedFieldsEnum::UnsupportedFieldsEnum(
+    ::_pbi::ConstantInitialized) {}
+struct UnsupportedFieldsEnumDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UnsupportedFieldsEnumDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~UnsupportedFieldsEnumDefaultTypeInternal() {}
+  union {
+    UnsupportedFieldsEnum _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UnsupportedFieldsEnumDefaultTypeInternal _UnsupportedFieldsEnum_default_instance_;
 }  // namespace functions
 }  // namespace zetasql
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto[1];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto[1];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto = nullptr;
-const ::uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto::offsets[1] = {};
-// Renamed for go-zetasql amalgamation: avoid colliding static names with other *.pb.cc in the same TU.
-static constexpr ::_pbi::MigrationSchema* unsupported_fields_pb_schemas = nullptr;
-static constexpr ::_pb::Message* const* unsupported_fields_pb_file_default_instances = nullptr;
+const ::uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::UnsupportedFieldsEnum, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+};
+
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        { 0, -1, -1, sizeof(::zetasql::functions::UnsupportedFieldsEnum)},
+};
+
+static const ::_pb::Message* const file_default_instances[] = {
+    &::zetasql::functions::_UnsupportedFieldsEnum_default_instance_._instance,
+};
 const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n1zetasql/public/functions/unsupported_f"
-    "ields.proto\022\021zetasql.functions*:\n\021Unsupp"
-    "ortedFields\022\010\n\004FAIL\020\000\022\n\n\006IGNORE\020\001\022\017\n\013PLA"
-    "CEHOLDER\020\002B8\n\034com.google.zetasql.functio"
-    "nsB\030ZetaSQLUnsupportedFields"
+    "ields.proto\022\021zetasql.functions\032\031zetasql/"
+    "public/type.proto\"\232\001\n\025UnsupportedFieldsE"
+    "num\"\200\001\n\021UnsupportedFields\022(\n\032UNSUPPORTED"
+    "_FIELDS_INVALID\020\000\032\010\262\362\260\222\016\002\010\001\022\010\n\004FAIL\020\001\022\n\n"
+    "\006IGNORE\020\002\022\017\n\013PLACEHOLDER\020\003\032\032\262\320\257\372\r\024\n\022UNSU"
+    "PPORTED_FIELDSB8\n\034com.google.zetasql.fun"
+    "ctionsB\030ZetaSQLUnsupportedFields"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_deps[1] =
+    {
+        &::descriptor_table_zetasql_2fpublic_2ftype_2eproto,
 };
 static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto = {
     false,
     false,
-    188,
+    312,
     descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto,
     "zetasql/public/functions/unsupported_fields.proto",
     &descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_once,
-    nullptr,
-    0,
-    0,
-    unsupported_fields_pb_schemas,
-    unsupported_fields_pb_file_default_instances,
+    descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_deps,
+    1,
+    1,
+    schemas,
+    file_default_instances,
     TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto::offsets,
-    nullptr,
+    file_level_metadata_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto,
     file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto,
     file_level_service_descriptors_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto,
 };
@@ -74,24 +111,80 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto(&descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto);
 namespace zetasql {
 namespace functions {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UnsupportedFields_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UnsupportedFieldsEnum_UnsupportedFields_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto[0];
 }
-bool UnsupportedFields_IsValid(int value) {
+bool UnsupportedFieldsEnum_UnsupportedFields_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum::UNSUPPORTED_FIELDS_INVALID;
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum::FAIL;
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum::IGNORE;
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum::PLACEHOLDER;
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum::UnsupportedFields_MIN;
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum::UnsupportedFields_MAX;
+constexpr int UnsupportedFieldsEnum::UnsupportedFields_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+// ===================================================================
+
+class UnsupportedFieldsEnum::_Internal {
+ public:
+};
+
+UnsupportedFieldsEnum::UnsupportedFieldsEnum(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.functions.UnsupportedFieldsEnum)
+}
+UnsupportedFieldsEnum::UnsupportedFieldsEnum(const UnsupportedFieldsEnum& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  UnsupportedFieldsEnum* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.functions.UnsupportedFieldsEnum)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UnsupportedFieldsEnum::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UnsupportedFieldsEnum::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata UnsupportedFieldsEnum::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto[0]);
+}
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace functions
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::zetasql::functions::UnsupportedFieldsEnum*
+Arena::CreateMaybeMessage< ::zetasql::functions::UnsupportedFieldsEnum >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::functions::UnsupportedFieldsEnum >(arena);
+}
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)
 #include "google/protobuf/port_undef.inc"

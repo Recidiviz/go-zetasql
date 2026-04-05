@@ -267,7 +267,6 @@ namespace zetasql_bison_parser {
   zetasql::parser_internal::SeparatedIdentifierTmpNode* slashed_identifier;
   zetasql::ASTPivotClause* pivot_clause;
   zetasql::ASTUnpivotClause* unpivot_clause;
-  zetasql::ASTMatchRecognizeClause* match_recognize_clause;
   zetasql::ASTRowPatternExpression* row_pattern_expression;
   zetasql::ASTSetOperationType* set_operation_type;
   zetasql::ASTSetOperationAllOrDistinct* set_operation_all_or_distinct;
@@ -282,10 +281,8 @@ namespace zetasql_bison_parser {
     zetasql::ASTUnpivotClause* unpivot_clause;
     zetasql::ASTAlias* alias;
   } pivot_or_unpivot_clause_and_alias;
-  struct {
-    zetasql::ASTMatchRecognizeClause* match_recognize_clause;
-    zetasql::ASTSampleClause* sample_clause;
-  } match_recognize_and_sample_clauses;
+  zetasql::ASTPostfixTableOperator* postfix_table_operator;
+  zetasql::ASTTableExpression* table_expression;
   struct {
     zetasql::ASTNode* where;
     zetasql::ASTNode* group_by;
@@ -346,7 +343,7 @@ namespace zetasql_bison_parser {
     zetasql::ASTNode* spanner_index_innerleaving_clause;
   } create_index_statement_suffix;
 
-#line 350 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 347 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -1202,8 +1199,8 @@ namespace zetasql_bison_parser {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 40653,     ///< Last index in yytable_.
-      yynnts_ = 703,  ///< Number of nonterminal symbols.
+      yylast_ = 41080,     ///< Last index in yytable_.
+      yynnts_ = 704,  ///< Number of nonterminal symbols.
       yyfinal_ = 513, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
@@ -1225,7 +1222,7 @@ namespace zetasql_bison_parser {
 
 
 } // zetasql_bison_parser
-#line 1229 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 1226 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 

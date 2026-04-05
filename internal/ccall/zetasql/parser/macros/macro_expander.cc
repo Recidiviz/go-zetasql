@@ -75,6 +75,16 @@ static absl::string_view GetMacroName(
   return macro_invocation_token.text.substr(1);
 }
 
+// Note: end_offset is exclusive
+static absl::string_view GetTextBetween(absl::string_view input, size_t start,
+                                        size_t end) {
+  ABSL_DCHECK_LE(start, end);
+  ABSL_DCHECK_LE(start, input.length());
+  size_t len = end - start;
+  ABSL_DCHECK_LE(len, input.length());
+  return absl::ClippedSubstr(input, start, len);
+}
+
 absl::StatusOr<int> ParseMacroArgIndex(absl::string_view text) {
   ZETASQL_RET_CHECK_GE(text.length(), 1);
   ZETASQL_RET_CHECK_EQ(text.front(), '$');

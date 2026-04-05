@@ -266,6 +266,7 @@ constexpr KeywordInfoPOD kAllKeywords[] = {
     {"privilege", KW_PRIVILEGE},
     {"privileges", KW_PRIVILEGES},
     {"procedure", KW_PROCEDURE},
+    {"project", KW_PROJECT},
     {"proto", KW_PROTO, kReserved},
     {"public", KW_PUBLIC},
     {"qualify",

@@ -33,8 +33,8 @@ namespace zetasql {
 namespace parser {
 namespace macros {
 
-static absl::string_view GetTextBetween(absl::string_view input, size_t start,
-                                        size_t end) {
+static absl::string_view GetTextBetweenFlexTokens(absl::string_view input,
+                                                   size_t start, size_t end) {
   ABSL_DCHECK_LE(start, end);
   ABSL_DCHECK_LE(start, input.length());
   size_t len = end - start;
@@ -78,7 +78,7 @@ absl::StatusOr<TokenWithLocation> FlexTokenProvider::GetFlexToken() {
   ZETASQL_ASSIGN_OR_RETURN(int token_kind, tokenizer_->GetNextToken(&location_));
 
   absl::string_view prev_whitespaces;
-  prev_whitespaces = GetTextBetween(input(), last_token_end_offset,
+  prev_whitespaces = GetTextBetweenFlexTokens(input(), last_token_end_offset,
                                     location_.start().GetByteOffset());
 
   return {{token_kind, location_, location_.GetTextFrom(input()),

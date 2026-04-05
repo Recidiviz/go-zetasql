@@ -688,6 +688,7 @@ enum FunctionSignatureId : int {
   FN_JSON_SUBSCRIPT_STRING = 1690,
   FN_TO_JSON_STRING = 1622,
   FN_TO_JSON = 1697,
+  FN_TO_JSON_UNSUPPORTED_FIELDS = 1948,
   FN_JSON_QUERY = 1623,
   FN_JSON_QUERY_JSON = 1686,
   FN_JSON_VALUE = 1624,
@@ -1126,12 +1127,14 @@ enum FunctionSignatureId : int {
   FN_MAP_EMPTY = 3012,
   FN_MAP_INSERT = 3013,
   FN_MAP_INSERT_OR_REPLACE = 3014,
+  FN_MAP_REPLACE_KV_PAIRS = 3015,
+  FN_MAP_REPLACE_K_REPEATED_V_LAMBDA = 3016,
 };
 
 bool FunctionSignatureId_IsValid(int value);
 constexpr FunctionSignatureId FunctionSignatureId_MIN = static_cast<FunctionSignatureId>(-1);
-constexpr FunctionSignatureId FunctionSignatureId_MAX = static_cast<FunctionSignatureId>(3014);
-constexpr int FunctionSignatureId_ARRAYSIZE = 3014 + 1;
+constexpr FunctionSignatureId FunctionSignatureId_MAX = static_cast<FunctionSignatureId>(3016);
+constexpr int FunctionSignatureId_ARRAYSIZE = 3016 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 FunctionSignatureId_descriptor();
 template <typename T>

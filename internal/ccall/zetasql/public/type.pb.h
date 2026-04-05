@@ -24,6 +24,7 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/arena.h"
 #include "google/protobuf/arenastring.h"
+#include "google/protobuf/generated_message_bases.h"
 #include "google/protobuf/generated_message_util.h"
 #include "google/protobuf/metadata_lite.h"
 #include "google/protobuf/generated_message_reflection.h"
@@ -62,6 +63,9 @@ extern EnumTypeProtoDefaultTypeInternal _EnumTypeProto_default_instance_;
 class MapTypeProto;
 struct MapTypeProtoDefaultTypeInternal;
 extern MapTypeProtoDefaultTypeInternal _MapTypeProto_default_instance_;
+class MeasureTypeProto;
+struct MeasureTypeProtoDefaultTypeInternal;
+extern MeasureTypeProtoDefaultTypeInternal _MeasureTypeProto_default_instance_;
 class OpaqueEnumTypeOptions;
 struct OpaqueEnumTypeOptionsDefaultTypeInternal;
 extern OpaqueEnumTypeOptionsDefaultTypeInternal _OpaqueEnumTypeOptions_default_instance_;
@@ -91,6 +95,8 @@ template <>
 ::zetasql::EnumTypeProto* Arena::CreateMaybeMessage<::zetasql::EnumTypeProto>(Arena*);
 template <>
 ::zetasql::MapTypeProto* Arena::CreateMaybeMessage<::zetasql::MapTypeProto>(Arena*);
+template <>
+::zetasql::MeasureTypeProto* Arena::CreateMaybeMessage<::zetasql::MeasureTypeProto>(Arena*);
 template <>
 ::zetasql::OpaqueEnumTypeOptions* Arena::CreateMaybeMessage<::zetasql::OpaqueEnumTypeOptions>(Arena*);
 template <>
@@ -2269,6 +2275,130 @@ class OpaqueEnumValueOptions final :
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
+};// -------------------------------------------------------------------
+
+class MeasureTypeProto final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.MeasureTypeProto) */ {
+ public:
+  inline MeasureTypeProto() : MeasureTypeProto(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR MeasureTypeProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  MeasureTypeProto(const MeasureTypeProto& from);
+  MeasureTypeProto(MeasureTypeProto&& from) noexcept
+    : MeasureTypeProto() {
+    *this = ::std::move(from);
+  }
+
+  inline MeasureTypeProto& operator=(const MeasureTypeProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline MeasureTypeProto& operator=(MeasureTypeProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const MeasureTypeProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const MeasureTypeProto* internal_default_instance() {
+    return reinterpret_cast<const MeasureTypeProto*>(
+               &_MeasureTypeProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(MeasureTypeProto& a, MeasureTypeProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(MeasureTypeProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(MeasureTypeProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  MeasureTypeProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<MeasureTypeProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const MeasureTypeProto& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const MeasureTypeProto& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.MeasureTypeProto";
+  }
+  protected:
+  explicit MeasureTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.MeasureTypeProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
 };
 
 // ===================================================================
@@ -4147,6 +4277,10 @@ inline void OpaqueEnumValueOptions::_internal_set_invalid_enum_value(bool value)
   _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.invalid_enum_value_ = value;
 }
+
+// -------------------------------------------------------------------
+
+// MeasureTypeProto
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

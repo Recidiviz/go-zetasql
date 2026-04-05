@@ -14,10 +14,12 @@
 #include "go-zetasql/proto/options_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/hash/hash/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-googletest/googletest/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 

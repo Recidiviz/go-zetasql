@@ -5,9 +5,10 @@
 // include sources
 #include "zetasql/base/bits.cc"
 // include dependencies
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/endian/export.inc"
-#include "go-zetasql/base/logging/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/numeric/int128/export.inc"
+#include "go-googletest/googletest/export.inc"
 
 #endif

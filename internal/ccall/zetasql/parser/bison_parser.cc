@@ -279,7 +279,7 @@ static absl::StatusOr<std::string> GenerateImprovedBisonSyntaxError(
   // Removes the "+=" and "-=" from the expectations set if the language feature
   // is not enabled.
   if (!language_options.LanguageFeatureEnabled(
-          static_cast<::zetasql::LanguageFeature>(102))) {
+          FEATURE_ENABLE_ALTER_ARRAY_OPTIONS)) {
     expectations_set.erase("\"+=\"");
     expectations_set.erase("\"-=\"");
   }

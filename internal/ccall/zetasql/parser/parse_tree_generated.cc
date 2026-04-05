@@ -215,6 +215,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_CLUSTER_BY] = "ClusterBy";
   map[AST_NEW_CONSTRUCTOR_ARG] = "NewConstructorArg";
   map[AST_NEW_CONSTRUCTOR] = "NewConstructor";
+  map[AST_BRACED_CONSTRUCTOR_LHS] = "BracedConstructorLhs";
   map[AST_BRACED_CONSTRUCTOR_FIELD_VALUE] = "BracedConstructorFieldValue";
   map[AST_BRACED_CONSTRUCTOR_FIELD] = "BracedConstructorField";
   map[AST_BRACED_CONSTRUCTOR] = "BracedConstructor";

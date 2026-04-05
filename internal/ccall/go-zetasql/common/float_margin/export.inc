@@ -6,7 +6,6 @@
 // include dependencies
 #include "go-zetasql/common/string_util/export.inc"
 #include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/mathlimits/export.inc"
 #include "go-zetasql/base/mathutil/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

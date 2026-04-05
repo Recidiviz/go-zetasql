@@ -24,12 +24,16 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/arena.h"
 #include "google/protobuf/arenastring.h"
+#include "google/protobuf/generated_message_bases.h"
 #include "google/protobuf/generated_message_util.h"
 #include "google/protobuf/metadata_lite.h"
 #include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/message.h"
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/generated_enum_reflection.h"
+#include "google/protobuf/unknown_field_set.h"
+#include "zetasql/public/type.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -49,44 +53,201 @@ struct TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
     descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto;
+namespace zetasql {
+namespace functions {
+class UnsupportedFieldsEnum;
+struct UnsupportedFieldsEnumDefaultTypeInternal;
+extern UnsupportedFieldsEnumDefaultTypeInternal _UnsupportedFieldsEnum_default_instance_;
+}  // namespace functions
+}  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
+template <>
+::zetasql::functions::UnsupportedFieldsEnum* Arena::CreateMaybeMessage<::zetasql::functions::UnsupportedFieldsEnum>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace zetasql {
 namespace functions {
-enum UnsupportedFields : int {
-  FAIL = 0,
-  IGNORE = 1,
-  PLACEHOLDER = 2,
+enum UnsupportedFieldsEnum_UnsupportedFields : int {
+  UnsupportedFieldsEnum_UnsupportedFields_UNSUPPORTED_FIELDS_INVALID = 0,
+  UnsupportedFieldsEnum_UnsupportedFields_FAIL = 1,
+  UnsupportedFieldsEnum_UnsupportedFields_IGNORE = 2,
+  UnsupportedFieldsEnum_UnsupportedFields_PLACEHOLDER = 3,
 };
 
-bool UnsupportedFields_IsValid(int value);
-constexpr UnsupportedFields UnsupportedFields_MIN = static_cast<UnsupportedFields>(0);
-constexpr UnsupportedFields UnsupportedFields_MAX = static_cast<UnsupportedFields>(2);
-constexpr int UnsupportedFields_ARRAYSIZE = 2 + 1;
+bool UnsupportedFieldsEnum_UnsupportedFields_IsValid(int value);
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum_UnsupportedFields_UnsupportedFields_MIN = static_cast<UnsupportedFieldsEnum_UnsupportedFields>(0);
+constexpr UnsupportedFieldsEnum_UnsupportedFields UnsupportedFieldsEnum_UnsupportedFields_UnsupportedFields_MAX = static_cast<UnsupportedFieldsEnum_UnsupportedFields>(3);
+constexpr int UnsupportedFieldsEnum_UnsupportedFields_UnsupportedFields_ARRAYSIZE = 3 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-UnsupportedFields_descriptor();
+UnsupportedFieldsEnum_UnsupportedFields_descriptor();
 template <typename T>
-const std::string& UnsupportedFields_Name(T value) {
-  static_assert(std::is_same<T, UnsupportedFields>::value ||
+const std::string& UnsupportedFieldsEnum_UnsupportedFields_Name(T value) {
+  static_assert(std::is_same<T, UnsupportedFieldsEnum_UnsupportedFields>::value ||
                     std::is_integral<T>::value,
                 "Incorrect type passed to UnsupportedFields_Name().");
-  return UnsupportedFields_Name(static_cast<UnsupportedFields>(value));
+  return UnsupportedFieldsEnum_UnsupportedFields_Name(static_cast<UnsupportedFieldsEnum_UnsupportedFields>(value));
 }
 template <>
-inline const std::string& UnsupportedFields_Name(UnsupportedFields value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<UnsupportedFields_descriptor,
-                                                 0, 2>(
+inline const std::string& UnsupportedFieldsEnum_UnsupportedFields_Name(UnsupportedFieldsEnum_UnsupportedFields value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<UnsupportedFieldsEnum_UnsupportedFields_descriptor,
+                                                 0, 3>(
       static_cast<int>(value));
 }
-inline bool UnsupportedFields_Parse(absl::string_view name, UnsupportedFields* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<UnsupportedFields>(
-      UnsupportedFields_descriptor(), name, value);
+inline bool UnsupportedFieldsEnum_UnsupportedFields_Parse(absl::string_view name, UnsupportedFieldsEnum_UnsupportedFields* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<UnsupportedFieldsEnum_UnsupportedFields>(
+      UnsupportedFieldsEnum_UnsupportedFields_descriptor(), name, value);
 }
 
 // ===================================================================
 
 
+// -------------------------------------------------------------------
+
+class UnsupportedFieldsEnum final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.functions.UnsupportedFieldsEnum) */ {
+ public:
+  inline UnsupportedFieldsEnum() : UnsupportedFieldsEnum(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR UnsupportedFieldsEnum(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  UnsupportedFieldsEnum(const UnsupportedFieldsEnum& from);
+  UnsupportedFieldsEnum(UnsupportedFieldsEnum&& from) noexcept
+    : UnsupportedFieldsEnum() {
+    *this = ::std::move(from);
+  }
+
+  inline UnsupportedFieldsEnum& operator=(const UnsupportedFieldsEnum& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UnsupportedFieldsEnum& operator=(UnsupportedFieldsEnum&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const UnsupportedFieldsEnum& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const UnsupportedFieldsEnum* internal_default_instance() {
+    return reinterpret_cast<const UnsupportedFieldsEnum*>(
+               &_UnsupportedFieldsEnum_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(UnsupportedFieldsEnum& a, UnsupportedFieldsEnum& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UnsupportedFieldsEnum* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UnsupportedFieldsEnum* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  UnsupportedFieldsEnum* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UnsupportedFieldsEnum>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const UnsupportedFieldsEnum& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const UnsupportedFieldsEnum& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.functions.UnsupportedFieldsEnum";
+  }
+  protected:
+  explicit UnsupportedFieldsEnum(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using UnsupportedFields = UnsupportedFieldsEnum_UnsupportedFields;
+  static constexpr UnsupportedFields UNSUPPORTED_FIELDS_INVALID = UnsupportedFieldsEnum_UnsupportedFields_UNSUPPORTED_FIELDS_INVALID;
+  static constexpr UnsupportedFields FAIL = UnsupportedFieldsEnum_UnsupportedFields_FAIL;
+  static constexpr UnsupportedFields IGNORE = UnsupportedFieldsEnum_UnsupportedFields_IGNORE;
+  static constexpr UnsupportedFields PLACEHOLDER = UnsupportedFieldsEnum_UnsupportedFields_PLACEHOLDER;
+  static inline bool UnsupportedFields_IsValid(int value) {
+    return UnsupportedFieldsEnum_UnsupportedFields_IsValid(value);
+  }
+  static constexpr UnsupportedFields UnsupportedFields_MIN = UnsupportedFieldsEnum_UnsupportedFields_UnsupportedFields_MIN;
+  static constexpr UnsupportedFields UnsupportedFields_MAX = UnsupportedFieldsEnum_UnsupportedFields_UnsupportedFields_MAX;
+  static constexpr int UnsupportedFields_ARRAYSIZE = UnsupportedFieldsEnum_UnsupportedFields_UnsupportedFields_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UnsupportedFields_descriptor() {
+    return UnsupportedFieldsEnum_UnsupportedFields_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& UnsupportedFields_Name(T value) {
+    return UnsupportedFieldsEnum_UnsupportedFields_Name(value);
+  }
+  static inline bool UnsupportedFields_Parse(absl::string_view name, UnsupportedFields* value) {
+    return UnsupportedFieldsEnum_UnsupportedFields_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.functions.UnsupportedFieldsEnum)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto;
+};
 
 // ===================================================================
 
@@ -100,6 +261,10 @@ inline bool UnsupportedFields_Parse(absl::string_view name, UnsupportedFields* v
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// UnsupportedFieldsEnum
+
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif  // __GNUC__
@@ -112,10 +277,10 @@ inline bool UnsupportedFields_Parse(absl::string_view name, UnsupportedFields* v
 PROTOBUF_NAMESPACE_OPEN
 
 template <>
-struct is_proto_enum<::zetasql::functions::UnsupportedFields> : std::true_type {};
+struct is_proto_enum<::zetasql::functions::UnsupportedFieldsEnum_UnsupportedFields> : std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor<::zetasql::functions::UnsupportedFields>() {
-  return ::zetasql::functions::UnsupportedFields_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::functions::UnsupportedFieldsEnum_UnsupportedFields>() {
+  return ::zetasql::functions::UnsupportedFieldsEnum_UnsupportedFields_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

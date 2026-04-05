@@ -6,6 +6,7 @@
 #include "zetasql/public/analyzer_options.cc"
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
+#include "go-zetasql/public/cycle_detector/export.inc"
 #include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"

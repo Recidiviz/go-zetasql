@@ -1661,6 +1661,20 @@ absl::string_view SchemaObjectKindToName(SchemaObjectKind schema_object_kind) {
       return "<INVALID SCHEMA OBJECT KIND>";
   }
 }
+
+std::string ASTOptionsEntry::GetSQLForOperator() const {
+  switch (assignment_op_) {
+    case NOT_SET:
+      return "<UNKNOWN OPERATOR>";
+    case ASSIGN:
+      return "=";
+    case ADD_ASSIGN:
+      return "+=";
+    case SUB_ASSIGN:
+      return "-=";
+  }
+}
+
 bool SchemaObjectAllowedForSnapshot(SchemaObjectKind schema_object_kind) {
   return schema_object_kind == SchemaObjectKind::kSchema;
 }

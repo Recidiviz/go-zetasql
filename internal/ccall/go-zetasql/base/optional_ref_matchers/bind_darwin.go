@@ -1,15 +1,16 @@
-package bits
+package optional_ref_matchers
 
 /*
-#cgo CXXFLAGS: -std=c++1z
-#cgo CXXFLAGS: -Os
+#cgo CXXFLAGS: -std=c++17
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
+#cgo CXXFLAGS: -I../../../utf8_range
 #cgo CXXFLAGS: -I../../../gtest
 #cgo CXXFLAGS: -I../../../icu
 #cgo CXXFLAGS: -I../../../re2
 #cgo CXXFLAGS: -I../../../json
 #cgo CXXFLAGS: -I../../../googleapis
+#cgo CXXFLAGS: -I../../../boringssl
 #cgo CXXFLAGS: -I../../../flex/src
 #cgo CXXFLAGS: -Wno-char-subscripts
 #cgo CXXFLAGS: -Wno-sign-compare
@@ -23,9 +24,12 @@ package bits
 #cgo CXXFLAGS: -Wno-enum-compare-switch
 #cgo CXXFLAGS: -Wno-return-type
 #cgo CXXFLAGS: -Wno-subobject-linkage
+#cgo CXXFLAGS: -Wno-defaulted-function-deleted
+#cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
+#cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_bits_ ## API
+#define GO_EXPORT(API) export_zetasql_base_optional_ref_matchers_ ## API
 #include "bridge.h"
 */
 import "C"

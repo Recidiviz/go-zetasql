@@ -319,7 +319,7 @@ typedef flex_uint8_t YY_CHAR;
 
 #define yytext_ptr yytext
 
-/* YY_DECL is redefined by zetasql/parser/flex_tokenizer.cc.inc before yylex(). */
+int yyFlexLexer::yywrap() { return 1; }
 
 static const flex_int16_t yy_nxt[][256] =
     {
@@ -43256,7 +43256,7 @@ static int yy_flex_strlen ( const char * );
  */
 #ifndef YY_DECL
 #define YY_DECL_IS_OURS 1
-#define YY_DECL int ZetaSqlFlexTokenizerBase::yylex()
+#define YY_DECL int yyFlexLexer::yylex()
 #endif /* !YY_DECL */
 
 /* Code executed at the beginning of each rule, after yytext and yyleng
@@ -45299,7 +45299,7 @@ YY_FATAL_ERROR( "flex scanner jammed" );
  * This constructor simply maintains backward compatibility.
  * DEPRECATED
  */
-ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase( std::istream* arg_yyin, std::ostream* arg_yyout ):
+yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout ):
 	yyin(arg_yyin ? arg_yyin->rdbuf() : std::cin.rdbuf()),
 	yyout(arg_yyout ? arg_yyout->rdbuf() : std::cout.rdbuf())
 {
@@ -45308,7 +45308,7 @@ ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase( std::istream* arg_yyin, std:
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase( std::istream& arg_yyin, std::ostream& arg_yyout ):
+yyFlexLexer::yyFlexLexer( std::istream& arg_yyin, std::ostream& arg_yyout ):
 	yyin(arg_yyin.rdbuf()),
 	yyout(arg_yyout.rdbuf())
 {
@@ -45317,7 +45317,7 @@ ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase( std::istream& arg_yyin, std:
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-void ZetaSqlFlexTokenizerBase::ctor_common()
+void yyFlexLexer::ctor_common()
 {
 	yy_c_buf_p = 0;
 	yy_init = 0;
@@ -45345,7 +45345,7 @@ void ZetaSqlFlexTokenizerBase::ctor_common()
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-ZetaSqlFlexTokenizerBase::~ZetaSqlFlexTokenizerBase()
+yyFlexLexer::~yyFlexLexer()
 {
 	delete [] yy_state_buf;
 	yyfree( yy_start_stack  );
@@ -45355,7 +45355,7 @@ ZetaSqlFlexTokenizerBase::~ZetaSqlFlexTokenizerBase()
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-void ZetaSqlFlexTokenizerBase::switch_streams( std::istream& new_in, std::ostream& new_out )
+void yyFlexLexer::switch_streams( std::istream& new_in, std::ostream& new_out )
 {
 	// was if( new_in )
 	yy_delete_buffer( YY_CURRENT_BUFFER );
@@ -45367,7 +45367,7 @@ void ZetaSqlFlexTokenizerBase::switch_streams( std::istream& new_in, std::ostrea
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-void ZetaSqlFlexTokenizerBase::switch_streams( std::istream* new_in, std::ostream* new_out )
+void yyFlexLexer::switch_streams( std::istream* new_in, std::ostream* new_out )
 {
 	if( ! new_in ) {
 		new_in = &yyin;
@@ -45381,9 +45381,9 @@ void ZetaSqlFlexTokenizerBase::switch_streams( std::istream* new_in, std::ostrea
 }
 
 #ifdef YY_INTERACTIVE
-int ZetaSqlFlexTokenizerBase::LexerInput( char* buf, int /* max_size */ )
+int yyFlexLexer::LexerInput( char* buf, int /* max_size */ )
 #else
-int ZetaSqlFlexTokenizerBase::LexerInput( char* buf, int max_size )
+int yyFlexLexer::LexerInput( char* buf, int max_size )
 #endif
 {
 	if ( yyin.eof() || yyin.fail() )
@@ -45410,7 +45410,7 @@ int ZetaSqlFlexTokenizerBase::LexerInput( char* buf, int max_size )
 #endif
 }
 
-void ZetaSqlFlexTokenizerBase::LexerOutput( const char* buf, int size )
+void yyFlexLexer::LexerOutput( const char* buf, int size )
 {
 	(void) yyout.write( buf, size );
 }
@@ -45422,7 +45422,7 @@ void ZetaSqlFlexTokenizerBase::LexerOutput( const char* buf, int size )
  *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
  *	EOB_ACT_END_OF_FILE - end of file
  */
-int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
+int yyFlexLexer::yy_get_next_buffer()
 {
     	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
 	char *source = (yytext_ptr);
@@ -45560,7 +45560,7 @@ int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
-    yy_state_type ZetaSqlFlexTokenizerBase::yy_get_previous_state()
+    yy_state_type yyFlexLexer::yy_get_previous_state()
 {
 	yy_state_type yy_current_state;
 	char *yy_cp;
@@ -45590,7 +45590,7 @@ int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
  * synopsis
  *	next_state = yy_try_NUL_trans( current_state );
  */
-    yy_state_type ZetaSqlFlexTokenizerBase::yy_try_NUL_trans( yy_state_type yy_current_state )
+    yy_state_type yyFlexLexer::yy_try_NUL_trans( yy_state_type yy_current_state )
 {
 	int yy_is_jam;
     	char *yy_cp = (yy_c_buf_p);
@@ -45611,7 +45611,7 @@ int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
 }
 
 #ifndef YY_NO_UNPUT
-    void ZetaSqlFlexTokenizerBase::yyunput( int c, char* yy_bp)
+    void yyFlexLexer::yyunput( int c, char* yy_bp)
 {
 	char *yy_cp;
     
@@ -45649,7 +45649,7 @@ int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
 }
 #endif
 
-    int ZetaSqlFlexTokenizerBase::yyinput()
+    int yyFlexLexer::yyinput()
 {
 	int c;
     
@@ -45721,7 +45721,7 @@ int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
  * 
  * @note This function does not reset the start condition to @c INITIAL .
  */
-    void ZetaSqlFlexTokenizerBase::yyrestart( std::istream& input_file )
+    void yyFlexLexer::yyrestart( std::istream& input_file )
 {
     
 	if ( ! YY_CURRENT_BUFFER ){
@@ -45739,7 +45739,7 @@ int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
  * 
  * @note This function does not reset the start condition to @c INITIAL .
  */
-void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
+void yyFlexLexer::yyrestart( std::istream* input_file )
 {
 	if( ! input_file ) {
 		input_file = &yyin;
@@ -45751,7 +45751,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  * @param new_buffer The new input buffer.
  * 
  */
-    void ZetaSqlFlexTokenizerBase::yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
+    void yyFlexLexer::yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
 {
     
 	/* TODO. We should be able to replace this entire function body
@@ -45782,7 +45782,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
 	(yy_did_buffer_switch_on_eof) = 1;
 }
 
-    void ZetaSqlFlexTokenizerBase::yy_load_buffer_state()
+    void yyFlexLexer::yy_load_buffer_state()
 {
     	(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
 	(yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
@@ -45796,7 +45796,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  * 
  * @return the allocated buffer state.
  */
-    YY_BUFFER_STATE ZetaSqlFlexTokenizerBase::yy_create_buffer( std::istream& file, int size )
+    YY_BUFFER_STATE yyFlexLexer::yy_create_buffer( std::istream& file, int size )
 {
 	YY_BUFFER_STATE b;
     
@@ -45826,7 +45826,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  * 
  * @return the allocated buffer state.
  */
-	YY_BUFFER_STATE ZetaSqlFlexTokenizerBase::yy_create_buffer( std::istream* file, int size )
+	YY_BUFFER_STATE yyFlexLexer::yy_create_buffer( std::istream* file, int size )
 {
 	return yy_create_buffer( *file, size );
 }
@@ -45835,7 +45835,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  * @param b a buffer created with yy_create_buffer()
  * 
  */
-    void ZetaSqlFlexTokenizerBase::yy_delete_buffer( YY_BUFFER_STATE b )
+    void yyFlexLexer::yy_delete_buffer( YY_BUFFER_STATE b )
 {
     
 	if ( ! b )
@@ -45854,7 +45854,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
  */
-    void ZetaSqlFlexTokenizerBase::yy_init_buffer( YY_BUFFER_STATE b, std::istream& file )
+    void yyFlexLexer::yy_init_buffer( YY_BUFFER_STATE b, std::istream& file )
 
 {
 	int oerrno = errno;
@@ -45881,7 +45881,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
  * 
  */
-    void ZetaSqlFlexTokenizerBase::yy_flush_buffer( YY_BUFFER_STATE b )
+    void yyFlexLexer::yy_flush_buffer( YY_BUFFER_STATE b )
 {
     	if ( ! b )
 		return;
@@ -45910,7 +45910,7 @@ void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
  *  @param new_buffer The new state.
  *  
  */
-void ZetaSqlFlexTokenizerBase::yypush_buffer_state (YY_BUFFER_STATE new_buffer)
+void yyFlexLexer::yypush_buffer_state (YY_BUFFER_STATE new_buffer)
 {
     	if (new_buffer == NULL)
 		return;
@@ -45940,7 +45940,7 @@ void ZetaSqlFlexTokenizerBase::yypush_buffer_state (YY_BUFFER_STATE new_buffer)
  *  The next element becomes the new top.
  *  
  */
-void ZetaSqlFlexTokenizerBase::yypop_buffer_state (void)
+void yyFlexLexer::yypop_buffer_state (void)
 {
     	if (!YY_CURRENT_BUFFER)
 		return;
@@ -45959,7 +45959,7 @@ void ZetaSqlFlexTokenizerBase::yypop_buffer_state (void)
 /* Allocates the stack if it does not exist.
  *  Guarantees space for at least one push.
  */
-void ZetaSqlFlexTokenizerBase::yyensure_buffer_stack(void)
+void yyFlexLexer::yyensure_buffer_stack(void)
 {
 	yy_size_t num_to_alloc;
     
@@ -46002,7 +46002,7 @@ void ZetaSqlFlexTokenizerBase::yyensure_buffer_stack(void)
 	}
 }
 
-    void ZetaSqlFlexTokenizerBase::yy_push_state( int _new_state )
+    void yyFlexLexer::yy_push_state( int _new_state )
 {
     	if ( (yy_start_stack_ptr) >= (yy_start_stack_depth) )
 		{
@@ -46027,7 +46027,7 @@ void ZetaSqlFlexTokenizerBase::yyensure_buffer_stack(void)
 	BEGIN(_new_state);
 }
 
-    void ZetaSqlFlexTokenizerBase::yy_pop_state()
+    void yyFlexLexer::yy_pop_state()
 {
     	if ( --(yy_start_stack_ptr) < 0 )
 		YY_FATAL_ERROR( "start-condition stack underflow" );
@@ -46035,7 +46035,7 @@ void ZetaSqlFlexTokenizerBase::yyensure_buffer_stack(void)
 	BEGIN((yy_start_stack)[(yy_start_stack_ptr)]);
 }
 
-    int ZetaSqlFlexTokenizerBase::yy_top_state()
+    int yyFlexLexer::yy_top_state()
 {
     	return (yy_start_stack)[(yy_start_stack_ptr) - 1];
 }
@@ -46044,7 +46044,7 @@ void ZetaSqlFlexTokenizerBase::yyensure_buffer_stack(void)
 #define YY_EXIT_FAILURE 2
 #endif
 
-void ZetaSqlFlexTokenizerBase::LexerError( const char* msg )
+void yyFlexLexer::LexerError( const char* msg )
 {
     	std::cerr << msg << std::endl;
 	exit( YY_EXIT_FAILURE );

@@ -1107,12 +1107,28 @@ class ASTPathExpression final : public ASTGeneralizedPathExpression {
   absl::Span<const ASTIdentifier* const> names_;
 };
 
+// A common superclass for all postfix table operators like TABLESAMPLE.
+class ASTPostfixTableOperator : public ASTNode {
+ public:
+  explicit ASTPostfixTableOperator(ASTNodeKind kind) : ASTNode(kind) {}
+
+  // The name of the operator to show in user-visible error messages.
+  virtual absl::string_view Name() const = 0;
+
+  friend class ParseTreeSerializer;
+};
+
 // Superclass for all table expressions.  These are things that appear in the
 // from clause and produce a stream of rows like a table.
 // This includes table scans, joins and subqueries.
 class ASTTableExpression : public ASTNode {
  public:
   explicit ASTTableExpression(ASTNodeKind kind) : ASTNode(kind) {}
+
+  const absl::Span<const ASTPostfixTableOperator* const>& postfix_operators() const {
+    return postfix_operators_;
+  }
+  const ASTPostfixTableOperator* postfix_operators(int i) const { return postfix_operators_[i]; }
 
   bool IsTableExpression() const override { return true; }
 
@@ -1123,7 +1139,37 @@ class ASTTableExpression : public ASTNode {
   // if applicable.
   const ASTNode* alias_location() const;
 
+  // Compatibility getters until callers are migrated to directly use the list
+  // of posfix operators.
+  const ASTPivotClause* pivot_clause() const {
+    for (const auto* op : postfix_operators()) {
+      if (op->node_kind() == AST_PIVOT_CLAUSE) {
+        return op->GetAsOrDie<ASTPivotClause>();
+      }
+    }
+    return nullptr;
+  }
+  const ASTUnpivotClause* unpivot_clause() const {
+    for (const auto* op : postfix_operators()) {
+      if (op->node_kind() == AST_UNPIVOT_CLAUSE) {
+        return op->GetAsOrDie<ASTUnpivotClause>();
+      }
+    }
+    return nullptr;
+  }
+  const ASTSampleClause* sample_clause() const {
+    for (const auto* op : postfix_operators()) {
+      if (op->node_kind() == AST_SAMPLE_CLAUSE) {
+        return op->GetAsOrDie<ASTSampleClause>();
+      }
+    }
+    return nullptr;
+  }
+
   friend class ParseTreeSerializer;
+
+ protected:
+  absl::Span<const ASTPostfixTableOperator* const> postfix_operators_;
 };
 
 // TablePathExpression are the TableExpressions that introduce a single scan,
@@ -1147,13 +1193,7 @@ class ASTTablePathExpression final : public ASTTableExpression {
   // Present if the scan had WITH OFFSET.
   const ASTWithOffset* with_offset() const { return with_offset_; }
 
-  // At most one of pivot_clause or unpivot_clause can be present.
-  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
-
-  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
   const ASTForSystemTime* for_system_time() const { return for_system_time_; }
-  const ASTMatchRecognizeClause* match_recognize_clause() const { return match_recognize_clause_; }
-  const ASTSampleClause* sample_clause() const { return sample_clause_; }
 
   const ASTAlias* alias() const override { return alias_; }
 
@@ -1167,11 +1207,8 @@ class ASTTablePathExpression final : public ASTTableExpression {
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&alias_, AST_ALIAS);
     fl.AddOptional(&with_offset_, AST_WITH_OFFSET);
-    fl.AddOptional(&pivot_clause_, AST_PIVOT_CLAUSE);
-    fl.AddOptional(&unpivot_clause_, AST_UNPIVOT_CLAUSE);
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
-    fl.AddOptional(&match_recognize_clause_, AST_MATCH_RECOGNIZE_CLAUSE);
-    fl.AddOptional(&sample_clause_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
@@ -1180,11 +1217,7 @@ class ASTTablePathExpression final : public ASTTableExpression {
   const ASTHint* hint_ = nullptr;
   const ASTAlias* alias_ = nullptr;
   const ASTWithOffset* with_offset_ = nullptr;
-  const ASTPivotClause* pivot_clause_ = nullptr;
-  const ASTUnpivotClause* unpivot_clause_ = nullptr;
   const ASTForSystemTime* for_system_time_ = nullptr;
-  const ASTMatchRecognizeClause* match_recognize_clause_ = nullptr;
-  const ASTSampleClause* sample_clause_ = nullptr;
 };
 
 // This is a placehodler ASTTableExpression used for the lhs field in
@@ -1203,6 +1236,7 @@ class ASTPipeJoinLhsPlaceholder final : public ASTTableExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 };
@@ -1923,6 +1957,7 @@ class ASTJoin final : public ASTTableExpression {
     fl.AddOptional(&on_clause_, AST_ON_CLAUSE);
     fl.AddOptional(&using_clause_, AST_USING_CLAUSE);
     fl.AddOptional(&clause_list_, AST_ON_OR_USING_CLAUSE_LIST);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
@@ -3527,8 +3562,6 @@ class ASTParenthesizedJoin final : public ASTTableExpression {
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTJoin* join() const { return join_; }
-  const ASTMatchRecognizeClause* match_recognize_clause() const { return match_recognize_clause_; }
-  const ASTSampleClause* sample_clause() const { return sample_clause_; }
 
   friend class ParseTreeSerializer;
 
@@ -3536,18 +3569,12 @@ class ASTParenthesizedJoin final : public ASTTableExpression {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&join_));
-    fl.AddOptional(&match_recognize_clause_, AST_MATCH_RECOGNIZE_CLAUSE);
-    fl.AddOptional(&sample_clause_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
   // Required.
   const ASTJoin* join_ = nullptr;
-
-  const ASTMatchRecognizeClause* match_recognize_clause_ = nullptr;
-
-  // Optional.
-  const ASTSampleClause* sample_clause_ = nullptr;
 };
 
 class ASTPartitionBy final : public ASTNode {
@@ -3982,10 +4009,6 @@ class ASTTableSubquery final : public ASTTableExpression {
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTQuery* subquery() const { return subquery_; }
-  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
-  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
-  const ASTMatchRecognizeClause* match_recognize_clause() const { return match_recognize_clause_; }
-  const ASTSampleClause* sample_clause() const { return sample_clause_; }
 
   const ASTAlias* alias() const override { return alias_; }
 
@@ -3996,22 +4019,12 @@ class ASTTableSubquery final : public ASTTableExpression {
     FieldLoader fl(this);
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&subquery_));
     fl.AddOptional(&alias_, AST_ALIAS);
-    fl.AddOptional(&pivot_clause_, AST_PIVOT_CLAUSE);
-    fl.AddOptional(&unpivot_clause_, AST_UNPIVOT_CLAUSE);
-    fl.AddOptional(&match_recognize_clause_, AST_MATCH_RECOGNIZE_CLAUSE);
-    fl.AddOptional(&sample_clause_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
   const ASTQuery* subquery_ = nullptr;
   const ASTAlias* alias_ = nullptr;
-
-  // One of pivot_clause or unpivot_clause can be present but not both.
-  const ASTPivotClause* pivot_clause_ = nullptr;
-
-  const ASTUnpivotClause* unpivot_clause_ = nullptr;
-  const ASTMatchRecognizeClause* match_recognize_clause_ = nullptr;
-  const ASTSampleClause* sample_clause_ = nullptr;
 };
 
 class ASTUnaryExpression final : public ASTExpression {
@@ -5418,11 +5431,11 @@ class ASTPivotValueList final : public ASTNode {
   absl::Span<const ASTPivotValue* const> values_;
 };
 
-class ASTPivotClause final : public ASTNode {
+class ASTPivotClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_PIVOT_CLAUSE;
 
-  ASTPivotClause() : ASTNode(kConcreteNodeKind) {}
+  ASTPivotClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -5431,6 +5444,8 @@ class ASTPivotClause final : public ASTNode {
   const ASTExpression* for_expression() const { return for_expression_; }
   const ASTPivotValueList* pivot_values() const { return pivot_values_; }
   const ASTAlias* output_alias() const { return output_alias_; }
+
+  absl::string_view Name() const override { return "PIVOT"; }
 
   friend class ParseTreeSerializer;
 
@@ -5502,11 +5517,11 @@ class ASTUnpivotInItemList final : public ASTNode {
   absl::Span<const ASTUnpivotInItem* const> in_items_;
 };
 
-class ASTUnpivotClause final : public ASTNode {
+class ASTUnpivotClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_UNPIVOT_CLAUSE;
 
-  ASTUnpivotClause() : ASTNode(kConcreteNodeKind) {}
+  ASTUnpivotClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -5529,6 +5544,7 @@ class ASTUnpivotClause final : public ASTNode {
   const ASTAlias* output_alias() const { return output_alias_; }
 
   std::string GetSQLForNullFilter() const;
+  absl::string_view Name() const override { return "UNPIVOT"; }
 
   friend class ParseTreeSerializer;
 
@@ -5599,11 +5615,11 @@ class ASTForSystemTime final : public ASTNode {
 };
 
 // Represents a row pattern recognition clause, i.e., MATCH_RECOGNIZE().
-class ASTMatchRecognizeClause final : public ASTNode {
+class ASTMatchRecognizeClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_MATCH_RECOGNIZE_CLAUSE;
 
-  ASTMatchRecognizeClause() : ASTNode(kConcreteNodeKind) {}
+  ASTMatchRecognizeClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -5614,6 +5630,8 @@ class ASTMatchRecognizeClause final : public ASTNode {
   const ASTRowPatternExpression* pattern() const { return pattern_; }
   const ASTSelectList* pattern_variable_definition_list() const { return pattern_variable_definition_list_; }
   const ASTAlias* output_alias() const { return output_alias_; }
+
+  absl::string_view Name() const override { return "MATCH_RECOGNIZE"; }
 
   friend class ParseTreeSerializer;
 
@@ -6109,6 +6127,29 @@ class ASTNewConstructor final : public ASTExpression {
   absl::Span<const ASTNewConstructorArg* const> arguments_;
 };
 
+class ASTBracedConstructorLhs final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_LHS;
+
+  ASTBracedConstructorLhs() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTGeneralizedPathExpression* extended_path_expr() const { return extended_path_expr_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&extended_path_expr_));
+    return fl.Finalize();
+  }
+
+  const ASTGeneralizedPathExpression* extended_path_expr_ = nullptr;
+};
+
 class ASTBracedConstructorFieldValue final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD_VALUE;
@@ -6139,8 +6180,6 @@ class ASTBracedConstructorFieldValue final : public ASTNode {
   bool colon_prefixed_ = false;
 };
 
-// Exactly one of 'identifier' and 'parenthesized_path' is
-// set.
 class ASTBracedConstructorField final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD;
@@ -6157,8 +6196,7 @@ class ASTBracedConstructorField final : public ASTNode {
   void set_comma_separated(bool comma_separated) { comma_separated_ = comma_separated; }
   bool comma_separated() const { return comma_separated_; }
 
-  const ASTIdentifier* identifier() const { return identifier_; }
-  const ASTPathExpression* parenthesized_path() const { return parenthesized_path_; }
+  const ASTBracedConstructorLhs* braced_constructor_lhs() const { return braced_constructor_lhs_; }
   const ASTBracedConstructorFieldValue* value() const { return value_; }
 
   friend class ParseTreeSerializer;
@@ -6166,14 +6204,12 @@ class ASTBracedConstructorField final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    fl.AddOptional(&identifier_, AST_IDENTIFIER);
-    fl.AddOptional(&parenthesized_path_, AST_PATH_EXPRESSION);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_lhs_));
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
     return fl.Finalize();
   }
 
-  const ASTIdentifier* identifier_ = nullptr;
-  const ASTPathExpression* parenthesized_path_ = nullptr;
+  const ASTBracedConstructorLhs* braced_constructor_lhs_ = nullptr;
   const ASTBracedConstructorFieldValue* value_ = nullptr;
   bool comma_separated_ = false;
 };
@@ -6621,15 +6657,17 @@ class ASTTVF final : public ASTTableExpression {
   const ASTPathExpression* name() const { return name_; }
   const ASTHint* hint() const { return hint_; }
   const ASTAlias* alias() const { return alias_; }
-  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
-  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
-  const ASTMatchRecognizeClause* match_recognize_clause() const { return match_recognize_clause_; }
-  const ASTSampleClause* sample() const { return sample_; }
 
   const absl::Span<const ASTTVFArgument* const>& argument_entries() const {
     return argument_entries_;
   }
   const ASTTVFArgument* argument_entries(int i) const { return argument_entries_[i]; }
+
+  // Compatibility getters until callers are migrated to directly use the list
+  // of posfix operators.
+  const ASTSampleClause* sample() const {
+      return sample_clause();
+  }
 
   friend class ParseTreeSerializer;
 
@@ -6640,10 +6678,7 @@ class ASTTVF final : public ASTTableExpression {
     fl.AddRepeatedWhileIsNodeKind(&argument_entries_, AST_TVF_ARGUMENT);
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&alias_, AST_ALIAS);
-    fl.AddOptional(&pivot_clause_, AST_PIVOT_CLAUSE);
-    fl.AddOptional(&unpivot_clause_, AST_UNPIVOT_CLAUSE);
-    fl.AddOptional(&match_recognize_clause_, AST_MATCH_RECOGNIZE_CLAUSE);
-    fl.AddOptional(&sample_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
@@ -6651,10 +6686,6 @@ class ASTTVF final : public ASTTableExpression {
   absl::Span<const ASTTVFArgument* const> argument_entries_;
   const ASTHint* hint_ = nullptr;
   const ASTAlias* alias_ = nullptr;
-  const ASTPivotClause* pivot_clause_ = nullptr;
-  const ASTUnpivotClause* unpivot_clause_ = nullptr;
-  const ASTMatchRecognizeClause* match_recognize_clause_ = nullptr;
-  const ASTSampleClause* sample_ = nullptr;
 };
 
 // This represents a clause of form "TABLE <target>", where <target> is either
@@ -6773,6 +6804,7 @@ class ASTCloneDataSource final : public ASTTableDataSource {
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
     fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 };
@@ -6794,6 +6826,7 @@ class ASTCopyDataSource final : public ASTTableDataSource {
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
     fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 };
@@ -9145,11 +9178,11 @@ class ASTSampleSuffix final : public ASTNode {
   const ASTRepeatableClause* repeat_ = nullptr;
 };
 
-class ASTSampleClause final : public ASTNode {
+class ASTSampleClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_SAMPLE_CLAUSE;
 
-  ASTSampleClause() : ASTNode(kConcreteNodeKind) {}
+  ASTSampleClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -9157,6 +9190,8 @@ class ASTSampleClause final : public ASTNode {
   const ASTIdentifier* sample_method() const { return sample_method_; }
   const ASTSampleSize* sample_size() const { return sample_size_; }
   const ASTSampleSuffix* sample_suffix() const { return sample_suffix_; }
+
+  absl::string_view Name() const override { return "TABLESAMPLE"; }
 
   friend class ParseTreeSerializer;
 

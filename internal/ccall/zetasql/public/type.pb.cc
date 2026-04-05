@@ -222,8 +222,21 @@ struct OpaqueEnumValueOptionsDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 OpaqueEnumValueOptionsDefaultTypeInternal _OpaqueEnumValueOptions_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR MeasureTypeProto::MeasureTypeProto(
+    ::_pbi::ConstantInitialized) {}
+struct MeasureTypeProtoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR MeasureTypeProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~MeasureTypeProtoDefaultTypeInternal() {}
+  union {
+    MeasureTypeProto _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MeasureTypeProtoDefaultTypeInternal _MeasureTypeProto_default_instance_;
 }  // namespace zetasql
-static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ftype_2eproto[10];
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ftype_2eproto[11];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ftype_2eproto[1];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_zetasql_2fpublic_2ftype_2eproto = nullptr;
@@ -362,6 +375,14 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets[] PROTOBUF
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::zetasql::OpaqueEnumValueOptions, _impl_.invalid_enum_value_),
     0,
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::MeasureTypeProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
 static const ::_pbi::MigrationSchema
@@ -376,6 +397,7 @@ static const ::_pbi::MigrationSchema
         { 103, 112, -1, sizeof(::zetasql::RangeTypeProto)},
         { 113, 122, -1, sizeof(::zetasql::OpaqueEnumTypeOptions)},
         { 123, 132, -1, sizeof(::zetasql::OpaqueEnumValueOptions)},
+        { 133, -1, -1, sizeof(::zetasql::MeasureTypeProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -389,6 +411,7 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_RangeTypeProto_default_instance_._instance,
     &::zetasql::_OpaqueEnumTypeOptions_default_instance_._instance,
     &::zetasql::_OpaqueEnumValueOptions_default_instance_._instance,
+    &::zetasql::_MeasureTypeProto_default_instance_._instance,
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\031zetasql/public/type.proto\022\007zetasql\032 go"
@@ -421,27 +444,27 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_
     "(\n\014element_type\030\001 \001(\0132\022.zetasql.TypeProt"
     "o\"5\n\025OpaqueEnumTypeOptions\022\034\n\024sql_opaque"
     "_enum_name\030\001 \001(\t\"4\n\026OpaqueEnumValueOptio"
-    "ns\022\032\n\022invalid_enum_value\030\001 \001(\010*\234\004\n\010TypeK"
-    "ind\0225\n(__TypeKind__switch_must_have_a_de"
-    "fault__\020\377\377\377\377\377\377\377\377\377\001\022\020\n\014TYPE_UNKNOWN\020\000\022\016\n\n"
-    "TYPE_INT32\020\001\022\016\n\nTYPE_INT64\020\002\022\017\n\013TYPE_UIN"
-    "T32\020\003\022\017\n\013TYPE_UINT64\020\004\022\r\n\tTYPE_BOOL\020\005\022\016\n"
-    "\nTYPE_FLOAT\020\006\022\017\n\013TYPE_DOUBLE\020\007\022\017\n\013TYPE_S"
-    "TRING\020\010\022\016\n\nTYPE_BYTES\020\t\022\r\n\tTYPE_DATE\020\n\022\022"
-    "\n\016TYPE_TIMESTAMP\020\023\022\r\n\tTYPE_ENUM\020\017\022\016\n\nTYP"
-    "E_ARRAY\020\020\022\017\n\013TYPE_STRUCT\020\021\022\016\n\nTYPE_PROTO"
-    "\020\022\022\r\n\tTYPE_TIME\020\024\022\021\n\rTYPE_DATETIME\020\025\022\022\n\016"
-    "TYPE_GEOGRAPHY\020\026\022\020\n\014TYPE_NUMERIC\020\027\022\023\n\017TY"
-    "PE_BIGNUMERIC\020\030\022\021\n\rTYPE_EXTENDED\020\031\022\r\n\tTY"
-    "PE_JSON\020\032\022\021\n\rTYPE_INTERVAL\020\033\022\022\n\016TYPE_TOK"
-    "ENLIST\020\034\022\016\n\nTYPE_RANGE\020\035\022\014\n\010TYPE_MAP\020\037\022\r"
-    "\n\tTYPE_UUID\020 :b\n\030opaque_enum_type_option"
-    "s\022\034.google.protobuf.EnumOptions\030\206\372\245\337\001 \001("
-    "\0132\036.zetasql.OpaqueEnumTypeOptions:i\n\031opa"
-    "que_enum_value_options\022!.google.protobuf"
-    ".EnumValueOptions\030\246\216\246\342\001 \001(\0132\037.zetasql.Op"
-    "aqueEnumValueOptionsB$\n\022com.google.zetas"
-    "qlB\013ZetaSQLType\370\001\001"
+    "ns\022\032\n\022invalid_enum_value\030\001 \001(\010\"\022\n\020Measur"
+    "eTypeProto*\234\004\n\010TypeKind\0225\n(__TypeKind__s"
+    "witch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\022\020"
+    "\n\014TYPE_UNKNOWN\020\000\022\016\n\nTYPE_INT32\020\001\022\016\n\nTYPE"
+    "_INT64\020\002\022\017\n\013TYPE_UINT32\020\003\022\017\n\013TYPE_UINT64"
+    "\020\004\022\r\n\tTYPE_BOOL\020\005\022\016\n\nTYPE_FLOAT\020\006\022\017\n\013TYP"
+    "E_DOUBLE\020\007\022\017\n\013TYPE_STRING\020\010\022\016\n\nTYPE_BYTE"
+    "S\020\t\022\r\n\tTYPE_DATE\020\n\022\022\n\016TYPE_TIMESTAMP\020\023\022\r"
+    "\n\tTYPE_ENUM\020\017\022\016\n\nTYPE_ARRAY\020\020\022\017\n\013TYPE_ST"
+    "RUCT\020\021\022\016\n\nTYPE_PROTO\020\022\022\r\n\tTYPE_TIME\020\024\022\021\n"
+    "\rTYPE_DATETIME\020\025\022\022\n\016TYPE_GEOGRAPHY\020\026\022\020\n\014"
+    "TYPE_NUMERIC\020\027\022\023\n\017TYPE_BIGNUMERIC\020\030\022\021\n\rT"
+    "YPE_EXTENDED\020\031\022\r\n\tTYPE_JSON\020\032\022\021\n\rTYPE_IN"
+    "TERVAL\020\033\022\022\n\016TYPE_TOKENLIST\020\034\022\016\n\nTYPE_RAN"
+    "GE\020\035\022\014\n\010TYPE_MAP\020\037\022\r\n\tTYPE_UUID\020 :b\n\030opa"
+    "que_enum_type_options\022\034.google.protobuf."
+    "EnumOptions\030\206\372\245\337\001 \001(\0132\036.zetasql.OpaqueEn"
+    "umTypeOptions:i\n\031opaque_enum_value_optio"
+    "ns\022!.google.protobuf.EnumValueOptions\030\246\216"
+    "\246\342\001 \001(\0132\037.zetasql.OpaqueEnumValueOptions"
+    "B$\n\022com.google.zetasqlB\013ZetaSQLType\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps[1] =
     {
@@ -451,13 +474,13 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ftype_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_2eproto = {
     false,
     false,
-    2018,
+    2038,
     descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto,
     "zetasql/public/type.proto",
     &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
     descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps,
     1,
-    10,
+    11,
     schemas,
     file_default_instances,
     TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets,
@@ -3427,6 +3450,44 @@ void OpaqueEnumValueOptions::InternalSwap(OpaqueEnumValueOptions* other) {
       &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
       file_level_metadata_zetasql_2fpublic_2ftype_2eproto[9]);
 }
+// ===================================================================
+
+class MeasureTypeProto::_Internal {
+ public:
+};
+
+MeasureTypeProto::MeasureTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.MeasureTypeProto)
+}
+MeasureTypeProto::MeasureTypeProto(const MeasureTypeProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  MeasureTypeProto* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.MeasureTypeProto)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MeasureTypeProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MeasureTypeProto::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata MeasureTypeProto::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[10]);
+}
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::OpaqueEnumTypeOptions >, 11, false>
   opaque_enum_type_options(kOpaqueEnumTypeOptionsFieldNumber, ::zetasql::OpaqueEnumTypeOptions::default_instance(), nullptr);
@@ -3475,6 +3536,10 @@ Arena::CreateMaybeMessage< ::zetasql::OpaqueEnumTypeOptions >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::zetasql::OpaqueEnumValueOptions*
 Arena::CreateMaybeMessage< ::zetasql::OpaqueEnumValueOptions >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::OpaqueEnumValueOptions >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::MeasureTypeProto*
+Arena::CreateMaybeMessage< ::zetasql::MeasureTypeProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::MeasureTypeProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)
