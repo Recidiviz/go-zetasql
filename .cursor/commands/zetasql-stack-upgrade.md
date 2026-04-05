@@ -12,7 +12,7 @@ This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulato
 ## Methodology (avoid brute-force loops)
 
 1. **Delta before mechanics** — Complete Phase 1 (upstream diff) and draft or update `docs/googlesql-upgrade-delta-<from>-to-<to>.md` *before* chasing unrelated test failures. Prior edits should follow known proto/builtin/`resolved_ast` themes.
-2. **Regeneration pipeline** — Submodule → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
+2. **Regeneration pipeline** — Submodule → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **sync `*.proto` into `internal/ccall` if needed** (updater `Skip` rules may **omit `.proto`** — stale `options.proto` / enums cause confusing failures) → **protoc** / `gen_parse_tree` / `gen_resolved_ast` (order per [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md) and your delta doc) → **`go run` generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
 3. **Canonical green definition** — **go-zetasql:** `make local/test` (`TESTPKG` defaults to `./`, root package — matches CI). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
 4. **Classify the failure** — Sync drift, linker/amalgamation, protobuf vendoring, or runtime/semantic (parser, language features, emulator path). Fix the matching layer; avoid alternating random edits with full tree rebuilds.
 5. **Generator and exportinc** — Manual edits to `bind.cc` templates, `export.inc`, or [`internal/cmd/generator`](../../internal/cmd/generator) / `exportinc` can be **overwritten** on the next generate pass. If a fix “comes back” after regeneration, change the **generator or policy** (e.g. flex suppress flags), not only the generated file.
@@ -28,6 +28,7 @@ End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and
 - **Phrases:** `zetasql-upgrade to <tag>`, `upgrade zetasql to <tag>`, `bump googlesql to <tag>`.
 - **Required:** Target **tag** (canonical form `YYYY.MM.P`, e.g. `2023.09.1`). Normalize user input (strip `v`, collapse spaces) to that form.
 - **Optional `from` tag:** If omitted, derive from the current submodule commit in [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) (`git describe --tags`) or from the latest [docs/googlesql-upgrade-delta-*.md](../../docs/) baseline.
+- **Submodule not exactly on a tag:** Run `git -C internal/cmd/updater/zetasql describe --tags --always`. If you see `<tag>-<N>-g<hash>` with **N ≥ 1**, there are **local commits on top of the upstream tag** (e.g. vendor patches). Plan to **cherry-pick or rebase** those commits onto `<to>` after bumping the submodule, and record the new submodule SHA in the delta doc.
 
 ## Phase 0 — Workspace prep (all three repos)
 
@@ -69,7 +70,10 @@ Before large mechanical edits, understand what changed between **`from`** and **
 2. **Regeneration / vendoring:**
    - A **full** run of `internal/cmd/updater` can **break the CGO link** (duplicate symbols, protobuf/flex skew). Prefer **incremental** steps and document what you ran.
    - Use `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when refreshing ZetaSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
+   - **Protos under `internal/ccall`:** If enums or generated Go/C++ look wrong after updater, **rsync or copy `*.proto` from the submodule** and rerun **protoc** (and parse_tree / resolved_ast helpers) — the updater does not always refresh every proto in ccall.
+   - **Flex:** Conflicting `yyFlexLexer` stubs vs `%option yyclass` in generated flex output may require **post-copy fixes** (e.g. [`internal/cmd/updater/main.go`](../../internal/cmd/updater/main.go) `applyPostCopyOverlays`) and generator config (e.g. `ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS` in [`internal/cmd/generator/config.yaml`](../../internal/cmd/generator/config.yaml)) so regenerations stay consistent.
    - After copying protobuf or vendor trees, run **`go run ./internal/cmd/vendorpatch`** or **`scripts/apply-vendor-patches.sh`** so amalgamation and git patches apply.
+   - **Go AST / bridge parity:** New syntax or nodes (e.g. `GROUP BY ALL`) may need updates to [`internal/cmd/generator/bridge.yaml`](../../internal/cmd/generator/bridge.yaml), **`bridge.inc` by hand** (generator may not overwrite existing file), **[`enum.go`](../../enum.go)** (`LanguageFeature` values), and **[`ast/node.go`](../../ast/node.go)**, plus a **parser test** that enables the feature. Not every upgrade needs this — follow upstream delta and user-facing API gaps.
 3. **Documentation:** Add `docs/googlesql-upgrade-delta-<from>-to-<to>.md` (match existing naming) summarizing upstream changes and how this repo addresses them.
 4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Use `make local/test` / `make local/build` or `make test/linux` with `TESTPKG` narrowed when iterating. Prefer the **root** package gate (`TESTPKG` unset or `./`); see **Failure triage** and skill `zetasql-stack-debug` before interpreting `go test ./...` failures under `internal/ccall`. Do **not** run the heaviest suites in parallel with downstream repos. For memory-constrained machines, use `go test -p 1` and optionally [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
 
@@ -78,7 +82,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
 ## Phase 3 — go-zetasqlite
 
 1. Ensure module uses the intended go-zetasql (`replace` or bumped version).
-2. Align **LanguageFeature** / analyzer options and **builtin registration** with new upstream surface (`internal/analyzer.go`, `internal/function_register.go`, function implementations).
+2. Align **LanguageFeature** / analyzer options and **builtin registration** with new upstream surface (`internal/analyzer.go`, `internal/function_register.go`, function implementations). Watch for **signature changes** (extra args, types) — update `function_bind.go` and builtins (e.g. JSON helpers) when upstream changes function catalogs.
 3. Add **tests** (e.g. `query_test.go` subtests named for the release).
 4. Run tests **after** go-zetasql passes: e.g. `go test -tags zetasql .` or Makefile targets from the repo README. Keep **one repo at a time** for heavy CGO loads.
 
@@ -109,7 +113,10 @@ Use [`.cursor/skills/zetasql-stack-debug/SKILL.md`](../skills/zetasql-stack-debu
 | Stale behavior after C++ header edits | CGO/cache: may need `bind.cc` bump or clean rebuild of affected package |
 | Crashes in parse/analyze / odd status handling | Minimal repro; CGO/amalgamation **renamed namespaces** can break template matches; `Status` payload / `GetTypeUrl` paths may need explicit handling vs `descriptor()` — not always fixed by rerunning the full suite |
 | OOM during tests | Sequential repo tests; `GOMAXPROCS` + `-p 1`; [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh); narrow `TESTPKG` |
+| `ENOSPC` / disk full (build or test) | Free space on the volume holding `GOCACHE`, `GOMODCACHE`, and build dirs; partial test runs can leave large artifacts |
+| Stale protos / wrong enums / parse options mismatch | Updater did not sync all `*.proto` into `internal/ccall` — copy from submodule + protoc / parse_tree / resolved_ast pipeline (see Phase 2 and delta doc) |
 | New builtins fail in emulator only | zetasqlite registration vs server query path |
+| Builtin compile errors after bump (arity, types) | Upstream **function signature** change — align `function_bind.go` and implementation files, not only registration lists |
 
 ## Reference — environment, scripts, and tests
 
@@ -229,14 +236,14 @@ make local/test
 
 ```bash
 cd "$GO_ZETASQLITE_ROOT"
-go test -tags zetasql -count=1 .
+go test -tags zetasql -count=1 -p 1 .
 ```
 
 **bigquery-emulator:**
 
 ```bash
 cd "$BIGQUERY_EMULATOR_ROOT"
-go test -count=1 ./...
+go test -count=1 -p 1 ./...
 ```
 
 ### Existing upgrade delta docs (examples)
