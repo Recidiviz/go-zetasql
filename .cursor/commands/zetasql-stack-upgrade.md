@@ -4,6 +4,18 @@
 
 This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator** to a new ZetaSQL/googlesql release tag. It covers upstream delta review, submodule bump, protobuf-safe regeneration, builtin parity, emulator integration tests, and sequential CGO test runs. Take the target **tag** from the user in this chat (canonical `YYYY.MM.P`, e.g. `2023.09.1`); normalize input (strip `v`, collapse spaces). Follow the phases below in order; downstream assumes upstream is green.
 
+## Slash command vs skill
+
+- **This file (`/zetasql-stack-upgrade`)** — End-to-end *phases*: workspace prep, upstream delta, submodule, regeneration order, verification sequence, branch naming, Plan mode. Use for the upgrade *runbook*.
+- **Skill `zetasql-stack-debug`** — [`.cursor/skills/zetasql-stack-debug/SKILL.md`](../skills/zetasql-stack-debug/SKILL.md) — Reusable *debugging and testing* rules: classify failures (sync vs link vs codegen vs semantics), canonical `make local/test` gate vs misleading `go test ./...` on `internal/ccall`, CGO cache, memory (`-p 1`, `scripts/cgo-go.sh`), symptom→cause triage. **Apply this skill whenever builds fail during an upgrade** or when triaging CGO/stack issues; it complements this command rather than replacing it.
+
+## Methodology (avoid brute-force loops)
+
+1. **Delta before mechanics** — Complete Phase 1 (upstream diff) and draft or update `docs/googlesql-upgrade-delta-<from>-to-<to>.md` *before* chasing unrelated test failures. Prior edits should follow known proto/builtin/`resolved_ast` themes.
+2. **Regeneration pipeline** — Submodule → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
+3. **Canonical green definition** — **go-zetasql:** `make local/test` (`TESTPKG` defaults to `./`, root package — matches CI). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
+4. **Classify the failure** — Sync drift, linker/amalgamation, protobuf vendoring, or runtime/semantic (parser, language features, emulator path). Fix the matching layer; avoid alternating random edits with full tree rebuilds.
+
 # ZetaSQL stack upgrade
 
 End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and keeping **go-zetasqlite** and **bigquery-emulator** aligned.
@@ -55,7 +67,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
    - Use `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when refreshing ZetaSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
    - After copying protobuf or vendor trees, run **`go run ./internal/cmd/vendorpatch`** or **`scripts/apply-vendor-patches.sh`** so amalgamation and git patches apply.
 3. **Documentation:** Add `docs/googlesql-upgrade-delta-<from>-to-<to>.md` (match existing naming) summarizing upstream changes and how this repo addresses them.
-4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Use `make local/test` / `make local/build` or `make test/linux` with `TESTPKG` narrowed when iterating. Do **not** run the heaviest suites in parallel with downstream repos.
+4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Use `make local/test` / `make local/build` or `make test/linux` with `TESTPKG` narrowed when iterating. Prefer the **root** package gate (`TESTPKG` unset or `./`); see **Failure triage** and skill `zetasql-stack-debug` before interpreting `go test ./...` failures under `internal/ccall`. Do **not** run the heaviest suites in parallel with downstream repos. For memory-constrained machines, use `go test -p 1` and optionally [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
 
 **Pointers:** [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), [internal/cmd/updater/main.go](../../internal/cmd/updater/main.go).
 
@@ -82,11 +94,16 @@ go-zetasql  →  go-zetasqlite  →  bigquery-emulator
 
 ## Failure triage
 
+Use [`.cursor/skills/zetasql-stack-debug/SKILL.md`](../skills/zetasql-stack-debug/SKILL.md) for expanded triage and test discipline.
+
 | Symptom | Where to look |
 |---------|---------------|
-| Duplicate symbols / link failures after updater | [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), `vendorpatch`, partial vs full updater run |
+| Many failures only under `go test ./...` / isolated `internal/ccall` packages; root `make local/test` passes | Often **unsupported** standalone shard builds — confirm CI/Makefile default (`TESTPKG=./`) before “fixing” |
+| Duplicate symbols / link failures after updater | [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), `vendorpatch`, partial vs full updater run; which TU owns shared `.cc` (e.g. protobuf utf8) |
 | Protobuf version / `port_def` errors | Amalgamation guards, `go run ./internal/cmd/vendorpatch` |
-| OOM during tests | Sequential repo tests; narrow `TESTPKG`; free parallel agents |
+| Stale behavior after C++ header edits | CGO/cache: may need `bind.cc` bump or clean rebuild of affected package |
+| Crashes in parse/analyze / odd status handling | Minimal repro; not always fixed by rerunning full suite |
+| OOM during tests | Sequential repo tests; `GOMAXPROCS` + `-p 1`; [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh); narrow `TESTPKG` |
 | New builtins fail in emulator only | zetasqlite registration vs server query path |
 
 ## Reference — environment, scripts, and tests
