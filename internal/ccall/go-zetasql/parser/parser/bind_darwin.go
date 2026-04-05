@@ -2,6 +2,7 @@ package parser
 
 /*
 #cgo CXXFLAGS: -std=c++17
+#cgo CXXFLAGS: -O0
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../utf8_range
