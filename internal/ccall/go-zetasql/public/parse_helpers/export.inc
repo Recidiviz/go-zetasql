@@ -24,7 +24,7 @@
 #include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
-#include "go-zetasql/parser/token_disambiguator/export.inc"
+#include "go-zetasql/parser/lookahead_transformer/export.inc"
 #include "go-zetasql/public/functions/convert_string/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

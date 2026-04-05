@@ -31,7 +31,6 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/common/warning_sink/export.inc"
 #include "go-zetasql/common/internal_analyzer_options/export.inc"
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"

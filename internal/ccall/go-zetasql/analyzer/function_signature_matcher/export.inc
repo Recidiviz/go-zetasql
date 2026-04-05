@@ -19,6 +19,7 @@
 #include "go-zetasql/public/function_cc_proto/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/signature_match_result/export.inc"
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/type/export.inc"

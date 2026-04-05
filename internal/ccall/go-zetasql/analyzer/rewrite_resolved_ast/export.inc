@@ -25,7 +25,6 @@
 #include "go-zetasql/resolved_ast/validator/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/container/btree/export.inc"
-#include "go-absl/flags/flag/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"

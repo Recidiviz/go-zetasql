@@ -10,5 +10,6 @@
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-absl/functional/bind_front/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

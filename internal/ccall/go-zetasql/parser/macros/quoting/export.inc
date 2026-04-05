@@ -5,6 +5,7 @@
 // include sources
 #include "zetasql/parser/macros/quoting.cc"
 // include dependencies
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

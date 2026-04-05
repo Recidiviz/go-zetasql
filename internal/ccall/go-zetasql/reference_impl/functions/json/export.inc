@@ -16,6 +16,7 @@
 #include "go-zetasql/public/functions/json_format/export.inc"
 #include "go-zetasql/public/functions/json_internal/export.inc"
 #include "go-zetasql/public/functions/to_json/export.inc"
+#include "go-zetasql/public/functions/unsupported_fields_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
 #include "go-absl/status/statusor/export.inc"

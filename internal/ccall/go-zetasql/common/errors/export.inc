@@ -24,5 +24,6 @@
 #include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
 #include "go-protobuf/protobuf/export.inc"
+#include "go-zetasql/common/warning_sink/export.inc"
 
 #endif

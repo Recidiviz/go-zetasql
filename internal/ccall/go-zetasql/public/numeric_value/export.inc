@@ -19,6 +19,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/compare/export.inc"
 #include "go-absl/types/optional/export.inc"
 
 #endif

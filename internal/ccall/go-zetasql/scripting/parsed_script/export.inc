@@ -20,6 +20,7 @@
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-absl/algorithm/container/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/flags/flag/export.inc"

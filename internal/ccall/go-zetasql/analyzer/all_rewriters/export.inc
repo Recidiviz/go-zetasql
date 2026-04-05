@@ -16,6 +16,8 @@
 #include "go-zetasql/analyzer/rewriters/map_function_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/multiway_unnest_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/nulliferror_function_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/pipe_assert_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/pivot_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/registration/export.inc"
 #include "go-zetasql/analyzer/rewriters/sql_function_inliner/export.inc"

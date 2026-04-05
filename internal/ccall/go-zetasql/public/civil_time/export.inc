@@ -9,5 +9,6 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"
+#include "go-absl/types/compare/export.inc"
 
 #endif

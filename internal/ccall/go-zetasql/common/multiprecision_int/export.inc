@@ -13,6 +13,7 @@
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/numeric/bits/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/compare/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #endif
