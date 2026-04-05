@@ -68,8 +68,7 @@
 #include "google/protobuf/parse_context.cc"
 #include "google/protobuf/repeated_field.cc"
 #include "google/protobuf/repeated_ptr_field.cc"
-// utf8_validity.cc is compiled once in internal/ccall/go-zetasql/bind.cc so
-// secondary CGO packages (renamed-namespace TUs) do not duplicate symbols.
+// utf8_range::... definitions: link package utf8_range_link (blank-imported from bind_*.go).
 #include "google/protobuf/wire_format_lite.cc"
 #include "google/protobuf/io/coded_stream.cc"
 #include "google/protobuf/io/zero_copy_stream.cc"

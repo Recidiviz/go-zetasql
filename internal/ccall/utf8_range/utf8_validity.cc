@@ -447,11 +447,11 @@ size_t ValidUTF8(const char* data, size_t len) {
 
 }  // namespace
 
-bool IsStructurallyValid(absl::string_view str) {
+bool IsStructurallyValid(std::string_view str) {
   return ValidUTF8</*ReturnPosition=*/false>(str.data(), str.size());
 }
 
-size_t SpanStructurallyValid(absl::string_view str) {
+size_t SpanStructurallyValid(std::string_view str) {
   return ValidUTF8</*ReturnPosition=*/true>(str.data(), str.size());
 }
 

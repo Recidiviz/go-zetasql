@@ -41,3 +41,7 @@ package protobuf
 #include "export.inc"
 */
 import "C"
+
+import (
+	_ "github.com/goccy/go-zetasql/internal/ccall/utf8_range_link"
+)
