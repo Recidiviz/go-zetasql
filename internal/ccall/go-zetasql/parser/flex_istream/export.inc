@@ -4,7 +4,6 @@
 #include "zetasql/parser/flex_istream.h"
 // include sources
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

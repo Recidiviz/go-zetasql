@@ -253,57 +253,57 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n-zetasql/scripting/script_executor_stat"
     "e.proto\022\007zetasql\032\031google/protobuf/any.pr"
-    "oto\032\034zetasql/proto/function.proto\032+zetas"
-    "ql/scripting/procedure_extension.proto\032("
-    "zetasql/scripting/script_exception.proto"
-    "\032 zetasql/scripting/variable.proto\"\252\n\n\030S"
-    "criptExecutorStateProto\022\?\n\tcallstack\030\001 \003"
-    "(\0132,.zetasql.ScriptExecutorStateProto.St"
-    "ackFrame\0224\n\022pending_exceptions\030\002 \003(\0132\030.z"
-    "etasql.ScriptException\022K\n\022triggered_feat"
-    "ures\030\003 \003(\0162/.zetasql.ScriptExecutorState"
-    "Proto.ScriptFeature\022\020\n\010timezone\030\004 \001(\t\022#\n"
-    "\033case_stmt_true_branch_index\030\005 \001(\003\022&\n\036ca"
-    "se_stmt_current_branch_index\030\006 \001(\003\022O\n\021sq"
-    "l_feature_usage\030\007 \001(\01324.zetasql.ScriptEx"
-    "ecutorStateProto.ScriptFeatureUsage\032\311\001\n\023"
-    "ProcedureDefinition\022\014\n\004name\030\001 \001(\t\0222\n\tsig"
-    "nature\030\002 \001(\0132\037.zetasql.FunctionSignature"
-    "Proto\022\032\n\022argument_name_list\030\003 \003(\t\022\014\n\004bod"
-    "y\030\004 \001(\t\022\026\n\016is_dynamic_sql\030\005 \001(\010\022.\n\texten"
-    "sion\030\006 \001(\0132\033.zetasql.ProcedureExtension\032"
-    "\210\004\n\nStackFrame\022S\n\024procedure_definition\030\001"
-    " \001(\01325.zetasql.ScriptExecutorStateProto."
-    "ProcedureDefinition\022$\n\tvariables\030\002 \003(\0132\021"
-    ".zetasql.Variable\022$\n\034current_location_by"
-    "te_offset\030\003 \001(\005\022\036\n\026control_flow_node_kin"
-    "d\030\005 \001(\005\022K\n\nparameters\030\004 \001(\01327.zetasql.Sc"
-    "riptExecutorStateProto.StackFrame.Parame"
-    "ters\022,\n\016for_loop_stack\030\006 \003(\0132\024.google.pr"
-    "otobuf.Any\032\275\001\n\nParameters\022S\n\004mode\030\004 \001(\0162"
-    "E.zetasql.ScriptExecutorStateProto.Stack"
-    "Frame.Parameters.ParameterMode\022$\n\tvariab"
-    "les\030\005 \003(\0132\021.zetasql.Variable\"4\n\rParamete"
-    "rMode\022\010\n\004NONE\020\000\022\t\n\005NAMED\020\001\022\016\n\nPOSITIONAL"
-    "\020\002\032Z\n\022ScriptFeatureUsage\022\021\n\texception\030\001 "
-    "\001(\005\022\021\n\tcall_stmt\030\002 \001(\005\022\036\n\026execute_immedi"
-    "ate_stmt\030\003 \001(\005\"g\n\rScriptFeature\022\013\n\007INVAL"
-    "ID\020\000\022\024\n\020EXCEPTION_CAUGHT\020\001\022\022\n\016CALL_STATE"
-    "MENT\020\002\022\037\n\033EXECUTE_IMMEDIATE_STATEMENT\020\003"
+    "oto\032\034zetasql/proto/function.proto\032$zetas"
+    "ql/proto/script_exception.proto\032+zetasql"
+    "/scripting/procedure_extension.proto\032 ze"
+    "tasql/scripting/variable.proto\"\252\n\n\030Scrip"
+    "tExecutorStateProto\022\?\n\tcallstack\030\001 \003(\0132,"
+    ".zetasql.ScriptExecutorStateProto.StackF"
+    "rame\0224\n\022pending_exceptions\030\002 \003(\0132\030.zetas"
+    "ql.ScriptException\022K\n\022triggered_features"
+    "\030\003 \003(\0162/.zetasql.ScriptExecutorStateProt"
+    "o.ScriptFeature\022\020\n\010timezone\030\004 \001(\t\022#\n\033cas"
+    "e_stmt_true_branch_index\030\005 \001(\003\022&\n\036case_s"
+    "tmt_current_branch_index\030\006 \001(\003\022O\n\021sql_fe"
+    "ature_usage\030\007 \001(\01324.zetasql.ScriptExecut"
+    "orStateProto.ScriptFeatureUsage\032\311\001\n\023Proc"
+    "edureDefinition\022\014\n\004name\030\001 \001(\t\0222\n\tsignatu"
+    "re\030\002 \001(\0132\037.zetasql.FunctionSignatureProt"
+    "o\022\032\n\022argument_name_list\030\003 \003(\t\022\014\n\004body\030\004 "
+    "\001(\t\022\026\n\016is_dynamic_sql\030\005 \001(\010\022.\n\textension"
+    "\030\006 \001(\0132\033.zetasql.ProcedureExtension\032\210\004\n\n"
+    "StackFrame\022S\n\024procedure_definition\030\001 \001(\013"
+    "25.zetasql.ScriptExecutorStateProto.Proc"
+    "edureDefinition\022$\n\tvariables\030\002 \003(\0132\021.zet"
+    "asql.Variable\022$\n\034current_location_byte_o"
+    "ffset\030\003 \001(\005\022\036\n\026control_flow_node_kind\030\005 "
+    "\001(\005\022K\n\nparameters\030\004 \001(\01327.zetasql.Script"
+    "ExecutorStateProto.StackFrame.Parameters"
+    "\022,\n\016for_loop_stack\030\006 \003(\0132\024.google.protob"
+    "uf.Any\032\275\001\n\nParameters\022S\n\004mode\030\004 \001(\0162E.ze"
+    "tasql.ScriptExecutorStateProto.StackFram"
+    "e.Parameters.ParameterMode\022$\n\tvariables\030"
+    "\005 \003(\0132\021.zetasql.Variable\"4\n\rParameterMod"
+    "e\022\010\n\004NONE\020\000\022\t\n\005NAMED\020\001\022\016\n\nPOSITIONAL\020\002\032Z"
+    "\n\022ScriptFeatureUsage\022\021\n\texception\030\001 \001(\005\022"
+    "\021\n\tcall_stmt\030\002 \001(\005\022\036\n\026execute_immediate_"
+    "stmt\030\003 \001(\005\"g\n\rScriptFeature\022\013\n\007INVALID\020\000"
+    "\022\024\n\020EXCEPTION_CAUGHT\020\001\022\022\n\016CALL_STATEMENT"
+    "\020\002\022\037\n\033EXECUTE_IMMEDIATE_STATEMENT\020\003"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_deps[5] =
     {
         &::descriptor_table_google_2fprotobuf_2fany_2eproto,
         &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
+        &::descriptor_table_zetasql_2fproto_2fscript_5fexception_2eproto,
         &::descriptor_table_zetasql_2fscripting_2fprocedure_5fextension_2eproto,
-        &::descriptor_table_zetasql_2fscripting_2fscript_5fexception_2eproto,
         &::descriptor_table_zetasql_2fscripting_2fvariable_2eproto,
 };
 static ::absl::once_flag descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto = {
     false,
     false,
-    1559,
+    1555,
     descriptor_table_protodef_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto,
     "zetasql/scripting/script_executor_state.proto",
     &descriptor_table_zetasql_2fscripting_2fscript_5fexecutor_5fstate_2eproto_once,

@@ -1321,6 +1321,7 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_AUX_LOAD_DATA_STMT: return "AuxLoadDataStmt";
     case RESOLVED_UNDROP_STMT: return "UndropStmt";
     case RESOLVED_IDENTITY_COLUMN_INFO: return "IdentityColumnInfo";
+    case RESOLVED_BARRIER_SCAN: return "BarrierScan";
     default:
       return absl::StrCat("INVALID_RESOLVED_NODE_KIND(", kind, ")");
   }
@@ -3987,6 +3988,14 @@ absl::Status ResolvedAggregateFunctionCall::SaveTo(
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
       function_call_info_, file_descriptor_set_map,
       proto->mutable_function_call_info()));
+  for (const auto& elem : group_by_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_group_by_list()));
+  }
+  for (const auto& elem : group_by_aggregate_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_group_by_aggregate_list()));
+  }
   return absl::OkStatus();
 }
 
@@ -4017,6 +4026,18 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
                    RestoreFromImpl<std::shared_ptr<ResolvedFunctionCallInfo>>(
                        proto.function_call_info(),
                        params));
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list;
+  for (const auto& elem : proto.group_by_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedComputedColumnBase> elem_restored,
+                     ResolvedComputedColumnBase::RestoreFrom(elem, params));
+    group_by_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list;
+  for (const auto& elem : proto.group_by_aggregate_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedComputedColumnBase> elem_restored,
+                     ResolvedComputedColumnBase::RestoreFrom(elem, params));
+    group_by_aggregate_list.push_back(std::move(elem_restored));
+  }
   ZETASQL_ASSIGN_OR_RETURN(auto type,
                    RestoreFromImpl<const Type*>(
                        proto.parent().parent().parent().type(),
@@ -4089,7 +4110,9 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
       std::move(having_modifier),
       std::move(order_by_item_list),
       std::move(limit),
-      std::move(function_call_info));
+      std::move(function_call_info),
+      std::move(group_by_list),
+      std::move(group_by_aggregate_list));
 
   node->set_type_annotation_map(std::move(type_annotation_map));
   node->set_hint_list(std::move(hint_list));
@@ -4110,6 +4133,12 @@ void ResolvedAggregateFunctionCall::GetChildNodes(
   }
   if (limit_ != nullptr) {
     child_nodes->emplace_back(limit_.get());
+  }
+  for (const auto& elem : group_by_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+  for (const auto& elem : group_by_aggregate_list_) {
+    child_nodes->emplace_back(elem.get());
   }
 }
 
@@ -4137,6 +4166,14 @@ void ResolvedAggregateFunctionCall::AddMutableChildNodePointers(
                   sizeof(*(mutable_child_node_ptrs->back())),
                   "Incorrect casting of mutable child node");
   }
+  for (auto& elem : group_by_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+  for (auto& elem : group_by_aggregate_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
 }
 
 absl::Status ResolvedAggregateFunctionCall::Accept(ResolvedASTVisitor* visitor) const {
@@ -4153,6 +4190,12 @@ absl::Status ResolvedAggregateFunctionCall::ChildrenAccept(ResolvedASTVisitor* v
   }
   if (limit_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(limit_.get()->Accept(visitor));
+  }
+  for (const auto& elem : group_by_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  for (const auto& elem : group_by_aggregate_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
   }
   return absl::OkStatus();
 }
@@ -4171,6 +4214,12 @@ void ResolvedAggregateFunctionCall::CollectDebugStringFields(
   }
   if (!IsDefaultValue(function_call_info_)) {
     fields->emplace_back("function_call_info", ToStringImpl(function_call_info_), function_call_info_accessed());
+  }
+  if (!group_by_list_.empty()) {
+    fields->emplace_back("group_by_list", group_by_list_, group_by_list_accessed());
+  }
+  if (!group_by_aggregate_list_.empty()) {
+    fields->emplace_back("group_by_aggregate_list", group_by_aggregate_list_, group_by_aggregate_list_accessed());
   }
 }
 
@@ -4214,6 +4263,30 @@ absl::Status ResolvedAggregateFunctionCall::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
   }
+  if ((accessed_ & (1<<4)) == 0 &&
+      !IsDefaultValue(group_by_list_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAggregateFunctionCall::group_by_list not accessed "
+           "and has non-default value)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<5)) == 0 &&
+      !IsDefaultValue(group_by_aggregate_list_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAggregateFunctionCall::group_by_aggregate_list not accessed "
+           "and has non-default value)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
   if ((accessed_ & (1<<0)) != 0) {
     if (having_modifier_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
@@ -4229,6 +4302,16 @@ absl::Status ResolvedAggregateFunctionCall::CheckFieldsAccessedImpl(
     if (limit_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
           limit_.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<4)) != 0) {
+    for (const auto& it : group_by_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<5)) != 0) {
+    for (const auto& it : group_by_aggregate_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
     }
   }
   return absl::OkStatus();
@@ -4249,6 +4332,14 @@ absl::Status ResolvedAggregateFunctionCall::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateFunctionCall::limit is accessed, but shouldn't be)";
   }
+  if ((accessed_ & (1<<4)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAggregateFunctionCall::group_by_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<5)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAggregateFunctionCall::group_by_aggregate_list is accessed, but shouldn't be)";
+  }
   if ((accessed_ & (1<<0)) != 0) {
     if (having_modifier_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(having_modifier_->CheckNoFieldsAccessed());
@@ -4264,6 +4355,16 @@ absl::Status ResolvedAggregateFunctionCall::CheckNoFieldsAccessed() const {
       ZETASQL_RETURN_IF_ERROR(limit_->CheckNoFieldsAccessed());
     }
   }
+  if ((accessed_ & (1<<4)) != 0) {
+    for (const auto& it : group_by_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<5)) != 0) {
+    for (const auto& it : group_by_aggregate_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
   return absl::OkStatus();
 }
 
@@ -4274,6 +4375,8 @@ void ResolvedAggregateFunctionCall::ClearFieldsAccessed() const {
   if (having_modifier_ != nullptr) having_modifier_->ClearFieldsAccessed();
   for (const auto& it : order_by_item_list_) it->ClearFieldsAccessed();
   if (limit_ != nullptr) limit_->ClearFieldsAccessed();
+  for (const auto& it : group_by_list_) it->ClearFieldsAccessed();
+  for (const auto& it : group_by_aggregate_list_) it->ClearFieldsAccessed();
 }
 
 void ResolvedAggregateFunctionCall::MarkFieldsAccessed() const {
@@ -4282,6 +4385,8 @@ void ResolvedAggregateFunctionCall::MarkFieldsAccessed() const {
   if (having_modifier_ != nullptr) having_modifier_->MarkFieldsAccessed();
   for (const auto& it : order_by_item_list_) it->MarkFieldsAccessed();
   if (limit_ != nullptr) limit_->MarkFieldsAccessed();
+  for (const auto& it : group_by_list_) it->MarkFieldsAccessed();
+  for (const auto& it : group_by_aggregate_list_) it->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedAnalyticFunctionCall::TYPE;
@@ -7546,6 +7651,9 @@ absl::StatusOr<std::unique_ptr<ResolvedScan>> ResolvedScan::RestoreFrom(
     case AnyResolvedScanProto::kResolvedExecuteAsRoleScanNode:
       return ResolvedExecuteAsRoleScan::RestoreFrom(
           proto.resolved_execute_as_role_scan_node(), params);
+    case AnyResolvedScanProto::kResolvedBarrierScanNode:
+      return ResolvedBarrierScan::RestoreFrom(
+          proto.resolved_barrier_scan_node(), params);
   case AnyResolvedScanProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedScanProto";
@@ -26187,10 +26295,10 @@ absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionGroup>> ResolvedAnalyticF
                      ResolvedWindowOrdering::RestoreFrom(
                          proto.order_by(), params));
   }
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> analytic_function_list;
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> analytic_function_list;
   for (const auto& elem : proto.analytic_function_list()) {
-    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedComputedColumn> elem_restored,
-                     ResolvedComputedColumn::RestoreFrom(elem, params));
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedComputedColumnBase> elem_restored,
+                     ResolvedComputedColumnBase::RestoreFrom(elem, params));
     analytic_function_list.push_back(std::move(elem_restored));
   }
   auto node = MakeResolvedAnalyticFunctionGroup(
@@ -44689,6 +44797,163 @@ void ResolvedIdentityColumnInfo::ClearFieldsAccessed() const {
 void ResolvedIdentityColumnInfo::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
+}
+
+const ResolvedNodeKind ResolvedBarrierScan::TYPE;
+
+ResolvedBarrierScan::~ResolvedBarrierScan() {
+}
+
+absl::Status ResolvedBarrierScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedScanProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_barrier_scan_node());
+}
+
+absl::Status ResolvedBarrierScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedBarrierScanProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_->SaveTo(
+        file_descriptor_set_map, proto->mutable_input_scan()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedBarrierScan>> ResolvedBarrierScan::RestoreFrom(
+    const ResolvedBarrierScanProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedScan> input_scan;
+  if (proto.
+  has_input_scan()) {
+    ZETASQL_ASSIGN_OR_RETURN(input_scan,
+                     ResolvedScan::RestoreFrom(
+                         proto.input_scan(), params));
+  }
+  std::vector<ResolvedColumn> column_list;
+  for (const auto& elem : proto.parent().column_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<ResolvedColumn>::value_type>(elem, params));
+    column_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  bool is_ordered =
+      proto.parent().is_ordered();
+  std::string node_source =
+      proto.parent().node_source();
+  auto node = MakeResolvedBarrierScan(
+      std::move(column_list),
+      std::move(input_scan));
+
+  node->set_hint_list(std::move(hint_list));
+  node->set_is_ordered(std::move(is_ordered));
+  node->set_node_source(std::move(node_source));
+  return node;
+}
+
+void ResolvedBarrierScan::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (input_scan_ != nullptr) {
+    child_nodes->emplace_back(input_scan_.get());
+  }
+}
+
+void ResolvedBarrierScan::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (input_scan_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &input_scan_));
+    static_assert(sizeof(input_scan_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedBarrierScan::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedBarrierScan(this);
+}
+
+absl::Status ResolvedBarrierScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedBarrierScan::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (input_scan_ != nullptr) {
+    fields->emplace_back("input_scan", input_scan_.get(), input_scan_accessed());
+  }
+}
+
+absl::Status ResolvedBarrierScan::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedBarrierScan::input_scan not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          input_scan_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedBarrierScan::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedBarrierScan::input_scan is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(input_scan_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedBarrierScan::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (input_scan_ != nullptr) input_scan_->ClearFieldsAccessed();
+}
+
+void ResolvedBarrierScan::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (input_scan_ != nullptr) input_scan_->MarkFieldsAccessed();
 }
 
 }  // namespace zetasql

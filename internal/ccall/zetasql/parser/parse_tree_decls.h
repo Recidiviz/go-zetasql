@@ -404,6 +404,7 @@ class ASTIdentityColumnMinValue;
 class ASTAliasedQueryModifiers;
 class ASTIntOrUnbounded;
 class ASTRecursionDepthModifier;
+class ASTMapType;
 
 }  // namespace zetasql
 #endif  // STORAGE_ZETASQL_PARSER_PARSE_TREE_DECLS_H

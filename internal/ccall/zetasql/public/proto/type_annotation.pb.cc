@@ -83,7 +83,7 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n*zetasql/public/proto/type_annotation.p"
     "roto\022\007zetasql\032 google/protobuf/descripto"
-    "r.proto\"\267\003\n\013FieldFormat\"\247\003\n\006Format\022\022\n\016DE"
+    "r.proto\"\301\003\n\013FieldFormat\"\261\003\n\006Format\022\022\n\016DE"
     "FAULT_FORMAT\020\000\022\010\n\004DATE\020\001\022\025\n\021TIMESTAMP_SE"
     "CONDS\020\002\022\024\n\020TIMESTAMP_MILLIS\020\003\022\024\n\020TIMESTA"
     "MP_MICROS\020\004\022\023\n\017TIMESTAMP_NANOS\020\005\022\020\n\014DATE"
@@ -92,23 +92,24 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotatio
     "MERIC\020\n\022\016\n\nBIGNUMERIC\020\013\022\010\n\004JSON\020\014\022\014\n\010INT"
     "ERVAL\020\016\022\r\n\tTOKENLIST\020\017\022\027\n\023RANGE_DATES_EN"
     "CODED\020\020\022\033\n\027RANGE_DATETIMES_ENCODED\020\021\022\034\n\030"
-    "RANGE_TIMESTAMPS_ENCODED\020\022\022=\n0__FieldFor"
-    "mat_Type__switch_must_have_a_default__\020\377"
-    "\377\377\377\377\377\377\377\377\001\"\243\001\n\022DeprecatedEncoding\"\214\001\n\010Enc"
-    "oding\022\024\n\020DEFAULT_ENCODING\020\000\022\021\n\rDATE_PACK"
-    "ED32\020\001\022\020\n\014DATE_DECIMAL\020\001\022A\n4__FieldForma"
-    "t_Encoding__switch_must_have_a_default__"
-    "\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001:M\n\006format\022\035.google.proto"
-    "buf.FieldOptions\030\313\353\341  \001(\0162\033.zetasql.Fiel"
-    "dFormat.Format:K\n\004type\022\035.google.protobuf"
-    ".FieldOptions\030\345\252\337\027 \001(\0162\033.zetasql.FieldFo"
-    "rmat.Format:X\n\010encoding\022\035.google.protobu"
-    "f.FieldOptions\030\247\371\376\035 \001(\0162$.zetasql.Deprec"
-    "atedEncoding.Encoding:<\n\014use_defaults\022\035."
-    "google.protobuf.FieldOptions\030\277\246\336\027 \001(\010:\004t"
-    "rue:D\n\022use_field_defaults\022\037.google.proto"
-    "buf.MessageOptions\030\202\371\326\027 \001(\010:\004trueB,\n\022com"
-    ".google.zetasqlB\023TypeAnnotationProto\370\001\001"
+    "RANGE_TIMESTAMPS_ENCODED\020\022\022\010\n\004UUID\020\023\022=\n0"
+    "__FieldFormat_Type__switch_must_have_a_d"
+    "efault__\020\377\377\377\377\377\377\377\377\377\001\"\247\001\n\022DeprecatedEncodi"
+    "ng\"\220\001\n\010Encoding\022\024\n\020DEFAULT_ENCODING\020\000\022\020\n"
+    "\014DATE_DECIMAL\020\001\022\025\n\rDATE_PACKED32\020\001\032\002\010\001\022A"
+    "\n4__FieldFormat_Encoding__switch_must_ha"
+    "ve_a_default__\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001:M\n\006format\022"
+    "\035.google.protobuf.FieldOptions\030\313\353\341  \001(\0162"
+    "\033.zetasql.FieldFormat.Format:K\n\004type\022\035.g"
+    "oogle.protobuf.FieldOptions\030\345\252\337\027 \001(\0162\033.z"
+    "etasql.FieldFormat.Format:X\n\010encoding\022\035."
+    "google.protobuf.FieldOptions\030\247\371\376\035 \001(\0162$."
+    "zetasql.DeprecatedEncoding.Encoding:<\n\014u"
+    "se_defaults\022\035.google.protobuf.FieldOptio"
+    "ns\030\277\246\336\027 \001(\010:\004true:D\n\022use_field_defaults\022"
+    "\037.google.protobuf.MessageOptions\030\202\371\326\027 \001("
+    "\010:\004trueB,\n\022com.google.zetasqlB\023TypeAnnot"
+    "ationProto\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps[1] =
     {
@@ -118,7 +119,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fanno
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = {
     false,
     false,
-    1119,
+    1133,
     descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
     "zetasql/public/proto/type_annotation.proto",
     &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once,
@@ -176,6 +177,7 @@ bool FieldFormat_Format_IsValid(int value) {
     case 16:
     case 17:
     case 18:
+    case 19:
       return true;
     default:
       return false;
@@ -202,6 +204,7 @@ constexpr FieldFormat_Format FieldFormat::TOKENLIST;
 constexpr FieldFormat_Format FieldFormat::RANGE_DATES_ENCODED;
 constexpr FieldFormat_Format FieldFormat::RANGE_DATETIMES_ENCODED;
 constexpr FieldFormat_Format FieldFormat::RANGE_TIMESTAMPS_ENCODED;
+constexpr FieldFormat_Format FieldFormat::UUID;
 constexpr FieldFormat_Format FieldFormat::__FieldFormat_Type__switch_must_have_a_default__;
 constexpr FieldFormat_Format FieldFormat::Format_MIN;
 constexpr FieldFormat_Format FieldFormat::Format_MAX;
@@ -227,8 +230,8 @@ bool DeprecatedEncoding_Encoding_IsValid(int value) {
   (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DEFAULT_ENCODING;
-constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DATE_PACKED32;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DATE_DECIMAL;
+constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::DATE_PACKED32;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::__FieldFormat_Encoding__switch_must_have_a_default__;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::Encoding_MIN;
 constexpr DeprecatedEncoding_Encoding DeprecatedEncoding::Encoding_MAX;

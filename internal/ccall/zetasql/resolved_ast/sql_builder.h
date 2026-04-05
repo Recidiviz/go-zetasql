@@ -342,6 +342,8 @@ class SQLBuilder : public ResolvedASTVisitor {
       const ResolvedOrderByItem* node) override;
   absl::Status VisitResolvedComputedColumn(
       const ResolvedComputedColumn* node) override;
+  absl::Status VisitResolvedDeferredComputedColumn(
+      const ResolvedDeferredComputedColumn* node) override;
   absl::Status VisitResolvedAssertRowsModified(
       const ResolvedAssertRowsModified* node) override;
   absl::Status VisitResolvedReturningClause(
@@ -404,6 +406,8 @@ class SQLBuilder : public ResolvedASTVisitor {
       const ResolvedUnpivotScan* node) override;
   absl::Status VisitResolvedGroupRowsScan(
       const ResolvedGroupRowsScan* node) override;
+  absl::Status VisitResolvedBarrierScan(
+      const ResolvedBarrierScan* node) override;
 
   // Visit methods for analytic functions related nodes.
   absl::Status VisitResolvedAnalyticFunctionGroup(
@@ -514,7 +518,7 @@ class SQLBuilder : public ResolvedASTVisitor {
 
   // Always append a (possibly empty) OPTIONS clause.
   absl::Status AppendOptions(
-      const std::vector<std::unique_ptr<const ResolvedOption>>& option_list,
+      absl::Span<const std::unique_ptr<const ResolvedOption>> option_list,
       std::string* sql);
   // Only append an OPTIONS clause if there is at least one option.
   absl::Status AppendOptionsIfPresent(
@@ -522,7 +526,7 @@ class SQLBuilder : public ResolvedASTVisitor {
       std::string* sql);
 
   absl::Status AppendHintsIfPresent(
-      const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list,
+      absl::Span<const std::unique_ptr<const ResolvedOption>> hint_list,
       std::string* text);
 
   void PushSQLForQueryExpression(const ResolvedNode* node,
@@ -780,6 +784,11 @@ class SQLBuilder : public ResolvedASTVisitor {
       const ResolvedPrimaryKey* primary_key);
   std::string ComputedColumnAliasDebugString() const;
 
+  // A ProjectScan is degenerate if it does not add any new information over its
+  // input scan.
+  virtual bool IsDegenerateProjectScan(const ResolvedProjectScan* node,
+                                       const QueryExpression* query_expression);
+
   // If we have a recursive view, sets up internal data structures in
   // preparation for generating SQL text for a recursive view, so that the
   // columns and table references to the recursive table are correct.
@@ -978,6 +987,15 @@ class SQLBuilder : public ResolvedASTVisitor {
   // unparsed SQL.
   absl::StatusOr<const ResolvedScan*> GetOriginalInputScanForCorresponding(
       const ResolvedScan* scan);
+
+  // When building function call which defines a side effects scope, we may need
+  // to inline some column refs to input scans. This stack keeps track of the
+  // current error handling context. Note that the same node may now be visited
+  // twice, e.g. an AggregateScan's aggregations would be first be visited from
+  // the context of an outer IFERROR() call to collect all its inputs, before
+  // being visited again free of any error handling context for the other
+  // expressions.
+  absl::flat_hash_set<const ResolvedScan*> scans_to_collapse_;
 };
 
 }  // namespace zetasql

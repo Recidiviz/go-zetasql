@@ -841,6 +841,7 @@ class ValueProto final :
     kIntervalValue = 24,
     kTokenlistValue = 25,
     kRangeValue = 26,
+    kUuidValue = 27,
     kValueProtoSwitchMustHaveADefault = 255,
     VALUE_NOT_SET = 0,
   };
@@ -951,6 +952,7 @@ class ValueProto final :
     kIntervalValueFieldNumber = 24,
     kTokenlistValueFieldNumber = 25,
     kRangeValueFieldNumber = 26,
+    kUuidValueFieldNumber = 27,
     kValueProtoSwitchMustHaveADefaultFieldNumber = 255,
   };
   // int32 int32_value = 1;
@@ -1332,6 +1334,27 @@ class ValueProto final :
   void unsafe_arena_set_allocated_range_value(
       ::zetasql::ValueProto_Range* range_value);
   ::zetasql::ValueProto_Range* unsafe_arena_release_range_value();
+  // bytes uuid_value = 27;
+  bool has_uuid_value() const;
+  void clear_uuid_value() ;
+  const std::string& uuid_value() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_uuid_value(Arg_&& arg, Args_... args);
+  std::string* mutable_uuid_value();
+  PROTOBUF_NODISCARD std::string* release_uuid_value();
+  void set_allocated_uuid_value(std::string* ptr);
+
+  private:
+  const std::string& _internal_uuid_value() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_uuid_value(
+      const std::string& value);
+  std::string* _internal_mutable_uuid_value();
+
+  public:
   // bool __ValueProto__switch_must_have_a_default = 255;
   bool has___valueproto__switch_must_have_a_default() const;
   void clear___valueproto__switch_must_have_a_default() ;
@@ -1372,6 +1395,7 @@ class ValueProto final :
   void set_has_interval_value();
   void set_has_tokenlist_value();
   void set_has_range_value();
+  void set_has_uuid_value();
   void set_has___valueproto__switch_must_have_a_default();
 
   inline bool has_value() const;
@@ -1408,6 +1432,7 @@ class ValueProto final :
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr interval_value_;
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tokenlist_value_;
       ::zetasql::ValueProto_Range* range_value_;
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr uuid_value_;
       bool __valueproto__switch_must_have_a_default_;
     } value_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -3176,6 +3201,85 @@ inline ::zetasql::ValueProto_Range* ValueProto::mutable_range_value() {
   ::zetasql::ValueProto_Range* _msg = _internal_mutable_range_value();
   // @@protoc_insertion_point(field_mutable:zetasql.ValueProto.range_value)
   return _msg;
+}
+
+// bytes uuid_value = 27;
+inline bool ValueProto::has_uuid_value() const {
+  return value_case() == kUuidValue;
+}
+inline void ValueProto::set_has_uuid_value() {
+  _impl_._oneof_case_[0] = kUuidValue;
+}
+inline void ValueProto::clear_uuid_value() {
+  if (value_case() == kUuidValue) {
+    _impl_.value_.uuid_value_.Destroy();
+    clear_has_value();
+  }
+}
+inline const std::string& ValueProto::uuid_value() const {
+  // @@protoc_insertion_point(field_get:zetasql.ValueProto.uuid_value)
+  return _internal_uuid_value();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ValueProto::set_uuid_value(Arg_&& arg,
+                                                     Args_... args) {
+  if (value_case() != kUuidValue) {
+    clear_value();
+
+    set_has_uuid_value();
+    _impl_.value_.uuid_value_.InitDefault();
+  }
+  _impl_.value_.uuid_value_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.ValueProto.uuid_value)
+}
+inline std::string* ValueProto::mutable_uuid_value() {
+  std::string* _s = _internal_mutable_uuid_value();
+  // @@protoc_insertion_point(field_mutable:zetasql.ValueProto.uuid_value)
+  return _s;
+}
+inline const std::string& ValueProto::_internal_uuid_value() const {
+  if (value_case() != kUuidValue) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+  }
+  return _impl_.value_.uuid_value_.Get();
+}
+inline void ValueProto::_internal_set_uuid_value(const std::string& value) {
+  if (value_case() != kUuidValue) {
+    clear_value();
+
+    set_has_uuid_value();
+    _impl_.value_.uuid_value_.InitDefault();
+  }
+
+
+  _impl_.value_.uuid_value_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ValueProto::_internal_mutable_uuid_value() {
+  if (value_case() != kUuidValue) {
+    clear_value();
+
+    set_has_uuid_value();
+    _impl_.value_.uuid_value_.InitDefault();
+  }
+  return _impl_.value_.uuid_value_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ValueProto::release_uuid_value() {
+  // @@protoc_insertion_point(field_release:zetasql.ValueProto.uuid_value)
+  if (value_case() != kUuidValue) {
+    return nullptr;
+  }
+  clear_has_value();
+  return _impl_.value_.uuid_value_.Release();
+}
+inline void ValueProto::set_allocated_uuid_value(std::string* value) {
+  if (has_value()) {
+    clear_value();
+  }
+  if (value != nullptr) {
+    set_has_uuid_value();
+    _impl_.value_.uuid_value_.InitAllocated(value, GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ValueProto.uuid_value)
 }
 
 // bool __ValueProto__switch_must_have_a_default = 255;

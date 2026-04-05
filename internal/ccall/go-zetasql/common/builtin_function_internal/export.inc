@@ -16,11 +16,14 @@
 #undef SetDefinitionForInlining
 #include "zetasql/common/builtin_function_map.cc"
 #include "zetasql/common/builtin_function_range.cc"
+#include "zetasql/common/builtin_function_sketches.cc"
 // include dependencies
+#include "go-zetasql/common/builtins_output_properties/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
+#include "go-zetasql/base/no_destructor/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"

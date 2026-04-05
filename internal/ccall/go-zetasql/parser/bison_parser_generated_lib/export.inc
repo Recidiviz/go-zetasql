@@ -10,11 +10,13 @@
 // include sources
 // include dependencies
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
+#include "go-zetasql/parser/bison_token_codes/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
@@ -32,6 +34,7 @@
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/flags/flag/export.inc"
+#include "go-absl/log/log/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

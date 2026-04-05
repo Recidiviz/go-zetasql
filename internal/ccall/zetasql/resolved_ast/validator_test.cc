@@ -1883,6 +1883,130 @@ TEST(ValidateTest, ErrorWhenSideEffectColumnIsNotConsumed) {
                         HasSubstr("unconsumed_side_effect_columns_.empty()")));
 }
 
+// TODO: Augment this test with actual validation logic for
+// multi-level aggregation.
+TEST(ValidateTest, MultilevelAggregationNotYetSupported) {
+  IdStringPool pool;
+  auto agg_function =
+      std::make_unique<Function>("count", "test_group", Function::AGGREGATE);
+  FunctionSignature sig(FunctionArgumentType(types::Int64Type(), 1), {},
+                        static_cast<int64_t>(1234));
+  ResolvedColumn placeholder_column = ResolvedColumn(
+      1, pool.Make("table_name"), pool.Make("name"), types::Int64Type());
+
+  {
+    ZETASQL_ASSERT_OK_AND_ASSIGN(
+        std::unique_ptr<const ResolvedComputedColumn>
+            placeholder_computed_column,
+        ResolvedComputedColumnBuilder()
+            .set_column(placeholder_column)
+            .set_expr(MakeResolvedLiteral(types::Int64Type(), Value::Int64(1)))
+            .Build());
+
+    ZETASQL_ASSERT_OK_AND_ASSIGN(
+        auto agg_function_call,
+        ResolvedAggregateFunctionCallBuilder()
+            .set_type(types::Int64Type())
+            .set_function(agg_function.get())
+            .set_signature(sig)
+            .add_group_by_list(std::move(placeholder_computed_column))
+            .Build());
+
+    EXPECT_THAT(
+        Validator().ValidateStandaloneResolvedExpr(agg_function_call.get()),
+        StatusIs(absl::StatusCode::kInternal,
+                 HasSubstr("Aggregate functions do not support group by yet")));
+  }
+
+  {
+    ZETASQL_ASSERT_OK_AND_ASSIGN(
+        std::unique_ptr<const ResolvedComputedColumn>
+            placeholder_computed_column,
+        ResolvedComputedColumnBuilder()
+            .set_column(placeholder_column)
+            .set_expr(MakeResolvedLiteral(types::Int64Type(), Value::Int64(1)))
+            .Build());
+
+    ZETASQL_ASSERT_OK_AND_ASSIGN(
+        auto agg_function_call,
+        ResolvedAggregateFunctionCallBuilder()
+            .set_type(types::Int64Type())
+            .set_function(agg_function.get())
+            .set_signature(sig)
+            .add_group_by_aggregate_list(std::move(placeholder_computed_column))
+            .Build());
+
+    EXPECT_THAT(
+        Validator().ValidateStandaloneResolvedExpr(agg_function_call.get()),
+        StatusIs(absl::StatusCode::kInternal,
+                 HasSubstr("Aggregate functions do not support group by yet")));
+  }
+}
+
+TEST(ValidateTest, ResolvedBarrierScanBasic) {
+  IdStringPool pool;
+  ResolvedColumn col1(1, pool.Make("table"), pool.Make("col1'"),
+                      types::Int64Type());
+  ResolvedColumn col2(2, pool.Make("table"), pool.Make("col2"),
+                      types::Int64Type());
+
+  ResolvedColumnList column_list = {col1, col2};
+
+  std::unique_ptr<ResolvedBarrierScan> barrier_scan = MakeResolvedBarrierScan(
+      column_list,
+      MakeResolvedProjectScan(
+          column_list,
+          MakeNodeVector(MakeResolvedComputedColumn(
+                             col1, MakeResolvedLiteral(Value::Int64(1))),
+                         MakeResolvedComputedColumn(
+                             col2, MakeResolvedLiteral(Value::Int64(2)))),
+          MakeResolvedSingleRowScan()));
+
+  std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list;
+  output_column_list.push_back(MakeResolvedOutputColumn("col1", col1));
+  output_column_list.push_back(MakeResolvedOutputColumn("col2", col2));
+
+  std::unique_ptr<ResolvedQueryStmt> query_stmt =
+      MakeResolvedQueryStmt(std::move(output_column_list),
+                            /*is_value_table=*/false, std::move(barrier_scan));
+
+  LanguageOptions language_options;
+  Validator validator(language_options);
+  ZETASQL_EXPECT_OK(validator.ValidateResolvedStatement(query_stmt.get()));
+}
+
+TEST(ValidateTest, ResolvedBarrierScanReferencesWrongColumn) {
+  IdStringPool pool;
+  ResolvedColumn col1(1, pool.Make("table"), pool.Make("col1'"),
+                      types::Int64Type());
+  ResolvedColumn col2(2, pool.Make("table"), pool.Make("col2"),
+                      types::DoubleType());
+
+  std::unique_ptr<ResolvedBarrierScan> barrier_scan = MakeResolvedBarrierScan(
+      /*column_list=*/{col1, col2},
+      MakeResolvedProjectScan(
+          /*column_list=*/{col1},
+          MakeNodeVector(MakeResolvedComputedColumn(
+              col1, MakeResolvedLiteral(Value::Int64(1)))),
+          MakeResolvedSingleRowScan()));
+
+  std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list;
+  output_column_list.push_back(MakeResolvedOutputColumn("col1", col1));
+  output_column_list.push_back(MakeResolvedOutputColumn("col2", col2));
+
+  std::unique_ptr<ResolvedQueryStmt> query_stmt =
+      MakeResolvedQueryStmt(std::move(output_column_list),
+                            /*is_value_table=*/false, std::move(barrier_scan));
+
+  // Validation fails because `col2` is not a column in the input scan.
+  LanguageOptions language_options;
+  Validator validator(language_options);
+  EXPECT_THAT(validator.ValidateResolvedStatement(query_stmt.get()),
+              StatusIs(absl::StatusCode::kInternal,
+                       HasSubstr("Column list contains column table.col2#2 not "
+                                 "visible in scan node")));
+}
+
 }  // namespace
 }  // namespace testing
 }  // namespace zetasql

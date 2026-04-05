@@ -3,6 +3,7 @@
 
 #include "zetasql/parser/macros/token_with_location.h"
 // include sources
+#include "zetasql/parser/macros/token_with_location.cc"
 // include dependencies
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-absl/strings/strings/export.inc"

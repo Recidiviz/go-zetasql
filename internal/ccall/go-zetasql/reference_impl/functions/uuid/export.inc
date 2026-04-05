@@ -7,6 +7,7 @@
 // include dependencies
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/functions/uuid/export.inc"
+#include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
 #include "go-absl/status/statusor/export.inc"
 

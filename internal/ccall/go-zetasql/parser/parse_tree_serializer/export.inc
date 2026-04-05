@@ -18,6 +18,7 @@
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/variant/export.inc"

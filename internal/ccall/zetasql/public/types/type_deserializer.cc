@@ -18,6 +18,7 @@
 
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
@@ -36,6 +37,7 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
+#include "google/protobuf/text_format.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
 
@@ -53,7 +55,8 @@ absl::Status ValidateTypeProto(const TypeProto& type_proto) {
       (type_proto.type_kind() == TYPE_MAP) != type_proto.has_map_type() ||
       type_proto.type_kind() == __TypeKind__switch_must_have_a_default__) {
     if (type_proto.type_kind() != TYPE_GEOGRAPHY) {
-      auto type_proto_debug_str = type_proto.DebugString();
+      std::string type_proto_debug_str;
+      google::protobuf::TextFormat::PrintToString(type_proto, &type_proto_debug_str);
       if (type_proto_debug_str.empty()) {
         type_proto_debug_str = "(empty proto)";
       }

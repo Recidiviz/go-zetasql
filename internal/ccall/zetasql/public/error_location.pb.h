@@ -202,6 +202,8 @@ class ErrorLocation final :
   enum : int {
     kErrorSourceFieldNumber = 4,
     kFilenameFieldNumber = 3,
+    kInputStartLineOffsetFieldNumber = 5,
+    kInputStartColumnOffsetFieldNumber = 6,
     kLineFieldNumber = 1,
     kColumnFieldNumber = 2,
   };
@@ -246,6 +248,28 @@ class ErrorLocation final :
   std::string* _internal_mutable_filename();
 
   public:
+  // optional int32 input_start_line_offset = 5;
+  bool has_input_start_line_offset() const;
+  void clear_input_start_line_offset() ;
+  ::int32_t input_start_line_offset() const;
+  void set_input_start_line_offset(::int32_t value);
+
+  private:
+  ::int32_t _internal_input_start_line_offset() const;
+  void _internal_set_input_start_line_offset(::int32_t value);
+
+  public:
+  // optional int32 input_start_column_offset = 6;
+  bool has_input_start_column_offset() const;
+  void clear_input_start_column_offset() ;
+  ::int32_t input_start_column_offset() const;
+  void set_input_start_column_offset(::int32_t value);
+
+  private:
+  ::int32_t _internal_input_start_column_offset() const;
+  void _internal_set_input_start_column_offset(::int32_t value);
+
+  public:
   // optional int32 line = 1 [default = 1];
   bool has_line() const;
   void clear_line() ;
@@ -280,6 +304,8 @@ class ErrorLocation final :
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ErrorSource > error_source_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr filename_;
+    ::int32_t input_start_line_offset_;
+    ::int32_t input_start_column_offset_;
     ::int32_t line_;
     ::int32_t column_;
   };
@@ -511,12 +537,12 @@ class ErrorSource final :
 
 // optional int32 line = 1 [default = 1];
 inline bool ErrorLocation::has_line() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
 inline void ErrorLocation::clear_line() {
   _impl_.line_ = 1;
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
 inline ::int32_t ErrorLocation::line() const {
   // @@protoc_insertion_point(field_get:zetasql.ErrorLocation.line)
@@ -530,18 +556,18 @@ inline ::int32_t ErrorLocation::_internal_line() const {
   return _impl_.line_;
 }
 inline void ErrorLocation::_internal_set_line(::int32_t value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000008u;
   _impl_.line_ = value;
 }
 
 // optional int32 column = 2 [default = 1];
 inline bool ErrorLocation::has_column() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
 inline void ErrorLocation::clear_column() {
   _impl_.column_ = 1;
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 inline ::int32_t ErrorLocation::column() const {
   // @@protoc_insertion_point(field_get:zetasql.ErrorLocation.column)
@@ -555,7 +581,7 @@ inline ::int32_t ErrorLocation::_internal_column() const {
   return _impl_.column_;
 }
 inline void ErrorLocation::_internal_set_column(::int32_t value) {
-  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_._has_bits_[0] |= 0x00000010u;
   _impl_.column_ = value;
 }
 
@@ -622,6 +648,56 @@ inline void ErrorLocation::set_allocated_filename(std::string* value) {
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:zetasql.ErrorLocation.filename)
+}
+
+// optional int32 input_start_line_offset = 5;
+inline bool ErrorLocation::has_input_start_line_offset() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline void ErrorLocation::clear_input_start_line_offset() {
+  _impl_.input_start_line_offset_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::int32_t ErrorLocation::input_start_line_offset() const {
+  // @@protoc_insertion_point(field_get:zetasql.ErrorLocation.input_start_line_offset)
+  return _internal_input_start_line_offset();
+}
+inline void ErrorLocation::set_input_start_line_offset(::int32_t value) {
+  _internal_set_input_start_line_offset(value);
+  // @@protoc_insertion_point(field_set:zetasql.ErrorLocation.input_start_line_offset)
+}
+inline ::int32_t ErrorLocation::_internal_input_start_line_offset() const {
+  return _impl_.input_start_line_offset_;
+}
+inline void ErrorLocation::_internal_set_input_start_line_offset(::int32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.input_start_line_offset_ = value;
+}
+
+// optional int32 input_start_column_offset = 6;
+inline bool ErrorLocation::has_input_start_column_offset() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline void ErrorLocation::clear_input_start_column_offset() {
+  _impl_.input_start_column_offset_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline ::int32_t ErrorLocation::input_start_column_offset() const {
+  // @@protoc_insertion_point(field_get:zetasql.ErrorLocation.input_start_column_offset)
+  return _internal_input_start_column_offset();
+}
+inline void ErrorLocation::set_input_start_column_offset(::int32_t value) {
+  _internal_set_input_start_column_offset(value);
+  // @@protoc_insertion_point(field_set:zetasql.ErrorLocation.input_start_column_offset)
+}
+inline ::int32_t ErrorLocation::_internal_input_start_column_offset() const {
+  return _impl_.input_start_column_offset_;
+}
+inline void ErrorLocation::_internal_set_input_start_column_offset(::int32_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.input_start_column_offset_ = value;
 }
 
 // repeated .zetasql.ErrorSource error_source = 4;

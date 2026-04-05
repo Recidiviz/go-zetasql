@@ -961,6 +961,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedIdentityColumnInfo(
       const ResolvedIdentityColumnInfo* node);
 
+  absl::Status CopyVisitResolvedBarrierScan(
+      const ResolvedBarrierScan* node);
+
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
   // The individual visit methods for each of the node types. We will copy
@@ -1589,6 +1592,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedIdentityColumnInfo(
       const ResolvedIdentityColumnInfo* node) override;
 
+  absl::Status VisitResolvedBarrierScan(
+      const ResolvedBarrierScan* node) override;
+
   // Assumes that 'ResolvedNodeType' contains 'hint_list' and copies it
   // 'from' -> 'to'.
   template <typename ResolvedNodeType>
@@ -1616,7 +1622,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   }
 
  private:
-  // Copies the WITH GROUP_ROWS parameter list from the original node to the
+  // Copies the WITH GROUP ROWS parameter list from the original node to the
   // copied node. This is required, as with_group_rows_parameter_list is not a
   // constructor arg, and the only way to transfer ownership is to explicitly
   // set it after constructing the copy.

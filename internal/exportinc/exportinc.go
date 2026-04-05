@@ -88,6 +88,7 @@ func PreludeLinesFromBindCC(bindCC []byte) ([]string, error) {
 func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	prelude = prependParserExportFlexSuppress(packageDir, prelude)
 	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
+	prelude = filterFlexTokenizerExportDuplicateSources(packageDir, prelude)
 	prelude = wrapUnicodeUtilsCCInclude(prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
@@ -116,6 +117,42 @@ func filterBisonExportDuplicateFlexTokenizer(packageDir string, prelude []string
 		out = append(out, line)
 	}
 	return out
+}
+
+// filterFlexTokenizerExportDuplicateSources drops flex_tokenizer.{cc,flex.cc} from flex_tokenizer's
+// export.inc. Parser bind.cc amalgamates those translation units; dependents (e.g. flex_token_provider)
+// include flex_tokenizer/export.inc and would otherwise duplicate ABSL_FLAG and lexer symbols.
+func filterFlexTokenizerExportDuplicateSources(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "/parser/flex_tokenizer") {
+		return prelude
+	}
+	const (
+		dropCC   = `#include "zetasql/parser/flex_tokenizer.cc"`
+		dropFlex = `#include "zetasql/parser/flex_tokenizer.flex.cc"`
+	)
+	out := make([]string, 0, len(prelude))
+	for _, line := range prelude {
+		t := strings.TrimSpace(line)
+		if t == dropCC || t == dropFlex {
+			continue
+		}
+		out = append(out, line)
+	}
+	note := "// flex_tokenizer.cc / flex_tokenizer.flex.cc are amalgamated in parser/bind.cc (parser prelude)."
+	for i, line := range out {
+		if strings.Contains(line, "// include sources") && i+1 < len(out) && !strings.Contains(out[i+1], "amalgamated in parser/bind.cc") {
+			out = slicesInsert(out, i+1, note)
+			break
+		}
+	}
+	return out
+}
+
+func slicesInsert(s []string, at int, val string) []string {
+	s = append(s, "")
+	copy(s[at+1:], s[at:])
+	s[at] = val
+	return s
 }
 
 // wrapUnicodeUtilsCCInclude guards zetasql/common/unicode_utils.cc so the public/analyzer CGO

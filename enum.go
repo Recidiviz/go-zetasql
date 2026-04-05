@@ -400,6 +400,9 @@ const (
 	// JSON_ARRAY_APPEND.
 	FeatureJsonMutatorFunctions LanguageFeature = 98
 
+	// Enables JSON_KEYS(JSON[, INT64 max_depth][, mode=>STRING]).
+	FeatureJsonKeysFunction LanguageFeature = 118
+
 	// Disallows "unicode", "unicode:ci", "unicode:cs" in ORDER BY ... COLLATE and
 	// other collation features. "unicode" is a legacy feature, and the desired
 	// behavior is to allow only "binary" and valid icu language tags.
@@ -695,6 +698,9 @@ const (
 
 	// If Array ordering is enabled, this flag enables arrays for GREATEST/LEAST.
 	FeatureV13ArrayGreatestLeast LanguageFeature = 13044
+
+	// SQL macros (DEFINE MACRO, ...). Required for parser/tokenizer when a macro catalog is present.
+	FeatureV14SqlMacros LanguageFeature = 14012
 
 	// Enable GROUP BY ALL (non-standard grouping: all non-aggregated SELECT list columns).
 	FeatureV14GroupByAll LanguageFeature = 14039

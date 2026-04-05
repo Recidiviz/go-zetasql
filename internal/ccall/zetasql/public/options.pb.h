@@ -164,6 +164,7 @@ enum LanguageFeature : int {
   FEATURE_JSON_CONSTRUCTOR_FUNCTIONS = 93,
   FEATURE_JSON_MUTATOR_FUNCTIONS = 98,
   FEATURE_JSON_QUERY_LAX = 115,
+  FEATURE_JSON_KEYS_FUNCTION = 118,
   FEATURE_CREATE_EXTERNAL_TABLE_WITH_PARTITION_COLUMNS = 47,
   FEATURE_INTERVAL_TYPE = 49,
   FEATURE_EXTRACT_ONEOF_CASE = 50,
@@ -202,7 +203,6 @@ enum LanguageFeature : int {
   FEATURE_GENERATED_BY_DEFAULT = 103,
   FEATURE_ENFORCE_MICROS_MODE_IN_INTERVAL_TYPE = 105,
   FEATURE_ALTER_COLUMN_DROP_GENERATED = 106,
-  FEATURE_TEXTMAPPER_PARSER = 999004,
   FEATURE_SHADOW_PARSING = 999005,
   FEATURE_DISABLE_TEXTMAPPER_PARSER = 107,
   FEATURE_DISABLE_PIVOT_REWRITER_UDA_ERRORS = 108,
@@ -327,6 +327,10 @@ enum LanguageFeature : int {
   FEATURE_V_1_4_JSON_ARRAY_VALUE_EXTRACTION_FUNCTIONS = 14053,
   FEATURE_V_1_4_ENFORCE_CONDITIONAL_EVALUATION = 14054,
   FEATURE_V_1_4_JSON_MORE_VALUE_EXTRACTION_FUNCTIONS = 14055,
+  FEATURE_V_1_4_IMPLICIT_COERCION_STRING_LITERAL_TO_BYTES = 14056,
+  FEATURE_V_1_4_UUID_TYPE = 14057,
+  FEATURE_V_1_4_MULTILEVEL_AGGREGATION = 14058,
+  FEATURE_V_1_4_REPLACE_FIELDS_ALLOW_MULTI_ONEOF = 14060,
   FEATURE_EXPERIMENTAL_MODULES = 999002,
   FEATURE_TEST_IDEALLY_ENABLED_BUT_IN_DEVELOPMENT = 999991,
   FEATURE_TEST_IDEALLY_DISABLED = 999992,
@@ -515,12 +519,13 @@ enum ErrorMessageStability : int {
   ERROR_MESSAGE_STABILITY_UNSPECIFIED = 0,
   ERROR_MESSAGE_STABILITY_PRODUCTION = 1,
   ERROR_MESSAGE_STABILITY_TEST_REDACTED = 2,
+  ERROR_MESSAGE_STABILITY_TEST_REDACTED_WITH_PAYLOADS = 3,
 };
 
 bool ErrorMessageStability_IsValid(int value);
 constexpr ErrorMessageStability ErrorMessageStability_MIN = static_cast<ErrorMessageStability>(0);
-constexpr ErrorMessageStability ErrorMessageStability_MAX = static_cast<ErrorMessageStability>(2);
-constexpr int ErrorMessageStability_ARRAYSIZE = 2 + 1;
+constexpr ErrorMessageStability ErrorMessageStability_MAX = static_cast<ErrorMessageStability>(3);
+constexpr int ErrorMessageStability_ARRAYSIZE = 3 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 ErrorMessageStability_descriptor();
 template <typename T>
@@ -533,7 +538,7 @@ const std::string& ErrorMessageStability_Name(T value) {
 template <>
 inline const std::string& ErrorMessageStability_Name(ErrorMessageStability value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ErrorMessageStability_descriptor,
-                                                 0, 2>(
+                                                 0, 3>(
       static_cast<int>(value));
 }
 inline bool ErrorMessageStability_Parse(absl::string_view name, ErrorMessageStability* value) {

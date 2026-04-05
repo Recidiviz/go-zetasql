@@ -9,6 +9,7 @@
 #include "go-zetasql/parser/macros/token_with_location/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/parser/bison_token_codes/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"
 

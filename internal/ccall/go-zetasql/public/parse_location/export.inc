@@ -7,6 +7,7 @@
 // include dependencies
 #include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/mathutil/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

@@ -28,6 +28,7 @@
 #undef kIsNullFnName
 #undef kOrderById
 #define kOrderById zetasql_analyzer_resolver_query_kOrderById
+#include "zetasql/analyzer/set_operation_resolver_base.cc"
 #include "zetasql/analyzer/resolver_query.cc"
 #undef kOrderById
 #include "zetasql/analyzer/resolver_stmt.cc"

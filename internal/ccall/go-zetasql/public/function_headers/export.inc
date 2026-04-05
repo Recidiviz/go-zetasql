@@ -6,6 +6,7 @@
 #include "zetasql/public/input_argument_type.h"
 // include sources
 // include dependencies
+#include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
@@ -15,6 +16,8 @@
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/case/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/proto/function_cc_proto/export.inc"
@@ -22,6 +25,7 @@
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

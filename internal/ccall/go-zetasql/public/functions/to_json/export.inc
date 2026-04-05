@@ -7,14 +7,13 @@
 // include dependencies
 #include "go-zetasql/public/functions/json_format/export.inc"
 #include "go-zetasql/base/logging/export.inc"
+#include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/canonicalize_signed_zero_to_string/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/public/interval_value/export.inc"
 #include "go-zetasql/public/json_value/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
-#include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
@@ -22,6 +21,6 @@
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
-#include "go-protobuf/protobuf/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

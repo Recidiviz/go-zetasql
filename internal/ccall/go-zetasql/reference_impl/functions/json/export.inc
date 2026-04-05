@@ -6,6 +6,7 @@
 #include "zetasql/reference_impl/functions/json.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
+#include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/public/json_value/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
@@ -18,5 +19,6 @@
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/strings/export.inc"
 
 #endif

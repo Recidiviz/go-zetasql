@@ -18,7 +18,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -27,10 +26,15 @@
 #include <vector>
 
 #include "zetasql/base/logging.h"
+#include "zetasql/common/errors.h"
+#include "zetasql/common/simple_evaluator_table_iterator.h"
 #include "zetasql/proto/simple_catalog.pb.h"
+#include "zetasql/public/builtin_function.h"
+#include "zetasql/public/builtin_function_options.h"
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/catalog_helper.h"
 #include "zetasql/public/constant.h"
+#include "zetasql/public/evaluator_table_iterator.h"
 #include "zetasql/public/procedure.h"
 #include "zetasql/public/simple_connection.pb.h"
 #include "zetasql/public/simple_constant.pb.h"
@@ -40,11 +44,14 @@
 #include "zetasql/public/strings.h"
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/types/annotation.h"
+#include "zetasql/public/types/type.h"
 #include "zetasql/public/types/type_deserializer.h"
 #include "zetasql/public/types/type_factory.h"
+#include "zetasql/public/value.h"
 #include "zetasql/base/case.h"
 #include "absl/container/btree_map.h"
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -52,13 +59,14 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
+#include "absl/time/time.h"
 #include "absl/types/span.h"
+#include "google/protobuf/descriptor.h"
 #include "zetasql/base/map_util.h"
-#include "zetasql/base/source_location.h"
 #include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
 #include "zetasql/base/status_builder.h"
 #include "zetasql/base/status_macros.h"
+#include "zetasql/base/clock.h"
 
 namespace zetasql {
 
@@ -456,13 +464,13 @@ void SimpleCatalog::AddOwnedFunction(const std::string& name,
 }
 
 void SimpleCatalog::AddOwnedFunctionLocked(
-    const std::string& name, std::unique_ptr<const Function> function) {
+    absl::string_view name, std::unique_ptr<const Function> function) {
   AddFunctionLocked(name, function.get());
   owned_functions_.emplace_back(std::move(function));
 }
 
 void SimpleCatalog::AddOwnedTableValuedFunction(
-    const std::string& name,
+    absl::string_view name,
     std::unique_ptr<const TableValuedFunction> function) {
   AddTableValuedFunction(name, function.get());
   absl::MutexLock l(&mutex_);
@@ -1466,7 +1474,7 @@ std::vector<const Connection*> SimpleCatalog::connections() const {
 }
 
 SimpleTable::SimpleTable(absl::string_view name,
-                         const std::vector<NameAndType>& columns,
+                         absl::Span<const NameAndType> columns,
                          const int64_t serialization_id)
     : name_(name), id_(serialization_id) {
   for (const NameAndType& name_and_type : columns) {
@@ -1854,28 +1862,27 @@ absl::StatusOr<std::unique_ptr<SimpleConstant>> SimpleConstant::Deserialize(
       new SimpleConstant(std::move(name_path), std::move(value)));
 }
 
-SimpleModel::SimpleModel(const std::string& name,
-                         absl::Span<const NameAndType> inputs,
+SimpleModel::SimpleModel(std::string name, absl::Span<const NameAndType> inputs,
                          absl::Span<const NameAndType> outputs,
                          const int64_t id)
-    : name_(name), id_(id) {
+    : name_(std::move(name)), id_(id) {
   for (const NameAndType& name_and_type : inputs) {
     std::unique_ptr<SimpleColumn> column(
-        new SimpleColumn(name, name_and_type.first, name_and_type.second));
+        new SimpleColumn(name_, name_and_type.first, name_and_type.second));
     ZETASQL_CHECK_OK(AddInput(column.release(), true /* is_owned */));
   }
   for (const NameAndType& name_and_type : outputs) {
     std::unique_ptr<SimpleColumn> column(
-        new SimpleColumn(name, name_and_type.first, name_and_type.second));
+        new SimpleColumn(name_, name_and_type.first, name_and_type.second));
     ZETASQL_CHECK_OK(AddOutput(column.release(), true /* is_owned */));
   }
 }
 
-SimpleModel::SimpleModel(const std::string& name,
+SimpleModel::SimpleModel(std::string name,
                          const std::vector<const Column*>& inputs,
                          const std::vector<const Column*>& outputs,
                          bool take_ownership, const int64_t id)
-    : name_(name), id_(id) {
+    : name_(std::move(name)), id_(id) {
   for (const Column* column : inputs) {
     ZETASQL_CHECK_OK(AddInput(column, take_ownership));
   }

@@ -185,6 +185,7 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2fvalue_2eproto::offsets[] PROTOBU
     ::_pbi::kInvalidFieldOffsetTag,
     ::_pbi::kInvalidFieldOffsetTag,
     ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
     PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto, _impl_.value_),
 };
 
@@ -206,7 +207,7 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\032zetasql/public/value.proto\022\007zetasql\032\037g"
-    "oogle/protobuf/timestamp.proto\"\222\010\n\nValue"
+    "oogle/protobuf/timestamp.proto\"\250\010\n\nValue"
     "Proto\022\025\n\013int32_value\030\001 \001(\005H\000\022\025\n\013int64_va"
     "lue\030\002 \001(\003H\000\022\026\n\014uint32_value\030\003 \001(\rH\000\022\026\n\014u"
     "int64_value\030\004 \001(\004H\000\022\024\n\nbool_value\030\005 \001(\010H"
@@ -225,15 +226,16 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF
     "\000\022\024\n\njson_value\030\027 \001(\tH\000\022\030\n\016interval_valu"
     "e\030\030 \001(\014H\000\022\031\n\017tokenlist_value\030\031 \001(\014H\000\0220\n\013"
     "range_value\030\032 \001(\0132\031.zetasql.ValueProto.R"
-    "angeH\000\0223\n(__ValueProto__switch_must_have"
-    "_a_default\030\377\001 \001(\010H\000\032-\n\005Array\022$\n\007element\030"
-    "\001 \003(\0132\023.zetasql.ValueProto\032,\n\006Struct\022\"\n\005"
-    "field\030\001 \003(\0132\023.zetasql.ValueProto\032=\n\010Date"
-    "time\022\"\n\032bit_field_datetime_seconds\030\001 \001(\003"
-    "\022\r\n\005nanos\030\002 \001(\005\032M\n\005Range\022\"\n\005start\030\001 \001(\0132"
-    "\023.zetasql.ValueProto\022 \n\003end\030\002 \001(\0132\023.zeta"
-    "sql.ValueProtoB\007\n\005valueJ\004\010\013\020\014J\004\010\026\020\027B%\n\022c"
-    "om.google.zetasqlB\014ZetaSQLValue\370\001\001"
+    "angeH\000\022\024\n\nuuid_value\030\033 \001(\014H\000\0223\n(__ValueP"
+    "roto__switch_must_have_a_default\030\377\001 \001(\010H"
+    "\000\032-\n\005Array\022$\n\007element\030\001 \003(\0132\023.zetasql.Va"
+    "lueProto\032,\n\006Struct\022\"\n\005field\030\001 \003(\0132\023.zeta"
+    "sql.ValueProto\032=\n\010Datetime\022\"\n\032bit_field_"
+    "datetime_seconds\030\001 \001(\003\022\r\n\005nanos\030\002 \001(\005\032M\n"
+    "\005Range\022\"\n\005start\030\001 \001(\0132\023.zetasql.ValuePro"
+    "to\022 \n\003end\030\002 \001(\0132\023.zetasql.ValueProtoB\007\n\005"
+    "valueJ\004\010\013\020\014J\004\010\026\020\027B%\n\022com.google.zetasqlB"
+    "\014ZetaSQLValue\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps[1] =
     {
@@ -243,7 +245,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fvalue_2eproto = {
     false,
     false,
-    1154,
+    1176,
     descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto,
     "zetasql/public/value.proto",
     &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
@@ -1370,6 +1372,10 @@ ValueProto::ValueProto(const ValueProto& from)
           from._internal_range_value());
       break;
     }
+    case kUuidValue: {
+      _this->_internal_set_uuid_value(from._internal_uuid_value());
+      break;
+    }
     case kValueProtoSwitchMustHaveADefault: {
       _this->_internal_set___valueproto__switch_must_have_a_default(from._internal___valueproto__switch_must_have_a_default());
       break;
@@ -1520,6 +1526,10 @@ void ValueProto::clear_value() {
       if (GetArenaForAllocation() == nullptr) {
         delete _impl_.value_.range_value_;
       }
+      break;
+    }
+    case kUuidValue: {
+      _impl_.value_.uuid_value_.Destroy();
       break;
     }
     case kValueProtoSwitchMustHaveADefault: {
@@ -1781,6 +1791,16 @@ const char* ValueProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
           goto handle_unusual;
         }
         continue;
+      // bytes uuid_value = 27;
+      case 27:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 218)) {
+          auto str = _internal_mutable_uuid_value();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       // bool __ValueProto__switch_must_have_a_default = 255;
       case 255:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 248)) {
@@ -1958,6 +1978,11 @@ failure:
           _Internal::range_value(this).GetCachedSize(), target, stream);
       break;
     }
+    case kUuidValue: {
+      const std::string& _s = this->_internal_uuid_value();
+      target = stream->WriteBytesMaybeAliased(27, _s, target);
+      break;
+    }
     case kValueProtoSwitchMustHaveADefault: {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
@@ -2130,6 +2155,12 @@ failure:
           *_impl_.value_.range_value_);
       break;
     }
+    // bytes uuid_value = 27;
+    case kUuidValue: {
+      total_size += 2 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+                                      this->_internal_uuid_value());
+      break;
+    }
     // bool __ValueProto__switch_must_have_a_default = 255;
     case kValueProtoSwitchMustHaveADefault: {
       total_size += 3;
@@ -2257,6 +2288,10 @@ void ValueProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
     case kRangeValue: {
       _this->_internal_mutable_range_value()->::zetasql::ValueProto_Range::MergeFrom(
           from._internal_range_value());
+      break;
+    }
+    case kUuidValue: {
+      _this->_internal_set_uuid_value(from._internal_uuid_value());
       break;
     }
     case kValueProtoSwitchMustHaveADefault: {

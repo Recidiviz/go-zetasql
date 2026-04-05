@@ -29,6 +29,10 @@ PROTOBUF_CONSTEXPR ErrorLocation::ErrorLocation(
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
+  , /*decltype(_impl_.input_start_line_offset_)*/ 0
+
+  , /*decltype(_impl_.input_start_column_offset_)*/ 0
+
   , /*decltype(_impl_.line_)*/ 1
 
   , /*decltype(_impl_.column_)*/ 1
@@ -86,10 +90,14 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ferror_5flocation_2eproto::offset
     PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.line_),
     PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.column_),
     PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.filename_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.input_start_line_offset_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.input_start_column_offset_),
     PROTOBUF_FIELD_OFFSET(::zetasql::ErrorLocation, _impl_.error_source_),
+    3,
+    4,
+    0,
     1,
     2,
-    0,
     ~0u,
     PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::ErrorSource, _internal_metadata_),
@@ -109,8 +117,8 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ferror_5flocation_2eproto::offset
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, 12, -1, sizeof(::zetasql::ErrorLocation)},
-        { 16, 27, -1, sizeof(::zetasql::ErrorSource)},
+        { 0, 14, -1, sizeof(::zetasql::ErrorLocation)},
+        { 20, 31, -1, sizeof(::zetasql::ErrorSource)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -119,19 +127,21 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2ferror_5flocation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n#zetasql/public/error_location.proto\022\007z"
-    "etasql\"q\n\rErrorLocation\022\017\n\004line\030\001 \001(\005:\0011"
-    "\022\021\n\006column\030\002 \001(\005:\0011\022\020\n\010filename\030\003 \001(\t\022*\n"
-    "\014error_source\030\004 \003(\0132\024.zetasql.ErrorSourc"
-    "e\"x\n\013ErrorSource\022\025\n\rerror_message\030\001 \001(\t\022"
-    "\"\n\032error_message_caret_string\030\002 \001(\t\022.\n\016e"
-    "rror_location\030\003 \001(\0132\026.zetasql.ErrorLocat"
-    "ionB\024\n\022com.google.zetasql"
+    "etasql\"\265\001\n\rErrorLocation\022\017\n\004line\030\001 \001(\005:\001"
+    "1\022\021\n\006column\030\002 \001(\005:\0011\022\020\n\010filename\030\003 \001(\t\022\037"
+    "\n\027input_start_line_offset\030\005 \001(\005\022!\n\031input"
+    "_start_column_offset\030\006 \001(\005\022*\n\014error_sour"
+    "ce\030\004 \003(\0132\024.zetasql.ErrorSource\"x\n\013ErrorS"
+    "ource\022\025\n\rerror_message\030\001 \001(\t\022\"\n\032error_me"
+    "ssage_caret_string\030\002 \001(\t\022.\n\016error_locati"
+    "on\030\003 \001(\0132\026.zetasql.ErrorLocationB\024\n\022com."
+    "google.zetasql"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto = {
     false,
     false,
-    305,
+    374,
     descriptor_table_protodef_zetasql_2fpublic_2ferror_5flocation_2eproto,
     "zetasql/public/error_location.proto",
     &descriptor_table_zetasql_2fpublic_2ferror_5flocation_2eproto_once,
@@ -172,13 +182,19 @@ class ErrorLocation::_Internal {
   static constexpr ::int32_t kHasBitsOffset =
     8 * PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_._has_bits_);
   static void set_has_line(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
+    (*has_bits)[0] |= 8u;
   }
   static void set_has_column(HasBits* has_bits) {
-    (*has_bits)[0] |= 4u;
+    (*has_bits)[0] |= 16u;
   }
   static void set_has_filename(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
+  }
+  static void set_has_input_start_line_offset(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_input_start_column_offset(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
   }
 };
 
@@ -196,6 +212,10 @@ ErrorLocation::ErrorLocation(const ErrorLocation& from)
     , decltype(_impl_.error_source_){from._impl_.error_source_}
     , decltype(_impl_.filename_) {}
 
+    , decltype(_impl_.input_start_line_offset_) {}
+
+    , decltype(_impl_.input_start_column_offset_) {}
+
     , decltype(_impl_.line_) {}
 
     , decltype(_impl_.column_) {}
@@ -209,9 +229,9 @@ ErrorLocation::ErrorLocation(const ErrorLocation& from)
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_impl_.filename_.Set(from._internal_filename(), _this->GetArenaForAllocation());
   }
-  ::memcpy(&_impl_.line_, &from._impl_.line_,
+  ::memcpy(&_impl_.input_start_line_offset_, &from._impl_.input_start_line_offset_,
     static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.column_) -
-    reinterpret_cast<char*>(&_impl_.line_)) + sizeof(_impl_.column_));
+    reinterpret_cast<char*>(&_impl_.input_start_line_offset_)) + sizeof(_impl_.column_));
   // @@protoc_insertion_point(copy_constructor:zetasql.ErrorLocation)
 }
 
@@ -222,6 +242,10 @@ inline void ErrorLocation::SharedCtor(::_pb::Arena* arena) {
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.error_source_){arena}
     , decltype(_impl_.filename_) {}
+
+    , decltype(_impl_.input_start_line_offset_) { 0 }
+
+    , decltype(_impl_.input_start_column_offset_) { 0 }
 
     , decltype(_impl_.line_) { 1 }
 
@@ -261,10 +285,13 @@ void ErrorLocation::Clear() {
 
   _internal_mutable_error_source()->Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
-    if (cached_has_bits & 0x00000001u) {
-      _impl_.filename_.ClearNonDefaultToEmpty();
-    }
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.filename_.ClearNonDefaultToEmpty();
+  }
+  if (cached_has_bits & 0x0000001eu) {
+    ::memset(&_impl_.input_start_line_offset_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.input_start_column_offset_) -
+        reinterpret_cast<char*>(&_impl_.input_start_line_offset_)) + sizeof(_impl_.input_start_column_offset_));
     _impl_.line_ = 1;
     _impl_.column_ = 1;
   }
@@ -326,6 +353,26 @@ const char* ErrorLocation::_InternalParse(const char* ptr, ::_pbi::ParseContext*
           goto handle_unusual;
         }
         continue;
+      // optional int32 input_start_line_offset = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
+          _Internal::set_has_input_start_line_offset(&has_bits);
+          _impl_.input_start_line_offset_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // optional int32 input_start_column_offset = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
+          _Internal::set_has_input_start_column_offset(&has_bits);
+          _impl_.input_start_column_offset_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -358,14 +405,14 @@ failure:
 
   cached_has_bits = _impl_._has_bits_[0];
   // optional int32 line = 1 [default = 1];
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
         1, this->_internal_line(), target);
   }
 
   // optional int32 column = 2 [default = 1];
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
         2, this->_internal_column(), target);
@@ -385,6 +432,20 @@ failure:
     const auto& repfield = this->_internal_error_source(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
         InternalWriteMessage(4, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // optional int32 input_start_line_offset = 5;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        5, this->_internal_input_start_line_offset(), target);
+  }
+
+  // optional int32 input_start_column_offset = 6;
+  if (cached_has_bits & 0x00000004u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        6, this->_internal_input_start_column_offset(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -411,21 +472,33 @@ failure:
   }
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000001fu) {
     // optional string filename = 3;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                       this->_internal_filename());
     }
 
-    // optional int32 line = 1 [default = 1];
+    // optional int32 input_start_line_offset = 5;
     if (cached_has_bits & 0x00000002u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_input_start_line_offset());
+    }
+
+    // optional int32 input_start_column_offset = 6;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_input_start_column_offset());
+    }
+
+    // optional int32 line = 1 [default = 1];
+    if (cached_has_bits & 0x00000008u) {
       total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
           this->_internal_line());
     }
 
     // optional int32 column = 2 [default = 1];
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000010u) {
       total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
           this->_internal_column());
     }
@@ -451,14 +524,20 @@ void ErrorLocation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
 
   _this->_internal_mutable_error_source()->MergeFrom(from._internal_error_source());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
       _this->_internal_set_filename(from._internal_filename());
     }
     if (cached_has_bits & 0x00000002u) {
-      _this->_impl_.line_ = from._impl_.line_;
+      _this->_impl_.input_start_line_offset_ = from._impl_.input_start_line_offset_;
     }
     if (cached_has_bits & 0x00000004u) {
+      _this->_impl_.input_start_column_offset_ = from._impl_.input_start_column_offset_;
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _this->_impl_.line_ = from._impl_.line_;
+    }
+    if (cached_has_bits & 0x00000010u) {
       _this->_impl_.column_ = from._impl_.column_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -489,9 +568,9 @@ void ErrorLocation::InternalSwap(ErrorLocation* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_.column_)
       + sizeof(ErrorLocation::_impl_.column_)
-      - PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_.line_)>(
-          reinterpret_cast<char*>(&_impl_.line_),
-          reinterpret_cast<char*>(&other->_impl_.line_));
+      - PROTOBUF_FIELD_OFFSET(ErrorLocation, _impl_.input_start_line_offset_)>(
+          reinterpret_cast<char*>(&_impl_.input_start_line_offset_),
+          reinterpret_cast<char*>(&other->_impl_.input_start_line_offset_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ErrorLocation::GetMetadata() const {

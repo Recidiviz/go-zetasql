@@ -405,6 +405,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_ALIASED_QUERY_MODIFIERS] = "AliasedQueryModifiers";
   map[AST_INT_OR_UNBOUNDED] = "IntOrUnbounded";
   map[AST_RECURSION_DEPTH_MODIFIER] = "RecursionDepthModifier";
+  map[AST_MAP_TYPE] = "MapType";
 
   for (int kind = kFirstASTNodeKind; kind <= kLastASTNodeKind;
        ++kind) {

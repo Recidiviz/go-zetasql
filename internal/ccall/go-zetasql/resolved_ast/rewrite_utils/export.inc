@@ -5,8 +5,10 @@
 // include sources
 #include "zetasql/resolved_ast/rewrite_utils.cc"
 // include dependencies
+#include "go-zetasql/resolved_ast/column_factory/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
+#include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
 #include "go-zetasql/analyzer/annotation_propagator/export.inc"
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
@@ -17,6 +19,8 @@
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-absl/algorithm/container/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

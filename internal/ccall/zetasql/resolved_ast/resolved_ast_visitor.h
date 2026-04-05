@@ -724,6 +724,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedBarrierScan(const ResolvedBarrierScan* node) {
+    return DefaultVisit(node);
+  }
 };
 
 }  // namespace zetasql

@@ -6673,26 +6673,26 @@ func parser_ASTInsertValuesRowList_row(arg0 unsafe.Pointer, arg1 C.int, arg2 *un
 	C.export_zetasql_parser_parser_ASTInsertValuesRowList_row(arg0, arg1, arg2)
 }
 
-func ASTInsertStatement_set_parse_progress(arg0 unsafe.Pointer, arg1 int) {
-	parser_ASTInsertStatement_set_parse_progress(
+func ASTInsertStatement_set_deprecated_parse_progress(arg0 unsafe.Pointer, arg1 int) {
+	parser_ASTInsertStatement_set_deprecated_parse_progress(
 		arg0,
 		C.int(arg1),
 	)
 }
 
-func parser_ASTInsertStatement_set_parse_progress(arg0 unsafe.Pointer, arg1 C.int) {
-	C.export_zetasql_parser_parser_ASTInsertStatement_set_parse_progress(arg0, arg1)
+func parser_ASTInsertStatement_set_deprecated_parse_progress(arg0 unsafe.Pointer, arg1 C.int) {
+	C.export_zetasql_parser_parser_ASTInsertStatement_set_deprecated_parse_progress(arg0, arg1)
 }
 
-func ASTInsertStatement_parse_progress(arg0 unsafe.Pointer, arg1 *int) {
-	parser_ASTInsertStatement_parse_progress(
+func ASTInsertStatement_deprecated_parse_progress(arg0 unsafe.Pointer, arg1 *int) {
+	parser_ASTInsertStatement_deprecated_parse_progress(
 		arg0,
 		(*C.int)(unsafe.Pointer(arg1)),
 	)
 }
 
-func parser_ASTInsertStatement_parse_progress(arg0 unsafe.Pointer, arg1 *C.int) {
-	C.export_zetasql_parser_parser_ASTInsertStatement_parse_progress(arg0, arg1)
+func parser_ASTInsertStatement_deprecated_parse_progress(arg0 unsafe.Pointer, arg1 *C.int) {
+	C.export_zetasql_parser_parser_ASTInsertStatement_deprecated_parse_progress(arg0, arg1)
 }
 
 func ASTInsertStatement_set_insert_mode(arg0 unsafe.Pointer, arg1 int) {

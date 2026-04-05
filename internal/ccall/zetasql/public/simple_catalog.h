@@ -249,7 +249,7 @@ class SimpleCatalog : public EnumerableCatalog {
   void AddTableValuedFunction(const TableValuedFunction* function)
       ABSL_LOCKS_EXCLUDED(mutex_);
   void AddOwnedTableValuedFunction(
-      const std::string& name,
+      absl::string_view name,
       std::unique_ptr<const TableValuedFunction> function);
   void AddOwnedTableValuedFunction(
       std::unique_ptr<const TableValuedFunction> function);
@@ -351,7 +351,7 @@ class SimpleCatalog : public EnumerableCatalog {
     return AddBuiltinFunctionsAndTypes(BuiltinFunctionOptions(options));
   }
 
-  // DEPRECATED: Use AddFunction or AddZetaSQLFunctions(options)
+  // DEPRECATED: Use AddFunction or AddBuiltinFunctionsAndTypes
   //
   // Add ZetaSQL built-in function definitions into this catalog.
   // This can add functions in both the global namespace and more specific
@@ -364,7 +364,7 @@ class SimpleCatalog : public EnumerableCatalog {
   // Deprecated because the function is misnamed, misused, and explicitly
   // delegating function object ownership to the catalog is the preferred
   // memory ownership pattern now.
-  ABSL_DEPRECATED("Use AddFunction or AddZetaSQLFunctions")
+  ABSL_DEPRECATED("Use AddFunction or AddBuiltinFunctionsAndTypes")
   void AddZetaSQLFunctions(const std::vector<const Function*>& functions)
       ABSL_LOCKS_EXCLUDED(mutex_);
 
@@ -541,7 +541,7 @@ class SimpleCatalog : public EnumerableCatalog {
   // to use a common locked implementation, similar to these for Function.
   void AddFunctionLocked(absl::string_view name, const Function* function)
       ABSL_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-  void AddOwnedFunctionLocked(const std::string& name,
+  void AddOwnedFunctionLocked(absl::string_view name,
                               std::unique_ptr<const Function> function)
       ABSL_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void AddTableValuedFunctionLocked(absl::string_view name,
@@ -656,7 +656,7 @@ class SimpleTable : public Table {
   // the same catalog.
   typedef std::pair<std::string, const Type*> NameAndType;
   typedef std::pair<std::string, AnnotatedType> NameAndAnnotatedType;
-  SimpleTable(absl::string_view name, const std::vector<NameAndType>& columns,
+  SimpleTable(absl::string_view name, absl::Span<const NameAndType> columns,
               int64_t serialization_id = 0);
   SimpleTable(absl::string_view name,
               absl::Span<const NameAndAnnotatedType> columns,
@@ -922,14 +922,14 @@ class SimpleModel : public Model {
   // Make a model with input and output columns with the given names and types.
   // Crashes if there are duplicate column names.
   typedef std::pair<std::string, const Type*> NameAndType;
-  SimpleModel(const std::string& name, absl::Span<const NameAndType> inputs,
+  SimpleModel(std::string name, absl::Span<const NameAndType> inputs,
               absl::Span<const NameAndType> outputs, int64_t id = 0);
 
   // Make a model with the given inputs and outputs.
   // Crashes if there are duplicate column names.
   // Takes ownership of elements of <inputs> and <outputs> if <take_ownership>
   // is true.
-  SimpleModel(const std::string& name, const std::vector<const Column*>& inputs,
+  SimpleModel(std::string name, const std::vector<const Column*>& inputs,
               const std::vector<const Column*>& outputs,
               bool take_ownership = false, int64_t id = 0);
 

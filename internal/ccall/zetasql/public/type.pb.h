@@ -137,12 +137,13 @@ enum TypeKind : int {
   TYPE_TOKENLIST = 28,
   TYPE_RANGE = 29,
   TYPE_MAP = 31,
+  TYPE_UUID = 32,
 };
 
 bool TypeKind_IsValid(int value);
 constexpr TypeKind TypeKind_MIN = static_cast<TypeKind>(-1);
-constexpr TypeKind TypeKind_MAX = static_cast<TypeKind>(31);
-constexpr int TypeKind_ARRAYSIZE = 31 + 1;
+constexpr TypeKind TypeKind_MAX = static_cast<TypeKind>(32);
+constexpr int TypeKind_ARRAYSIZE = 32 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 TypeKind_descriptor();
 template <typename T>
@@ -155,7 +156,7 @@ const std::string& TypeKind_Name(T value) {
 template <>
 inline const std::string& TypeKind_Name(TypeKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<TypeKind_descriptor,
-                                                 -1, 31>(
+                                                 -1, 32>(
       static_cast<int>(value));
 }
 inline bool TypeKind_Parse(absl::string_view name, TypeKind* value) {

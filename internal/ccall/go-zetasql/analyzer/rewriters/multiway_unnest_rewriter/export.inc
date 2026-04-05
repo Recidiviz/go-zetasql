@@ -22,6 +22,7 @@
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/log/log/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"

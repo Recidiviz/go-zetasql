@@ -2990,11 +2990,11 @@
         - int
       ret:
         - struct
-    - name: ASTInsertStatement_set_parse_progress
+    - name: ASTInsertStatement_set_deprecated_parse_progress
       args:
         - struct
         - int
-    - name: ASTInsertStatement_parse_progress
+    - name: ASTInsertStatement_deprecated_parse_progress
       args:
         - struct
       ret:

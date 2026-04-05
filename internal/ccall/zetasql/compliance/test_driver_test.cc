@@ -16,21 +16,27 @@
 
 #include "zetasql/compliance/test_driver.h"
 
-#include <algorithm>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
-#include "google/protobuf/descriptor.h"
 #include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/testing_proto_util.h"
 #include "zetasql/public/options.pb.h"
+#include "zetasql/public/types/annotation.h"
+#include "zetasql/public/types/array_type.h"
+#include "zetasql/public/types/proto_type.h"
+#include "zetasql/public/types/simple_value.h"
+#include "zetasql/public/types/struct_type.h"
+#include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/value.h"
 #include "zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "zetasql/base/check.h"
+#include "absl/strings/cord.h"
+#include "absl/strings/str_cat.h"
 
 namespace zetasql {
 
@@ -156,7 +162,7 @@ TEST(TestDriverTest, SerializeDeserializeTableOptions) {
   std::vector<google::protobuf::DescriptorPool*> descriptor_pools;
   descriptor_pools.push_back(&test_pool);
   std::vector<std::unique_ptr<const AnnotationMap>> annotation_maps;
-  SCOPED_TRACE(test_db_proto.DebugString());
+  SCOPED_TRACE(absl::StrCat(test_db_proto));
   ZETASQL_ASSERT_OK_AND_ASSIGN(
       TestDatabase deserialized_db,
       DeserializeTestDatabase(test_db_proto, &type_factory, descriptor_pools,

@@ -49,7 +49,8 @@
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
 
-// This flag is an escape hatch to disable running the
+// This flag is an escape hatch to disable running the rewriter relevance
+// checker invoked by `FindRelevantRewriters`.
 ABSL_FLAG(bool, zetasql_disable_rewriter_checker, false,
           "Disables post resolution detection of applicable ZetaSQL "
           "rewriters.");
@@ -89,8 +90,12 @@ std::unique_ptr<AnalyzerOptions> AnalyzerOptionsForRewrite(
   options_for_rewrite->mutable_language()->set_name_resolution_mode(
       NameResolutionMode::NAME_RESOLUTION_STRICT);
 
-  // Turn on WITH expression feature for all rewriters by default. This does not
-  // impact language feature set when resolving user facing query.
+  // Turn on certain default features for all rewriters. This only affects the
+  // rewriter itself, and does not impact the language feature set used when
+  // resolving the user facing query. Only features which themselves can be
+  // rewritten into basic SQL should be enabled.
+  options_for_rewrite->mutable_language()->EnableLanguageFeature(
+      FEATURE_V_1_3_UNNEST_AND_FLATTEN_ARRAYS);
   options_for_rewrite->mutable_language()->EnableLanguageFeature(
       FEATURE_V_1_4_WITH_EXPRESSION);
 
@@ -162,9 +167,9 @@ absl::Status InternalRewriteResolvedAstNoConvertErrorLocation(
     ZETASQL_ASSIGN_OR_RETURN(checker_detected_rewrites,
                      FindRelevantRewriters(rewrite_input));
     // This check is trying to catch any cases where the resolver is updated to
-    // identify an applicable rewrite but FindApplicableRewrites is not. The
+    // identify an applicable rewrite but FindRelevantRewriters is not. The
     // resolver's output is used on the first rewrite pass, but
-    // FindAppliableRewites is used on subsequent passes. If the logic diverges
+    // FindRelevantRewriters is used on subsequent passes. If the logic diverges
     // between those components, we could miss rewrites.
     if (ZETASQL_DEBUG_MODE && !resolver_detected_rewrites.empty()) {
       ZETASQL_RET_CHECK(
@@ -287,6 +292,9 @@ absl::Status InternalRewriteResolvedAstNoConvertErrorLocation(
       // anonymization rewriter from its input.
       // TODO: Improve the checker to avoid false positives.
       rewrites_to_apply.erase(REWRITE_ANONYMIZATION);
+      // TODO: Add a rewrite state enum to remove this. Currently
+      // needed to halt rewriter iterations before resource is exhausted.
+      rewrites_to_apply.erase(REWRITE_AGGREGATION_THRESHOLD);
     } while (!rewrites_to_apply.empty());
   }
 

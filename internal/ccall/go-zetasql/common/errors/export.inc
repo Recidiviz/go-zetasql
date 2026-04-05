@@ -16,10 +16,13 @@
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/flags/flag/export.inc"
+#include "go-absl/log/log/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"
+#include "go-absl/types/span/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #endif

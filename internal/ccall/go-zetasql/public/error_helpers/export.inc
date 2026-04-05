@@ -14,6 +14,8 @@
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/common/utf_util/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
+#include "go-zetasql/proto/script_exception_cc_proto/export.inc"
+#include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

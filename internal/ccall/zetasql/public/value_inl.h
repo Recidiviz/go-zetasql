@@ -25,6 +25,7 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <initializer_list>
 #include <memory>
@@ -45,8 +46,10 @@
 #include "zetasql/public/type.h"
 #include "zetasql/public/type.pb.h"
 #include "zetasql/public/types/value_representations.h"
+#include "zetasql/public/uuid_value.h"
 #include "zetasql/public/value.h"  
 #include "zetasql/public/value_content.h"
+#include "zetasql/base/case.h"
 #include "absl/container/btree_map.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/hash/hash.h"
@@ -57,10 +60,11 @@
 #include "absl/time/time.h"
 #include "absl/types/span.h"
 #include "zetasql/base/compact_reference_counted.h"
+#include "zetasql/base/ret_check.h"
 
 namespace zetasql {
 
-class Value::TypedList : public internal::ValueContentContainer {
+class Value::TypedList : public internal::ValueContentOrderedList {
  public:
   explicit TypedList(std::vector<Value>&& values)
       : values_(std::move(values)) {}
@@ -78,11 +82,11 @@ class Value::TypedList : public internal::ValueContentContainer {
     return size;
   }
 
-  internal::ValueContentContainerElement element(int i) const override {
+  internal::NullableValueContent element(int i) const override {
     if (values_.at(i).is_null()) {
-      return internal::ValueContentContainerElement();
+      return internal::NullableValueContent();
     }
-    return internal::ValueContentContainerElement(values_.at(i).GetContent());
+    return internal::NullableValueContent(values_.at(i).GetContent());
   }
 
   int64_t num_elements() const override { return values_.size(); }
@@ -101,44 +105,29 @@ using ValueMap = absl::btree_map<Value, Value, ValueComparator>;
 
 class Value::TypedMap : public internal::ValueContentMap {
  public:
-  explicit TypedMap(std::vector<std::pair<Value, Value>>& values)
-      : map_(values.begin(), values.end()) {}
+  explicit TypedMap(std::vector<std::pair<Value, Value>>& values);
   TypedMap(const TypedMap&) = delete;
   TypedMap& operator=(const TypedMap&) = delete;
   ~TypedMap() override;
 
-  const ValueMap& entries() const { return map_; }
-
-  uint64_t physical_byte_size() const override {
-    uint64_t size = sizeof(TypedMap);
-    for (const auto& entry : map_) {
-      size += (entry.first.physical_byte_size() +
-               entry.second.physical_byte_size());
-    }
-    return size;
-  }
-
-  int64_t num_elements() const override { return map_.size(); }
-  std::vector<std::pair<internal::ValueContentContainerElement,
-                        internal::ValueContentContainerElement>>
-  value_content_entries() const override {
-    std::vector<std::pair<internal::ValueContentContainerElement,
-                          internal::ValueContentContainerElement>>
-        elements;
-    elements.reserve(map_.size());
-    for (const auto& [key, value] : map_) {
-      elements.push_back(std::make_pair(
-          key.is_null()
-              ? internal::ValueContentContainerElement()
-              : internal::ValueContentContainerElement(key.GetContent()),
-          value.is_null()
-              ? internal::ValueContentContainerElement()
-              : internal::ValueContentContainerElement(value.GetContent())));
-    }
-    return elements;
-  }
+  const ValueMap& entries() const;
+  uint64_t physical_byte_size() const override;
+  int64_t num_elements() const override;
+  std::vector<
+      std::pair<internal::NullableValueContent, internal::NullableValueContent>>
+  value_content_entries() const override;
+  std::optional<internal::NullableValueContent> GetContentMapValueByKey(
+      const internal::NullableValueContent& search_key, const Type* key_type,
+      const ValueEqualityCheckOptions& options) const override;
 
  private:
+  class Iterator;
+
+  std::unique_ptr<internal::ValueContentMap::IteratorImpl> begin_internal()
+      const override;
+  std::unique_ptr<internal::ValueContentMap::IteratorImpl> end_internal()
+      const override;
+
   ValueMap map_;
 };
 
@@ -265,6 +254,9 @@ inline Value::Value(const IntervalValue& interval)
 inline Value::Value(tokens::TokenList tokenlist)
     : metadata_(TypeKind::TYPE_TOKENLIST),
       tokenlist_ptr_(new internal::TokenListRef(std::move(tokenlist))) {}
+
+inline Value::Value(const UuidValue& uuid)
+    : metadata_(TypeKind::TYPE_UUID), uuid_ptr_(new internal::UuidRef(uuid)) {}
 
 inline absl::StatusOr<Value> Value::MakeStruct(const StructType* type,
                                                std::vector<Value>&& values) {
@@ -424,6 +416,7 @@ inline Value Value::Extended(const ExtendedType* type,
                              const ValueContent& value) {
   return Value(type, value);
 }
+inline Value Value::Uuid(UuidValue v) { return Value(v); }
 
 inline Value Value::NullInt32() { return Value(TypeKind::TYPE_INT32); }
 inline Value Value::NullInt64() { return Value(TypeKind::TYPE_INT64); }
@@ -446,6 +439,7 @@ inline Value Value::NullBigNumeric() {
 }
 inline Value Value::NullJson() { return Value(TypeKind::TYPE_JSON); }
 inline Value Value::NullTokenList() { return Value(types::TokenListType()); }
+inline Value Value::NullUuid() { return Value(TypeKind::TYPE_UUID); }
 inline Value Value::EmptyGeography() {
   ABSL_CHECK(false);
   return NullGeography();
@@ -670,7 +664,7 @@ inline const Value& Value::start() const {
       << "Not a range value";
   ABSL_CHECK(!is_null()) << "Null value";  // Crash ok
   ABSL_CHECK(type()->IsRange());           // Crash ok
-  const internal::ValueContentContainer* const container_ptr =
+  const internal::ValueContentOrderedList* const container_ptr =
       container_ptr_->value();
   const TypedList* const list_ptr =
       static_cast<const TypedList* const>(container_ptr);
@@ -683,7 +677,7 @@ inline const Value& Value::end() const {
       << "Not a range value";
   ABSL_CHECK(!is_null()) << "Null value";  // Crash ok
   ABSL_CHECK(type()->IsRange());           // Crash ok
-  const internal::ValueContentContainer* const container_ptr =
+  const internal::ValueContentOrderedList* const container_ptr =
       container_ptr_->value();
   const TypedList* const list_ptr =
       static_cast<const TypedList* const>(container_ptr);
@@ -959,6 +953,7 @@ inline Value Struct(const StructType* type, absl::Span<const Value> values) {
 inline Value UnsafeStruct(const StructType* type, std::vector<Value>&& values) {
   return Value::UnsafeStruct(type, std::move(values));
 }
+inline Value Uuid(UuidValue v) { return Value::Uuid(v); }
 
 inline Value Proto(const ProtoType* proto_type, absl::Cord value) {
   return Value::Proto(proto_type, std::move(value));
@@ -1008,6 +1003,7 @@ inline Value NullNumeric() { return Value::NullNumeric(); }
 inline Value NullBigNumeric() { return Value::NullBigNumeric(); }
 inline Value NullJson() { return Value::NullJson(); }
 inline Value NullTokenList() { return Value::NullTokenList(); }
+inline Value NullUuid() { return Value::NullUuid(); }
 inline Value Null(const Type* type) { return Value::Null(type); }
 
 inline Value Invalid() { return Value::Invalid(); }

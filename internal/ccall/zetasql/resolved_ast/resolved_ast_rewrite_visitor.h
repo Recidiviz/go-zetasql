@@ -2393,6 +2393,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedBarrierScan(
+      const ResolvedBarrierScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedBarrierScan (
+      std::unique_ptr<const ResolvedBarrierScan> node) {
+    return node;
+  }
+
  private:
   template <typename ExpectedReturnT>
   static absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> VerifyType(
@@ -2832,6 +2843,10 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedUndropStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedIdentityColumnInfo> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedBarrierScan> node);
+  absl::StatusOr<ResolvedColumn> DefaultVisit(ResolvedColumn column);
+
   template <typename TypeName>
   std::unique_ptr<const TypeName> CastUniquePtr(std::unique_ptr<const ResolvedNode> node) {
     return absl::WrapUnique(static_cast<const TypeName*>(node.release()));
@@ -4300,12 +4315,30 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedBarrierScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedBarrierScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedBarrierScan>(std::move(node)));
+        }
+        break;
+      }
       default:
         ZETASQL_RET_CHECK_FAIL() << "could not dispatch node of type "
                          << node->node_kind_string();
         break;
     }
     return VerifyType<ExpectedReturnT>(std::move(visited_node));
+  }
+
+  virtual absl::Status PreVisitResolvedColumn(const ResolvedColumn&) {
+    return absl::OkStatus();
+  }
+
+  // Rewrite a ResolvedColumn. The default behavior returns it as is.
+  // Overrides may be necessary when a visitor needs to remap columns.
+  virtual absl::StatusOr<ResolvedColumn> PostVisitResolvedColumn(
+      const ResolvedColumn& column) {
+    return column;
   }
 };
 

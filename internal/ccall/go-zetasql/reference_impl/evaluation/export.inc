@@ -119,6 +119,7 @@
 #include "go-zetasql/base/exactfloat/export.inc"
 #include "go-re2/re2/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-google/rpc/status_cc_proto/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/clock/export.inc"
 

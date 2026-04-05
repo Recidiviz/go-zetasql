@@ -520,7 +520,6 @@ FunctionMap::FunctionMap() {
                      "SafeArrayAtOffset");
     RegisterFunction(FunctionKind::kSafeArrayAtOrdinal,
                      "$safe_array_at_ordinal", "SafeArrayAtOrdinal");
-    RegisterFunction(FunctionKind::kSubscript, "$subscript", "Subscript");
     RegisterFunction(FunctionKind::kArrayIsDistinct, "array_is_distinct",
                      "ArrayIsDistinct");
     RegisterFunction(FunctionKind::kAvg, "avg", "Avg");
@@ -581,8 +580,10 @@ FunctionMap::FunctionMap() {
                      "ProtoMapAtKey");
     RegisterFunction(FunctionKind::kSafeProtoMapAtKey, "$safe_proto_map_at_key",
                      "SafeProtoMapAtKey");
-    RegisterFunction(FunctionKind::kModifyMap, "modify_map", "ModifyMap");
-    RegisterFunction(FunctionKind::kContainsKey, "contains_key", "ContainsKey");
+    RegisterFunction(FunctionKind::kProtoModifyMap, "proto_modify_map",
+                     "ProtoModifyMap");
+    RegisterFunction(FunctionKind::kProtoMapContainsKey,
+                     "proto_map_contains_key", "ProtoMapContainsKey");
     RegisterFunction(FunctionKind::kJsonExtract, "json_extract", "JsonExtract");
     RegisterFunction(FunctionKind::kJsonExtractScalar, "json_extract_scalar",
                      "JsonExtractScalar");
@@ -597,6 +598,8 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kJsonValueArray, "json_value_array",
                      "JsonValueArray");
     RegisterFunction(FunctionKind::kToJson, "to_json", "ToJson");
+    RegisterFunction(FunctionKind::kJsonSubscript, "json_subscript",
+                     "JsonSubscript");
     RegisterFunction(FunctionKind::kStringArray, "string_array", "StringArray");
     RegisterFunction(FunctionKind::kInt32, "int32", "Int32");
     RegisterFunction(FunctionKind::kInt32Array, "int32_array", "Int32Array");
@@ -652,6 +655,7 @@ FunctionMap::FunctionMap() {
                      "JsonArrayInsert");
     RegisterFunction(FunctionKind::kJsonArrayAppend, "json_array_append",
                      "JsonArrayAppend");
+    RegisterFunction(FunctionKind::kJsonKeys, "json_keys", "JsonKeys");
     RegisterFunction(FunctionKind::kGreatest, "greatest", "Greatest");
   }();
   [this]() {
@@ -1015,6 +1019,7 @@ FunctionMap::FunctionMap() {
     RegisterFunction(FunctionKind::kRand, "rand", "Rand");
     RegisterFunction(FunctionKind::kGenerateUuid, "generate_uuid",
                      "Generate_Uuid");
+    RegisterFunction(FunctionKind::kNewUuid, "new_uuid", "New_Uuid");
     RegisterFunction(FunctionKind::kMd5, "md5", "Md5");
     RegisterFunction(FunctionKind::kSha1, "sha1", "Sha1");
     RegisterFunction(FunctionKind::kSha256, "sha256", "Sha256");
@@ -1087,6 +1092,27 @@ FunctionMap::FunctionMap() {
                      "ElementwiseAvg");
     RegisterFunction(FunctionKind::kMapFromArray, "map_from_array",
                      "MapFromArray");
+    RegisterFunction(FunctionKind::kMapEntriesSorted, "map_entries_sorted",
+                     "MapEntriesSorted");
+    RegisterFunction(FunctionKind::kMapEntriesUnsorted, "map_entries_unsorted",
+                     "MapEntriesUnsorted");
+    RegisterFunction(FunctionKind::kMapGet, "map_get", "MapGet");
+    RegisterFunction(FunctionKind::kMapSubscript, "map_subscript",
+                     "MapSubscript");
+    RegisterFunction(FunctionKind::kMapSubscriptWithKey,
+                     "map_subscript_with_key", "MapSubscriptWithKey");
+    RegisterFunction(FunctionKind::kMapContainsKey, "map_contains_key",
+                     "MapContainsKey");
+    RegisterFunction(FunctionKind::kMapKeysSorted, "map_keys_sorted",
+                     "MapKeysSorted");
+    RegisterFunction(FunctionKind::kMapKeysUnsorted, "map_keys_unsorted",
+                     "MapKeysUnsorted");
+    RegisterFunction(FunctionKind::kMapValuesSorted, "map_values_sorted",
+                     "MapValuesSorted");
+    RegisterFunction(FunctionKind::kMapValuesUnsorted, "map_values_unsorted",
+                     "MapValuesUnsorted");
+    RegisterFunction(FunctionKind::kMapValuesSortedByKey,
+                     "map_values_sorted_by_key", "MapValuesSortedByKey");
   }();
 }  // NOLINT(readability/fn_size)
 
@@ -1431,12 +1457,13 @@ class ProtoMapFunction : public BuiltinScalarFunction {
         key_type = args[1].type();
         value_type = output_type();
         break;
-      case FunctionKind::kContainsKey:
+      case FunctionKind::kProtoMapContainsKey:
         key_type = args[1].type();
         value_type = nullptr;
         break;
-      case FunctionKind::kModifyMap:
-        ZETASQL_RET_CHECK_GE(args.size(), 3) << "MODIFY_MAP must have at least 3 args.";
+      case FunctionKind::kProtoModifyMap:
+        ZETASQL_RET_CHECK_GE(args.size(), 3)
+            << "PROTO_MODIFY_MAP must have at least 3 args.";
         key_type = args[1].type();
         value_type = args[2].type();
         break;
@@ -1456,7 +1483,7 @@ class ProtoMapFunction : public BuiltinScalarFunction {
     ZETASQL_RETURN_IF_ERROR(ParseProtoMap(args[0], key_type, value_type, map));
 
     // TODO: Collation should be propagated from the second arg
-    //     of `CONTAINS_KEY` and `$proto_map_at_key`.
+    //     of `PROTO_MAP_CONTAINS_KEY` and `$proto_map_at_key`.
     bool equal_values_are_distinguishable =
         value_type != nullptr &&
         IsTypeWithDistinguishableTies(value_type, /*collator_list=*/{});
@@ -1515,7 +1542,7 @@ class ProtoMapFunction : public BuiltinScalarFunction {
         ZETASQL_RET_CHECK(found_value.type()->Equals(output_type()));
         return found_value;
       }
-      case FunctionKind::kContainsKey: {
+      case FunctionKind::kProtoMapContainsKey: {
         if (args[1].is_null()) {
           return Value::Bool(false);
         }
@@ -1528,7 +1555,7 @@ class ProtoMapFunction : public BuiltinScalarFunction {
         };
         return Value::Bool(find_with_key(args[1]) != map.end());
       }
-      case FunctionKind::kModifyMap: {
+      case FunctionKind::kProtoModifyMap: {
         return ModifyMap(std::move(map), args, context);
       }
       default:
@@ -1543,9 +1570,9 @@ class ProtoMapFunction : public BuiltinScalarFunction {
                                   EvaluationContext* context) const {
     const int num_mods = (args.size() - 1) / 2;
     ZETASQL_RET_CHECK(args.size() % 2)
-        << "MODIFY_MAP: should have an odd number of args";
+        << "PROTO_MODIFY_MAP: should have an odd number of args";
     ZETASQL_RET_CHECK_LE(3, args.size())
-        << "MODIFY_MAP: should have at least three args";
+        << "PROTO_MODIFY_MAP: should have at least three args";
 
     absl::flat_hash_set<Value> seen_keys;
 
@@ -1557,15 +1584,15 @@ class ProtoMapFunction : public BuiltinScalarFunction {
       const bool already_seen = !seen_keys.insert(mod_key).second;
       if (already_seen) {
         return absl::OutOfRangeError(
-            absl::StrCat("MODIFY_MAP: Only one instance of each key is "
+            absl::StrCat("PROTO_MODIFY_MAP: Only one instance of each key is "
                          "allowed. Found multiple instances of key: ",
                          mod_key.GetSQLLiteral(product_mode_)));
       }
       if (mod_key.is_null()) {
-        return absl::OutOfRangeError(
-            absl::StrCat("MODIFY_MAP: All key arguments must be non-NULL, "
-                         "but found NULL at argument ",
-                         key_arg_index));
+        return absl::OutOfRangeError(absl::StrCat(
+            "PROTO_MODIFY_MAP: All key arguments must be non-NULL, "
+            "but found NULL at argument ",
+            key_arg_index));
       }
 
       // Erase any entries from map that have the same key as the
@@ -1607,8 +1634,8 @@ class ProtoMapFunction : public BuiltinScalarFunction {
     }
 
     // Even though the above algorithm is stable and maintins the order of the
-    // input array elements, the MODIFY_MAP function does not define where in
-    // the artbitrary element order the new key-value pair goes.
+    // input array elements, the PROTO_MODIFY_MAP function does not define where
+    // in the artbitrary element order the new key-value pair goes.
     InternalValue::OrderPreservationKind output_orderedness =
         InternalValue::kIgnoresOrder;
     return InternalValue::ArrayChecked(
@@ -1757,8 +1784,8 @@ std::string BuiltinScalarFunction::debug_name() const {
 static absl::Status ValidateInputTypesSupportEqualityComparison(
     FunctionKind kind, absl::Span<const Type* const> input_types) {
   for (auto type : input_types) {
-    if (!ValidateTypeSupportsEqualityComparison(type).ok()) {
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+    if (!type->SupportsEquality()) {
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Inputs to " << BuiltinFunctionCatalog::GetDebugNameByKind(kind)
              << " must support equality comparison: " << type->DebugString();
     }
@@ -1767,12 +1794,14 @@ static absl::Status ValidateInputTypesSupportEqualityComparison(
 }
 
 static absl::Status ValidateInputTypesSupportOrderComparison(
-    FunctionKind kind, absl::Span<const Type* const> input_types) {
+    const LanguageOptions& language_options, FunctionKind kind,
+    absl::Span<const Type* const> input_types) {
   for (auto type : input_types) {
-    if (!ValidateTypeSupportsOrderComparison(type).ok()) {
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+    std::string why_not;
+    if (!type->SupportsOrdering(language_options, &why_not)) {
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Inputs to " << BuiltinFunctionCatalog::GetDebugNameByKind(kind)
-             << " must support order comparison: " << type->DebugString();
+             << " must support order comparison: " << why_not;
     }
   }
   return absl::OkStatus();
@@ -1783,7 +1812,7 @@ static absl::Status ValidateSupportedTypes(
     absl::Span<const Type* const> input_types) {
   for (auto type : input_types) {
     if (!type->IsSupportedType(language_options)) {
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Type not found: "
              << type->TypeName(language_options.product_mode());
     }
@@ -1881,7 +1910,7 @@ static absl::Status CheckVectorDistanceInputType(
   // then the type is unsupported.
   std::string unsupported_type_error_message = "Unsupported array element type";
   ZETASQL_RET_CHECK_FAIL() << unsupported_type_error_message;
-  return absl::InvalidArgumentError(unsupported_type_error_message);
+  return absl::OutOfRangeError(unsupported_type_error_message);
 }
 
 static absl::StatusOr<std::unique_ptr<SimpleBuiltinScalarFunction>>
@@ -2093,7 +2122,7 @@ absl::StatusOr<BuiltinScalarFunction*>
 BuiltinScalarFunction::CreateValidatedRaw(
     FunctionKind kind, const LanguageOptions& language_options,
     const Type* output_type,
-    const std::vector<std::unique_ptr<AlgebraArg>>& arguments) {
+    absl::Span<const std::unique_ptr<AlgebraArg>> arguments) {
   std::vector<const Type*> input_types;
   input_types.reserve(arguments.size());
   for (const auto& expr : arguments) {
@@ -2124,12 +2153,12 @@ BuiltinScalarFunction::CreateValidatedRaw(
           ValidateInputTypesSupportEqualityComparison(kind, input_types));
       return new ComparisonFunction(kind, output_type);
     case FunctionKind::kLeast:
-      ZETASQL_RETURN_IF_ERROR(
-          ValidateInputTypesSupportOrderComparison(kind, input_types));
+      ZETASQL_RETURN_IF_ERROR(ValidateInputTypesSupportOrderComparison(
+          language_options, kind, input_types));
       return new LeastFunction(output_type);
     case FunctionKind::kGreatest:
-      ZETASQL_RETURN_IF_ERROR(
-          ValidateInputTypesSupportOrderComparison(kind, input_types));
+      ZETASQL_RETURN_IF_ERROR(ValidateInputTypesSupportOrderComparison(
+          language_options, kind, input_types));
       return new GreatestFunction(output_type);
     case FunctionKind::kAnd:
     case FunctionKind::kNot:
@@ -2203,8 +2232,8 @@ BuiltinScalarFunction::CreateValidatedRaw(
       return new ArrayElementFunction(0, true /* safe */, output_type);
     case FunctionKind::kSafeProtoMapAtKey:
     case FunctionKind::kProtoMapAtKey:
-    case FunctionKind::kContainsKey:
-    case FunctionKind::kModifyMap:
+    case FunctionKind::kProtoMapContainsKey:
+    case FunctionKind::kProtoModifyMap:
       return new ProtoMapFunction(kind, output_type,
                                   language_options.product_mode());
     case FunctionKind::kAbs:
@@ -2324,7 +2353,7 @@ BuiltinScalarFunction::CreateValidatedRaw(
       return new GenerateArrayFunction(output_type);
     case FunctionKind::kRangeBucket:
       return new RangeBucketFunction();
-    case FunctionKind::kSubscript:
+    case FunctionKind::kJsonSubscript:
     case FunctionKind::kJsonExtract:
     case FunctionKind::kJsonExtractScalar:
     case FunctionKind::kJsonExtractArray:
@@ -2531,6 +2560,7 @@ BuiltinScalarFunction::CreateValidatedRaw(
     case FunctionKind::kRand:
       return new RandFunction;
     case FunctionKind::kGenerateUuid:
+    case FunctionKind::kNewUuid:
       // UUID functions are optional.
       return BuiltinFunctionRegistry::GetScalarFunction(kind, output_type);
     case FunctionKind::kMd5:
@@ -2597,11 +2627,12 @@ BuiltinScalarFunction::CreateValidatedRaw(
       return new ArrayZipFunction(kind, output_type, inline_lambda_expr);
     }
     case FunctionKind::kMapFromArray:
+    case FunctionKind::kMapEntriesSorted:
+    case FunctionKind::kMapEntriesUnsorted:
+    case FunctionKind::kMapGet:
       return BuiltinFunctionRegistry::GetScalarFunction(kind, output_type);
     default:
-      ZETASQL_RET_CHECK_FAIL() << BuiltinFunctionCatalog::GetDebugNameByKind(kind)
-                       << " is not a scalar function";
-      break;
+      return BuiltinFunctionRegistry::GetScalarFunction(kind, output_type);
   }
 }  // NOLINT(readability/fn_size)
 
@@ -2609,7 +2640,7 @@ absl::StatusOr<std::unique_ptr<BuiltinScalarFunction>>
 BuiltinScalarFunction::CreateValidated(
     FunctionKind kind, const LanguageOptions& language_options,
     const Type* output_type,
-    const std::vector<std::unique_ptr<AlgebraArg>>& arguments) {
+    absl::Span<const std::unique_ptr<AlgebraArg>> arguments) {
   ZETASQL_ASSIGN_OR_RETURN(
       BuiltinScalarFunction * func,
       CreateValidatedRaw(kind, language_options, output_type, arguments));
@@ -5876,7 +5907,7 @@ absl::Status BuiltinAggregateAccumulator::Reset() {
       out_string_.clear();
       if (!args_.empty()) {
         if (args_[0].is_null()) {
-          return ::zetasql_base::InvalidArgumentErrorBuilder()
+          return ::zetasql_base::OutOfRangeErrorBuilder()
                  << "Illegal NULL separator in STRING_AGG";
         }
         delimiter_ = (function_->output_type()->kind() == TYPE_STRING)
@@ -6625,7 +6656,7 @@ bool BuiltinAggregateAccumulator::Accumulate(const Value& value,
       }
       // Array is non null, validate its length
       if (array_length_ != -1 && array_length_ != array.num_elements()) {
-        *status = ::zetasql_base::InvalidArgumentErrorBuilder()
+        *status = ::zetasql_base::OutOfRangeErrorBuilder()
                   << "Elementwise aggregate requires all non-NULL arrays have "
                      "the same length; found length "
                   << array_length_ << " and length " << array.num_elements()
@@ -6718,7 +6749,7 @@ bool BuiltinAggregateAccumulator::Accumulate(const Value& value,
       }
       // Array is non null, validate its length
       if (array_length_ != -1 && array_length_ != array.num_elements()) {
-        *status = ::zetasql_base::InvalidArgumentErrorBuilder()
+        *status = ::zetasql_base::OutOfRangeErrorBuilder()
                   << "Elementwise aggregate requires all non-NULL arrays have "
                      "the same length; found length "
                   << array_length_ << " and length " << array.num_elements()
@@ -7345,6 +7376,9 @@ absl::Status ConvertDifferentPrivacyOutputToOutputJson(
   return absl::OkStatus();
 }
 
+constexpr absl::string_view kDifferentialPrivacyApproxBoundsNotEnoughDataUrl =
+    "type.googleapis.com/differential_privacy.ApproxBoundsNotEnoughData";
+
 // Removes the payload for identifying when approx bounds failed because it had
 // not enough data.  This step is required for the migration.
 //
@@ -7356,9 +7390,15 @@ absl::StatusOr<differential_privacy::Output> IgnoreDifferentialPrivacyPayload(
     return output;
   }
   absl::Status result = output.status();
-  result.ErasePayload(
-      "type.googleapis.com/differential_privacy.ApproxBoundsNotEnoughData");
+  result.ErasePayload(kDifferentialPrivacyApproxBoundsNotEnoughDataUrl);
   return result;
+}
+
+// For an error returned from an anon function, return whether the error was
+// caused by approx bounds not having enough data to determine bounds.
+bool ApproxBoundsHadNotEnoughData(const absl::Status& status) {
+  return status.GetPayload(kDifferentialPrivacyApproxBoundsNotEnoughDataUrl)
+      .has_value();
 }
 
 template <class T>
@@ -7398,9 +7438,16 @@ absl::StatusOr<Value> GetAnonReturnValue(
   if (algorithm == nullptr) {
     return Value::MakeNull<T>();
   }
-  ZETASQL_ASSIGN_OR_RETURN(auto result, IgnoreDifferentialPrivacyPayload(
-                                    algorithm->PartialResult()));
-  return Value::Make<T>(::differential_privacy::GetValue<T>(result));
+  absl::StatusOr<::differential_privacy::Output> result =
+      algorithm->PartialResult();
+  if (!result.ok()) {
+    if (ApproxBoundsHadNotEnoughData(result.status())) {
+      return Value::MakeNull<T>();
+    } else {
+      return result.status();
+    }
+  }
+  return Value::Make<T>(::differential_privacy::GetValue<T>(result.value()));
 }
 
 template <class T>
@@ -7409,9 +7456,16 @@ absl::StatusOr<Value> GetDPReturnValue(
   if (algorithm == nullptr) {
     return Value::MakeNull<T>();
   }
-  ZETASQL_ASSIGN_OR_RETURN(auto result, IgnoreDifferentialPrivacyPayload(
-                                    algorithm->PartialResult()));
-  return Value::Make<T>(::differential_privacy::GetValue<T>(result));
+  absl::StatusOr<::differential_privacy::Output> result =
+      algorithm->PartialResult();
+  if (!result.ok()) {
+    if (ApproxBoundsHadNotEnoughData(result.status())) {
+      return Value::MakeNull<T>();
+    } else {
+      return result.status();
+    }
+  }
+  return Value::Make<T>(::differential_privacy::GetValue<T>(result.value()));
 }
 
 template <class T>
@@ -7935,7 +7989,7 @@ absl::StatusOr<Value> BuiltinAggregateAccumulator::GetFinalResultInternal(
     case FCT(FunctionKind::kMin, TYPE_STRING):
       return count_ > 0 ? Value::String(out_string_) : Value::NullString();
     case FCT(FunctionKind::kStringAgg, TYPE_STRING):
-      if (count_ > 1) {
+      if (count_ > 1 && !inputs_in_defined_order) {
         context_->SetNonDeterministicOutput();
       }
       return count_ > 0 ? Value::String(out_string_) : Value::NullString();
@@ -7943,7 +7997,7 @@ absl::StatusOr<Value> BuiltinAggregateAccumulator::GetFinalResultInternal(
     case FCT(FunctionKind::kMin, TYPE_BYTES):
       return count_ > 0 ? Value::Bytes(out_string_) : Value::NullBytes();
     case FCT(FunctionKind::kStringAgg, TYPE_BYTES):
-      if (count_ > 1) {
+      if (count_ > 1 && !inputs_in_defined_order) {
         context_->SetNonDeterministicOutput();
       }
       return count_ > 0 ? Value::Bytes(out_string_) : Value::NullBytes();
@@ -8402,7 +8456,7 @@ GetQuantifiedLikeOperationType(FunctionKind kind) {
     case FunctionKind::kNotLikeAllArrayWithCollation:
       return QuantifiedLikeEvaluationParams::OperationType::kLikeAll;
     default:
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Expected some variant of like function. Found: "
              << static_cast<int>(kind);
   }
@@ -9784,7 +9838,14 @@ absl::StatusOr<Value> ReplaceFieldsFunction::Eval(
       field_paths_.size(),
       args.size() - 1 /*The first argument is the root proto or struct*/);
   ZETASQL_RET_CHECK(args[0].type()->IsStructOrProto());
+
+  // Return NULL if the first argument is NULL.
+  if (args[0].is_null()) {
+    return args[0];
+  }
+
   Value output = args[0];
+
   for (int i = 0; i < field_paths_.size(); ++i) {
     if (output_type()->IsStruct()) {
       ZETASQL_ASSIGN_OR_RETURN(
@@ -10257,7 +10318,7 @@ absl::StatusOr<Value> StringConversionFunction::Eval(
                        functions::ConvertJsonToString(json_value_const_ref));
     } break;
     default:
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Unsupported type " << args[0].type()->DebugString()
              << " for String function";
   }
@@ -10378,7 +10439,7 @@ absl::StatusOr<Value> DateTimeTruncFunction::Eval(
       return Value::Time(time);
     }
     default:
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Unsupported type " << args[0].type()->DebugString()
              << " for datetime TRUNC function";
   }
@@ -11672,13 +11733,13 @@ absl::Status LeadFunction::Eval(
   ZETASQL_RET_CHECK_EQ(1, args[2].size());
 
   if (args[1][0].is_null()) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "The offset to the function LEAD must not be null";
   }
 
   const int64_t offset = args[1][0].int64_value();
   if (offset < 0) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "The offset to the function LEAD must not be negative";
   }
 
@@ -11719,13 +11780,13 @@ absl::Status LagFunction::Eval(const TupleSchema& schema,
   ZETASQL_RET_CHECK_EQ(1, args[2].size());
 
   if (args[1][0].is_null()) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "The offset to the function LAG must not be null";
   }
 
   const int64_t offset = args[1][0].int64_value();
   if (offset < 0) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "The offset to the function LAG must not be negative";
   }
 
@@ -11758,7 +11819,7 @@ absl::Status PercentileContFunction::Eval(
   ZETASQL_RET_CHECK_EQ(1, args[1].size());
   const Value& percentile_arg = args[1][0];
   if (percentile_arg.is_null()) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "The second argument to the function PERCENTILE_CONT must not be"
               " null";
   }
@@ -11812,7 +11873,7 @@ absl::Status PercentileDiscFunction::Eval(
   ZETASQL_RET_CHECK_EQ(1, args[1].size());
   const Value& percentile_arg = args[1][0];
   if (percentile_arg.is_null()) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "The second argument to the function PERCENTILE_DISC must not be"
               " null";
   }
@@ -11916,7 +11977,7 @@ absl::StatusOr<Value> DateTimeBucketFunction::Eval(
       return Value::Date(result);
     }
     default:
-      return ::zetasql_base::InvalidArgumentErrorBuilder()
+      return ::zetasql_base::OutOfRangeErrorBuilder()
              << "Unsupported type " << args[0].type()->DebugString()
              << " for datetime BUCKET function";
   }
@@ -12064,7 +12125,7 @@ absl::StatusOr<Value> ApproxCosineDistanceFunction::Eval(
   ZETASQL_RET_CHECK_GE(args.size(), 2);
   ZETASQL_RET_CHECK_LE(args.size(), 3);
   if (args.size() == 3) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "Optional argument `options` is not supported by the ZetaSQL "
            << "reference implementation.";
   }
@@ -12125,7 +12186,7 @@ absl::StatusOr<Value> ApproxEuclideanDistanceFunction::Eval(
   ZETASQL_RET_CHECK_GE(args.size(), 2);
   ZETASQL_RET_CHECK_LE(args.size(), 3);
   if (args.size() == 3) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "Optional argument `options` is not supported by the ZetaSQL "
            << "reference implementation.";
   }
@@ -12160,7 +12221,7 @@ absl::StatusOr<Value> ApproxDotProductFunction::Eval(
   ZETASQL_RET_CHECK_GE(args.size(), 2);
   ZETASQL_RET_CHECK_LE(args.size(), 3);
   if (args.size() == 3) {
-    return ::zetasql_base::InvalidArgumentErrorBuilder()
+    return ::zetasql_base::OutOfRangeErrorBuilder()
            << "Optional argument `options` is not supported by the ZetaSQL "
            << "reference implementation.";
   }
@@ -12402,7 +12463,7 @@ absl::StatusOr<Value> ArrayZipFunction::ToStructValue(
   std::vector<Value> fields;
   fields.reserve(arrays.size());
   for (int i = 0; i < struct_type->num_fields(); ++i) {
-    const Value array_value = arrays[i];
+    const Value& array_value = arrays[i];
     if (element_index < array_value.num_elements()) {
       fields.push_back(array_value.element(element_index));
     } else {

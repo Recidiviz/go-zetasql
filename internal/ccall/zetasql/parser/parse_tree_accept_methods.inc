@@ -1496,6 +1496,10 @@ void ASTRecursionDepthModifier::Accept(ParseTreeVisitor* visitor, void* data) co
   visitor->visitASTRecursionDepthModifier(this, data);
 }
 
+void ASTMapType::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTMapType(this, data);
+}
+
 absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTQueryStatement(this);
 }
@@ -2990,6 +2994,10 @@ absl::StatusOr<VisitResult> ASTIntOrUnbounded::Accept(NonRecursiveParseTreeVisit
 
 absl::StatusOr<VisitResult> ASTRecursionDepthModifier::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTRecursionDepthModifier(this);
+}
+
+absl::StatusOr<VisitResult> ASTMapType::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTMapType(this);
 }
 
 }  // namespace zetasql

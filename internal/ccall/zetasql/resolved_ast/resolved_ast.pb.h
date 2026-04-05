@@ -263,6 +263,9 @@ extern ResolvedAuxLoadDataPartitionFilterProtoDefaultTypeInternal _ResolvedAuxLo
 class ResolvedAuxLoadDataStmtProto;
 struct ResolvedAuxLoadDataStmtProtoDefaultTypeInternal;
 extern ResolvedAuxLoadDataStmtProtoDefaultTypeInternal _ResolvedAuxLoadDataStmtProto_default_instance_;
+class ResolvedBarrierScanProto;
+struct ResolvedBarrierScanProtoDefaultTypeInternal;
+extern ResolvedBarrierScanProtoDefaultTypeInternal _ResolvedBarrierScanProto_default_instance_;
 class ResolvedBeginStmtProto;
 struct ResolvedBeginStmtProtoDefaultTypeInternal;
 extern ResolvedBeginStmtProtoDefaultTypeInternal _ResolvedBeginStmtProto_default_instance_;
@@ -938,6 +941,8 @@ template <>
 ::zetasql::ResolvedAuxLoadDataPartitionFilterProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAuxLoadDataPartitionFilterProto>(Arena*);
 template <>
 ::zetasql::ResolvedAuxLoadDataStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedAuxLoadDataStmtProto>(Arena*);
+template <>
+::zetasql::ResolvedBarrierScanProto* Arena::CreateMaybeMessage<::zetasql::ResolvedBarrierScanProto>(Arena*);
 template <>
 ::zetasql::ResolvedBeginStmtProto* Arena::CreateMaybeMessage<::zetasql::ResolvedBeginStmtProto>(Arena*);
 template <>
@@ -7070,6 +7075,8 @@ class ResolvedAggregateFunctionCallProto final :
 
   enum : int {
     kOrderByItemListFieldNumber = 3,
+    kGroupByListFieldNumber = 7,
+    kGroupByAggregateListFieldNumber = 8,
     kParentFieldNumber = 1,
     kLimitFieldNumber = 4,
     kHavingModifierFieldNumber = 5,
@@ -7095,6 +7102,46 @@ class ResolvedAggregateFunctionCallProto final :
   ::zetasql::ResolvedOrderByItemProto* add_order_by_item_list();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOrderByItemProto >&
       order_by_item_list() const;
+  // repeated .zetasql.AnyResolvedComputedColumnBaseProto group_by_list = 7;
+  int group_by_list_size() const;
+  private:
+  int _internal_group_by_list_size() const;
+
+  public:
+  void clear_group_by_list() ;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* mutable_group_by_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >*
+      mutable_group_by_list();
+  private:
+  const ::zetasql::AnyResolvedComputedColumnBaseProto& _internal_group_by_list(int index) const;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* _internal_add_group_by_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>& _internal_group_by_list() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>* _internal_mutable_group_by_list();
+  public:
+  const ::zetasql::AnyResolvedComputedColumnBaseProto& group_by_list(int index) const;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* add_group_by_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >&
+      group_by_list() const;
+  // repeated .zetasql.AnyResolvedComputedColumnBaseProto group_by_aggregate_list = 8;
+  int group_by_aggregate_list_size() const;
+  private:
+  int _internal_group_by_aggregate_list_size() const;
+
+  public:
+  void clear_group_by_aggregate_list() ;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* mutable_group_by_aggregate_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >*
+      mutable_group_by_aggregate_list();
+  private:
+  const ::zetasql::AnyResolvedComputedColumnBaseProto& _internal_group_by_aggregate_list(int index) const;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* _internal_add_group_by_aggregate_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>& _internal_group_by_aggregate_list() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>* _internal_mutable_group_by_aggregate_list();
+  public:
+  const ::zetasql::AnyResolvedComputedColumnBaseProto& group_by_aggregate_list(int index) const;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* add_group_by_aggregate_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >&
+      group_by_aggregate_list() const;
   // optional .zetasql.ResolvedNonScalarFunctionCallBaseProto parent = 1;
   bool has_parent() const;
   void clear_parent() ;
@@ -7162,6 +7209,8 @@ class ResolvedAggregateFunctionCallProto final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedOrderByItemProto > order_by_item_list_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto > group_by_list_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto > group_by_aggregate_list_;
     ::zetasql::ResolvedNonScalarFunctionCallBaseProto* parent_;
     ::zetasql::AnyResolvedExprProto* limit_;
     ::zetasql::ResolvedAggregateHavingModifierProto* having_modifier_;
@@ -10389,6 +10438,7 @@ class AnyResolvedScanProto final :
     kResolvedUnpivotScanNode = 172,
     kResolvedGroupRowsScanNode = 176,
     kResolvedExecuteAsRoleScanNode = 207,
+    kResolvedBarrierScanNode = 261,
     NODE_NOT_SET = 0,
   };
 
@@ -10472,6 +10522,7 @@ class AnyResolvedScanProto final :
     kResolvedUnpivotScanNodeFieldNumber = 172,
     kResolvedGroupRowsScanNodeFieldNumber = 176,
     kResolvedExecuteAsRoleScanNodeFieldNumber = 207,
+    kResolvedBarrierScanNodeFieldNumber = 261,
   };
   // .zetasql.ResolvedSingleRowScanProto resolved_single_row_scan_node = 19;
   bool has_resolved_single_row_scan_node() const;
@@ -10869,6 +10920,24 @@ class AnyResolvedScanProto final :
   void unsafe_arena_set_allocated_resolved_execute_as_role_scan_node(
       ::zetasql::ResolvedExecuteAsRoleScanProto* resolved_execute_as_role_scan_node);
   ::zetasql::ResolvedExecuteAsRoleScanProto* unsafe_arena_release_resolved_execute_as_role_scan_node();
+  // .zetasql.ResolvedBarrierScanProto resolved_barrier_scan_node = 261;
+  bool has_resolved_barrier_scan_node() const;
+  private:
+  bool _internal_has_resolved_barrier_scan_node() const;
+
+  public:
+  void clear_resolved_barrier_scan_node() ;
+  const ::zetasql::ResolvedBarrierScanProto& resolved_barrier_scan_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedBarrierScanProto* release_resolved_barrier_scan_node();
+  ::zetasql::ResolvedBarrierScanProto* mutable_resolved_barrier_scan_node();
+  void set_allocated_resolved_barrier_scan_node(::zetasql::ResolvedBarrierScanProto* resolved_barrier_scan_node);
+  private:
+  const ::zetasql::ResolvedBarrierScanProto& _internal_resolved_barrier_scan_node() const;
+  ::zetasql::ResolvedBarrierScanProto* _internal_mutable_resolved_barrier_scan_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_barrier_scan_node(
+      ::zetasql::ResolvedBarrierScanProto* resolved_barrier_scan_node);
+  ::zetasql::ResolvedBarrierScanProto* unsafe_arena_release_resolved_barrier_scan_node();
   void clear_node();
   NodeCase node_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.AnyResolvedScanProto)
@@ -10896,6 +10965,7 @@ class AnyResolvedScanProto final :
   void set_has_resolved_unpivot_scan_node();
   void set_has_resolved_group_rows_scan_node();
   void set_has_resolved_execute_as_role_scan_node();
+  void set_has_resolved_barrier_scan_node();
 
   inline bool has_node() const;
   inline void clear_has_node();
@@ -10929,6 +10999,7 @@ class AnyResolvedScanProto final :
       ::zetasql::ResolvedUnpivotScanProto* resolved_unpivot_scan_node_;
       ::zetasql::ResolvedGroupRowsScanProto* resolved_group_rows_scan_node_;
       ::zetasql::ResolvedExecuteAsRoleScanProto* resolved_execute_as_role_scan_node_;
+      ::zetasql::ResolvedBarrierScanProto* resolved_barrier_scan_node_;
     } node_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::uint32_t _oneof_case_[1];
@@ -32202,25 +32273,25 @@ class ResolvedAnalyticFunctionGroupProto final :
     kPartitionByFieldNumber = 2,
     kOrderByFieldNumber = 3,
   };
-  // repeated .zetasql.ResolvedComputedColumnProto analytic_function_list = 4;
+  // repeated .zetasql.AnyResolvedComputedColumnBaseProto analytic_function_list = 4;
   int analytic_function_list_size() const;
   private:
   int _internal_analytic_function_list_size() const;
 
   public:
   void clear_analytic_function_list() ;
-  ::zetasql::ResolvedComputedColumnProto* mutable_analytic_function_list(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedComputedColumnProto >*
+  ::zetasql::AnyResolvedComputedColumnBaseProto* mutable_analytic_function_list(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >*
       mutable_analytic_function_list();
   private:
-  const ::zetasql::ResolvedComputedColumnProto& _internal_analytic_function_list(int index) const;
-  ::zetasql::ResolvedComputedColumnProto* _internal_add_analytic_function_list();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::ResolvedComputedColumnProto>& _internal_analytic_function_list() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::ResolvedComputedColumnProto>* _internal_mutable_analytic_function_list();
+  const ::zetasql::AnyResolvedComputedColumnBaseProto& _internal_analytic_function_list(int index) const;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* _internal_add_analytic_function_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>& _internal_analytic_function_list() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>* _internal_mutable_analytic_function_list();
   public:
-  const ::zetasql::ResolvedComputedColumnProto& analytic_function_list(int index) const;
-  ::zetasql::ResolvedComputedColumnProto* add_analytic_function_list();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedComputedColumnProto >&
+  const ::zetasql::AnyResolvedComputedColumnBaseProto& analytic_function_list(int index) const;
+  ::zetasql::AnyResolvedComputedColumnBaseProto* add_analytic_function_list();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >&
       analytic_function_list() const;
   // optional .zetasql.ResolvedArgumentProto parent = 1;
   bool has_parent() const;
@@ -32274,7 +32345,7 @@ class ResolvedAnalyticFunctionGroupProto final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedComputedColumnProto > analytic_function_list_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto > analytic_function_list_;
     ::zetasql::ResolvedArgumentProto* parent_;
     ::zetasql::ResolvedWindowPartitioningProto* partition_by_;
     ::zetasql::ResolvedWindowOrderingProto* order_by_;
@@ -53147,6 +53218,163 @@ class ResolvedIdentityColumnInfoProto final :
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedBarrierScanProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedBarrierScanProto) */ {
+ public:
+  inline ResolvedBarrierScanProto() : ResolvedBarrierScanProto(nullptr) {}
+  ~ResolvedBarrierScanProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedBarrierScanProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedBarrierScanProto(const ResolvedBarrierScanProto& from);
+  ResolvedBarrierScanProto(ResolvedBarrierScanProto&& from) noexcept
+    : ResolvedBarrierScanProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedBarrierScanProto& operator=(const ResolvedBarrierScanProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedBarrierScanProto& operator=(ResolvedBarrierScanProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedBarrierScanProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedBarrierScanProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedBarrierScanProto*>(
+               &_ResolvedBarrierScanProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    247;
+
+  friend void swap(ResolvedBarrierScanProto& a, ResolvedBarrierScanProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedBarrierScanProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedBarrierScanProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedBarrierScanProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedBarrierScanProto>(arena);
+  }
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedBarrierScanProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedBarrierScanProto";
+  }
+  protected:
+  explicit ResolvedBarrierScanProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kParentFieldNumber = 1,
+    kInputScanFieldNumber = 2,
+  };
+  // optional .zetasql.ResolvedScanProto parent = 1;
+  bool has_parent() const;
+  void clear_parent() ;
+  const ::zetasql::ResolvedScanProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedScanProto* release_parent();
+  ::zetasql::ResolvedScanProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedScanProto* parent);
+  private:
+  const ::zetasql::ResolvedScanProto& _internal_parent() const;
+  ::zetasql::ResolvedScanProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedScanProto* parent);
+  ::zetasql::ResolvedScanProto* unsafe_arena_release_parent();
+  // optional .zetasql.AnyResolvedScanProto input_scan = 2;
+  bool has_input_scan() const;
+  void clear_input_scan() ;
+  const ::zetasql::AnyResolvedScanProto& input_scan() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedScanProto* release_input_scan();
+  ::zetasql::AnyResolvedScanProto* mutable_input_scan();
+  void set_allocated_input_scan(::zetasql::AnyResolvedScanProto* input_scan);
+  private:
+  const ::zetasql::AnyResolvedScanProto& _internal_input_scan() const;
+  ::zetasql::AnyResolvedScanProto* _internal_mutable_input_scan();
+  public:
+  void unsafe_arena_set_allocated_input_scan(
+      ::zetasql::AnyResolvedScanProto* input_scan);
+  ::zetasql::AnyResolvedScanProto* unsafe_arena_release_input_scan();
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedBarrierScanProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::zetasql::ResolvedScanProto* parent_;
+    ::zetasql::AnyResolvedScanProto* input_scan_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };
 
 // ===================================================================
@@ -63674,6 +63902,102 @@ inline void ResolvedAggregateFunctionCallProto::set_allocated_function_call_info
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedAggregateFunctionCallProto.function_call_info)
 }
 
+// repeated .zetasql.AnyResolvedComputedColumnBaseProto group_by_list = 7;
+inline int ResolvedAggregateFunctionCallProto::_internal_group_by_list_size() const {
+  return _impl_.group_by_list_.size();
+}
+inline int ResolvedAggregateFunctionCallProto::group_by_list_size() const {
+  return _internal_group_by_list_size();
+}
+inline void ResolvedAggregateFunctionCallProto::clear_group_by_list() {
+  _internal_mutable_group_by_list()->Clear();
+}
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAggregateFunctionCallProto::mutable_group_by_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAggregateFunctionCallProto.group_by_list)
+  return _internal_mutable_group_by_list()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >*
+ResolvedAggregateFunctionCallProto::mutable_group_by_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedAggregateFunctionCallProto.group_by_list)
+  return _internal_mutable_group_by_list();
+}
+inline const ::zetasql::AnyResolvedComputedColumnBaseProto& ResolvedAggregateFunctionCallProto::_internal_group_by_list(int index) const {
+  return _internal_group_by_list().Get(index);
+}
+inline const ::zetasql::AnyResolvedComputedColumnBaseProto& ResolvedAggregateFunctionCallProto::group_by_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAggregateFunctionCallProto.group_by_list)
+  return _internal_group_by_list(index);
+}
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAggregateFunctionCallProto::_internal_add_group_by_list() {
+  return _internal_mutable_group_by_list()->Add();
+}
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAggregateFunctionCallProto::add_group_by_list() {
+  ::zetasql::AnyResolvedComputedColumnBaseProto* _add = _internal_add_group_by_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedAggregateFunctionCallProto.group_by_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >&
+ResolvedAggregateFunctionCallProto::group_by_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedAggregateFunctionCallProto.group_by_list)
+  return _internal_group_by_list();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>&
+ResolvedAggregateFunctionCallProto::_internal_group_by_list() const {
+  return _impl_.group_by_list_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>*
+ResolvedAggregateFunctionCallProto::_internal_mutable_group_by_list() {
+  return &_impl_.group_by_list_;
+}
+
+// repeated .zetasql.AnyResolvedComputedColumnBaseProto group_by_aggregate_list = 8;
+inline int ResolvedAggregateFunctionCallProto::_internal_group_by_aggregate_list_size() const {
+  return _impl_.group_by_aggregate_list_.size();
+}
+inline int ResolvedAggregateFunctionCallProto::group_by_aggregate_list_size() const {
+  return _internal_group_by_aggregate_list_size();
+}
+inline void ResolvedAggregateFunctionCallProto::clear_group_by_aggregate_list() {
+  _internal_mutable_group_by_aggregate_list()->Clear();
+}
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAggregateFunctionCallProto::mutable_group_by_aggregate_list(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAggregateFunctionCallProto.group_by_aggregate_list)
+  return _internal_mutable_group_by_aggregate_list()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >*
+ResolvedAggregateFunctionCallProto::mutable_group_by_aggregate_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedAggregateFunctionCallProto.group_by_aggregate_list)
+  return _internal_mutable_group_by_aggregate_list();
+}
+inline const ::zetasql::AnyResolvedComputedColumnBaseProto& ResolvedAggregateFunctionCallProto::_internal_group_by_aggregate_list(int index) const {
+  return _internal_group_by_aggregate_list().Get(index);
+}
+inline const ::zetasql::AnyResolvedComputedColumnBaseProto& ResolvedAggregateFunctionCallProto::group_by_aggregate_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedAggregateFunctionCallProto.group_by_aggregate_list)
+  return _internal_group_by_aggregate_list(index);
+}
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAggregateFunctionCallProto::_internal_add_group_by_aggregate_list() {
+  return _internal_mutable_group_by_aggregate_list()->Add();
+}
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAggregateFunctionCallProto::add_group_by_aggregate_list() {
+  ::zetasql::AnyResolvedComputedColumnBaseProto* _add = _internal_add_group_by_aggregate_list();
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedAggregateFunctionCallProto.group_by_aggregate_list)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >&
+ResolvedAggregateFunctionCallProto::group_by_aggregate_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedAggregateFunctionCallProto.group_by_aggregate_list)
+  return _internal_group_by_aggregate_list();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>&
+ResolvedAggregateFunctionCallProto::_internal_group_by_aggregate_list() const {
+  return _impl_.group_by_aggregate_list_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>*
+ResolvedAggregateFunctionCallProto::_internal_mutable_group_by_aggregate_list() {
+  return &_impl_.group_by_aggregate_list_;
+}
+
 // -------------------------------------------------------------------
 
 // ResolvedAnalyticFunctionCallProto
@@ -69739,6 +70063,80 @@ inline ::zetasql::ResolvedExecuteAsRoleScanProto* AnyResolvedScanProto::_interna
 inline ::zetasql::ResolvedExecuteAsRoleScanProto* AnyResolvedScanProto::mutable_resolved_execute_as_role_scan_node() {
   ::zetasql::ResolvedExecuteAsRoleScanProto* _msg = _internal_mutable_resolved_execute_as_role_scan_node();
   // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedScanProto.resolved_execute_as_role_scan_node)
+  return _msg;
+}
+
+// .zetasql.ResolvedBarrierScanProto resolved_barrier_scan_node = 261;
+inline bool AnyResolvedScanProto::has_resolved_barrier_scan_node() const {
+  return node_case() == kResolvedBarrierScanNode;
+}
+inline bool AnyResolvedScanProto::_internal_has_resolved_barrier_scan_node() const {
+  return node_case() == kResolvedBarrierScanNode;
+}
+inline void AnyResolvedScanProto::set_has_resolved_barrier_scan_node() {
+  _impl_._oneof_case_[0] = kResolvedBarrierScanNode;
+}
+inline void AnyResolvedScanProto::clear_resolved_barrier_scan_node() {
+  if (node_case() == kResolvedBarrierScanNode) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.node_.resolved_barrier_scan_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedBarrierScanProto* AnyResolvedScanProto::release_resolved_barrier_scan_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedScanProto.resolved_barrier_scan_node)
+  if (node_case() == kResolvedBarrierScanNode) {
+    clear_has_node();
+    ::zetasql::ResolvedBarrierScanProto* temp = _impl_.node_.resolved_barrier_scan_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.node_.resolved_barrier_scan_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedBarrierScanProto& AnyResolvedScanProto::_internal_resolved_barrier_scan_node() const {
+  return node_case() == kResolvedBarrierScanNode
+      ? *_impl_.node_.resolved_barrier_scan_node_
+      : reinterpret_cast<::zetasql::ResolvedBarrierScanProto&>(::zetasql::_ResolvedBarrierScanProto_default_instance_);
+}
+inline const ::zetasql::ResolvedBarrierScanProto& AnyResolvedScanProto::resolved_barrier_scan_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedScanProto.resolved_barrier_scan_node)
+  return _internal_resolved_barrier_scan_node();
+}
+inline ::zetasql::ResolvedBarrierScanProto* AnyResolvedScanProto::unsafe_arena_release_resolved_barrier_scan_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedScanProto.resolved_barrier_scan_node)
+  if (node_case() == kResolvedBarrierScanNode) {
+    clear_has_node();
+    ::zetasql::ResolvedBarrierScanProto* temp = _impl_.node_.resolved_barrier_scan_node_;
+    _impl_.node_.resolved_barrier_scan_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedScanProto::unsafe_arena_set_allocated_resolved_barrier_scan_node(::zetasql::ResolvedBarrierScanProto* resolved_barrier_scan_node) {
+  clear_node();
+  if (resolved_barrier_scan_node) {
+    set_has_resolved_barrier_scan_node();
+    _impl_.node_.resolved_barrier_scan_node_ = resolved_barrier_scan_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedScanProto.resolved_barrier_scan_node)
+}
+inline ::zetasql::ResolvedBarrierScanProto* AnyResolvedScanProto::_internal_mutable_resolved_barrier_scan_node() {
+  if (node_case() != kResolvedBarrierScanNode) {
+    clear_node();
+    set_has_resolved_barrier_scan_node();
+    _impl_.node_.resolved_barrier_scan_node_ = CreateMaybeMessage< ::zetasql::ResolvedBarrierScanProto >(GetArenaForAllocation());
+  }
+  return _impl_.node_.resolved_barrier_scan_node_;
+}
+inline ::zetasql::ResolvedBarrierScanProto* AnyResolvedScanProto::mutable_resolved_barrier_scan_node() {
+  ::zetasql::ResolvedBarrierScanProto* _msg = _internal_mutable_resolved_barrier_scan_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedScanProto.resolved_barrier_scan_node)
   return _msg;
 }
 
@@ -101160,7 +101558,7 @@ inline void ResolvedAnalyticFunctionGroupProto::set_allocated_order_by(::zetasql
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedAnalyticFunctionGroupProto.order_by)
 }
 
-// repeated .zetasql.ResolvedComputedColumnProto analytic_function_list = 4;
+// repeated .zetasql.AnyResolvedComputedColumnBaseProto analytic_function_list = 4;
 inline int ResolvedAnalyticFunctionGroupProto::_internal_analytic_function_list_size() const {
   return _impl_.analytic_function_list_.size();
 }
@@ -101170,40 +101568,40 @@ inline int ResolvedAnalyticFunctionGroupProto::analytic_function_list_size() con
 inline void ResolvedAnalyticFunctionGroupProto::clear_analytic_function_list() {
   _internal_mutable_analytic_function_list()->Clear();
 }
-inline ::zetasql::ResolvedComputedColumnProto* ResolvedAnalyticFunctionGroupProto::mutable_analytic_function_list(int index) {
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAnalyticFunctionGroupProto::mutable_analytic_function_list(int index) {
   // @@protoc_insertion_point(field_mutable:zetasql.ResolvedAnalyticFunctionGroupProto.analytic_function_list)
   return _internal_mutable_analytic_function_list()->Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedComputedColumnProto >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >*
 ResolvedAnalyticFunctionGroupProto::mutable_analytic_function_list() {
   // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedAnalyticFunctionGroupProto.analytic_function_list)
   return _internal_mutable_analytic_function_list();
 }
-inline const ::zetasql::ResolvedComputedColumnProto& ResolvedAnalyticFunctionGroupProto::_internal_analytic_function_list(int index) const {
+inline const ::zetasql::AnyResolvedComputedColumnBaseProto& ResolvedAnalyticFunctionGroupProto::_internal_analytic_function_list(int index) const {
   return _internal_analytic_function_list().Get(index);
 }
-inline const ::zetasql::ResolvedComputedColumnProto& ResolvedAnalyticFunctionGroupProto::analytic_function_list(int index) const {
+inline const ::zetasql::AnyResolvedComputedColumnBaseProto& ResolvedAnalyticFunctionGroupProto::analytic_function_list(int index) const {
   // @@protoc_insertion_point(field_get:zetasql.ResolvedAnalyticFunctionGroupProto.analytic_function_list)
   return _internal_analytic_function_list(index);
 }
-inline ::zetasql::ResolvedComputedColumnProto* ResolvedAnalyticFunctionGroupProto::_internal_add_analytic_function_list() {
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAnalyticFunctionGroupProto::_internal_add_analytic_function_list() {
   return _internal_mutable_analytic_function_list()->Add();
 }
-inline ::zetasql::ResolvedComputedColumnProto* ResolvedAnalyticFunctionGroupProto::add_analytic_function_list() {
-  ::zetasql::ResolvedComputedColumnProto* _add = _internal_add_analytic_function_list();
+inline ::zetasql::AnyResolvedComputedColumnBaseProto* ResolvedAnalyticFunctionGroupProto::add_analytic_function_list() {
+  ::zetasql::AnyResolvedComputedColumnBaseProto* _add = _internal_add_analytic_function_list();
   // @@protoc_insertion_point(field_add:zetasql.ResolvedAnalyticFunctionGroupProto.analytic_function_list)
   return _add;
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedComputedColumnProto >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::AnyResolvedComputedColumnBaseProto >&
 ResolvedAnalyticFunctionGroupProto::analytic_function_list() const {
   // @@protoc_insertion_point(field_list:zetasql.ResolvedAnalyticFunctionGroupProto.analytic_function_list)
   return _internal_analytic_function_list();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::ResolvedComputedColumnProto>&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>&
 ResolvedAnalyticFunctionGroupProto::_internal_analytic_function_list() const {
   return _impl_.analytic_function_list_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::ResolvedComputedColumnProto>*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::AnyResolvedComputedColumnBaseProto>*
 ResolvedAnalyticFunctionGroupProto::_internal_mutable_analytic_function_list() {
   return &_impl_.analytic_function_list_;
 }
@@ -130565,6 +130963,184 @@ inline bool ResolvedIdentityColumnInfoProto::_internal_cycling_enabled() const {
 inline void ResolvedIdentityColumnInfoProto::_internal_set_cycling_enabled(bool value) {
   _impl_._has_bits_[0] |= 0x00000020u;
   _impl_.cycling_enabled_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ResolvedBarrierScanProto
+
+// optional .zetasql.ResolvedScanProto parent = 1;
+inline bool ResolvedBarrierScanProto::has_parent() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.parent_ != nullptr);
+  return value;
+}
+inline void ResolvedBarrierScanProto::clear_parent() {
+  if (_impl_.parent_ != nullptr) _impl_.parent_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::ResolvedScanProto& ResolvedBarrierScanProto::_internal_parent() const {
+  const ::zetasql::ResolvedScanProto* p = _impl_.parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedScanProto&>(
+      ::zetasql::_ResolvedScanProto_default_instance_);
+}
+inline const ::zetasql::ResolvedScanProto& ResolvedBarrierScanProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedBarrierScanProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedBarrierScanProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedScanProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.parent_);
+  }
+  _impl_.parent_ = parent;
+  if (parent) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedBarrierScanProto.parent)
+}
+inline ::zetasql::ResolvedScanProto* ResolvedBarrierScanProto::release_parent() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedScanProto* temp = _impl_.parent_;
+  _impl_.parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedScanProto* ResolvedBarrierScanProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedBarrierScanProto.parent)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedScanProto* temp = _impl_.parent_;
+  _impl_.parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedScanProto* ResolvedBarrierScanProto::_internal_mutable_parent() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedScanProto>(GetArenaForAllocation());
+    _impl_.parent_ = p;
+  }
+  return _impl_.parent_;
+}
+inline ::zetasql::ResolvedScanProto* ResolvedBarrierScanProto::mutable_parent() {
+  ::zetasql::ResolvedScanProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedBarrierScanProto.parent)
+  return _msg;
+}
+inline void ResolvedBarrierScanProto::set_allocated_parent(::zetasql::ResolvedScanProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedBarrierScanProto.parent)
+}
+
+// optional .zetasql.AnyResolvedScanProto input_scan = 2;
+inline bool ResolvedBarrierScanProto::has_input_scan() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.input_scan_ != nullptr);
+  return value;
+}
+inline void ResolvedBarrierScanProto::clear_input_scan() {
+  if (_impl_.input_scan_ != nullptr) _impl_.input_scan_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::AnyResolvedScanProto& ResolvedBarrierScanProto::_internal_input_scan() const {
+  const ::zetasql::AnyResolvedScanProto* p = _impl_.input_scan_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedScanProto&>(
+      ::zetasql::_AnyResolvedScanProto_default_instance_);
+}
+inline const ::zetasql::AnyResolvedScanProto& ResolvedBarrierScanProto::input_scan() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedBarrierScanProto.input_scan)
+  return _internal_input_scan();
+}
+inline void ResolvedBarrierScanProto::unsafe_arena_set_allocated_input_scan(
+    ::zetasql::AnyResolvedScanProto* input_scan) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.input_scan_);
+  }
+  _impl_.input_scan_ = input_scan;
+  if (input_scan) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedBarrierScanProto.input_scan)
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedBarrierScanProto::release_input_scan() {
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedScanProto* temp = _impl_.input_scan_;
+  _impl_.input_scan_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedBarrierScanProto::unsafe_arena_release_input_scan() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedBarrierScanProto.input_scan)
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedScanProto* temp = _impl_.input_scan_;
+  _impl_.input_scan_ = nullptr;
+  return temp;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedBarrierScanProto::_internal_mutable_input_scan() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.input_scan_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedScanProto>(GetArenaForAllocation());
+    _impl_.input_scan_ = p;
+  }
+  return _impl_.input_scan_;
+}
+inline ::zetasql::AnyResolvedScanProto* ResolvedBarrierScanProto::mutable_input_scan() {
+  ::zetasql::AnyResolvedScanProto* _msg = _internal_mutable_input_scan();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedBarrierScanProto.input_scan)
+  return _msg;
+}
+inline void ResolvedBarrierScanProto::set_allocated_input_scan(::zetasql::AnyResolvedScanProto* input_scan) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.input_scan_;
+  }
+  if (input_scan) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(input_scan);
+    if (message_arena != submessage_arena) {
+      input_scan = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, input_scan, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.input_scan_ = input_scan;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedBarrierScanProto.input_scan)
 }
 
 #ifdef __GNUC__

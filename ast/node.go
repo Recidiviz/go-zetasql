@@ -5741,12 +5741,12 @@ type InsertStatementNode struct {
 }
 
 func (n *InsertStatementNode) SetParseProgress(progress ParseProgress) {
-	zetasqlparser.ASTInsertStatement_set_parse_progress(n.getRaw(), int(progress))
+	zetasqlparser.ASTInsertStatement_set_deprecated_parse_progress(n.getRaw(), int(progress))
 }
 
 func (n *InsertStatementNode) ParseProgress() ParseProgress {
 	var v int
-	zetasqlparser.ASTInsertStatement_parse_progress(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_deprecated_parse_progress(n.getRaw(), &v)
 	return ParseProgress(v)
 }
 

@@ -1030,9 +1030,6 @@ absl::Status ParseTreeSerializer::Serialize(const ASTExpression* node,
   } else if (dynamic_cast<const ASTReplaceFieldsExpression*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTReplaceFieldsExpression*>(node),
                               proto->mutable_ast_replace_fields_expression_node()));
-  } else if (dynamic_cast<const ASTBracedConstructorFieldValue*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTBracedConstructorFieldValue*>(node),
-                              proto->mutable_ast_braced_constructor_field_value_node()));
   } else if (dynamic_cast<const ASTBracedConstructor*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTBracedConstructor*>(node),
                               proto->mutable_ast_braced_constructor_node()));
@@ -1051,6 +1048,12 @@ absl::Status ParseTreeSerializer::Serialize(const ASTExpression* node,
   } else if (dynamic_cast<const ASTExpressionWithAlias*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTExpressionWithAlias*>(node),
                               proto->mutable_ast_expression_with_alias_node()));
+  } else if (dynamic_cast<const ASTStructBracedConstructor*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTStructBracedConstructor*>(node),
+                              proto->mutable_ast_struct_braced_constructor_node()));
+  } else if (dynamic_cast<const ASTIntOrUnbounded*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTIntOrUnbounded*>(node),
+                              proto->mutable_ast_int_or_unbounded_node()));
   } else {
     return absl::InvalidArgumentError("Unknown subclass of ASTExpression");
   }
@@ -1261,12 +1264,6 @@ absl::StatusOr<ASTExpression*> ParseTreeSerializer::Deserialize(
           id_string_pool, arena,
           allocated_ast_nodes);
     }
-    case AnyASTExpressionProto::kAstBracedConstructorFieldValueNode: {
-      return Deserialize(
-          proto.ast_braced_constructor_field_value_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
     case AnyASTExpressionProto::kAstBracedConstructorNode: {
       return Deserialize(
           proto.ast_braced_constructor_node(),
@@ -1303,6 +1300,18 @@ absl::StatusOr<ASTExpression*> ParseTreeSerializer::Deserialize(
           id_string_pool, arena,
           allocated_ast_nodes);
     }
+    case AnyASTExpressionProto::kAstStructBracedConstructorNode: {
+      return Deserialize(
+          proto.ast_struct_braced_constructor_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTExpressionProto::kAstIntOrUnboundedNode: {
+      return Deserialize(
+          proto.ast_int_or_unbounded_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
     case AnyASTExpressionProto::NODE_NOT_SET:
       break;
   }
@@ -1336,7 +1345,6 @@ absl::Status ParseTreeSerializer::DeserializeFields(
 absl::Status ParseTreeSerializer::Serialize(const ASTLeaf* node,
                                             ASTLeafProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
-  proto->set_image(node->image_);
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTLeaf* node,
@@ -1348,24 +1356,9 @@ absl::Status ParseTreeSerializer::Serialize(const ASTLeaf* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTLeaf* node,
                                            AnyASTLeafProto* proto) {
-  if (dynamic_cast<const ASTIntLiteral*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTIntLiteral*>(node),
-                              proto->mutable_ast_int_literal_node()));
-  } else if (dynamic_cast<const ASTBooleanLiteral*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTBooleanLiteral*>(node),
-                              proto->mutable_ast_boolean_literal_node()));
-  } else if (dynamic_cast<const ASTStringLiteral*>(node)) {
+  if (dynamic_cast<const ASTStringLiteral*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTStringLiteral*>(node),
                               proto->mutable_ast_string_literal_node()));
-  } else if (dynamic_cast<const ASTStar*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTStar*>(node),
-                              proto->mutable_ast_star_node()));
-  } else if (dynamic_cast<const ASTFloatLiteral*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTFloatLiteral*>(node),
-                              proto->mutable_ast_float_literal_node()));
-  } else if (dynamic_cast<const ASTNullLiteral*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTNullLiteral*>(node),
-                              proto->mutable_ast_null_literal_node()));
   } else if (dynamic_cast<const ASTNumericLiteral*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTNumericLiteral*>(node),
                               proto->mutable_ast_numeric_literal_node()));
@@ -1375,18 +1368,12 @@ absl::Status ParseTreeSerializer::Serialize(const ASTLeaf* node,
   } else if (dynamic_cast<const ASTBytesLiteral*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTBytesLiteral*>(node),
                               proto->mutable_ast_bytes_literal_node()));
-  } else if (dynamic_cast<const ASTMaxLiteral*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTMaxLiteral*>(node),
-                              proto->mutable_ast_max_literal_node()));
   } else if (dynamic_cast<const ASTJSONLiteral*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTJSONLiteral*>(node),
                               proto->mutable_ast_json_literal_node()));
-  } else if (dynamic_cast<const ASTIndexAllColumns*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTIndexAllColumns*>(node),
-                              proto->mutable_ast_index_all_columns_node()));
-  } else if (dynamic_cast<const ASTMacroBody*>(node)) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTMacroBody*>(node),
-                              proto->mutable_ast_macro_body_node()));
+  } else if (dynamic_cast<const ASTPrintableLeaf*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTPrintableLeaf*>(node),
+                              proto->mutable_ast_printable_leaf_node()));
   } else {
     return absl::InvalidArgumentError("Unknown subclass of ASTLeaf");
   }
@@ -1399,39 +1386,9 @@ absl::StatusOr<ASTLeaf*> ParseTreeSerializer::Deserialize(
     std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
 
   switch (proto.node_case()) {
-    case AnyASTLeafProto::kAstIntLiteralNode: {
-      return Deserialize(
-          proto.ast_int_literal_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
-    case AnyASTLeafProto::kAstBooleanLiteralNode: {
-      return Deserialize(
-          proto.ast_boolean_literal_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
     case AnyASTLeafProto::kAstStringLiteralNode: {
       return Deserialize(
           proto.ast_string_literal_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
-    case AnyASTLeafProto::kAstStarNode: {
-      return Deserialize(
-          proto.ast_star_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
-    case AnyASTLeafProto::kAstFloatLiteralNode: {
-      return Deserialize(
-          proto.ast_float_literal_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
-    case AnyASTLeafProto::kAstNullLiteralNode: {
-      return Deserialize(
-          proto.ast_null_literal_node(),
           id_string_pool, arena,
           allocated_ast_nodes);
     }
@@ -1453,27 +1410,15 @@ absl::StatusOr<ASTLeaf*> ParseTreeSerializer::Deserialize(
           id_string_pool, arena,
           allocated_ast_nodes);
     }
-    case AnyASTLeafProto::kAstMaxLiteralNode: {
-      return Deserialize(
-          proto.ast_max_literal_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
     case AnyASTLeafProto::kAstJsonLiteralNode: {
       return Deserialize(
           proto.ast_json_literal_node(),
           id_string_pool, arena,
           allocated_ast_nodes);
     }
-    case AnyASTLeafProto::kAstIndexAllColumnsNode: {
+    case AnyASTLeafProto::kAstPrintableLeafNode: {
       return Deserialize(
-          proto.ast_index_all_columns_node(),
-          id_string_pool, arena,
-          allocated_ast_nodes);
-    }
-    case AnyASTLeafProto::kAstMacroBodyNode: {
-      return Deserialize(
-          proto.ast_macro_body_node(),
+          proto.ast_printable_leaf_node(),
           id_string_pool, arena,
           allocated_ast_nodes);
     }
@@ -1503,6 +1448,159 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTPrintableLeaf* node,
+                                            ASTPrintableLeafProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  proto->set_image(node->image_);
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTPrintableLeaf* node,
+                                           AnyASTExpressionProto* proto) {
+  AnyASTLeafProto* ast_leaf_proto =
+      proto->mutable_ast_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTPrintableLeaf* node,
+                                           AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTPrintableLeaf* node,
+                                           AnyASTPrintableLeafProto* proto) {
+  if (dynamic_cast<const ASTIntLiteral*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTIntLiteral*>(node),
+                              proto->mutable_ast_int_literal_node()));
+  } else if (dynamic_cast<const ASTBooleanLiteral*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTBooleanLiteral*>(node),
+                              proto->mutable_ast_boolean_literal_node()));
+  } else if (dynamic_cast<const ASTStar*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTStar*>(node),
+                              proto->mutable_ast_star_node()));
+  } else if (dynamic_cast<const ASTFloatLiteral*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTFloatLiteral*>(node),
+                              proto->mutable_ast_float_literal_node()));
+  } else if (dynamic_cast<const ASTNullLiteral*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTNullLiteral*>(node),
+                              proto->mutable_ast_null_literal_node()));
+  } else if (dynamic_cast<const ASTMaxLiteral*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTMaxLiteral*>(node),
+                              proto->mutable_ast_max_literal_node()));
+  } else if (dynamic_cast<const ASTIndexAllColumns*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTIndexAllColumns*>(node),
+                              proto->mutable_ast_index_all_columns_node()));
+  } else if (dynamic_cast<const ASTMacroBody*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTMacroBody*>(node),
+                              proto->mutable_ast_macro_body_node()));
+  } else if (dynamic_cast<const ASTStringLiteralComponent*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTStringLiteralComponent*>(node),
+                              proto->mutable_ast_string_literal_component_node()));
+  } else if (dynamic_cast<const ASTBytesLiteralComponent*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTBytesLiteralComponent*>(node),
+                              proto->mutable_ast_bytes_literal_component_node()));
+  } else {
+    return absl::InvalidArgumentError("Unknown subclass of ASTPrintableLeaf");
+  }
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTPrintableLeaf*> ParseTreeSerializer::Deserialize(
+    const AnyASTPrintableLeafProto& proto,
+          IdStringPool* id_string_pool,
+          zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+
+  switch (proto.node_case()) {
+    case AnyASTPrintableLeafProto::kAstIntLiteralNode: {
+      return Deserialize(
+          proto.ast_int_literal_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstBooleanLiteralNode: {
+      return Deserialize(
+          proto.ast_boolean_literal_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstStarNode: {
+      return Deserialize(
+          proto.ast_star_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstFloatLiteralNode: {
+      return Deserialize(
+          proto.ast_float_literal_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstNullLiteralNode: {
+      return Deserialize(
+          proto.ast_null_literal_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstMaxLiteralNode: {
+      return Deserialize(
+          proto.ast_max_literal_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstIndexAllColumnsNode: {
+      return Deserialize(
+          proto.ast_index_all_columns_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstMacroBodyNode: {
+      return Deserialize(
+          proto.ast_macro_body_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstStringLiteralComponentNode: {
+      return Deserialize(
+          proto.ast_string_literal_component_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::kAstBytesLiteralComponentNode: {
+      return Deserialize(
+          proto.ast_bytes_literal_component_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTPrintableLeafProto::NODE_NOT_SET:
+      break;
+  }
+  return absl::InvalidArgumentError("Empty proto!");
+}
+absl::Status ParseTreeSerializer::DeserializeAbstract(
+      ASTPrintableLeaf* node, const ASTPrintableLeafProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  return DeserializeFields(node,
+                           proto,
+                           id_string_pool,
+                           arena,
+                           allocated_ast_nodes);
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTPrintableLeaf* node, const ASTPrintableLeafProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
   node->image_ = proto.image();
   return absl::OkStatus();
 }
@@ -1521,6 +1619,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTIntLiteral* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTIntLiteral* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTIntLiteral* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTIntLiteralProto* ast_int_literal_proto =
       proto->mutable_ast_int_literal_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_int_literal_proto));
@@ -2102,6 +2207,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTBooleanLiteral* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTBooleanLiteral* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTBooleanLiteral* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTBooleanLiteralProto* ast_boolean_literal_proto =
       proto->mutable_ast_boolean_literal_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_boolean_literal_proto));
@@ -2249,6 +2361,11 @@ absl::Status ParseTreeSerializer::DeserializeFields(
 absl::Status ParseTreeSerializer::Serialize(const ASTStringLiteral* node,
                                             ASTStringLiteralProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  for (int i = 0; i < node->components().length(); i++) {
+    const ASTStringLiteralComponent* components_ = node->components().at(i);
+    ASTStringLiteralComponentProto* proto2 = proto->add_components();
+    ZETASQL_RETURN_IF_ERROR(Serialize(components_, proto2));
+  }
   proto->set_string_value(node->string_value_);
   return absl::OkStatus();
 }
@@ -2290,6 +2407,67 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  for (int i=0; i < proto.components_size(); i++) {
+    node->AddChild(Deserialize(proto.components(i),
+                               id_string_pool,
+                               arena,
+                               allocated_ast_nodes).value());
+  }
+  node->string_value_ = proto.string_value();
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTStringLiteralComponent* node,
+                                            ASTStringLiteralComponentProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  proto->set_string_value(node->string_value_);
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTStringLiteralComponent* node,
+                                           AnyASTExpressionProto* proto) {
+  AnyASTLeafProto* ast_leaf_proto =
+      proto->mutable_ast_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTStringLiteralComponent* node,
+                                           AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTStringLiteralComponent* node,
+                                           AnyASTPrintableLeafProto* proto) {
+  ASTStringLiteralComponentProto* ast_string_literal_component_proto =
+      proto->mutable_ast_string_literal_component_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_string_literal_component_proto));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTStringLiteralComponent*> ParseTreeSerializer::Deserialize(
+    const ASTStringLiteralComponentProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTStringLiteralComponent* node = zetasql_base::NewInArena<ASTStringLiteralComponent>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTStringLiteralComponent* node, const ASTStringLiteralComponentProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
   node->string_value_ = proto.string_value();
   return absl::OkStatus();
 }
@@ -2308,6 +2486,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTStar* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTStar* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTStar* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTStarProto* ast_star_proto =
       proto->mutable_ast_star_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_star_proto));
@@ -2383,6 +2568,119 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
   for (int i=0; i < proto.disjuncts_size(); i++) {
     node->AddChild(Deserialize(proto.disjuncts(i),
+                               id_string_pool,
+                               arena,
+                               allocated_ast_nodes).value());
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTOrderingExpression* node,
+                                            ASTOrderingExpressionProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->expression_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->expression_, proto->mutable_expression()));
+  }
+  if (node->collate_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->collate_, proto->mutable_collate()));
+  }
+  if (node->null_order_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->null_order_, proto->mutable_null_order()));
+  }
+  proto->set_ordering_spec(static_cast<ASTOrderingExpressionEnums_OrderingSpec>(node->ordering_spec_));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTOrderingExpression*> ParseTreeSerializer::Deserialize(
+    const ASTOrderingExpressionProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTOrderingExpression* node = zetasql_base::NewInArena<ASTOrderingExpression>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTOrderingExpression* node, const ASTOrderingExpressionProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_expression()) {
+    node->AddChild(Deserialize(proto.expression(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_collate()) {
+    node->AddChild(Deserialize(proto.collate(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_null_order()) {
+    node->AddChild(Deserialize(proto.null_order(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  node->ordering_spec_ = static_cast<ASTOrderingExpression::OrderingSpec>(proto.ordering_spec());
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTOrderBy* node,
+                                            ASTOrderByProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->hint_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->hint_, proto->mutable_hint()));
+  }
+  for (int i = 0; i < node->ordering_expressions().length(); i++) {
+    const ASTOrderingExpression* ordering_expressions_ = node->ordering_expressions().at(i);
+    ASTOrderingExpressionProto* proto2 = proto->add_ordering_expressions();
+    ZETASQL_RETURN_IF_ERROR(Serialize(ordering_expressions_, proto2));
+  }
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTOrderBy*> ParseTreeSerializer::Deserialize(
+    const ASTOrderByProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTOrderBy* node = zetasql_base::NewInArena<ASTOrderBy>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTOrderBy* node, const ASTOrderByProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_hint()) {
+    node->AddChild(Deserialize(proto.hint(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  for (int i=0; i < proto.ordering_expressions_size(); i++) {
+    node->AddChild(Deserialize(proto.ordering_expressions(i),
                                id_string_pool,
                                arena,
                                allocated_ast_nodes).value());
@@ -2551,119 +2849,6 @@ absl::Status ParseTreeSerializer::DeserializeFields(
   return absl::OkStatus();
 }
 
-absl::Status ParseTreeSerializer::Serialize(const ASTOrderingExpression* node,
-                                            ASTOrderingExpressionProto* proto) {
-  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
-  if (node->expression_ != nullptr) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(node->expression_, proto->mutable_expression()));
-  }
-  if (node->collate_ != nullptr) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(node->collate_, proto->mutable_collate()));
-  }
-  if (node->null_order_ != nullptr) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(node->null_order_, proto->mutable_null_order()));
-  }
-  proto->set_ordering_spec(static_cast<ASTOrderingExpressionEnums_OrderingSpec>(node->ordering_spec_));
-  return absl::OkStatus();
-}
-absl::StatusOr<ASTOrderingExpression*> ParseTreeSerializer::Deserialize(
-    const ASTOrderingExpressionProto& proto,
-    IdStringPool* id_string_pool,
-    zetasql_base::UnsafeArena* arena,
-    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
-  ASTOrderingExpression* node = zetasql_base::NewInArena<ASTOrderingExpression>(arena);
-  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
-  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
-                                      proto.parent(),
-                                      id_string_pool,
-                                      arena,
-                                      allocated_ast_nodes));
-  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
-                                    proto,
-                                    id_string_pool,
-                                    arena,
-                                    allocated_ast_nodes));
-  return node;
-}
-absl::Status ParseTreeSerializer::DeserializeFields(
-      ASTOrderingExpression* node, const ASTOrderingExpressionProto& proto,
-      IdStringPool* id_string_pool,
-      zetasql_base::UnsafeArena* arena,
-      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
-  if (proto.has_expression()) {
-    node->AddChild(Deserialize(proto.expression(),
-                   id_string_pool,
-                   arena,
-                   allocated_ast_nodes).value());
-  }
-  if (proto.has_collate()) {
-    node->AddChild(Deserialize(proto.collate(),
-                   id_string_pool,
-                   arena,
-                   allocated_ast_nodes).value());
-  }
-  if (proto.has_null_order()) {
-    node->AddChild(Deserialize(proto.null_order(),
-                   id_string_pool,
-                   arena,
-                   allocated_ast_nodes).value());
-  }
-  node->ordering_spec_ = static_cast<ASTOrderingExpression::OrderingSpec>(proto.ordering_spec());
-  return absl::OkStatus();
-}
-
-absl::Status ParseTreeSerializer::Serialize(const ASTOrderBy* node,
-                                            ASTOrderByProto* proto) {
-  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
-  if (node->hint_ != nullptr) {
-    ZETASQL_RETURN_IF_ERROR(Serialize(node->hint_, proto->mutable_hint()));
-  }
-  for (int i = 0; i < node->ordering_expressions().length(); i++) {
-    const ASTOrderingExpression* ordering_expressions_ = node->ordering_expressions().at(i);
-    ASTOrderingExpressionProto* proto2 = proto->add_ordering_expressions();
-    ZETASQL_RETURN_IF_ERROR(Serialize(ordering_expressions_, proto2));
-  }
-  return absl::OkStatus();
-}
-absl::StatusOr<ASTOrderBy*> ParseTreeSerializer::Deserialize(
-    const ASTOrderByProto& proto,
-    IdStringPool* id_string_pool,
-    zetasql_base::UnsafeArena* arena,
-    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
-  ASTOrderBy* node = zetasql_base::NewInArena<ASTOrderBy>(arena);
-  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
-  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
-                                      proto.parent(),
-                                      id_string_pool,
-                                      arena,
-                                      allocated_ast_nodes));
-  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
-                                    proto,
-                                    id_string_pool,
-                                    arena,
-                                    allocated_ast_nodes));
-  return node;
-}
-absl::Status ParseTreeSerializer::DeserializeFields(
-      ASTOrderBy* node, const ASTOrderByProto& proto,
-      IdStringPool* id_string_pool,
-      zetasql_base::UnsafeArena* arena,
-      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
-  if (proto.has_hint()) {
-    node->AddChild(Deserialize(proto.hint(),
-                   id_string_pool,
-                   arena,
-                   allocated_ast_nodes).value());
-  }
-  for (int i=0; i < proto.ordering_expressions_size(); i++) {
-    node->AddChild(Deserialize(proto.ordering_expressions(i),
-                               id_string_pool,
-                               arena,
-                               allocated_ast_nodes).value());
-  }
-  return absl::OkStatus();
-}
-
 absl::Status ParseTreeSerializer::Serialize(const ASTLimitOffset* node,
                                             ASTLimitOffsetProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
@@ -2728,6 +2913,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTFloatLiteral* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTFloatLiteral* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTFloatLiteral* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTFloatLiteralProto* ast_float_literal_proto =
       proto->mutable_ast_float_literal_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_float_literal_proto));
@@ -2774,6 +2966,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTNullLiteral* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTNullLiteral* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTNullLiteral* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTNullLiteralProto* ast_null_literal_proto =
       proto->mutable_ast_null_literal_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_null_literal_proto));
@@ -2856,6 +3055,9 @@ absl::Status ParseTreeSerializer::Serialize(const ASTAliasedQuery* node,
   if (node->query_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->query_, proto->mutable_query()));
   }
+  if (node->modifiers_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->modifiers_, proto->mutable_modifiers()));
+  }
   return absl::OkStatus();
 }
 absl::StatusOr<ASTAliasedQuery*> ParseTreeSerializer::Deserialize(
@@ -2890,6 +3092,12 @@ absl::Status ParseTreeSerializer::DeserializeFields(
   }
   if (proto.has_query()) {
     node->AddChild(Deserialize(proto.query(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_modifiers()) {
+    node->AddChild(Deserialize(proto.modifiers(),
                    id_string_pool,
                    arena,
                    allocated_ast_nodes).value());
@@ -3119,6 +3327,9 @@ absl::Status ParseTreeSerializer::Serialize(const ASTType* node,
   } else if (dynamic_cast<const ASTFunctionType*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTFunctionType*>(node),
                               proto->mutable_ast_function_type_node()));
+  } else if (dynamic_cast<const ASTMapType*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTMapType*>(node),
+                              proto->mutable_ast_map_type_node()));
   } else {
     return absl::InvalidArgumentError("Unknown subclass of ASTType");
   }
@@ -3158,6 +3369,12 @@ absl::StatusOr<ASTType*> ParseTreeSerializer::Deserialize(
     case AnyASTTypeProto::kAstFunctionTypeNode: {
       return Deserialize(
           proto.ast_function_type_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTTypeProto::kAstMapTypeNode: {
+      return Deserialize(
+          proto.ast_map_type_node(),
           id_string_pool, arena,
           allocated_ast_nodes);
     }
@@ -3949,6 +4166,9 @@ absl::Status ParseTreeSerializer::Serialize(const ASTFunctionCall* node,
   if (node->with_report_modifier_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->with_report_modifier_, proto->mutable_with_report_modifier()));
   }
+  if (node->group_by_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->group_by_, proto->mutable_group_by()));
+  }
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTFunctionCall* node,
@@ -3996,6 +4216,12 @@ absl::Status ParseTreeSerializer::DeserializeFields(
   }
   if (proto.has_having_modifier()) {
     node->AddChild(Deserialize(proto.having_modifier(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_group_by()) {
+    node->AddChild(Deserialize(proto.group_by(),
                    id_string_pool,
                    arena,
                    allocated_ast_nodes).value());
@@ -4478,6 +4704,9 @@ absl::Status ParseTreeSerializer::DeserializeFields(
 absl::Status ParseTreeSerializer::Serialize(const ASTNumericLiteral* node,
                                             ASTNumericLiteralProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->string_literal_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->string_literal_, proto->mutable_string_literal()));
+  }
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTNumericLiteral* node,
@@ -4518,12 +4747,21 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_string_literal()) {
+    node->AddChild(Deserialize(proto.string_literal(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
   return absl::OkStatus();
 }
 
 absl::Status ParseTreeSerializer::Serialize(const ASTBigNumericLiteral* node,
                                             ASTBigNumericLiteralProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->string_literal_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->string_literal_, proto->mutable_string_literal()));
+  }
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTBigNumericLiteral* node,
@@ -4564,12 +4802,24 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_string_literal()) {
+    node->AddChild(Deserialize(proto.string_literal(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
   return absl::OkStatus();
 }
 
 absl::Status ParseTreeSerializer::Serialize(const ASTBytesLiteral* node,
                                             ASTBytesLiteralProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  for (int i = 0; i < node->components().length(); i++) {
+    const ASTBytesLiteralComponent* components_ = node->components().at(i);
+    ASTBytesLiteralComponentProto* proto2 = proto->add_components();
+    ZETASQL_RETURN_IF_ERROR(Serialize(components_, proto2));
+  }
+  proto->set_bytes_value(node->bytes_value_);
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTBytesLiteral* node,
@@ -4607,6 +4857,66 @@ absl::StatusOr<ASTBytesLiteral*> ParseTreeSerializer::Deserialize(
 }
 absl::Status ParseTreeSerializer::DeserializeFields(
       ASTBytesLiteral* node, const ASTBytesLiteralProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  for (int i=0; i < proto.components_size(); i++) {
+    node->AddChild(Deserialize(proto.components(i),
+                               id_string_pool,
+                               arena,
+                               allocated_ast_nodes).value());
+  }
+  node->bytes_value_ = proto.bytes_value();
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTBytesLiteralComponent* node,
+                                            ASTBytesLiteralComponentProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTBytesLiteralComponent* node,
+                                           AnyASTExpressionProto* proto) {
+  AnyASTLeafProto* ast_leaf_proto =
+      proto->mutable_ast_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTBytesLiteralComponent* node,
+                                           AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTBytesLiteralComponent* node,
+                                           AnyASTPrintableLeafProto* proto) {
+  ASTBytesLiteralComponentProto* ast_bytes_literal_component_proto =
+      proto->mutable_ast_bytes_literal_component_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_bytes_literal_component_proto));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTBytesLiteralComponent*> ParseTreeSerializer::Deserialize(
+    const ASTBytesLiteralComponentProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTBytesLiteralComponent* node = zetasql_base::NewInArena<ASTBytesLiteralComponent>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTBytesLiteralComponent* node, const ASTBytesLiteralComponentProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
@@ -4677,6 +4987,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTMaxLiteral* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTMaxLiteral* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTMaxLiteral* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTMaxLiteralProto* ast_max_literal_proto =
       proto->mutable_ast_max_literal_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_max_literal_proto));
@@ -4712,6 +5029,9 @@ absl::Status ParseTreeSerializer::DeserializeFields(
 absl::Status ParseTreeSerializer::Serialize(const ASTJSONLiteral* node,
                                             ASTJSONLiteralProto* proto) {
   ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->string_literal_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->string_literal_, proto->mutable_string_literal()));
+  }
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTJSONLiteral* node,
@@ -4752,6 +5072,12 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_string_literal()) {
+    node->AddChild(Deserialize(proto.string_literal(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
   return absl::OkStatus();
 }
 
@@ -10287,13 +10613,7 @@ absl::Status ParseTreeSerializer::Serialize(const ASTBracedConstructorFieldValue
   if (node->expression_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->expression_, proto->mutable_expression()));
   }
-  return absl::OkStatus();
-}
-absl::Status ParseTreeSerializer::Serialize(const ASTBracedConstructorFieldValue* node,
-                                           AnyASTExpressionProto* proto) {
-  ASTBracedConstructorFieldValueProto* ast_braced_constructor_field_value_proto =
-      proto->mutable_ast_braced_constructor_field_value_node();
-  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_braced_constructor_field_value_proto));
+  proto->set_colon_prefixed(node->colon_prefixed_);
   return absl::OkStatus();
 }
 absl::StatusOr<ASTBracedConstructorFieldValue*> ParseTreeSerializer::Deserialize(
@@ -10326,6 +10646,7 @@ absl::Status ParseTreeSerializer::DeserializeFields(
                    arena,
                    allocated_ast_nodes).value());
   }
+  node->colon_prefixed_ = proto.colon_prefixed();
   return absl::OkStatus();
 }
 
@@ -10341,6 +10662,7 @@ absl::Status ParseTreeSerializer::Serialize(const ASTBracedConstructorField* nod
   if (node->value_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->value_, proto->mutable_value()));
   }
+  proto->set_comma_separated(node->comma_separated_);
   return absl::OkStatus();
 }
 absl::StatusOr<ASTBracedConstructorField*> ParseTreeSerializer::Deserialize(
@@ -10385,6 +10707,7 @@ absl::Status ParseTreeSerializer::DeserializeFields(
                    arena,
                    allocated_ast_nodes).value());
   }
+  node->comma_separated_ = proto.comma_separated();
   return absl::OkStatus();
 }
 
@@ -10477,6 +10800,63 @@ absl::StatusOr<ASTBracedNewConstructor*> ParseTreeSerializer::Deserialize(
 }
 absl::Status ParseTreeSerializer::DeserializeFields(
       ASTBracedNewConstructor* node, const ASTBracedNewConstructorProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_type_name()) {
+    node->AddChild(Deserialize(proto.type_name(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_braced_constructor()) {
+    node->AddChild(Deserialize(proto.braced_constructor(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTStructBracedConstructor* node,
+                                            ASTStructBracedConstructorProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->type_name_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->type_name_, proto->mutable_type_name()));
+  }
+  if (node->braced_constructor_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->braced_constructor_, proto->mutable_braced_constructor()));
+  }
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTStructBracedConstructor* node,
+                                           AnyASTExpressionProto* proto) {
+  ASTStructBracedConstructorProto* ast_struct_braced_constructor_proto =
+      proto->mutable_ast_struct_braced_constructor_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_struct_braced_constructor_proto));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTStructBracedConstructor*> ParseTreeSerializer::Deserialize(
+    const ASTStructBracedConstructorProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTStructBracedConstructor* node = zetasql_base::NewInArena<ASTStructBracedConstructor>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTStructBracedConstructor* node, const ASTStructBracedConstructorProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
@@ -12309,6 +12689,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTIndexAllColumns* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTIndexAllColumns* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTIndexAllColumns* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTIndexAllColumnsProto* ast_index_all_columns_proto =
       proto->mutable_ast_index_all_columns_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_index_all_columns_proto));
@@ -14497,7 +14884,7 @@ absl::Status ParseTreeSerializer::Serialize(const ASTInsertStatement* node,
   if (node->returning_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->returning_, proto->mutable_returning()));
   }
-  proto->set_parse_progress(static_cast<ASTInsertStatementEnums_ParseProgress>(node->parse_progress_));
+  proto->set_deprecated_parse_progress(node->deprecated_parse_progress_);
   proto->set_insert_mode(static_cast<ASTInsertStatementEnums_InsertMode>(node->insert_mode_));
   if (node->hint_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->hint_, proto->mutable_hint()));
@@ -14577,7 +14964,7 @@ absl::Status ParseTreeSerializer::DeserializeFields(
                    arena,
                    allocated_ast_nodes).value());
   }
-  node->parse_progress_ = static_cast<ASTInsertStatement::ParseProgress>(proto.parse_progress());
+  node->deprecated_parse_progress_ = proto.deprecated_parse_progress();
   node->insert_mode_ = static_cast<ASTInsertStatement::InsertMode>(proto.insert_mode());
   return absl::OkStatus();
 }
@@ -21798,6 +22185,9 @@ absl::Status ParseTreeSerializer::Serialize(const ASTAlterStatementBase* node,
   } else if (dynamic_cast<const ASTAlterApproxViewStatement*>(node)) {
     ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTAlterApproxViewStatement*>(node),
                               proto->mutable_ast_alter_approx_view_statement_node()));
+  } else if (dynamic_cast<const ASTAlterExternalSchemaStatement*>(node)) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(static_cast<const ASTAlterExternalSchemaStatement*>(node),
+                              proto->mutable_ast_alter_external_schema_statement_node()));
   } else {
     return absl::InvalidArgumentError("Unknown subclass of ASTAlterStatementBase");
   }
@@ -21867,6 +22257,12 @@ absl::StatusOr<ASTAlterStatementBase*> ParseTreeSerializer::Deserialize(
     case AnyASTAlterStatementBaseProto::kAstAlterApproxViewStatementNode: {
       return Deserialize(
           proto.ast_alter_approx_view_statement_node(),
+          id_string_pool, arena,
+          allocated_ast_nodes);
+    }
+    case AnyASTAlterStatementBaseProto::kAstAlterExternalSchemaStatementNode: {
+      return Deserialize(
+          proto.ast_alter_external_schema_statement_node(),
           id_string_pool, arena,
           allocated_ast_nodes);
     }
@@ -22012,6 +22408,59 @@ absl::StatusOr<ASTAlterSchemaStatement*> ParseTreeSerializer::Deserialize(
 }
 absl::Status ParseTreeSerializer::DeserializeFields(
       ASTAlterSchemaStatement* node, const ASTAlterSchemaStatementProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTAlterExternalSchemaStatement* node,
+                                            ASTAlterExternalSchemaStatementProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTAlterExternalSchemaStatement* node,
+                                           AnyASTStatementProto* proto) {
+  AnyASTDdlStatementProto* ast_ddl_statement_proto =
+      proto->mutable_ast_ddl_statement_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_ddl_statement_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTAlterExternalSchemaStatement* node,
+                                           AnyASTDdlStatementProto* proto) {
+  AnyASTAlterStatementBaseProto* ast_alter_statement_base_proto =
+      proto->mutable_ast_alter_statement_base_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_alter_statement_base_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTAlterExternalSchemaStatement* node,
+                                           AnyASTAlterStatementBaseProto* proto) {
+  ASTAlterExternalSchemaStatementProto* ast_alter_external_schema_statement_proto =
+      proto->mutable_ast_alter_external_schema_statement_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_alter_external_schema_statement_proto));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTAlterExternalSchemaStatement*> ParseTreeSerializer::Deserialize(
+    const ASTAlterExternalSchemaStatementProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTAlterExternalSchemaStatement* node = zetasql_base::NewInArena<ASTAlterExternalSchemaStatement>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTAlterExternalSchemaStatement* node, const ASTAlterExternalSchemaStatementProto& proto,
       IdStringPool* id_string_pool,
       zetasql_base::UnsafeArena* arena,
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
@@ -23941,6 +24390,13 @@ absl::Status ParseTreeSerializer::Serialize(const ASTMacroBody* node,
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTMacroBody* node,
                                            AnyASTLeafProto* proto) {
+  AnyASTPrintableLeafProto* ast_printable_leaf_proto =
+      proto->mutable_ast_printable_leaf_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_printable_leaf_proto));
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTMacroBody* node,
+                                           AnyASTPrintableLeafProto* proto) {
   ASTMacroBodyProto* ast_macro_body_proto =
       proto->mutable_ast_macro_body_node();
   ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_macro_body_proto));
@@ -24041,6 +24497,9 @@ absl::Status ParseTreeSerializer::Serialize(const ASTUndropStatement* node,
   if (node->for_system_time_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(Serialize(node->for_system_time_, proto->mutable_for_system_time()));
   }
+  if (node->options_list_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->options_list_, proto->mutable_options_list()));
+  }
   return absl::OkStatus();
 }
 absl::Status ParseTreeSerializer::Serialize(const ASTUndropStatement* node,
@@ -24091,6 +24550,12 @@ absl::Status ParseTreeSerializer::DeserializeFields(
   node->is_if_not_exists_ = proto.is_if_not_exists();
   if (proto.has_for_system_time()) {
     node->AddChild(Deserialize(proto.for_system_time(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_options_list()) {
+    node->AddChild(Deserialize(proto.options_list(),
                    id_string_pool,
                    arena,
                    allocated_ast_nodes).value());
@@ -24325,6 +24790,229 @@ absl::Status ParseTreeSerializer::DeserializeFields(
       std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
   if (proto.has_value()) {
     node->AddChild(Deserialize(proto.value(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTAliasedQueryModifiers* node,
+                                            ASTAliasedQueryModifiersProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->recursion_depth_modifier_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->recursion_depth_modifier_, proto->mutable_recursion_depth_modifier()));
+  }
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTAliasedQueryModifiers*> ParseTreeSerializer::Deserialize(
+    const ASTAliasedQueryModifiersProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTAliasedQueryModifiers* node = zetasql_base::NewInArena<ASTAliasedQueryModifiers>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTAliasedQueryModifiers* node, const ASTAliasedQueryModifiersProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_recursion_depth_modifier()) {
+    node->AddChild(Deserialize(proto.recursion_depth_modifier(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTIntOrUnbounded* node,
+                                            ASTIntOrUnboundedProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->bound_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->bound_, proto->mutable_bound()));
+  }
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTIntOrUnbounded* node,
+                                           AnyASTExpressionProto* proto) {
+  ASTIntOrUnboundedProto* ast_int_or_unbounded_proto =
+      proto->mutable_ast_int_or_unbounded_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_int_or_unbounded_proto));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTIntOrUnbounded*> ParseTreeSerializer::Deserialize(
+    const ASTIntOrUnboundedProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTIntOrUnbounded* node = zetasql_base::NewInArena<ASTIntOrUnbounded>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTIntOrUnbounded* node, const ASTIntOrUnboundedProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_bound()) {
+    node->AddChild(Deserialize(proto.bound(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTRecursionDepthModifier* node,
+                                            ASTRecursionDepthModifierProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->alias_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->alias_, proto->mutable_alias()));
+  }
+  if (node->lower_bound_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->lower_bound_, proto->mutable_lower_bound()));
+  }
+  if (node->upper_bound_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->upper_bound_, proto->mutable_upper_bound()));
+  }
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTRecursionDepthModifier*> ParseTreeSerializer::Deserialize(
+    const ASTRecursionDepthModifierProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTRecursionDepthModifier* node = zetasql_base::NewInArena<ASTRecursionDepthModifier>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTRecursionDepthModifier* node, const ASTRecursionDepthModifierProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_alias()) {
+    node->AddChild(Deserialize(proto.alias(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_lower_bound()) {
+    node->AddChild(Deserialize(proto.lower_bound(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_upper_bound()) {
+    node->AddChild(Deserialize(proto.upper_bound(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ParseTreeSerializer::Serialize(const ASTMapType* node,
+                                            ASTMapTypeProto* proto) {
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, proto->mutable_parent()));
+  if (node->key_type_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->key_type_, proto->mutable_key_type()));
+  }
+  if (node->value_type_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->value_type_, proto->mutable_value_type()));
+  }
+  if (node->type_parameters_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->type_parameters_, proto->mutable_type_parameters()));
+  }
+  if (node->collate_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(Serialize(node->collate_, proto->mutable_collate()));
+  }
+  return absl::OkStatus();
+}
+absl::Status ParseTreeSerializer::Serialize(const ASTMapType* node,
+                                           AnyASTTypeProto* proto) {
+  ASTMapTypeProto* ast_map_type_proto =
+      proto->mutable_ast_map_type_node();
+  ZETASQL_RETURN_IF_ERROR(Serialize(node, ast_map_type_proto));
+  return absl::OkStatus();
+}
+absl::StatusOr<ASTMapType*> ParseTreeSerializer::Deserialize(
+    const ASTMapTypeProto& proto,
+    IdStringPool* id_string_pool,
+    zetasql_base::UnsafeArena* arena,
+    std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  ASTMapType* node = zetasql_base::NewInArena<ASTMapType>(arena);
+  allocated_ast_nodes->push_back(std::unique_ptr<ASTNode>(node));
+  ZETASQL_RETURN_IF_ERROR(DeserializeAbstract(node,
+                                      proto.parent(),
+                                      id_string_pool,
+                                      arena,
+                                      allocated_ast_nodes));
+  ZETASQL_RETURN_IF_ERROR(DeserializeFields(node,
+                                    proto,
+                                    id_string_pool,
+                                    arena,
+                                    allocated_ast_nodes));
+  return node;
+}
+absl::Status ParseTreeSerializer::DeserializeFields(
+      ASTMapType* node, const ASTMapTypeProto& proto,
+      IdStringPool* id_string_pool,
+      zetasql_base::UnsafeArena* arena,
+      std::vector<std::unique_ptr<ASTNode>>* allocated_ast_nodes) {
+  if (proto.has_key_type()) {
+    node->AddChild(Deserialize(proto.key_type(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_value_type()) {
+    node->AddChild(Deserialize(proto.value_type(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_type_parameters()) {
+    node->AddChild(Deserialize(proto.type_parameters(),
+                   id_string_pool,
+                   arena,
+                   allocated_ast_nodes).value());
+  }
+  if (proto.has_collate()) {
+    node->AddChild(Deserialize(proto.collate(),
                    id_string_pool,
                    arena,
                    allocated_ast_nodes).value());

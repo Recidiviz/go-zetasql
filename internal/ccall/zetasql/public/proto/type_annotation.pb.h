@@ -88,13 +88,14 @@ enum FieldFormat_Format : int {
   FieldFormat_Format_RANGE_DATES_ENCODED = 16,
   FieldFormat_Format_RANGE_DATETIMES_ENCODED = 17,
   FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED = 18,
+  FieldFormat_Format_UUID = 19,
   FieldFormat_Format___FieldFormat_Type__switch_must_have_a_default__ = -1,
 };
 
 bool FieldFormat_Format_IsValid(int value);
 constexpr FieldFormat_Format FieldFormat_Format_Format_MIN = static_cast<FieldFormat_Format>(-1);
-constexpr FieldFormat_Format FieldFormat_Format_Format_MAX = static_cast<FieldFormat_Format>(18);
-constexpr int FieldFormat_Format_Format_ARRAYSIZE = 18 + 1;
+constexpr FieldFormat_Format FieldFormat_Format_Format_MAX = static_cast<FieldFormat_Format>(19);
+constexpr int FieldFormat_Format_Format_ARRAYSIZE = 19 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 FieldFormat_Format_descriptor();
 template <typename T>
@@ -107,7 +108,7 @@ const std::string& FieldFormat_Format_Name(T value) {
 template <>
 inline const std::string& FieldFormat_Format_Name(FieldFormat_Format value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<FieldFormat_Format_descriptor,
-                                                 -1, 18>(
+                                                 -1, 19>(
       static_cast<int>(value));
 }
 inline bool FieldFormat_Format_Parse(absl::string_view name, FieldFormat_Format* value) {
@@ -116,8 +117,8 @@ inline bool FieldFormat_Format_Parse(absl::string_view name, FieldFormat_Format*
 }
 enum DeprecatedEncoding_Encoding : int {
   DeprecatedEncoding_Encoding_DEFAULT_ENCODING = 0,
-  DeprecatedEncoding_Encoding_DATE_PACKED32 = 1,
   DeprecatedEncoding_Encoding_DATE_DECIMAL = 1,
+  DeprecatedEncoding_Encoding_DATE_PACKED32 [[deprecated]] = 1,
   DeprecatedEncoding_Encoding___FieldFormat_Encoding__switch_must_have_a_default__ = -1,
 };
 
@@ -279,6 +280,7 @@ class FieldFormat final :
   static constexpr Format RANGE_DATES_ENCODED = FieldFormat_Format_RANGE_DATES_ENCODED;
   static constexpr Format RANGE_DATETIMES_ENCODED = FieldFormat_Format_RANGE_DATETIMES_ENCODED;
   static constexpr Format RANGE_TIMESTAMPS_ENCODED = FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED;
+  static constexpr Format UUID = FieldFormat_Format_UUID;
   static constexpr Format __FieldFormat_Type__switch_must_have_a_default__ = FieldFormat_Format___FieldFormat_Type__switch_must_have_a_default__;
   static inline bool Format_IsValid(int value) {
     return FieldFormat_Format_IsValid(value);
@@ -423,8 +425,8 @@ class DeprecatedEncoding final :
 
   using Encoding = DeprecatedEncoding_Encoding;
   static constexpr Encoding DEFAULT_ENCODING = DeprecatedEncoding_Encoding_DEFAULT_ENCODING;
-  static constexpr Encoding DATE_PACKED32 = DeprecatedEncoding_Encoding_DATE_PACKED32;
   static constexpr Encoding DATE_DECIMAL = DeprecatedEncoding_Encoding_DATE_DECIMAL;
+  [[deprecated]] static constexpr Encoding DATE_PACKED32 = DeprecatedEncoding_Encoding_DATE_PACKED32;
   static constexpr Encoding __FieldFormat_Encoding__switch_must_have_a_default__ = DeprecatedEncoding_Encoding___FieldFormat_Encoding__switch_must_have_a_default__;
   static inline bool Encoding_IsValid(int value) {
     return DeprecatedEncoding_Encoding_IsValid(value);

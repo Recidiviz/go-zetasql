@@ -421,7 +421,7 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_
     "(\n\014element_type\030\001 \001(\0132\022.zetasql.TypeProt"
     "o\"5\n\025OpaqueEnumTypeOptions\022\034\n\024sql_opaque"
     "_enum_name\030\001 \001(\t\"4\n\026OpaqueEnumValueOptio"
-    "ns\022\032\n\022invalid_enum_value\030\001 \001(\010*\215\004\n\010TypeK"
+    "ns\022\032\n\022invalid_enum_value\030\001 \001(\010*\234\004\n\010TypeK"
     "ind\0225\n(__TypeKind__switch_must_have_a_de"
     "fault__\020\377\377\377\377\377\377\377\377\377\001\022\020\n\014TYPE_UNKNOWN\020\000\022\016\n\n"
     "TYPE_INT32\020\001\022\016\n\nTYPE_INT64\020\002\022\017\n\013TYPE_UIN"
@@ -434,14 +434,14 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_
     "TYPE_GEOGRAPHY\020\026\022\020\n\014TYPE_NUMERIC\020\027\022\023\n\017TY"
     "PE_BIGNUMERIC\020\030\022\021\n\rTYPE_EXTENDED\020\031\022\r\n\tTY"
     "PE_JSON\020\032\022\021\n\rTYPE_INTERVAL\020\033\022\022\n\016TYPE_TOK"
-    "ENLIST\020\034\022\016\n\nTYPE_RANGE\020\035\022\014\n\010TYPE_MAP\020\037:b"
-    "\n\030opaque_enum_type_options\022\034.google.prot"
-    "obuf.EnumOptions\030\206\372\245\337\001 \001(\0132\036.zetasql.Opa"
-    "queEnumTypeOptions:i\n\031opaque_enum_value_"
-    "options\022!.google.protobuf.EnumValueOptio"
-    "ns\030\246\216\246\342\001 \001(\0132\037.zetasql.OpaqueEnumValueOp"
-    "tionsB$\n\022com.google.zetasqlB\013ZetaSQLType"
-    "\370\001\001"
+    "ENLIST\020\034\022\016\n\nTYPE_RANGE\020\035\022\014\n\010TYPE_MAP\020\037\022\r"
+    "\n\tTYPE_UUID\020 :b\n\030opaque_enum_type_option"
+    "s\022\034.google.protobuf.EnumOptions\030\206\372\245\337\001 \001("
+    "\0132\036.zetasql.OpaqueEnumTypeOptions:i\n\031opa"
+    "que_enum_value_options\022!.google.protobuf"
+    ".EnumValueOptions\030\246\216\246\342\001 \001(\0132\037.zetasql.Op"
+    "aqueEnumValueOptionsB$\n\022com.google.zetas"
+    "qlB\013ZetaSQLType\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps[1] =
     {
@@ -451,7 +451,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ftype_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_2eproto = {
     false,
     false,
-    2003,
+    2018,
     descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto,
     "zetasql/public/type.proto",
     &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
@@ -518,6 +518,7 @@ bool TypeKind_IsValid(int value) {
     case 28:
     case 29:
     case 31:
+    case 32:
       return true;
     default:
       return false;

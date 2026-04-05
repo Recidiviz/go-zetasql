@@ -4916,7 +4916,7 @@ void GO_EXPORT(ResolvedAnalyticFunctionGroup_analytic_function_list)(void * arg0
 
 void GO_EXPORT(ResolvedAnalyticFunctionGroup_set_analytic_function_list)(void * arg0,void * arg1){
   zetasql::ResolvedAnalyticFunctionGroup *node = (zetasql::ResolvedAnalyticFunctionGroup *)arg0;
-  SET_UNIQUE_PTR_LIST(node->set_analytic_function_list, ResolvedComputedColumn, arg1);
+  SET_UNIQUE_PTR_COMPUTED_COLUMN_BASE_LIST(node->set_analytic_function_list, arg1);
 }
 
 void GO_EXPORT(ResolvedAnalyticFunctionGroup_add_analytic_function_list)(void * arg0,void * arg1){

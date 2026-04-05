@@ -33,6 +33,7 @@
 #include "zetasql/analyzer/name_scope.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parse_tree_errors.h"
+#include "zetasql/parser/parse_tree_visitor.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/strings.h"
@@ -44,6 +45,7 @@
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
@@ -144,6 +146,57 @@ absl::Status ReleaseLegacyRollupColumnList(
   return absl::OkStatus();
 }
 
+// Traverse the parser AST for an `ASTSelectColumn` and look for evidence that
+// the column should have it's first-pass resolution deferred until after the
+// GROUP BY clause is resolved. A column should have it's first-pass resolution
+// deferred if it uses `GROUP ROWS` or a `GROUP BY` aggregate function modifier
+// outside of an expression subquery. See comments in
+// `ResolveSelectListExprsFirstPass` for more details.
+//
+// For instance, the following expression should have it's resolution deferred:
+//    `1 + SUM(... GROUP BY...) + SUM(X) WITH GROUP ROWS (...)`
+// But the following expression should not:
+//    `(SELECT 1 + SUM(... GROUP BY...) + SUM(X) WITH GROUP ROWS (...) FROM...)`
+class DeferredResolutionFinder : public NonRecursiveParseTreeVisitor {
+ public:
+  DeferredResolutionFinder() = default;
+  DeferredResolutionFinder(const DeferredResolutionFinder&) = delete;
+  DeferredResolutionFinder(DeferredResolutionFinder&&) = delete;
+  DeferredResolutionFinder& operator=(const DeferredResolutionFinder&) = delete;
+  DeferredResolutionFinder& operator=(DeferredResolutionFinder&&) = delete;
+
+  absl::StatusOr<VisitResult> defaultVisit(const ASTNode* node) override {
+    return VisitResult::VisitChildren(node);
+  }
+
+  absl::StatusOr<VisitResult> visitASTExpressionSubquery(
+      const ASTExpressionSubquery* node) override {
+    return VisitResult::Empty();
+  }
+
+  absl::StatusOr<VisitResult> visitASTFunctionCall(
+      const ASTFunctionCall* node) override {
+    if (node->group_by() != nullptr || node->with_group_rows() != nullptr) {
+      info_.has_outer_group_rows_or_group_by_modifiers = true;
+    }
+    return VisitResult::VisitChildren(node);
+  };
+
+  absl::StatusOr<VisitResult> visitASTAnalyticFunctionCall(
+      const ASTAnalyticFunctionCall* node) override {
+    info_.has_outer_analytic_function = true;
+    return VisitResult::VisitChildren(node);
+  };
+
+  DeferredResolutionSelectColumnInfo GetDeferredResolutionSelectColumnInfo()
+      const {
+    return info_;
+  }
+
+ private:
+  DeferredResolutionSelectColumnInfo info_;
+};
+
 }  // namespace
 
 void QueryGroupByAndAggregateInfo::Reset() {
@@ -151,7 +204,7 @@ void QueryGroupByAndAggregateInfo::Reset() {
   has_aggregation = false;
   is_group_by_all = false;
   aggregate_expr_map.clear();
-  group_by_columns_to_compute.clear();
+  group_by_column_state_list.clear();
   group_by_expr_map.clear();
   grouping_call_list.clear();
   grouping_output_columns.clear();
@@ -213,6 +266,13 @@ void SelectColumnStateList::AddSelectColumn(
   AddSelectColumn(std::make_unique<SelectColumnState>(
       ast_select_column, alias, is_explicit, has_aggregation, has_analytic,
       has_volatile, std::move(resolved_expr)));
+}
+
+absl::Status SelectColumnStateList::ReplaceSelectColumn(
+    int index, std::unique_ptr<SelectColumnState> new_select_column_state) {
+  ZETASQL_RET_CHECK_LT(index, select_column_state_list_.size());
+  select_column_state_list_[index] = std::move(new_select_column_state);
+  return absl::OkStatus();
 }
 
 void SelectColumnStateList::AddSelectColumn(
@@ -283,6 +343,22 @@ absl::Status SelectColumnStateList::ValidateAggregateAndAnalyticSupport(
     const absl::string_view column_description, const ASTNode* ast_location,
     const SelectColumnState* select_column_state,
     const ExprResolutionInfo* expr_resolution_info) {
+  // If `contains_outer_group_rows_or_group_by_modifiers` is true, then
+  // `has_aggregation` should also be true. This condition is just to help
+  // provide a better error message if a user writes something like
+  // 'SCALAR_FUNCTION(...) WITH GROUP ROWS (...)'.
+  if (select_column_state->contains_outer_group_rows_or_group_by_modifiers &&
+      !expr_resolution_info->allows_aggregation) {
+    ZETASQL_RET_CHECK(select_column_state->has_aggregation);
+    return MakeSqlErrorAt(ast_location)
+           << "Column " << column_description
+           << " contains a GROUP ROWS subquery or a GROUP BY modifier, which "
+              "is not allowed in "
+           << expr_resolution_info->clause_name
+           << (expr_resolution_info->is_post_distinct()
+                   ? " after SELECT DISTINCT"
+                   : "");
+  }
   if (select_column_state->has_aggregation &&
       !expr_resolution_info->allows_aggregation) {
     return MakeSqlErrorAt(ast_location)
@@ -355,7 +431,8 @@ QueryResolutionInfo::~QueryResolutionInfo() {}
 
 const ResolvedComputedColumn*
 QueryResolutionInfo::AddGroupByComputedColumnIfNeeded(
-    const ResolvedColumn& column, std::unique_ptr<const ResolvedExpr> expr) {
+    const ResolvedColumn& column, std::unique_ptr<const ResolvedExpr> expr,
+    const ResolvedExpr* pre_group_by_expr) {
   group_by_info_.has_group_by = true;
   const ResolvedComputedColumn*& stored_column =
       group_by_info_.group_by_expr_map[expr.get()];
@@ -364,7 +441,8 @@ QueryResolutionInfo::AddGroupByComputedColumnIfNeeded(
   }
   auto new_column = MakeResolvedComputedColumn(column, std::move(expr));
   stored_column = new_column.get();
-  group_by_info_.group_by_columns_to_compute.push_back(std::move(new_column));
+  group_by_info_.group_by_column_state_list.emplace_back(std::move(new_column),
+                                                         pre_group_by_expr);
   return stored_column;
 }
 
@@ -459,7 +537,7 @@ absl::Status QueryResolutionInfo::ReleaseGroupingSetsAndRollupList(
 
 void QueryResolutionInfo::AddAggregateComputedColumn(
     const ASTFunctionCall* ast_function_call,
-    std::unique_ptr<const ResolvedComputedColumn> column) {
+    std::unique_ptr<const ResolvedComputedColumnBase> column) {
   group_by_info_.has_aggregation = true;
   if (ast_function_call != nullptr) {
     zetasql_base::InsertIfNotPresent(&group_by_info_.aggregate_expr_map,
@@ -577,7 +655,7 @@ void QueryResolutionInfo::ResetAnalyticResolver(Resolver* resolver) {
 absl::Status QueryResolutionInfo::CheckComputedColumnListsAreEmpty() const {
   ZETASQL_RET_CHECK(select_list_columns_to_compute_before_aggregation_.empty());
   ZETASQL_RET_CHECK(select_list_columns_to_compute_.empty());
-  ZETASQL_RET_CHECK(group_by_info_.group_by_columns_to_compute.empty());
+  ZETASQL_RET_CHECK(group_by_info_.group_by_column_state_list.empty());
   ZETASQL_RET_CHECK(group_by_info_.aggregate_columns_to_compute.empty());
   ZETASQL_RET_CHECK(group_by_info_.grouping_set_list.empty());
   ZETASQL_RET_CHECK(order_by_columns_to_compute_.empty());
@@ -618,10 +696,12 @@ std::string QueryResolutionInfo::DebugString() const {
   }();
   absl::StrAppend(&debug_string, "select_with_mode: ", select_with_mode_str,
                   "\n");
-  absl::StrAppend(&debug_string, "group_by_columns(size ",
-                  group_by_info_.group_by_columns_to_compute.size(), "):\n");
-  for (const auto& column : group_by_info_.group_by_columns_to_compute) {
-    absl::StrAppend(&debug_string, "  ", column->DebugString(), "\n");
+  absl::StrAppend(&debug_string, "group_by_column_state_list(size ",
+                  group_by_info_.group_by_column_state_list.size(), "):\n");
+  for (const GroupByColumnState& group_by_column_state :
+       group_by_info_.group_by_column_state_list) {
+    absl::StrAppend(&debug_string, group_by_column_state.DebugString("  "),
+                    "\n");
   }
   absl::StrAppend(&debug_string, "aggregate_columns(size ",
                   group_by_info_.aggregate_columns_to_compute.size(), "):\n");
@@ -699,6 +779,13 @@ const ResolvedExpr* UntypedLiteralMap::Find(const ResolvedColumn& column) {
 
   return zetasql_base::FindWithDefault(*column_id_to_untyped_literal_map_,
                               column.column_id());
+}
+
+absl::StatusOr<DeferredResolutionSelectColumnInfo>
+GetDeferredResolutionSelectColumnInfo(const ASTSelectColumn* column) {
+  DeferredResolutionFinder deferred_resolution_finder;
+  ZETASQL_RETURN_IF_ERROR(column->TraverseNonRecursive(&deferred_resolution_finder));
+  return deferred_resolution_finder.GetDeferredResolutionSelectColumnInfo();
 }
 
 }  // namespace zetasql

@@ -7,7 +7,6 @@
 // include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
-#include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/enum_utils/export.inc"
@@ -17,8 +16,10 @@
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
+#include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"
 

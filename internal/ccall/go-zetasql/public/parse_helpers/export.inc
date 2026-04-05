@@ -16,9 +16,9 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
@@ -28,7 +28,7 @@
 #include "go-zetasql/public/functions/convert_string/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/memory/memory/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

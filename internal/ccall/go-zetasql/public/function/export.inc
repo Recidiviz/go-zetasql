@@ -13,6 +13,7 @@
 #include "zetasql/public/procedure.cc"
 #include "zetasql/public/table_valued_function.cc"
 // include dependencies
+#include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-zetasql/public/evaluator_table_iterator/export.inc"
@@ -29,6 +30,7 @@
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
@@ -43,6 +45,7 @@
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

@@ -15,9 +15,11 @@
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/builtin_function_internal/export.inc"
+#include "go-zetasql/common/builtins_output_properties/export.inc"
 #include "go-zetasql/proto/options_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

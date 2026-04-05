@@ -31,6 +31,7 @@
 #include "zetasql/public/proto/wire_format_annotation.pb.h"
 #include "zetasql/base/case.h"
 #include "absl/container/btree_set.h"
+#include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"
@@ -102,7 +103,7 @@ class TypeToProtoConverter {
   // Make a proto to represent <array_type> in <in_message>, which is
   // assumed to be an empty message.
   absl::Status MakeArrayProto(const ArrayType* array_type,
-                              const std::string& name,
+                              absl::string_view name,
                               google::protobuf::DescriptorProto* array_proto);
 
   // Get the DescriptorProto for a struct, re-using a cached one if possible.
@@ -233,6 +234,12 @@ absl::Status TypeToProtoConverter::MakeFieldDescriptor(
       proto_field->set_type(google::protobuf::FieldDescriptorProto::TYPE_BYTES);
       proto_field->mutable_options()->SetExtension(zetasql::format,
                                                    FieldFormat::TOKENLIST);
+      break;
+    }
+    case TYPE_UUID: {
+      proto_field->set_type(google::protobuf::FieldDescriptorProto::TYPE_BYTES);
+      proto_field->mutable_options()->SetExtension(zetasql::format,
+                                                   FieldFormat::UUID);
       break;
     }
     case TYPE_RANGE: {
@@ -396,7 +403,7 @@ absl::Status TypeToProtoConverter::MakeStructProto(
 }
 
 absl::Status TypeToProtoConverter::MakeArrayProto(
-    const ArrayType* array_type, const std::string& name,
+    const ArrayType* array_type, absl::string_view name,
     google::protobuf::DescriptorProto* array_proto) {
   ZETASQL_RET_CHECK_EQ(array_proto->field_size(), 0);
 

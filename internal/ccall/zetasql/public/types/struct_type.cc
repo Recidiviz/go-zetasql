@@ -35,10 +35,12 @@
 #include "zetasql/public/strings.h"
 #include "zetasql/public/type.pb.h"
 #include "zetasql/public/types/internal_utils.h"
+#include "zetasql/public/types/list_backed_type.h"
 #include "zetasql/public/types/type.h"
 #include "zetasql/public/types/type_modifiers.h"
 #include "zetasql/public/types/type_parameters.h"
 #include "zetasql/public/types/value_representations.h"
+#include "zetasql/public/value.pb.h"
 #include "zetasql/public/value_content.h"
 #include "absl/base/optimization.h"
 #include "absl/container/flat_hash_map.h"
@@ -59,7 +61,7 @@ namespace zetasql {
 
 StructType::StructType(const TypeFactory* factory,
                        std::vector<StructField> fields, int nesting_depth)
-    : ContainerType(factory, TYPE_STRUCT),
+    : ListBackedType(factory, TYPE_STRUCT),
       fields_(std::move(fields)),
       nesting_depth_(nesting_depth) {}
 
@@ -408,12 +410,12 @@ bool StructType::EqualsImpl(const StructType* const type1,
 
 void StructType::CopyValueContent(const ValueContent& from,
                                   ValueContent* to) const {
-  from.GetAs<internal::ValueContentContainerRef*>()->Ref();
+  from.GetAs<internal::ValueContentOrderedListRef*>()->Ref();
   *to = from;
 }
 
 void StructType::ClearValueContent(const ValueContent& value) const {
-  value.GetAs<internal::ValueContentContainerRef*>()->Unref();
+  value.GetAs<internal::ValueContentOrderedListRef*>()->Unref();
 }
 
 absl::HashState StructType::HashTypeParameter(absl::HashState state) const {
@@ -427,10 +429,10 @@ absl::HashState StructType::HashTypeParameter(absl::HashState state) const {
 absl::HashState StructType::HashValueContent(const ValueContent& value,
                                              absl::HashState state) const {
   absl::HashState result = absl::HashState::Create(&state);
-  const internal::ValueContentContainer* container =
-      value.GetAs<internal::ValueContentContainerRef*>()->value();
+  const internal::ValueContentOrderedList* container =
+      value.GetAs<internal::ValueContentOrderedListRef*>()->value();
   for (int i = 0; i < container->num_elements(); i++) {
-    ValueContentContainerElementHasher hasher(field(i).type);
+    NullableValueContentHasher hasher(field(i).type);
     result = absl::HashState::combine(std::move(result),
                                       hasher(container->element(i)));
   }
@@ -440,10 +442,10 @@ absl::HashState StructType::HashValueContent(const ValueContent& value,
 bool StructType::ValueContentEquals(
     const ValueContent& x, const ValueContent& y,
     const ValueEqualityCheckOptions& options) const {
-  const internal::ValueContentContainer* x_container =
-      x.GetAs<internal::ValueContentContainerRef*>()->value();
-  const internal::ValueContentContainer* y_container =
-      y.GetAs<internal::ValueContentContainerRef*>()->value();
+  const internal::ValueContentOrderedList* x_container =
+      x.GetAs<internal::ValueContentOrderedListRef*>()->value();
+  const internal::ValueContentOrderedList* y_container =
+      y.GetAs<internal::ValueContentOrderedListRef*>()->value();
   if (x_container->num_elements() != y_container->num_elements()) {
     if (options.reason) {
       const auto& format_options = DebugFormatValueContentOptions();
@@ -489,10 +491,10 @@ bool StructType::ValueContentEquals(
 
 bool StructType::ValueContentLess(const ValueContent& x, const ValueContent& y,
                                   const Type* other_type) const {
-  const internal::ValueContentContainer* x_container =
-      x.GetAs<internal::ValueContentContainerRef*>()->value();
-  const internal::ValueContentContainer* y_container =
-      y.GetAs<internal::ValueContentContainerRef*>()->value();
+  const internal::ValueContentOrderedList* x_container =
+      x.GetAs<internal::ValueContentOrderedListRef*>()->value();
+  const internal::ValueContentOrderedList* y_container =
+      y.GetAs<internal::ValueContentOrderedListRef*>()->value();
   if (x_container->num_elements() != y_container->num_elements()) return false;
   // Because we return true as soon as 'LessThan' returns true for a
   // field (without checking types of all fields), we may return true for
@@ -502,7 +504,7 @@ bool StructType::ValueContentLess(const ValueContent& x, const ValueContent& y,
   for (int i = 0; i < x_container->num_elements(); i++) {
     const Type* x_field_type = field(i).type;
     const Type* y_field_type = other_struct_type->field(i).type;
-    const std::optional<bool> is_less = ValueContentContainerElementLess(
+    const std::optional<bool> is_less = NullableValueContentLess(
         x_container->element(i), y_container->element(i), x_field_type,
         y_field_type);
     if (is_less.has_value()) return *is_less;
@@ -512,9 +514,21 @@ bool StructType::ValueContentLess(const ValueContent& x, const ValueContent& y,
 
 absl::Status StructType::SerializeValueContent(const ValueContent& value,
                                                ValueProto* value_proto) const {
-  return absl::FailedPreconditionError(
-      "SerializeValueContent should never be called for StructType, since its "
-      "value content is maintained in the Value class");
+  const internal::ValueContentOrderedList* struct_value_content =
+      value.GetAs<internal::ValueContentOrderedListRef*>()->value();
+
+  auto* struct_value_proto = value_proto->mutable_struct_value();
+
+  for (int i = 0; i < struct_value_content->num_elements(); ++i) {
+    auto* field_value_proto = struct_value_proto->add_field();
+    const internal::NullableValueContent& field_value_content =
+        struct_value_content->element(i);
+    if (!field_value_content.is_null()) {
+      ZETASQL_RETURN_IF_ERROR(field(i).type->SerializeValueContent(
+          field_value_content.value_content(), field_value_proto));
+    }
+  }
+  return absl::OkStatus();
 }
 
 absl::Status StructType::DeserializeValueContent(const ValueProto& value_proto,

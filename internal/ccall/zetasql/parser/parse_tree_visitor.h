@@ -756,6 +756,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTRecursionDepthModifier(const ASTRecursionDepthModifier* node, void* data) = 0;
 
+  virtual void visitASTMapType(const ASTMapType* node, void* data) = 0;
+
 };
 
 class DefaultParseTreeVisitor : public ParseTreeVisitor {
@@ -2260,6 +2262,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTMapType(const ASTMapType* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
 };
 
 class NonRecursiveParseTreeVisitor {
@@ -3016,6 +3022,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTIntOrUnbounded(const ASTIntOrUnbounded* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTRecursionDepthModifier(const ASTRecursionDepthModifier* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTMapType(const ASTMapType* node) {return defaultVisit(node);};
 
 };
 }  // namespace zetasql

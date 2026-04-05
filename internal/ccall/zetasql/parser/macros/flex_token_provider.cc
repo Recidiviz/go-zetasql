@@ -18,12 +18,11 @@
 
 #include <cstddef>
 #include <memory>
+#include <optional>
 
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/bison_token_codes.h"
 #include "zetasql/parser/flex_tokenizer.h"
+#include "zetasql/parser/macros/token_provider_base.h"
 #include "zetasql/parser/macros/token_with_location.h"
-#include "zetasql/public/language_options.h"
 #include "zetasql/public/parse_location.h"
 #include "zetasql/base/check.h"
 #include "absl/status/statusor.h"
@@ -34,8 +33,8 @@ namespace zetasql {
 namespace parser {
 namespace macros {
 
-static absl::string_view FlexTokenProviderGetTextBetween(
-    absl::string_view input, size_t start, size_t end) {
+static absl::string_view GetTextSlice(absl::string_view input, size_t start,
+                                       size_t end) {
   ABSL_DCHECK_LE(start, end);
   ABSL_DCHECK_LE(start, input.length());
   size_t len = end - start;
@@ -43,32 +42,50 @@ static absl::string_view FlexTokenProviderGetTextBetween(
   return absl::ClippedSubstr(input, start, len);
 }
 
-FlexTokenProvider::FlexTokenProvider(BisonParserMode mode,
-                                     absl::string_view filename,
-                                     absl::string_view input, int start_offset,
-                                     const LanguageOptions& language_options)
-    : mode_(mode),
-      language_options_(language_options),
+FlexTokenProvider::FlexTokenProvider(absl::string_view filename,
+                                     absl::string_view input,
+                                     bool preserve_comments, int start_offset,
+                                     std::optional<int> end_offset)
+    : TokenProviderBase(filename, input, start_offset, end_offset),
       tokenizer_(std::make_unique<ZetaSqlFlexTokenizer>(
-          mode, filename, input, start_offset, language_options)),
+          filename, input.substr(0, this->end_offset()), preserve_comments,
+          start_offset)),
+      preserve_comments_(preserve_comments),
       location_(ParseLocationPoint::FromByteOffset(filename, -1),
                 ParseLocationPoint::FromByteOffset(filename, -1)) {}
+
+std::unique_ptr<TokenProviderBase> FlexTokenProvider::CreateNewInstance(
+    absl::string_view filename, absl::string_view input, int start_offset,
+    std::optional<int> end_offset) const {
+  return std::make_unique<FlexTokenProvider>(
+      filename, input, preserve_comments_, start_offset, end_offset);
+}
+
+absl::StatusOr<TokenWithLocation> FlexTokenProvider::ConsumeNextTokenImpl() {
+  if (!input_token_buffer_.empty()) {
+    // Check for any unused tokens first, before we pull any more
+    const TokenWithLocation front_token = input_token_buffer_.front();
+    input_token_buffer_.pop();
+    return front_token;
+  }
+
+  return GetFlexToken();
+}
 
 absl::StatusOr<TokenWithLocation> FlexTokenProvider::GetFlexToken() {
   int last_token_end_offset = location_.end().GetByteOffset();
   if (last_token_end_offset == -1) {
-    last_token_end_offset = 0;
+    last_token_end_offset = start_offset();
   }
 
   ZETASQL_ASSIGN_OR_RETURN(int token_kind, tokenizer_->GetNextToken(&location_));
 
   absl::string_view prev_whitespaces;
-  absl::string_view input = tokenizer_->input();
-  prev_whitespaces = FlexTokenProviderGetTextBetween(input, last_token_end_offset,
+  prev_whitespaces = GetTextSlice(input(), last_token_end_offset,
                                     location_.start().GetByteOffset());
 
-  return {
-      {token_kind, location_, location_.GetTextFrom(input), prev_whitespaces}};
+  return {{token_kind, location_, location_.GetTextFrom(input()),
+           prev_whitespaces}};
 }
 
 }  // namespace macros

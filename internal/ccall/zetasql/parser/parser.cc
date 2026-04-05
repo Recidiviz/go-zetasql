@@ -31,6 +31,7 @@
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parser_runtime_info.h"
 #include "zetasql/parser/statement_properties.h"
+#include "zetasql/public/error_helpers.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
@@ -50,17 +51,15 @@ using parser::BisonParser;
 using parser::BisonParserMode;
 using MacroCatalog = parser::macros::MacroCatalog;
 
-ParserOptions::ParserOptions() : ParserOptions(LanguageOptions{}) {}
+static ErrorMessageOptions GetDefaultErrorMessageOptions() {
+  return {.mode = ERROR_MESSAGE_WITH_PAYLOAD,
+          // The value of `attach_error_location_payload` doesn't matter when
+          // the mode is `ERROR_MESSAGE_WITH_PAYLOAD`.
+          .attach_error_location_payload = false,
+          .stability = GetDefaultErrorMessageStability()};
+}
 
-ParserOptions::ParserOptions(std::shared_ptr<IdStringPool> id_string_pool,
-                             std::shared_ptr<zetasql_base::UnsafeArena> arena,
-                             const LanguageOptions* language_options,
-                             const MacroCatalog* macro_catalog)
-    : arena_(std::move(arena)),
-      id_string_pool_(std::move(id_string_pool)),
-      language_options_(language_options ? *language_options
-                                         : LanguageOptions()),
-      macro_catalog_(macro_catalog) {}
+ParserOptions::ParserOptions() : ParserOptions(LanguageOptions{}) {}
 
 ParserOptions::ParserOptions(LanguageOptions language_options,
                              const MacroCatalog* macro_catalog)
@@ -128,8 +127,8 @@ absl::Status ParseStatement(absl::string_view statement_string,
       &ast_node, &other_allocated_ast_nodes,
       /*ast_statement_properties=*/nullptr,
       /*statement_end_byte_offset=*/nullptr);
-  ZETASQL_RETURN_IF_ERROR(
-      ConvertInternalErrorLocationToExternal(status, statement_string));
+  ZETASQL_RETURN_IF_ERROR(ConvertInternalErrorLocationAndAdjustErrorString(
+      GetDefaultErrorMessageOptions(), statement_string, status));
   ZETASQL_RET_CHECK(ast_node != nullptr);
 
   std::unique_ptr<ASTStatement> statement(
@@ -169,7 +168,7 @@ absl::Status ParseScript(absl::string_view script_string,
       ErrorMessageOptions{
           .mode = error_message_mode,
           .attach_error_location_payload = keep_error_location_payload,
-          .stability = ERROR_MESSAGE_STABILITY_UNSPECIFIED},
+          .stability = GetDefaultErrorMessageStability()},
       script_string, status));
   *output = std::make_unique<ParserOutput>(
       parser_options.id_string_pool(), parser_options.arena(),
@@ -203,8 +202,8 @@ absl::Status ParseNextStatementInternal(ParseResumeLocation* resume_location,
       parser_options.arena().get(), parser_options.language_options(),
       parser_options.macro_catalog(), &ast_node, &other_allocated_ast_nodes,
       /*ast_statement_properties=*/nullptr, &next_statement_byte_offset);
-  ZETASQL_RETURN_IF_ERROR(
-      ConvertInternalErrorLocationToExternal(status, resume_location->input()));
+  ZETASQL_RETURN_IF_ERROR(ConvertInternalErrorLocationAndAdjustErrorString(
+      GetDefaultErrorMessageOptions(), resume_location->input(), status));
 
   *at_end_of_input =
       (next_statement_byte_offset == -1 ||
@@ -261,7 +260,8 @@ absl::Status ParseType(absl::string_view type_string,
       parser_options.macro_catalog(), &ast_node, &other_allocated_ast_nodes,
       /*ast_statement_properties=*/nullptr,
       /*statement_end_byte_offset=*/nullptr);
-  ZETASQL_RETURN_IF_ERROR(ConvertInternalErrorLocationToExternal(status, type_string));
+  ZETASQL_RETURN_IF_ERROR(ConvertInternalErrorLocationAndAdjustErrorString(
+      GetDefaultErrorMessageOptions(), type_string, status));
   ZETASQL_RET_CHECK(ast_node != nullptr);
   ZETASQL_RET_CHECK(ast_node->IsType());
   std::unique_ptr<ASTType> type(ast_node.release()->GetAsOrDie<ASTType>());
@@ -289,8 +289,8 @@ absl::Status ParseExpression(absl::string_view expression_string,
       parser_options.macro_catalog(), &ast_node, &other_allocated_ast_nodes,
       /*ast_statement_properties=*/nullptr,
       /*statement_end_byte_offset=*/nullptr);
-  ZETASQL_RETURN_IF_ERROR(
-      ConvertInternalErrorLocationToExternal(status, expression_string));
+  ZETASQL_RETURN_IF_ERROR(ConvertInternalErrorLocationAndAdjustErrorString(
+      GetDefaultErrorMessageOptions(), expression_string, status));
   ZETASQL_RET_CHECK(ast_node != nullptr);
   ZETASQL_RET_CHECK(ast_node->IsExpression());
   std::unique_ptr<ASTExpression> expression(
@@ -320,8 +320,8 @@ absl::Status ParseExpression(const ParseResumeLocation& resume_location,
       &ast_node, &other_allocated_ast_nodes,
       /*ast_statement_properties=*/nullptr,
       /*statement_end_byte_offset=*/nullptr);
-  ZETASQL_RETURN_IF_ERROR(
-      ConvertInternalErrorLocationToExternal(status, resume_location.input()));
+  ZETASQL_RETURN_IF_ERROR(ConvertInternalErrorLocationAndAdjustErrorString(
+      GetDefaultErrorMessageOptions(), resume_location.input(), status));
   ZETASQL_RET_CHECK(ast_node != nullptr);
   std::unique_ptr<ASTExpression> expression(
       ast_node.release()->GetAsOrDie<ASTExpression>());
@@ -374,7 +374,7 @@ absl::Status ParseNextStatementProperties(
   std::unique_ptr<ASTNode> output;
 
   // Unlike ParseStatementKind above, it is not safe to ignore the output
-  // status in this case. In this functionn we expect to be able to inspect the
+  // status in this case. In this function we expect to be able to inspect the
   // ASTNode instances to get at statement level hints, and if there is a
   // parser error those nodes might not be initialized.
   //

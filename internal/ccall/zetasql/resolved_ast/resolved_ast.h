@@ -483,6 +483,8 @@ class ResolvedUndropStmt;
 class ResolvedUndropStmtBuilder;
 class ResolvedIdentityColumnInfo;
 class ResolvedIdentityColumnInfoBuilder;
+class ResolvedBarrierScan;
+class ResolvedBarrierScanBuilder;
 
 // Argument nodes are not self-contained nodes in the tree.  They exist
 // only to describe parameters to another node (e.g. columns in an OrderBy).
@@ -1897,6 +1899,12 @@ class ResolvedSystemVariable final : public ResolvedExpr {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedSystemVariable(
       const Type* type,
@@ -2057,6 +2065,12 @@ class ResolvedInlineLambda final : public ResolvedArgument {
   std::vector<ResolvedColumn>* mutable_argument_list() {
     accessed_ |= (1<<0);
     return &argument_list_;
+  }
+
+  std::vector<ResolvedColumn> release_argument_list() {
+    std::vector<ResolvedColumn> tmp;
+    argument_list_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& parameter_list() const {
@@ -2403,6 +2417,12 @@ class ResolvedFilterFieldArg final : public ResolvedArgument {
   std::vector<const google::protobuf::FieldDescriptor*>* mutable_field_descriptor_path() {
     accessed_ |= (1<<1);
     return &field_descriptor_path_;
+  }
+
+  std::vector<const google::protobuf::FieldDescriptor*> release_field_descriptor_path() {
+    std::vector<const google::protobuf::FieldDescriptor*> tmp;
+    field_descriptor_path_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -2911,6 +2931,12 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
     return &collation_list_;
   }
 
+  std::vector<ResolvedCollation> release_collation_list() {
+    std::vector<ResolvedCollation> tmp;
+    collation_list_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   ResolvedFunctionCallBase()
       : ResolvedExpr()
@@ -3282,7 +3308,7 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
     null_handling_modifier_ = v;
   }
 
-  // Holds a table subquery defined in WITH GROUP_ROWS(...) that is
+  // Holds a table subquery defined in WITH GROUP ROWS(...) that is
   // evaluated over the input rows of a ResolvedAggregateScan
   // corresponding to the current group. The function itself is
   // evaluated over the rows returned from the subquery.
@@ -3407,8 +3433,28 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
 };
 
 // An aggregate function call.  The signature always has mode AGGREGATE.
-// This node only ever shows up as the outer function call in a
-// ResolvedAggregateScan::aggregate_list.
+//
+// FEATURE_V_1_4_MULTILEVEL_AGGREGATION enables multi-level aggregate
+// expressions (e.g. 'SUM(AVG(1 + X) GROUP BY key)' ). The GROUP BY modifier
+// within an aggregate function body indicates the presence of a multi-level
+// aggregate expression.
+//
+// `group_by_aggregate_list` can only be present if `group_by_list` is
+// present. `group_by_list` and `group_by_aggregate_list` are mutually
+// exclusive with `having_modifier`.
+//
+// If `group_by_list` is empty, then standard column visibility rules apply
+// (i.e. columns supplied by input scan to the enclosing AggregateScan are
+// visible to argument expressions and aggregate function modifiers, as are
+// correlated columns).
+//
+// If `group_by_list` is non-empty, the initial aggregation is applied first,
+// computing the aggregate and grouping columns in `group_by_aggregate_list`
+// `group_by_list`.  Only these computed columns (plus correlated columns)
+// are visible to argument expressions and aggregate function modifiers
+// (e.g. DISTINCT, IGNORE / RESPECT NULLS, LIMIT, ORDER BY). These
+// modifiers are applied on the output rows from the initial aggregation,
+// as input to the final aggregation.
 class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCallBase {
  public:
   typedef ResolvedNonScalarFunctionCallBase SUPER;
@@ -3432,7 +3478,9 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
       std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier,
       std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
       std::unique_ptr<const ResolvedExpr> limit,
-      const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info
+      const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list
   );
   ~ResolvedAggregateFunctionCall() final;
 
@@ -3555,6 +3603,63 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
     function_call_info_ = v;
   }
 
+  // Group the stream of input values by columns in this list, and
+  // compute the aggregates defined in `group_by_aggregate_list`.
+  // Used only for multi-level aggregation, when
+  // FEATURE_V_1_4_MULTILEVEL_AGGREGATION is enabled.
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& group_by_list() const {
+    accessed_ |= (1<<4);
+    return group_by_list_;
+  }
+  int group_by_list_size() const {
+    if (group_by_list_.empty()) accessed_ |= (1<<4);
+    return static_cast<int>(group_by_list_.size());
+  }
+  const ResolvedComputedColumnBase* group_by_list(int i) const {
+    accessed_ |= (1<<4);
+    return group_by_list_.at(i).get();
+  }
+  void add_group_by_list(std::unique_ptr<const ResolvedComputedColumnBase> v) {
+    group_by_list_.emplace_back(std::move(v));
+  }
+  void set_group_by_list(std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> v) {
+    group_by_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_group_by_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp;
+    group_by_list_.swap(tmp);
+    return tmp;
+  }
+
+  // Aggregate columns to compute over the grouping keys defined in
+  // `group_by_list`. Used only for multi-level aggregation, when
+  // FEATURE_V_1_4_MULTILEVEL_AGGREGATION is enabled.
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& group_by_aggregate_list() const {
+    accessed_ |= (1<<5);
+    return group_by_aggregate_list_;
+  }
+  int group_by_aggregate_list_size() const {
+    if (group_by_aggregate_list_.empty()) accessed_ |= (1<<5);
+    return static_cast<int>(group_by_aggregate_list_.size());
+  }
+  const ResolvedComputedColumnBase* group_by_aggregate_list(int i) const {
+    accessed_ |= (1<<5);
+    return group_by_aggregate_list_.at(i).get();
+  }
+  void add_group_by_aggregate_list(std::unique_ptr<const ResolvedComputedColumnBase> v) {
+    group_by_aggregate_list_.emplace_back(std::move(v));
+  }
+  void set_group_by_aggregate_list(std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> v) {
+    group_by_aggregate_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_group_by_aggregate_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp;
+    group_by_aggregate_list_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   ResolvedAggregateFunctionCall()
       : ResolvedNonScalarFunctionCallBase()
@@ -3562,6 +3667,8 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
       , order_by_item_list_()
       , limit_()
       , function_call_info_()
+      , group_by_list_()
+      , group_by_aggregate_list_()
   {}
 
   explicit ResolvedAggregateFunctionCall(
@@ -3577,6 +3684,8 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
       std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
       std::unique_ptr<const ResolvedExpr> limit,
       const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list,
       ConstructorOverload)
       : ResolvedNonScalarFunctionCallBase(
             type,
@@ -3591,7 +3700,9 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
       having_modifier_(std::move(having_modifier)),
       order_by_item_list_(std::move(order_by_item_list)),
       limit_(std::move(limit)),
-      function_call_info_(function_call_info) {
+      function_call_info_(function_call_info),
+      group_by_list_(std::move(group_by_list)),
+      group_by_aggregate_list_(std::move(group_by_aggregate_list)) {
   }
 
   void CollectDebugStringFields(
@@ -3615,10 +3726,18 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
   bool function_call_info_accessed() const {
     return accessed_ & (1<<3);
  }
+  bool group_by_list_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  bool group_by_aggregate_list_accessed() const {
+    return accessed_ & (1<<5);
+ }
   std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier_;
   std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list_;
   std::unique_ptr<const ResolvedExpr> limit_;
   std::shared_ptr<ResolvedFunctionCallInfo> function_call_info_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -3634,7 +3753,9 @@ inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunct
     std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier,
     std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
     std::unique_ptr<const ResolvedExpr> limit,
-    const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info) {
+    const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list,
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list) {
   return std::unique_ptr<ResolvedAggregateFunctionCall>(new ResolvedAggregateFunctionCall(
         type,
         function,
@@ -3648,6 +3769,8 @@ inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunct
         std::move(order_by_item_list),
         std::move(limit),
         function_call_info,
+        std::move(group_by_list),
+        std::move(group_by_aggregate_list),
         ResolvedAggregateFunctionCall::NEW_CONSTRUCTOR));
 }
 inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall(
@@ -3673,7 +3796,9 @@ inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunct
       std::move(having_modifier),
       std::move(order_by_item_list),
       std::move(limit),
-      /*function_call_info=*/{std::make_shared<ResolvedFunctionCallInfo>()});
+      /*function_call_info=*/{std::make_shared<ResolvedFunctionCallInfo>()},
+      /*group_by_list=*/{},
+      /*group_by_aggregate_list=*/{});
 }
 
 // Overloaded factory method for the construction of ResolvedAggregateFunctionCall with
@@ -3683,7 +3808,7 @@ inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunct
 // 3. input container can be any object with a `begin()` and `end()`.
 //
 // Note, initializer lists cannot be used to pass
-//  argument_list, generic_argument_list, order_by_item_list
+//  argument_list, generic_argument_list, order_by_item_list, group_by_list, group_by_aggregate_list
 // due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
 // instead.
 template <
@@ -3692,7 +3817,11 @@ template <
   typename generic_argument_list_t
       = std::vector<std::unique_ptr<const ResolvedFunctionArgument>>,
   typename order_by_item_list_t
-      = std::vector<std::unique_ptr<const ResolvedOrderByItem>>>
+      = std::vector<std::unique_ptr<const ResolvedOrderByItem>>,
+  typename group_by_list_t
+      = std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>,
+  typename group_by_aggregate_list_t
+      = std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>
 std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall(
     const Type* type,
     const Function* function,
@@ -3705,7 +3834,9 @@ std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall
     std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier,
     order_by_item_list_t order_by_item_list,
     std::unique_ptr<const ResolvedExpr> limit,
-    const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info) {
+    const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
+    group_by_list_t group_by_list,
+    group_by_aggregate_list_t group_by_aggregate_list) {
   static_assert(std::is_base_of<
       ResolvedExpr,
       typename std::decay<decltype(**(argument_list.begin()))>::type>::value,
@@ -3721,6 +3852,16 @@ std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall
       typename std::decay<decltype(**(order_by_item_list.begin()))>::type>::value,
       "order_by_item_list must be a container of unique_ptr with elements of type "
       "ResolvedOrderByItem (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedComputedColumnBase,
+      typename std::decay<decltype(**(group_by_list.begin()))>::type>::value,
+      "group_by_list must be a container of unique_ptr with elements of type "
+      "ResolvedComputedColumnBase (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedComputedColumnBase,
+      typename std::decay<decltype(**(group_by_aggregate_list.begin()))>::type>::value,
+      "group_by_aggregate_list must be a container of unique_ptr with elements of type "
+      "ResolvedComputedColumnBase (or its descendants).");
   return MakeResolvedAggregateFunctionCall(
       type,
       function,
@@ -3736,7 +3877,11 @@ std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall
       {std::make_move_iterator(order_by_item_list.begin()),
        std::make_move_iterator(order_by_item_list.end())},
       std::move(limit),
-      function_call_info);
+      function_call_info,
+      {std::make_move_iterator(group_by_list.begin()),
+       std::make_move_iterator(group_by_list.end())},
+      {std::make_move_iterator(group_by_aggregate_list.begin()),
+       std::make_move_iterator(group_by_aggregate_list.end())});
 }
 
 // An analytic function call. The mode of the function is either AGGREGATE
@@ -6092,6 +6237,12 @@ class ResolvedReplaceFieldItem final : public ResolvedArgument {
     return &struct_index_path_;
   }
 
+  std::vector<int> release_struct_index_path() {
+    std::vector<int> tmp;
+    struct_index_path_.swap(tmp);
+    return tmp;
+  }
+
   // A vector of FieldDescriptors that denotes the path to a proto
   // field that will be modified. If <struct_index_path> is also
   // non-empty, then the first element in this vector should be a
@@ -6118,6 +6269,12 @@ class ResolvedReplaceFieldItem final : public ResolvedArgument {
   std::vector<const google::protobuf::FieldDescriptor*>* mutable_proto_field_path() {
     accessed_ |= (1<<2);
     return &proto_field_path_;
+  }
+
+  std::vector<const google::protobuf::FieldDescriptor*> release_proto_field_path() {
+    std::vector<const google::protobuf::FieldDescriptor*> tmp;
+    proto_field_path_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -7107,7 +7264,7 @@ class ResolvedScan  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 25;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 26;
 
   bool IsScan() const final { return true; }
 
@@ -7186,6 +7343,12 @@ class ResolvedScan  : public ResolvedNode {
   std::vector<ResolvedColumn>* mutable_column_list() {
     accessed_ |= (1<<0);
     return &column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    column_list_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
@@ -7273,6 +7436,7 @@ class ResolvedScan  : public ResolvedNode {
   friend class ResolvedRelationArgumentScanBuilder;
   friend class ResolvedPivotScanBuilder;
   friend class ResolvedUnpivotScanBuilder;
+  friend class ResolvedBarrierScanBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -7823,6 +7987,12 @@ class ResolvedDescriptor final : public ResolvedArgument {
     return &descriptor_column_list_;
   }
 
+  std::vector<ResolvedColumn> release_descriptor_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    descriptor_column_list_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& descriptor_column_name_list() const {
     accessed_ |= (1<<1);
     return descriptor_column_name_list_;
@@ -7844,6 +8014,12 @@ class ResolvedDescriptor final : public ResolvedArgument {
   std::vector<std::string>* mutable_descriptor_column_name_list() {
     accessed_ |= (1<<1);
     return &descriptor_column_name_list_;
+  }
+
+  std::vector<std::string> release_descriptor_column_name_list() {
+    std::vector<std::string> tmp;
+    descriptor_column_name_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -8123,6 +8299,12 @@ class ResolvedTableScan final : public ResolvedScan {
   std::vector<int>* mutable_column_index_list() {
     accessed_ |= (1<<2);
     return &column_index_list_;
+  }
+
+  std::vector<int> release_column_index_list() {
+    std::vector<int> tmp;
+    column_index_list_.swap(tmp);
+    return tmp;
   }
 
   const std::string& alias() const {
@@ -8657,6 +8839,12 @@ class ResolvedArrayScan final : public ResolvedScan {
   std::vector<ResolvedColumn>* mutable_element_column_list() {
     accessed_ |= (1<<2);
     return &element_column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_element_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    element_column_list_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
@@ -9974,6 +10162,12 @@ class ResolvedAggregateScanBase  : public ResolvedScan {
   std::vector<ResolvedCollation>* mutable_collation_list() {
     accessed_ |= (1<<2);
     return &collation_list_;
+  }
+
+  std::vector<ResolvedCollation> release_collation_list() {
+    std::vector<ResolvedCollation> tmp;
+    collation_list_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& aggregate_list() const {
@@ -11344,6 +11538,12 @@ class ResolvedSetOperationItem final : public ResolvedArgument {
   std::vector<ResolvedColumn>* mutable_output_column_list() {
     accessed_ |= (1<<1);
     return &output_column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_output_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    output_column_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -14501,6 +14701,12 @@ class ResolvedPrimaryKey final : public ResolvedConstraint {
     return &column_offset_list_;
   }
 
+  std::vector<int> release_column_offset_list() {
+    std::vector<int> tmp;
+    column_offset_list_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
     accessed_ |= (1<<1);
     return option_list_;
@@ -14563,6 +14769,12 @@ class ResolvedPrimaryKey final : public ResolvedConstraint {
   std::vector<std::string>* mutable_column_name_list() {
     accessed_ |= (1<<4);
     return &column_name_list_;
+  }
+
+  std::vector<std::string> release_column_name_list() {
+    std::vector<std::string> tmp;
+    column_name_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -14832,6 +15044,12 @@ class ResolvedForeignKey final : public ResolvedConstraint {
     return &referencing_column_offset_list_;
   }
 
+  std::vector<int> release_referencing_column_offset_list() {
+    std::vector<int> tmp;
+    referencing_column_offset_list_.swap(tmp);
+    return tmp;
+  }
+
   const Table* referenced_table() const {
     accessed_ |= (1<<2);
     return referenced_table_;
@@ -14861,6 +15079,12 @@ class ResolvedForeignKey final : public ResolvedConstraint {
   std::vector<int>* mutable_referenced_column_offset_list() {
     accessed_ |= (1<<3);
     return &referenced_column_offset_list_;
+  }
+
+  std::vector<int> release_referenced_column_offset_list() {
+    std::vector<int> tmp;
+    referenced_column_offset_list_.swap(tmp);
+    return tmp;
   }
 
   ResolvedForeignKey::MatchMode match_mode() const {
@@ -14941,6 +15165,12 @@ class ResolvedForeignKey final : public ResolvedConstraint {
   std::vector<std::string>* mutable_referencing_column_list() {
     accessed_ |= (1<<9);
     return &referencing_column_list_;
+  }
+
+  std::vector<std::string> release_referencing_column_list() {
+    std::vector<std::string> tmp;
+    referencing_column_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -15870,6 +16100,12 @@ class ResolvedTVFScan final : public ResolvedScan {
     return &column_index_list_;
   }
 
+  std::vector<int> release_column_index_list() {
+    std::vector<int> tmp;
+    column_index_list_.swap(tmp);
+    return tmp;
+  }
+
   const std::string& alias() const {
     accessed_ |= (1<<4);
     return alias_;
@@ -16026,7 +16262,7 @@ std::unique_ptr<ResolvedTVFScan> MakeResolvedTVFScan(
 }
 
 // ResolvedGroupRowsScan represents a call to a special TVF GROUP_ROWS().
-// It can only show up inside WITH GROUP_ROWS clause, which is resolved as
+// It can only show up inside WITH GROUP ROWS clause, which is resolved as
 // the field with_group_rows_subquery in ResolvedNonScalarFunctionCallBase
 // ResolvedGroupRowsScan. This scan produces rows corresponding to the input
 // of ResolvedAggregateScan that belong to the current group.
@@ -16406,6 +16642,12 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
   std::vector<ResolvedColumn>* mutable_argument_column_list() {
     accessed_ |= (1<<5);
     return &argument_column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_argument_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    argument_column_list_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedInlineLambda* inline_lambda() const {
@@ -17182,6 +17424,12 @@ class ResolvedCreateDatabaseStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
     accessed_ |= (1<<1);
     return option_list_;
@@ -17394,6 +17642,12 @@ class ResolvedCreateStatement  : public ResolvedStatement {
   std::vector<std::string>* mutable_name_path() {
     accessed_ |= (1<<0);
     return &name_path_;
+  }
+
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
   }
 
   ResolvedCreateStatement::CreateScope create_scope() const {
@@ -17916,6 +18170,12 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
     return &table_name_path_;
   }
 
+  std::vector<std::string> release_table_name_path() {
+    std::vector<std::string> tmp;
+    table_name_path_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedTableScan* table_scan() const {
     accessed_ |= (1<<1);
     return table_scan_.get();
@@ -18332,7 +18592,7 @@ inline std::unique_ptr<ResolvedCreateIndexStmt> MakeResolvedCreateIndexStmt() {
 //   [OPTIONS (name=value, ...)]
 //
 //   CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] EXTERNAL SCHEMA
-//   [IF NOT EXISTS] <name> WITH CONNECTION <connection>
+//   [IF NOT EXISTS] <name> [WITH CONNECTION] <connection>
 //   OPTIONS (name=value, ...)
 //
 // <option_list> contains engine-specific options associated with the schema
@@ -18646,7 +18906,7 @@ inline std::unique_ptr<ResolvedCreateSchemaStmt> MakeResolvedCreateSchemaStmt() 
 
 // This statement:
 // CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] EXTERNAL SCHEMA
-// [IF NOT EXISTS] <name> WITH CONNECTION <connection>
+// [IF NOT EXISTS] <name> [WITH CONNECTION] <connection>
 // OPTIONS (name=value, ...)
 //
 // <connection> encapsulates engine-specific metadata used to connect
@@ -18998,6 +19258,12 @@ class ResolvedCreateTableStmtBase  : public ResolvedCreateStatement {
   std::vector<ResolvedColumn>* mutable_pseudo_column_list() {
     accessed_ |= (1<<2);
     return &pseudo_column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_pseudo_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    pseudo_column_list_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedPrimaryKey* primary_key() const {
@@ -22186,6 +22452,12 @@ class ResolvedExportModelStmt final : public ResolvedStatement {
     return &model_name_path_;
   }
 
+  std::vector<std::string> release_model_name_path() {
+    std::vector<std::string> tmp;
+    model_name_path_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedConnection* connection() const {
     accessed_ |= (1<<1);
     return connection_.get();
@@ -22711,6 +22983,12 @@ class ResolvedExportMetadataStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedConnection* connection() const {
     accessed_ |= (1<<2);
     return connection_.get();
@@ -22941,6 +23219,12 @@ class ResolvedDefineTableStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
     accessed_ |= (1<<1);
     return option_list_;
@@ -23151,6 +23435,12 @@ class ResolvedDescribeStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& from_name_path() const {
     accessed_ |= (1<<2);
     return from_name_path_;
@@ -23172,6 +23462,12 @@ class ResolvedDescribeStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_from_name_path() {
     accessed_ |= (1<<2);
     return &from_name_path_;
+  }
+
+  std::vector<std::string> release_from_name_path() {
+    std::vector<std::string> tmp;
+    from_name_path_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -23340,6 +23636,12 @@ class ResolvedShowStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_name_path() {
     accessed_ |= (1<<1);
     return &name_path_;
+  }
+
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedLiteral* like_expr() const {
@@ -23533,6 +23835,12 @@ class ResolvedBeginStmt final : public ResolvedStatement {
     return &isolation_level_list_;
   }
 
+  std::vector<std::string> release_isolation_level_list() {
+    std::vector<std::string> tmp;
+    isolation_level_list_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedBeginStmt(
       ResolvedBeginStmt::ReadWriteMode read_write_mode,
@@ -23699,6 +24007,12 @@ class ResolvedSetTransactionStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_isolation_level_list() {
     accessed_ |= (1<<1);
     return &isolation_level_list_;
+  }
+
+  std::vector<std::string> release_isolation_level_list() {
+    std::vector<std::string> tmp;
+    isolation_level_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -24289,6 +24603,12 @@ class ResolvedDropStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   ResolvedDropStmt::DropMode drop_mode() const {
     accessed_ |= (1<<3);
     return drop_mode_;
@@ -24466,6 +24786,12 @@ class ResolvedDropMaterializedViewStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedDropMaterializedViewStmt(
       bool is_if_exists,
@@ -24617,6 +24943,12 @@ class ResolvedDropSnapshotTableStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_name_path() {
     accessed_ |= (1<<1);
     return &name_path_;
+  }
+
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -25969,6 +26301,12 @@ class ResolvedWindowPartitioning final : public ResolvedArgument {
     return &collation_list_;
   }
 
+  std::vector<ResolvedCollation> release_collation_list() {
+    std::vector<ResolvedCollation> tmp;
+    collation_list_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedWindowPartitioning(
       std::vector<std::unique_ptr<const ResolvedColumnRef>> partition_by_list,
@@ -26444,7 +26782,7 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
   friend std::unique_ptr<ResolvedAnalyticFunctionGroup> MakeResolvedAnalyticFunctionGroup(
       std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
       std::unique_ptr<const ResolvedWindowOrdering> order_by,
-      std::vector<std::unique_ptr<const ResolvedComputedColumn>> analytic_function_list
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> analytic_function_list
   );
   ~ResolvedAnalyticFunctionGroup() final;
 
@@ -26519,7 +26857,7 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
     return std::move(order_by_);
   }
 
-  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& analytic_function_list() const {
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& analytic_function_list() const {
     accessed_ |= (1<<2);
     return analytic_function_list_;
   }
@@ -26527,19 +26865,19 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
     if (analytic_function_list_.empty()) accessed_ |= (1<<2);
     return static_cast<int>(analytic_function_list_.size());
   }
-  const ResolvedComputedColumn* analytic_function_list(int i) const {
+  const ResolvedComputedColumnBase* analytic_function_list(int i) const {
     accessed_ |= (1<<2);
     return analytic_function_list_.at(i).get();
   }
-  void add_analytic_function_list(std::unique_ptr<const ResolvedComputedColumn> v) {
+  void add_analytic_function_list(std::unique_ptr<const ResolvedComputedColumnBase> v) {
     analytic_function_list_.emplace_back(std::move(v));
   }
-  void set_analytic_function_list(std::vector<std::unique_ptr<const ResolvedComputedColumn>> v) {
+  void set_analytic_function_list(std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> v) {
     analytic_function_list_ = std::move(v);
   }
 
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_analytic_function_list() {
-    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp;
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_analytic_function_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp;
     analytic_function_list_.swap(tmp);
     return tmp;
   }
@@ -26548,7 +26886,7 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
   explicit ResolvedAnalyticFunctionGroup(
       std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
       std::unique_ptr<const ResolvedWindowOrdering> order_by,
-      std::vector<std::unique_ptr<const ResolvedComputedColumn>> analytic_function_list,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> analytic_function_list,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -26578,14 +26916,14 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
  }
   std::unique_ptr<const ResolvedWindowPartitioning> partition_by_;
   std::unique_ptr<const ResolvedWindowOrdering> order_by_;
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> analytic_function_list_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> analytic_function_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
 inline std::unique_ptr<ResolvedAnalyticFunctionGroup> MakeResolvedAnalyticFunctionGroup(
     std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
     std::unique_ptr<const ResolvedWindowOrdering> order_by,
-    std::vector<std::unique_ptr<const ResolvedComputedColumn>> analytic_function_list) {
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> analytic_function_list) {
   return std::unique_ptr<ResolvedAnalyticFunctionGroup>(new ResolvedAnalyticFunctionGroup(
         std::move(partition_by),
         std::move(order_by),
@@ -26605,16 +26943,16 @@ inline std::unique_ptr<ResolvedAnalyticFunctionGroup> MakeResolvedAnalyticFuncti
 // instead.
 template <
   typename analytic_function_list_t
-      = std::vector<std::unique_ptr<const ResolvedComputedColumn>>>
+      = std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>
 std::unique_ptr<ResolvedAnalyticFunctionGroup> MakeResolvedAnalyticFunctionGroup(
     std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
     std::unique_ptr<const ResolvedWindowOrdering> order_by,
     analytic_function_list_t analytic_function_list) {
   static_assert(std::is_base_of<
-      ResolvedComputedColumn,
+      ResolvedComputedColumnBase,
       typename std::decay<decltype(**(analytic_function_list.begin()))>::type>::value,
       "analytic_function_list must be a container of unique_ptr with elements of type "
-      "ResolvedComputedColumn (or its descendants).");
+      "ResolvedComputedColumnBase (or its descendants).");
   return MakeResolvedAnalyticFunctionGroup(
       std::move(partition_by),
       std::move(order_by),
@@ -27642,6 +27980,12 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     return &insert_column_list_;
   }
 
+  std::vector<ResolvedColumn> release_insert_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    insert_column_list_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedColumnRef>>& query_parameter_list() const {
     accessed_ |= (1<<5);
     return query_parameter_list_;
@@ -27702,6 +28046,12 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     return &query_output_column_list_;
   }
 
+  std::vector<ResolvedColumn> release_query_output_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    query_output_column_list_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedInsertRow>>& row_list() const {
     accessed_ |= (1<<8);
     return row_list_;
@@ -27750,6 +28100,12 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     return &column_access_list_;
   }
 
+  std::vector<ResolvedStatement::ObjectAccess> release_column_access_list() {
+    std::vector<ResolvedStatement::ObjectAccess> tmp;
+    column_access_list_.swap(tmp);
+    return tmp;
+  }
+
   // This returns a topologically sorted list of generated columns
   //  resolved ids in the table accessed by insert statement.
   //  For example for below table
@@ -27786,6 +28142,12 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   std::vector<int>* mutable_topologically_sorted_generated_column_id_list() {
     accessed_ |= (1<<10);
     return &topologically_sorted_generated_column_id_list_;
+  }
+
+  std::vector<int> release_topologically_sorted_generated_column_id_list() {
+    std::vector<int> tmp;
+    topologically_sorted_generated_column_id_list_.swap(tmp);
+    return tmp;
   }
 
   // This field returns the vector of generated column expressions
@@ -28190,6 +28552,12 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
   std::vector<ResolvedStatement::ObjectAccess>* mutable_column_access_list() {
     accessed_ |= (1<<3);
     return &column_access_list_;
+  }
+
+  std::vector<ResolvedStatement::ObjectAccess> release_column_access_list() {
+    std::vector<ResolvedStatement::ObjectAccess> tmp;
+    column_access_list_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
@@ -29115,6 +29483,12 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
     return &column_access_list_;
   }
 
+  std::vector<ResolvedStatement::ObjectAccess> release_column_access_list() {
+    std::vector<ResolvedStatement::ObjectAccess> tmp;
+    column_access_list_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedAssertRowsModified* assert_rows_modified() const {
     accessed_ |= (1<<2);
     return assert_rows_modified_.get();
@@ -29222,6 +29596,12 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
   std::vector<int>* mutable_topologically_sorted_generated_column_id_list() {
     accessed_ |= (1<<8);
     return &topologically_sorted_generated_column_id_list_;
+  }
+
+  std::vector<int> release_topologically_sorted_generated_column_id_list() {
+    std::vector<int> tmp;
+    topologically_sorted_generated_column_id_list_.swap(tmp);
+    return tmp;
   }
 
   // TODO: refactor it with INSERT case.
@@ -29607,6 +29987,12 @@ class ResolvedMergeWhen final : public ResolvedArgument {
     return &insert_column_list_;
   }
 
+  std::vector<ResolvedColumn> release_insert_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    insert_column_list_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedInsertRow* insert_row() const {
     accessed_ |= (1<<4);
     return insert_row_.get();
@@ -29888,6 +30274,12 @@ class ResolvedMergeStmt final : public ResolvedStatement {
   std::vector<ResolvedStatement::ObjectAccess>* mutable_column_access_list() {
     accessed_ |= (1<<1);
     return &column_access_list_;
+  }
+
+  std::vector<ResolvedStatement::ObjectAccess> release_column_access_list() {
+    std::vector<ResolvedStatement::ObjectAccess> tmp;
+    column_access_list_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedScan* from_scan() const {
@@ -30285,6 +30677,12 @@ class ResolvedObjectUnit final : public ResolvedArgument {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedObjectUnit(
       const std::vector<std::string>& name_path,
@@ -30510,7 +30908,7 @@ inline std::unique_ptr<ResolvedPrivilege> MakeResolvedPrivilege() {
 // Common superclass of GRANT/REVOKE statements.
 //
 // <privilege_list> is the list of privileges to be granted/revoked. ALL
-// PRIVILEGES should be granted/fromed if it is empty.
+// PRIVILEGES should be granted/revoked if it is empty.
 // <object_type_list> is an optional list of string identifiers, e.g., TABLE,
 // VIEW, MATERIALIZED VIEW.
 // <name_path> is a vector of segments of the object identifier's pathname.
@@ -30637,6 +31035,12 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
     return &object_type_list_;
   }
 
+  std::vector<std::string> release_object_type_list() {
+    std::vector<std::string> tmp;
+    object_type_list_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& name_path() const {
     accessed_ |= (1<<2);
     return name_path_;
@@ -30660,6 +31064,12 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& grantee_list() const {
     accessed_ |= (1<<3);
     return grantee_list_;
@@ -30681,6 +31091,12 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
   std::vector<std::string>* mutable_grantee_list() {
     accessed_ |= (1<<3);
     return &grantee_list_;
+  }
+
+  std::vector<std::string> release_grantee_list() {
+    std::vector<std::string> tmp;
+    grantee_list_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& grantee_expr_list() const {
@@ -31152,6 +31568,12 @@ class ResolvedAlterObjectStmt  : public ResolvedStatement {
   std::vector<std::string>* mutable_name_path() {
     accessed_ |= (1<<0);
     return &name_path_;
+  }
+
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
@@ -35240,6 +35662,12 @@ class ResolvedAlterTableSetOptionsStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
     accessed_ |= (1<<1);
     return option_list_;
@@ -35468,6 +35896,12 @@ class ResolvedRenameStmt final : public ResolvedStatement {
     return &old_name_path_;
   }
 
+  std::vector<std::string> release_old_name_path() {
+    std::vector<std::string> tmp;
+    old_name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& new_name_path() const {
     accessed_ |= (1<<2);
     return new_name_path_;
@@ -35489,6 +35923,12 @@ class ResolvedRenameStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_new_name_path() {
     accessed_ |= (1<<2);
     return &new_name_path_;
+  }
+
+  std::vector<std::string> release_new_name_path() {
+    std::vector<std::string> tmp;
+    new_name_path_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -35952,6 +36392,12 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
     return &target_name_path_;
   }
 
+  std::vector<std::string> release_target_name_path() {
+    std::vector<std::string> tmp;
+    target_name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& grantee_list() const {
     accessed_ |= (1<<3);
     return grantee_list_;
@@ -35973,6 +36419,12 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_grantee_list() {
     accessed_ |= (1<<3);
     return &grantee_list_;
+  }
+
+  std::vector<std::string> release_grantee_list() {
+    std::vector<std::string> tmp;
+    grantee_list_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedExpr>>& grantee_expr_list() const {
@@ -36288,6 +36740,12 @@ class ResolvedDropPrivilegeRestrictionStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedPrivilege>>& column_privilege_list() const {
     accessed_ |= (1<<3);
     return column_privilege_list_;
@@ -36538,6 +36996,12 @@ class ResolvedDropRowAccessPolicyStmt final : public ResolvedStatement {
     return &target_name_path_;
   }
 
+  std::vector<std::string> release_target_name_path() {
+    std::vector<std::string> tmp;
+    target_name_path_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedDropRowAccessPolicyStmt(
       bool is_drop_all,
@@ -36728,6 +37192,12 @@ class ResolvedDropIndexStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_table_name_path() {
     accessed_ |= (1<<2);
     return &table_name_path_;
+  }
+
+  std::vector<std::string> release_table_name_path() {
+    std::vector<std::string> tmp;
+    table_name_path_.swap(tmp);
+    return tmp;
   }
 
   ResolvedDropIndexStmt::IndexType index_type() const {
@@ -37910,6 +38380,12 @@ class ResolvedRenameToAction final : public ResolvedAlterAction {
     return &new_path_;
   }
 
+  std::vector<std::string> release_new_path() {
+    std::vector<std::string> tmp;
+    new_path_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedRenameToAction(
       const std::vector<std::string>& new_path,
@@ -38928,6 +39404,12 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
     return &argument_name_list_;
   }
 
+  std::vector<std::string> release_argument_name_list() {
+    std::vector<std::string> tmp;
+    argument_name_list_.swap(tmp);
+    return tmp;
+  }
+
   const FunctionSignature& signature() const {
     accessed_ |= (1<<3);
     return signature_.value();
@@ -39837,6 +40319,12 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
     return &argument_name_list_;
   }
 
+  std::vector<std::string> release_argument_name_list() {
+    std::vector<std::string> tmp;
+    argument_name_list_.swap(tmp);
+    return tmp;
+  }
+
   const FunctionSignature& signature() const {
     accessed_ |= (1<<1);
     return signature_.value();
@@ -40679,6 +41167,12 @@ class ResolvedDropFunctionStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   // NOTE: arguments for DROP FUNCTION statements are matched only on
   // type; names for any arguments in ResolvedArgumentList will be set
   // to the empty string irrespective of whether or not argument names
@@ -40877,6 +41371,12 @@ class ResolvedDropTableFunctionStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_name_path() {
     accessed_ |= (1<<1);
     return &name_path_;
+  }
+
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -41264,6 +41764,12 @@ class ResolvedImportStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::string& file_path() const {
     accessed_ |= (1<<2);
     return file_path_;
@@ -41295,6 +41801,12 @@ class ResolvedImportStmt final : public ResolvedStatement {
     return &alias_path_;
   }
 
+  std::vector<std::string> release_alias_path() {
+    std::vector<std::string> tmp;
+    alias_path_.swap(tmp);
+    return tmp;
+  }
+
   const std::vector<std::string>& into_alias_path() const {
     accessed_ |= (1<<4);
     return into_alias_path_;
@@ -41316,6 +41828,12 @@ class ResolvedImportStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_into_alias_path() {
     accessed_ |= (1<<4);
     return &into_alias_path_;
+  }
+
+  std::vector<std::string> release_into_alias_path() {
+    std::vector<std::string> tmp;
+    into_alias_path_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
@@ -41554,6 +42072,12 @@ class ResolvedModuleStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_name_path() {
     accessed_ |= (1<<0);
     return &name_path_;
+  }
+
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
@@ -42491,6 +43015,12 @@ class ResolvedCreateProcedureStmt final : public ResolvedCreateStatement {
     return &argument_name_list_;
   }
 
+  std::vector<std::string> release_argument_name_list() {
+    std::vector<std::string> tmp;
+    argument_name_list_.swap(tmp);
+    return tmp;
+  }
+
   const FunctionSignature& signature() const {
     accessed_ |= (1<<1);
     return signature_.value();
@@ -42982,6 +43512,12 @@ class ResolvedExecuteImmediateStmt final : public ResolvedStatement {
   std::vector<std::string>* mutable_into_identifier_list() {
     accessed_ |= (1<<1);
     return &into_identifier_list_;
+  }
+
+  std::vector<std::string> release_into_identifier_list() {
+    std::vector<std::string> tmp;
+    into_identifier_list_.swap(tmp);
+    return tmp;
   }
 
   const std::vector<std::unique_ptr<const ResolvedExecuteImmediateArgument>>& using_argument_list() const {
@@ -44786,6 +45322,12 @@ class ResolvedUnpivotScan final : public ResolvedScan {
     return &value_column_list_;
   }
 
+  std::vector<ResolvedColumn> release_value_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    value_column_list_.swap(tmp);
+    return tmp;
+  }
+
   // This is a new column added in the output for storing labels for
   // input columns groups that are present in the IN clause. Its
   // values are taken from <label_list>.
@@ -45304,6 +45846,12 @@ class ResolvedTableAndColumnInfo final : public ResolvedArgument {
   std::vector<int>* mutable_column_index_list() {
     accessed_ |= (1<<1);
     return &column_index_list_;
+  }
+
+  std::vector<int> release_column_index_list() {
+    std::vector<int> tmp;
+    column_index_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -45911,6 +46459,12 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedAuxLoadDataPartitionFilter* partition_filter() const {
     accessed_ |= (1<<3);
     return partition_filter_.get();
@@ -45994,6 +46548,12 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
   std::vector<ResolvedColumn>* mutable_pseudo_column_list() {
     accessed_ |= (1<<6);
     return &pseudo_column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_pseudo_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    pseudo_column_list_.swap(tmp);
+    return tmp;
   }
 
   const ResolvedPrimaryKey* primary_key() const {
@@ -46585,6 +47145,12 @@ class ResolvedUndropStmt final : public ResolvedStatement {
     return &name_path_;
   }
 
+  std::vector<std::string> release_name_path() {
+    std::vector<std::string> tmp;
+    name_path_.swap(tmp);
+    return tmp;
+  }
+
   const ResolvedExpr* for_system_time_expr() const {
     accessed_ |= (1<<3);
     return for_system_time_expr_.get();
@@ -46939,6 +47505,148 @@ inline std::unique_ptr<ResolvedIdentityColumnInfo> MakeResolvedIdentityColumnInf
       new ResolvedIdentityColumnInfo());
 }
 
+// ResolvedBarrierScan marks an optimization barrier during query planning.
+// It wraps an `input_scan` and ensures `input_scan` is evaluated as if
+// `input_scan` stands alone; plan transformations that may cause
+// different observable side effects may not cross the optimization barrier.
+//
+// The output rows of a ResolvedBarrierScan are the same as those of the
+// `input_scan`, propagating the `is_ordered` property of `input_scan`.
+//
+// The following optimizations are allowed:
+// * Prune an unused column of a ResolvedBarrierScan.
+// * Prune the whole ResolvedBarrierScan.
+//
+// This node does not have a corresponding syntax.
+class ResolvedBarrierScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_BARRIER_SCAN;
+
+ protected:
+  ResolvedBarrierScan()
+      : ResolvedScan()
+      , input_scan_()
+  {}
+
+ public:
+
+  ResolvedBarrierScan(const ResolvedBarrierScan&) = delete;
+  ResolvedBarrierScan& operator=(const ResolvedBarrierScan&) = delete;
+
+  friend std::unique_ptr<ResolvedBarrierScan> MakeResolvedBarrierScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan
+  );
+  ~ResolvedBarrierScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_BARRIER_SCAN; }
+  std::string node_kind_string() const final { return "BarrierScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedBarrierScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedBarrierScan>> RestoreFrom(
+      const ResolvedBarrierScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<0);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v,
+                          bool propagate_order=true) {
+    input_scan_ = std::move(v);
+    if (propagate_order) {
+      set_is_ordered(input_scan_->is_ordered());
+    }
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+ protected:
+  explicit ResolvedBarrierScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_(std::move(input_scan)) {
+    set_is_ordered(input_scan_->is_ordered());
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedBarrierScan> MakeResolvedBarrierScan();
+  friend class ResolvedBarrierScanBuilder;
+  friend ResolvedBarrierScanBuilder ToBuilder(std::unique_ptr<const ResolvedBarrierScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedBarrierScan> MakeResolvedBarrierScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan) {
+  return std::unique_ptr<ResolvedBarrierScan>(new ResolvedBarrierScan(
+        column_list,
+        std::move(input_scan),
+        ResolvedBarrierScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedBarrierScan> MakeResolvedBarrierScan() {
+  return std::unique_ptr<ResolvedBarrierScan>(
+      new ResolvedBarrierScan());
+}
+
 inline std::unique_ptr<ResolvedLiteral> MakeResolvedLiteral(
     const Value& value) {
   // The float_literal_id is 0 for any ResolvedLiterals whose original images
@@ -47197,6 +47905,38 @@ inline std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan(
         std::move(join_expr),
         is_outer,
         /*array_zip_mode=*/nullptr);
+}
+
+// Special overload for backward compatibility purposes.
+inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall(
+  const Type* type,
+  const Function* function,
+  const FunctionSignature& signature,
+  std::vector<std::unique_ptr<const ResolvedExpr>> argument_list,
+  std::vector<std::unique_ptr<const ResolvedFunctionArgument>> generic_argument_list,
+  ResolvedFunctionCallBase::ErrorMode error_mode,
+  bool distinct,
+  ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier,
+  std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier,
+  std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
+  std::unique_ptr<const ResolvedExpr> limit,
+  const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info) {
+    return MakeResolvedAggregateFunctionCall(
+      type,
+      function,
+      signature,
+      std::move(argument_list),
+      std::move(generic_argument_list),
+      error_mode,
+      distinct,
+      null_handling_modifier,
+      std::move(having_modifier),
+      std::move(order_by_item_list),
+      std::move(limit),
+      function_call_info,
+      /*group_by_list=*/{},
+      /*group_by_aggregate_list=*/{}
+    );
 }
 
 }  // namespace zetasql

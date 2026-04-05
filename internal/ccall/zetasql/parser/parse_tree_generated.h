@@ -1751,6 +1751,7 @@ class ASTFunctionCall final : public ASTExpression {
 
   const ASTPathExpression* function() const { return function_; }
   const ASTHavingModifier* having_modifier() const { return having_modifier_; }
+  const ASTGroupBy* group_by() const { return group_by_; }
 
   // If present, applies to the inputs of anonymized aggregate functions.
   const ASTClampedBetweenModifier* clamped_between_modifier() const { return clamped_between_modifier_; }
@@ -1782,7 +1783,8 @@ class ASTFunctionCall final : public ASTExpression {
     return distinct_ || null_handling_modifier_ != DEFAULT_NULL_HANDLING ||
            having_modifier_ != nullptr ||
            clamped_between_modifier_ != nullptr || order_by_ != nullptr ||
-           limit_offset_ != nullptr || with_group_rows_ != nullptr;
+           limit_offset_ != nullptr || with_group_rows_ != nullptr ||
+           group_by_ != nullptr;
   }
 
   friend class ParseTreeSerializer;
@@ -1793,6 +1795,7 @@ class ASTFunctionCall final : public ASTExpression {
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&function_));
     fl.AddRepeatedWhileIsExpression(&arguments_);
     fl.AddOptional(&having_modifier_, AST_HAVING_MODIFIER);
+    fl.AddOptional(&group_by_, AST_GROUP_BY);
     fl.AddOptional(&clamped_between_modifier_, AST_CLAMPED_BETWEEN_MODIFIER);
     fl.AddOptional(&with_report_modifier_, AST_WITH_REPORT_MODIFIER);
     fl.AddOptional(&order_by_, AST_ORDER_BY);
@@ -1807,6 +1810,9 @@ class ASTFunctionCall final : public ASTExpression {
 
   // Set if the function was called with FUNC(args HAVING {MAX|MIN} expr).
   const ASTHavingModifier* having_modifier_ = nullptr;
+
+  // Set if the function was called with FUNC(args GROUP BY expr [, ... ]).
+  const ASTGroupBy* group_by_ = nullptr;
 
   // Set if the function was called with
   // FUNC(args CLAMPED BETWEEN low AND high).
@@ -1825,7 +1831,7 @@ class ASTFunctionCall final : public ASTExpression {
   // Optional hint.
   const ASTHint* hint_ = nullptr;
 
-  // Set if the function was called WITH GROUP_ROWS(...).
+  // Set if the function was called WITH GROUP ROWS(...).
   const ASTWithGroupRows* with_group_rows_ = nullptr;
 
   // Set if the function was called with FUNC(args {IGNORE|RESPECT} NULLS).
@@ -5127,7 +5133,7 @@ class ASTAnalyticFunctionCall final : public ASTExpression {
   //
   // The function_with_group_rows() case can only happen if
   // FEATURE_V_1_3_WITH_GROUP_ROWS is enabled and one function call has both
-  // WITH GROUP_ROWS and an OVER clause.
+  // WITH GROUP ROWS and an OVER clause.
   const ASTFunctionCall* function() const;
   const ASTFunctionCallWithGroupRows* function_with_group_rows() const;
 
@@ -5870,8 +5876,9 @@ class ASTModelClause final : public ASTNode {
   const ASTPathExpression* model_path_ = nullptr;
 };
 
-// This represents a clause of form "CONNECTION <target>", where <target> is a
-// connection name.
+// This represents a clause of `CONNECTION DEFAULT` or `CONNECTION <path>`.
+// In the former form, the connection_path will be a default literal. In the
+// latter form, the connection_path will be a path expression.
 class ASTConnectionClause final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_CONNECTION_CLAUSE;
@@ -5881,7 +5888,7 @@ class ASTConnectionClause final : public ASTNode {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  const ASTPathExpression* connection_path() const { return connection_path_; }
+  const ASTExpression* connection_path() const { return connection_path_; }
 
   friend class ParseTreeSerializer;
 
@@ -5892,7 +5899,7 @@ class ASTConnectionClause final : public ASTNode {
     return fl.Finalize();
   }
 
-  const ASTPathExpression* connection_path_ = nullptr;
+  const ASTExpression* connection_path_ = nullptr;
 };
 
 class ASTTableDataSource : public ASTTableExpression {
@@ -6165,7 +6172,8 @@ class ASTCreateSchemaStatement final : public ASTCreateSchemaStmtBase {
 
 // This represents a CREATE EXTERNAL SCHEMA statement, i.e.,
 // CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] EXTERNAL SCHEMA [IF
-// NOT EXISTS] <name> WITH CONNECTION <connection> OPTIONS (name=value, ...);
+// NOT EXISTS] <name> [WITH CONNECTION <connection>] OPTIONS (name=value,
+// ...);
 class ASTCreateExternalSchemaStatement final : public ASTCreateSchemaStmtBase {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_EXTERNAL_SCHEMA_STATEMENT;
@@ -6876,7 +6884,7 @@ class ASTTemplatedParameterType final : public ASTNode {
   ASTTemplatedParameterType::TemplatedTypeKind kind_ = ASTTemplatedParameterType::UNINITIALIZED;
 };
 
-// This represents the value DEFAULT that shows up in DML statements.
+// This represents the value DEFAULT in DML statements or connection clauses.
 // It will not show up as a general expression anywhere else.
 class ASTDefaultLiteral final : public ASTExpression {
  public:
@@ -7470,14 +7478,9 @@ class ASTInsertStatement final : public ASTStatement {
     kSeenValuesList = ASTInsertStatementEnums::kSeenValuesList
   };
 
-  // This is used by the Bison parser to store the latest element of the INSERT
-  // syntax that was seen. The INSERT statement is extremely complicated to
-  // parse in bison because it is very free-form, almost everything is optional
-  // and almost all of the keywords are also usable as identifiers. So we parse
-  // it in a very free-form way, and enforce the grammar in code during/after
-  // parsing.
-  void set_parse_progress(ASTInsertStatement::ParseProgress parse_progress) { parse_progress_ = parse_progress; }
-  ASTInsertStatement::ParseProgress parse_progress() const { return parse_progress_; }
+  // Deprecated
+  void set_deprecated_parse_progress(int deprecated_parse_progress) { deprecated_parse_progress_ = deprecated_parse_progress; }
+  int deprecated_parse_progress() const { return deprecated_parse_progress_; }
 
   void set_insert_mode(ASTInsertStatement::InsertMode insert_mode) { insert_mode_ = insert_mode; }
   ASTInsertStatement::InsertMode insert_mode() const { return insert_mode_; }
@@ -7531,7 +7534,7 @@ class ASTInsertStatement final : public ASTStatement {
   const ASTQuery* query_ = nullptr;
   const ASTAssertRowsModified* assert_rows_modified_ = nullptr;
   const ASTReturningClause* returning_ = nullptr;
-  ASTInsertStatement::ParseProgress parse_progress_ = ASTInsertStatement::kInitial;
+  int deprecated_parse_progress_ = 0;
   ASTInsertStatement::InsertMode insert_mode_ = ASTInsertStatement::DEFAULT_MODE;
 };
 
@@ -12468,6 +12471,38 @@ class ASTRecursionDepthModifier final : public ASTNode {
   const ASTAlias* alias_ = nullptr;
   const ASTIntOrUnbounded* lower_bound_ = nullptr;
   const ASTIntOrUnbounded* upper_bound_ = nullptr;
+};
+
+class ASTMapType final : public ASTType {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_MAP_TYPE;
+
+  ASTMapType() : ASTType(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTType* key_type() const { return key_type_; }
+  const ASTType* value_type() const { return value_type_; }
+  const ASTTypeParameterList* type_parameters() const override { return type_parameters_; }
+  const ASTCollate* collate() const override { return collate_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&key_type_));
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_type_));
+    fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
+    fl.AddOptional(&collate_, AST_COLLATE);
+    return fl.Finalize();
+  }
+
+  const ASTType* key_type_ = nullptr;
+  const ASTType* value_type_ = nullptr;
+  const ASTTypeParameterList* type_parameters_ = nullptr;
+  const ASTCollate* collate_ = nullptr;
 };
 
 }  // namespace zetasql

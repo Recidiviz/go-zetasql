@@ -30,13 +30,19 @@
 #include "zetasql/analyzer/resolver.h"
 #include "zetasql/common/evaluator_registration_utils.h"
 #include "zetasql/common/status_payload_utils.h"
+#include "zetasql/compliance/test_driver.h"
+#include "zetasql/parser/parse_tree.h"
+#include "zetasql/parser/parser.h"
 #include "zetasql/public/analyzer.h"
 #include "zetasql/public/analyzer_options.h"
 #include "zetasql/public/analyzer_output.h"
 #include "zetasql/public/annotation/collation.h"
+#include "zetasql/public/catalog.h"
 #include "zetasql/public/error_helpers.h"
+#include "zetasql/public/evaluator.h"
 #include "zetasql/public/function.h"
 #include "zetasql/public/functions/date_time_util.h"
+#include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/multi_catalog.h"
 #include "zetasql/public/options.pb.h"
@@ -44,25 +50,32 @@
 #include "zetasql/public/simple_catalog.h"
 #include "zetasql/public/simple_catalog_util.h"
 #include "zetasql/public/types/annotation.h"
+#include "zetasql/public/types/simple_value.h"
+#include "zetasql/public/types/struct_type.h"
+#include "zetasql/public/types/type.h"
 #include "zetasql/public/types/type_factory.h"
 #include "zetasql/public/value.h"
 #include "zetasql/reference_impl/algebrizer.h"
 #include "zetasql/reference_impl/evaluation.h"
 #include "zetasql/reference_impl/operator.h"
 #include "zetasql/reference_impl/parameters.h"
-#include "zetasql/reference_impl/rewrite_flags.h"
 #include "zetasql/reference_impl/statement_evaluator.h"
 #include "zetasql/reference_impl/tuple.h"
 #include "zetasql/reference_impl/type_helpers.h"
+#include "zetasql/reference_impl/variable_generator.h"
 #include "zetasql/reference_impl/variable_id.h"
 #include "zetasql/resolved_ast/resolved_ast.h"
 #include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "zetasql/resolved_ast/resolved_node.h"
 #include "zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "zetasql/scripting/error_helpers.h"
 #include "zetasql/scripting/script_executor.h"
+#include "zetasql/scripting/script_segment.h"
+#include "zetasql/scripting/type_aliases.h"
 #include "zetasql/testing/test_value.h"
 #include "absl/container/btree_set.h"
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/flags/flag.h"
 #include "zetasql/base/check.h"
 #include "absl/status/status.h"
@@ -73,8 +86,10 @@
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
+#include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
 #include "zetasql/base/status_macros.h"
+#include "zetasql/base/clock.h"
 
 // Ideally we would rename this to
 // --reference_driver_statement_eval_timeout_sec, but that could break existing
@@ -143,6 +158,21 @@ ReferenceDriver::ReferenceDriver(
 }
 
 ReferenceDriver::~ReferenceDriver() = default;
+
+// static
+std::unique_ptr<ReferenceDriver> ReferenceDriver::CreateFromTestDriver(
+    TestDriver* test_driver) {
+  if (test_driver->IsReferenceImplementation()) {
+    auto* ref_driver = static_cast<ReferenceDriver*>(test_driver);
+    ABSL_CHECK(ref_driver != nullptr);
+    return std::make_unique<ReferenceDriver>(
+        ref_driver->GetSupportedLanguageOptions(),
+        ref_driver->enabled_rewrites());
+  } else {
+    return std::make_unique<ReferenceDriver>(
+        test_driver->GetSupportedLanguageOptions());
+  }
+}
 
 // static
 bool ReferenceDriver::UsesUnsupportedType(const LanguageOptions& options,
@@ -296,6 +326,7 @@ absl::StatusOr<AnalyzerOptions> ReferenceDriver::GetAnalyzerOptions(
   analyzer_options.set_enabled_rewrites(enabled_rewrites_);
   analyzer_options.set_error_message_mode(
       ErrorMessageMode::ERROR_MESSAGE_MULTI_LINE_WITH_CARET);
+  analyzer_options.set_show_function_signature_mismatch_details(true);
   analyzer_options.set_default_time_zone(default_time_zone_);
 
   for (const auto& p : parameters) {
@@ -445,6 +476,15 @@ absl::StatusOr<Value> ReferenceDriver::ExecuteStatement(
                                             /*database=*/nullptr);
 }
 
+absl::StatusOr<ScriptResult> ReferenceDriver::ExecuteScript(
+    const std::string& sql, const std::map<std::string, Value>& parameters,
+    TypeFactory* type_factory) {
+  ExecuteStatementOptions options{.primary_key_mode = PrimaryKeyMode::DEFAULT};
+  bool uses_unsupported_type = false;  // unused
+  return ExecuteScriptForReferenceDriver(sql, parameters, options, type_factory,
+                                         &uses_unsupported_type);
+}
+
 absl::StatusOr<std::unique_ptr<const AnalyzerOutput>>
 ReferenceDriver::AnalyzeStatement(
     absl::string_view sql, TypeFactory* type_factory,
@@ -453,6 +493,8 @@ ReferenceDriver::AnalyzeStatement(
   std::unique_ptr<const AnalyzerOutput> analyzed;
   ZETASQL_RETURN_IF_ERROR(zetasql::AnalyzeStatement(sql, analyzer_options, catalog,
                                               type_factory, &analyzed));
+  // TODO: Remove this once the aggregation threshold rewriter and
+  // anonymization rewriter are updated to follow the correct pattern.
   if (analyzed->analyzer_output_properties().IsRelevant(
           REWRITE_ANONYMIZATION)) {
     ZETASQL_ASSIGN_OR_RETURN(

@@ -6,6 +6,7 @@
 #include "zetasql/public/functions/uuid.cc"
 // include dependencies
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/public/uuid_value/export.inc"
 #include "go-absl/random/random/export.inc"
 #include "go-absl/random/bit_gen_ref/export.inc"
 

@@ -3142,14 +3142,14 @@ void GO_EXPORT(ASTInsertValuesRowList_row)(void * arg0,int arg1,void ** arg2){
   *arg2 = (void *)node->rows(arg1);
 }
 
-void GO_EXPORT(ASTInsertStatement_set_parse_progress)(void * arg0,int arg1){
+void GO_EXPORT(ASTInsertStatement_set_deprecated_parse_progress)(void * arg0,int arg1){
   zetasql::ASTInsertStatement *node = (zetasql::ASTInsertStatement *)arg0;
-  node->set_parse_progress((zetasql::ASTInsertStatement::ParseProgress)arg1);
+  node->set_deprecated_parse_progress(arg1);
 }
 
-void GO_EXPORT(ASTInsertStatement_parse_progress)(void * arg0,int* arg1){
+void GO_EXPORT(ASTInsertStatement_deprecated_parse_progress)(void * arg0,int* arg1){
   zetasql::ASTInsertStatement *node = (zetasql::ASTInsertStatement *)arg0;
-  *arg1 = node->parse_progress();
+  *arg1 = node->deprecated_parse_progress();
 }
 
 void GO_EXPORT(ASTInsertStatement_set_insert_mode)(void * arg0,int arg1){

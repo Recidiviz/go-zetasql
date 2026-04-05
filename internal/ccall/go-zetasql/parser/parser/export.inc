@@ -51,6 +51,7 @@
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
 #include "go-zetasql/parser/macros/macro_expander/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
+#include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/error_location_cc_proto/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"

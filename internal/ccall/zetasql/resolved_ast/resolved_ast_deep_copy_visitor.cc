@@ -1076,6 +1076,11 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedIdentityColumnInfo(
   return CopyVisitResolvedIdentityColumnInfo(node);
 }
 
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedBarrierScan(
+    const ResolvedBarrierScan* node) {
+  return CopyVisitResolvedBarrierScan(node);
+}
+
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedLiteral(
     const ResolvedLiteral* node) {
@@ -1481,6 +1486,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateFunctionCall(
       std::unique_ptr<ResolvedExpr> limit,
       ProcessNode(node->limit()));
 
+  // Get a deep copy of group_by_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> group_by_list,
+      ProcessNodeList(node->group_by_list()));
+
+  // Get a deep copy of group_by_aggregate_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> group_by_aggregate_list,
+      ProcessNodeList(node->group_by_aggregate_list()));
+
   // Get a deep copy of argument_list vector.
   ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> argument_list,
@@ -1519,7 +1534,9 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateFunctionCall(
     std::move(having_modifier),
     std::move(order_by_item_list),
     std::move(limit),
-    node->function_call_info()
+    node->function_call_info(),
+    std::move(group_by_list),
+    std::move(group_by_aggregate_list)
   );
 
   // Copy the type_annotation_map field explicitly because it is not a
@@ -6061,7 +6078,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticFunctionGroup(
 
   // Get a deep copy of analytic_function_list vector.
   ZETASQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumn>> analytic_function_list,
+      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> analytic_function_list,
       ProcessNodeList(node->analytic_function_list()));
 
   // Create a mutable instance of ResolvedAnalyticFunctionGroup.
@@ -9740,6 +9757,59 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedIdentityColumnInfo(
     node->min_value(),
     node->cycling_enabled()
   );
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedBarrierScan(
+    const ResolvedBarrierScan* node) {
+  // Get deep copy of input_scan field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> input_scan,
+      ProcessNode(node->input_scan()));
+
+  std::vector<ResolvedColumn> column_list;
+  for (int i = 0; i < node->column_list().size(); ++i) {
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+                     CopyResolvedColumn(node->column_list()[i]));
+    column_list.push_back(elem);
+  }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Create a mutable instance of ResolvedBarrierScan.
+  auto copy = MakeResolvedBarrierScan(
+    column_list,
+    std::move(input_scan)
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
+
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
+
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
