@@ -2,6 +2,7 @@
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 // bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h later.
 #include "_cgo_export.h"
+#include "root_analyzer_amalgamation_macros.inc"
 #include "go-zetasql/public/analyzer/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"

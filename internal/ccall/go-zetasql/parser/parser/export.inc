@@ -1,9 +1,6 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_PARSER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_PARSER_EXPORT_H
 
-// Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h.
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
-
 #include "zetasql/parser/ast_node.h"
 #include "zetasql/parser/ast_node_kind.h"
 #include "zetasql/parser/parse_tree.h"
@@ -21,6 +18,7 @@
 // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
 #undef yylex
 #include "zetasql/parser/join_processor.cc"
+// utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
 #include "zetasql/parser/flex_tokenizer.h"
 #include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/bison_parser.cc"

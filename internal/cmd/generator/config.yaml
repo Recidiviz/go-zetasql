@@ -379,7 +379,7 @@ add_sources:
       // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
       #undef yylex
       #include "zetasql/parser/join_processor.cc"
-      #include "utf8_range/utf8_validity.cc"
+      // utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
       #include "zetasql/parser/flex_tokenizer.h"
       #include "zetasql/parser/flex_tokenizer.flex.cc"
 
@@ -434,8 +434,7 @@ cclib:
   bind_cc_prelude_before_headers:
     - pkg: zetasql/parser/parser
       lines: |
-        // Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h, or the
-        // include guard prevents a later SUPPRESS include from skipping stub definitions.
+        // Suppress flex_tokenizer.h inline yywrap/yylex; flex_tokenizer.flex.cc provides them.
         #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
     - pkg: zetasql/public/parse_helpers
       lines: |

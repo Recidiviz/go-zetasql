@@ -3,7 +3,9 @@
 
 #include "zetasql/common/unicode_utils.h"
 // include sources
+#ifndef ZETASQL_OMIT_UNICODE_UTILS_CC
 #include "zetasql/common/unicode_utils.cc"
+#endif
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-absl/algorithm/container/export.inc"

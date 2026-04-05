@@ -955,6 +955,9 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 			param.ImportUnsafePkg = true
 		}
 	}
+	param.ImportGoLibs = append(param.ImportGoLibs,
+		"github.com/goccy/go-zetasql/internal/ccall/utf8_range_link",
+	)
 	return param
 }
 

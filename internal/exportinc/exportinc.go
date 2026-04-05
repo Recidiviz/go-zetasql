@@ -88,6 +88,7 @@ func PreludeLinesFromBindCC(bindCC []byte) ([]string, error) {
 func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	prelude = prependParserExportFlexSuppress(packageDir, prelude)
 	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
+	prelude = wrapUnicodeUtilsCCInclude(prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
 	}
@@ -117,25 +118,31 @@ func filterBisonExportDuplicateFlexTokenizer(packageDir string, prelude []string
 	return out
 }
 
-// prependParserExportFlexSuppress ensures parser/export.inc defines SUPPRESS before parser.h (line ~10)
-// pulls flex_tokenizer.h. Dependent packages (parse_helpers, etc.) amalgamate via export.inc only;
-// without this, the include guard skips a later SUPPRESS include and flex.cc conflicts with header stubs.
-func prependParserExportFlexSuppress(packageDir string, prelude []string) []string {
-	if !strings.Contains(packageDir, "/parser/parser") {
-		return prelude
-	}
-	for i := 0; i < len(prelude) && i < 8; i++ {
-		if strings.Contains(prelude[i], "ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS") {
-			return prelude
+// wrapUnicodeUtilsCCInclude guards zetasql/common/unicode_utils.cc so the public/analyzer CGO
+// package can define ZETASQL_OMIT_UNICODE_UTILS_CC (see bind_cc_prelude_before_headers) and avoid
+// duplicating FLAGS_zetasql_idstring_* with root bind.cc, while other TUs include the .cc as before.
+func wrapUnicodeUtilsCCInclude(prelude []string) []string {
+	const direct = `#include "zetasql/common/unicode_utils.cc"`
+	out := make([]string, 0, len(prelude)+2)
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == direct {
+			out = append(out,
+				"#ifndef ZETASQL_OMIT_UNICODE_UTILS_CC",
+				direct,
+				"#endif",
+			)
+			continue
 		}
+		out = append(out, line)
 	}
-	out := make([]string, 0, len(prelude)+3)
-	out = append(out,
-		"// Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h.",
-		"#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS",
-		"")
-	out = append(out, prelude...)
 	return out
+}
+
+// prependParserExportFlexSuppress used to force SUPPRESS so flex_tokenizer.flex.cc stubs did not
+// clash with flex_tokenizer.h inline stubs. Parser bind.cc no longer sets SUPPRESS (inline stubs
+// are required); export.inc must match bind.cc or dependent TUs get mismatched flex linkage.
+func prependParserExportFlexSuppress(packageDir string, prelude []string) []string {
+	return prelude
 }
 
 // PreludeForExport returns the prelude lines that export.inc should contain (raw extraction plus policy).
