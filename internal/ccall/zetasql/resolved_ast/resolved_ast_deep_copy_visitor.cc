@@ -1076,9 +1076,29 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedIdentityColumnInfo(
   return CopyVisitResolvedIdentityColumnInfo(node);
 }
 
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedStaticDescribeScan(
+    const ResolvedStaticDescribeScan* node) {
+  return CopyVisitResolvedStaticDescribeScan(node);
+}
+
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAssertScan(
+    const ResolvedAssertScan* node) {
+  return CopyVisitResolvedAssertScan(node);
+}
+
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedBarrierScan(
     const ResolvedBarrierScan* node) {
   return CopyVisitResolvedBarrierScan(node);
+}
+
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateConnectionStmt(
+    const ResolvedCreateConnectionStmt* node) {
+  return CopyVisitResolvedCreateConnectionStmt(node);
+}
+
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterConnectionStmt(
+    const ResolvedAlterConnectionStmt* node) {
+  return CopyVisitResolvedAlterConnectionStmt(node);
 }
 
 absl::Status
@@ -4353,6 +4373,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateIndexStmt(
       std::vector<std::unique_ptr<ResolvedExpr>> storing_expression_list,
       ProcessNodeList(node->storing_expression_list()));
 
+  // Get a deep copy of partition_by_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
+      ProcessNodeList(node->partition_by_list()));
+
   // Get a deep copy of option_list vector.
   ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
@@ -4386,6 +4411,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateIndexStmt(
     node->index_all_columns(),
     std::move(index_item_list),
     std::move(storing_expression_list),
+    std::move(partition_by_list),
     std::move(option_list),
     std::move(computed_columns_list),
     std::move(unnest_expressions_list)
@@ -9771,6 +9797,125 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedIdentityColumnInfo(
 }
 
 absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedStaticDescribeScan(
+    const ResolvedStaticDescribeScan* node) {
+  // Get deep copy of input_scan field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> input_scan,
+      ProcessNode(node->input_scan()));
+
+  std::vector<ResolvedColumn> column_list;
+  for (int i = 0; i < node->column_list().size(); ++i) {
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+                     CopyResolvedColumn(node->column_list()[i]));
+    column_list.push_back(elem);
+  }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Create a mutable instance of ResolvedStaticDescribeScan.
+  auto copy = MakeResolvedStaticDescribeScan(
+    column_list,
+    std::move(input_scan),
+    node->describe_text()
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
+
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
+
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertScan(
+    const ResolvedAssertScan* node) {
+  // Get deep copy of input_scan field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> input_scan,
+      ProcessNode(node->input_scan()));
+
+  // Get deep copy of condition field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> condition,
+      ProcessNode(node->condition()));
+
+  // Get deep copy of message field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> message,
+      ProcessNode(node->message()));
+
+  std::vector<ResolvedColumn> column_list;
+  for (int i = 0; i < node->column_list().size(); ++i) {
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+                     CopyResolvedColumn(node->column_list()[i]));
+    column_list.push_back(elem);
+  }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Create a mutable instance of ResolvedAssertScan.
+  auto copy = MakeResolvedAssertScan(
+    column_list,
+    std::move(input_scan),
+    std::move(condition),
+    std::move(message)
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
+
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
+
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedBarrierScan(
     const ResolvedBarrierScan* node) {
   // Get deep copy of input_scan field.
@@ -9810,6 +9955,87 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedBarrierScan(
   // Copy the `node_source` field explicitly because it is not a constructor
   // arg.
   copy.get()->set_node_source(node->node_source());
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateConnectionStmt(
+    const ResolvedCreateConnectionStmt* node) {
+  // Get a deep copy of option_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> option_list,
+      ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Create a mutable instance of ResolvedCreateConnectionStmt.
+  auto copy = MakeResolvedCreateConnectionStmt(
+    node->name_path(),
+    node->create_scope(),
+    node->create_mode(),
+    std::move(option_list)
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterConnectionStmt(
+    const ResolvedAlterConnectionStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Get a deep copy of alter_action_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
+      ProcessNodeList(node->alter_action_list()));
+
+  // Create a mutable instance of ResolvedAlterConnectionStmt.
+  auto copy = MakeResolvedAlterConnectionStmt(
+    node->name_path(),
+    std::move(alter_action_list),
+    node->is_if_exists()
+  );
+
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.

@@ -4,8 +4,104 @@ void ASTQueryStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTQueryStatement(this, data);
 }
 
+void ASTAliasedQueryExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAliasedQueryExpression(this, data);
+}
+
 void ASTQuery::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTQuery(this, data);
+}
+
+void ASTFromQuery::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTFromQuery(this, data);
+}
+
+void ASTPipeExtend::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeExtend(this, data);
+}
+
+void ASTPipeRenameItem::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeRenameItem(this, data);
+}
+
+void ASTPipeRename::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeRename(this, data);
+}
+
+void ASTPipeAggregate::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeAggregate(this, data);
+}
+
+void ASTPipeSetOperation::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeSetOperation(this, data);
+}
+
+void ASTPipeJoin::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeJoin(this, data);
+}
+
+void ASTPipeCall::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeCall(this, data);
+}
+
+void ASTPipeWindow::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeWindow(this, data);
+}
+
+void ASTPipeWhere::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeWhere(this, data);
+}
+
+void ASTPipeSelect::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeSelect(this, data);
+}
+
+void ASTPipeLimitOffset::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeLimitOffset(this, data);
+}
+
+void ASTPipeOrderBy::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeOrderBy(this, data);
+}
+
+void ASTPipeDistinct::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeDistinct(this, data);
+}
+
+void ASTPipeTablesample::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeTablesample(this, data);
+}
+
+void ASTPipeAs::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeAs(this, data);
+}
+
+void ASTPipeStaticDescribe::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeStaticDescribe(this, data);
+}
+
+void ASTPipeAssert::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeAssert(this, data);
+}
+
+void ASTPipeDrop::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeDrop(this, data);
+}
+
+void ASTPipeSetItem::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeSetItem(this, data);
+}
+
+void ASTPipeSet::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeSet(this, data);
+}
+
+void ASTPipePivot::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipePivot(this, data);
+}
+
+void ASTPipeUnpivot::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeUnpivot(this, data);
 }
 
 void ASTSelect::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -38,6 +134,10 @@ void ASTPathExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTTablePathExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTTablePathExpression(this, data);
+}
+
+void ASTPipeJoinLhsPlaceholder::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeJoinLhsPlaceholder(this, data);
 }
 
 void ASTFromClause::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -82,6 +182,10 @@ void ASTOrderingExpression::Accept(ParseTreeVisitor* visitor, void* data) const 
 
 void ASTOrderBy::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTOrderBy(this, data);
+}
+
+void ASTGroupingItemOrder::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTGroupingItemOrder(this, data);
 }
 
 void ASTGroupingItem::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -564,6 +668,18 @@ void ASTForSystemTime::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTForSystemTime(this, data);
 }
 
+void ASTMatchRecognizeClause::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTMatchRecognizeClause(this, data);
+}
+
+void ASTRowPatternVariable::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRowPatternVariable(this, data);
+}
+
+void ASTRowPatternOperation::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRowPatternOperation(this, data);
+}
+
 void ASTQualify::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTQualify(this, data);
 }
@@ -698,6 +814,10 @@ void ASTCloneDataSourceList::Accept(ParseTreeVisitor* visitor, void* data) const
 
 void ASTCloneDataStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTCloneDataStatement(this, data);
+}
+
+void ASTCreateConnectionStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTCreateConnectionStatement(this, data);
 }
 
 void ASTCreateConstantStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1308,6 +1428,10 @@ void ASTForInStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTForInStatement(this, data);
 }
 
+void ASTAlterConnectionStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterConnectionStatement(this, data);
+}
+
 void ASTAlterDatabaseStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterDatabaseStatement(this, data);
 }
@@ -1504,8 +1628,104 @@ absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisit
   return visitor->visitASTQueryStatement(this);
 }
 
+absl::StatusOr<VisitResult> ASTAliasedQueryExpression::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAliasedQueryExpression(this);
+}
+
 absl::StatusOr<VisitResult> ASTQuery::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTQuery(this);
+}
+
+absl::StatusOr<VisitResult> ASTFromQuery::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTFromQuery(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeExtend::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeExtend(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeRenameItem::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeRenameItem(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeRename::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeRename(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeAggregate::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeAggregate(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeSetOperation::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeSetOperation(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeJoin::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeJoin(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeCall::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeCall(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeWindow::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeWindow(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeWhere::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeWhere(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeSelect::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeSelect(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeLimitOffset::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeLimitOffset(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeOrderBy::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeOrderBy(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeDistinct::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeDistinct(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeTablesample::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeTablesample(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeAs::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeAs(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeStaticDescribe::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeStaticDescribe(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeAssert::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeAssert(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeDrop::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeDrop(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeSetItem::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeSetItem(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeSet::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeSet(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipePivot::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipePivot(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeUnpivot::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeUnpivot(this);
 }
 
 absl::StatusOr<VisitResult> ASTSelect::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1538,6 +1758,10 @@ absl::StatusOr<VisitResult> ASTPathExpression::Accept(NonRecursiveParseTreeVisit
 
 absl::StatusOr<VisitResult> ASTTablePathExpression::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTTablePathExpression(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeJoinLhsPlaceholder::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeJoinLhsPlaceholder(this);
 }
 
 absl::StatusOr<VisitResult> ASTFromClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1582,6 +1806,10 @@ absl::StatusOr<VisitResult> ASTOrderingExpression::Accept(NonRecursiveParseTreeV
 
 absl::StatusOr<VisitResult> ASTOrderBy::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTOrderBy(this);
+}
+
+absl::StatusOr<VisitResult> ASTGroupingItemOrder::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTGroupingItemOrder(this);
 }
 
 absl::StatusOr<VisitResult> ASTGroupingItem::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2064,6 +2292,18 @@ absl::StatusOr<VisitResult> ASTForSystemTime::Accept(NonRecursiveParseTreeVisito
   return visitor->visitASTForSystemTime(this);
 }
 
+absl::StatusOr<VisitResult> ASTMatchRecognizeClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTMatchRecognizeClause(this);
+}
+
+absl::StatusOr<VisitResult> ASTRowPatternVariable::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRowPatternVariable(this);
+}
+
+absl::StatusOr<VisitResult> ASTRowPatternOperation::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRowPatternOperation(this);
+}
+
 absl::StatusOr<VisitResult> ASTQualify::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTQualify(this);
 }
@@ -2198,6 +2438,10 @@ absl::StatusOr<VisitResult> ASTCloneDataSourceList::Accept(NonRecursiveParseTree
 
 absl::StatusOr<VisitResult> ASTCloneDataStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTCloneDataStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTCreateConnectionStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTCreateConnectionStatement(this);
 }
 
 absl::StatusOr<VisitResult> ASTCreateConstantStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2806,6 +3050,10 @@ absl::StatusOr<VisitResult> ASTRepeatStatement::Accept(NonRecursiveParseTreeVisi
 
 absl::StatusOr<VisitResult> ASTForInStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTForInStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTAlterConnectionStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterConnectionStatement(this);
 }
 
 absl::StatusOr<VisitResult> ASTAlterDatabaseStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {

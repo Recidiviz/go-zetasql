@@ -724,7 +724,19 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedStaticDescribeScan(const ResolvedStaticDescribeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAssertScan(const ResolvedAssertScan* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedBarrierScan(const ResolvedBarrierScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateConnectionStmt(const ResolvedCreateConnectionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterConnectionStmt(const ResolvedAlterConnectionStmt* node) {
     return DefaultVisit(node);
   }
 };

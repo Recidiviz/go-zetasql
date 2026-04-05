@@ -122,6 +122,9 @@ extern ASTOptionsEntryEnumsDefaultTypeInternal _ASTOptionsEntryEnums_default_ins
 class ASTOrderingExpressionEnums;
 struct ASTOrderingExpressionEnumsDefaultTypeInternal;
 extern ASTOrderingExpressionEnumsDefaultTypeInternal _ASTOrderingExpressionEnums_default_instance_;
+class ASTRowPatternOperationEnums;
+struct ASTRowPatternOperationEnumsDefaultTypeInternal;
+extern ASTRowPatternOperationEnumsDefaultTypeInternal _ASTRowPatternOperationEnums_default_instance_;
 class ASTSampleSizeEnums;
 struct ASTSampleSizeEnumsDefaultTypeInternal;
 extern ASTSampleSizeEnumsDefaultTypeInternal _ASTSampleSizeEnums_default_instance_;
@@ -200,6 +203,8 @@ template <>
 ::zetasql::ASTOptionsEntryEnums* Arena::CreateMaybeMessage<::zetasql::ASTOptionsEntryEnums>(Arena*);
 template <>
 ::zetasql::ASTOrderingExpressionEnums* Arena::CreateMaybeMessage<::zetasql::ASTOrderingExpressionEnums>(Arena*);
+template <>
+::zetasql::ASTRowPatternOperationEnums* Arena::CreateMaybeMessage<::zetasql::ASTRowPatternOperationEnums>(Arena*);
 template <>
 ::zetasql::ASTSampleSizeEnums* Arena::CreateMaybeMessage<::zetasql::ASTSampleSizeEnums>(Arena*);
 template <>
@@ -1427,11 +1432,43 @@ inline bool ASTSpannerInterleaveClauseEnums_Type_Parse(absl::string_view name, A
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTSpannerInterleaveClauseEnums_Type>(
       ASTSpannerInterleaveClauseEnums_Type_descriptor(), name, value);
 }
+enum ASTRowPatternOperationEnums_OperationType : int {
+  ASTRowPatternOperationEnums_OperationType_OPERATION_TYPE_UNSPECIFIED = 0,
+  ASTRowPatternOperationEnums_OperationType_CONCAT = 1,
+  ASTRowPatternOperationEnums_OperationType_ALTERNATE = 2,
+  ASTRowPatternOperationEnums_OperationType_PERMUTE = 3,
+  ASTRowPatternOperationEnums_OperationType_EXCLUDE = 4,
+};
+
+bool ASTRowPatternOperationEnums_OperationType_IsValid(int value);
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums_OperationType_OperationType_MIN = static_cast<ASTRowPatternOperationEnums_OperationType>(0);
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums_OperationType_OperationType_MAX = static_cast<ASTRowPatternOperationEnums_OperationType>(4);
+constexpr int ASTRowPatternOperationEnums_OperationType_OperationType_ARRAYSIZE = 4 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ASTRowPatternOperationEnums_OperationType_descriptor();
+template <typename T>
+const std::string& ASTRowPatternOperationEnums_OperationType_Name(T value) {
+  static_assert(std::is_same<T, ASTRowPatternOperationEnums_OperationType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to OperationType_Name().");
+  return ASTRowPatternOperationEnums_OperationType_Name(static_cast<ASTRowPatternOperationEnums_OperationType>(value));
+}
+template <>
+inline const std::string& ASTRowPatternOperationEnums_OperationType_Name(ASTRowPatternOperationEnums_OperationType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ASTRowPatternOperationEnums_OperationType_descriptor,
+                                                 0, 4>(
+      static_cast<int>(value));
+}
+inline bool ASTRowPatternOperationEnums_OperationType_Parse(absl::string_view name, ASTRowPatternOperationEnums_OperationType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTRowPatternOperationEnums_OperationType>(
+      ASTRowPatternOperationEnums_OperationType_descriptor(), name, value);
+}
 enum SchemaObjectKind : int {
   __SchemaObjectKind__switch_must_have_a_default__ = -1,
   kInvalidSchemaObjectKind = 1,
   kAggregateFunction = 2,
   kApproxView = 17,
+  kConnection = 19,
   kConstant = 3,
   kDatabase = 4,
   kExternalTable = 5,
@@ -1450,8 +1487,8 @@ enum SchemaObjectKind : int {
 
 bool SchemaObjectKind_IsValid(int value);
 constexpr SchemaObjectKind SchemaObjectKind_MIN = static_cast<SchemaObjectKind>(-1);
-constexpr SchemaObjectKind SchemaObjectKind_MAX = static_cast<SchemaObjectKind>(18);
-constexpr int SchemaObjectKind_ARRAYSIZE = 18 + 1;
+constexpr SchemaObjectKind SchemaObjectKind_MAX = static_cast<SchemaObjectKind>(19);
+constexpr int SchemaObjectKind_ARRAYSIZE = 19 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 SchemaObjectKind_descriptor();
 template <typename T>
@@ -1464,7 +1501,7 @@ const std::string& SchemaObjectKind_Name(T value) {
 template <>
 inline const std::string& SchemaObjectKind_Name(SchemaObjectKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<SchemaObjectKind_descriptor,
-                                                 -1, 18>(
+                                                 -1, 19>(
       static_cast<int>(value));
 }
 inline bool SchemaObjectKind_Parse(absl::string_view name, SchemaObjectKind* value) {
@@ -6451,6 +6488,153 @@ class ASTSpannerInterleaveClauseEnums final :
   struct Impl_ {
   };
   friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ASTRowPatternOperationEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ASTRowPatternOperationEnums) */ {
+ public:
+  inline ASTRowPatternOperationEnums() : ASTRowPatternOperationEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ASTRowPatternOperationEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ASTRowPatternOperationEnums(const ASTRowPatternOperationEnums& from);
+  ASTRowPatternOperationEnums(ASTRowPatternOperationEnums&& from) noexcept
+    : ASTRowPatternOperationEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ASTRowPatternOperationEnums& operator=(const ASTRowPatternOperationEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ASTRowPatternOperationEnums& operator=(ASTRowPatternOperationEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ASTRowPatternOperationEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ASTRowPatternOperationEnums* internal_default_instance() {
+    return reinterpret_cast<const ASTRowPatternOperationEnums*>(
+               &_ASTRowPatternOperationEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    33;
+
+  friend void swap(ASTRowPatternOperationEnums& a, ASTRowPatternOperationEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ASTRowPatternOperationEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ASTRowPatternOperationEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ASTRowPatternOperationEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ASTRowPatternOperationEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ASTRowPatternOperationEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ASTRowPatternOperationEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ASTRowPatternOperationEnums";
+  }
+  protected:
+  explicit ASTRowPatternOperationEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using OperationType = ASTRowPatternOperationEnums_OperationType;
+  static constexpr OperationType OPERATION_TYPE_UNSPECIFIED = ASTRowPatternOperationEnums_OperationType_OPERATION_TYPE_UNSPECIFIED;
+  static constexpr OperationType CONCAT = ASTRowPatternOperationEnums_OperationType_CONCAT;
+  static constexpr OperationType ALTERNATE = ASTRowPatternOperationEnums_OperationType_ALTERNATE;
+  static constexpr OperationType PERMUTE = ASTRowPatternOperationEnums_OperationType_PERMUTE;
+  static constexpr OperationType EXCLUDE = ASTRowPatternOperationEnums_OperationType_EXCLUDE;
+  static inline bool OperationType_IsValid(int value) {
+    return ASTRowPatternOperationEnums_OperationType_IsValid(value);
+  }
+  static constexpr OperationType OperationType_MIN = ASTRowPatternOperationEnums_OperationType_OperationType_MIN;
+  static constexpr OperationType OperationType_MAX = ASTRowPatternOperationEnums_OperationType_OperationType_MAX;
+  static constexpr int OperationType_ARRAYSIZE = ASTRowPatternOperationEnums_OperationType_OperationType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* OperationType_descriptor() {
+    return ASTRowPatternOperationEnums_OperationType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& OperationType_Name(T value) {
+    return ASTRowPatternOperationEnums_OperationType_Name(value);
+  }
+  static inline bool OperationType_Parse(absl::string_view name, OperationType* value) {
+    return ASTRowPatternOperationEnums_OperationType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ASTRowPatternOperationEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
 };
 
 // ===================================================================
@@ -6596,6 +6780,10 @@ class ASTSpannerInterleaveClauseEnums final :
 // -------------------------------------------------------------------
 
 // ASTSpannerInterleaveClauseEnums
+
+// -------------------------------------------------------------------
+
+// ASTRowPatternOperationEnums
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -6846,6 +7034,12 @@ struct is_proto_enum<::zetasql::ASTSpannerInterleaveClauseEnums_Type> : std::tru
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTSpannerInterleaveClauseEnums_Type>() {
   return ::zetasql::ASTSpannerInterleaveClauseEnums_Type_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ASTRowPatternOperationEnums_OperationType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTRowPatternOperationEnums_OperationType>() {
+  return ::zetasql::ASTRowPatternOperationEnums_OperationType_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::SchemaObjectKind> : std::true_type {};

@@ -262,14 +262,18 @@ enum ResolvedNodeKind : int {
   RESOLVED_AUX_LOAD_DATA_STMT = 186,
   RESOLVED_UNDROP_STMT = 227,
   RESOLVED_IDENTITY_COLUMN_INFO = 244,
+  RESOLVED_STATIC_DESCRIBE_SCAN = 251,
+  RESOLVED_ASSERT_SCAN = 252,
   RESOLVED_BARRIER_SCAN = 261,
+  RESOLVED_CREATE_CONNECTION_STMT = 263,
+  RESOLVED_ALTER_CONNECTION_STMT = 264,
   __ResolvedNodeKind__switch_must_have_default__ = -1,
 };
 
 bool ResolvedNodeKind_IsValid(int value);
 constexpr ResolvedNodeKind ResolvedNodeKind_MIN = static_cast<ResolvedNodeKind>(-1);
-constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(261);
-constexpr int ResolvedNodeKind_ARRAYSIZE = 261 + 1;
+constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(264);
+constexpr int ResolvedNodeKind_ARRAYSIZE = 264 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 ResolvedNodeKind_descriptor();
 template <typename T>
@@ -282,7 +286,7 @@ const std::string& ResolvedNodeKind_Name(T value) {
 template <>
 inline const std::string& ResolvedNodeKind_Name(ResolvedNodeKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedNodeKind_descriptor,
-                                                 -1, 261>(
+                                                 -1, 264>(
       static_cast<int>(value));
 }
 inline bool ResolvedNodeKind_Parse(absl::string_view name, ResolvedNodeKind* value) {

@@ -448,9 +448,22 @@ struct ASTSpannerInterleaveClauseEnumsDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ASTSpannerInterleaveClauseEnumsDefaultTypeInternal _ASTSpannerInterleaveClauseEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ASTRowPatternOperationEnums::ASTRowPatternOperationEnums(
+    ::_pbi::ConstantInitialized) {}
+struct ASTRowPatternOperationEnumsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ASTRowPatternOperationEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ASTRowPatternOperationEnumsDefaultTypeInternal() {}
+  union {
+    ASTRowPatternOperationEnums _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ASTRowPatternOperationEnumsDefaultTypeInternal _ASTRowPatternOperationEnums_default_instance_;
 }  // namespace zetasql
-static ::_pb::Metadata file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[33];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[41];
+static ::_pb::Metadata file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[34];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[42];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_zetasql_2fparser_2fast_5fenums_2eproto = nullptr;
 const ::uint32_t TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
@@ -719,6 +732,14 @@ const ::uint32_t TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets[] P
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ASTRowPatternOperationEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
 static const ::_pbi::MigrationSchema
@@ -756,6 +777,7 @@ static const ::_pbi::MigrationSchema
         { 240, -1, -1, sizeof(::zetasql::ASTCreateFunctionStmtBaseEnums)},
         { 248, -1, -1, sizeof(::zetasql::ASTAuxLoadDataStatementEnums)},
         { 256, -1, -1, sizeof(::zetasql::ASTSpannerInterleaveClauseEnums)},
+        { 264, -1, -1, sizeof(::zetasql::ASTRowPatternOperationEnums)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -792,6 +814,7 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_ASTCreateFunctionStmtBaseEnums_default_instance_._instance,
     &::zetasql::_ASTAuxLoadDataStatementEnums_default_instance_._instance,
     &::zetasql::_ASTSpannerInterleaveClauseEnums_default_instance_._instance,
+    &::zetasql::_ASTRowPatternOperationEnums_default_instance_._instance,
 };
 const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\036zetasql/parser/ast_enums.proto\022\007zetasq"
@@ -891,30 +914,33 @@ const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PR
     "dDataStatementEnums\"7\n\rInsertionMode\022\013\n\007"
     "NOT_SET\020\000\022\n\n\006APPEND\020\001\022\r\n\tOVERWRITE\020\002\"M\n\037"
     "ASTSpannerInterleaveClauseEnums\"*\n\004Type\022"
-    "\013\n\007NOT_SET\020\000\022\006\n\002IN\020\001\022\r\n\tIN_PARENT\020\002*\371\002\n\020"
-    "SchemaObjectKind\022=\n0__SchemaObjectKind__"
-    "switch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\022"
-    "\034\n\030kInvalidSchemaObjectKind\020\001\022\026\n\022kAggreg"
-    "ateFunction\020\002\022\017\n\013kApproxView\020\021\022\r\n\tkConst"
-    "ant\020\003\022\r\n\tkDatabase\020\004\022\022\n\016kExternalTable\020\005"
-    "\022\r\n\tkFunction\020\006\022\n\n\006kIndex\020\007\022\025\n\021kMaterial"
-    "izedView\020\010\022\n\n\006kModel\020\t\022\016\n\nkProcedure\020\n\022\013"
-    "\n\007kSchema\020\013\022\n\n\006kTable\020\014\022\022\n\016kTableFunctio"
-    "n\020\r\022\t\n\005kView\020\016\022\022\n\016kSnapshotTable\020\017\022\023\n\017kE"
-    "xternalSchema\020\022B\035\n\031com.google.zetasql.pa"
-    "rserP\001"
+    "\013\n\007NOT_SET\020\000\022\006\n\002IN\020\001\022\r\n\tIN_PARENT\020\002\"\203\001\n\033"
+    "ASTRowPatternOperationEnums\"d\n\rOperation"
+    "Type\022\036\n\032OPERATION_TYPE_UNSPECIFIED\020\000\022\n\n\006"
+    "CONCAT\020\001\022\r\n\tALTERNATE\020\002\022\013\n\007PERMUTE\020\003\022\013\n\007"
+    "EXCLUDE\020\004*\212\003\n\020SchemaObjectKind\022=\n0__Sche"
+    "maObjectKind__switch_must_have_a_default"
+    "__\020\377\377\377\377\377\377\377\377\377\001\022\034\n\030kInvalidSchemaObjectKin"
+    "d\020\001\022\026\n\022kAggregateFunction\020\002\022\017\n\013kApproxVi"
+    "ew\020\021\022\017\n\013kConnection\020\023\022\r\n\tkConstant\020\003\022\r\n\t"
+    "kDatabase\020\004\022\022\n\016kExternalTable\020\005\022\r\n\tkFunc"
+    "tion\020\006\022\n\n\006kIndex\020\007\022\025\n\021kMaterializedView\020"
+    "\010\022\n\n\006kModel\020\t\022\016\n\nkProcedure\020\n\022\013\n\007kSchema"
+    "\020\013\022\n\n\006kTable\020\014\022\022\n\016kTableFunction\020\r\022\t\n\005kV"
+    "iew\020\016\022\022\n\016kSnapshotTable\020\017\022\023\n\017kExternalSc"
+    "hema\020\022B\035\n\031com.google.zetasql.parserP\001"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto = {
     false,
     false,
-    4326,
+    4477,
     descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto,
     "zetasql/parser/ast_enums.proto",
     &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
     nullptr,
     0,
-    33,
+    34,
     schemas,
     file_default_instances,
     TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets,
@@ -2069,9 +2095,39 @@ constexpr int ASTSpannerInterleaveClauseEnums::Type_ARRAYSIZE;
 
 #endif  // (__cplusplus < 201703) &&
         // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SchemaObjectKind_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTRowPatternOperationEnums_OperationType_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[40];
+}
+bool ASTRowPatternOperationEnums_OperationType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::OPERATION_TYPE_UNSPECIFIED;
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::CONCAT;
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::ALTERNATE;
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::PERMUTE;
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::EXCLUDE;
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::OperationType_MIN;
+constexpr ASTRowPatternOperationEnums_OperationType ASTRowPatternOperationEnums::OperationType_MAX;
+constexpr int ASTRowPatternOperationEnums::OperationType_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SchemaObjectKind_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto);
+  return file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[41];
 }
 bool SchemaObjectKind_IsValid(int value) {
   switch (value) {
@@ -2093,6 +2149,7 @@ bool SchemaObjectKind_IsValid(int value) {
     case 15:
     case 17:
     case 18:
+    case 19:
       return true;
     default:
       return false;
@@ -3352,6 +3409,44 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ASTSpannerInterleaveClauseEnum
       &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[32]);
 }
+// ===================================================================
+
+class ASTRowPatternOperationEnums::_Internal {
+ public:
+};
+
+ASTRowPatternOperationEnums::ASTRowPatternOperationEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.ASTRowPatternOperationEnums)
+}
+ASTRowPatternOperationEnums::ASTRowPatternOperationEnums(const ASTRowPatternOperationEnums& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ASTRowPatternOperationEnums* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.ASTRowPatternOperationEnums)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ASTRowPatternOperationEnums::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ASTRowPatternOperationEnums::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata ASTRowPatternOperationEnums::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
+      file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[33]);
+}
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
@@ -3486,6 +3581,10 @@ Arena::CreateMaybeMessage< ::zetasql::ASTAuxLoadDataStatementEnums >(Arena* aren
 template<> PROTOBUF_NOINLINE ::zetasql::ASTSpannerInterleaveClauseEnums*
 Arena::CreateMaybeMessage< ::zetasql::ASTSpannerInterleaveClauseEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ASTSpannerInterleaveClauseEnums >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ASTRowPatternOperationEnums*
+Arena::CreateMaybeMessage< ::zetasql::ASTRowPatternOperationEnums >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ASTRowPatternOperationEnums >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)

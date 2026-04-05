@@ -32,7 +32,31 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_FAKE] = "Fake";  // For testing purposes only.
 
   map[AST_QUERY_STATEMENT] = "QueryStatement";
+  map[AST_ALIASED_QUERY_EXPRESSION] = "AliasedQueryExpression";
   map[AST_QUERY] = "Query";
+  map[AST_FROM_QUERY] = "FromQuery";
+  map[AST_PIPE_EXTEND] = "PipeExtend";
+  map[AST_PIPE_RENAME_ITEM] = "PipeRenameItem";
+  map[AST_PIPE_RENAME] = "PipeRename";
+  map[AST_PIPE_AGGREGATE] = "PipeAggregate";
+  map[AST_PIPE_SET_OPERATION] = "PipeSetOperation";
+  map[AST_PIPE_JOIN] = "PipeJoin";
+  map[AST_PIPE_CALL] = "PipeCall";
+  map[AST_PIPE_WINDOW] = "PipeWindow";
+  map[AST_PIPE_WHERE] = "PipeWhere";
+  map[AST_PIPE_SELECT] = "PipeSelect";
+  map[AST_PIPE_LIMIT_OFFSET] = "PipeLimitOffset";
+  map[AST_PIPE_ORDER_BY] = "PipeOrderBy";
+  map[AST_PIPE_DISTINCT] = "PipeDistinct";
+  map[AST_PIPE_TABLESAMPLE] = "PipeTablesample";
+  map[AST_PIPE_AS] = "PipeAs";
+  map[AST_PIPE_STATIC_DESCRIBE] = "PipeStaticDescribe";
+  map[AST_PIPE_ASSERT] = "PipeAssert";
+  map[AST_PIPE_DROP] = "PipeDrop";
+  map[AST_PIPE_SET_ITEM] = "PipeSetItem";
+  map[AST_PIPE_SET] = "PipeSet";
+  map[AST_PIPE_PIVOT] = "PipePivot";
+  map[AST_PIPE_UNPIVOT] = "PipeUnpivot";
   map[AST_SELECT] = "Select";
   map[AST_SELECT_LIST] = "SelectList";
   map[AST_SELECT_COLUMN] = "SelectColumn";
@@ -41,6 +65,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_ALIAS] = "Alias";
   map[AST_PATH_EXPRESSION] = "PathExpression";
   map[AST_TABLE_PATH_EXPRESSION] = "TablePathExpression";
+  map[AST_PIPE_JOIN_LHS_PLACEHOLDER] = "PipeJoinLhsPlaceholder";
   map[AST_FROM_CLAUSE] = "FromClause";
   map[AST_WHERE_CLAUSE] = "WhereClause";
   map[AST_BOOLEAN_LITERAL] = "BooleanLiteral";
@@ -52,6 +77,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_OR_EXPR] = "OrExpr";
   map[AST_ORDERING_EXPRESSION] = "OrderingExpression";
   map[AST_ORDER_BY] = "OrderBy";
+  map[AST_GROUPING_ITEM_ORDER] = "GroupingItemOrder";
   map[AST_GROUPING_ITEM] = "GroupingItem";
   map[AST_GROUP_BY] = "GroupBy";
   map[AST_GROUP_BY_ALL] = "GroupByAll";
@@ -172,6 +198,9 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_UNPIVOT_CLAUSE] = "UnpivotClause";
   map[AST_USING_CLAUSE] = "UsingClause";
   map[AST_FOR_SYSTEM_TIME] = "ForSystemTime";
+  map[AST_MATCH_RECOGNIZE_CLAUSE] = "MatchRecognizeClause";
+  map[AST_ROW_PATTERN_VARIABLE] = "RowPatternVariable";
+  map[AST_ROW_PATTERN_OPERATION] = "RowPatternOperation";
   map[AST_QUALIFY] = "Qualify";
   map[AST_CLAMPED_BETWEEN_MODIFIER] = "ClampedBetweenModifier";
   map[AST_WITH_REPORT_MODIFIER] = "WithReportModifier";
@@ -206,6 +235,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_COPY_DATA_SOURCE] = "CopyDataSource";
   map[AST_CLONE_DATA_SOURCE_LIST] = "CloneDataSourceList";
   map[AST_CLONE_DATA_STATEMENT] = "CloneDataStatement";
+  map[AST_CREATE_CONNECTION_STATEMENT] = "CreateConnectionStatement";
   map[AST_CREATE_CONSTANT_STATEMENT] = "CreateConstantStatement";
   map[AST_CREATE_DATABASE_STATEMENT] = "CreateDatabaseStatement";
   map[AST_CREATE_PROCEDURE_STATEMENT] = "CreateProcedureStatement";
@@ -358,6 +388,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_WHILE_STATEMENT] = "WhileStatement";
   map[AST_REPEAT_STATEMENT] = "RepeatStatement";
   map[AST_FOR_IN_STATEMENT] = "ForInStatement";
+  map[AST_ALTER_CONNECTION_STATEMENT] = "AlterConnectionStatement";
   map[AST_ALTER_DATABASE_STATEMENT] = "AlterDatabaseStatement";
   map[AST_ALTER_SCHEMA_STATEMENT] = "AlterSchemaStatement";
   map[AST_ALTER_EXTERNAL_SCHEMA_STATEMENT] = "AlterExternalSchemaStatement";

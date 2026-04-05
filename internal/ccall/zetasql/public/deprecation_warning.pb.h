@@ -76,12 +76,13 @@ enum DeprecationWarning_Kind : int {
   DeprecationWarning_Kind_PROTO3_FIELD_PRESENCE = 3,
   DeprecationWarning_Kind_QUERY_TOO_COMPLEX = 4,
   DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA = 5,
+  DeprecationWarning_Kind_PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN = 6,
 };
 
 bool DeprecationWarning_Kind_IsValid(int value);
 constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MIN = static_cast<DeprecationWarning_Kind>(-1);
-constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MAX = static_cast<DeprecationWarning_Kind>(5);
-constexpr int DeprecationWarning_Kind_Kind_ARRAYSIZE = 5 + 1;
+constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MAX = static_cast<DeprecationWarning_Kind>(6);
+constexpr int DeprecationWarning_Kind_Kind_ARRAYSIZE = 6 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 DeprecationWarning_Kind_descriptor();
 template <typename T>
@@ -94,7 +95,7 @@ const std::string& DeprecationWarning_Kind_Name(T value) {
 template <>
 inline const std::string& DeprecationWarning_Kind_Name(DeprecationWarning_Kind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<DeprecationWarning_Kind_descriptor,
-                                                 -1, 5>(
+                                                 -1, 6>(
       static_cast<int>(value));
 }
 inline bool DeprecationWarning_Kind_Parse(absl::string_view name, DeprecationWarning_Kind* value) {
@@ -240,6 +241,7 @@ class DeprecationWarning final :
   static constexpr Kind PROTO3_FIELD_PRESENCE = DeprecationWarning_Kind_PROTO3_FIELD_PRESENCE;
   static constexpr Kind QUERY_TOO_COMPLEX = DeprecationWarning_Kind_QUERY_TOO_COMPLEX;
   static constexpr Kind DEPRECATED_ANONYMIZATION_OPTION_KAPPA = DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA;
+  static constexpr Kind PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN = DeprecationWarning_Kind_PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN;
   static inline bool Kind_IsValid(int value) {
     return DeprecationWarning_Kind_IsValid(value);
   }

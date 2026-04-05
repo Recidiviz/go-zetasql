@@ -1321,7 +1321,11 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_AUX_LOAD_DATA_STMT: return "AuxLoadDataStmt";
     case RESOLVED_UNDROP_STMT: return "UndropStmt";
     case RESOLVED_IDENTITY_COLUMN_INFO: return "IdentityColumnInfo";
+    case RESOLVED_STATIC_DESCRIBE_SCAN: return "StaticDescribeScan";
+    case RESOLVED_ASSERT_SCAN: return "AssertScan";
     case RESOLVED_BARRIER_SCAN: return "BarrierScan";
+    case RESOLVED_CREATE_CONNECTION_STMT: return "CreateConnectionStmt";
+    case RESOLVED_ALTER_CONNECTION_STMT: return "AlterConnectionStmt";
     default:
       return absl::StrCat("INVALID_RESOLVED_NODE_KIND(", kind, ")");
   }
@@ -7651,6 +7655,12 @@ absl::StatusOr<std::unique_ptr<ResolvedScan>> ResolvedScan::RestoreFrom(
     case AnyResolvedScanProto::kResolvedExecuteAsRoleScanNode:
       return ResolvedExecuteAsRoleScan::RestoreFrom(
           proto.resolved_execute_as_role_scan_node(), params);
+    case AnyResolvedScanProto::kResolvedStaticDescribeScanNode:
+      return ResolvedStaticDescribeScan::RestoreFrom(
+          proto.resolved_static_describe_scan_node(), params);
+    case AnyResolvedScanProto::kResolvedAssertScanNode:
+      return ResolvedAssertScan::RestoreFrom(
+          proto.resolved_assert_scan_node(), params);
     case AnyResolvedScanProto::kResolvedBarrierScanNode:
       return ResolvedBarrierScan::RestoreFrom(
           proto.resolved_barrier_scan_node(), params);
@@ -17654,6 +17664,9 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateStatement>> ResolvedCreateStatement
     case AnyResolvedCreateStatementProto::kResolvedCreateSchemaStmtBaseNode:
       return ResolvedCreateSchemaStmtBase::RestoreFrom(
           proto.resolved_create_schema_stmt_base_node(), params);
+    case AnyResolvedCreateStatementProto::kResolvedCreateConnectionStmtNode:
+      return ResolvedCreateConnectionStmt::RestoreFrom(
+          proto.resolved_create_connection_stmt_node(), params);
   case AnyResolvedCreateStatementProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedCreateStatementProto";
@@ -18181,6 +18194,10 @@ absl::Status ResolvedCreateIndexStmt::SaveTo(
     ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
       file_descriptor_set_map, proto->add_storing_expression_list()));
   }
+  for (const auto& elem : partition_by_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_partition_by_list()));
+  }
   for (const auto& elem : option_list_) {
     ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
       file_descriptor_set_map, proto->add_option_list()));
@@ -18230,6 +18247,12 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateIndexStmt>> ResolvedCreateIndexStmt
                      ResolvedExpr::RestoreFrom(elem, params));
     storing_expression_list.push_back(std::move(elem_restored));
   }
+  std::vector<std::unique_ptr<const ResolvedExpr>> partition_by_list;
+  for (const auto& elem : proto.partition_by_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedExpr> elem_restored,
+                     ResolvedExpr::RestoreFrom(elem, params));
+    partition_by_list.push_back(std::move(elem_restored));
+  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list;
   for (const auto& elem : proto.option_list()) {
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
@@ -18274,6 +18297,7 @@ absl::StatusOr<std::unique_ptr<ResolvedCreateIndexStmt>> ResolvedCreateIndexStmt
       std::move(index_all_columns),
       std::move(index_item_list),
       std::move(storing_expression_list),
+      std::move(partition_by_list),
       std::move(option_list),
       std::move(computed_columns_list),
       std::move(unnest_expressions_list));
@@ -18292,6 +18316,9 @@ void ResolvedCreateIndexStmt::GetChildNodes(
     child_nodes->emplace_back(elem.get());
   }
   for (const auto& elem : storing_expression_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+  for (const auto& elem : partition_by_list_) {
     child_nodes->emplace_back(elem.get());
   }
   for (const auto& elem : option_list_) {
@@ -18325,6 +18352,10 @@ void ResolvedCreateIndexStmt::AddMutableChildNodePointers(
     mutable_child_node_ptrs->emplace_back(
         reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
   }
+  for (auto& elem : partition_by_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
   for (auto& elem : option_list_) {
     mutable_child_node_ptrs->emplace_back(
         reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
@@ -18352,6 +18383,9 @@ absl::Status ResolvedCreateIndexStmt::ChildrenAccept(ResolvedASTVisitor* visitor
     ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
   }
   for (const auto& elem : storing_expression_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  for (const auto& elem : partition_by_list_) {
     ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
   }
   for (const auto& elem : option_list_) {
@@ -18392,6 +18426,9 @@ void ResolvedCreateIndexStmt::CollectDebugStringFields(
   }
   if (!storing_expression_list_.empty()) {
     fields->emplace_back("storing_expression_list", storing_expression_list_, storing_expression_list_accessed());
+  }
+  if (!partition_by_list_.empty()) {
+    fields->emplace_back("partition_by_list", partition_by_list_, partition_by_list_accessed());
   }
   if (!option_list_.empty()) {
     fields->emplace_back("option_list", option_list_, option_list_accessed());
@@ -18487,6 +18524,18 @@ absl::Status ResolvedCreateIndexStmt::CheckFieldsAccessedImpl(
         << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
   }
   if ((accessed_ & (1<<8)) == 0 &&
+      !IsDefaultValue(partition_by_list_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedCreateIndexStmt::partition_by_list not accessed "
+           "and has non-default value)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<9)) == 0 &&
       !IsDefaultValue(option_list_)) {
     NodeAnnotation annotation = {
       .node = this,
@@ -18498,7 +18547,7 @@ absl::Status ResolvedCreateIndexStmt::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
   }
-  if ((accessed_ & (1<<9)) == 0 &&
+  if ((accessed_ & (1<<10)) == 0 &&
       !IsDefaultValue(computed_columns_list_)) {
     NodeAnnotation annotation = {
       .node = this,
@@ -18510,7 +18559,7 @@ absl::Status ResolvedCreateIndexStmt::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
   }
-  if ((accessed_ & (1<<10)) == 0 &&
+  if ((accessed_ & (1<<11)) == 0 &&
       !IsDefaultValue(unnest_expressions_list_)) {
     NodeAnnotation annotation = {
       .node = this,
@@ -18539,16 +18588,21 @@ absl::Status ResolvedCreateIndexStmt::CheckFieldsAccessedImpl(
     }
   }
   if ((accessed_ & (1<<8)) != 0) {
-    for (const auto& it : option_list_) {
+    for (const auto& it : partition_by_list_) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
     }
   }
   if ((accessed_ & (1<<9)) != 0) {
-    for (const auto& it : computed_columns_list_) {
+    for (const auto& it : option_list_) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
     }
   }
   if ((accessed_ & (1<<10)) != 0) {
+    for (const auto& it : computed_columns_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<11)) != 0) {
     for (const auto& it : unnest_expressions_list_) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
     }
@@ -18589,13 +18643,17 @@ absl::Status ResolvedCreateIndexStmt::CheckNoFieldsAccessed() const {
   }
   if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "(ResolvedCreateIndexStmt::option_list is accessed, but shouldn't be)";
+        << "(ResolvedCreateIndexStmt::partition_by_list is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "(ResolvedCreateIndexStmt::computed_columns_list is accessed, but shouldn't be)";
+        << "(ResolvedCreateIndexStmt::option_list is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<10)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedCreateIndexStmt::computed_columns_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<11)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::unnest_expressions_list is accessed, but shouldn't be)";
   }
@@ -18615,16 +18673,21 @@ absl::Status ResolvedCreateIndexStmt::CheckNoFieldsAccessed() const {
     }
   }
   if ((accessed_ & (1<<8)) != 0) {
-    for (const auto& it : option_list_) {
+    for (const auto& it : partition_by_list_) {
       ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
     }
   }
   if ((accessed_ & (1<<9)) != 0) {
-    for (const auto& it : computed_columns_list_) {
+    for (const auto& it : option_list_) {
       ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
     }
   }
   if ((accessed_ & (1<<10)) != 0) {
+    for (const auto& it : computed_columns_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<11)) != 0) {
     for (const auto& it : unnest_expressions_list_) {
       ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
     }
@@ -18639,6 +18702,7 @@ void ResolvedCreateIndexStmt::ClearFieldsAccessed() const {
   if (table_scan_ != nullptr) table_scan_->ClearFieldsAccessed();
   for (const auto& it : index_item_list_) it->ClearFieldsAccessed();
   for (const auto& it : storing_expression_list_) it->ClearFieldsAccessed();
+  for (const auto& it : partition_by_list_) it->ClearFieldsAccessed();
   for (const auto& it : option_list_) it->ClearFieldsAccessed();
   for (const auto& it : computed_columns_list_) it->ClearFieldsAccessed();
   for (const auto& it : unnest_expressions_list_) it->ClearFieldsAccessed();
@@ -18650,6 +18714,7 @@ void ResolvedCreateIndexStmt::MarkFieldsAccessed() const {
   if (table_scan_ != nullptr) table_scan_->MarkFieldsAccessed();
   for (const auto& it : index_item_list_) it->MarkFieldsAccessed();
   for (const auto& it : storing_expression_list_) it->MarkFieldsAccessed();
+  for (const auto& it : partition_by_list_) it->MarkFieldsAccessed();
   for (const auto& it : option_list_) it->MarkFieldsAccessed();
   for (const auto& it : computed_columns_list_) it->MarkFieldsAccessed();
   for (const auto& it : unnest_expressions_list_) it->MarkFieldsAccessed();
@@ -31029,6 +31094,9 @@ absl::StatusOr<std::unique_ptr<ResolvedAlterObjectStmt>> ResolvedAlterObjectStmt
     case AnyResolvedAlterObjectStmtProto::kResolvedAlterExternalSchemaStmtNode:
       return ResolvedAlterExternalSchemaStmt::RestoreFrom(
           proto.resolved_alter_external_schema_stmt_node(), params);
+    case AnyResolvedAlterObjectStmtProto::kResolvedAlterConnectionStmtNode:
+      return ResolvedAlterConnectionStmt::RestoreFrom(
+          proto.resolved_alter_connection_stmt_node(), params);
   case AnyResolvedAlterObjectStmtProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedAlterObjectStmtProto";
@@ -44799,6 +44867,428 @@ void ResolvedIdentityColumnInfo::MarkFieldsAccessed() const {
   accessed_ = 0xFFFFFFFF;
 }
 
+const ResolvedNodeKind ResolvedStaticDescribeScan::TYPE;
+
+ResolvedStaticDescribeScan::~ResolvedStaticDescribeScan() {
+}
+
+absl::Status ResolvedStaticDescribeScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedScanProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_static_describe_scan_node());
+}
+
+absl::Status ResolvedStaticDescribeScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedStaticDescribeScanProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_->SaveTo(
+        file_descriptor_set_map, proto->mutable_input_scan()));
+  }
+  proto->set_describe_text(describe_text_);
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedStaticDescribeScan>> ResolvedStaticDescribeScan::RestoreFrom(
+    const ResolvedStaticDescribeScanProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedScan> input_scan;
+  if (proto.
+  has_input_scan()) {
+    ZETASQL_ASSIGN_OR_RETURN(input_scan,
+                     ResolvedScan::RestoreFrom(
+                         proto.input_scan(), params));
+  }
+  std::string describe_text =
+      proto.describe_text();
+  std::vector<ResolvedColumn> column_list;
+  for (const auto& elem : proto.parent().column_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<ResolvedColumn>::value_type>(elem, params));
+    column_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  bool is_ordered =
+      proto.parent().is_ordered();
+  std::string node_source =
+      proto.parent().node_source();
+  auto node = MakeResolvedStaticDescribeScan(
+      std::move(column_list),
+      std::move(input_scan),
+      std::move(describe_text));
+
+  node->set_hint_list(std::move(hint_list));
+  node->set_is_ordered(std::move(is_ordered));
+  node->set_node_source(std::move(node_source));
+  return node;
+}
+
+void ResolvedStaticDescribeScan::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (input_scan_ != nullptr) {
+    child_nodes->emplace_back(input_scan_.get());
+  }
+}
+
+void ResolvedStaticDescribeScan::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (input_scan_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &input_scan_));
+    static_assert(sizeof(input_scan_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedStaticDescribeScan::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedStaticDescribeScan(this);
+}
+
+absl::Status ResolvedStaticDescribeScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedStaticDescribeScan::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedStaticDescribeScan::input_scan not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          input_scan_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedStaticDescribeScan::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedStaticDescribeScan::input_scan is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(input_scan_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedStaticDescribeScan::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (input_scan_ != nullptr) input_scan_->ClearFieldsAccessed();
+}
+
+void ResolvedStaticDescribeScan::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (input_scan_ != nullptr) input_scan_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedAssertScan::TYPE;
+
+ResolvedAssertScan::~ResolvedAssertScan() {
+}
+
+absl::Status ResolvedAssertScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedScanProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_assert_scan_node());
+}
+
+absl::Status ResolvedAssertScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAssertScanProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_->SaveTo(
+        file_descriptor_set_map, proto->mutable_input_scan()));
+  }
+  if (condition_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(condition_->SaveTo(
+        file_descriptor_set_map, proto->mutable_condition()));
+  }
+  if (message_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(message_->SaveTo(
+        file_descriptor_set_map, proto->mutable_message()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAssertScan>> ResolvedAssertScan::RestoreFrom(
+    const ResolvedAssertScanProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedScan> input_scan;
+  if (proto.
+  has_input_scan()) {
+    ZETASQL_ASSIGN_OR_RETURN(input_scan,
+                     ResolvedScan::RestoreFrom(
+                         proto.input_scan(), params));
+  }
+  std::unique_ptr<const ResolvedExpr> condition;
+  if (proto.
+  has_condition()) {
+    ZETASQL_ASSIGN_OR_RETURN(condition,
+                     ResolvedExpr::RestoreFrom(
+                         proto.condition(), params));
+  }
+  std::unique_ptr<const ResolvedExpr> message;
+  if (proto.
+  has_message()) {
+    ZETASQL_ASSIGN_OR_RETURN(message,
+                     ResolvedExpr::RestoreFrom(
+                         proto.message(), params));
+  }
+  std::vector<ResolvedColumn> column_list;
+  for (const auto& elem : proto.parent().column_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<ResolvedColumn>::value_type>(elem, params));
+    column_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  bool is_ordered =
+      proto.parent().is_ordered();
+  std::string node_source =
+      proto.parent().node_source();
+  auto node = MakeResolvedAssertScan(
+      std::move(column_list),
+      std::move(input_scan),
+      std::move(condition),
+      std::move(message));
+
+  node->set_hint_list(std::move(hint_list));
+  node->set_is_ordered(std::move(is_ordered));
+  node->set_node_source(std::move(node_source));
+  return node;
+}
+
+void ResolvedAssertScan::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (input_scan_ != nullptr) {
+    child_nodes->emplace_back(input_scan_.get());
+  }
+  if (condition_ != nullptr) {
+    child_nodes->emplace_back(condition_.get());
+  }
+  if (message_ != nullptr) {
+    child_nodes->emplace_back(message_.get());
+  }
+}
+
+void ResolvedAssertScan::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (input_scan_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &input_scan_));
+    static_assert(sizeof(input_scan_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+  if (condition_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &condition_));
+    static_assert(sizeof(condition_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+  if (message_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &message_));
+    static_assert(sizeof(message_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedAssertScan::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAssertScan(this);
+}
+
+absl::Status ResolvedAssertScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_.get()->Accept(visitor));
+  }
+  if (condition_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(condition_.get()->Accept(visitor));
+  }
+  if (message_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(message_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAssertScan::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (input_scan_ != nullptr) {
+    fields->emplace_back("input_scan", input_scan_.get(), input_scan_accessed());
+  }
+  if (condition_ != nullptr) {
+    fields->emplace_back("condition", condition_.get(), condition_accessed());
+  }
+  if (message_ != nullptr) {
+    fields->emplace_back("message", message_.get(), message_accessed());
+  }
+}
+
+absl::Status ResolvedAssertScan::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAssertScan::input_scan not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<1)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAssertScan::condition not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<2)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedAssertScan::message not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          input_scan_.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    if (condition_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          condition_.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    if (message_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          message_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedAssertScan::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAssertScan::input_scan is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAssertScan::condition is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAssertScan::message is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(input_scan_->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    if (condition_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(condition_->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    if (message_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(message_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAssertScan::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (input_scan_ != nullptr) input_scan_->ClearFieldsAccessed();
+  if (condition_ != nullptr) condition_->ClearFieldsAccessed();
+  if (message_ != nullptr) message_->ClearFieldsAccessed();
+}
+
+void ResolvedAssertScan::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (input_scan_ != nullptr) input_scan_->MarkFieldsAccessed();
+  if (condition_ != nullptr) condition_->MarkFieldsAccessed();
+  if (message_ != nullptr) message_->MarkFieldsAccessed();
+}
+
 const ResolvedNodeKind ResolvedBarrierScan::TYPE;
 
 ResolvedBarrierScan::~ResolvedBarrierScan() {
@@ -44954,6 +45444,218 @@ void ResolvedBarrierScan::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
   if (input_scan_ != nullptr) input_scan_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedCreateConnectionStmt::TYPE;
+
+ResolvedCreateConnectionStmt::~ResolvedCreateConnectionStmt() {
+}
+
+absl::Status ResolvedCreateConnectionStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedCreateStatementProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_create_connection_stmt_node());
+}
+
+absl::Status ResolvedCreateConnectionStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedCreateConnectionStmtProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  for (const auto& elem : option_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_option_list()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedCreateConnectionStmt>> ResolvedCreateConnectionStmt::RestoreFrom(
+    const ResolvedCreateConnectionStmtProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::vector<std::unique_ptr<const ResolvedOption>> option_list;
+  for (const auto& elem : proto.option_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    option_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::string> name_path;
+  for (const auto& elem : proto.parent().name_path()) {
+    name_path.push_back(elem);
+  }
+  ResolvedCreateStatement::CreateScope create_scope =
+      proto.parent().create_scope();
+  ResolvedCreateStatement::CreateMode create_mode =
+      proto.parent().create_mode();
+  auto node = MakeResolvedCreateConnectionStmt(
+      std::move(name_path),
+      std::move(create_scope),
+      std::move(create_mode),
+      std::move(option_list));
+
+  node->set_hint_list(std::move(hint_list));
+  return node;
+}
+
+void ResolvedCreateConnectionStmt::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  for (const auto& elem : option_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+}
+
+void ResolvedCreateConnectionStmt::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  for (auto& elem : option_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+}
+
+absl::Status ResolvedCreateConnectionStmt::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedCreateConnectionStmt(this);
+}
+
+absl::Status ResolvedCreateConnectionStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  for (const auto& elem : option_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedCreateConnectionStmt::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (!option_list_.empty()) {
+    fields->emplace_back("option_list", option_list_, option_list_accessed());
+  }
+}
+
+absl::Status ResolvedCreateConnectionStmt::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0 &&
+      !IsDefaultValue(option_list_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedCreateConnectionStmt::option_list not accessed "
+           "and has non-default value)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    for (const auto& it : option_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedCreateConnectionStmt::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedCreateConnectionStmt::option_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    for (const auto& it : option_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedCreateConnectionStmt::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  for (const auto& it : option_list_) it->ClearFieldsAccessed();
+}
+
+void ResolvedCreateConnectionStmt::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  for (const auto& it : option_list_) it->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedAlterConnectionStmt::TYPE;
+
+ResolvedAlterConnectionStmt::~ResolvedAlterConnectionStmt() {
+}
+
+absl::Status ResolvedAlterConnectionStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterObjectStmtProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_alter_connection_stmt_node());
+}
+
+absl::Status ResolvedAlterConnectionStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAlterConnectionStmtProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAlterConnectionStmt>> ResolvedAlterConnectionStmt::RestoreFrom(
+    const ResolvedAlterConnectionStmtProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::string> name_path;
+  for (const auto& elem : proto.parent().name_path()) {
+    name_path.push_back(elem);
+  }
+  std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list;
+  for (const auto& elem : proto.parent().alter_action_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedAlterAction> elem_restored,
+                     ResolvedAlterAction::RestoreFrom(elem, params));
+    alter_action_list.push_back(std::move(elem_restored));
+  }
+  bool is_if_exists =
+      proto.parent().is_if_exists();
+  auto node = MakeResolvedAlterConnectionStmt(
+      std::move(name_path),
+      std::move(alter_action_list),
+      std::move(is_if_exists));
+
+  node->set_hint_list(std::move(hint_list));
+  return node;
+}
+
+absl::Status ResolvedAlterConnectionStmt::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAlterConnectionStmt(this);
+}
+
+absl::Status ResolvedAlterConnectionStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  return absl::OkStatus();
 }
 
 }  // namespace zetasql

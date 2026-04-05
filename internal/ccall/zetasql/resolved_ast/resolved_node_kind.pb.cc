@@ -28,7 +28,7 @@ static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
 static constexpr ::_pb::Message* const* file_default_instances = nullptr;
 const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n-zetasql/resolved_ast/resolved_node_kin"
-    "d.proto\022\007zetasql*\3135\n\020ResolvedNodeKind\022\024\n"
+    "d.proto\022\007zetasql*\3256\n\020ResolvedNodeKind\022\024\n"
     "\020RESOLVED_LITERAL\020\003\022\026\n\022RESOLVED_PARAMETE"
     "R\020\004\022\036\n\032RESOLVED_EXPRESSION_COLUMN\020\005\022 \n\033R"
     "ESOLVED_CATALOG_COLUMN_REF\020\316\001\022\027\n\023RESOLVE"
@@ -197,17 +197,20 @@ const char descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fnode_
     "TMT\020\264\001\022,\n\'RESOLVED_AUX_LOAD_DATA_PARTITI"
     "ON_FILTER\020\336\001\022 \n\033RESOLVED_AUX_LOAD_DATA_S"
     "TMT\020\272\001\022\031\n\024RESOLVED_UNDROP_STMT\020\343\001\022\"\n\035RES"
-    "OLVED_IDENTITY_COLUMN_INFO\020\364\001\022\032\n\025RESOLVE"
-    "D_BARRIER_SCAN\020\205\002\022;\n.__ResolvedNodeKind_"
-    "_switch_must_have_default__\020\377\377\377\377\377\377\377\377\377\001B-"
-    "\n\022com.google.zetasqlB\027ZetaSQLResolvedNod"
-    "eKind"
+    "OLVED_IDENTITY_COLUMN_INFO\020\364\001\022\"\n\035RESOLVE"
+    "D_STATIC_DESCRIBE_SCAN\020\373\001\022\031\n\024RESOLVED_AS"
+    "SERT_SCAN\020\374\001\022\032\n\025RESOLVED_BARRIER_SCAN\020\205\002"
+    "\022$\n\037RESOLVED_CREATE_CONNECTION_STMT\020\207\002\022#"
+    "\n\036RESOLVED_ALTER_CONNECTION_STMT\020\210\002\022;\n._"
+    "_ResolvedNodeKind__switch_must_have_defa"
+    "ult__\020\377\377\377\377\377\377\377\377\377\001B-\n\022com.google.zetasqlB\027"
+    "ZetaSQLResolvedNodeKind"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto = {
     false,
     false,
-    6965,
+    7103,
     descriptor_table_protodef_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto,
     "zetasql/resolved_ast/resolved_node_kind.proto",
     &descriptor_table_zetasql_2fresolved_5fast_2fresolved_5fnode_5fkind_2eproto_once,
@@ -453,9 +456,13 @@ bool ResolvedNodeKind_IsValid(int value) {
     case 244:
     case 249:
     case 250:
+    case 251:
+    case 252:
     case 255:
     case 256:
     case 261:
+    case 263:
+    case 264:
       return true;
     default:
       return false;

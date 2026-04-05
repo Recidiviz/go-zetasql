@@ -200,15 +200,19 @@ enum LanguageFeature : int {
   FEATURE_EXTERNAL_SECURITY_PROCEDURE = 96,
   FEATURE_CREATE_MATERIALIZED_VIEW_AS_REPLICA_OF = 97,
   FEATURE_ENABLE_ALTER_ARRAY_OPTIONS = 102,
+  FEATURE_PIPES = 101,
+  FEATURE_PIPE_STATIC_DESCRIBE = 112,
+  FEATURE_PIPE_ASSERT = 113,
   FEATURE_GENERATED_BY_DEFAULT = 103,
   FEATURE_ENFORCE_MICROS_MODE_IN_INTERVAL_TYPE = 105,
   FEATURE_ALTER_COLUMN_DROP_GENERATED = 106,
   FEATURE_SHADOW_PARSING = 999005,
   FEATURE_DISABLE_TEXTMAPPER_PARSER = 107,
-  FEATURE_DISABLE_PIVOT_REWRITER_UDA_ERRORS = 108,
   FEATURE_IDENTITY_COLUMNS = 109,
   FEATURE_EXTERNAL_SCHEMA_DDL = 111,
   FEATURE_TEMPLATED_SQL_FUNCTION_RESOLVE_WITH_TYPED_ARGS = 114,
+  FEATURE_CREATE_INDEX_PARTITION_BY = 117,
+  FEATURE_TO_JSON_UNSUPPORTED_FIELDS = 119,
   FEATURE_V_1_1_ORDER_BY_COLLATE = 11001,
   FEATURE_V_1_1_WITH_ON_SUBQUERY = 11002,
   FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE = 11003,
@@ -331,6 +335,8 @@ enum LanguageFeature : int {
   FEATURE_V_1_4_UUID_TYPE = 14057,
   FEATURE_V_1_4_MULTILEVEL_AGGREGATION = 14058,
   FEATURE_V_1_4_REPLACE_FIELDS_ALLOW_MULTI_ONEOF = 14060,
+  FEATURE_V_1_4_KLL_FLOAT64_PRIMARY_WITH_DOUBLE_ALIAS = 14064,
+  FEATURE_V_1_4_DISALLOW_PIVOT_AND_UNPIVOT_ON_ARRAY_SCANS = 14066,
   FEATURE_EXPERIMENTAL_MODULES = 999002,
   FEATURE_TEST_IDEALLY_ENABLED_BUT_IN_DEVELOPMENT = 999991,
   FEATURE_TEST_IDEALLY_DISABLED = 999992,
@@ -377,12 +383,14 @@ enum ResolvedASTRewrite : int {
   REWRITE_INSERT_DML_VALUES = 24,
   REWRITE_MULTIWAY_UNNEST = 25,
   REWRITE_AGGREGATION_THRESHOLD = 26,
+  REWRITE_PIPE_ASSERT = 27,
+  REWRITE_ORDER_BY_AND_LIMIT_IN_AGGREGATE = 28,
 };
 
 bool ResolvedASTRewrite_IsValid(int value);
 constexpr ResolvedASTRewrite ResolvedASTRewrite_MIN = static_cast<ResolvedASTRewrite>(0);
-constexpr ResolvedASTRewrite ResolvedASTRewrite_MAX = static_cast<ResolvedASTRewrite>(26);
-constexpr int ResolvedASTRewrite_ARRAYSIZE = 26 + 1;
+constexpr ResolvedASTRewrite ResolvedASTRewrite_MAX = static_cast<ResolvedASTRewrite>(28);
+constexpr int ResolvedASTRewrite_ARRAYSIZE = 28 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 ResolvedASTRewrite_descriptor();
 template <typename T>
@@ -395,7 +403,7 @@ const std::string& ResolvedASTRewrite_Name(T value) {
 template <>
 inline const std::string& ResolvedASTRewrite_Name(ResolvedASTRewrite value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedASTRewrite_descriptor,
-                                                 0, 26>(
+                                                 0, 28>(
       static_cast<int>(value));
 }
 inline bool ResolvedASTRewrite_Parse(absl::string_view name, ResolvedASTRewrite* value) {

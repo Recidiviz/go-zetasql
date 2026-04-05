@@ -961,8 +961,20 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedIdentityColumnInfo(
       const ResolvedIdentityColumnInfo* node);
 
+  absl::Status CopyVisitResolvedStaticDescribeScan(
+      const ResolvedStaticDescribeScan* node);
+
+  absl::Status CopyVisitResolvedAssertScan(
+      const ResolvedAssertScan* node);
+
   absl::Status CopyVisitResolvedBarrierScan(
       const ResolvedBarrierScan* node);
+
+  absl::Status CopyVisitResolvedCreateConnectionStmt(
+      const ResolvedCreateConnectionStmt* node);
+
+  absl::Status CopyVisitResolvedAlterConnectionStmt(
+      const ResolvedAlterConnectionStmt* node);
 
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
@@ -1592,8 +1604,20 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedIdentityColumnInfo(
       const ResolvedIdentityColumnInfo* node) override;
 
+  absl::Status VisitResolvedStaticDescribeScan(
+      const ResolvedStaticDescribeScan* node) override;
+
+  absl::Status VisitResolvedAssertScan(
+      const ResolvedAssertScan* node) override;
+
   absl::Status VisitResolvedBarrierScan(
       const ResolvedBarrierScan* node) override;
+
+  absl::Status VisitResolvedCreateConnectionStmt(
+      const ResolvedCreateConnectionStmt* node) override;
+
+  absl::Status VisitResolvedAlterConnectionStmt(
+      const ResolvedAlterConnectionStmt* node) override;
 
   // Assumes that 'ResolvedNodeType' contains 'hint_list' and copies it
   // 'from' -> 'to'.

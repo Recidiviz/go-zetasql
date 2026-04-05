@@ -278,6 +278,7 @@ enum FunctionSignatureId : int {
   FN_COLLATE = 1082,
   FN_REGEXP_INSTR_STRING = 1079,
   FN_REGEXP_INSTR_BYTES = 1080,
+  FN_SPLIT_SUBSTR = 1083,
   FN_IF = 1100,
   FN_COALESCE = 1101,
   FN_IFNULL = 1102,
@@ -1122,12 +1123,15 @@ enum FunctionSignatureId : int {
   FN_MAP_VALUES_SORTED = 3009,
   FN_MAP_VALUES_UNSORTED = 3010,
   FN_MAP_VALUES_SORTED_BY_KEY = 3011,
+  FN_MAP_EMPTY = 3012,
+  FN_MAP_INSERT = 3013,
+  FN_MAP_INSERT_OR_REPLACE = 3014,
 };
 
 bool FunctionSignatureId_IsValid(int value);
 constexpr FunctionSignatureId FunctionSignatureId_MIN = static_cast<FunctionSignatureId>(-1);
-constexpr FunctionSignatureId FunctionSignatureId_MAX = static_cast<FunctionSignatureId>(3011);
-constexpr int FunctionSignatureId_ARRAYSIZE = 3011 + 1;
+constexpr FunctionSignatureId FunctionSignatureId_MAX = static_cast<FunctionSignatureId>(3014);
+constexpr int FunctionSignatureId_ARRAYSIZE = 3014 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 FunctionSignatureId_descriptor();
 template <typename T>

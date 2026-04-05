@@ -240,7 +240,11 @@ class ResolvedAuxLoadDataPartitionFilterBuilder;
 class ResolvedAuxLoadDataStmtBuilder;
 class ResolvedUndropStmtBuilder;
 class ResolvedIdentityColumnInfoBuilder;
+class ResolvedStaticDescribeScanBuilder;
+class ResolvedAssertScanBuilder;
 class ResolvedBarrierScanBuilder;
+class ResolvedCreateConnectionStmtBuilder;
+class ResolvedAlterConnectionStmtBuilder;
 
 class ResolvedLiteralBuilder final {
  public:
@@ -26428,6 +26432,101 @@ class ResolvedCreateIndexStmtBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& partition_by_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->partition_by_list();
+  }
+
+  int partition_by_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->partition_by_list_size();
+  }
+
+  const ResolvedExpr* partition_by_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->partition_by_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedCreateIndexStmtBuilder&& add_partition_by_list(T v) && {
+    node_->add_partition_by_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedCreateIndexStmtBuilder& add_partition_by_list(T v) & {
+    node_->add_partition_by_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedCreateIndexStmtBuilder&& add_partition_by_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_partition_by_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedCreateIndexStmtBuilder& add_partition_by_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_partition_by_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedCreateIndexStmtBuilder&& add_partition_by_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_partition_by_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedCreateIndexStmtBuilder& add_partition_by_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_partition_by_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_partition_by_list() {
+    return node_->release_partition_by_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedExpr>>>>>
+  ResolvedCreateIndexStmtBuilder&& set_partition_by_list(T v) && {
+    node_->set_partition_by_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedExpr>>>>>
+  ResolvedCreateIndexStmtBuilder& set_partition_by_list(T v) & {
+    node_->set_partition_by_list(std::move(v));
+
+    return *this;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->option_list();
@@ -26889,7 +26988,7 @@ class ResolvedCreateIndexStmtBuilder final {
   std::unique_ptr<ResolvedCreateIndexStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<15> field_is_set_ = {0};
+  std::bitset<16> field_is_set_ = {0};
   friend ResolvedCreateIndexStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedCreateIndexStmt> node);
 
@@ -71474,6 +71573,874 @@ inline ResolvedIdentityColumnInfoBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedStaticDescribeScanBuilder final {
+ public:
+  ResolvedStaticDescribeScanBuilder() : ResolvedStaticDescribeScanBuilder(absl::WrapUnique(new ResolvedStaticDescribeScan)) {}
+
+  ResolvedStaticDescribeScanBuilder(const ResolvedStaticDescribeScanBuilder&) = delete;
+  ResolvedStaticDescribeScanBuilder& operator=(const ResolvedStaticDescribeScanBuilder&) = delete;
+  ResolvedStaticDescribeScanBuilder(ResolvedStaticDescribeScanBuilder&& other)
+      : ResolvedStaticDescribeScanBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedStaticDescribeScanBuilder& operator=(ResolvedStaticDescribeScanBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedStaticDescribeScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(4)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedStaticDescribeScan::input_scan was not set on the builder");
+    }
+    if (!field_is_set_.test(5)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedStaticDescribeScan::describe_text was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedStaticDescribeScan>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const ResolvedScan* input_scan() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->input_scan();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return node_->release_input_scan();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedStaticDescribeScanBuilder&& set_input_scan(T v, bool propagate_order=true) && {
+    node_->set_input_scan(std::move(v), propagate_order);
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedStaticDescribeScanBuilder& set_input_scan(T v, bool propagate_order=true) & {
+    node_->set_input_scan(std::move(v), propagate_order);
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedStaticDescribeScanBuilder&& set_input_scan(absl::StatusOr<T> v, bool propagate_order=true) && {
+    if (v.ok()) {
+      node_->set_input_scan(std::move(*v), propagate_order);
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedStaticDescribeScanBuilder& set_input_scan(absl::StatusOr<T> v, bool propagate_order=true) & {
+    if (v.ok()) {
+      node_->set_input_scan(std::move(*v), propagate_order);
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedStaticDescribeScanBuilder&& set_input_scan(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedStaticDescribeScanBuilder& set_input_scan(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  const std::string& describe_text() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->describe_text();
+  }
+
+  ResolvedStaticDescribeScanBuilder&& set_describe_text(absl::string_view v) && {
+    node_->set_describe_text(v);
+    field_is_set_.set(5, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedStaticDescribeScanBuilder& set_describe_text(absl::string_view v) & {
+    node_->set_describe_text(v);
+    field_is_set_.set(5, true);
+
+    return *this;
+  }
+
+  const std::vector<ResolvedColumn>& column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list();
+  }
+
+  int column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list_size();
+  }
+
+  const ResolvedColumn& column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list(i);
+  }
+
+  ResolvedStaticDescribeScanBuilder&& add_column_list(ResolvedColumn v) && {
+    node_->add_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedStaticDescribeScanBuilder& add_column_list(ResolvedColumn v) & {
+    node_->add_column_list(v);
+
+    return *this;
+  }
+
+  ResolvedStaticDescribeScanBuilder&& add_column_list(absl::StatusOr<ResolvedColumn> v) && {
+    if (v.ok()) {
+      node_->add_column_list(*v);
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  ResolvedStaticDescribeScanBuilder& add_column_list(absl::StatusOr<ResolvedColumn> v) & {
+    if (v.ok()) {
+      node_->add_column_list(*v);
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<ResolvedColumn> release_column_list() {
+    return node_->release_column_list();
+  }
+
+  ResolvedStaticDescribeScanBuilder&& set_column_list(const std::vector<ResolvedColumn>& v) && {
+    node_->set_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedStaticDescribeScanBuilder& set_column_list(const std::vector<ResolvedColumn>& v) & {
+    node_->set_column_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedStaticDescribeScanBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedStaticDescribeScanBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedStaticDescribeScanBuilder&& add_hint_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedStaticDescribeScanBuilder& add_hint_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedStaticDescribeScanBuilder&& add_hint_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedStaticDescribeScanBuilder& add_hint_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedStaticDescribeScanBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedStaticDescribeScanBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_ordered() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_ordered();
+  }
+
+  ResolvedStaticDescribeScanBuilder&& set_is_ordered(bool v) && {
+    node_->set_is_ordered(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedStaticDescribeScanBuilder& set_is_ordered(bool v) & {
+    node_->set_is_ordered(v);
+
+    return *this;
+  }
+
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedStaticDescribeScanBuilder&& set_node_source(absl::string_view v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedStaticDescribeScanBuilder& set_node_source(absl::string_view v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedStaticDescribeScan> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<6> field_is_set_ = {0};
+  friend ResolvedStaticDescribeScanBuilder ToBuilder(
+      std::unique_ptr<const ResolvedStaticDescribeScan> node);
+
+  ResolvedStaticDescribeScanBuilder(std::unique_ptr<ResolvedStaticDescribeScan> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedStaticDescribeScanBuilder ToBuilder(
+    std::unique_ptr<const ResolvedStaticDescribeScan> node) {
+  ResolvedStaticDescribeScanBuilder builder(absl::WrapUnique<ResolvedStaticDescribeScan>(
+      const_cast<ResolvedStaticDescribeScan*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(5, true);
+  return builder;
+}
+
+class ResolvedAssertScanBuilder final {
+ public:
+  ResolvedAssertScanBuilder() : ResolvedAssertScanBuilder(absl::WrapUnique(new ResolvedAssertScan)) {}
+
+  ResolvedAssertScanBuilder(const ResolvedAssertScanBuilder&) = delete;
+  ResolvedAssertScanBuilder& operator=(const ResolvedAssertScanBuilder&) = delete;
+  ResolvedAssertScanBuilder(ResolvedAssertScanBuilder&& other)
+      : ResolvedAssertScanBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedAssertScanBuilder& operator=(ResolvedAssertScanBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedAssertScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(4)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedAssertScan::input_scan was not set on the builder");
+    }
+    if (!field_is_set_.test(5)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedAssertScan::condition was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedAssertScan::message was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAssertScan>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const ResolvedScan* input_scan() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->input_scan();
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return node_->release_input_scan();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedAssertScanBuilder&& set_input_scan(T v) && {
+    node_->set_input_scan(std::move(v));
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedAssertScanBuilder& set_input_scan(T v) & {
+    node_->set_input_scan(std::move(v));
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedAssertScanBuilder&& set_input_scan(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->set_input_scan(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedAssertScanBuilder& set_input_scan(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->set_input_scan(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedAssertScanBuilder&& set_input_scan(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedScan>>>>
+  ResolvedAssertScanBuilder& set_input_scan(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_input_scan(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+  const ResolvedExpr* condition() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->condition();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_condition() {
+    return node_->release_condition();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder&& set_condition(T v) && {
+    node_->set_condition(std::move(v));
+    field_is_set_.set(5, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder& set_condition(T v) & {
+    node_->set_condition(std::move(v));
+    field_is_set_.set(5, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder&& set_condition(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->set_condition(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(5, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder& set_condition(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->set_condition(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(5, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder&& set_condition(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_condition(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(5, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder& set_condition(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_condition(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(5, true);
+
+    return *this;
+  }
+
+  const ResolvedExpr* message() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->message();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_message() {
+    return node_->release_message();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder&& set_message(T v) && {
+    node_->set_message(std::move(v));
+    field_is_set_.set(6, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder& set_message(T v) & {
+    node_->set_message(std::move(v));
+    field_is_set_.set(6, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder&& set_message(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->set_message(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(6, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder& set_message(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->set_message(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+    field_is_set_.set(6, true);
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder&& set_message(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_message(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(6, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedExpr>>>>
+  ResolvedAssertScanBuilder& set_message(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_message(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(6, true);
+
+    return *this;
+  }
+
+  const std::vector<ResolvedColumn>& column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list();
+  }
+
+  int column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list_size();
+  }
+
+  const ResolvedColumn& column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column_list(i);
+  }
+
+  ResolvedAssertScanBuilder&& add_column_list(ResolvedColumn v) && {
+    node_->add_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAssertScanBuilder& add_column_list(ResolvedColumn v) & {
+    node_->add_column_list(v);
+
+    return *this;
+  }
+
+  ResolvedAssertScanBuilder&& add_column_list(absl::StatusOr<ResolvedColumn> v) && {
+    if (v.ok()) {
+      node_->add_column_list(*v);
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  ResolvedAssertScanBuilder& add_column_list(absl::StatusOr<ResolvedColumn> v) & {
+    if (v.ok()) {
+      node_->add_column_list(*v);
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<ResolvedColumn> release_column_list() {
+    return node_->release_column_list();
+  }
+
+  ResolvedAssertScanBuilder&& set_column_list(const std::vector<ResolvedColumn>& v) && {
+    node_->set_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAssertScanBuilder& set_column_list(const std::vector<ResolvedColumn>& v) & {
+    node_->set_column_list(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAssertScanBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAssertScanBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAssertScanBuilder&& add_hint_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAssertScanBuilder& add_hint_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAssertScanBuilder&& add_hint_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAssertScanBuilder& add_hint_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedAssertScanBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedAssertScanBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_ordered() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_ordered();
+  }
+
+  ResolvedAssertScanBuilder&& set_is_ordered(bool v) && {
+    node_->set_is_ordered(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAssertScanBuilder& set_is_ordered(bool v) & {
+    node_->set_is_ordered(v);
+
+    return *this;
+  }
+
+  const std::string& node_source() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->node_source();
+  }
+
+  ResolvedAssertScanBuilder&& set_node_source(absl::string_view v) && {
+    node_->set_node_source(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAssertScanBuilder& set_node_source(absl::string_view v) & {
+    node_->set_node_source(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAssertScan> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<7> field_is_set_ = {0};
+  friend ResolvedAssertScanBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAssertScan> node);
+
+  ResolvedAssertScanBuilder(std::unique_ptr<ResolvedAssertScan> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAssertScanBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAssertScan> node) {
+  ResolvedAssertScanBuilder builder(absl::WrapUnique<ResolvedAssertScan>(
+      const_cast<ResolvedAssertScan*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(4, true);
+  builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
+  return builder;
+}
+
 class ResolvedBarrierScanBuilder final {
  public:
   ResolvedBarrierScanBuilder() : ResolvedBarrierScanBuilder(absl::WrapUnique(new ResolvedBarrierScan)) {}
@@ -71808,6 +72775,638 @@ inline ResolvedBarrierScanBuilder ToBuilder(
       const_cast<ResolvedBarrierScan*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(4, true);
+  return builder;
+}
+
+class ResolvedCreateConnectionStmtBuilder final {
+ public:
+  ResolvedCreateConnectionStmtBuilder() : ResolvedCreateConnectionStmtBuilder(absl::WrapUnique(new ResolvedCreateConnectionStmt)) {}
+
+  ResolvedCreateConnectionStmtBuilder(const ResolvedCreateConnectionStmtBuilder&) = delete;
+  ResolvedCreateConnectionStmtBuilder& operator=(const ResolvedCreateConnectionStmtBuilder&) = delete;
+  ResolvedCreateConnectionStmtBuilder(ResolvedCreateConnectionStmtBuilder&& other)
+      : ResolvedCreateConnectionStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedCreateConnectionStmtBuilder& operator=(ResolvedCreateConnectionStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateConnectionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateConnectionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder&& add_option_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_option_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder& add_option_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_option_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder&& add_option_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder& add_option_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedCreateConnectionStmtBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedCreateConnectionStmtBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder&& add_hint_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder& add_hint_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder&& add_hint_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedCreateConnectionStmtBuilder& add_hint_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedCreateConnectionStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedCreateConnectionStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedCreateConnectionStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateConnectionStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  std::vector<std::string> release_name_path() {
+    return node_->release_name_path();
+  }
+
+  ResolvedCreateConnectionStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateConnectionStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::CreateScope create_scope() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->create_scope();
+  }
+
+  ResolvedCreateConnectionStmtBuilder&& set_create_scope(ResolvedCreateStatement::CreateScope v) && {
+    node_->set_create_scope(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateConnectionStmtBuilder& set_create_scope(ResolvedCreateStatement::CreateScope v) & {
+    node_->set_create_scope(v);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::CreateMode create_mode() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->create_mode();
+  }
+
+  ResolvedCreateConnectionStmtBuilder&& set_create_mode(ResolvedCreateStatement::CreateMode v) && {
+    node_->set_create_mode(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateConnectionStmtBuilder& set_create_mode(ResolvedCreateStatement::CreateMode v) & {
+    node_->set_create_mode(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedCreateConnectionStmt> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedCreateConnectionStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedCreateConnectionStmt> node);
+
+  ResolvedCreateConnectionStmtBuilder(std::unique_ptr<ResolvedCreateConnectionStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedCreateConnectionStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedCreateConnectionStmt> node) {
+  ResolvedCreateConnectionStmtBuilder builder(absl::WrapUnique<ResolvedCreateConnectionStmt>(
+      const_cast<ResolvedCreateConnectionStmt*>(node.release())));
+  // All required nodes are evidently already set
+  return builder;
+}
+
+class ResolvedAlterConnectionStmtBuilder final {
+ public:
+  ResolvedAlterConnectionStmtBuilder() : ResolvedAlterConnectionStmtBuilder(absl::WrapUnique(new ResolvedAlterConnectionStmt)) {}
+
+  ResolvedAlterConnectionStmtBuilder(const ResolvedAlterConnectionStmtBuilder&) = delete;
+  ResolvedAlterConnectionStmtBuilder& operator=(const ResolvedAlterConnectionStmtBuilder&) = delete;
+  ResolvedAlterConnectionStmtBuilder(ResolvedAlterConnectionStmtBuilder&& other)
+      : ResolvedAlterConnectionStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedAlterConnectionStmtBuilder& operator=(ResolvedAlterConnectionStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterConnectionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterConnectionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAlterConnectionStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAlterConnectionStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAlterConnectionStmtBuilder&& add_hint_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAlterConnectionStmtBuilder& add_hint_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_hint_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAlterConnectionStmtBuilder&& add_hint_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedOption>>>>
+  ResolvedAlterConnectionStmtBuilder& add_hint_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedAlterConnectionStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedOption>>>>>
+  ResolvedAlterConnectionStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedAlterConnectionStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterConnectionStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  std::vector<std::string> release_name_path() {
+    return node_->release_name_path();
+  }
+
+  ResolvedAlterConnectionStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterConnectionStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list();
+  }
+
+  int alter_action_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list_size();
+  }
+
+  const ResolvedAlterAction* alter_action_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedAlterAction>>>>
+  ResolvedAlterConnectionStmtBuilder&& add_alter_action_list(T v) && {
+    node_->add_alter_action_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedAlterAction>>>>
+  ResolvedAlterConnectionStmtBuilder& add_alter_action_list(T v) & {
+    node_->add_alter_action_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedAlterAction>>>>
+  ResolvedAlterConnectionStmtBuilder&& add_alter_action_list(absl::StatusOr<T> v) && {
+    if (v.ok()) {
+      node_->add_alter_action_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<const ResolvedAlterAction>>>>
+  ResolvedAlterConnectionStmtBuilder& add_alter_action_list(absl::StatusOr<T> v) & {
+    if (v.ok()) {
+      node_->add_alter_action_list(std::move(*v));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_, v.status());
+    }
+
+    return *this;
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedAlterAction>>>>
+  ResolvedAlterConnectionStmtBuilder&& add_alter_action_list(T&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_alter_action_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<!std::is_convertible_v<T, std::unique_ptr<const ResolvedAlterAction>>>>
+  ResolvedAlterConnectionStmtBuilder& add_alter_action_list(T&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_alter_action_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedAlterAction>> release_alter_action_list() {
+    return node_->release_alter_action_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedAlterAction>>>>>
+  ResolvedAlterConnectionStmtBuilder&& set_alter_action_list(T v) && {
+    node_->set_alter_action_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible_v<T, std::vector<std::unique_ptr<const ResolvedAlterAction>>>>>
+  ResolvedAlterConnectionStmtBuilder& set_alter_action_list(T v) & {
+    node_->set_alter_action_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_if_exists() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_if_exists();
+  }
+
+  ResolvedAlterConnectionStmtBuilder&& set_is_if_exists(bool v) && {
+    node_->set_is_if_exists(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterConnectionStmtBuilder& set_is_if_exists(bool v) & {
+    node_->set_is_if_exists(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAlterConnectionStmt> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedAlterConnectionStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAlterConnectionStmt> node);
+
+  ResolvedAlterConnectionStmtBuilder(std::unique_ptr<ResolvedAlterConnectionStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAlterConnectionStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAlterConnectionStmt> node) {
+  ResolvedAlterConnectionStmtBuilder builder(absl::WrapUnique<ResolvedAlterConnectionStmt>(
+      const_cast<ResolvedAlterConnectionStmt*>(node.release())));
+  // All required nodes are evidently already set
   return builder;
 }
 

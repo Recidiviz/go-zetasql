@@ -2393,6 +2393,28 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedStaticDescribeScan(
+      const ResolvedStaticDescribeScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedStaticDescribeScan (
+      std::unique_ptr<const ResolvedStaticDescribeScan> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedAssertScan(
+      const ResolvedAssertScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAssertScan (
+      std::unique_ptr<const ResolvedAssertScan> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedBarrierScan(
       const ResolvedBarrierScan&) {
     return absl::OkStatus();
@@ -2401,6 +2423,28 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedBarrierScan (
       std::unique_ptr<const ResolvedBarrierScan> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedCreateConnectionStmt(
+      const ResolvedCreateConnectionStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedCreateConnectionStmt (
+      std::unique_ptr<const ResolvedCreateConnectionStmt> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedAlterConnectionStmt(
+      const ResolvedAlterConnectionStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAlterConnectionStmt (
+      std::unique_ptr<const ResolvedAlterConnectionStmt> node) {
     return node;
   }
 
@@ -2844,7 +2888,15 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedIdentityColumnInfo> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedStaticDescribeScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAssertScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedBarrierScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedCreateConnectionStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAlterConnectionStmt> node);
   absl::StatusOr<ResolvedColumn> DefaultVisit(ResolvedColumn column);
 
   template <typename TypeName>
@@ -4315,10 +4367,38 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedStaticDescribeScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedStaticDescribeScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedStaticDescribeScan>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedAssertScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAssertScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAssertScan>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedBarrierScan::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedBarrierScan>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedBarrierScan>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedCreateConnectionStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedCreateConnectionStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateConnectionStmt>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedAlterConnectionStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAlterConnectionStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterConnectionStmt>(std::move(node)));
         }
         break;
       }
