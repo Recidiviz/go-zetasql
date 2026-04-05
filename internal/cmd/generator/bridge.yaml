@@ -633,6 +633,11 @@
         - int
       ret:
         - struct
+    - name: ASTGroupBy_all
+      args:
+        - struct
+      ret:
+        - struct
     - name: ASTOrderingExpression_set_ordering_spec
       args:
         - struct

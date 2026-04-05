@@ -778,6 +778,11 @@ void GO_EXPORT(ASTGroupBy_grouping_item)(void * arg0,int arg1,void ** arg2){
   *arg2 = (void *)groupby->grouping_items(arg1);
 }
 
+void GO_EXPORT(ASTGroupBy_all)(void * arg0,void ** arg1){
+  zetasql::ASTGroupBy *groupby = (zetasql::ASTGroupBy *)arg0;
+  *arg1 = (void *)groupby->all();
+}
+
 void GO_EXPORT(ASTOrderingExpression_set_ordering_spec)(void * arg0,int arg1){
   zetasql::ASTOrderingExpression *node = (zetasql::ASTOrderingExpression *)arg0;
   node->set_ordering_spec((zetasql::ASTOrderingExpression::OrderingSpec)arg1);

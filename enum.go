@@ -696,6 +696,9 @@ const (
 	// If Array ordering is enabled, this flag enables arrays for GREATEST/LEAST.
 	FeatureV13ArrayGreatestLeast LanguageFeature = 13044
 
+	// Enable GROUP BY ALL (non-standard grouping: all non-aggregated SELECT list columns).
+	FeatureV14GroupByAll LanguageFeature = 14039
+
 	// EXPERIMENTAL FEATURES
 	// These are features supported in the code that are not currently part of
 	// officially supported ZetaSQL as of any version.

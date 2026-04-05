@@ -1431,6 +1431,17 @@ func parser_ASTGroupBy_grouping_item(arg0 unsafe.Pointer, arg1 C.int, arg2 *unsa
 	C.export_zetasql_parser_parser_ASTGroupBy_grouping_item(arg0, arg1, arg2)
 }
 
+func ASTGroupBy_all(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	parser_ASTGroupBy_all(
+		arg0,
+		arg1,
+	)
+}
+
+func parser_ASTGroupBy_all(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_parser_parser_ASTGroupBy_all(arg0, arg1)
+}
+
 func ASTOrderingExpression_set_ordering_spec(arg0 unsafe.Pointer, arg1 int) {
 	parser_ASTOrderingExpression_set_ordering_spec(
 		arg0,

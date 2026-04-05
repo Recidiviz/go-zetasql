@@ -123,6 +123,7 @@ extern void GO_EXPORT(ASTGroupingItem_rollup)(void * arg0,void ** arg1);
 extern void GO_EXPORT(ASTGroupBy_hint)(void * arg0,void ** arg1);
 extern void GO_EXPORT(ASTGroupBy_grouping_items_num)(void * arg0,int* arg1);
 extern void GO_EXPORT(ASTGroupBy_grouping_item)(void * arg0,int arg1,void ** arg2);
+extern void GO_EXPORT(ASTGroupBy_all)(void * arg0,void ** arg1);
 extern void GO_EXPORT(ASTOrderingExpression_set_ordering_spec)(void * arg0,int arg1);
 extern void GO_EXPORT(ASTOrderingExpression_ordering_spec)(void * arg0,int* arg1);
 extern void GO_EXPORT(ASTOrderingExpression_expression)(void * arg0,void ** arg1);

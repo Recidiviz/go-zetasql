@@ -946,6 +946,21 @@ func (n *GroupByNode) GroupingItems() []*GroupingItemNode {
 	return ret
 }
 
+// All returns the GROUP BY ALL marker when the statement uses GROUP BY ALL;
+// it is nil when grouping uses explicit grouping items.
+func (n *GroupByNode) All() *GroupByAllNode {
+	var v unsafe.Pointer
+	zetasqlparser.ASTGroupBy_all(n.getRaw(), &v)
+	if v == nil {
+		return nil
+	}
+	return newGroupByAllNode(v)
+}
+
+type GroupByAllNode struct {
+	*BaseNode
+}
+
 type OrderingSpec int
 
 const (
@@ -9287,6 +9302,13 @@ func newGroupByNode(n unsafe.Pointer) *GroupByNode {
 	return &GroupByNode{BaseNode: newBaseNode(n)}
 }
 
+func newGroupByAllNode(n unsafe.Pointer) *GroupByAllNode {
+	if n == nil {
+		return nil
+	}
+	return &GroupByAllNode{BaseNode: newBaseNode(n)}
+}
+
 func newOrderingExpressionNode(n unsafe.Pointer) *OrderingExpressionNode {
 	if n == nil {
 		return nil
@@ -11705,6 +11727,8 @@ func newNode(n unsafe.Pointer) Node {
 		return newRestrictToClauseNode(n)
 	case "GroupBy":
 		return newGroupByNode(n)
+	case "GroupByAll":
+		return newGroupByAllNode(n)
 	case "GroupingItem":
 		return newGroupingItemNode(n)
 	case "Having":

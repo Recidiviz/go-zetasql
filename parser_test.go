@@ -54,6 +54,30 @@ func TestParser(t *testing.T) {
 	}
 }
 
+func TestParseGroupByAll(t *testing.T) {
+	lang := zetasql.NewLanguageOptions()
+	lang.EnableLanguageFeature(zetasql.FeatureV14GroupByAll)
+	opt := zetasql.NewParserOptions()
+	opt.SetLanguageOptions(lang)
+
+	stmt, err := zetasql.ParseStatement("SELECT a, SUM(b) AS s FROM t GROUP BY ALL", opt)
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	qs := stmt.(*ast.QueryStatementNode)
+	sel := qs.Query().QueryExpr().(*ast.SelectNode)
+	gb := sel.GroupBy()
+	if gb == nil {
+		t.Fatal("expected non-nil GROUP BY clause")
+	}
+	if gb.All() == nil {
+		t.Fatal("expected GROUP BY ALL marker node")
+	}
+	if len(gb.GroupingItems()) != 0 {
+		t.Fatalf("GROUP BY ALL must not use explicit grouping items, got %d", len(gb.GroupingItems()))
+	}
+}
+
 func TestWalk(t *testing.T) {
 	for _, test := range []struct {
 		name  string
