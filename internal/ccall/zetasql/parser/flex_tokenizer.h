@@ -79,10 +79,10 @@ class ZetaSqlFlexTokenizer final : public ZetaSqlFlexTokenizerBase {
 }  // namespace parser
 }  // namespace zetasql
 
-// This incantation is necessary because for some reason these functions are not
-// generated for ZetaSqlFlexTokenizerBase, but the class does reference them.
+// yywrap is defined in flex_tokenizer.flex.cc (generated). TUs that only
+// include this header without flex.cc need the stub; set SUPPRESS when
+// including flex_tokenizer.flex.cc to avoid duplicate yywrap definitions.
 #ifndef ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
-inline int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
 inline int ZetaSqlFlexTokenizerBase::yywrap() { return 1; }
 #endif
 
