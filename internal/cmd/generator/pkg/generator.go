@@ -343,15 +343,26 @@ func (g *Generator) generate(f *ParsedFile) error {
 	return nil
 }
 
-func (g *Generator) generateRootBindCC(outputDir string) error {
+// rootZetaSQLAmalgamationLibs lists zetasql ccall libs linked into root bind.cc / bridge.h.
+// zetasql/parser/parser is omitted: that package has its own bind.cc with namespace-prefix
+// macros; re-including parser/export.inc in the parent TU duplicates absl flags and parser .o.
+func (g *Generator) rootZetaSQLAmalgamationLibs() []string {
 	pkgs := g.pkgs()
 	libs := make([]string, 0, len(pkgs))
 	for _, pkg := range pkgs {
 		if !strings.Contains(pkg.Name, "zetasql") {
 			continue
 		}
+		if pkg.Name == "zetasql/parser/parser" {
+			continue
+		}
 		libs = append(libs, pkg.Name)
 	}
+	return libs
+}
+
+func (g *Generator) generateRootBindCC(outputDir string) error {
+	libs := g.rootZetaSQLAmalgamationLibs()
 	output, err := g.generateCCSourceByTemplate(
 		"templates/root_bind.cc.tmpl",
 		libs,
@@ -408,14 +419,7 @@ func (g *Generator) pkgs() []*Package {
 }
 
 func (g *Generator) generateRootBridgeH(outputDir string) error {
-	pkgs := g.pkgs()
-	libs := make([]string, 0, len(pkgs))
-	for _, pkg := range pkgs {
-		if !strings.Contains(pkg.Name, "zetasql") {
-			continue
-		}
-		libs = append(libs, pkg.Name)
-	}
+	libs := g.rootZetaSQLAmalgamationLibs()
 	output, err := g.generateCCSourceByTemplate(
 		"templates/root_bridge.h.tmpl",
 		libs,
@@ -730,6 +734,17 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	sources := make([]SourceParam, 0, len(lib.Sources))
 	for _, src := range filterStrings(filterStrings(lib.SourcePaths(), excludeAmalg), excludeSrc) {
 		sourceParam := SourceParam{Value: src}
+		if addSource, exists := g.containsAddSourceFileMap[src]; exists {
+			for _, inc := range addSource.BeforeIncludes {
+				if sourceParam.BeforeIncludeHook == "" {
+					sourceParam.BeforeIncludeHook += "\n"
+				}
+				sourceParam.BeforeIncludeHook += fmt.Sprintf("#include \"%s\"\n", inc)
+			}
+			if addSource.FlexPrelude != "" {
+				sourceParam.BeforeIncludeHook += "\n" + addSource.FlexPrelude + "\n"
+			}
+		}
 		if symbols, exists := g.containsConflictSymbolFileMap[src]; exists {
 			for _, symbol := range symbols {
 				rhs := fmt.Sprintf("%s_%s", param.FQDN, symbol)
@@ -745,7 +760,7 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 				sourceParam.AfterIncludeHook += fmt.Sprintf("#undef %s\n", symbols[i])
 			}
 		}
-		if addSource, exists := g.containsAddSourceFileMap[src]; exists {
+		if addSource, exists := g.containsAddSourceFileMap[src]; exists && addSource.Source != "" {
 			sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", addSource.Source)
 		}
 		sources = append(sources, sourceParam)
@@ -899,6 +914,10 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 	param.IncludePaths = includePaths
 	bridgeHeaderMap := map[string]struct{}{}
 	for _, pkg := range g.pkgs() {
+		// Parser methods use export_zetasql_parser_parser_* in parser/parser/bind_linux.go only.
+		if pkg.Name == "zetasql/parser/parser" {
+			continue
+		}
 		pkgName := pkg.Name
 		for _, dep := range g.pkgToAllDeps[pkgName] {
 			if dep == pkgName {
@@ -983,6 +1002,12 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 		}
 	}
 	param.ImportGoLibs = importGoLibs
+	for _, extra := range g.cfg.CCLib.ExtraBindGoImports {
+		if extra.Pkg != pkgName {
+			continue
+		}
+		param.ImportGoLibs = append(param.ImportGoLibs, extra.Imports...)
+	}
 	param.BridgeHeaders = bridgeHeaders
 	param.ExportFuncs = exportFuncs
 	if pkg, exists := g.pkgMap[pkgName]; exists {

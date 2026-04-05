@@ -367,9 +367,21 @@ exclude_zetasql_dirs:
   - proto/testing
 
 add_sources:
-  # bison_parser.bison.cc references flex helpers implemented in flex_tokenizer.cc; include after bison.
-  - file: zetasql/parser/bison_parser.bison.cc
+  # flex_tokenizer.cc must share the parser package FQDN with bison_parser.cc (not bison_parser_generated_lib).
+  # Grammar must be #included before bison_parser.cc (stack-allocated BisonParserImpl needs complete type).
+  - file: zetasql/parser/bison_parser.cc
     source: zetasql/parser/flex_tokenizer.cc
+    before_includes:
+      - zetasql/parser/bison_parser.bison.cc
+    # join_processor.cc includes bison_parser.bison.h → flex_tokenizer.h; it must run after #undef yylex
+    # (see flex_prelude), not immediately after bison_parser.bison.cc.
+    flex_prelude: |
+      // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
+      #undef yylex
+      #include "zetasql/parser/join_processor.cc"
+      #include "utf8_range/utf8_validity.cc"
+      #include "zetasql/parser/flex_tokenizer.h"
+      #include "zetasql/parser/flex_tokenizer.flex.cc"
 
 protobuf_internal_export_name_files:
   - protobuf/google/protobuf/descriptor.pb.h
@@ -406,26 +418,29 @@ cclib:
     - pkg: zetasql/parser/bison_parser_generated_lib
       headers:
         - zetasql/parser/flex_tokenizer.h
-  # Generated flex is pulled in before headers (see bind_cc_prelude_before_headers); omit from // include sources.
+  # Generated flex is pulled in via parser bind_cc_prelude_before_headers; omit from per-file sources.
   exclude_amalgamation_sources:
     - pkg: zetasql/parser/bison_parser_generated_lib
       sources:
+        # flex_tokenizer.flex.cc is included via parser/bind.cc prelude only.
         - zetasql/parser/flex_tokenizer.flex.cc
-    # flex_tokenizer.cc includes flex_tokenizer.h; omit duplicate amalgamation include.
+        # Grammar is amalgamated in zetasql/parser/parser only (parser FQDN matches flex_tokenizer).
+        - zetasql/parser/bison_parser.bison.cc
+        - zetasql/parser/join_processor.cc
     - pkg: zetasql/parser/parser
       sources:
         - zetasql/parser/flex_tokenizer.h
+        - zetasql/parser/flex_tokenizer.cc
   bind_cc_prelude_before_headers:
-    - pkg: zetasql/parser/bison_parser_generated_lib
+    - pkg: zetasql/parser/parser
       lines: |
+        // Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h, or the
+        // include guard prevents a later SUPPRESS include from skipping stub definitions.
         #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
-        #include "zetasql/parser/flex_tokenizer.flex.cc"
-        #undef ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
-  symbol_define_overrides:
-    - pkg: zetasql/parser/bison_parser_generated_lib
-      symbol: ZetaSqlFlexTokenizerBase
-      replacement: zetasql_parser_parser_ZetaSqlFlexTokenizerBase
-      comment: Must match parser/bind.cc so flex base symbols resolve in the parser package.
+    - pkg: zetasql/public/parse_helpers
+      lines: |
+        // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
+        #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
   # id_string / unicode_utils flags — only the parser amalgamation needs these defines.
   inject_replace_names:
     - pkg: zetasql/parser/parser
@@ -433,6 +448,10 @@ cclib:
       names:
         - FLAGS_zetasql_idstring_allow_unicode_characters
         - FLAGS_nozetasql_idstring_allow_unicode_characters
+  extra_bind_go_imports:
+    - pkg: zetasql/parser/parser
+      imports:
+        - github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/bison_parser_generated_lib
 
 protoc:
   - name: zetasql/resolved_ast/serialization_cc_proto

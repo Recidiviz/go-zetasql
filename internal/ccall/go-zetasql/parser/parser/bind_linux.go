@@ -39,6 +39,7 @@ package parser
 import "C"
 import (
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
+	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/bison_parser_generated_lib"
 	"unsafe"
 )
 

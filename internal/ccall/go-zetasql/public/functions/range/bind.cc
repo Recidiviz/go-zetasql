@@ -243,6 +243,7 @@
 // include dependencies
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/base/case/export.inc"
+#include "go-zetasql/base/endian/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"

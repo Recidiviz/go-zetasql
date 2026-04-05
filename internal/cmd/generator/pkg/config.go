@@ -35,8 +35,11 @@ type ConflictSymbol struct {
 }
 
 type SourceConfig struct {
-	File   string `yaml:"file"`
-	Source string `yaml:"source"`
+	File           string   `yaml:"file"`
+	Source         string   `yaml:"source"`
+	BeforeIncludes []string `yaml:"before_includes"`
+	// FlexPrelude is emitted after BeforeIncludes and before #include of File (e.g. flex after grammar).
+	FlexPrelude string `yaml:"flex_prelude,omitempty"`
 }
 
 type AmalgamationHeaderExclude struct {
@@ -75,6 +78,13 @@ type InjectReplaceNames struct {
 	Names []string `yaml:"names"`
 }
 
+// ExtraBindGoImport adds a blank `_ "pkg"` import to bind_linux.go / bind_darwin.go for a
+// ccall package (e.g. link protobuf utf8_range + bison flex objects into parser).
+type ExtraBindGoImport struct {
+	Pkg     string   `yaml:"pkg"`     // e.g. zetasql/parser/parser
+	Imports []string `yaml:"imports"` // full module paths
+}
+
 type CCLibConfig struct {
 	Excludes                     []string                     `yaml:"excludes"`
 	ExcludeAmalgamationHeaders   []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
@@ -82,6 +92,7 @@ type CCLibConfig struct {
 	BindCCPreludeBeforeHeaders   []BindCCPreludeBeforeHeaders `yaml:"bind_cc_prelude_before_headers"`
 	SymbolDefineOverrides        []SymbolDefineOverride       `yaml:"symbol_define_overrides"`
 	InjectReplaceNames           []InjectReplaceNames         `yaml:"inject_replace_names"`
+	ExtraBindGoImports           []ExtraBindGoImport          `yaml:"extra_bind_go_imports"`
 }
 
 type ProtocConfig struct {

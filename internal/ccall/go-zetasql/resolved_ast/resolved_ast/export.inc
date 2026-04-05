@@ -43,6 +43,7 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

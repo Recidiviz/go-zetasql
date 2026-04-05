@@ -1164,6 +1164,7 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_FLATTENED_ARG: return "FlattenedArg";
     case RESOLVED_REPLACE_FIELD_ITEM: return "ReplaceFieldItem";
     case RESOLVED_REPLACE_FIELD: return "ReplaceField";
+    case RESOLVED_GET_PROTO_ONEOF: return "GetProtoOneof";
     case RESOLVED_SUBQUERY_EXPR: return "SubqueryExpr";
     case RESOLVED_WITH_EXPR: return "WithExpr";
     case RESOLVED_EXECUTE_AS_ROLE_SCAN: return "ExecuteAsRoleScan";
@@ -1620,6 +1621,9 @@ absl::StatusOr<std::unique_ptr<ResolvedExpr>> ResolvedExpr::RestoreFrom(
     case AnyResolvedExprProto::kResolvedReplaceFieldNode:
       return ResolvedReplaceField::RestoreFrom(
           proto.resolved_replace_field_node(), params);
+    case AnyResolvedExprProto::kResolvedGetProtoOneofNode:
+      return ResolvedGetProtoOneof::RestoreFrom(
+          proto.resolved_get_proto_oneof_node(), params);
     case AnyResolvedExprProto::kResolvedSystemVariableNode:
       return ResolvedSystemVariable::RestoreFrom(
           proto.resolved_system_variable_node(), params);
@@ -1959,11 +1963,11 @@ absl::Status ResolvedParameter::CheckFieldsAccessedImpl(
 absl::Status ResolvedParameter::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedParameter::name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedParameter::position is accessed, but shouldn't be)";
   }
@@ -3540,19 +3544,19 @@ absl::Status ResolvedFunctionCallBase::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionCallBase::function is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionCallBase::argument_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionCallBase::generic_argument_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionCallBase::error_mode is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionCallBase::collation_list is accessed, but shouldn't be)";
   }
@@ -3915,19 +3919,19 @@ absl::Status ResolvedNonScalarFunctionCallBase::CheckFieldsAccessedImpl(
 absl::Status ResolvedNonScalarFunctionCallBase::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedNonScalarFunctionCallBase::distinct is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedNonScalarFunctionCallBase::null_handling_modifier is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedNonScalarFunctionCallBase::with_group_rows_subquery is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedNonScalarFunctionCallBase::with_group_rows_parameter_list is accessed, but shouldn't be)";
   }
@@ -4244,15 +4248,15 @@ absl::Status ResolvedAggregateFunctionCall::CheckFieldsAccessedImpl(
 absl::Status ResolvedAggregateFunctionCall::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateFunctionCall::having_modifier is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateFunctionCall::order_by_item_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateFunctionCall::limit is accessed, but shouldn't be)";
   }
@@ -5002,19 +5006,19 @@ absl::Status ResolvedCast::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCast::expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCast::return_null_on_error is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCast::format is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCast::time_zone is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCast::type_modifiers is accessed, but shouldn't be)";
   }
@@ -5481,7 +5485,7 @@ absl::Status ResolvedMakeProtoField::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMakeProtoField::field_descriptor is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMakeProtoField::format is accessed, but shouldn't be)";
   }
@@ -5902,15 +5906,15 @@ absl::Status ResolvedGetProtoField::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGetProtoField::field_descriptor is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGetProtoField::get_has_bit is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGetProtoField::format is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGetProtoField::return_default_value_when_unset is accessed, but shouldn't be)";
   }
@@ -6513,11 +6517,11 @@ absl::Status ResolvedReplaceFieldItem::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedReplaceFieldItem::expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedReplaceFieldItem::struct_index_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedReplaceFieldItem::proto_field_path is accessed, but shouldn't be)";
   }
@@ -6736,6 +6740,177 @@ void ResolvedReplaceField::MarkFieldsAccessed() const {
   accessed_ = 0xFFFFFFFF;
   if (expr_ != nullptr) expr_->MarkFieldsAccessed();
   for (const auto& it : replace_field_item_list_) it->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedGetProtoOneof::TYPE;
+
+ResolvedGetProtoOneof::~ResolvedGetProtoOneof() {
+}
+
+absl::Status ResolvedGetProtoOneof::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedExprProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_get_proto_oneof_node());
+}
+
+absl::Status ResolvedGetProtoOneof::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedGetProtoOneofProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(expr_->SaveTo(
+        file_descriptor_set_map, proto->mutable_expr()));
+  }
+  ZETASQL_RETURN_IF_ERROR(SaveToImpl(
+      oneof_descriptor_, file_descriptor_set_map,
+      proto->mutable_oneof_descriptor()));
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedGetProtoOneof>> ResolvedGetProtoOneof::RestoreFrom(
+    const ResolvedGetProtoOneofProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedExpr> expr;
+  if (proto.
+  has_expr()) {
+    ZETASQL_ASSIGN_OR_RETURN(expr,
+                     ResolvedExpr::RestoreFrom(
+                         proto.expr(), params));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto oneof_descriptor,
+                   RestoreFromImpl<const google::protobuf::OneofDescriptor*>(
+                       proto.oneof_descriptor(),
+                       params));
+  ZETASQL_ASSIGN_OR_RETURN(auto type,
+                   RestoreFromImpl<const Type*>(
+                       proto.parent().type(),
+                       params));
+  ZETASQL_ASSIGN_OR_RETURN(auto type_annotation_map,
+                   RestoreFromImpl<const AnnotationMap*>(
+                       proto.parent().type_annotation_map(),
+                       params));
+  auto node = MakeResolvedGetProtoOneof(
+      std::move(type),
+      std::move(expr),
+      std::move(oneof_descriptor));
+
+  node->set_type_annotation_map(std::move(type_annotation_map));
+  return node;
+}
+
+void ResolvedGetProtoOneof::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (expr_ != nullptr) {
+    child_nodes->emplace_back(expr_.get());
+  }
+}
+
+void ResolvedGetProtoOneof::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (expr_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &expr_));
+    static_assert(sizeof(expr_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedGetProtoOneof::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedGetProtoOneof(this);
+}
+
+absl::Status ResolvedGetProtoOneof::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(expr_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedGetProtoOneof::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (expr_ != nullptr) {
+    fields->emplace_back("expr", expr_.get(), expr_accessed());
+  }
+  {
+    fields->emplace_back("oneof_descriptor", ToStringImpl(oneof_descriptor_), oneof_descriptor_accessed());
+  }
+}
+
+absl::Status ResolvedGetProtoOneof::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  if ((accessed_ & (1<<0)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedGetProtoOneof::expr not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<1)) == 0) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedGetProtoOneof::oneof_descriptor not accessed)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          expr_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedGetProtoOneof::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedGetProtoOneof::expr is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedGetProtoOneof::oneof_descriptor is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(expr_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedGetProtoOneof::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (expr_ != nullptr) expr_->ClearFieldsAccessed();
+}
+
+void ResolvedGetProtoOneof::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (expr_ != nullptr) expr_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedSubqueryExpr::TYPE;
@@ -7027,15 +7202,15 @@ absl::Status ResolvedSubqueryExpr::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSubqueryExpr::subquery_type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSubqueryExpr::parameter_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSubqueryExpr::in_expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSubqueryExpr::in_collation is accessed, but shouldn't be)";
   }
@@ -8004,11 +8179,11 @@ absl::Status ResolvedDescriptor::CheckFieldsAccessedImpl(
 absl::Status ResolvedDescriptor::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDescriptor::descriptor_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDescriptor::descriptor_column_name_list is accessed, but shouldn't be)";
   }
@@ -8264,7 +8439,7 @@ absl::Status ResolvedTableScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedTableScan::table is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedTableScan::for_system_time_expr is accessed, but shouldn't be)";
   }
@@ -8537,7 +8712,7 @@ absl::Status ResolvedJoinScan::CheckFieldsAccessedImpl(
 absl::Status ResolvedJoinScan::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedJoinScan::join_type is accessed, but shouldn't be)";
   }
@@ -8549,7 +8724,7 @@ absl::Status ResolvedJoinScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedJoinScan::right_scan is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedJoinScan::join_expr is accessed, but shouldn't be)";
   }
@@ -8901,7 +9076,7 @@ absl::Status ResolvedArrayScan::CheckFieldsAccessedImpl(
 absl::Status ResolvedArrayScan::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArrayScan::input_scan is accessed, but shouldn't be)";
   }
@@ -8913,15 +9088,15 @@ absl::Status ResolvedArrayScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArrayScan::element_column is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArrayScan::array_offset_column is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArrayScan::join_expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArrayScan::is_outer is accessed, but shouldn't be)";
   }
@@ -10193,7 +10368,7 @@ absl::Status ResolvedAggregateScanBase::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateScanBase::group_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateScanBase::collation_list is accessed, but shouldn't be)";
   }
@@ -10201,15 +10376,15 @@ absl::Status ResolvedAggregateScanBase::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateScanBase::aggregate_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateScanBase::grouping_set_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateScanBase::rollup_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateScanBase::grouping_call_list is accessed, but shouldn't be)";
   }
@@ -10609,7 +10784,7 @@ absl::Status ResolvedAnonymizedAggregateScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAnonymizedAggregateScan::k_threshold_expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAnonymizedAggregateScan::anonymization_option_list is accessed, but shouldn't be)";
   }
@@ -10869,7 +11044,7 @@ absl::Status ResolvedDifferentialPrivacyAggregateScan::CheckNoFieldsAccessed() c
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDifferentialPrivacyAggregateScan::group_selection_threshold_expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDifferentialPrivacyAggregateScan::option_list is accessed, but shouldn't be)";
   }
@@ -11080,7 +11255,7 @@ absl::Status ResolvedAggregationThresholdAggregateScan::CheckFieldsAccessedImpl(
 absl::Status ResolvedAggregationThresholdAggregateScan::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregationThresholdAggregateScan::option_list is accessed, but shouldn't be)";
   }
@@ -12642,11 +12817,11 @@ absl::Status ResolvedSampleScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSampleScan::repeatable_argument is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSampleScan::weight_column is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSampleScan::partition_by_list is accessed, but shouldn't be)";
   }
@@ -13062,19 +13237,19 @@ absl::Status ResolvedOrderByItem::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedOrderByItem::column_ref is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedOrderByItem::collation_name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedOrderByItem::is_descending is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedOrderByItem::null_order is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedOrderByItem::collation is accessed, but shouldn't be)";
   }
@@ -13343,23 +13518,23 @@ absl::Status ResolvedColumnAnnotations::CheckFieldsAccessedImpl(
 absl::Status ResolvedColumnAnnotations::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnAnnotations::collation_name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnAnnotations::not_null is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnAnnotations::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnAnnotations::child_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnAnnotations::type_parameters is accessed, but shouldn't be)";
   }
@@ -13985,19 +14160,19 @@ absl::Status ResolvedColumnDefinition::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnDefinition::type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnDefinition::annotations is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnDefinition::is_hidden is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnDefinition::generated_column_info is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedColumnDefinition::default_value is accessed, but shouldn't be)";
   }
@@ -14266,15 +14441,15 @@ absl::Status ResolvedPrimaryKey::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedPrimaryKey::column_offset_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedPrimaryKey::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedPrimaryKey::unenforced is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedPrimaryKey::constraint_name is accessed, but shouldn't be)";
   }
@@ -15393,7 +15568,7 @@ absl::Status ResolvedTVFScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedTVFScan::argument_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedTVFScan::function_call_signature is accessed, but shouldn't be)";
   }
@@ -15628,6 +15803,7 @@ absl::Status ResolvedFunctionArgument::SaveTo(
     ZETASQL_RETURN_IF_ERROR(sequence_->SaveTo(
         file_descriptor_set_map, proto->mutable_sequence()));
   }
+  proto->set_argument_alias(argument_alias_);
   return absl::OkStatus();
 }
 
@@ -15690,6 +15866,8 @@ absl::StatusOr<std::unique_ptr<ResolvedFunctionArgument>> ResolvedFunctionArgume
                      ResolvedSequence::RestoreFrom(
                          proto.sequence(), params));
   }
+  std::string argument_alias =
+      proto.argument_alias();
   auto node = MakeResolvedFunctionArgument(
       std::move(expr),
       std::move(scan),
@@ -15698,7 +15876,8 @@ absl::StatusOr<std::unique_ptr<ResolvedFunctionArgument>> ResolvedFunctionArgume
       std::move(descriptor_arg),
       std::move(argument_column_list),
       std::move(inline_lambda),
-      std::move(sequence));
+      std::move(sequence),
+      std::move(argument_alias));
 
   return node;
 }
@@ -15848,6 +16027,9 @@ void ResolvedFunctionArgument::CollectDebugStringFields(
   if (sequence_ != nullptr) {
     fields->emplace_back("sequence", sequence_.get(), sequence_accessed());
   }
+  if (!IsDefaultValue(argument_alias_)) {
+    fields->emplace_back("argument_alias", ToStringImpl(argument_alias_), argument_alias_accessed());
+  }
 }
 
 absl::Status ResolvedFunctionArgument::CheckFieldsAccessedImpl(
@@ -15950,6 +16132,18 @@ absl::Status ResolvedFunctionArgument::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
   }
+  if ((accessed_ & (1<<8)) == 0 &&
+      !IsDefaultValue(argument_alias_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedFunctionArgument::argument_alias not accessed "
+           "and has non-default value)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
@@ -15998,37 +16192,41 @@ absl::Status ResolvedFunctionArgument::CheckFieldsAccessedImpl(
 absl::Status ResolvedFunctionArgument::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::expr is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::scan is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::model is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::connection is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::descriptor_arg is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::argument_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::inline_lambda is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedFunctionArgument::sequence is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<8)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedFunctionArgument::argument_alias is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -16665,7 +16863,7 @@ absl::Status ResolvedQueryStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedQueryStmt::output_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedQueryStmt::is_value_table is accessed, but shouldn't be)";
   }
@@ -16840,7 +17038,7 @@ absl::Status ResolvedCreateDatabaseStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateDatabaseStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateDatabaseStmt::option_list is accessed, but shouldn't be)";
   }
@@ -17034,15 +17232,15 @@ absl::Status ResolvedCreateStatement::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateStatement::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateStatement::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateStatement::create_scope is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateStatement::create_mode is accessed, but shouldn't be)";
   }
@@ -17404,7 +17602,7 @@ absl::Status ResolvedUnnestItem::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUnnestItem::element_column is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUnnestItem::array_offset_column is accessed, but shouldn't be)";
   }
@@ -17861,15 +18059,15 @@ absl::Status ResolvedCreateIndexStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::is_unique is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::is_search is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::is_vector is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::index_all_columns is accessed, but shouldn't be)";
   }
@@ -17877,19 +18075,19 @@ absl::Status ResolvedCreateIndexStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::index_item_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::storing_expression_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<8)) != 0 ) {
+  if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<9)) != 0 ) {
+  if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::computed_columns_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<10)) != 0 ) {
+  if ((accessed_ & (1<<10)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateIndexStmt::unnest_expressions_list is accessed, but shouldn't be)";
   }
@@ -18121,11 +18319,11 @@ absl::Status ResolvedCreateSchemaStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateSchemaStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateSchemaStmt::collation_name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateSchemaStmt::option_list is accessed, but shouldn't be)";
   }
@@ -18514,35 +18712,35 @@ absl::Status ResolvedCreateTableStmtBase::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateTableStmtBase::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::primary_key is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::foreign_key_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::check_constraint_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::is_value_table is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::like_table is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<8)) != 0 ) {
+  if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::collation_name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<9)) != 0 ) {
+  if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmtBase::connection is accessed, but shouldn't be)";
   }
@@ -18937,19 +19135,19 @@ absl::Status ResolvedCreateTableStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateTableStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmt::clone_from is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmt::copy_from is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmt::partition_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableStmt::cluster_by_list is accessed, but shouldn't be)";
   }
@@ -19313,11 +19511,11 @@ absl::Status ResolvedCreateTableAsSelectStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateTableAsSelectStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableAsSelectStmt::partition_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableAsSelectStmt::cluster_by_list is accessed, but shouldn't be)";
   }
@@ -20142,11 +20340,11 @@ absl::Status ResolvedCreateModelStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateModelStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::output_column_list is accessed, but shouldn't be)";
   }
@@ -20154,39 +20352,39 @@ absl::Status ResolvedCreateModelStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::query is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::aliased_query_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::transform_input_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::transform_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::transform_output_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::transform_analytic_function_group_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<8)) != 0 ) {
+  if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::input_column_definition_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<9)) != 0 ) {
+  if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::output_column_definition_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<10)) != 0 ) {
+  if ((accessed_ & (1<<10)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::is_remote is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<11)) != 0 ) {
+  if ((accessed_ & (1<<11)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateModelStmt::connection is accessed, but shouldn't be)";
   }
@@ -20527,7 +20725,7 @@ absl::Status ResolvedCreateViewBase::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateViewBase::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateViewBase::option_list is accessed, but shouldn't be)";
   }
@@ -20535,15 +20733,15 @@ absl::Status ResolvedCreateViewBase::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateViewBase::output_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateViewBase::has_explicit_columns is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateViewBase::sql_security is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateViewBase::is_value_table is accessed, but shouldn't be)";
   }
@@ -20798,7 +20996,7 @@ absl::Status ResolvedWithPartitionColumns::CheckFieldsAccessedImpl(
 absl::Status ResolvedWithPartitionColumns::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedWithPartitionColumns::column_definition_list is accessed, but shouldn't be)";
   }
@@ -20997,7 +21195,7 @@ absl::Status ResolvedCreateSnapshotTableStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateSnapshotTableStmt::clone_from is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateSnapshotTableStmt::option_list is accessed, but shouldn't be)";
   }
@@ -21228,7 +21426,7 @@ absl::Status ResolvedCreateExternalTableStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateExternalTableStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateExternalTableStmt::with_partition_columns is accessed, but shouldn't be)";
   }
@@ -21437,7 +21635,7 @@ absl::Status ResolvedExportModelStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportModelStmt::model_name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportModelStmt::connection is accessed, but shouldn't be)";
   }
@@ -21737,11 +21935,11 @@ absl::Status ResolvedExportDataStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedExportDataStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportDataStmt::connection is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportDataStmt::option_list is accessed, but shouldn't be)";
   }
@@ -21749,7 +21947,7 @@ absl::Status ResolvedExportDataStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportDataStmt::output_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportDataStmt::is_value_table is accessed, but shouldn't be)";
   }
@@ -22004,7 +22202,7 @@ absl::Status ResolvedExportMetadataStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportMetadataStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedExportMetadataStmt::connection is accessed, but shouldn't be)";
   }
@@ -22344,7 +22542,7 @@ absl::Status ResolvedDescribeStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDescribeStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDescribeStmt::from_name_path is accessed, but shouldn't be)";
   }
@@ -22526,11 +22724,11 @@ absl::Status ResolvedShowStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedShowStmt::identifier is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedShowStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedShowStmt::like_expr is accessed, but shouldn't be)";
   }
@@ -22674,11 +22872,11 @@ absl::Status ResolvedBeginStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedBeginStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedBeginStmt::read_write_mode is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedBeginStmt::isolation_level_list is accessed, but shouldn't be)";
   }
@@ -22811,11 +23009,11 @@ absl::Status ResolvedSetTransactionStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedSetTransactionStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSetTransactionStmt::read_write_mode is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSetTransactionStmt::isolation_level_list is accessed, but shouldn't be)";
   }
@@ -23021,7 +23219,7 @@ absl::Status ResolvedStartBatchStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedStartBatchStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedStartBatchStmt::batch_type is accessed, but shouldn't be)";
   }
@@ -23298,7 +23496,7 @@ absl::Status ResolvedDropStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropStmt::drop_mode is accessed, but shouldn't be)";
   }
@@ -24364,7 +24562,7 @@ absl::Status ResolvedOption::CheckFieldsAccessedImpl(
 absl::Status ResolvedOption::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedOption::qualifier is accessed, but shouldn't be)";
   }
@@ -24554,7 +24752,7 @@ absl::Status ResolvedWindowPartitioning::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedWindowPartitioning::partition_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedWindowPartitioning::collation_list is accessed, but shouldn't be)";
   }
@@ -25675,7 +25873,7 @@ absl::Status ResolvedAssertStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAssertStmt::expression is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAssertStmt::description is accessed, but shouldn't be)";
   }
@@ -26027,6 +26225,9 @@ absl::Status ResolvedInsertStmt::SaveTo(
   for (const auto& elem : column_access_list_) {
     proto->add_column_access_list(elem);
   }
+  for (const auto& elem : topologically_sorted_generated_column_index_list_) {
+    proto->add_topologically_sorted_generated_column_index_list(elem);
+  }
   return absl::OkStatus();
 }
 
@@ -26095,6 +26296,10 @@ absl::StatusOr<std::unique_ptr<ResolvedInsertStmt>> ResolvedInsertStmt::RestoreF
     // RepeatedField<int>, not RepeatedField<enum>.
     column_access_list.push_back(static_cast<ResolvedStatement::ObjectAccess>(elem));
   }
+  std::vector<int> topologically_sorted_generated_column_index_list;
+  for (const auto& elem : proto.topologically_sorted_generated_column_index_list()) {
+    topologically_sorted_generated_column_index_list.push_back(elem);
+  }
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
   for (const auto& elem : proto.parent().hint_list()) {
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
@@ -26110,7 +26315,8 @@ absl::StatusOr<std::unique_ptr<ResolvedInsertStmt>> ResolvedInsertStmt::RestoreF
       std::move(query_parameter_list),
       std::move(query),
       std::move(query_output_column_list),
-      std::move(row_list));
+      std::move(row_list),
+      std::move(topologically_sorted_generated_column_index_list));
 
   node->set_hint_list(std::move(hint_list));
   node->set_column_access_list(std::move(column_access_list));
@@ -26246,6 +26452,9 @@ void ResolvedInsertStmt::CollectDebugStringFields(
   if (!IsDefaultValue(column_access_list_)) {
     fields->emplace_back("column_access_list", ToStringImpl(column_access_list_), column_access_list_accessed());
   }
+  if (!IsDefaultValue(topologically_sorted_generated_column_index_list_)) {
+    fields->emplace_back("topologically_sorted_generated_column_index_list", ToStringCommaSeparated(topologically_sorted_generated_column_index_list_), topologically_sorted_generated_column_index_list_accessed());
+  }
 }
 
 absl::Status ResolvedInsertStmt::CheckFieldsAccessedImpl(
@@ -26360,6 +26569,18 @@ absl::Status ResolvedInsertStmt::CheckFieldsAccessedImpl(
            "and has non-default value)\n"
         << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
   }
+  if ((accessed_ & (1<<10)) == 0 &&
+      !IsDefaultValue(topologically_sorted_generated_column_index_list_)) {
+    NodeAnnotation annotation = {
+      .node = this,
+      .annotation = "(*** This node has unaccessed field ***)"
+    };
+    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "Unimplemented feature "
+           "(ResolvedInsertStmt::topologically_sorted_generated_column_index_list not accessed "
+           "and has non-default value)\n"
+        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
@@ -26400,41 +26621,45 @@ absl::Status ResolvedInsertStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedInsertStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::table_scan is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::insert_mode is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::assert_rows_modified is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::returning is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::insert_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::query_parameter_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::query is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::query_output_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<8)) != 0 ) {
+  if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedInsertStmt::row_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<10)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedInsertStmt::topologically_sorted_generated_column_index_list is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
@@ -26811,19 +27036,19 @@ absl::Status ResolvedDeleteStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedDeleteStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDeleteStmt::table_scan is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDeleteStmt::assert_rows_modified is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDeleteStmt::returning is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDeleteStmt::array_offset_column is accessed, but shouldn't be)";
   }
@@ -27251,7 +27476,7 @@ absl::Status ResolvedUpdateItem::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::target is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::set_value is accessed, but shouldn't be)";
   }
@@ -27259,19 +27484,19 @@ absl::Status ResolvedUpdateItem::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::element_column is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::array_update_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::delete_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::update_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateItem::insert_list is accessed, but shouldn't be)";
   }
@@ -27935,19 +28160,19 @@ absl::Status ResolvedUpdateStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedUpdateStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateStmt::table_scan is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateStmt::assert_rows_modified is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateStmt::returning is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateStmt::array_offset_column is accessed, but shouldn't be)";
   }
@@ -27959,7 +28184,7 @@ absl::Status ResolvedUpdateStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateStmt::update_item_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUpdateStmt::from_scan is accessed, but shouldn't be)";
   }
@@ -28305,15 +28530,15 @@ absl::Status ResolvedMergeWhen::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMergeWhen::action_type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMergeWhen::insert_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMergeWhen::insert_row is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMergeWhen::update_item_list is accessed, but shouldn't be)";
   }
@@ -29325,11 +29550,11 @@ absl::Status ResolvedGrantOrRevokeStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGrantOrRevokeStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGrantOrRevokeStmt::grantee_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGrantOrRevokeStmt::grantee_expr_list is accessed, but shouldn't be)";
   }
@@ -29678,7 +29903,7 @@ absl::Status ResolvedAlterObjectStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedAlterObjectStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterObjectStmt::name_path is accessed, but shouldn't be)";
   }
@@ -29686,7 +29911,7 @@ absl::Status ResolvedAlterObjectStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterObjectStmt::alter_action_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterObjectStmt::is_if_exists is accessed, but shouldn't be)";
   }
@@ -30356,7 +30581,7 @@ absl::Status ResolvedAlterColumnAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedAlterColumnAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterColumnAction::is_if_exists is accessed, but shouldn't be)";
   }
@@ -30684,7 +30909,7 @@ absl::Status ResolvedAlterSubEntityAction::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterSubEntityAction::alter_action is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterSubEntityAction::is_if_exists is accessed, but shouldn't be)";
   }
@@ -30879,7 +31104,7 @@ absl::Status ResolvedAddSubEntityAction::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAddSubEntityAction::options_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAddSubEntityAction::is_if_not_exists is accessed, but shouldn't be)";
   }
@@ -31031,7 +31256,7 @@ absl::Status ResolvedDropSubEntityAction::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropSubEntityAction::name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropSubEntityAction::is_if_exists is accessed, but shouldn't be)";
   }
@@ -31365,7 +31590,7 @@ absl::Status ResolvedAddConstraintAction::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAddConstraintAction::constraint is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAddConstraintAction::table is accessed, but shouldn't be)";
   }
@@ -31950,7 +32175,7 @@ absl::Status ResolvedAlterColumnSetDataTypeAction::CheckNoFieldsAccessed() const
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterColumnSetDataTypeAction::updated_type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterColumnSetDataTypeAction::updated_type_parameters is accessed, but shouldn't be)";
   }
@@ -32404,7 +32629,7 @@ absl::Status ResolvedRenameColumnAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedRenameColumnAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRenameColumnAction::is_if_exists is accessed, but shouldn't be)";
   }
@@ -32534,11 +32759,11 @@ absl::Status ResolvedSetAsAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedSetAsAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSetAsAction::entity_body_json is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedSetAsAction::entity_body_text is accessed, but shouldn't be)";
   }
@@ -32852,7 +33077,7 @@ absl::Status ResolvedAlterTableSetOptionsStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterTableSetOptionsStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAlterTableSetOptionsStmt::is_if_exists is accessed, but shouldn't be)";
   }
@@ -33224,7 +33449,7 @@ absl::Status ResolvedCreatePrivilegeRestrictionStmt::CheckNoFieldsAccessed() con
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreatePrivilegeRestrictionStmt::object_type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreatePrivilegeRestrictionStmt::restrictee_list is accessed, but shouldn't be)";
   }
@@ -33529,11 +33754,11 @@ absl::Status ResolvedCreateRowAccessPolicyStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateRowAccessPolicyStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateRowAccessPolicyStmt::create_mode is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateRowAccessPolicyStmt::name is accessed, but shouldn't be)";
   }
@@ -33541,11 +33766,11 @@ absl::Status ResolvedCreateRowAccessPolicyStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateRowAccessPolicyStmt::target_name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateRowAccessPolicyStmt::grantee_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateRowAccessPolicyStmt::grantee_expr_list is accessed, but shouldn't be)";
   }
@@ -33757,7 +33982,7 @@ absl::Status ResolvedDropPrivilegeRestrictionStmt::CheckNoFieldsAccessed() const
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropPrivilegeRestrictionStmt::object_type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropPrivilegeRestrictionStmt::is_if_exists is accessed, but shouldn't be)";
   }
@@ -33941,15 +34166,15 @@ absl::Status ResolvedDropRowAccessPolicyStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedDropRowAccessPolicyStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropRowAccessPolicyStmt::is_drop_all is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropRowAccessPolicyStmt::is_if_exists is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropRowAccessPolicyStmt::name is accessed, but shouldn't be)";
   }
@@ -34134,7 +34359,7 @@ absl::Status ResolvedDropIndexStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropIndexStmt::table_name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedDropIndexStmt::index_type is accessed, but shouldn't be)";
   }
@@ -34389,7 +34614,7 @@ absl::Status ResolvedRestrictToAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedRestrictToAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRestrictToAction::restrictee_list is accessed, but shouldn't be)";
   }
@@ -34540,11 +34765,11 @@ absl::Status ResolvedAddToRestricteeListAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedAddToRestricteeListAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAddToRestricteeListAction::is_if_not_exists is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAddToRestricteeListAction::restrictee_list is accessed, but shouldn't be)";
   }
@@ -34695,11 +34920,11 @@ absl::Status ResolvedRemoveFromRestricteeListAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedRemoveFromRestricteeListAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRemoveFromRestricteeListAction::is_if_exists is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRemoveFromRestricteeListAction::restrictee_list is accessed, but shouldn't be)";
   }
@@ -34993,11 +35218,11 @@ absl::Status ResolvedRevokeFromAction::CheckFieldsAccessedImpl(
 absl::Status ResolvedRevokeFromAction::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRevokeFromAction::revokee_expr_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRevokeFromAction::is_revoke_from_all is accessed, but shouldn't be)";
   }
@@ -36141,31 +36366,31 @@ absl::Status ResolvedCreateFunctionStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateFunctionStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::is_aggregate is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::language is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::aggregate_expression_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<9)) != 0 ) {
+  if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<10)) != 0 ) {
+  if ((accessed_ & (1<<10)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::sql_security is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<11)) != 0 ) {
+  if ((accessed_ & (1<<11)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::determinism_level is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<13)) != 0 ) {
+  if ((accessed_ & (1<<13)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateFunctionStmt::connection is accessed, but shouldn't be)";
   }
@@ -36332,7 +36557,7 @@ absl::Status ResolvedArgumentDef::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArgumentDef::type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedArgumentDef::argument_kind is accessed, but shouldn't be)";
   }
@@ -36776,15 +37001,15 @@ absl::Status ResolvedCreateTableFunctionStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateTableFunctionStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableFunctionStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableFunctionStmt::language is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableFunctionStmt::query is accessed, but shouldn't be)";
   }
@@ -36792,11 +37017,11 @@ absl::Status ResolvedCreateTableFunctionStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableFunctionStmt::output_column_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<8)) != 0 ) {
+  if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableFunctionStmt::is_value_table is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<9)) != 0 ) {
+  if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateTableFunctionStmt::sql_security is accessed, but shouldn't be)";
   }
@@ -36962,7 +37187,7 @@ absl::Status ResolvedRelationArgumentScan::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRelationArgumentScan::name is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedRelationArgumentScan::is_value_table is accessed, but shouldn't be)";
   }
@@ -37951,23 +38176,23 @@ absl::Status ResolvedImportStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedImportStmt::import_kind is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedImportStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedImportStmt::file_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedImportStmt::alias_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedImportStmt::into_alias_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedImportStmt::option_list is accessed, but shouldn't be)";
   }
@@ -38131,7 +38356,7 @@ absl::Status ResolvedModuleStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedModuleStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedModuleStmt::option_list is accessed, but shouldn't be)";
   }
@@ -38574,15 +38799,15 @@ absl::Status ResolvedCreateMaterializedViewStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedCreateMaterializedViewStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateMaterializedViewStmt::partition_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateMaterializedViewStmt::cluster_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateMaterializedViewStmt::replica_source is accessed, but shouldn't be)";
   }
@@ -39021,27 +39246,27 @@ absl::Status ResolvedCreateProcedureStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::signature is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::procedure_body is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<4)) != 0 ) {
+  if ((accessed_ & (1<<4)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::connection is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::language is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<6)) != 0 ) {
+  if ((accessed_ & (1<<6)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::code is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateProcedureStmt::external_security is accessed, but shouldn't be)";
   }
@@ -39831,15 +40056,15 @@ absl::Status ResolvedCreateEntityStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateEntityStmt::entity_type is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateEntityStmt::entity_body_json is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateEntityStmt::entity_body_text is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedCreateEntityStmt::option_list is accessed, but shouldn't be)";
   }
@@ -41592,11 +41817,11 @@ absl::Status ResolvedTableAndColumnInfo::CheckFieldsAccessedImpl(
 absl::Status ResolvedTableAndColumnInfo::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedTableAndColumnInfo::table is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedTableAndColumnInfo::column_index_list is accessed, but shouldn't be)";
   }
@@ -41769,11 +41994,11 @@ absl::Status ResolvedAnalyzeStmt::CheckFieldsAccessedImpl(
 absl::Status ResolvedAnalyzeStmt::CheckNoFieldsAccessed() const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
 
-  if ((accessed_ & (1<<0)) != 0 ) {
+  if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAnalyzeStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAnalyzeStmt::table_and_column_index_list is accessed, but shouldn't be)";
   }
@@ -41939,7 +42164,7 @@ absl::Status ResolvedAuxLoadDataPartitionFilter::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataPartitionFilter::filter is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataPartitionFilter::is_overwrite is accessed, but shouldn't be)";
   }
@@ -42625,51 +42850,51 @@ absl::Status ResolvedAuxLoadDataStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::is_temp_table is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<2)) != 0 ) {
+  if ((accessed_ & (1<<2)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::partition_filter is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<5)) != 0 ) {
+  if ((accessed_ & (1<<5)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::column_definition_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<7)) != 0 ) {
+  if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::primary_key is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<8)) != 0 ) {
+  if ((accessed_ & (1<<8)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::foreign_key_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<9)) != 0 ) {
+  if ((accessed_ & (1<<9)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::check_constraint_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<10)) != 0 ) {
+  if ((accessed_ & (1<<10)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::partition_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<11)) != 0 ) {
+  if ((accessed_ & (1<<11)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::cluster_by_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<12)) != 0 ) {
+  if ((accessed_ & (1<<12)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::option_list is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<13)) != 0 ) {
+  if ((accessed_ & (1<<13)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::with_partition_columns is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<14)) != 0 ) {
+  if ((accessed_ & (1<<14)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::connection is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<15)) != 0 ) {
+  if ((accessed_ & (1<<15)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAuxLoadDataStmt::from_files_option_list is accessed, but shouldn't be)";
   }
@@ -42952,7 +43177,7 @@ absl::Status ResolvedUndropStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUndropStmt::schema_object_kind is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<1)) != 0 ) {
+  if ((accessed_ & (1<<1)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUndropStmt::is_if_not_exists is accessed, but shouldn't be)";
   }
@@ -42960,7 +43185,7 @@ absl::Status ResolvedUndropStmt::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUndropStmt::name_path is accessed, but shouldn't be)";
   }
-  if ((accessed_ & (1<<3)) != 0 ) {
+  if ((accessed_ & (1<<3)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedUndropStmt::for_system_time_expr is accessed, but shouldn't be)";
   }

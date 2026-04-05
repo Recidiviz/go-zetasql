@@ -242,7 +242,7 @@
 
 // include dependencies
 #include "go-zetasql/common/status_payload_utils/export.inc"
-#include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -253,9 +253,11 @@
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"
+#include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #include "bridge.h"

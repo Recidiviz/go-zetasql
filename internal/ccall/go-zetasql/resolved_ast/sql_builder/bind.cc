@@ -243,10 +243,12 @@
 #include "zetasql/resolved_ast/sql_builder.cc"
 
 // include dependencies
+#include "go-zetasql/resolved_ast/node_sources/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
+#include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"

@@ -22,6 +22,7 @@
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
+#include "google/protobuf/descriptor.h"
 
 namespace zetasql_base {
 
@@ -30,7 +31,13 @@ extern const absl::string_view kZetaSqlTypeUrlPrefix;
 // Return the type_url for encoding a Status payload of type T.
 template <class T>
 std::string GetTypeUrl() {
-  return absl::StrCat(kZetaSqlTypeUrlPrefix, T::descriptor()->full_name());
+  const google::protobuf::Descriptor* d = T::descriptor();
+  if (ABSL_PREDICT_TRUE(d != nullptr)) {
+    return absl::StrCat(kZetaSqlTypeUrlPrefix, d->full_name());
+  }
+  // Descriptor tables may not be initialized yet in some CGO link orders; leave
+  // URL empty so HasPayloadWithType does not dereference a null descriptor.
+  return std::string();
 }
 
 // Attaches the given payload. This will overwrite any previous payload with
@@ -38,7 +45,15 @@ std::string GetTypeUrl() {
 template <class T>
 void AttachPayload(absl::Status* status, const T& payload) {
   absl::Cord serialized = absl::Cord(payload.SerializeAsString());
-  status->SetPayload(GetTypeUrl<T>(), serialized);
+  const google::protobuf::Descriptor* d = T::descriptor();
+  if (d == nullptr) {
+    d = payload.GetDescriptor();
+  }
+  if (d == nullptr) {
+    return;
+  }
+  status->SetPayload(absl::StrCat(kZetaSqlTypeUrlPrefix, d->full_name()),
+                     serialized);
 }
 
 }  // namespace zetasql_base

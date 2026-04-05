@@ -42,8 +42,9 @@
 #define FLAGS_nozetasql_enough_stack_bytes zetasql_parser_bison_parser_generated_lib_FLAGS_nozetasql_enough_stack_bytes
 #define FLAGS_zetasql_canonicalize_signed_zero_to_string zetasql_parser_bison_parser_generated_lib_FLAGS_zetasql_canonicalize_signed_zero_to_string
 #define FLAGS_nozetasql_canonicalize_signed_zero_to_string zetasql_parser_bison_parser_generated_lib_FLAGS_nozetasql_canonicalize_signed_zero_to_string
-// Must match parser/bind.cc so flex base symbols resolve in the parser package.
-#define ZetaSqlFlexTokenizerBase zetasql_parser_parser_ZetaSqlFlexTokenizerBase
+#define FLAGS_zetasql_idstring_allow_unicode_characters zetasql_parser_bison_parser_generated_lib_FLAGS_zetasql_idstring_allow_unicode_characters
+#define FLAGS_nozetasql_idstring_allow_unicode_characters zetasql_parser_bison_parser_generated_lib_FLAGS_nozetasql_idstring_allow_unicode_characters
+#define ZetaSqlFlexTokenizerBase zetasql_parser_bison_parser_generated_lib_ZetaSqlFlexTokenizerBase
 #define ZetaSqlFlexLexer zetasql_parser_bison_parser_generated_lib_ZetaSqlFlexLexer
 #define UCaseMap zetasql_parser_bison_parser_generated_lib_UCaseMap
 #define google_2fprotobuf_2fdescriptor_2eproto zetasql_parser_bison_parser_generated_lib_google_2fprotobuf_2fdescriptor_2eproto
@@ -233,10 +234,6 @@
 #define GO_EXPORT(def) export_zetasql_parser_bison_parser_generated_lib_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
-#include "zetasql/parser/flex_tokenizer.flex.cc"
-#undef ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
-
 // include headers
 //#define private public
 #include "zetasql/parser/bison_parser.bison.h"
@@ -250,10 +247,6 @@
 //#undef private
 
 // include sources
-#include "zetasql/parser/bison_parser.bison.cc"
-#include "zetasql/parser/flex_tokenizer.cc"
-
-#include "zetasql/parser/join_processor.cc"
 
 // include dependencies
 #include "go-zetasql/parser/keywords/export.inc"

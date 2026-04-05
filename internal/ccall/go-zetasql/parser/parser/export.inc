@@ -1,6 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_PARSER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_PARSER_EXPORT_H
 
+// Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h.
+#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+
 #include "zetasql/parser/ast_node.h"
 #include "zetasql/parser/ast_node_kind.h"
 #include "zetasql/parser/parse_tree.h"
@@ -14,10 +17,16 @@
 #include "zetasql/parser/visit_result.h"
 // include sources
 #include "zetasql/parser/ast_node_internal.h"
+#include "zetasql/parser/bison_parser.bison.cc"
+// bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
+#undef yylex
+#include "zetasql/parser/join_processor.cc"
+#include "zetasql/parser/flex_tokenizer.h"
+#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/bison_parser.cc"
+#include "zetasql/parser/flex_tokenizer.cc"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/flex_tokenizer.cc"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
 // include dependencies
@@ -29,6 +38,7 @@
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

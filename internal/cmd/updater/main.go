@@ -151,7 +151,130 @@ func applyPostCopyOverlays() error {
 	); err != nil {
 		return err
 	}
+	// options.pb.h may lag options.proto for new LanguageFeature values; use numeric id 102 ==
+	// FEATURE_ENABLE_ALTER_ARRAY_OPTIONS until protos are regenerated in lockstep.
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "bison_parser.cc"),
+		"FEATURE_ENABLE_ALTER_ARRAY_OPTIONS",
+		"static_cast<::zetasql::LanguageFeature>(102)",
+	); err != nil {
+		return err
+	}
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.cc"),
+		"FEATURE_ENABLE_ALTER_ARRAY_OPTIONS",
+		"static_cast<::zetasql::LanguageFeature>(102)",
+	); err != nil {
+		return err
+	}
+	// Generated flex uses yyFlexLexer=ZetaSqlFlexLexer; flex_tokenizer.h expects ZetaSqlFlexTokenizerBase.
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		"    #define yyFlexLexer ZetaSqlFlexLexer",
+		`#ifndef yyFlexLexer
+    #define yyFlexLexer ZetaSqlFlexTokenizerBase
+#endif`,
+	); err != nil {
+		return err
+	}
+	// bind.cc includes flex_tokenizer.h first (FlexLexer.h once); drop duplicate #include only.
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		`#define yytext_ptr yytext
+
+#include <FlexLexer.h>
+
+int yyFlexLexer::yywrap()`,
+		`#define yytext_ptr yytext
+
+int yyFlexLexer::yywrap()`,
+	); err != nil {
+		return err
+	}
+	// Stubs conflict with flex-generated yylex when amalgamated after flex_tokenizer.flex.cc.
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.h"),
+		`// This incantation is necessary because for some reason these functions are not
+// generated for ZetaSqlFlexTokenizerBase, but the class does reference them.
+inline int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
+inline int ZetaSqlFlexTokenizerBase::yywrap() { return 1; }
+
+#endif  // ZETASQL_PARSER_FLEX_TOKENIZER_H_`,
+		`// This incantation is necessary because for some reason these functions are not
+// generated for ZetaSqlFlexTokenizerBase, but the class does reference them.
+#ifndef ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+inline int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
+inline int ZetaSqlFlexTokenizerBase::yywrap() { return 1; }
+#endif
+
+#endif  // ZETASQL_PARSER_FLEX_TOKENIZER_H_`,
+	); err != nil {
+		return err
+	}
+	// ASTOptionsEntry dropped GetSQLForOperator upstream; options entries use " = " between name and value.
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "unparser.cc"),
+		`UnparseChildrenWithSeparator(node, data, node->GetSQLForOperator());`,
+		`UnparseChildrenWithSeparator(node, data, " = ");`,
+	); err != nil {
+		return err
+	}
+	// Until bison/flex are regenerated together with keywords.cc, drop "project" (KW_PROJECT).
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "keywords.cc"),
+		"    {\"project\", KW_PROJECT},\n",
+		"",
+	); err != nil {
+		return err
+	}
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "parse_tree.cc"),
+		`
+
+std::string ASTOptionsEntry::GetSQLForOperator() const {
+  switch (assignment_op_) {
+    case NOT_SET:
+      return "<UNKNOWN OPERATOR>";
+    case ASSIGN:
+      return "=";
+    case ADD_ASSIGN:
+      return "+=";
+    case SUB_ASSIGN:
+      return "-=";
+  }
+}
+`,
+		"",
+	); err != nil {
+		return err
+	}
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "public", "types", "proto_type.cc"),
+		"  value_proto->set_proto_value(GetCordValue(value));",
+		"  value_proto->set_proto_value(std::string(GetCordValue(value)));",
+	); err != nil {
+		return err
+	}
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "public", "types", "proto_type.cc"),
+		"  value->set(new internal::ProtoRep(this, value_proto.proto_value()));",
+		"  value->set(\n      new internal::ProtoRep(this, absl::Cord(value_proto.proto_value())));",
+	); err != nil {
+		return err
+	}
 	return nil
+}
+
+func replaceAllInFile(path, old, new string) error {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	s := string(b)
+	if !strings.Contains(s, old) {
+		return nil
+	}
+	return os.WriteFile(path, []byte(strings.ReplaceAll(s, old, new)), 0o644)
 }
 
 var copyExternalLibMap = map[string]string{

@@ -20,7 +20,9 @@
      * We will address this in a future release of flex, or omit the C++ scanner
      * altogether.
      */
-    #define yyFlexLexer ZetaSqlFlexLexer
+#ifndef yyFlexLexer
+    #define yyFlexLexer ZetaSqlFlexTokenizerBase
+#endif
 
 #ifdef yyalloc
 #define ZetaSqlalloc_ALREADY_DEFINED
@@ -317,10 +319,12 @@ typedef flex_uint8_t YY_CHAR;
 
 #define yytext_ptr yytext
 
-#include <FlexLexer.h>
-
-// yylex/yywrap are defined inline in flex_tokenizer.h (included later from this
-// file's %{...%} section) to avoid duplicate definitions with other TUs.
+int yyFlexLexer::yywrap() { return 1; }
+int yyFlexLexer::yylex()
+	{
+	LexerError( "yyFlexLexer::yylex invoked but %option yyclass used" );
+	return 0;
+	}
 
 #define YY_DECL int FlexTokenizer::yylex()
 

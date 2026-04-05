@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <functional>
 #include <limits>
+#include <optional>
 #include <queue>
 #include <set>
 #include <stack>
@@ -202,7 +203,7 @@ void ASTNode::Dumper::Dump() {
 
 std::string ASTNode::DebugString(int max_depth) const {
   std::string out;
-  Dumper(this, "\n", max_depth, absl::nullopt, &out).Dump();
+  Dumper(this, "\n", max_depth, std::nullopt, &out).Dump();
   return out;
 }
 

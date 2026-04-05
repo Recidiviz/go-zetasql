@@ -2191,7 +2191,8 @@ void GO_EXPORT(FunctionArgumentTypeOptions_set_extra_relation_input_columns_allo
 void GO_EXPORT(FunctionArgumentTypeOptions_set_argument_name)(void * arg0,void * arg1)
 {
   zetasql::FunctionArgumentTypeOptions *opt = (zetasql::FunctionArgumentTypeOptions *)arg0;
-  opt->set_argument_name((char *)arg1);
+  opt->set_argument_name(absl::string_view((const char *)arg1),
+                         zetasql::kPositionalOrNamed);
 }
 
 void GO_EXPORT(FunctionArgumentTypeOptions_set_argument_name_is_mandatory)(void * arg0,int arg1)

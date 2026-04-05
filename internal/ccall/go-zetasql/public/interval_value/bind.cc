@@ -242,10 +242,9 @@
 
 // include dependencies
 #include "go-zetasql/base/endian/export.inc"
+#include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/multiprecision_int/export.inc"
-#include "go-zetasql/public/functions/arithmetics/export.inc"
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"

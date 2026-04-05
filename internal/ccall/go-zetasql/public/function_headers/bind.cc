@@ -258,6 +258,7 @@
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"

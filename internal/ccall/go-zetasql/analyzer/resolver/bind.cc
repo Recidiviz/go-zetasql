@@ -281,6 +281,7 @@
 #include "go-zetasql/analyzer/name_scope/export.inc"
 #include "go-zetasql/analyzer/path_expression_span/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/general_trie/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

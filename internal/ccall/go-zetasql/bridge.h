@@ -6,7 +6,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <stdint.h>
-#include "../go-zetasql/parser/parser/bridge_extern.h"
 #include "../go-zetasql/public/analyzer/bridge_extern.h"
 #include "../go-zetasql/public/catalog/bridge_extern.h"
 #include "../go-zetasql/public/simple_catalog/bridge_extern.h"

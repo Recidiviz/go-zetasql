@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"unsafe"
 
-	internal "github.com/goccy/go-zetasql/internal/ccall/go-zetasql"
+	zetasqlparser "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/parser"
 	"github.com/goccy/go-zetasql/internal/helper"
 	"github.com/goccy/go-zetasql/types"
 )
@@ -127,61 +127,61 @@ func (n *BaseNode) ID() int {
 
 func (n *BaseNode) Kind() Kind {
 	var kind int
-	internal.ASTNode_node_kind(n.getRaw(), &kind)
+	zetasqlparser.ASTNode_node_kind(n.getRaw(), &kind)
 	return Kind(kind)
 }
 
 func (n *BaseNode) NumChildren() int {
 	var children int
-	internal.ASTNode_num_children(n.getRaw(), &children)
+	zetasqlparser.ASTNode_num_children(n.getRaw(), &children)
 	return children
 }
 
 func (n *BaseNode) SingleNodeDebugString() string {
 	var v unsafe.Pointer
-	internal.ASTNode_SingleNodeDebugString(n.getRaw(), &v)
+	zetasqlparser.ASTNode_SingleNodeDebugString(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
 func (n *BaseNode) Child(i int) Node {
 	var child unsafe.Pointer
-	internal.ASTNode_child(n.getRaw(), i, &child)
+	zetasqlparser.ASTNode_child(n.getRaw(), i, &child)
 	return newNode(child)
 }
 
 func (n *BaseNode) MutableChild(i int) Node {
 	var child unsafe.Pointer
-	internal.ASTNode_mutable_child(n.getRaw(), i, &child)
+	zetasqlparser.ASTNode_mutable_child(n.getRaw(), i, &child)
 	return newNode(child)
 }
 
 func (n *BaseNode) SetParent(parent Node) {
-	internal.ASTNode_set_parent(n.getRaw(), parent.getRaw())
+	zetasqlparser.ASTNode_set_parent(n.getRaw(), parent.getRaw())
 }
 
 func (n *BaseNode) Parent() Node {
 	var parent unsafe.Pointer
-	internal.ASTNode_parent(n.getRaw(), &parent)
+	zetasqlparser.ASTNode_parent(n.getRaw(), &parent)
 	return newNode(parent)
 }
 
 func (n *BaseNode) AddChild(child Node) {
-	internal.ASTNode_AddChild(n.getRaw(), child.getRaw())
+	zetasqlparser.ASTNode_AddChild(n.getRaw(), child.getRaw())
 }
 
 func (n *BaseNode) AddChildFront(child Node) {
-	internal.ASTNode_AddChildFront(n.getRaw(), child.getRaw())
+	zetasqlparser.ASTNode_AddChildFront(n.getRaw(), child.getRaw())
 }
 
 func (n *BaseNode) FindChildIndex(kind Kind) int {
 	var index int
-	internal.ASTNode_find_child_index(n.getRaw(), int(kind), &index)
+	zetasqlparser.ASTNode_find_child_index(n.getRaw(), int(kind), &index)
 	return index
 }
 
 func (n *BaseNode) DebugString(maxDepth int) string {
 	var v unsafe.Pointer
-	internal.ASTNode_DebugString(n.getRaw(), maxDepth, &v)
+	zetasqlparser.ASTNode_DebugString(n.getRaw(), maxDepth, &v)
 	return helper.PtrToString(v)
 }
 
@@ -206,94 +206,94 @@ func (n *BaseNode) MoveEndLocationBack(bytes int) {
 }
 
 func (n *BaseNode) SetStartLocation(v *types.ParseLocationPoint) {
-	internal.ASTNode_set_start_location(n.getRaw(), getRawParseLocationPoint(v))
+	zetasqlparser.ASTNode_set_start_location(n.getRaw(), getRawParseLocationPoint(v))
 }
 
 func (n *BaseNode) SetEndLocation(v *types.ParseLocationPoint) {
-	internal.ASTNode_set_end_location(n.getRaw(), getRawParseLocationPoint(v))
+	zetasqlparser.ASTNode_set_end_location(n.getRaw(), getRawParseLocationPoint(v))
 }
 
 func (n *BaseNode) IsTableExpression() bool {
 	var ret bool
-	internal.ASTNode_IsTableExpression(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsTableExpression(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsQueryExpression() bool {
 	var ret bool
-	internal.ASTNode_IsQueryExpression(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsQueryExpression(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsExpression() bool {
 	var ret bool
-	internal.ASTNode_IsExpression(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsExpression(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsType() bool {
 	var ret bool
-	internal.ASTNode_IsType(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsType(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsLeaf() bool {
 	var ret bool
-	internal.ASTNode_IsLeaf(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsLeaf(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsStatement() bool {
 	var ret bool
-	internal.ASTNode_IsStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsScriptStatement() bool {
 	var ret bool
-	internal.ASTNode_IsScriptStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsScriptStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsLoopStatement() bool {
 	var ret bool
-	internal.ASTNode_IsLoopStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsLoopStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsSqlStatement() bool {
 	var ret bool
-	internal.ASTNode_IsSqlStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsSqlStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsDdlStatement() bool {
 	var ret bool
-	internal.ASTNode_IsDdlStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsDdlStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsCreateStatement() bool {
 	var ret bool
-	internal.ASTNode_IsCreateStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsCreateStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) IsAlterStatement() bool {
 	var ret bool
-	internal.ASTNode_IsAlterStatement(n.getRaw(), &ret)
+	zetasqlparser.ASTNode_IsAlterStatement(n.getRaw(), &ret)
 	return ret
 }
 
 func (n *BaseNode) ParseLocationRange() *types.ParseLocationRange {
 	var v unsafe.Pointer
-	internal.ASTNode_GetParseLocationRange(n.getRaw(), &v)
+	zetasqlparser.ASTNode_GetParseLocationRange(n.getRaw(), &v)
 	return newParseLocationRange(v)
 }
 
 func (n *BaseNode) LocationString() string {
 	var v unsafe.Pointer
-	internal.ASTNode_GetLocationString(n.getRaw(), &v)
+	zetasqlparser.ASTNode_GetLocationString(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -307,7 +307,7 @@ type QueryStatementNode struct {
 
 func (n *QueryStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTQueryStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTQueryStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -319,12 +319,12 @@ type QueryExpressionBaseNode struct {
 }
 
 func (n *QueryExpressionBaseNode) SetParenthesized(parenthesized bool) {
-	internal.ASTQueryExpression_set_parenthesized(n.getRaw(), helper.BoolToInt(parenthesized))
+	zetasqlparser.ASTQueryExpression_set_parenthesized(n.getRaw(), helper.BoolToInt(parenthesized))
 }
 
 func (n *QueryExpressionBaseNode) Parenthesized() bool {
 	var v bool
-	internal.ASTQueryExpression_parenthesized(n.getRaw(), &v)
+	zetasqlparser.ASTQueryExpression_parenthesized(n.getRaw(), &v)
 	return v
 }
 
@@ -333,28 +333,28 @@ type QueryNode struct {
 }
 
 func (n *QueryNode) SetIsNested(isNested bool) {
-	internal.ASTQuery_set_is_nested(n.getRaw(), helper.BoolToInt(isNested))
+	zetasqlparser.ASTQuery_set_is_nested(n.getRaw(), helper.BoolToInt(isNested))
 }
 
 func (n *QueryNode) IsNested() bool {
 	var v bool
-	internal.ASTQuery_is_nested(n.getRaw(), &v)
+	zetasqlparser.ASTQuery_is_nested(n.getRaw(), &v)
 	return v
 }
 
 func (n *QueryNode) SetIsPivotInput(isPivotInput bool) {
-	internal.ASTQuery_set_is_pivot_input(n.getRaw(), helper.BoolToInt(isPivotInput))
+	zetasqlparser.ASTQuery_set_is_pivot_input(n.getRaw(), helper.BoolToInt(isPivotInput))
 }
 
 func (n *QueryNode) IsPivotInput() bool {
 	var v bool
-	internal.ASTQuery_is_pivot_input(n.getRaw(), &v)
+	zetasqlparser.ASTQuery_is_pivot_input(n.getRaw(), &v)
 	return v
 }
 
 func (n *QueryNode) WithClause() *WithClauseNode {
 	var v unsafe.Pointer
-	internal.ASTQuery_with_clause(n.getRaw(), &v)
+	zetasqlparser.ASTQuery_with_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -363,7 +363,7 @@ func (n *QueryNode) WithClause() *WithClauseNode {
 
 func (n *QueryNode) QueryExpr() QueryExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTQuery_query_expr(n.getRaw(), &v)
+	zetasqlparser.ASTQuery_query_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -372,7 +372,7 @@ func (n *QueryNode) QueryExpr() QueryExpressionNode {
 
 func (n *QueryNode) OrderBy() *OrderByNode {
 	var v unsafe.Pointer
-	internal.ASTQuery_order_by(n.getRaw(), &v)
+	zetasqlparser.ASTQuery_order_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -381,7 +381,7 @@ func (n *QueryNode) OrderBy() *OrderByNode {
 
 func (n *QueryNode) LimitOffset() *LimitOffsetNode {
 	var v unsafe.Pointer
-	internal.ASTQuery_limit_offset(n.getRaw(), &v)
+	zetasqlparser.ASTQuery_limit_offset(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -393,18 +393,18 @@ type SelectNode struct {
 }
 
 func (n *SelectNode) SetDistinct(distinct bool) {
-	internal.ASTSelect_set_distinct(n.getRaw(), helper.BoolToInt(distinct))
+	zetasqlparser.ASTSelect_set_distinct(n.getRaw(), helper.BoolToInt(distinct))
 }
 
 func (n *SelectNode) Distinct() bool {
 	var v bool
-	internal.ASTSelect_distinct(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_distinct(n.getRaw(), &v)
 	return v
 }
 
 func (n *SelectNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_hint(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -413,7 +413,7 @@ func (n *SelectNode) Hint() *HintNode {
 
 func (n *SelectNode) AnonymizationOptions() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_anonymization_options(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_anonymization_options(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -422,7 +422,7 @@ func (n *SelectNode) AnonymizationOptions() *OptionsListNode {
 
 func (n *SelectNode) SelectAs() *SelectAsNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_select_as(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_select_as(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -431,7 +431,7 @@ func (n *SelectNode) SelectAs() *SelectAsNode {
 
 func (n *SelectNode) SelectList() *SelectListNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_select_list(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_select_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -440,7 +440,7 @@ func (n *SelectNode) SelectList() *SelectListNode {
 
 func (n *SelectNode) FromClause() *FromClauseNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_from_clause(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_from_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -449,7 +449,7 @@ func (n *SelectNode) FromClause() *FromClauseNode {
 
 func (n *SelectNode) WhereClause() *WhereClauseNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_where_clause(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_where_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -458,7 +458,7 @@ func (n *SelectNode) WhereClause() *WhereClauseNode {
 
 func (n *SelectNode) GroupBy() *GroupByNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_group_by(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_group_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -467,7 +467,7 @@ func (n *SelectNode) GroupBy() *GroupByNode {
 
 func (n *SelectNode) Having() *HavingNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_having(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_having(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -476,7 +476,7 @@ func (n *SelectNode) Having() *HavingNode {
 
 func (n *SelectNode) Qualify() *QualifyNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_qualify(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_qualify(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -485,7 +485,7 @@ func (n *SelectNode) Qualify() *QualifyNode {
 
 func (n *SelectNode) WindowClause() *WindowClauseNode {
 	var v unsafe.Pointer
-	internal.ASTSelect_window_clause(n.getRaw(), &v)
+	zetasqlparser.ASTSelect_window_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -498,11 +498,11 @@ type SelectListNode struct {
 
 func (n *SelectListNode) Columns() []*SelectColumnNode {
 	var num int
-	internal.ASTSelectList_column_num(n.getRaw(), &num)
+	zetasqlparser.ASTSelectList_column_num(n.getRaw(), &num)
 	columns := make([]*SelectColumnNode, 0, num)
 	for i := 0; i < num; i++ {
 		var col unsafe.Pointer
-		internal.ASTSelectList_column(n.getRaw(), i, &col)
+		zetasqlparser.ASTSelectList_column(n.getRaw(), i, &col)
 		columns = append(columns, newSelectColumnNode(col))
 	}
 	return columns
@@ -514,13 +514,13 @@ type SelectColumnNode struct {
 
 func (n *SelectColumnNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSelectColumn_expression(n.getRaw(), &v)
+	zetasqlparser.ASTSelectColumn_expression(n.getRaw(), &v)
 	return newNode(v).(ExpressionNode)
 }
 
 func (n *SelectColumnNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTSelectColumn_alias(n.getRaw(), &v)
+	zetasqlparser.ASTSelectColumn_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -532,18 +532,18 @@ type ExpressionBaseNode struct {
 }
 
 func (n *ExpressionBaseNode) SetParenthesized(parenthesized bool) {
-	internal.ASTExpression_set_parenthesized(n.getRaw(), helper.BoolToInt(parenthesized))
+	zetasqlparser.ASTExpression_set_parenthesized(n.getRaw(), helper.BoolToInt(parenthesized))
 }
 
 func (n *ExpressionBaseNode) Parenthesized() bool {
 	var v bool
-	internal.ASTExpression_parenthesized(n.getRaw(), &v)
+	zetasqlparser.ASTExpression_parenthesized(n.getRaw(), &v)
 	return v
 }
 
 func (n *ExpressionBaseNode) IsAllowedInComparison() bool {
 	var v bool
-	internal.ASTExpression_IsAllowedInComparison(n.getRaw(), &v)
+	zetasqlparser.ASTExpression_IsAllowedInComparison(n.getRaw(), &v)
 	return v
 }
 
@@ -553,12 +553,12 @@ type LeafBaseNode struct {
 
 func (n *LeafBaseNode) Image() string {
 	var v unsafe.Pointer
-	internal.ASTLeaf_image(n.getRaw(), &v)
+	zetasqlparser.ASTLeaf_image(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
 func (n *LeafBaseNode) SetImage(image string) {
-	internal.ASTLeaf_set_image(n.getRaw(), helper.StringToPtr(image))
+	zetasqlparser.ASTLeaf_set_image(n.getRaw(), helper.StringToPtr(image))
 }
 
 type IntLiteralNode struct {
@@ -567,7 +567,7 @@ type IntLiteralNode struct {
 
 func (n *IntLiteralNode) IsHex() bool {
 	var v bool
-	internal.ASTIntLiteral_is_hex(n.getRaw(), &v)
+	zetasqlparser.ASTIntLiteral_is_hex(n.getRaw(), &v)
 	return v
 }
 
@@ -584,12 +584,12 @@ type IdentifierNode struct {
 }
 
 func (n *IdentifierNode) SetName(name string) {
-	internal.ASTIdentifier_SetIdentifier(n.getRaw(), helper.StringToPtr(name))
+	zetasqlparser.ASTIdentifier_SetIdentifier(n.getRaw(), helper.StringToPtr(name))
 }
 
 func (n *IdentifierNode) Name() string {
 	var name unsafe.Pointer
-	internal.ASTIdentifier_GetAsString(n.getRaw(), &name)
+	zetasqlparser.ASTIdentifier_GetAsString(n.getRaw(), &name)
 	return helper.PtrToString(name)
 }
 
@@ -599,7 +599,7 @@ type AliasNode struct {
 
 func (n *AliasNode) Identifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlias_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTAlias_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -608,7 +608,7 @@ func (n *AliasNode) Identifier() *IdentifierNode {
 
 func (n *AliasNode) Name() string {
 	var v unsafe.Pointer
-	internal.ASTAlias_GetAsString(n.getRaw(), &v)
+	zetasqlparser.ASTAlias_GetAsString(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -624,11 +624,11 @@ type PathExpressionNode struct {
 
 func (n *PathExpressionNode) Names() []*IdentifierNode {
 	var num int
-	internal.ASTPathExpression_num_names(n.getRaw(), &num)
+	zetasqlparser.ASTPathExpression_num_names(n.getRaw(), &num)
 	names := make([]*IdentifierNode, 0, num)
 	for i := 0; i < num; i++ {
 		var name unsafe.Pointer
-		internal.ASTPathExpression_name(n.getRaw(), i, &name)
+		zetasqlparser.ASTPathExpression_name(n.getRaw(), i, &name)
 		names = append(names, newIdentifierNode(name))
 	}
 	return names
@@ -639,7 +639,7 @@ func (n *PathExpressionNode) Names() []*IdentifierNode {
 // that many identifiers from the prefix of <path>.
 func (n *PathExpressionNode) ToIdentifierPathString(maxPrefixSize uint32) string {
 	var v unsafe.Pointer
-	internal.ASTPathExpression_ToIdentifierPathString(n.getRaw(), maxPrefixSize, &v)
+	zetasqlparser.ASTPathExpression_ToIdentifierPathString(n.getRaw(), maxPrefixSize, &v)
 	return helper.PtrToString(v)
 }
 
@@ -653,55 +653,55 @@ type TablePathExpressionNode struct {
 
 func (n *TablePathExpressionNode) PathExpr() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_path_expr(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_path_expr(n.getRaw(), &v)
 	return newPathExpressionNode(v)
 }
 
 func (n *TablePathExpressionNode) UnnestExpr() *UnnestExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_unnest_expr(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_unnest_expr(n.getRaw(), &v)
 	return newUnnestExpressionNode(v)
 }
 
 func (n *TablePathExpressionNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_hint(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_hint(n.getRaw(), &v)
 	return newHintNode(v)
 }
 
 func (n *TablePathExpressionNode) WithOffset() *WithOffsetNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_with_offset(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_with_offset(n.getRaw(), &v)
 	return newWithOffsetNode(v)
 }
 
 func (n *TablePathExpressionNode) PivotClause() *PivotClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_pivot_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_pivot_clause(n.getRaw(), &v)
 	return newPivotClauseNode(v)
 }
 
 func (n *TablePathExpressionNode) UnpivotClause() *UnpivotClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_unpivot_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_unpivot_clause(n.getRaw(), &v)
 	return newUnpivotClauseNode(v)
 }
 
 func (n *TablePathExpressionNode) ForSystemTime() *ForSystemTimeNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_for_system_time(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_for_system_time(n.getRaw(), &v)
 	return newForSystemTimeNode(v)
 }
 
 func (n *TablePathExpressionNode) SampleClause() *SampleClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_sample_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_sample_clause(n.getRaw(), &v)
 	return newSampleClauseNode(v)
 }
 
 func (n *TablePathExpressionNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTTablePathExpression_alias(n.getRaw(), &v)
+	zetasqlparser.ASTTablePathExpression_alias(n.getRaw(), &v)
 	return newAliasNode(v)
 }
 
@@ -711,7 +711,7 @@ type FromClauseNode struct {
 
 func (n *FromClauseNode) TableExpression() TableExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFromClause_table_expression(n.getRaw(), &v)
+	zetasqlparser.ASTFromClause_table_expression(n.getRaw(), &v)
 	return newNode(v).(TableExpressionNode)
 }
 
@@ -721,7 +721,7 @@ type WhereClauseNode struct {
 
 func (n *WhereClauseNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTWhereClause_expression(n.getRaw(), &v)
+	zetasqlparser.ASTWhereClause_expression(n.getRaw(), &v)
 	return newNode(v).(ExpressionNode)
 }
 
@@ -730,12 +730,12 @@ type BooleanLiteralNode struct {
 }
 
 func (n *BooleanLiteralNode) SetValue(value bool) {
-	internal.ASTBooleanLiteral_set_value(n.getRaw(), helper.BoolToInt(value))
+	zetasqlparser.ASTBooleanLiteral_set_value(n.getRaw(), helper.BoolToInt(value))
 }
 
 func (n *BooleanLiteralNode) Value() bool {
 	var v bool
-	internal.ASTBooleanLiteral_value(n.getRaw(), &v)
+	zetasqlparser.ASTBooleanLiteral_value(n.getRaw(), &v)
 	return v
 }
 
@@ -745,11 +745,11 @@ type AndExprNode struct {
 
 func (n *AndExprNode) Conjuncts() []ExpressionNode {
 	var num int
-	internal.ASTAndExpr_conjuncts_num(n.getRaw(), &num)
+	zetasqlparser.ASTAndExpr_conjuncts_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTAndExpr_conjunct(n.getRaw(), i, &v)
+		zetasqlparser.ASTAndExpr_conjunct(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -828,40 +828,40 @@ type BinaryExpressionNode struct {
 }
 
 func (n *BinaryExpressionNode) SetOp(op BinaryOp) {
-	internal.ASTBinaryExpression_set_op(n.getRaw(), int(op))
+	zetasqlparser.ASTBinaryExpression_set_op(n.getRaw(), int(op))
 }
 
 func (n *BinaryExpressionNode) Op() BinaryOp {
 	var v int
-	internal.ASTBinaryExpression_op(n.getRaw(), &v)
+	zetasqlparser.ASTBinaryExpression_op(n.getRaw(), &v)
 	return BinaryOp(v)
 }
 
 func (n *BinaryExpressionNode) SetIsNot(isNot bool) {
-	internal.ASTBinaryExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
+	zetasqlparser.ASTBinaryExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
 }
 
 func (n *BinaryExpressionNode) IsNot() bool {
 	var v bool
-	internal.ASTBinaryExpression_is_not(n.getRaw(), &v)
+	zetasqlparser.ASTBinaryExpression_is_not(n.getRaw(), &v)
 	return v
 }
 
 func (n *BinaryExpressionNode) Lhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBinaryExpression_lhs(n.getRaw(), &v)
+	zetasqlparser.ASTBinaryExpression_lhs(n.getRaw(), &v)
 	return newNode(v).(ExpressionNode)
 }
 
 func (n *BinaryExpressionNode) Rhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBinaryExpression_rhs(n.getRaw(), &v)
+	zetasqlparser.ASTBinaryExpression_rhs(n.getRaw(), &v)
 	return newNode(v).(ExpressionNode)
 }
 
 func (n *BinaryExpressionNode) SQLForOperator() string {
 	var v unsafe.Pointer
-	internal.ASTBinaryExpression_GetSQLForOperator(n.getRaw(), &v)
+	zetasqlparser.ASTBinaryExpression_GetSQLForOperator(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -871,12 +871,12 @@ type StringLiteralNode struct {
 
 func (n *StringLiteralNode) Value() string {
 	var v unsafe.Pointer
-	internal.ASTStringLiteral_string_value(n.getRaw(), &v)
+	zetasqlparser.ASTStringLiteral_string_value(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
 func (n *StringLiteralNode) SetValue(value string) {
-	internal.ASTStringLiteral_set_string_value(n.getRaw(), helper.StringToPtr(value))
+	zetasqlparser.ASTStringLiteral_set_string_value(n.getRaw(), helper.StringToPtr(value))
 }
 
 type StarNode struct {
@@ -889,11 +889,11 @@ type OrExprNode struct {
 
 func (n *OrExprNode) Disjuncts() []ExpressionNode {
 	var num int
-	internal.ASTOrExpr_disjuncts_num(n.getRaw(), &num)
+	zetasqlparser.ASTOrExpr_disjuncts_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTOrExpr_disjunct(n.getRaw(), i, &v)
+		zetasqlparser.ASTOrExpr_disjunct(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -905,7 +905,7 @@ type GroupingItemNode struct {
 
 func (n *GroupingItemNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTGroupingItem_expression(n.getRaw(), &v)
+	zetasqlparser.ASTGroupingItem_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -914,7 +914,7 @@ func (n *GroupingItemNode) Expression() ExpressionNode {
 
 func (n *GroupingItemNode) Rollup() *RollupNode {
 	var v unsafe.Pointer
-	internal.ASTGroupingItem_rollup(n.getRaw(), &v)
+	zetasqlparser.ASTGroupingItem_rollup(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -927,7 +927,7 @@ type GroupByNode struct {
 
 func (n *GroupByNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTGroupBy_hint(n.getRaw(), &v)
+	zetasqlparser.ASTGroupBy_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -936,11 +936,11 @@ func (n *GroupByNode) Hint() *HintNode {
 
 func (n *GroupByNode) GroupingItems() []*GroupingItemNode {
 	var num int
-	internal.ASTGroupBy_grouping_items_num(n.getRaw(), &num)
+	zetasqlparser.ASTGroupBy_grouping_items_num(n.getRaw(), &num)
 	ret := make([]*GroupingItemNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTGroupBy_grouping_item(n.getRaw(), i, &v)
+		zetasqlparser.ASTGroupBy_grouping_item(n.getRaw(), i, &v)
 		ret = append(ret, newGroupingItemNode(v))
 	}
 	return ret
@@ -974,18 +974,18 @@ type OrderingExpressionNode struct {
 }
 
 func (n *OrderingExpressionNode) SetOrderingSpec(spec OrderingSpec) {
-	internal.ASTOrderingExpression_set_ordering_spec(n.getRaw(), int(spec))
+	zetasqlparser.ASTOrderingExpression_set_ordering_spec(n.getRaw(), int(spec))
 }
 
 func (n *OrderingExpressionNode) OrderingSpec() OrderingSpec {
 	var v int
-	internal.ASTOrderingExpression_ordering_spec(n.getRaw(), &v)
+	zetasqlparser.ASTOrderingExpression_ordering_spec(n.getRaw(), &v)
 	return OrderingSpec(v)
 }
 
 func (n *OrderingExpressionNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTOrderingExpression_expression(n.getRaw(), &v)
+	zetasqlparser.ASTOrderingExpression_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -994,7 +994,7 @@ func (n *OrderingExpressionNode) Expression() ExpressionNode {
 
 func (n *OrderingExpressionNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTOrderingExpression_collate(n.getRaw(), &v)
+	zetasqlparser.ASTOrderingExpression_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1003,7 +1003,7 @@ func (n *OrderingExpressionNode) Collate() *CollateNode {
 
 func (n *OrderingExpressionNode) NullOrder() *NullOrderNode {
 	var v unsafe.Pointer
-	internal.ASTOrderingExpression_null_order(n.getRaw(), &v)
+	zetasqlparser.ASTOrderingExpression_null_order(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1016,7 +1016,7 @@ type OrderByNode struct {
 
 func (n *OrderByNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTOrderBy_hint(n.getRaw(), &v)
+	zetasqlparser.ASTOrderBy_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1025,11 +1025,11 @@ func (n *OrderByNode) Hint() *HintNode {
 
 func (n *OrderByNode) OrderingExpressions() []*OrderingExpressionNode {
 	var num int
-	internal.ASTOrderBy_ordering_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTOrderBy_ordering_expressions_num(n.getRaw(), &num)
 	ret := make([]*OrderingExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTOrderBy_ordering_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTOrderBy_ordering_expression(n.getRaw(), i, &v)
 		ret = append(ret, newOrderingExpressionNode(v))
 	}
 	return ret
@@ -1041,7 +1041,7 @@ type LimitOffsetNode struct {
 
 func (n *LimitOffsetNode) Limit() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTLimitOffset_limit(n.getRaw(), &v)
+	zetasqlparser.ASTLimitOffset_limit(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1050,7 +1050,7 @@ func (n *LimitOffsetNode) Limit() ExpressionNode {
 
 func (n *LimitOffsetNode) Offset() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTLimitOffset_offset(n.getRaw(), &v)
+	zetasqlparser.ASTLimitOffset_offset(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1079,7 +1079,7 @@ type OnClauseNode struct {
 
 func (n *OnClauseNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTOnClause_expression(n.getRaw(), &v)
+	zetasqlparser.ASTOnClause_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1092,7 +1092,7 @@ type WithClauseEntryNode struct {
 
 func (n *WithClauseEntryNode) Alias() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTWithClauseEntry_alias(n.getRaw(), &v)
+	zetasqlparser.ASTWithClauseEntry_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1101,7 +1101,7 @@ func (n *WithClauseEntryNode) Alias() *IdentifierNode {
 
 func (n *WithClauseEntryNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTWithClauseEntry_query(n.getRaw(), &v)
+	zetasqlparser.ASTWithClauseEntry_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1165,68 +1165,68 @@ type JoinNode struct {
 }
 
 func (n *JoinNode) SetJoinType(typ JoinType) {
-	internal.ASTJoin_set_join_type(n.getRaw(), int(typ))
+	zetasqlparser.ASTJoin_set_join_type(n.getRaw(), int(typ))
 }
 
 func (n *JoinNode) JoinType() JoinType {
 	var v int
-	internal.ASTJoin_join_type(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_join_type(n.getRaw(), &v)
 	return JoinType(v)
 }
 
 func (n *JoinNode) SetJoinHint(hint JoinHint) {
-	internal.ASTJoin_set_join_hint(n.getRaw(), int(hint))
+	zetasqlparser.ASTJoin_set_join_hint(n.getRaw(), int(hint))
 }
 
 func (n *JoinNode) JoinHint() JoinHint {
 	var v int
-	internal.ASTJoin_join_hint(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_join_hint(n.getRaw(), &v)
 	return JoinHint(v)
 }
 
 func (n *JoinNode) SetNatural(natural bool) {
-	internal.ASTJoin_set_natural(n.getRaw(), helper.BoolToInt(natural))
+	zetasqlparser.ASTJoin_set_natural(n.getRaw(), helper.BoolToInt(natural))
 }
 
 func (n *JoinNode) Natural() bool {
 	var v bool
-	internal.ASTJoin_natural(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_natural(n.getRaw(), &v)
 	return v
 }
 
 func (n *JoinNode) SetUnmatchedJoinCount(count int) {
-	internal.ASTJoin_set_unmatched_join_count(n.getRaw(), count)
+	zetasqlparser.ASTJoin_set_unmatched_join_count(n.getRaw(), count)
 }
 
 func (n *JoinNode) UnmatchedJoinCount() int {
 	var v int
-	internal.ASTJoin_unmatched_join_count(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_unmatched_join_count(n.getRaw(), &v)
 	return v
 }
 
 func (n *JoinNode) SetTransformationNeeded(needed bool) {
-	internal.ASTJoin_set_transformation_needed(n.getRaw(), helper.BoolToInt(needed))
+	zetasqlparser.ASTJoin_set_transformation_needed(n.getRaw(), helper.BoolToInt(needed))
 }
 
 func (n *JoinNode) TransformationNeeded() bool {
 	var v bool
-	internal.ASTJoin_transformation_needed(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_transformation_needed(n.getRaw(), &v)
 	return v
 }
 
 func (n *JoinNode) SetContainsCommaJoin(commaJoin bool) {
-	internal.ASTJoin_set_contains_comma_join(n.getRaw(), helper.BoolToInt(commaJoin))
+	zetasqlparser.ASTJoin_set_contains_comma_join(n.getRaw(), helper.BoolToInt(commaJoin))
 }
 
 func (n *JoinNode) ContainsCommaJoin() bool {
 	var v bool
-	internal.ASTJoin_contains_comma_join(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_contains_comma_join(n.getRaw(), &v)
 	return v
 }
 
 func (n *JoinNode) Lhs() TableExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTJoin_lhs(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_lhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1235,7 +1235,7 @@ func (n *JoinNode) Lhs() TableExpressionNode {
 
 func (n *JoinNode) Rhs() TableExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTJoin_rhs(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_rhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1244,7 +1244,7 @@ func (n *JoinNode) Rhs() TableExpressionNode {
 
 func (n *JoinNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTJoin_hint(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1253,7 +1253,7 @@ func (n *JoinNode) Hint() *HintNode {
 
 func (n *JoinNode) OnClause() *OnClauseNode {
 	var v unsafe.Pointer
-	internal.ASTJoin_on_clause(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_on_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1262,7 +1262,7 @@ func (n *JoinNode) OnClause() *OnClauseNode {
 
 func (n *JoinNode) UsingClause() *UsingClauseNode {
 	var v unsafe.Pointer
-	internal.ASTJoin_using_clause(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_using_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1279,7 +1279,7 @@ func newJoinParseError(raw unsafe.Pointer) *JoinParseError {
 
 func (e *JoinParseError) ErrorNode() Node {
 	var v unsafe.Pointer
-	internal.JoinParseError_error_node(e.raw, &v)
+	zetasqlparser.JoinParseError_error_node(e.raw, &v)
 	if v == nil {
 		return nil
 	}
@@ -1288,7 +1288,7 @@ func (e *JoinParseError) ErrorNode() Node {
 
 func (e *JoinParseError) Message() string {
 	var v unsafe.Pointer
-	internal.JoinParseError_message(e.raw, &v)
+	zetasqlparser.JoinParseError_message(e.raw, &v)
 	return helper.PtrToString(v)
 }
 
@@ -1298,7 +1298,7 @@ func (e *JoinParseError) Error() string {
 
 func (n *JoinNode) ParseError() *JoinParseError {
 	var v unsafe.Pointer
-	internal.ASTJoin_parse_error(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_parse_error(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1307,13 +1307,13 @@ func (n *JoinNode) ParseError() *JoinParseError {
 
 func (n *JoinNode) SQLForJoinType() string {
 	var v unsafe.Pointer
-	internal.ASTJoin_GetSQLForJoinType(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_GetSQLForJoinType(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
 func (n *JoinNode) SQLForJoinHint() string {
 	var v unsafe.Pointer
-	internal.ASTJoin_GetSQLForJoinHint(n.getRaw(), &v)
+	zetasqlparser.ASTJoin_GetSQLForJoinHint(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -1322,22 +1322,22 @@ type WithClauseNode struct {
 }
 
 func (n *WithClauseNode) SetRecursive(recursive bool) {
-	internal.ASTWithClause_set_recursive(n.getRaw(), helper.BoolToInt(recursive))
+	zetasqlparser.ASTWithClause_set_recursive(n.getRaw(), helper.BoolToInt(recursive))
 }
 
 func (n *WithClauseNode) Recursive() bool {
 	var v bool
-	internal.ASTWithClause_recursive(n.getRaw(), &v)
+	zetasqlparser.ASTWithClause_recursive(n.getRaw(), &v)
 	return v
 }
 
 func (n *WithClauseNode) With() []*WithClauseEntryNode {
 	var num int
-	internal.ASTWithClause_with_num(n.getRaw(), &num)
+	zetasqlparser.ASTWithClause_with_num(n.getRaw(), &num)
 	ret := make([]*WithClauseEntryNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTWithClause_with(n.getRaw(), i, &v)
+		zetasqlparser.ASTWithClause_with(n.getRaw(), i, &v)
 		ret = append(ret, newWithClauseEntryNode(v))
 	}
 	return ret
@@ -1349,7 +1349,7 @@ type HavingNode struct {
 
 func (n *HavingNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTHaving_expression(n.getRaw(), &v)
+	zetasqlparser.ASTHaving_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1362,7 +1362,7 @@ type TypeBaseNode struct {
 
 func (n *TypeBaseNode) TypeParameters() *TypeParameterListNode {
 	var v unsafe.Pointer
-	internal.ASTType_type_parameters(n.getRaw(), &v)
+	zetasqlparser.ASTType_type_parameters(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1371,7 +1371,7 @@ func (n *TypeBaseNode) TypeParameters() *TypeParameterListNode {
 
 func (n *TypeBaseNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTType_collate(n.getRaw(), &v)
+	zetasqlparser.ASTType_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1384,7 +1384,7 @@ type SimpleTypeNode struct {
 
 func (n *SimpleTypeNode) TypeName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSimpleType_type_name(n.getRaw(), &v)
+	zetasqlparser.ASTSimpleType_type_name(n.getRaw(), &v)
 	return newPathExpressionNode(v)
 }
 
@@ -1394,7 +1394,7 @@ type ArrayTypeNode struct {
 
 func (n *ArrayTypeNode) ElementType() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTArrayType_element_type(n.getRaw(), &v)
+	zetasqlparser.ASTArrayType_element_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1407,7 +1407,7 @@ type StructFieldNode struct {
 
 func (n *StructFieldNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTStructField_name(n.getRaw(), &v)
+	zetasqlparser.ASTStructField_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1416,7 +1416,7 @@ func (n *StructFieldNode) Name() *IdentifierNode {
 
 func (n *StructFieldNode) Type() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTStructField_type(n.getRaw(), &v)
+	zetasqlparser.ASTStructField_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1429,11 +1429,11 @@ type StructTypeNode struct {
 
 func (n *StructTypeNode) StructFields() []*StructFieldNode {
 	var num int
-	internal.ASTStructType_struct_fields_num(n.getRaw(), &num)
+	zetasqlparser.ASTStructType_struct_fields_num(n.getRaw(), &num)
 	ret := make([]*StructFieldNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStructType_struct_field(n.getRaw(), i, &v)
+		zetasqlparser.ASTStructType_struct_field(n.getRaw(), i, &v)
 		ret = append(ret, newStructFieldNode(v))
 	}
 	return ret
@@ -1444,18 +1444,18 @@ type CastExpressionNode struct {
 }
 
 func (n *CastExpressionNode) SetIsSafeCast(isSafe bool) {
-	internal.ASTCastExpression_set_is_safe_cast(n.getRaw(), helper.BoolToInt(isSafe))
+	zetasqlparser.ASTCastExpression_set_is_safe_cast(n.getRaw(), helper.BoolToInt(isSafe))
 }
 
 func (n *CastExpressionNode) IsSafeCast() bool {
 	var v bool
-	internal.ASTCastExpression_is_safe_cast(n.getRaw(), &v)
+	zetasqlparser.ASTCastExpression_is_safe_cast(n.getRaw(), &v)
 	return v
 }
 
 func (n *CastExpressionNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCastExpression_expr(n.getRaw(), &v)
+	zetasqlparser.ASTCastExpression_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1464,7 +1464,7 @@ func (n *CastExpressionNode) Expr() ExpressionNode {
 
 func (n *CastExpressionNode) Type() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTCastExpression_type(n.getRaw(), &v)
+	zetasqlparser.ASTCastExpression_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1473,7 +1473,7 @@ func (n *CastExpressionNode) Type() TypeNode {
 
 func (n *CastExpressionNode) Format() *FormatClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCastExpression_format(n.getRaw(), &v)
+	zetasqlparser.ASTCastExpression_format(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1508,18 +1508,18 @@ type SelectAsNode struct {
 }
 
 func (n *SelectAsNode) SetAsMode(mode AsMode) {
-	internal.ASTSelectAs_set_as_mode(n.getRaw(), int(mode))
+	zetasqlparser.ASTSelectAs_set_as_mode(n.getRaw(), int(mode))
 }
 
 func (n *SelectAsNode) AsMode() AsMode {
 	var v int
-	internal.ASTSelectAs_as_mode(n.getRaw(), &v)
+	zetasqlparser.ASTSelectAs_as_mode(n.getRaw(), &v)
 	return AsMode(v)
 }
 
 func (n *SelectAsNode) TypeName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSelectAs_type_name(n.getRaw(), &v)
+	zetasqlparser.ASTSelectAs_type_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1528,13 +1528,13 @@ func (n *SelectAsNode) TypeName() *PathExpressionNode {
 
 func (n *SelectAsNode) IsSelectAsStruct() bool {
 	var v bool
-	internal.ASTSelectAs_is_select_as_struct(n.getRaw(), &v)
+	zetasqlparser.ASTSelectAs_is_select_as_struct(n.getRaw(), &v)
 	return v
 }
 
 func (n *SelectAsNode) IsSelectAsValue() bool {
 	var v bool
-	internal.ASTSelectAs_is_select_as_value(n.getRaw(), &v)
+	zetasqlparser.ASTSelectAs_is_select_as_value(n.getRaw(), &v)
 	return v
 }
 
@@ -1544,11 +1544,11 @@ type RollupNode struct {
 
 func (n *RollupNode) Expressions() []ExpressionNode {
 	var num int
-	internal.ASTRollup_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTRollup_expressions_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTRollup_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTRollup_expression(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -1579,38 +1579,38 @@ type FunctionCallNode struct {
 }
 
 func (n *FunctionCallNode) SetNullHandlingModifier(mod NullHandlingModifier) {
-	internal.ASTFunctionCall_set_null_handling_modifier(n.getRaw(), int(mod))
+	zetasqlparser.ASTFunctionCall_set_null_handling_modifier(n.getRaw(), int(mod))
 }
 
 func (n *FunctionCallNode) NullHandlingModifier() NullHandlingModifier {
 	var v int
-	internal.ASTFunctionCall_null_handling_modifier(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_null_handling_modifier(n.getRaw(), &v)
 	return NullHandlingModifier(v)
 }
 
 func (n *FunctionCallNode) SetDistinct(distinct bool) {
-	internal.ASTFunctionCall_set_distinct(n.getRaw(), helper.BoolToInt(distinct))
+	zetasqlparser.ASTFunctionCall_set_distinct(n.getRaw(), helper.BoolToInt(distinct))
 }
 
 func (n *FunctionCallNode) Distinct() bool {
 	var v bool
-	internal.ASTFunctionCall_distinct(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_distinct(n.getRaw(), &v)
 	return v
 }
 
 func (n *FunctionCallNode) SetIsCurrentDateTimeWithoutParentheses(v bool) {
-	internal.ASTFunctionCall_set_is_current_date_time_without_parentheses(n.getRaw(), helper.BoolToInt(v))
+	zetasqlparser.ASTFunctionCall_set_is_current_date_time_without_parentheses(n.getRaw(), helper.BoolToInt(v))
 }
 
 func (n *FunctionCallNode) IsCurrentDateTimeWithoutParentheses() bool {
 	var v bool
-	internal.ASTFunctionCall_is_current_date_time_without_parentheses(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_is_current_date_time_without_parentheses(n.getRaw(), &v)
 	return v
 }
 
 func (n *FunctionCallNode) Function() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_function(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_function(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1619,7 +1619,7 @@ func (n *FunctionCallNode) Function() *PathExpressionNode {
 
 func (n *FunctionCallNode) HavingModifier() *HavingModifierNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_having_modifier(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_having_modifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1628,7 +1628,7 @@ func (n *FunctionCallNode) HavingModifier() *HavingModifierNode {
 
 func (n *FunctionCallNode) ClampedBetweenModifier() *ClampedBetweenModifierNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_clamped_between_modifier(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_clamped_between_modifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1637,7 +1637,7 @@ func (n *FunctionCallNode) ClampedBetweenModifier() *ClampedBetweenModifierNode 
 
 func (n *FunctionCallNode) OrderBy() *OrderByNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_order_by(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_order_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1646,7 +1646,7 @@ func (n *FunctionCallNode) OrderBy() *OrderByNode {
 
 func (n *FunctionCallNode) LimitOffset() *LimitOffsetNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_limit_offset(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_limit_offset(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1655,7 +1655,7 @@ func (n *FunctionCallNode) LimitOffset() *LimitOffsetNode {
 
 func (n *FunctionCallNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_hint(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1664,7 +1664,7 @@ func (n *FunctionCallNode) Hint() *HintNode {
 
 func (n *FunctionCallNode) WithGroupRows() *WithGroupRowsNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCall_with_group_rows(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_with_group_rows(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1673,11 +1673,11 @@ func (n *FunctionCallNode) WithGroupRows() *WithGroupRowsNode {
 
 func (n *FunctionCallNode) Arguments() []ExpressionNode {
 	var num int
-	internal.ASTFunctionCall_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTFunctionCall_arguments_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTFunctionCall_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTFunctionCall_argument(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -1685,7 +1685,7 @@ func (n *FunctionCallNode) Arguments() []ExpressionNode {
 
 func (n *FunctionCallNode) HasModifiers() bool {
 	var v bool
-	internal.ASTFunctionCall_HasModifiers(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCall_HasModifiers(n.getRaw(), &v)
 	return v
 }
 
@@ -1695,7 +1695,7 @@ type ArrayConstructorNode struct {
 
 func (n *ArrayConstructorNode) Type() *ArrayTypeNode {
 	var v unsafe.Pointer
-	internal.ASTArrayConstructor_type(n.getRaw(), &v)
+	zetasqlparser.ASTArrayConstructor_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1704,11 +1704,11 @@ func (n *ArrayConstructorNode) Type() *ArrayTypeNode {
 
 func (n *ArrayConstructorNode) Elements() []ExpressionNode {
 	var num int
-	internal.ASTArrayConstructor_elements_num(n.getRaw(), &num)
+	zetasqlparser.ASTArrayConstructor_elements_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTArrayConstructor_element(n.getRaw(), i, &v)
+		zetasqlparser.ASTArrayConstructor_element(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -1720,7 +1720,7 @@ type StructConstructorArgNode struct {
 
 func (n *StructConstructorArgNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTStructConstructorArg_expression(n.getRaw(), &v)
+	zetasqlparser.ASTStructConstructorArg_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1729,7 +1729,7 @@ func (n *StructConstructorArgNode) Expression() ExpressionNode {
 
 func (n *StructConstructorArgNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTStructConstructorArg_alias(n.getRaw(), &v)
+	zetasqlparser.ASTStructConstructorArg_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1742,11 +1742,11 @@ type StructConstructorWithParensNode struct {
 
 func (n *StructConstructorWithParensNode) FieldExpressions() []ExpressionNode {
 	var num int
-	internal.ASTStructConstructorWithParens_field_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTStructConstructorWithParens_field_expressions_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStructConstructorWithParens_field_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTStructConstructorWithParens_field_expression(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -1758,7 +1758,7 @@ type StructConstructorWithKeywordNode struct {
 
 func (n *StructConstructorWithKeywordNode) StructType() *StructTypeNode {
 	var v unsafe.Pointer
-	internal.ASTStructConstructorWithKeyword_struct_type(n.getRaw(), &v)
+	zetasqlparser.ASTStructConstructorWithKeyword_struct_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1767,11 +1767,11 @@ func (n *StructConstructorWithKeywordNode) StructType() *StructTypeNode {
 
 func (n *StructConstructorWithKeywordNode) Fields() []*StructConstructorArgNode {
 	var num int
-	internal.ASTStructConstructorWithKeyword_fields_num(n.getRaw(), &num)
+	zetasqlparser.ASTStructConstructorWithKeyword_fields_num(n.getRaw(), &num)
 	ret := make([]*StructConstructorArgNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStructConstructorWithKeyword_field(n.getRaw(), i, &v)
+		zetasqlparser.ASTStructConstructorWithKeyword_field(n.getRaw(), i, &v)
 		ret = append(ret, newStructConstructorArgNode(v))
 	}
 	return ret
@@ -1782,18 +1782,18 @@ type InExpressionNode struct {
 }
 
 func (n *InExpressionNode) SetIsNot(isNot bool) {
-	internal.ASTInExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
+	zetasqlparser.ASTInExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
 }
 
 func (n *InExpressionNode) IsNot() bool {
 	var v bool
-	internal.ASTInExpression_is_not(n.getRaw(), &v)
+	zetasqlparser.ASTInExpression_is_not(n.getRaw(), &v)
 	return v
 }
 
 func (n *InExpressionNode) Lhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTInExpression_lhs(n.getRaw(), &v)
+	zetasqlparser.ASTInExpression_lhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1802,7 +1802,7 @@ func (n *InExpressionNode) Lhs() ExpressionNode {
 
 func (n *InExpressionNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTInExpression_hint(n.getRaw(), &v)
+	zetasqlparser.ASTInExpression_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1811,7 +1811,7 @@ func (n *InExpressionNode) Hint() *HintNode {
 
 func (n *InExpressionNode) InList() *InListNode {
 	var v unsafe.Pointer
-	internal.ASTInExpression_in_list(n.getRaw(), &v)
+	zetasqlparser.ASTInExpression_in_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1820,7 +1820,7 @@ func (n *InExpressionNode) InList() *InListNode {
 
 func (n *InExpressionNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTInExpression_query(n.getRaw(), &v)
+	zetasqlparser.ASTInExpression_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1829,7 +1829,7 @@ func (n *InExpressionNode) Query() *QueryNode {
 
 func (n *InExpressionNode) UnnestExpr() *UnnestExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTInExpression_unnest_expr(n.getRaw(), &v)
+	zetasqlparser.ASTInExpression_unnest_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1842,11 +1842,11 @@ type InListNode struct {
 
 func (n *InListNode) List() []ExpressionNode {
 	var num int
-	internal.ASTInList_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTInList_list_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTInList_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTInList_list(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -1857,18 +1857,18 @@ type BetweenExpressionNode struct {
 }
 
 func (n *BetweenExpressionNode) SetIsNot(isNot bool) {
-	internal.ASTBetweenExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
+	zetasqlparser.ASTBetweenExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
 }
 
 func (n *BetweenExpressionNode) IsNot() bool {
 	var v bool
-	internal.ASTBetweenExpression_is_not(n.getRaw(), &v)
+	zetasqlparser.ASTBetweenExpression_is_not(n.getRaw(), &v)
 	return v
 }
 
 func (n *BetweenExpressionNode) Lhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBetweenExpression_lhs(n.getRaw(), &v)
+	zetasqlparser.ASTBetweenExpression_lhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1877,7 +1877,7 @@ func (n *BetweenExpressionNode) Lhs() ExpressionNode {
 
 func (n *BetweenExpressionNode) Low() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBetweenExpression_low(n.getRaw(), &v)
+	zetasqlparser.ASTBetweenExpression_low(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1886,7 +1886,7 @@ func (n *BetweenExpressionNode) Low() ExpressionNode {
 
 func (n *BetweenExpressionNode) High() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBetweenExpression_high(n.getRaw(), &v)
+	zetasqlparser.ASTBetweenExpression_high(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1934,18 +1934,18 @@ type DateOrTimeLiteralNode struct {
 }
 
 func (n *DateOrTimeLiteralNode) SetTypeKind(kind TypeKind) {
-	internal.ASTDateOrTimeLiteral_set_type_kind(n.getRaw(), int(kind))
+	zetasqlparser.ASTDateOrTimeLiteral_set_type_kind(n.getRaw(), int(kind))
 }
 
 func (n *DateOrTimeLiteralNode) TypeKind() TypeKind {
 	var v int
-	internal.ASTDateOrTimeLiteral_type_kind(n.getRaw(), &v)
+	zetasqlparser.ASTDateOrTimeLiteral_type_kind(n.getRaw(), &v)
 	return TypeKind(v)
 }
 
 func (n *DateOrTimeLiteralNode) StringLiteral() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTDateOrTimeLiteral_string_literal(n.getRaw(), &v)
+	zetasqlparser.ASTDateOrTimeLiteral_string_literal(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -1982,11 +1982,11 @@ type CaseValueExpressionNode struct {
 
 func (n *CaseValueExpressionNode) Arguments() []ExpressionNode {
 	var num int
-	internal.ASTCaseValueExpression_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTCaseValueExpression_arguments_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTCaseValueExpression_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTCaseValueExpression_argument(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -1998,11 +1998,11 @@ type CaseNoValueExpressionNode struct {
 
 func (n *CaseNoValueExpressionNode) Arguments() []ExpressionNode {
 	var num int
-	internal.ASTCaseNoValueExpression_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTCaseNoValueExpression_arguments_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTCaseNoValueExpression_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTCaseNoValueExpression_argument(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -2014,7 +2014,7 @@ type ArrayElementNode struct {
 
 func (n *ArrayElementNode) Array() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTArrayElement_array(n.getRaw(), &v)
+	zetasqlparser.ASTArrayElement_array(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2023,7 +2023,7 @@ func (n *ArrayElementNode) Array() ExpressionNode {
 
 func (n *ArrayElementNode) Position() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTArrayElement_position(n.getRaw(), &v)
+	zetasqlparser.ASTArrayElement_position(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2035,18 +2035,18 @@ type BitwiseShiftExpressionNode struct {
 }
 
 func (n *BitwiseShiftExpressionNode) SetIsLeftShift(isLeftShift bool) {
-	internal.ASTBitwiseShiftExpression_set_is_left_shift(n.getRaw(), helper.BoolToInt(isLeftShift))
+	zetasqlparser.ASTBitwiseShiftExpression_set_is_left_shift(n.getRaw(), helper.BoolToInt(isLeftShift))
 }
 
 func (n *BitwiseShiftExpressionNode) IsLeftShift() bool {
 	var v bool
-	internal.ASTBitwiseShiftExpression_is_left_shift(n.getRaw(), &v)
+	zetasqlparser.ASTBitwiseShiftExpression_is_left_shift(n.getRaw(), &v)
 	return v
 }
 
 func (n *BitwiseShiftExpressionNode) Lhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBitwiseShiftExpression_lhs(n.getRaw(), &v)
+	zetasqlparser.ASTBitwiseShiftExpression_lhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2055,7 +2055,7 @@ func (n *BitwiseShiftExpressionNode) Lhs() ExpressionNode {
 
 func (n *BitwiseShiftExpressionNode) Rhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTBitwiseShiftExpression_rhs(n.getRaw(), &v)
+	zetasqlparser.ASTBitwiseShiftExpression_rhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2068,7 +2068,7 @@ type CollateNode struct {
 
 func (n *CollateNode) Name() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCollate_collation_name(n.getRaw(), &v)
+	zetasqlparser.ASTCollate_collation_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2081,7 +2081,7 @@ type DotGeneralizedFieldNode struct {
 
 func (n *DotGeneralizedFieldNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDotGeneralizedField_expr(n.getRaw(), &v)
+	zetasqlparser.ASTDotGeneralizedField_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2090,7 +2090,7 @@ func (n *DotGeneralizedFieldNode) Expr() ExpressionNode {
 
 func (n *DotGeneralizedFieldNode) Path() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDotGeneralizedField_path(n.getRaw(), &v)
+	zetasqlparser.ASTDotGeneralizedField_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2103,7 +2103,7 @@ type DotIdentifierNode struct {
 
 func (n *DotIdentifierNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDotIdentifier_expr(n.getRaw(), &v)
+	zetasqlparser.ASTDotIdentifier_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2112,7 +2112,7 @@ func (n *DotIdentifierNode) Expr() ExpressionNode {
 
 func (n *DotIdentifierNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDotIdentifier_name(n.getRaw(), &v)
+	zetasqlparser.ASTDotIdentifier_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2125,7 +2125,7 @@ type DotStarNode struct {
 
 func (n *DotStarNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDotStar_expr(n.getRaw(), &v)
+	zetasqlparser.ASTDotStar_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2138,7 +2138,7 @@ type DotStarWithModifiersNode struct {
 
 func (n *DotStarWithModifiersNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDotStarWithModifiers_expr(n.getRaw(), &v)
+	zetasqlparser.ASTDotStarWithModifiers_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2147,7 +2147,7 @@ func (n *DotStarWithModifiersNode) Expr() ExpressionNode {
 
 func (n *DotStarWithModifiersNode) Modifiers() *StarModifiersNode {
 	var v unsafe.Pointer
-	internal.ASTDotStarWithModifiers_modifiers(n.getRaw(), &v)
+	zetasqlparser.ASTDotStarWithModifiers_modifiers(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2179,18 +2179,18 @@ type ExpressionSubqueryNode struct {
 }
 
 func (n *ExpressionSubqueryNode) SetModifier(modifier ExpressionSubqueryModifier) {
-	internal.ASTExpressionSubquery_set_modifier(n.getRaw(), int(modifier))
+	zetasqlparser.ASTExpressionSubquery_set_modifier(n.getRaw(), int(modifier))
 }
 
 func (n *ExpressionSubqueryNode) Modifier() ExpressionSubqueryModifier {
 	var v int
-	internal.ASTExpressionSubquery_modifier(n.getRaw(), &v)
+	zetasqlparser.ASTExpressionSubquery_modifier(n.getRaw(), &v)
 	return ExpressionSubqueryModifier(v)
 }
 
 func (n *ExpressionSubqueryNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTExpressionSubquery_hint(n.getRaw(), &v)
+	zetasqlparser.ASTExpressionSubquery_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2199,7 +2199,7 @@ func (n *ExpressionSubqueryNode) Hint() *HintNode {
 
 func (n *ExpressionSubqueryNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTExpressionSubquery_query(n.getRaw(), &v)
+	zetasqlparser.ASTExpressionSubquery_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2212,7 +2212,7 @@ type ExtractExpressionNode struct {
 
 func (n *ExtractExpressionNode) LhsExpr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTExtractExpression_lhs_expr(n.getRaw(), &v)
+	zetasqlparser.ASTExtractExpression_lhs_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2221,7 +2221,7 @@ func (n *ExtractExpressionNode) LhsExpr() ExpressionNode {
 
 func (n *ExtractExpressionNode) RhsExpr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTExtractExpression_rhs_expr(n.getRaw(), &v)
+	zetasqlparser.ASTExtractExpression_rhs_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2230,7 +2230,7 @@ func (n *ExtractExpressionNode) RhsExpr() ExpressionNode {
 
 func (n *ExtractExpressionNode) TimeZoneExpr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTExtractExpression_time_zone_expr(n.getRaw(), &v)
+	zetasqlparser.ASTExtractExpression_time_zone_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2250,18 +2250,18 @@ type HavingModifierNode struct {
 }
 
 func (n *HavingModifierNode) SetModifierKind(kind HavingModifierKind) {
-	internal.ASTHavingModifier_set_modifier_kind(n.getRaw(), int(kind))
+	zetasqlparser.ASTHavingModifier_set_modifier_kind(n.getRaw(), int(kind))
 }
 
 func (n *HavingModifierNode) ModifierKind() HavingModifierKind {
 	var v int
-	internal.ASTHavingModifier_modifier_kind(n.getRaw(), &v)
+	zetasqlparser.ASTHavingModifier_modifier_kind(n.getRaw(), &v)
 	return HavingModifierKind(v)
 }
 
 func (n *HavingModifierNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTHavingModifier_expr(n.getRaw(), &v)
+	zetasqlparser.ASTHavingModifier_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2274,7 +2274,7 @@ type IntervalExprNode struct {
 
 func (n *IntervalExprNode) InternalValue() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTIntervalExpr_interval_value(n.getRaw(), &v)
+	zetasqlparser.ASTIntervalExpr_interval_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2283,7 +2283,7 @@ func (n *IntervalExprNode) InternalValue() ExpressionNode {
 
 func (n *IntervalExprNode) DatePartName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTIntervalExpr_date_part_name(n.getRaw(), &v)
+	zetasqlparser.ASTIntervalExpr_date_part_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2292,7 +2292,7 @@ func (n *IntervalExprNode) DatePartName() *IdentifierNode {
 
 func (n *IntervalExprNode) DatePartNameTo() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTIntervalExpr_date_part_name_to(n.getRaw(), &v)
+	zetasqlparser.ASTIntervalExpr_date_part_name_to(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2305,7 +2305,7 @@ type NamedArgumentNode struct {
 
 func (n *NamedArgumentNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTNamedArgument_name(n.getRaw(), &v)
+	zetasqlparser.ASTNamedArgument_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2314,7 +2314,7 @@ func (n *NamedArgumentNode) Name() *IdentifierNode {
 
 func (n *NamedArgumentNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTNamedArgument_expr(n.getRaw(), &v)
+	zetasqlparser.ASTNamedArgument_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2326,12 +2326,12 @@ type NullOrderNode struct {
 }
 
 func (n *NullOrderNode) SetNullsFirst(nullsFirst bool) {
-	internal.ASTNullOrder_set_nulls_first(n.getRaw(), helper.BoolToInt(nullsFirst))
+	zetasqlparser.ASTNullOrder_set_nulls_first(n.getRaw(), helper.BoolToInt(nullsFirst))
 }
 
 func (n *NullOrderNode) NullsFirst() bool {
 	var v bool
-	internal.ASTNullOrder_nulls_first(n.getRaw(), &v)
+	zetasqlparser.ASTNullOrder_nulls_first(n.getRaw(), &v)
 	return v
 }
 
@@ -2341,11 +2341,11 @@ type OnOrUsingClauseListNode struct {
 
 func (n *OnOrUsingClauseListNode) OnOrUsingClauseList() []Node {
 	var num int
-	internal.ASTOnOrUsingClauseList_on_or_using_clause_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTOnOrUsingClauseList_on_or_using_clause_list_num(n.getRaw(), &num)
 	ret := make([]Node, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTOnUsingClauseList_on_or_using_clause_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTOnUsingClauseList_on_or_using_clause_list(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v))
 	}
 	return ret
@@ -2357,7 +2357,7 @@ type ParenthesizedJoinNode struct {
 
 func (n *ParenthesizedJoinNode) Join() *JoinNode {
 	var v unsafe.Pointer
-	internal.ASTParenthesizedJoin_join(n.getRaw(), &v)
+	zetasqlparser.ASTParenthesizedJoin_join(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2366,7 +2366,7 @@ func (n *ParenthesizedJoinNode) Join() *JoinNode {
 
 func (n *ParenthesizedJoinNode) SampleClause() *SampleClauseNode {
 	var v unsafe.Pointer
-	internal.ASTParenthesizedJoin_sample_clause(n.getRaw(), &v)
+	zetasqlparser.ASTParenthesizedJoin_sample_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2379,7 +2379,7 @@ type PartitionByNode struct {
 
 func (n *PartitionByNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTPartitionBy_hint(n.getRaw(), &v)
+	zetasqlparser.ASTPartitionBy_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2388,11 +2388,11 @@ func (n *PartitionByNode) Hint() *HintNode {
 
 func (n *PartitionByNode) PartitioningExpressions() []ExpressionNode {
 	var num int
-	internal.ASTPartitionBy_partitioning_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTPartitionBy_partitioning_expressions_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTPartitionBy_partitioning_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTPartitionBy_partitioning_expression(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -2412,28 +2412,28 @@ type SetOperationNode struct {
 }
 
 func (n *SetOperationNode) SetOpType(opType SetOperationType) {
-	internal.ASTSetOperation_set_op_type(n.getRaw(), int(opType))
+	zetasqlparser.ASTSetOperation_set_op_type(n.getRaw(), int(opType))
 }
 
 func (n *SetOperationNode) OpType() SetOperationType {
 	var v int
-	internal.ASTSetOperation_op_type(n.getRaw(), &v)
+	zetasqlparser.ASTSetOperation_op_type(n.getRaw(), &v)
 	return SetOperationType(v)
 }
 
 func (n *SetOperationNode) SetDistinct(distinct bool) {
-	internal.ASTSetOperation_set_distinct(n.getRaw(), helper.BoolToInt(distinct))
+	zetasqlparser.ASTSetOperation_set_distinct(n.getRaw(), helper.BoolToInt(distinct))
 }
 
 func (n *SetOperationNode) Distinct() bool {
 	var v bool
-	internal.ASTSetOperation_distinct(n.getRaw(), &v)
+	zetasqlparser.ASTSetOperation_distinct(n.getRaw(), &v)
 	return v
 }
 
 func (n *SetOperationNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTSetOperation_hint(n.getRaw(), &v)
+	zetasqlparser.ASTSetOperation_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2442,11 +2442,11 @@ func (n *SetOperationNode) Hint() *HintNode {
 
 func (n *SetOperationNode) Inputs() []QueryExpressionNode {
 	var num int
-	internal.ASTSetOperation_inputs_num(n.getRaw(), &num)
+	zetasqlparser.ASTSetOperation_inputs_num(n.getRaw(), &num)
 	ret := make([]QueryExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTSetOperation_input(n.getRaw(), i, &v)
+		zetasqlparser.ASTSetOperation_input(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(QueryExpressionNode))
 	}
 	return ret
@@ -2454,7 +2454,7 @@ func (n *SetOperationNode) Inputs() []QueryExpressionNode {
 
 func (n *SetOperationNode) SQLForOperation() string {
 	var v unsafe.Pointer
-	internal.ASTSetOperation_GetSQLForOperation(n.getRaw(), &v)
+	zetasqlparser.ASTSetOperation_GetSQLForOperation(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -2464,11 +2464,11 @@ type StarExceptListNode struct {
 
 func (n *StarExceptListNode) Identifiers() []*IdentifierNode {
 	var num int
-	internal.ASTStarExceptList_identifiers_num(n.getRaw(), &num)
+	zetasqlparser.ASTStarExceptList_identifiers_num(n.getRaw(), &num)
 	ret := make([]*IdentifierNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStarExpcetList_identifier(n.getRaw(), i, &v)
+		zetasqlparser.ASTStarExpcetList_identifier(n.getRaw(), i, &v)
 		ret = append(ret, newIdentifierNode(v))
 	}
 	return ret
@@ -2480,7 +2480,7 @@ type StarModifiersNode struct {
 
 func (n *StarModifiersNode) ExceptList() *StarExceptListNode {
 	var v unsafe.Pointer
-	internal.ASTStarModifiers_except_list(n.getRaw(), &v)
+	zetasqlparser.ASTStarModifiers_except_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2489,11 +2489,11 @@ func (n *StarModifiersNode) ExceptList() *StarExceptListNode {
 
 func (n *StarModifiersNode) ReplaceItems() []*StarReplaceItemNode {
 	var num int
-	internal.ASTStarModifiers_replace_items_num(n.getRaw(), &num)
+	zetasqlparser.ASTStarModifiers_replace_items_num(n.getRaw(), &num)
 	ret := make([]*StarReplaceItemNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStarModifiers_replace_item(n.getRaw(), i, &v)
+		zetasqlparser.ASTStarModifiers_replace_item(n.getRaw(), i, &v)
 		ret = append(ret, newStarReplaceItemNode(v))
 	}
 	return ret
@@ -2505,7 +2505,7 @@ type StarReplaceItemNode struct {
 
 func (n *StarReplaceItemNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTStarReplaceItem_expression(n.getRaw(), &v)
+	zetasqlparser.ASTStarReplaceItem_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2514,7 +2514,7 @@ func (n *StarReplaceItemNode) Expression() ExpressionNode {
 
 func (n *StarReplaceItemNode) Alias() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTStarReplaceItem_alias(n.getRaw(), &v)
+	zetasqlparser.ASTStarReplaceItem_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2527,7 +2527,7 @@ type StarWithModifiersNode struct {
 
 func (n *StarWithModifiersNode) Modifiers() *StarModifiersNode {
 	var v unsafe.Pointer
-	internal.ASTStarWithModifiers_modifiers(n.getRaw(), &v)
+	zetasqlparser.ASTStarWithModifiers_modifiers(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2540,7 +2540,7 @@ type TableSubqueryNode struct {
 
 func (n *TableSubqueryNode) Subquery() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTTableSubquery_subquery(n.getRaw(), &v)
+	zetasqlparser.ASTTableSubquery_subquery(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2549,7 +2549,7 @@ func (n *TableSubqueryNode) Subquery() *QueryNode {
 
 func (n *TableSubqueryNode) PivotClause() *PivotClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTableSubquery_pivot_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTableSubquery_pivot_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2558,7 +2558,7 @@ func (n *TableSubqueryNode) PivotClause() *PivotClauseNode {
 
 func (n *TableSubqueryNode) UnpivotClause() *UnpivotClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTableSubquery_unpivot_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTableSubquery_unpivot_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2567,7 +2567,7 @@ func (n *TableSubqueryNode) UnpivotClause() *UnpivotClauseNode {
 
 func (n *TableSubqueryNode) SampleClause() *SampleClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTableSubquery_sample_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTableSubquery_sample_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2576,7 +2576,7 @@ func (n *TableSubqueryNode) SampleClause() *SampleClauseNode {
 
 func (n *TableSubqueryNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTTableSubquery_alias(n.getRaw(), &v)
+	zetasqlparser.ASTTableSubquery_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2620,18 +2620,18 @@ type UnaryExpressionNode struct {
 }
 
 func (n *UnaryExpressionNode) SetOp(op UnaryExpressionOp) {
-	internal.ASTUnaryExpression_set_op(n.getRaw(), int(op))
+	zetasqlparser.ASTUnaryExpression_set_op(n.getRaw(), int(op))
 }
 
 func (n *UnaryExpressionNode) Op() UnaryExpressionOp {
 	var v int
-	internal.ASTUnaryExpression_op(n.getRaw(), &v)
+	zetasqlparser.ASTUnaryExpression_op(n.getRaw(), &v)
 	return UnaryExpressionOp(v)
 }
 
 func (n *UnaryExpressionNode) Operand() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUnaryExpression_operand(n.getRaw(), &v)
+	zetasqlparser.ASTUnaryExpression_operand(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2640,7 +2640,7 @@ func (n *UnaryExpressionNode) Operand() ExpressionNode {
 
 func (n *UnaryExpressionNode) SQLForOperator() string {
 	var v unsafe.Pointer
-	internal.ASTUnaryExpression_GetSQLForOperator(n.getRaw(), &v)
+	zetasqlparser.ASTUnaryExpression_GetSQLForOperator(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -2650,7 +2650,7 @@ type UnnestExpressionNode struct {
 
 func (n *UnnestExpressionNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUnnestExpression_expression(n.getRaw(), &v)
+	zetasqlparser.ASTUnnestExpression_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2663,11 +2663,11 @@ type WindowClauseNode struct {
 
 func (n *WindowClauseNode) Windows() []*WindowDefinitionNode {
 	var num int
-	internal.ASTWindowClause_windows_num(n.getRaw(), &num)
+	zetasqlparser.ASTWindowClause_windows_num(n.getRaw(), &num)
 	ret := make([]*WindowDefinitionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTWindowClause_window(n.getRaw(), i, &v)
+		zetasqlparser.ASTWindowClause_window(n.getRaw(), i, &v)
 		ret = append(ret, newWindowDefinitionNode(v))
 	}
 	return ret
@@ -2679,7 +2679,7 @@ type WindowDefinitionNode struct {
 
 func (n *WindowDefinitionNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTWindowDefinition_name(n.getRaw(), &v)
+	zetasqlparser.ASTWindowDefinition_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2688,7 +2688,7 @@ func (n *WindowDefinitionNode) Name() *IdentifierNode {
 
 func (n *WindowDefinitionNode) WindowSpec() *WindowSpecificationNode {
 	var v unsafe.Pointer
-	internal.ASTWindowDefinition_window_spec(n.getRaw(), &v)
+	zetasqlparser.ASTWindowDefinition_window_spec(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2718,7 +2718,7 @@ type WindowFrameNode struct {
 
 func (n *WindowFrameNode) StartExpr() *WindowFrameExprNode {
 	var v unsafe.Pointer
-	internal.ASTWindowFrame_start_expr(n.getRaw(), &v)
+	zetasqlparser.ASTWindowFrame_start_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2727,7 +2727,7 @@ func (n *WindowFrameNode) StartExpr() *WindowFrameExprNode {
 
 func (n *WindowFrameNode) EndExpr() *WindowFrameExprNode {
 	var v unsafe.Pointer
-	internal.ASTWindowFrame_end_expr(n.getRaw(), &v)
+	zetasqlparser.ASTWindowFrame_end_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2735,18 +2735,18 @@ func (n *WindowFrameNode) EndExpr() *WindowFrameExprNode {
 }
 
 func (n *WindowFrameNode) SetUnit(frameUnit WindowFrameUnit) {
-	internal.ASTWindowFrame_set_unit(n.getRaw(), int(frameUnit))
+	zetasqlparser.ASTWindowFrame_set_unit(n.getRaw(), int(frameUnit))
 }
 
 func (n *WindowFrameNode) FrameUnit() WindowFrameUnit {
 	var v int
-	internal.ASTWindowFrame_frame_unit(n.getRaw(), &v)
+	zetasqlparser.ASTWindowFrame_frame_unit(n.getRaw(), &v)
 	return WindowFrameUnit(v)
 }
 
 func (n *WindowFrameNode) FrameUnitString() string {
 	var v unsafe.Pointer
-	internal.ASTWindowFrame_GetFrameUnitString(n.getRaw(), &v)
+	zetasqlparser.ASTWindowFrame_GetFrameUnitString(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -2781,18 +2781,18 @@ type WindowFrameExprNode struct {
 }
 
 func (n *WindowFrameExprNode) SetBoundaryType(boundaryType WindowFrameBoundaryType) {
-	internal.ASTWindowFrameExpr_set_boundary_type(n.getRaw(), int(boundaryType))
+	zetasqlparser.ASTWindowFrameExpr_set_boundary_type(n.getRaw(), int(boundaryType))
 }
 
 func (n *WindowFrameExprNode) BoundaryType() WindowFrameBoundaryType {
 	var v int
-	internal.ASTWindowFrameExpr_boundary_type(n.getRaw(), &v)
+	zetasqlparser.ASTWindowFrameExpr_boundary_type(n.getRaw(), &v)
 	return WindowFrameBoundaryType(v)
 }
 
 func (n *WindowFrameExprNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTWindowFrameExpr_expression(n.getRaw(), &v)
+	zetasqlparser.ASTWindowFrameExpr_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2804,18 +2804,18 @@ type LikeExpressionNode struct {
 }
 
 func (n *LikeExpressionNode) SetIsNot(isNot bool) {
-	internal.ASTLikeExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
+	zetasqlparser.ASTLikeExpression_set_is_not(n.getRaw(), helper.BoolToInt(isNot))
 }
 
 func (n *LikeExpressionNode) IsNot() bool {
 	var v bool
-	internal.ASTLikeExpression_is_not(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_is_not(n.getRaw(), &v)
 	return v
 }
 
 func (n *LikeExpressionNode) Lhs() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTLikeExpression_lhs(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_lhs(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2824,7 +2824,7 @@ func (n *LikeExpressionNode) Lhs() ExpressionNode {
 
 func (n *LikeExpressionNode) Op() *AnySomeAllOpNode {
 	var v unsafe.Pointer
-	internal.ASTLikeExpression_op(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_op(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2833,7 +2833,7 @@ func (n *LikeExpressionNode) Op() *AnySomeAllOpNode {
 
 func (n *LikeExpressionNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTLikeExpression_hint(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2842,7 +2842,7 @@ func (n *LikeExpressionNode) Hint() *HintNode {
 
 func (n *LikeExpressionNode) InList() *InListNode {
 	var v unsafe.Pointer
-	internal.ASTLikeExpression_in_list(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_in_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2851,7 +2851,7 @@ func (n *LikeExpressionNode) InList() *InListNode {
 
 func (n *LikeExpressionNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTLikeExpression_query(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2860,7 +2860,7 @@ func (n *LikeExpressionNode) Query() *QueryNode {
 
 func (n *LikeExpressionNode) UnnestExpr() *UnnestExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTLikeExpression_unnest_expr(n.getRaw(), &v)
+	zetasqlparser.ASTLikeExpression_unnest_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2873,7 +2873,7 @@ type WindowSpecificationNode struct {
 
 func (n *WindowSpecificationNode) BaseWindowName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTWindowSpecification_base_window_name(n.getRaw(), &v)
+	zetasqlparser.ASTWindowSpecification_base_window_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2882,7 +2882,7 @@ func (n *WindowSpecificationNode) BaseWindowName() *IdentifierNode {
 
 func (n *WindowSpecificationNode) PartitionBy() *PartitionByNode {
 	var v unsafe.Pointer
-	internal.ASTWindowSpecification_partition_by(n.getRaw(), &v)
+	zetasqlparser.ASTWindowSpecification_partition_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2891,7 +2891,7 @@ func (n *WindowSpecificationNode) PartitionBy() *PartitionByNode {
 
 func (n *WindowSpecificationNode) OrderBy() *OrderByNode {
 	var v unsafe.Pointer
-	internal.ASTWindowSpecification_order_by(n.getRaw(), &v)
+	zetasqlparser.ASTWindowSpecification_order_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2900,7 +2900,7 @@ func (n *WindowSpecificationNode) OrderBy() *OrderByNode {
 
 func (n *WindowSpecificationNode) WindowFrame() *WindowFrameNode {
 	var v unsafe.Pointer
-	internal.ASTWindowSpecification_window_frame(n.getRaw(), &v)
+	zetasqlparser.ASTWindowSpecification_window_frame(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2913,7 +2913,7 @@ type WithOffsetNode struct {
 
 func (n *WithOffsetNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTWithOffset_alias(n.getRaw(), &v)
+	zetasqlparser.ASTWithOffset_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -2948,18 +2948,18 @@ type AnySomeAllOpNode struct {
 }
 
 func (n *AnySomeAllOpNode) SetOp(op AnySomeAllOpType) {
-	internal.ASTAnySomeAllOp_set_op(n.getRaw(), int(op))
+	zetasqlparser.ASTAnySomeAllOp_set_op(n.getRaw(), int(op))
 }
 
 func (n *AnySomeAllOpNode) Op() AnySomeAllOpType {
 	var v int
-	internal.ASTAnySomeAllOp_op(n.getRaw(), &v)
+	zetasqlparser.ASTAnySomeAllOp_op(n.getRaw(), &v)
 	return AnySomeAllOpType(v)
 }
 
 func (n *AnySomeAllOpNode) SQLForOperator() string {
 	var v unsafe.Pointer
-	internal.ASTAnySomeAllOp_GetSQLForOperator(n.getRaw(), &v)
+	zetasqlparser.ASTAnySomeAllOp_GetSQLForOperator(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -2972,22 +2972,22 @@ type StatementListNode struct {
 }
 
 func (n *StatementListNode) SetVariableDeclarationsAllowed(allowed bool) {
-	internal.ASTStatementList_set_variable_declarations_allowed(n.getRaw(), helper.BoolToInt(allowed))
+	zetasqlparser.ASTStatementList_set_variable_declarations_allowed(n.getRaw(), helper.BoolToInt(allowed))
 }
 
 func (n *StatementListNode) VariableDeclarationsAllowed() bool {
 	var v bool
-	internal.ASTStatementList_variable_declarations_allowed(n.getRaw(), &v)
+	zetasqlparser.ASTStatementList_variable_declarations_allowed(n.getRaw(), &v)
 	return v
 }
 
 func (n *StatementListNode) StatementList() []StatementNode {
 	var num int
-	internal.ASTStatementList_statement_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTStatementList_statement_list_num(n.getRaw(), &num)
 	ret := make([]StatementNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStatementList_statement_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTStatementList_statement_list(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(StatementNode))
 	}
 	return ret
@@ -3003,7 +3003,7 @@ type HintedStatementNode struct {
 
 func (n *HintedStatementNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTHintedStatement_hint(n.getRaw(), &v)
+	zetasqlparser.ASTHintedStatement_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3012,7 +3012,7 @@ func (n *HintedStatementNode) Hint() *HintNode {
 
 func (n *HintedStatementNode) Statement() StatementNode {
 	var v unsafe.Pointer
-	internal.ASTHintedStatement_statement(n.getRaw(), &v)
+	zetasqlparser.ASTHintedStatement_statement(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3025,7 +3025,7 @@ type ExplainStatementNode struct {
 
 func (n *ExplainStatementNode) Statement() StatementNode {
 	var v unsafe.Pointer
-	internal.ASTExplainStatement_statement(n.getRaw(), &v)
+	zetasqlparser.ASTExplainStatement_statement(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3038,7 +3038,7 @@ type DescribeStatementNode struct {
 
 func (n *DescribeStatementNode) OptionalIdentifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDescribeStatement_optional_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTDescribeStatement_optional_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3047,7 +3047,7 @@ func (n *DescribeStatementNode) OptionalIdentifier() *IdentifierNode {
 
 func (n *DescribeStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDescribeStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDescribeStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3056,7 +3056,7 @@ func (n *DescribeStatementNode) Name() *PathExpressionNode {
 
 func (n *DescribeStatementNode) OptionalFromName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDescribeStatement_optional_from_name(n.getRaw(), &v)
+	zetasqlparser.ASTDescribeStatement_optional_from_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3069,7 +3069,7 @@ type ShowStatementNode struct {
 
 func (n *ShowStatementNode) Identifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTShowStatement_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTShowStatement_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3078,7 +3078,7 @@ func (n *ShowStatementNode) Identifier() *IdentifierNode {
 
 func (n *ShowStatementNode) OptionalName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTShowStatement_optional_name(n.getRaw(), &v)
+	zetasqlparser.ASTShowStatement_optional_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3087,7 +3087,7 @@ func (n *ShowStatementNode) OptionalName() *PathExpressionNode {
 
 func (n *ShowStatementNode) OptionalLikeString() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTShowStatement_optional_like_string(n.getRaw(), &v)
+	zetasqlparser.ASTShowStatement_optional_like_string(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3104,7 +3104,7 @@ type TransactionIsolationLevelNode struct {
 
 func (n *TransactionIsolationLevelNode) Identifier1() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTTransactionIsolationLevel_identifier1(n.getRaw(), &v)
+	zetasqlparser.ASTTransactionIsolationLevel_identifier1(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3114,7 +3114,7 @@ func (n *TransactionIsolationLevelNode) Identifier1() *IdentifierNode {
 // Identifier2 second identifier can be non-null only if first identifier is non-null.
 func (n *TransactionIsolationLevelNode) Identifier2() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTTransactionIsolationLevel_identifier2(n.getRaw(), &v)
+	zetasqlparser.ASTTransactionIsolationLevel_identifier2(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3146,12 +3146,12 @@ type TransactionReadWriteModeNode struct {
 }
 
 func (n *TransactionReadWriteModeNode) SetMode(modeType TransactionReadWriteModeType) {
-	internal.ASTTransactionReadWriteMode_set_mode(n.getRaw(), int(modeType))
+	zetasqlparser.ASTTransactionReadWriteMode_set_mode(n.getRaw(), int(modeType))
 }
 
 func (n *TransactionReadWriteModeNode) Mode() TransactionReadWriteModeType {
 	var v int
-	internal.ASTTransactionReadWriteMode_mode(n.getRaw(), &v)
+	zetasqlparser.ASTTransactionReadWriteMode_mode(n.getRaw(), &v)
 	return TransactionReadWriteModeType(v)
 }
 
@@ -3161,11 +3161,11 @@ type TransactionModeListNode struct {
 
 func (n *TransactionModeListNode) Elements() []TransactionModeNode {
 	var num int
-	internal.ASTTransactionModeList_elements_num(n.getRaw(), &num)
+	zetasqlparser.ASTTransactionModeList_elements_num(n.getRaw(), &num)
 	ret := make([]TransactionModeNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTTransactionModeList_element(n.getRaw(), i, &v)
+		zetasqlparser.ASTTransactionModeList_element(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(TransactionModeNode))
 	}
 	return ret
@@ -3177,7 +3177,7 @@ type BeginStatementNode struct {
 
 func (n *BeginStatementNode) ModeList() *TransactionModeListNode {
 	var v unsafe.Pointer
-	internal.ASTBeginStatement_mode_list(n.getRaw(), &v)
+	zetasqlparser.ASTBeginStatement_mode_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3190,7 +3190,7 @@ type SetTransactionStatementNode struct {
 
 func (n *SetTransactionStatementNode) ModeList() *TransactionModeListNode {
 	var v unsafe.Pointer
-	internal.ASTSetTransactionStatement_mode_list(n.getRaw(), &v)
+	zetasqlparser.ASTSetTransactionStatement_mode_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3211,7 +3211,7 @@ type StartBatchStatementNode struct {
 
 func (n *StartBatchStatementNode) BatchType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTStartBatchStatement_batch_type(n.getRaw(), &v)
+	zetasqlparser.ASTStartBatchStatement_batch_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3232,7 +3232,7 @@ type DdlStatementBaseNode struct {
 
 func (n *DdlStatementBaseNode) DdlTarget() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDdlStatement_GetDdlTarget(n.getRaw(), &v)
+	zetasqlparser.ASTDdlStatement_GetDdlTarget(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3244,18 +3244,18 @@ type DropEntityStatementNode struct {
 }
 
 func (n *DropEntityStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropEntityStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropEntityStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropEntityStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropEntityStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropEntityStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropEntityStatementNode) EntityType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDropEntityStatement_entity_type(n.getRaw(), &v)
+	zetasqlparser.ASTDropEntityStatement_entity_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3264,7 +3264,7 @@ func (n *DropEntityStatementNode) EntityType() *IdentifierNode {
 
 func (n *DropEntityStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropEntityStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropEntityStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3276,18 +3276,18 @@ type DropFunctionStatementNode struct {
 }
 
 func (n *DropFunctionStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropFunctionStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropFunctionStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropFunctionStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropFunctionStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropFunctionStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropFunctionStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropFunctionStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropFunctionStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3296,7 +3296,7 @@ func (n *DropFunctionStatementNode) Name() *PathExpressionNode {
 
 func (n *DropFunctionStatementNode) Parameters() *FunctionParametersNode {
 	var v unsafe.Pointer
-	internal.ASTDropFunctionStatement_parameters(n.getRaw(), &v)
+	zetasqlparser.ASTDropFunctionStatement_parameters(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3308,18 +3308,18 @@ type DropTableFunctionStatementNode struct {
 }
 
 func (n *DropTableFunctionStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropTableFunctionStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropTableFunctionStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropTableFunctionStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropTableFunctionStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropTableFunctionStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropTableFunctionStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropTableFunctionStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropTableFunctionStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3331,18 +3331,18 @@ type DropAllRowAccessPoliciesStatementNode struct {
 }
 
 func (n *DropAllRowAccessPoliciesStatementNode) SetHasAccessKeyword(keyword bool) {
-	internal.ASTDropAllRowAccessPoliciesStatement_set_has_access_keyword(n.getRaw(), helper.BoolToInt(keyword))
+	zetasqlparser.ASTDropAllRowAccessPoliciesStatement_set_has_access_keyword(n.getRaw(), helper.BoolToInt(keyword))
 }
 
 func (n *DropAllRowAccessPoliciesStatementNode) HasAccessKeyword() bool {
 	var v bool
-	internal.ASTDropAllRowAccessPoliciesStatement_has_access_keyword(n.getRaw(), &v)
+	zetasqlparser.ASTDropAllRowAccessPoliciesStatement_has_access_keyword(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropAllRowAccessPoliciesStatementNode) TableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropAllRowAccessPoliciesStatement_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropAllRowAccessPoliciesStatement_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3354,18 +3354,18 @@ type DropMaterializedViewStatementNode struct {
 }
 
 func (n *DropMaterializedViewStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropMaterializedViewStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropMaterializedViewStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropMaterializedViewStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropMaterializedViewStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropMaterializedViewStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropMaterializedViewStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropMaterializedViewStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropMaterializedViewStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3377,18 +3377,18 @@ type DropSnapshotTableStatementNode struct {
 }
 
 func (n *DropSnapshotTableStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropSnapshotTableStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropSnapshotTableStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropSnapshotTableStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropSnapshotTableStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropSnapshotTableStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropSnapshotTableStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropSnapshotTableStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropSnapshotTableStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3400,18 +3400,18 @@ type DropSearchIndexStatementNode struct {
 }
 
 func (n *DropSearchIndexStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropSearchIndexStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropSearchIndexStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropSearchIndexStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropSearchIndexStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropSearchIndexStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropSearchIndexStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropSearchIndexStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropSearchIndexStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3420,7 +3420,7 @@ func (n *DropSearchIndexStatementNode) Name() *PathExpressionNode {
 
 func (n *DropSearchIndexStatementNode) TableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropSearchIndexStatement_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropSearchIndexStatement_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3433,7 +3433,7 @@ type RenameStatementNode struct {
 
 func (n *RenameStatementNode) Identifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTRenameStatement_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTRenameStatement_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3442,7 +3442,7 @@ func (n *RenameStatementNode) Identifier() *IdentifierNode {
 
 func (n *RenameStatementNode) OldName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTRenameStatement_old_name(n.getRaw(), &v)
+	zetasqlparser.ASTRenameStatement_old_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3451,7 +3451,7 @@ func (n *RenameStatementNode) OldName() *PathExpressionNode {
 
 func (n *RenameStatementNode) NewName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTRenameStatement_new_name(n.getRaw(), &v)
+	zetasqlparser.ASTRenameStatement_new_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3470,18 +3470,18 @@ type ImportStatementNode struct {
 }
 
 func (n *ImportStatementNode) SetImportKind(kind ImportStatementKind) {
-	internal.ASTImportStatement_set_import_kind(n.getRaw(), int(kind))
+	zetasqlparser.ASTImportStatement_set_import_kind(n.getRaw(), int(kind))
 }
 
 func (n *ImportStatementNode) ImportKind() ImportStatementKind {
 	var v int
-	internal.ASTImportStatement_import_kind(n.getRaw(), &v)
+	zetasqlparser.ASTImportStatement_import_kind(n.getRaw(), &v)
 	return ImportStatementKind(v)
 }
 
 func (n *ImportStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTImportStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTImportStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3490,7 +3490,7 @@ func (n *ImportStatementNode) Name() *PathExpressionNode {
 
 func (n *ImportStatementNode) StringValue() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTImportStatement_string_value(n.getRaw(), &v)
+	zetasqlparser.ASTImportStatement_string_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3499,7 +3499,7 @@ func (n *ImportStatementNode) StringValue() *StringLiteralNode {
 
 func (n *ImportStatementNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTImportStatement_alias(n.getRaw(), &v)
+	zetasqlparser.ASTImportStatement_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3508,7 +3508,7 @@ func (n *ImportStatementNode) Alias() *AliasNode {
 
 func (n *ImportStatementNode) IntoAlias() *IntoAliasNode {
 	var v unsafe.Pointer
-	internal.ASTImportStatement_into_alias(n.getRaw(), &v)
+	zetasqlparser.ASTImportStatement_into_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3517,7 +3517,7 @@ func (n *ImportStatementNode) IntoAlias() *IntoAliasNode {
 
 func (n *ImportStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTImportStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTImportStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3530,7 +3530,7 @@ type ModuleStatementNode struct {
 
 func (n *ModuleStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTModuleStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTModuleStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3539,7 +3539,7 @@ func (n *ModuleStatementNode) Name() *PathExpressionNode {
 
 func (n *ModuleStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTModuleStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTModuleStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3552,7 +3552,7 @@ type WithConnectionClauseNode struct {
 
 func (n *WithConnectionClauseNode) ConnectionClause() *ConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTWithConnectionClause_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTWithConnectionClause_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3565,7 +3565,7 @@ type IntoAliasNode struct {
 
 func (n *IntoAliasNode) Identifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTIntoAlias_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTIntoAlias_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3574,7 +3574,7 @@ func (n *IntoAliasNode) Identifier() *IdentifierNode {
 
 func (n *IntoAliasNode) Name() string {
 	var v unsafe.Pointer
-	internal.ASTIntoAlias_GetAsString(n.getRaw(), &v)
+	zetasqlparser.ASTIntoAlias_GetAsString(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -3584,7 +3584,7 @@ type UnnestExpressionWithOptAliasAndOffsetNode struct {
 
 func (n *UnnestExpressionWithOptAliasAndOffsetNode) UnnestExpression() *UnnestExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUnnestExpressionWithOptAliasAndOffset_unnest_expression(n.getRaw(), &v)
+	zetasqlparser.ASTUnnestExpressionWithOptAliasAndOffset_unnest_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3593,7 +3593,7 @@ func (n *UnnestExpressionWithOptAliasAndOffsetNode) UnnestExpression() *UnnestEx
 
 func (n *UnnestExpressionWithOptAliasAndOffsetNode) OptionalAlias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTUnnestExpressionWithOptAliasAndOffset_optional_alias(n.getRaw(), &v)
+	zetasqlparser.ASTUnnestExpressionWithOptAliasAndOffset_optional_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3602,7 +3602,7 @@ func (n *UnnestExpressionWithOptAliasAndOffsetNode) OptionalAlias() *AliasNode {
 
 func (n *UnnestExpressionWithOptAliasAndOffsetNode) OptionalWithOffset() *WithOffsetNode {
 	var v unsafe.Pointer
-	internal.ASTUnnestExpressionWithOptAliasAndOffset_optional_with_offset(n.getRaw(), &v)
+	zetasqlparser.ASTUnnestExpressionWithOptAliasAndOffset_optional_with_offset(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3615,7 +3615,7 @@ type PivotExpressionNode struct {
 
 func (n *PivotExpressionNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTPivotExpression_expression(n.getRaw(), &v)
+	zetasqlparser.ASTPivotExpression_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3624,7 +3624,7 @@ func (n *PivotExpressionNode) Expression() ExpressionNode {
 
 func (n *PivotExpressionNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTPivotExpression_alias(n.getRaw(), &v)
+	zetasqlparser.ASTPivotExpression_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3637,7 +3637,7 @@ type PivotValueNode struct {
 
 func (n *PivotValueNode) Value() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTPivotValue_value(n.getRaw(), &v)
+	zetasqlparser.ASTPivotValue_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3646,7 +3646,7 @@ func (n *PivotValueNode) Value() ExpressionNode {
 
 func (n *PivotValueNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTPivotValue_alias(n.getRaw(), &v)
+	zetasqlparser.ASTPivotValue_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3659,11 +3659,11 @@ type PivotExpressionListNode struct {
 
 func (n *PivotExpressionListNode) Expressions() []*PivotExpressionNode {
 	var num int
-	internal.ASTPivotExpressionList_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTPivotExpressionList_expressions_num(n.getRaw(), &num)
 	ret := make([]*PivotExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTPivotExpressionList_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTPivotExpressionList_expression(n.getRaw(), i, &v)
 		ret = append(ret, newPivotExpressionNode(v))
 	}
 	return ret
@@ -3675,11 +3675,11 @@ type PivotValueListNode struct {
 
 func (n *PivotValueListNode) Values() []*PivotValueNode {
 	var num int
-	internal.ASTPivotValueList_values_num(n.getRaw(), &num)
+	zetasqlparser.ASTPivotValueList_values_num(n.getRaw(), &num)
 	ret := make([]*PivotValueNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTPivotValueList_value(n.getRaw(), i, &v)
+		zetasqlparser.ASTPivotValueList_value(n.getRaw(), i, &v)
 		ret = append(ret, newPivotValueNode(v))
 	}
 	return ret
@@ -3691,7 +3691,7 @@ type PivotClauseNode struct {
 
 func (n *PivotClauseNode) PivotExpressions() *PivotExpressionListNode {
 	var v unsafe.Pointer
-	internal.ASTPivotClause_pivot_expressions(n.getRaw(), &v)
+	zetasqlparser.ASTPivotClause_pivot_expressions(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3700,7 +3700,7 @@ func (n *PivotClauseNode) PivotExpressions() *PivotExpressionListNode {
 
 func (n *PivotClauseNode) ForExpression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTPivotClause_for_expression(n.getRaw(), &v)
+	zetasqlparser.ASTPivotClause_for_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3709,7 +3709,7 @@ func (n *PivotClauseNode) ForExpression() ExpressionNode {
 
 func (n *PivotClauseNode) PivotValues() *PivotValueListNode {
 	var v unsafe.Pointer
-	internal.ASTPivotClause_pivot_values(n.getRaw(), &v)
+	zetasqlparser.ASTPivotClause_pivot_values(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3718,7 +3718,7 @@ func (n *PivotClauseNode) PivotValues() *PivotValueListNode {
 
 func (n *PivotClauseNode) OutputAlias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTPivotClause_output_alias(n.getRaw(), &v)
+	zetasqlparser.ASTPivotClause_output_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3731,7 +3731,7 @@ type UnpivotInItemNode struct {
 
 func (n *UnpivotInItemNode) UnpivotColumns() *PathExpressionListNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotInItem_unpivot_columns(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotInItem_unpivot_columns(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3740,7 +3740,7 @@ func (n *UnpivotInItemNode) UnpivotColumns() *PathExpressionListNode {
 
 func (n *UnpivotInItemNode) Alias() *UnpivotInItemLabelNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotInItem_alias(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotInItem_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3753,11 +3753,11 @@ type UnpivotInItemListNode struct {
 
 func (n *UnpivotInItemListNode) InItems() []*UnpivotInItemNode {
 	var num int
-	internal.ASTUnpivotInItemList_in_items_num(n.getRaw(), &num)
+	zetasqlparser.ASTUnpivotInItemList_in_items_num(n.getRaw(), &num)
 	ret := make([]*UnpivotInItemNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTUnpivotInItemList_in_item(n.getRaw(), i, &v)
+		zetasqlparser.ASTUnpivotInItemList_in_item(n.getRaw(), i, &v)
 		ret = append(ret, newUnpivotInItemNode(v))
 	}
 	return ret
@@ -3788,18 +3788,18 @@ type UnpivotClauseNode struct {
 }
 
 func (n *UnpivotClauseNode) SetNullFilter(filter UnpivotNullFilter) {
-	internal.ASTUnpivotClause_set_null_filter(n.getRaw(), int(filter))
+	zetasqlparser.ASTUnpivotClause_set_null_filter(n.getRaw(), int(filter))
 }
 
 func (n *UnpivotClauseNode) NullFilter() UnpivotNullFilter {
 	var v int
-	internal.ASTUnpivotClause_null_filter(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotClause_null_filter(n.getRaw(), &v)
 	return UnpivotNullFilter(v)
 }
 
 func (n *UnpivotClauseNode) UnpivotOutputValueColumns() *PathExpressionListNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotClause_unpivot_output_value_columns(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotClause_unpivot_output_value_columns(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3808,7 +3808,7 @@ func (n *UnpivotClauseNode) UnpivotOutputValueColumns() *PathExpressionListNode 
 
 func (n *UnpivotClauseNode) UnpivotOutputNameColumn() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotClause_unpivot_output_name_column(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotClause_unpivot_output_name_column(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3817,7 +3817,7 @@ func (n *UnpivotClauseNode) UnpivotOutputNameColumn() *PathExpressionNode {
 
 func (n *UnpivotClauseNode) UnpivotInItems() *UnpivotInItemListNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotClause_unpivot_in_items(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotClause_unpivot_in_items(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3826,7 +3826,7 @@ func (n *UnpivotClauseNode) UnpivotInItems() *UnpivotInItemListNode {
 
 func (n *UnpivotClauseNode) OutputAlias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotClause_output_alias(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotClause_output_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3839,11 +3839,11 @@ type UsingClauseNode struct {
 
 func (n *UsingClauseNode) Keys() []*IdentifierNode {
 	var num int
-	internal.ASTUsingClause_keys_num(n.getRaw(), &num)
+	zetasqlparser.ASTUsingClause_keys_num(n.getRaw(), &num)
 	ret := make([]*IdentifierNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTUsingClause_key(n.getRaw(), i, &v)
+		zetasqlparser.ASTUsingClause_key(n.getRaw(), i, &v)
 		ret = append(ret, newIdentifierNode(v))
 	}
 	return ret
@@ -3855,7 +3855,7 @@ type ForSystemTimeNode struct {
 
 func (n *ForSystemTimeNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTForSystemTime_expression(n.getRaw(), &v)
+	zetasqlparser.ASTForSystemTime_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3868,7 +3868,7 @@ type QualifyNode struct {
 
 func (n *QualifyNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTQualify_expression(n.getRaw(), &v)
+	zetasqlparser.ASTQualify_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3881,7 +3881,7 @@ type ClampedBetweenModifierNode struct {
 
 func (n *ClampedBetweenModifierNode) Low() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTClampedBetweenModifier_low(n.getRaw(), &v)
+	zetasqlparser.ASTClampedBetweenModifier_low(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3890,7 +3890,7 @@ func (n *ClampedBetweenModifierNode) Low() ExpressionNode {
 
 func (n *ClampedBetweenModifierNode) High() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTClampedBetweenModifier_high(n.getRaw(), &v)
+	zetasqlparser.ASTClampedBetweenModifier_high(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3903,7 +3903,7 @@ type FormatClauseNode struct {
 
 func (n *FormatClauseNode) Format() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFormatClause_format(n.getRaw(), &v)
+	zetasqlparser.ASTFormatClause_format(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3912,7 +3912,7 @@ func (n *FormatClauseNode) Format() ExpressionNode {
 
 func (n *FormatClauseNode) TimeZoneExpr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFormatClause_time_zone_expr(n.getRaw(), &v)
+	zetasqlparser.ASTFormatClause_time_zone_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3925,11 +3925,11 @@ type PathExpressionListNode struct {
 
 func (n *PathExpressionListNode) PathExpressionList() []*PathExpressionNode {
 	var num int
-	internal.ASTPathExpressionList_path_expression_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTPathExpressionList_path_expression_list_num(n.getRaw(), &num)
 	ret := make([]*PathExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTPathExpressionList_path_expression_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTPathExpressionList_path_expression_list(n.getRaw(), i, &v)
 		ret = append(ret, newPathExpressionNode(v))
 	}
 	return ret
@@ -3940,18 +3940,18 @@ type ParameterExprNode struct {
 }
 
 func (n *ParameterExprNode) SetPosition(pos int) {
-	internal.ASTParameterExpr_set_position(n.getRaw(), pos)
+	zetasqlparser.ASTParameterExpr_set_position(n.getRaw(), pos)
 }
 
 func (n *ParameterExprNode) Position() int {
 	var v int
-	internal.ASTParameterExpr_position(n.getRaw(), &v)
+	zetasqlparser.ASTParameterExpr_position(n.getRaw(), &v)
 	return v
 }
 
 func (n *ParameterExprNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTParameterExpr_name(n.getRaw(), &v)
+	zetasqlparser.ASTParameterExpr_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3964,7 +3964,7 @@ type SystemVariableExprNode struct {
 
 func (n *SystemVariableExprNode) Path() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSystemVariableExpr_path(n.getRaw(), &v)
+	zetasqlparser.ASTSystemVariableExpr_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3977,7 +3977,7 @@ type WithGroupRowsNode struct {
 
 func (n *WithGroupRowsNode) Subquery() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTWithGroupRows_subquery(n.getRaw(), &v)
+	zetasqlparser.ASTWithGroupRows_subquery(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3990,7 +3990,7 @@ type LambdaNode struct {
 
 func (n *LambdaNode) ArgumentList() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTLambda_argument_list(n.getRaw(), &v)
+	zetasqlparser.ASTLambda_argument_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -3999,7 +3999,7 @@ func (n *LambdaNode) ArgumentList() ExpressionNode {
 
 func (n *LambdaNode) Body() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTLambda_body(n.getRaw(), &v)
+	zetasqlparser.ASTLambda_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4012,7 +4012,7 @@ type AnalyticFunctionCallNode struct {
 
 func (n *AnalyticFunctionCallNode) WindowSpec() *WindowSpecificationNode {
 	var v unsafe.Pointer
-	internal.ASTAnalyticFunctionCall_window_spec(n.getRaw(), &v)
+	zetasqlparser.ASTAnalyticFunctionCall_window_spec(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4021,7 +4021,7 @@ func (n *AnalyticFunctionCallNode) WindowSpec() *WindowSpecificationNode {
 
 func (n *AnalyticFunctionCallNode) Function() *FunctionCallNode {
 	var v unsafe.Pointer
-	internal.ASTAnalyticFunctionCall_function(n.getRaw(), &v)
+	zetasqlparser.ASTAnalyticFunctionCall_function(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4030,7 +4030,7 @@ func (n *AnalyticFunctionCallNode) Function() *FunctionCallNode {
 
 func (n *AnalyticFunctionCallNode) FunctionWithGroupRows() *FunctionCallWithGroupRowsNode {
 	var v unsafe.Pointer
-	internal.ASTAnalyticFunctionCall_function_with_group_rows(n.getRaw(), &v)
+	zetasqlparser.ASTAnalyticFunctionCall_function_with_group_rows(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4043,7 +4043,7 @@ type FunctionCallWithGroupRowsNode struct {
 
 func (n *FunctionCallWithGroupRowsNode) Function() *FunctionCallNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCallWithGroupRows_function(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCallWithGroupRows_function(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4052,7 +4052,7 @@ func (n *FunctionCallWithGroupRowsNode) Function() *FunctionCallNode {
 
 func (n *FunctionCallWithGroupRowsNode) Subquery() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionCallWithGroupRows_subquery(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionCallWithGroupRows_subquery(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4065,11 +4065,11 @@ type ClusterByNode struct {
 
 func (n *ClusterByNode) ClusteringExpressions() []ExpressionNode {
 	var num int
-	internal.ASTClusterBy_clustering_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTClusterBy_clustering_expressions_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTClusterBy_clustering_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTClusterBy_clustering_expression(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -4081,7 +4081,7 @@ type NewConstructorArgNode struct {
 
 func (n *NewConstructorArgNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTNewConstructorArg_expression(n.getRaw(), &v)
+	zetasqlparser.ASTNewConstructorArg_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4090,7 +4090,7 @@ func (n *NewConstructorArgNode) Expression() ExpressionNode {
 
 func (n *NewConstructorArgNode) OptionalIdentifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTNewConstructorArg_optional_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTNewConstructorArg_optional_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4099,7 +4099,7 @@ func (n *NewConstructorArgNode) OptionalIdentifier() *IdentifierNode {
 
 func (n *NewConstructorArgNode) OptionalPathExpression() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTNewConstructorArg_optional_path_expression(n.getRaw(), &v)
+	zetasqlparser.ASTNewConstructorArg_optional_path_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4112,7 +4112,7 @@ type NewConstructorNode struct {
 
 func (n *NewConstructorNode) TypeName() *SimpleTypeNode {
 	var v unsafe.Pointer
-	internal.ASTNewConstructor_type_name(n.getRaw(), &v)
+	zetasqlparser.ASTNewConstructor_type_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4121,11 +4121,11 @@ func (n *NewConstructorNode) TypeName() *SimpleTypeNode {
 
 func (n *NewConstructorNode) Arguments() []*NewConstructorArgNode {
 	var num int
-	internal.ASTNewConstructor_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTNewConstructor_arguments_num(n.getRaw(), &num)
 	ret := make([]*NewConstructorArgNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTNewConstructor_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTNewConstructor_argument(n.getRaw(), i, &v)
 		ret = append(ret, newNewConstructorArgNode(v))
 	}
 	return ret
@@ -4137,11 +4137,11 @@ type OptionsListNode struct {
 
 func (n *OptionsListNode) OptionsEntries() []*OptionsEntryNode {
 	var num int
-	internal.ASTOptionsList_options_entries_num(n.getRaw(), &num)
+	zetasqlparser.ASTOptionsList_options_entries_num(n.getRaw(), &num)
 	ret := make([]*OptionsEntryNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTOptionsList_options_entry(n.getRaw(), i, &v)
+		zetasqlparser.ASTOptionsList_options_entry(n.getRaw(), i, &v)
 		ret = append(ret, newOptionsEntryNode(v))
 	}
 	return ret
@@ -4153,7 +4153,7 @@ type OptionsEntryNode struct {
 
 func (n *OptionsEntryNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTOptionsEntry_name(n.getRaw(), &v)
+	zetasqlparser.ASTOptionsEntry_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4162,7 +4162,7 @@ func (n *OptionsEntryNode) Name() *IdentifierNode {
 
 func (n *OptionsEntryNode) Value() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTOptionsEntry_value(n.getRaw(), &v)
+	zetasqlparser.ASTOptionsEntry_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4217,56 +4217,56 @@ type CreateStatementNode struct {
 }
 
 func (n *CreateStatementNode) SetScope(scope CreateStatementScope) {
-	internal.ASTCreateStatement_set_scope(n.getRaw(), int(scope))
+	zetasqlparser.ASTCreateStatement_set_scope(n.getRaw(), int(scope))
 }
 
 func (n *CreateStatementNode) Scope() CreateStatementScope {
 	var v int
-	internal.ASTCreateStatement_scope(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_scope(n.getRaw(), &v)
 	return CreateStatementScope(v)
 }
 
 func (n *CreateStatementNode) SetIsOrReplace(isOrReplace bool) {
-	internal.ASTCreateStatement_set_is_or_replace(n.getRaw(), helper.BoolToInt(isOrReplace))
+	zetasqlparser.ASTCreateStatement_set_is_or_replace(n.getRaw(), helper.BoolToInt(isOrReplace))
 }
 
 func (n *CreateStatementNode) IsOrReplace() bool {
 	var v bool
-	internal.ASTCreateStatement_is_or_replace(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_is_or_replace(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateStatementNode) SetIsIfNotExists(isIfNotExists bool) {
-	internal.ASTCreateStatement_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTCreateStatement_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *CreateStatementNode) IsIfNotExists() bool {
 	var v bool
-	internal.ASTCreateStatement_is_if_not_exists(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_is_if_not_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateStatementNode) IsDefaultScope() bool {
 	var v bool
-	internal.ASTCreateStatement_is_default_scope(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_is_default_scope(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateStatementNode) IsPrivate() bool {
 	var v bool
-	internal.ASTCreateStatement_is_private(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_is_private(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateStatementNode) IsPublic() bool {
 	var v bool
-	internal.ASTCreateStatement_is_public(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_is_public(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateStatementNode) IsTemp() bool {
 	var v bool
-	internal.ASTCreateStatement_is_temp(n.getRaw(), &v)
+	zetasqlparser.ASTCreateStatement_is_temp(n.getRaw(), &v)
 	return v
 }
 
@@ -4298,28 +4298,28 @@ type FunctionParameterNode struct {
 }
 
 func (n *FunctionParameterNode) SetProcedureParameterMode(mode ProcedureParameterMode) {
-	internal.ASTFunctionParameter_set_procedure_parameter_mode(n.getRaw(), int(mode))
+	zetasqlparser.ASTFunctionParameter_set_procedure_parameter_mode(n.getRaw(), int(mode))
 }
 
 func (n *FunctionParameterNode) ProcedureParameterMode() ProcedureParameterMode {
 	var v int
-	internal.ASTFunctionParameter_procedure_parameter_mode(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_procedure_parameter_mode(n.getRaw(), &v)
 	return ProcedureParameterMode(v)
 }
 
 func (n *FunctionParameterNode) SetIsNotAggregate(isNotAggregate bool) {
-	internal.ASTFunctionParameter_set_is_not_aggregate(n.getRaw(), helper.BoolToInt(isNotAggregate))
+	zetasqlparser.ASTFunctionParameter_set_is_not_aggregate(n.getRaw(), helper.BoolToInt(isNotAggregate))
 }
 
 func (n *FunctionParameterNode) IsNotAggregate() bool {
 	var v bool
-	internal.ASTFunctionParameter_is_not_aggregate(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_is_not_aggregate(n.getRaw(), &v)
 	return v
 }
 
 func (n *FunctionParameterNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionParameter_name(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4328,7 +4328,7 @@ func (n *FunctionParameterNode) Name() *IdentifierNode {
 
 func (n *FunctionParameterNode) Type() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionParameter_type(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4337,7 +4337,7 @@ func (n *FunctionParameterNode) Type() TypeNode {
 
 func (n *FunctionParameterNode) TemplatedParameterType() *TemplatedParameterTypeNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionParameter_templated_parameter_type(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_templated_parameter_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4346,7 +4346,7 @@ func (n *FunctionParameterNode) TemplatedParameterType() *TemplatedParameterType
 
 func (n *FunctionParameterNode) TVFSchema() *TVFSchemaNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionParameter_tvf_schema(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_tvf_schema(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4355,7 +4355,7 @@ func (n *FunctionParameterNode) TVFSchema() *TVFSchemaNode {
 
 func (n *FunctionParameterNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionParameter_alias(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4364,7 +4364,7 @@ func (n *FunctionParameterNode) Alias() *AliasNode {
 
 func (n *FunctionParameterNode) DefaultValue() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionParameter_default_value(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_default_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4373,13 +4373,13 @@ func (n *FunctionParameterNode) DefaultValue() ExpressionNode {
 
 func (n *FunctionParameterNode) IsTableParameter() bool {
 	var v bool
-	internal.ASTFunctionParameter_IsTableParameter(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_IsTableParameter(n.getRaw(), &v)
 	return v
 }
 
 func (n *FunctionParameterNode) IsTemplated() bool {
 	var v bool
-	internal.ASTFunctionParameter_IsTemplated(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionParameter_IsTemplated(n.getRaw(), &v)
 	return v
 }
 
@@ -4389,11 +4389,11 @@ type FunctionParametersNode struct {
 
 func (n *FunctionParametersNode) ParameterEntries() []*FunctionParameterNode {
 	var num int
-	internal.ASTFunctionParameters_parameter_entries_num(n.getRaw(), &num)
+	zetasqlparser.ASTFunctionParameters_parameter_entries_num(n.getRaw(), &num)
 	ret := make([]*FunctionParameterNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTFunctionParameters_parameter_entry(n.getRaw(), i, &v)
+		zetasqlparser.ASTFunctionParameters_parameter_entry(n.getRaw(), i, &v)
 		ret = append(ret, newFunctionParameterNode(v))
 	}
 	return ret
@@ -4405,7 +4405,7 @@ type FunctionDeclarationNode struct {
 
 func (n *FunctionDeclarationNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionDeclaration_name(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionDeclaration_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4414,7 +4414,7 @@ func (n *FunctionDeclarationNode) Name() *PathExpressionNode {
 
 func (n *FunctionDeclarationNode) Parameters() *FunctionParametersNode {
 	var v unsafe.Pointer
-	internal.ASTFunctionDeclaration_parameters(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionDeclaration_parameters(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4423,7 +4423,7 @@ func (n *FunctionDeclarationNode) Parameters() *FunctionParametersNode {
 
 func (n *FunctionDeclarationNode) IsTemplated() bool {
 	var v bool
-	internal.ASTFunctionDeclaration_IsTemplated(n.getRaw(), &v)
+	zetasqlparser.ASTFunctionDeclaration_IsTemplated(n.getRaw(), &v)
 	return v
 }
 
@@ -4433,7 +4433,7 @@ type SqlFunctionBodyNode struct {
 
 func (n *SqlFunctionBodyNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSqlFunctionBody_expression(n.getRaw(), &v)
+	zetasqlparser.ASTSqlFunctionBody_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4446,7 +4446,7 @@ type TVFArgumentNode struct {
 
 func (n *TVFArgumentNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTVFArgument_expr(n.getRaw(), &v)
+	zetasqlparser.ASTTVFArgument_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4455,7 +4455,7 @@ func (n *TVFArgumentNode) Expr() ExpressionNode {
 
 func (n *TVFArgumentNode) TableClause() *TableClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTVFArgument_table_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTVFArgument_table_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4464,7 +4464,7 @@ func (n *TVFArgumentNode) TableClause() *TableClauseNode {
 
 func (n *TVFArgumentNode) ModelClause() *ModelClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTVFArgument_model_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTVFArgument_model_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4473,7 +4473,7 @@ func (n *TVFArgumentNode) ModelClause() *ModelClauseNode {
 
 func (n *TVFArgumentNode) ConnectionClause() *ConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTVFArgument_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTVFArgument_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4482,7 +4482,7 @@ func (n *TVFArgumentNode) ConnectionClause() *ConnectionClauseNode {
 
 func (n *TVFArgumentNode) Descriptor() *DescriptorNode {
 	var v unsafe.Pointer
-	internal.ASTTVFArgument_descriptor(n.getRaw(), &v)
+	zetasqlparser.ASTTVFArgument_descriptor(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4495,7 +4495,7 @@ type TVFNode struct {
 
 func (n *TVFNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTVF_name(n.getRaw(), &v)
+	zetasqlparser.ASTTVF_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4504,7 +4504,7 @@ func (n *TVFNode) Name() *PathExpressionNode {
 
 func (n *TVFNode) Hint() *HintNode {
 	var v unsafe.Pointer
-	internal.ASTTVF_hint(n.getRaw(), &v)
+	zetasqlparser.ASTTVF_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4513,7 +4513,7 @@ func (n *TVFNode) Hint() *HintNode {
 
 func (n *TVFNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTTVF_alias(n.getRaw(), &v)
+	zetasqlparser.ASTTVF_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4522,7 +4522,7 @@ func (n *TVFNode) Alias() *AliasNode {
 
 func (n *TVFNode) PivotClause() *PivotClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTVF_pivot_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTVF_pivot_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4531,7 +4531,7 @@ func (n *TVFNode) PivotClause() *PivotClauseNode {
 
 func (n *TVFNode) UnpivotClause() *UnpivotClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTVF_unpivot_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTVF_unpivot_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4540,7 +4540,7 @@ func (n *TVFNode) UnpivotClause() *UnpivotClauseNode {
 
 func (n *TVFNode) SampleClause() *SampleClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTVF_sample(n.getRaw(), &v)
+	zetasqlparser.ASTTVF_sample(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4549,11 +4549,11 @@ func (n *TVFNode) SampleClause() *SampleClauseNode {
 
 func (n *TVFNode) ArgumentEntries() []*TVFArgumentNode {
 	var num int
-	internal.ASTTVF_argument_entries_num(n.getRaw(), &num)
+	zetasqlparser.ASTTVF_argument_entries_num(n.getRaw(), &num)
 	ret := make([]*TVFArgumentNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTTVF_argument_entry(n.getRaw(), i, &v)
+		zetasqlparser.ASTTVF_argument_entry(n.getRaw(), i, &v)
 		ret = append(ret, newTVFArgumentNode(v))
 	}
 	return ret
@@ -4565,7 +4565,7 @@ type TableClauseNode struct {
 
 func (n *TableClauseNode) TablePath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTableClause_table_path(n.getRaw(), &v)
+	zetasqlparser.ASTTableClause_table_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4574,7 +4574,7 @@ func (n *TableClauseNode) TablePath() *PathExpressionNode {
 
 func (n *TableClauseNode) TVF() *TVFNode {
 	var v unsafe.Pointer
-	internal.ASTTableClause_tvf(n.getRaw(), &v)
+	zetasqlparser.ASTTableClause_tvf(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4587,7 +4587,7 @@ type ModelClauseNode struct {
 
 func (n *ModelClauseNode) ModelPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTModelClause_model_path(n.getRaw(), &v)
+	zetasqlparser.ASTModelClause_model_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4600,7 +4600,7 @@ type ConnectionClauseNode struct {
 
 func (n *ConnectionClauseNode) ConnectionPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTConnectionClause_connection_path(n.getRaw(), &v)
+	zetasqlparser.ASTConnectionClause_connection_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4613,7 +4613,7 @@ type TableDataSourceNode struct {
 
 func (n *TableDataSourceNode) PathExpr() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTableDataSource_path_expr(n.getRaw(), &v)
+	zetasqlparser.ASTTableDataSource_path_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4622,7 +4622,7 @@ func (n *TableDataSourceNode) PathExpr() *PathExpressionNode {
 
 func (n *TableDataSourceNode) ForSystemTime() *ForSystemTimeNode {
 	var v unsafe.Pointer
-	internal.ASTTableDataSource_for_system_time(n.getRaw(), &v)
+	zetasqlparser.ASTTableDataSource_for_system_time(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4631,7 +4631,7 @@ func (n *TableDataSourceNode) ForSystemTime() *ForSystemTimeNode {
 
 func (n *TableDataSourceNode) WhereClause() *WhereClauseNode {
 	var v unsafe.Pointer
-	internal.ASTTableDataSource_where_clause(n.getRaw(), &v)
+	zetasqlparser.ASTTableDataSource_where_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4652,11 +4652,11 @@ type CloneDataSourceListNode struct {
 
 func (n *CloneDataSourceListNode) DataSources() []*CloneDataSourceNode {
 	var num int
-	internal.ASTCloneDataSourceList_data_sources_num(n.getRaw(), &num)
+	zetasqlparser.ASTCloneDataSourceList_data_sources_num(n.getRaw(), &num)
 	ret := make([]*CloneDataSourceNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTCloneDataSourceList_data_source(n.getRaw(), i, &v)
+		zetasqlparser.ASTCloneDataSourceList_data_source(n.getRaw(), i, &v)
 		ret = append(ret, newCloneDataSourceNode(v))
 	}
 	return ret
@@ -4668,7 +4668,7 @@ type CloneDataStatementNode struct {
 
 func (n *CloneDataStatementNode) TargetPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCloneDataStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTCloneDataStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4677,7 +4677,7 @@ func (n *CloneDataStatementNode) TargetPath() *PathExpressionNode {
 
 func (n *CloneDataStatementNode) DataSourceList() *CloneDataSourceListNode {
 	var v unsafe.Pointer
-	internal.ASTCloneDataStatement_data_source_list(n.getRaw(), &v)
+	zetasqlparser.ASTCloneDataStatement_data_source_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4690,7 +4690,7 @@ type CreateConstantStatementNode struct {
 
 func (n *CreateConstantStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateConstantStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateConstantStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4699,7 +4699,7 @@ func (n *CreateConstantStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateConstantStatementNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateConstantStatement_expr(n.getRaw(), &v)
+	zetasqlparser.ASTCreateConstantStatement_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4712,7 +4712,7 @@ type CreateDatabaseStatementNode struct {
 
 func (n *CreateDatabaseStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateDatabaseStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateDatabaseStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4721,7 +4721,7 @@ func (n *CreateDatabaseStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateDatabaseStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateDatabaseStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateDatabaseStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4734,7 +4734,7 @@ type CreateProcedureStatementNode struct {
 
 func (n *CreateProcedureStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateProcedureStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateProcedureStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4743,7 +4743,7 @@ func (n *CreateProcedureStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateProcedureStatementNode) Parameters() *FunctionParametersNode {
 	var v unsafe.Pointer
-	internal.ASTCreateProcedureStatement_parameters(n.getRaw(), &v)
+	zetasqlparser.ASTCreateProcedureStatement_parameters(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4752,7 +4752,7 @@ func (n *CreateProcedureStatementNode) Parameters() *FunctionParametersNode {
 
 func (n *CreateProcedureStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateProcedureStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateProcedureStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4761,7 +4761,7 @@ func (n *CreateProcedureStatementNode) OptionsList() *OptionsListNode {
 
 func (n *CreateProcedureStatementNode) Body() ScriptNode {
 	var v unsafe.Pointer
-	internal.ASTCreateProcedureStatement_body(n.getRaw(), &v)
+	zetasqlparser.ASTCreateProcedureStatement_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4774,7 +4774,7 @@ type CreateSchemaStatementNode struct {
 
 func (n *CreateSchemaStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateSchemaStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateSchemaStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4783,7 +4783,7 @@ func (n *CreateSchemaStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateSchemaStatementNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTCreateSchemaStatement_collate(n.getRaw(), &v)
+	zetasqlparser.ASTCreateSchemaStatement_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4792,7 +4792,7 @@ func (n *CreateSchemaStatementNode) Collate() *CollateNode {
 
 func (n *CreateSchemaStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateSchemaStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateSchemaStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4805,7 +4805,7 @@ type TransformClauseNode struct {
 
 func (n *TransformClauseNode) SelectList() *SelectListNode {
 	var v unsafe.Pointer
-	internal.ASTTransformClause_select_list(n.getRaw(), &v)
+	zetasqlparser.ASTTransformClause_select_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4818,7 +4818,7 @@ type CreateModelStatementNode struct {
 
 func (n *CreateModelStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateModelStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateModelStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4827,7 +4827,7 @@ func (n *CreateModelStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateModelStatementNode) TransformClause() *TransformClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreateModelStatement_transform_clause(n.getRaw(), &v)
+	zetasqlparser.ASTCreateModelStatement_transform_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4836,7 +4836,7 @@ func (n *CreateModelStatementNode) TransformClause() *TransformClauseNode {
 
 func (n *CreateModelStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateModelStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateModelStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4845,7 +4845,7 @@ func (n *CreateModelStatementNode) OptionsList() *OptionsListNode {
 
 func (n *CreateModelStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTCreateModelStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTCreateModelStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4862,11 +4862,11 @@ type IndexItemListNode struct {
 
 func (n *IndexItemListNode) OrderingExpressions() []*OrderingExpressionNode {
 	var num int
-	internal.ASTIndexItemList_ordering_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTIndexItemList_ordering_expressions_num(n.getRaw(), &num)
 	ret := make([]*OrderingExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTIndexItemList_ordering_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTIndexItemList_ordering_expression(n.getRaw(), i, &v)
 		ret = append(ret, newOrderingExpressionNode(v))
 	}
 	return ret
@@ -4878,11 +4878,11 @@ type IndexStoringExpressionListNode struct {
 
 func (n *IndexStoringExpressionListNode) Expressions() []ExpressionNode {
 	var num int
-	internal.ASTIndexStoringExpressionList_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTIndexStoringExpressionList_expressions_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTIndexStoringExpressionList_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTIndexStoringExpressionList_expression(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -4894,11 +4894,11 @@ type IndexUnnestExpressionListNode struct {
 
 func (n *IndexUnnestExpressionListNode) UnnestExpressions() []*UnnestExpressionWithOptAliasAndOffsetNode {
 	var num int
-	internal.ASTIndexUnnestExpressionList_unnest_expressions_num(n.getRaw(), &num)
+	zetasqlparser.ASTIndexUnnestExpressionList_unnest_expressions_num(n.getRaw(), &num)
 	ret := make([]*UnnestExpressionWithOptAliasAndOffsetNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTIndexUnnestExpressionList_unnest_expression(n.getRaw(), i, &v)
+		zetasqlparser.ASTIndexUnnestExpressionList_unnest_expression(n.getRaw(), i, &v)
 		ret = append(ret, newUnnestExpressionWithOptAliasAndOffsetNode(v))
 	}
 	return ret
@@ -4909,28 +4909,28 @@ type CreateIndexStatementNode struct {
 }
 
 func (n *CreateIndexStatementNode) SetIsUnique(isUnique bool) {
-	internal.ASTCreateIndexStatement_set_is_unique(n.getRaw(), helper.BoolToInt(isUnique))
+	zetasqlparser.ASTCreateIndexStatement_set_is_unique(n.getRaw(), helper.BoolToInt(isUnique))
 }
 
 func (n *CreateIndexStatementNode) IsUnique() bool {
 	var v bool
-	internal.ASTCreateIndexStatement_is_unique(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_is_unique(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateIndexStatementNode) SetIsSearch(isSearch bool) {
-	internal.ASTCreateIndexStatement_set_is_search(n.getRaw(), helper.BoolToInt(isSearch))
+	zetasqlparser.ASTCreateIndexStatement_set_is_search(n.getRaw(), helper.BoolToInt(isSearch))
 }
 
 func (n *CreateIndexStatementNode) IsSearch() bool {
 	var v bool
-	internal.ASTCreateIndexStatement_is_search(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_is_search(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateIndexStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4939,7 +4939,7 @@ func (n *CreateIndexStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateIndexStatementNode) TableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4948,7 +4948,7 @@ func (n *CreateIndexStatementNode) TableName() *PathExpressionNode {
 
 func (n *CreateIndexStatementNode) OptionalTableAlias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_optional_table_alias(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_optional_table_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4957,7 +4957,7 @@ func (n *CreateIndexStatementNode) OptionalTableAlias() *AliasNode {
 
 func (n *CreateIndexStatementNode) OptionalIndexUnnestExpressionList() *IndexUnnestExpressionListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_optional_index_unnest_expression_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_optional_index_unnest_expression_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4966,7 +4966,7 @@ func (n *CreateIndexStatementNode) OptionalIndexUnnestExpressionList() *IndexUnn
 
 func (n *CreateIndexStatementNode) IndexItemList() *IndexItemListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_index_item_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_index_item_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4975,7 +4975,7 @@ func (n *CreateIndexStatementNode) IndexItemList() *IndexItemListNode {
 
 func (n *CreateIndexStatementNode) OptionalIndexSotringExpressions() *IndexStoringExpressionListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_optional_index_storing_expressions(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_optional_index_storing_expressions(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4984,7 +4984,7 @@ func (n *CreateIndexStatementNode) OptionalIndexSotringExpressions() *IndexStori
 
 func (n *CreateIndexStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateIndexStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateIndexStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -4997,7 +4997,7 @@ type ExportDataStatementNode struct {
 
 func (n *ExportDataStatementNode) WithConnectionClause() *WithConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTExportDataStatement_with_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTExportDataStatement_with_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5006,7 +5006,7 @@ func (n *ExportDataStatementNode) WithConnectionClause() *WithConnectionClauseNo
 
 func (n *ExportDataStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTExportDataStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTExportDataStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5015,7 +5015,7 @@ func (n *ExportDataStatementNode) OptionsList() *OptionsListNode {
 
 func (n *ExportDataStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTExportDataStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTExportDataStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5028,7 +5028,7 @@ type ExportModelStatementNode struct {
 
 func (n *ExportModelStatementNode) ModelNamePath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTExportModelStatement_model_name_path(n.getRaw(), &v)
+	zetasqlparser.ASTExportModelStatement_model_name_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5037,7 +5037,7 @@ func (n *ExportModelStatementNode) ModelNamePath() *PathExpressionNode {
 
 func (n *ExportModelStatementNode) WithConnectionClause() *WithConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTExportModelStatement_with_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTExportModelStatement_with_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5046,7 +5046,7 @@ func (n *ExportModelStatementNode) WithConnectionClause() *WithConnectionClauseN
 
 func (n *ExportModelStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTExportModelStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTExportModelStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5059,7 +5059,7 @@ type CallStatementNode struct {
 
 func (n *CallStatementNode) ProcedureName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCallStatement_procedure_name(n.getRaw(), &v)
+	zetasqlparser.ASTCallStatement_procedure_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5068,11 +5068,11 @@ func (n *CallStatementNode) ProcedureName() *PathExpressionNode {
 
 func (n *CallStatementNode) Arguments() []*TVFArgumentNode {
 	var num int
-	internal.ASTCallStatement_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTCallStatement_arguments_num(n.getRaw(), &num)
 	ret := make([]*TVFArgumentNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTCallStatement_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTCallStatement_argument(n.getRaw(), i, &v)
 		ret = append(ret, newTVFArgumentNode(v))
 	}
 	return ret
@@ -5084,7 +5084,7 @@ type DefineTableStatementNode struct {
 
 func (n *DefineTableStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDefineTableStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDefineTableStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5093,7 +5093,7 @@ func (n *DefineTableStatementNode) Name() *PathExpressionNode {
 
 func (n *DefineTableStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTDefineTableStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTDefineTableStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5106,7 +5106,7 @@ type WithPartitionColumnsClauseNode struct {
 
 func (n *WithPartitionColumnsClauseNode) TableElementList() *TableElementListNode {
 	var v unsafe.Pointer
-	internal.ASTWithPartitionColumnsClause_table_element_list(n.getRaw(), &v)
+	zetasqlparser.ASTWithPartitionColumnsClause_table_element_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5119,7 +5119,7 @@ type CreateSnapshotTableStatementNode struct {
 
 func (n *CreateSnapshotTableStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateSnapshotTableStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateSnapshotTableStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5128,7 +5128,7 @@ func (n *CreateSnapshotTableStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateSnapshotTableStatementNode) CloneDataSource() *CloneDataSourceNode {
 	var v unsafe.Pointer
-	internal.ASTCreateSnapshotTableStatement_clone_data_source(n.getRaw(), &v)
+	zetasqlparser.ASTCreateSnapshotTableStatement_clone_data_source(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5137,7 +5137,7 @@ func (n *CreateSnapshotTableStatementNode) CloneDataSource() *CloneDataSourceNod
 
 func (n *CreateSnapshotTableStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateSnapshotTableStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateSnapshotTableStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5150,11 +5150,11 @@ type TypeParameterListNode struct {
 
 func (n *TypeParameterListNode) Parameters() []LeafNode {
 	var num int
-	internal.ASTTypeParameterList_parameters_num(n.getRaw(), &num)
+	zetasqlparser.ASTTypeParameterList_parameters_num(n.getRaw(), &num)
 	ret := make([]LeafNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTTypeParameterList_parameter(n.getRaw(), i, &v)
+		zetasqlparser.ASTTypeParameterList_parameter(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(LeafNode))
 	}
 	return ret
@@ -5166,11 +5166,11 @@ type TVFSchemaNode struct {
 
 func (n *TVFSchemaNode) Columns() []*TVFSchemaColumnNode {
 	var num int
-	internal.ASTTVFSchema_columns_num(n.getRaw(), &num)
+	zetasqlparser.ASTTVFSchema_columns_num(n.getRaw(), &num)
 	ret := make([]*TVFSchemaColumnNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTTVFSchema_column(n.getRaw(), i, &v)
+		zetasqlparser.ASTTVFSchema_column(n.getRaw(), i, &v)
 		ret = append(ret, newTVFSchemaColumnNode(v))
 	}
 	return ret
@@ -5182,7 +5182,7 @@ type TVFSchemaColumnNode struct {
 
 func (n *TVFSchemaColumnNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTTVFSchemaColumn_name(n.getRaw(), &v)
+	zetasqlparser.ASTTVFSchemaColumn_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5191,7 +5191,7 @@ func (n *TVFSchemaColumnNode) Name() *IdentifierNode {
 
 func (n *TVFSchemaColumnNode) Type() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTTVFSchemaColumn_type(n.getRaw(), &v)
+	zetasqlparser.ASTTVFSchemaColumn_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5204,7 +5204,7 @@ type TableAndColumnInfoNode struct {
 
 func (n *TableAndColumnInfoNode) TableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTableAndColumnInfo_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTTableAndColumnInfo_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5213,7 +5213,7 @@ func (n *TableAndColumnInfoNode) TableName() *PathExpressionNode {
 
 func (n *TableAndColumnInfoNode) ColumnList() *ColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTTableAndColumnInfo_column_list(n.getRaw(), &v)
+	zetasqlparser.ASTTableAndColumnInfo_column_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5226,11 +5226,11 @@ type TableAndColumnInfoListNode struct {
 
 func (n *TableAndColumnInfoListNode) TableAndColumnInfoEntries() []*TableAndColumnInfoNode {
 	var num int
-	internal.ASTTableAndColumnInfoList_table_and_column_info_entries_num(n.getRaw(), &num)
+	zetasqlparser.ASTTableAndColumnInfoList_table_and_column_info_entries_num(n.getRaw(), &num)
 	ret := make([]*TableAndColumnInfoNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTTableAndColumnInfoList_table_and_column_info_entry(n.getRaw(), i, &v)
+		zetasqlparser.ASTTableAndColumnInfoList_table_and_column_info_entry(n.getRaw(), i, &v)
 		ret = append(ret, newTableAndColumnInfoNode(v))
 	}
 	return ret
@@ -5273,12 +5273,12 @@ type TemplatedParameterTypeNode struct {
 }
 
 func (n *TemplatedParameterTypeNode) SetKind(kind TemplatedTypeKind) {
-	internal.ASTTemplatedParameterType_set_kind(n.getRaw(), int(kind))
+	zetasqlparser.ASTTemplatedParameterType_set_kind(n.getRaw(), int(kind))
 }
 
 func (n *TemplatedParameterTypeNode) TemplatedKind() TemplatedTypeKind {
 	var v int
-	internal.ASTTemplatedParameterType_kind(n.getRaw(), &v)
+	zetasqlparser.ASTTemplatedParameterType_kind(n.getRaw(), &v)
 	return TemplatedTypeKind(v)
 }
 
@@ -5292,7 +5292,7 @@ type AnalyzeStatementNode struct {
 
 func (n *AnalyzeStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTAnalyzeStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTAnalyzeStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5301,7 +5301,7 @@ func (n *AnalyzeStatementNode) OptionsList() *OptionsListNode {
 
 func (n *AnalyzeStatementNode) TableAndColumnInfoList() *TableAndColumnInfoListNode {
 	var v unsafe.Pointer
-	internal.ASTAnalyzeStatement_table_and_column_info_list(n.getRaw(), &v)
+	zetasqlparser.ASTAnalyzeStatement_table_and_column_info_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5314,7 +5314,7 @@ type AssertStatementNode struct {
 
 func (n *AssertStatementNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAssertStatement_expr(n.getRaw(), &v)
+	zetasqlparser.ASTAssertStatement_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5323,7 +5323,7 @@ func (n *AssertStatementNode) Expr() ExpressionNode {
 
 func (n *AssertStatementNode) Description() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTAssertStatement_description(n.getRaw(), &v)
+	zetasqlparser.ASTAssertStatement_description(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5336,7 +5336,7 @@ type AssertRowsModifiedNode struct {
 
 func (n *AssertRowsModifiedNode) NumRows() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAssertRowsModified_num_rows(n.getRaw(), &v)
+	zetasqlparser.ASTAssertRowsModified_num_rows(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5349,7 +5349,7 @@ type ReturningClauseNode struct {
 
 func (n *ReturningClauseNode) SelectList() *SelectListNode {
 	var v unsafe.Pointer
-	internal.ASTReturningClause_select_list(n.getRaw(), &v)
+	zetasqlparser.ASTReturningClause_select_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5358,7 +5358,7 @@ func (n *ReturningClauseNode) SelectList() *SelectListNode {
 
 func (n *ReturningClauseNode) ActionAlias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTReturningClause_action_alias(n.getRaw(), &v)
+	zetasqlparser.ASTReturningClause_action_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5371,7 +5371,7 @@ type DeleteStatementNode struct {
 
 func (n *DeleteStatementNode) TargetPath() GeneralizedPathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDeleteStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTDeleteStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5380,7 +5380,7 @@ func (n *DeleteStatementNode) TargetPath() GeneralizedPathExpressionNode {
 
 func (n *DeleteStatementNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTDeleteStatement_alias(n.getRaw(), &v)
+	zetasqlparser.ASTDeleteStatement_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5389,7 +5389,7 @@ func (n *DeleteStatementNode) Alias() *AliasNode {
 
 func (n *DeleteStatementNode) Offset() *WithOffsetNode {
 	var v unsafe.Pointer
-	internal.ASTDeleteStatement_offset(n.getRaw(), &v)
+	zetasqlparser.ASTDeleteStatement_offset(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5398,7 +5398,7 @@ func (n *DeleteStatementNode) Offset() *WithOffsetNode {
 
 func (n *DeleteStatementNode) Where() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDeleteStatement_where(n.getRaw(), &v)
+	zetasqlparser.ASTDeleteStatement_where(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5407,7 +5407,7 @@ func (n *DeleteStatementNode) Where() ExpressionNode {
 
 func (n *DeleteStatementNode) AssertRowsModified() *AssertRowsModifiedNode {
 	var v unsafe.Pointer
-	internal.ASTDeleteStatement_assert_rows_modified(n.getRaw(), &v)
+	zetasqlparser.ASTDeleteStatement_assert_rows_modified(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5416,7 +5416,7 @@ func (n *DeleteStatementNode) AssertRowsModified() *AssertRowsModifiedNode {
 
 func (n *DeleteStatementNode) Returning() *ReturningClauseNode {
 	var v unsafe.Pointer
-	internal.ASTDeleteStatement_returning(n.getRaw(), &v)
+	zetasqlparser.ASTDeleteStatement_returning(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5440,12 +5440,12 @@ type PrimaryKeyColumnAttributeNode struct {
 }
 
 func (n *PrimaryKeyColumnAttributeNode) SetEnforced(enforced bool) {
-	internal.ASTPrimaryKeyColumnAttribute_set_enforced(n.getRaw(), helper.BoolToInt(enforced))
+	zetasqlparser.ASTPrimaryKeyColumnAttribute_set_enforced(n.getRaw(), helper.BoolToInt(enforced))
 }
 
 func (n *PrimaryKeyColumnAttributeNode) Enforced() bool {
 	var v bool
-	internal.ASTPrimaryKeyColumnAttribute_enforced(n.getRaw(), &v)
+	zetasqlparser.ASTPrimaryKeyColumnAttribute_enforced(n.getRaw(), &v)
 	return v
 }
 
@@ -5455,7 +5455,7 @@ type ForeignKeyColumnAttributeNode struct {
 
 func (n *ForeignKeyColumnAttributeNode) ConstraintName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKeyColumnAttribute_constraint_name(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyColumnAttribute_constraint_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5464,7 +5464,7 @@ func (n *ForeignKeyColumnAttributeNode) ConstraintName() *IdentifierNode {
 
 func (n *ForeignKeyColumnAttributeNode) Reference() *ForeignKeyReferenceNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKeyColumnAttribute_reference(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyColumnAttribute_reference(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5477,11 +5477,11 @@ type ColumnAttributeListNode struct {
 
 func (n *ColumnAttributeListNode) Values() []ColumnAttributeNode {
 	var num int
-	internal.ASTColumnAttributeList_values_num(n.getRaw(), &num)
+	zetasqlparser.ASTColumnAttributeList_values_num(n.getRaw(), &num)
 	ret := make([]ColumnAttributeNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTColumnAttributeList_value(n.getRaw(), i, &v)
+		zetasqlparser.ASTColumnAttributeList_value(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ColumnAttributeNode))
 	}
 	return ret
@@ -5493,7 +5493,7 @@ type StructColumnFieldNode struct {
 
 func (n *StructColumnFieldNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTStructColumnField_name(n.getRaw(), &v)
+	zetasqlparser.ASTStructColumnField_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5502,7 +5502,7 @@ func (n *StructColumnFieldNode) Name() *IdentifierNode {
 
 func (n *StructColumnFieldNode) Schema() *ColumnSchemaNode {
 	var v unsafe.Pointer
-	internal.ASTStructColumnField_schema(n.getRaw(), &v)
+	zetasqlparser.ASTStructColumnField_schema(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5534,18 +5534,18 @@ type GeneratedColumnInfoNode struct {
 }
 
 func (n *GeneratedColumnInfoNode) SetStoredMode(mode GeneratedColumnInfoStoredMode) {
-	internal.ASTGeneratedColumnInfo_set_stored_mode(n.getRaw(), int(mode))
+	zetasqlparser.ASTGeneratedColumnInfo_set_stored_mode(n.getRaw(), int(mode))
 }
 
 func (n *GeneratedColumnInfoNode) StoredMode() GeneratedColumnInfoStoredMode {
 	var v int
-	internal.ASTGeneratedColumnInfo_stored_mode(n.getRaw(), &v)
+	zetasqlparser.ASTGeneratedColumnInfo_stored_mode(n.getRaw(), &v)
 	return GeneratedColumnInfoStoredMode(v)
 }
 
 func (n *GeneratedColumnInfoNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTGeneratedColumnInfo_expression(n.getRaw(), &v)
+	zetasqlparser.ASTGeneratedColumnInfo_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5554,7 +5554,7 @@ func (n *GeneratedColumnInfoNode) Expression() ExpressionNode {
 
 func (n *GeneratedColumnInfoNode) SqlForStoredMode() string {
 	var v unsafe.Pointer
-	internal.ASTGeneratedColumnInfo_GetSqlForStoredMode(n.getRaw(), &v)
+	zetasqlparser.ASTGeneratedColumnInfo_GetSqlForStoredMode(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -5568,7 +5568,7 @@ type ColumnDefinitionNode struct {
 
 func (n *ColumnDefinitionNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTColumnDefinition_name(n.getRaw(), &v)
+	zetasqlparser.ASTColumnDefinition_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5577,7 +5577,7 @@ func (n *ColumnDefinitionNode) Name() *IdentifierNode {
 
 func (n *ColumnDefinitionNode) Schema() *ColumnSchemaNode {
 	var v unsafe.Pointer
-	internal.ASTColumnDefinition_schema(n.getRaw(), &v)
+	zetasqlparser.ASTColumnDefinition_schema(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5590,11 +5590,11 @@ type TableElementListNode struct {
 
 func (n *TableElementListNode) Elements() []TableElementNode {
 	var num int
-	internal.ASTTableElementList_elements_num(n.getRaw(), &num)
+	zetasqlparser.ASTTableElementList_elements_num(n.getRaw(), &num)
 	ret := make([]TableElementNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTTableElementList_element(n.getRaw(), i, &v)
+		zetasqlparser.ASTTableElementList_element(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(TableElementNode))
 	}
 	return ret
@@ -5606,11 +5606,11 @@ type ColumnListNode struct {
 
 func (n *ColumnListNode) Identifiers() []*IdentifierNode {
 	var num int
-	internal.ASTColumnList_identifiers_num(n.getRaw(), &num)
+	zetasqlparser.ASTColumnList_identifiers_num(n.getRaw(), &num)
 	ret := make([]*IdentifierNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTColumnList_identifier(n.getRaw(), i, &v)
+		zetasqlparser.ASTColumnList_identifier(n.getRaw(), i, &v)
 		ret = append(ret, newIdentifierNode(v))
 	}
 	return ret
@@ -5638,18 +5638,18 @@ type ColumnPositionNode struct {
 }
 
 func (n *ColumnPositionNode) SetType(typ ColumnRelativePositionType) {
-	internal.ASTColumnPosition_set_type(n.getRaw(), int(typ))
+	zetasqlparser.ASTColumnPosition_set_type(n.getRaw(), int(typ))
 }
 
 func (n *ColumnPositionNode) Type() ColumnRelativePositionType {
 	var v int
-	internal.ASTColumnPosition_type(n.getRaw(), &v)
+	zetasqlparser.ASTColumnPosition_type(n.getRaw(), &v)
 	return ColumnRelativePositionType(v)
 }
 
 func (n *ColumnPositionNode) Identifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTColumnPosition_identifier(n.getRaw(), &v)
+	zetasqlparser.ASTColumnPosition_identifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5662,11 +5662,11 @@ type InsertValuesRowNode struct {
 
 func (n *InsertValuesRowNode) Values() []ExpressionNode {
 	var num int
-	internal.ASTInsertValuesRow_values_num(n.getRaw(), &num)
+	zetasqlparser.ASTInsertValuesRow_values_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTInsertValuesRow_value(n.getRaw(), i, &v)
+		zetasqlparser.ASTInsertValuesRow_value(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -5678,11 +5678,11 @@ type InsertValuesRowListNode struct {
 
 func (n *InsertValuesRowListNode) Rows() []*InsertValuesRowNode {
 	var num int
-	internal.ASTInsertValuesRowList_rows_num(n.getRaw(), &num)
+	zetasqlparser.ASTInsertValuesRowList_rows_num(n.getRaw(), &num)
 	ret := make([]*InsertValuesRowNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTInsertValuesRowList_row(n.getRaw(), i, &v)
+		zetasqlparser.ASTInsertValuesRowList_row(n.getRaw(), i, &v)
 		ret = append(ret, newInsertValuesRowNode(v))
 	}
 	return ret
@@ -5726,28 +5726,28 @@ type InsertStatementNode struct {
 }
 
 func (n *InsertStatementNode) SetParseProgress(progress ParseProgress) {
-	internal.ASTInsertStatement_set_parse_progress(n.getRaw(), int(progress))
+	zetasqlparser.ASTInsertStatement_set_parse_progress(n.getRaw(), int(progress))
 }
 
 func (n *InsertStatementNode) ParseProgress() ParseProgress {
 	var v int
-	internal.ASTInsertStatement_parse_progress(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_parse_progress(n.getRaw(), &v)
 	return ParseProgress(v)
 }
 
 func (n *InsertStatementNode) SetInsertMode(mode InsertMode) {
-	internal.ASTInsertStatement_set_insert_mode(n.getRaw(), int(mode))
+	zetasqlparser.ASTInsertStatement_set_insert_mode(n.getRaw(), int(mode))
 }
 
 func (n *InsertStatementNode) InsertMode() InsertMode {
 	var v int
-	internal.ASTInsertStatement_insert_mode(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_insert_mode(n.getRaw(), &v)
 	return InsertMode(v)
 }
 
 func (n *InsertStatementNode) TargetPath() GeneralizedPathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5756,7 +5756,7 @@ func (n *InsertStatementNode) TargetPath() GeneralizedPathExpressionNode {
 
 func (n *InsertStatementNode) ColumnList() *ColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_column_list(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_column_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5765,7 +5765,7 @@ func (n *InsertStatementNode) ColumnList() *ColumnListNode {
 
 func (n *InsertStatementNode) Rows() *InsertValuesRowListNode {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_rows(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_rows(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5774,7 +5774,7 @@ func (n *InsertStatementNode) Rows() *InsertValuesRowListNode {
 
 func (n *InsertStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5783,7 +5783,7 @@ func (n *InsertStatementNode) Query() *QueryNode {
 
 func (n *InsertStatementNode) AssertRowsModified() *AssertRowsModifiedNode {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_assert_rows_modified(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_assert_rows_modified(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5792,7 +5792,7 @@ func (n *InsertStatementNode) AssertRowsModified() *AssertRowsModifiedNode {
 
 func (n *InsertStatementNode) Returning() *ReturningClauseNode {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_returning(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_returning(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5801,7 +5801,7 @@ func (n *InsertStatementNode) Returning() *ReturningClauseNode {
 
 func (n *InsertStatementNode) SQLForInsertMode() string {
 	var v unsafe.Pointer
-	internal.ASTInsertStatement_GetSQLForInsertMode(n.getRaw(), &v)
+	zetasqlparser.ASTInsertStatement_GetSQLForInsertMode(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -5811,7 +5811,7 @@ type UpdateSetValueNode struct {
 
 func (n *UpdateSetValueNode) Path() GeneralizedPathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateSetValue_path(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateSetValue_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5820,7 +5820,7 @@ func (n *UpdateSetValueNode) Path() GeneralizedPathExpressionNode {
 
 func (n *UpdateSetValueNode) Value() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateSetValue_value(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateSetValue_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5833,7 +5833,7 @@ type UpdateItemNode struct {
 
 func (n *UpdateItemNode) SetValue() *UpdateSetValueNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateItem_set_value(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateItem_set_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5842,7 +5842,7 @@ func (n *UpdateItemNode) SetValue() *UpdateSetValueNode {
 
 func (n *UpdateItemNode) InsertStatement() *InsertStatementNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateItem_insert_statement(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateItem_insert_statement(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5851,7 +5851,7 @@ func (n *UpdateItemNode) InsertStatement() *InsertStatementNode {
 
 func (n *UpdateItemNode) DeleteStatement() *DeleteStatementNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateItem_delete_statement(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateItem_delete_statement(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5860,7 +5860,7 @@ func (n *UpdateItemNode) DeleteStatement() *DeleteStatementNode {
 
 func (n *UpdateItemNode) UpdateStatement() *UpdateStatementNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateItem_update_statement(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateItem_update_statement(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5873,11 +5873,11 @@ type UpdateItemListNode struct {
 
 func (n *UpdateItemListNode) UpdateItems() []*UpdateItemNode {
 	var num int
-	internal.ASTUpdateItemList_update_items_num(n.getRaw(), &num)
+	zetasqlparser.ASTUpdateItemList_update_items_num(n.getRaw(), &num)
 	ret := make([]*UpdateItemNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTUpdateItemList_update_item(n.getRaw(), i, &v)
+		zetasqlparser.ASTUpdateItemList_update_item(n.getRaw(), i, &v)
 		ret = append(ret, newUpdateItemNode(v))
 	}
 	return ret
@@ -5889,7 +5889,7 @@ type UpdateStatementNode struct {
 
 func (n *UpdateStatementNode) TargetPath() GeneralizedPathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5898,7 +5898,7 @@ func (n *UpdateStatementNode) TargetPath() GeneralizedPathExpressionNode {
 
 func (n *UpdateStatementNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_alias(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5907,7 +5907,7 @@ func (n *UpdateStatementNode) Alias() *AliasNode {
 
 func (n *UpdateStatementNode) Offset() *WithOffsetNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_offset(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_offset(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5916,7 +5916,7 @@ func (n *UpdateStatementNode) Offset() *WithOffsetNode {
 
 func (n *UpdateStatementNode) UpdateItemList() *UpdateItemListNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_update_item_list(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_update_item_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5925,7 +5925,7 @@ func (n *UpdateStatementNode) UpdateItemList() *UpdateItemListNode {
 
 func (n *UpdateStatementNode) FromClause() *FromClauseNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_from_clause(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_from_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5934,7 +5934,7 @@ func (n *UpdateStatementNode) FromClause() *FromClauseNode {
 
 func (n *UpdateStatementNode) Where() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_where(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_where(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5943,7 +5943,7 @@ func (n *UpdateStatementNode) Where() ExpressionNode {
 
 func (n *UpdateStatementNode) AssertRowsModified() *AssertRowsModifiedNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_assert_rows_modified(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_assert_rows_modified(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5952,7 +5952,7 @@ func (n *UpdateStatementNode) AssertRowsModified() *AssertRowsModifiedNode {
 
 func (n *UpdateStatementNode) Returning() *ReturningClauseNode {
 	var v unsafe.Pointer
-	internal.ASTUpdateStatement_returning(n.getRaw(), &v)
+	zetasqlparser.ASTUpdateStatement_returning(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5965,7 +5965,7 @@ type TrucateStatementNode struct {
 
 func (n *TrucateStatementNode) TargetPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTruncateStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTTruncateStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5974,7 +5974,7 @@ func (n *TrucateStatementNode) TargetPath() *PathExpressionNode {
 
 func (n *TrucateStatementNode) Where() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTTruncateStatement_where(n.getRaw(), &v)
+	zetasqlparser.ASTTruncateStatement_where(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -5995,18 +5995,18 @@ type MergeActionNode struct {
 }
 
 func (n *MergeActionNode) SetActionType(typ MergeActionType) {
-	internal.ASTMergeAction_set_action_type(n.getRaw(), int(typ))
+	zetasqlparser.ASTMergeAction_set_action_type(n.getRaw(), int(typ))
 }
 
 func (n *MergeActionNode) ActionType() MergeActionType {
 	var v int
-	internal.ASTMergeAction_action_type(n.getRaw(), &v)
+	zetasqlparser.ASTMergeAction_action_type(n.getRaw(), &v)
 	return MergeActionType(v)
 }
 
 func (n *MergeActionNode) InsertColumnList() *ColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTMergeAction_insert_column_list(n.getRaw(), &v)
+	zetasqlparser.ASTMergeAction_insert_column_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6015,7 +6015,7 @@ func (n *MergeActionNode) InsertColumnList() *ColumnListNode {
 
 func (n *MergeActionNode) InsertRow() *InsertValuesRowNode {
 	var v unsafe.Pointer
-	internal.ASTMergeAction_insert_row(n.getRaw(), &v)
+	zetasqlparser.ASTMergeAction_insert_row(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6024,7 +6024,7 @@ func (n *MergeActionNode) InsertRow() *InsertValuesRowNode {
 
 func (n *MergeActionNode) UpdateItemList() *UpdateItemListNode {
 	var v unsafe.Pointer
-	internal.ASTMergeAction_update_item_list(n.getRaw(), &v)
+	zetasqlparser.ASTMergeAction_update_item_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6045,18 +6045,18 @@ type MergeWhenClauseNode struct {
 }
 
 func (n *MergeWhenClauseNode) SetMatchType(matchType MergeMatchType) {
-	internal.ASTMergeWhenClause_set_match_type(n.getRaw(), int(matchType))
+	zetasqlparser.ASTMergeWhenClause_set_match_type(n.getRaw(), int(matchType))
 }
 
 func (n *MergeWhenClauseNode) MatchType() MergeMatchType {
 	var v int
-	internal.ASTMergeWhenClause_match_type(n.getRaw(), &v)
+	zetasqlparser.ASTMergeWhenClause_match_type(n.getRaw(), &v)
 	return MergeMatchType(v)
 }
 
 func (n *MergeWhenClauseNode) SearchCondition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTMergeWhenClause_search_condition(n.getRaw(), &v)
+	zetasqlparser.ASTMergeWhenClause_search_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6065,7 +6065,7 @@ func (n *MergeWhenClauseNode) SearchCondition() ExpressionNode {
 
 func (n *MergeWhenClauseNode) Action() *MergeActionNode {
 	var v unsafe.Pointer
-	internal.ASTMergeWhenClause_action(n.getRaw(), &v)
+	zetasqlparser.ASTMergeWhenClause_action(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6074,7 +6074,7 @@ func (n *MergeWhenClauseNode) Action() *MergeActionNode {
 
 func (n *MergeWhenClauseNode) SQLForMatchType() string {
 	var v unsafe.Pointer
-	internal.ASTMergeWhenClause_GetSQLForMatchType(n.getRaw(), &v)
+	zetasqlparser.ASTMergeWhenClause_GetSQLForMatchType(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -6084,11 +6084,11 @@ type MergeWhenClauseListNode struct {
 
 func (n *MergeWhenClauseListNode) ClauseList() []*MergeWhenClauseNode {
 	var num int
-	internal.ASTMergeWhenClauseList_clause_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTMergeWhenClauseList_clause_list_num(n.getRaw(), &num)
 	ret := make([]*MergeWhenClauseNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTMergeWhenClauseList_clause_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTMergeWhenClauseList_clause_list(n.getRaw(), i, &v)
 		ret = append(ret, newMergeWhenClauseNode(v))
 	}
 	return ret
@@ -6100,7 +6100,7 @@ type MergeStatementNode struct {
 
 func (n *MergeStatementNode) TargetPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTMergeStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTMergeStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6109,7 +6109,7 @@ func (n *MergeStatementNode) TargetPath() *PathExpressionNode {
 
 func (n *MergeStatementNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTMergeStatement_alias(n.getRaw(), &v)
+	zetasqlparser.ASTMergeStatement_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6118,7 +6118,7 @@ func (n *MergeStatementNode) Alias() *AliasNode {
 
 func (n *MergeStatementNode) TableExpression() TableExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTMergeStatement_table_expression(n.getRaw(), &v)
+	zetasqlparser.ASTMergeStatement_table_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6127,7 +6127,7 @@ func (n *MergeStatementNode) TableExpression() TableExpressionNode {
 
 func (n *MergeStatementNode) MergeCondition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTMergeStatement_merge_condition(n.getRaw(), &v)
+	zetasqlparser.ASTMergeStatement_merge_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6136,7 +6136,7 @@ func (n *MergeStatementNode) MergeCondition() ExpressionNode {
 
 func (n *MergeStatementNode) WhenClauses() *MergeWhenClauseListNode {
 	var v unsafe.Pointer
-	internal.ASTMergeStatement_when_clauses(n.getRaw(), &v)
+	zetasqlparser.ASTMergeStatement_when_clauses(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6149,7 +6149,7 @@ type PrivilegeNode struct {
 
 func (n *PrivilegeNode) PrivilegeAction() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTPrivilege_privilege_action(n.getRaw(), &v)
+	zetasqlparser.ASTPrivilege_privilege_action(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6158,7 +6158,7 @@ func (n *PrivilegeNode) PrivilegeAction() *IdentifierNode {
 
 func (n *PrivilegeNode) Paths() *PathExpressionListNode {
 	var v unsafe.Pointer
-	internal.ASTPrivilege_paths(n.getRaw(), &v)
+	zetasqlparser.ASTPrivilege_paths(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6171,11 +6171,11 @@ type PrivilegesNode struct {
 
 func (n *PrivilegesNode) Privileges() []*PrivilegeNode {
 	var num int
-	internal.ASTPrivileges_privileges_num(n.getRaw(), &num)
+	zetasqlparser.ASTPrivileges_privileges_num(n.getRaw(), &num)
 	ret := make([]*PrivilegeNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTPrivileges_privilege(n.getRaw(), i, &v)
+		zetasqlparser.ASTPrivileges_privilege(n.getRaw(), i, &v)
 		ret = append(ret, newPrivilegeNode(v))
 	}
 	return ret
@@ -6183,7 +6183,7 @@ func (n *PrivilegesNode) Privileges() []*PrivilegeNode {
 
 func (n *PrivilegesNode) IsAllPrivileges() bool {
 	var v bool
-	internal.ASTPrivileges_is_all_privileges(n.getRaw(), &v)
+	zetasqlparser.ASTPrivileges_is_all_privileges(n.getRaw(), &v)
 	return v
 }
 
@@ -6193,11 +6193,11 @@ type GranteeListNode struct {
 
 func (n *GranteeListNode) GranteeList() []ExpressionNode {
 	var num int
-	internal.ASTGranteeList_grantee_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTGranteeList_grantee_list_num(n.getRaw(), &num)
 	ret := make([]ExpressionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTGranteeList_grantee_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTGranteeList_grantee_list(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(ExpressionNode))
 	}
 	return ret
@@ -6209,7 +6209,7 @@ type GrantStatementNode struct {
 
 func (n *GrantStatementNode) Privileges() *PrivilegesNode {
 	var v unsafe.Pointer
-	internal.ASTGrantStatement_privileges(n.getRaw(), &v)
+	zetasqlparser.ASTGrantStatement_privileges(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6218,7 +6218,7 @@ func (n *GrantStatementNode) Privileges() *PrivilegesNode {
 
 func (n *GrantStatementNode) TargetType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTGrantStatement_target_type(n.getRaw(), &v)
+	zetasqlparser.ASTGrantStatement_target_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6227,7 +6227,7 @@ func (n *GrantStatementNode) TargetType() *IdentifierNode {
 
 func (n *GrantStatementNode) TargetPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTGrantStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTGrantStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6236,7 +6236,7 @@ func (n *GrantStatementNode) TargetPath() *PathExpressionNode {
 
 func (n *GrantStatementNode) GranteeList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTGrantStatement_grantee_list(n.getRaw(), &v)
+	zetasqlparser.ASTGrantStatement_grantee_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6249,7 +6249,7 @@ type RevokeStatementNode struct {
 
 func (n *RevokeStatementNode) Privileges() *PrivilegesNode {
 	var v unsafe.Pointer
-	internal.ASTRevokeStatement_privileges(n.getRaw(), &v)
+	zetasqlparser.ASTRevokeStatement_privileges(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6258,7 +6258,7 @@ func (n *RevokeStatementNode) Privileges() *PrivilegesNode {
 
 func (n *RevokeStatementNode) TargetType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTRevokeStatement_target_type(n.getRaw(), &v)
+	zetasqlparser.ASTRevokeStatement_target_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6267,7 +6267,7 @@ func (n *RevokeStatementNode) TargetType() *IdentifierNode {
 
 func (n *RevokeStatementNode) TargetPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTRevokeStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTRevokeStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6276,7 +6276,7 @@ func (n *RevokeStatementNode) TargetPath() *PathExpressionNode {
 
 func (n *RevokeStatementNode) GranteeList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTRevokeStatement_grantee_list(n.getRaw(), &v)
+	zetasqlparser.ASTRevokeStatement_grantee_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6289,7 +6289,7 @@ type RepeatableClauseNode struct {
 
 func (n *RepeatableClauseNode) Argument() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTRepeatableClause_argument(n.getRaw(), &v)
+	zetasqlparser.ASTRepeatableClause_argument(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6321,18 +6321,18 @@ type FilterFieldsArgNode struct {
 }
 
 func (n *FilterFieldsArgNode) SetFilterType(typ FilterType) {
-	internal.ASTFilterFieldsArg_set_filter_type(n.getRaw(), int(typ))
+	zetasqlparser.ASTFilterFieldsArg_set_filter_type(n.getRaw(), int(typ))
 }
 
 func (n *FilterFieldsArgNode) FilterType() FilterType {
 	var v int
-	internal.ASTFilterFieldsArg_filter_type(n.getRaw(), &v)
+	zetasqlparser.ASTFilterFieldsArg_filter_type(n.getRaw(), &v)
 	return FilterType(v)
 }
 
 func (n *FilterFieldsArgNode) PathExpression() GeneralizedPathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFilterFieldsArg_path_expression(n.getRaw(), &v)
+	zetasqlparser.ASTFilterFieldsArg_path_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6341,7 +6341,7 @@ func (n *FilterFieldsArgNode) PathExpression() GeneralizedPathExpressionNode {
 
 func (n *FilterFieldsArgNode) SQLForOperator() string {
 	var v unsafe.Pointer
-	internal.ASTFilterFieldsArg_GetSQLForOperator(n.getRaw(), &v)
+	zetasqlparser.ASTFilterFieldsArg_GetSQLForOperator(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -6351,7 +6351,7 @@ type ReplaceFieldsArgNode struct {
 
 func (n *ReplaceFieldsArgNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTReplaceFieldsArg_expression(n.getRaw(), &v)
+	zetasqlparser.ASTReplaceFieldsArg_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6360,7 +6360,7 @@ func (n *ReplaceFieldsArgNode) Expression() ExpressionNode {
 
 func (n *ReplaceFieldsArgNode) PathExpression() GeneralizedPathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTReplaceFieldsArg_path_expression(n.getRaw(), &v)
+	zetasqlparser.ASTReplaceFieldsArg_path_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6373,7 +6373,7 @@ type ReplaceFieldsExpressionNode struct {
 
 func (n *ReplaceFieldsExpressionNode) Expr() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTReplaceFieldsExpression_expr(n.getRaw(), &v)
+	zetasqlparser.ASTReplaceFieldsExpression_expr(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6382,11 +6382,11 @@ func (n *ReplaceFieldsExpressionNode) Expr() ExpressionNode {
 
 func (n *ReplaceFieldsExpressionNode) Arguments() []*ReplaceFieldsArgNode {
 	var num int
-	internal.ASTReplaceFieldsExpression_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTReplaceFieldsExpression_arguments_num(n.getRaw(), &num)
 	ret := make([]*ReplaceFieldsArgNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTReplaceFieldsExpression_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTReplaceFieldsExpression_argument(n.getRaw(), i, &v)
 		ret = append(ret, newReplaceFieldsArgNode(v))
 	}
 	return ret
@@ -6417,18 +6417,18 @@ type SampleSizeNode struct {
 }
 
 func (n *SampleSizeNode) SetUnit(unit SampleSizeUnit) {
-	internal.ASTSampleSize_set_unit(n.getRaw(), int(unit))
+	zetasqlparser.ASTSampleSize_set_unit(n.getRaw(), int(unit))
 }
 
 func (n *SampleSizeNode) Unit() SampleSizeUnit {
 	var v int
-	internal.ASTSampleSize_unit(n.getRaw(), &v)
+	zetasqlparser.ASTSampleSize_unit(n.getRaw(), &v)
 	return SampleSizeUnit(v)
 }
 
 func (n *SampleSizeNode) Size() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSampleSize_size(n.getRaw(), &v)
+	zetasqlparser.ASTSampleSize_size(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6437,7 +6437,7 @@ func (n *SampleSizeNode) Size() ExpressionNode {
 
 func (n *SampleSizeNode) PartitionBy() *PartitionByNode {
 	var v unsafe.Pointer
-	internal.ASTSampleSize_partition_by(n.getRaw(), &v)
+	zetasqlparser.ASTSampleSize_partition_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6446,7 +6446,7 @@ func (n *SampleSizeNode) PartitionBy() *PartitionByNode {
 
 func (n *SampleSizeNode) SQLForUnit() string {
 	var v unsafe.Pointer
-	internal.ASTSampleSize_GetSQLForUnit(n.getRaw(), &v)
+	zetasqlparser.ASTSampleSize_GetSQLForUnit(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -6456,7 +6456,7 @@ type WithWeightNode struct {
 
 func (n *WithWeightNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTWithWeight_alias(n.getRaw(), &v)
+	zetasqlparser.ASTWithWeight_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6469,7 +6469,7 @@ type SampleSuffixNode struct {
 
 func (n *SampleSuffixNode) Weight() *WithWeightNode {
 	var v unsafe.Pointer
-	internal.ASTSampleSuffix_weight(n.getRaw(), &v)
+	zetasqlparser.ASTSampleSuffix_weight(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6478,7 +6478,7 @@ func (n *SampleSuffixNode) Weight() *WithWeightNode {
 
 func (n *SampleSuffixNode) Repeat() *RepeatableClauseNode {
 	var v unsafe.Pointer
-	internal.ASTSampleSuffix_repeat(n.getRaw(), &v)
+	zetasqlparser.ASTSampleSuffix_repeat(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6491,7 +6491,7 @@ type SampleClauseNode struct {
 
 func (n *SampleClauseNode) SampleMethod() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTSampleClause_sample_method(n.getRaw(), &v)
+	zetasqlparser.ASTSampleClause_sample_method(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6500,7 +6500,7 @@ func (n *SampleClauseNode) SampleMethod() *IdentifierNode {
 
 func (n *SampleClauseNode) SampleSize() *SampleSizeNode {
 	var v unsafe.Pointer
-	internal.ASTSampleClause_sample_size(n.getRaw(), &v)
+	zetasqlparser.ASTSampleClause_sample_size(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6509,7 +6509,7 @@ func (n *SampleClauseNode) SampleSize() *SampleSizeNode {
 
 func (n *SampleClauseNode) SampleSuffix() *SampleSuffixNode {
 	var v unsafe.Pointer
-	internal.ASTSampleClause_sample_suffix(n.getRaw(), &v)
+	zetasqlparser.ASTSampleClause_sample_suffix(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6522,7 +6522,7 @@ type AlterActionBaseNode struct {
 
 func (n *AlterActionBaseNode) SQLForAlterAction() string {
 	var v unsafe.Pointer
-	internal.ASTAlterAction_GetSQLForAlterAction(n.getRaw(), &v)
+	zetasqlparser.ASTAlterAction_GetSQLForAlterAction(n.getRaw(), &v)
 	return helper.PtrToString(v)
 }
 
@@ -6532,7 +6532,7 @@ type SetOptionsActionNode struct {
 
 func (n *SetOptionsActionNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTSetOptionsAction_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTSetOptionsAction_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6545,7 +6545,7 @@ type SetAsActionNode struct {
 
 func (n *SetAsActionNode) JSONBody() *JSONLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTSetAsAction_json_body(n.getRaw(), &v)
+	zetasqlparser.ASTSetAsAction_json_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6554,7 +6554,7 @@ func (n *SetAsActionNode) JSONBody() *JSONLiteralNode {
 
 func (n *SetAsActionNode) TextBody() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTSetAsAction_text_body(n.getRaw(), &v)
+	zetasqlparser.ASTSetAsAction_text_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6566,18 +6566,18 @@ type AddConstraintActionNode struct {
 }
 
 func (n *AddConstraintActionNode) SetIsIfNotExists(isIfNotExists bool) {
-	internal.ASTAddConstraintAction_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAddConstraintAction_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AddConstraintActionNode) IsIfNotExists() bool {
 	var v bool
-	internal.ASTAddConstraintAction_is_if_not_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAddConstraintAction_is_if_not_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AddConstraintActionNode) Constraint() TableConstraintNode {
 	var v unsafe.Pointer
-	internal.ASTAddConstraintAction_constraint(n.getRaw(), &v)
+	zetasqlparser.ASTAddConstraintAction_constraint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6589,12 +6589,12 @@ type DropPrimaryKeyActionNode struct {
 }
 
 func (n *DropPrimaryKeyActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTDropPrimaryKeyAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTDropPrimaryKeyAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *DropPrimaryKeyActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropPrimaryKeyAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropPrimaryKeyAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
@@ -6603,18 +6603,18 @@ type DropConstraintActionNode struct {
 }
 
 func (n *DropConstraintActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTDropConstraintAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTDropConstraintAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *DropConstraintActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropConstraintAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropConstraintAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropConstraintActionNode) ConstraintName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDropConstraintAction_constraint_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropConstraintAction_constraint_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6626,28 +6626,28 @@ type AlterConstraintEnforcementActionNode struct {
 }
 
 func (n *AlterConstraintEnforcementActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterConstraintEnforcementAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterConstraintEnforcementAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterConstraintEnforcementActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterConstraintEnforcementAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterConstraintEnforcementAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterConstraintEnforcementActionNode) SetIsEnforced(enforced bool) {
-	internal.ASTAlterConstraintEnforcementAction_set_is_enforced(n.getRaw(), helper.BoolToInt(enforced))
+	zetasqlparser.ASTAlterConstraintEnforcementAction_set_is_enforced(n.getRaw(), helper.BoolToInt(enforced))
 }
 
 func (n *AlterConstraintEnforcementActionNode) IsEnforced() bool {
 	var v bool
-	internal.ASTAlterConstraintEnforcementAction_is_enforced(n.getRaw(), &v)
+	zetasqlparser.ASTAlterConstraintEnforcementAction_is_enforced(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterConstraintEnforcementActionNode) ConstraintName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterConstraintEnforcementAction_constraint_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterConstraintEnforcementAction_constraint_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6659,18 +6659,18 @@ type AlterConstraintSetOptionsActionNode struct {
 }
 
 func (n *AlterConstraintSetOptionsActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterConstraintSetOptionsAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterConstraintSetOptionsAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterConstraintSetOptionsActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterConstraintSetOptionsAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterConstraintSetOptionsAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterConstraintSetOptionsActionNode) ConstraintName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterConstraintSetOptionsAction_constraint_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterConstraintSetOptionsAction_constraint_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6679,7 +6679,7 @@ func (n *AlterConstraintSetOptionsActionNode) ConstraintName() *IdentifierNode {
 
 func (n *AlterConstraintSetOptionsActionNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTAlterConstraintSetOptionsAction_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTAlterConstraintSetOptionsAction_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6691,18 +6691,18 @@ type AddColumnActionNode struct {
 }
 
 func (n *AddColumnActionNode) SetIsIfNotExists(isIfNotExists bool) {
-	internal.ASTAddColumnAction_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAddColumnAction_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AddColumnActionNode) IsIfNotExists() bool {
 	var v bool
-	internal.ASTAddColumnAction_is_if_not_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAddColumnAction_is_if_not_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AddColumnActionNode) ColumnDefinition() *ColumnDefinitionNode {
 	var v unsafe.Pointer
-	internal.ASTAddColumnAction_column_definition(n.getRaw(), &v)
+	zetasqlparser.ASTAddColumnAction_column_definition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6711,7 +6711,7 @@ func (n *AddColumnActionNode) ColumnDefinition() *ColumnDefinitionNode {
 
 func (n *AddColumnActionNode) ColumnPosition() *ColumnPositionNode {
 	var v unsafe.Pointer
-	internal.ASTAddColumnAction_column_position(n.getRaw(), &v)
+	zetasqlparser.ASTAddColumnAction_column_position(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6720,7 +6720,7 @@ func (n *AddColumnActionNode) ColumnPosition() *ColumnPositionNode {
 
 func (n *AddColumnActionNode) FillExpression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAddColumnAction_fill_expression(n.getRaw(), &v)
+	zetasqlparser.ASTAddColumnAction_fill_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6732,18 +6732,18 @@ type DropColumnActionNode struct {
 }
 
 func (n *DropColumnActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTDropColumnAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTDropColumnAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *DropColumnActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropColumnAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropColumnAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropColumnActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDropColumnAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropColumnAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6755,18 +6755,18 @@ type RenameColumnActionNode struct {
 }
 
 func (n *RenameColumnActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTRenameColumnAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTRenameColumnAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *RenameColumnActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTRenameColumnAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTRenameColumnAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *RenameColumnActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTRenameColumnAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTRenameColumnAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6775,7 +6775,7 @@ func (n *RenameColumnActionNode) ColumnName() *IdentifierNode {
 
 func (n *RenameColumnActionNode) NewColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTRenameColumnAction_new_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTRenameColumnAction_new_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6787,18 +6787,18 @@ type AlterColumnTypeActionNode struct {
 }
 
 func (n *AlterColumnTypeActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterColumnTypeAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterColumnTypeAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterColumnTypeActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterColumnTypeAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnTypeAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterColumnTypeActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnTypeAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnTypeAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6807,7 +6807,7 @@ func (n *AlterColumnTypeActionNode) ColumnName() *IdentifierNode {
 
 func (n *AlterColumnTypeActionNode) Schema() *ColumnSchemaNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnTypeAction_schema(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnTypeAction_schema(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6816,7 +6816,7 @@ func (n *AlterColumnTypeActionNode) Schema() *ColumnSchemaNode {
 
 func (n *AlterColumnTypeActionNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnTypeAction_collate(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnTypeAction_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6828,18 +6828,18 @@ type AlterColumnOptionsActionNode struct {
 }
 
 func (n *AlterColumnOptionsActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterColumnOptionsAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterColumnOptionsAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterColumnOptionsActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterColumnOptionsAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnOptionsAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterColumnOptionsActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnOptionsAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnOptionsAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6848,7 +6848,7 @@ func (n *AlterColumnOptionsActionNode) ColumnName() *IdentifierNode {
 
 func (n *AlterColumnOptionsActionNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnOptionsAction_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnOptionsAction_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6860,18 +6860,18 @@ type AlterColumnSetDefaultActionNode struct {
 }
 
 func (n *AlterColumnSetDefaultActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterColumnSetDefaultAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterColumnSetDefaultAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterColumnSetDefaultActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterColumnSetDefaultAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnSetDefaultAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterColumnSetDefaultActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnSetDefaultAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnSetDefaultAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6880,7 +6880,7 @@ func (n *AlterColumnSetDefaultActionNode) ColumnName() *IdentifierNode {
 
 func (n *AlterColumnSetDefaultActionNode) DefaultExpression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnSetDefaultAction_default_expression(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnSetDefaultAction_default_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6892,18 +6892,18 @@ type AlterColumnDropDefaultActionNode struct {
 }
 
 func (n *AlterColumnDropDefaultActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterColumnDropDefaultAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterColumnDropDefaultAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterColumnDropDefaultActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterColumnDropDefaultAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnDropDefaultAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterColumnDropDefaultActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnDropDefaultAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnDropDefaultAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6915,18 +6915,18 @@ type AlterColumnDropNotNullActionNode struct {
 }
 
 func (n *AlterColumnDropNotNullActionNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTAlterColumnDropNotNullAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAlterColumnDropNotNullAction_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AlterColumnDropNotNullActionNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterColumnDropNotNullAction_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnDropNotNullAction_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterColumnDropNotNullActionNode) ColumnName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterColumnDropNotNullAction_column_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterColumnDropNotNullAction_column_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6938,18 +6938,18 @@ type GrantToClauseNode struct {
 }
 
 func (n *GrantToClauseNode) SetHasGrantKeywordAndParens(v bool) {
-	internal.ASTGrantToClause_set_has_grant_keyword_and_parens(n.getRaw(), helper.BoolToInt(v))
+	zetasqlparser.ASTGrantToClause_set_has_grant_keyword_and_parens(n.getRaw(), helper.BoolToInt(v))
 }
 
 func (n *GrantToClauseNode) HasGrantKeywordAndParens() bool {
 	var v bool
-	internal.ASTGrantToClause_has_grant_keyword_and_parens(n.getRaw(), &v)
+	zetasqlparser.ASTGrantToClause_has_grant_keyword_and_parens(n.getRaw(), &v)
 	return v
 }
 
 func (n *GrantToClauseNode) GranteeList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTGrantToClause_grantee_list(n.getRaw(), &v)
+	zetasqlparser.ASTGrantToClause_grantee_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6962,7 +6962,7 @@ type RestrictToClauseNode struct {
 
 func (n *RestrictToClauseNode) RestricteeList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTRestrictToClause_restrictee_list(n.getRaw(), &v)
+	zetasqlparser.ASTRestrictToClause_restrictee_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6974,18 +6974,18 @@ type AddToRestricteeListClauseNode struct {
 }
 
 func (n *AddToRestricteeListClauseNode) SetIsIfNotExists(isIfNotExists bool) {
-	internal.ASTAddToRestricteeListClause_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTAddToRestricteeListClause_set_is_if_not_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *AddToRestricteeListClauseNode) IsIfNotExists() bool {
 	var v bool
-	internal.ASTAddToRestricteeListClause_is_if_not_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAddToRestricteeListClause_is_if_not_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AddToRestricteeListClauseNode) RestricteeList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTAddToRestricteeListClause_restrictee_list(n.getRaw(), &v)
+	zetasqlparser.ASTAddToRestricteeListClause_restrictee_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -6997,18 +6997,18 @@ type RemoveFromRestricteeListClauseNode struct {
 }
 
 func (n *RemoveFromRestricteeListClauseNode) SetIsIfExists(isIfNotExists bool) {
-	internal.ASTRemoveFromRestricteeListClause_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
+	zetasqlparser.ASTRemoveFromRestricteeListClause_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfNotExists))
 }
 
 func (n *RemoveFromRestricteeListClauseNode) IsIfExists() bool {
 	var v bool
-	internal.ASTRemoveFromRestricteeListClause_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTRemoveFromRestricteeListClause_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *RemoveFromRestricteeListClauseNode) RestricteeList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTRemoveFromRestricteeListClause_restrictee_list(n.getRaw(), &v)
+	zetasqlparser.ASTRemoveFromRestricteeListClause_restrictee_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7020,18 +7020,18 @@ type FilterUsingClauseNode struct {
 }
 
 func (n *FilterUsingClauseNode) SetHasFilterKeyword(keyword bool) {
-	internal.ASTFilterUsingClause_set_has_filter_keyword(n.getRaw(), helper.BoolToInt(keyword))
+	zetasqlparser.ASTFilterUsingClause_set_has_filter_keyword(n.getRaw(), helper.BoolToInt(keyword))
 }
 
 func (n *FilterUsingClauseNode) HasFilterKeyword() bool {
 	var v bool
-	internal.ASTFilterUsingClause_has_filter_keyword(n.getRaw(), &v)
+	zetasqlparser.ASTFilterUsingClause_has_filter_keyword(n.getRaw(), &v)
 	return v
 }
 
 func (n *FilterUsingClauseNode) Predicate() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTFilterUsingClause_predicate(n.getRaw(), &v)
+	zetasqlparser.ASTFilterUsingClause_predicate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7043,18 +7043,18 @@ type RevokeFromClauseNode struct {
 }
 
 func (n *RevokeFromClauseNode) SetIsRevokeFromAll(v bool) {
-	internal.ASTRevokeFromClause_set_is_revoke_from_all(n.getRaw(), helper.BoolToInt(v))
+	zetasqlparser.ASTRevokeFromClause_set_is_revoke_from_all(n.getRaw(), helper.BoolToInt(v))
 }
 
 func (n *RevokeFromClauseNode) IsRevokeFromAll() bool {
 	var v bool
-	internal.ASTRevokeFromClause_is_revoke_from_all(n.getRaw(), &v)
+	zetasqlparser.ASTRevokeFromClause_is_revoke_from_all(n.getRaw(), &v)
 	return v
 }
 
 func (n *RevokeFromClauseNode) RevokeFromList() *GranteeListNode {
 	var v unsafe.Pointer
-	internal.ASTRevokeFromClause_revoke_from_list(n.getRaw(), &v)
+	zetasqlparser.ASTRevokeFromClause_revoke_from_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7067,7 +7067,7 @@ type RenameToClauseNode struct {
 
 func (n *RenameToClauseNode) NewName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTRenameToClause_new_name(n.getRaw(), &v)
+	zetasqlparser.ASTRenameToClause_new_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7080,7 +7080,7 @@ type SetCollateClauseNode struct {
 
 func (n *SetCollateClauseNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTSetCollateClause_collate(n.getRaw(), &v)
+	zetasqlparser.ASTSetCollateClause_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7093,11 +7093,11 @@ type AlterActionListNode struct {
 
 func (n *AlterActionListNode) Actions() []AlterActionNode {
 	var num int
-	internal.ASTAlterActionList_actions_num(n.getRaw(), &num)
+	zetasqlparser.ASTAlterActionList_actions_num(n.getRaw(), &num)
 	ret := make([]AlterActionNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTAlterActionList_action(n.getRaw(), i, &v)
+		zetasqlparser.ASTAlterActionList_action(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(AlterActionNode))
 	}
 	return ret
@@ -7109,7 +7109,7 @@ type AlterAllRowAccessPoliciesStatementNode struct {
 
 func (n *AlterAllRowAccessPoliciesStatementNode) TableNamePath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAlterAllRowAccessPoliciesStatement_table_name_path(n.getRaw(), &v)
+	zetasqlparser.ASTAlterAllRowAccessPoliciesStatement_table_name_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7118,7 +7118,7 @@ func (n *AlterAllRowAccessPoliciesStatementNode) TableNamePath() *PathExpression
 
 func (n *AlterAllRowAccessPoliciesStatementNode) AlterAction() AlterActionNode {
 	var v unsafe.Pointer
-	internal.ASTAlterAllRowAccessPoliciesStatement_alter_action(n.getRaw(), &v)
+	zetasqlparser.ASTAlterAllRowAccessPoliciesStatement_alter_action(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7153,22 +7153,22 @@ type ForeignKeyActionsNode struct {
 }
 
 func (n *ForeignKeyActionsNode) SetUpdateAction(action ForeignKeyAction) {
-	internal.ASTForeignKeyActions_set_udpate_action(n.getRaw(), int(action))
+	zetasqlparser.ASTForeignKeyActions_set_udpate_action(n.getRaw(), int(action))
 }
 
 func (n *ForeignKeyActionsNode) UpdateAction() ForeignKeyAction {
 	var v int
-	internal.ASTForeignKeyActions_udpate_action(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyActions_udpate_action(n.getRaw(), &v)
 	return ForeignKeyAction(v)
 }
 
 func (n *ForeignKeyActionsNode) SetDeleteAction(action ForeignKeyAction) {
-	internal.ASTForeignKeyActions_set_delete_action(n.getRaw(), int(action))
+	zetasqlparser.ASTForeignKeyActions_set_delete_action(n.getRaw(), int(action))
 }
 
 func (n *ForeignKeyActionsNode) DeleteAction() ForeignKeyAction {
 	var v int
-	internal.ASTForeignKeyActions_delete_action(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyActions_delete_action(n.getRaw(), &v)
 	return ForeignKeyAction(v)
 }
 
@@ -7197,28 +7197,28 @@ type ForeignKeyReferenceNode struct {
 }
 
 func (n *ForeignKeyReferenceNode) SetMatch(match ForeignKeyReferenceMatch) {
-	internal.ASTForeignKeyReference_set_match(n.getRaw(), int(match))
+	zetasqlparser.ASTForeignKeyReference_set_match(n.getRaw(), int(match))
 }
 
 func (n *ForeignKeyReferenceNode) Match() ForeignKeyReferenceMatch {
 	var v int
-	internal.ASTForeignKeyReference_match(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyReference_match(n.getRaw(), &v)
 	return ForeignKeyReferenceMatch(v)
 }
 
 func (n *ForeignKeyReferenceNode) SetEnforced(enforced bool) {
-	internal.ASTForeignKeyReference_set_enforced(n.getRaw(), helper.BoolToInt(enforced))
+	zetasqlparser.ASTForeignKeyReference_set_enforced(n.getRaw(), helper.BoolToInt(enforced))
 }
 
 func (n *ForeignKeyReferenceNode) Enforced() bool {
 	var v bool
-	internal.ASTForeignKeyReference_enforced(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyReference_enforced(n.getRaw(), &v)
 	return v
 }
 
 func (n *ForeignKeyReferenceNode) TableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKeyReference_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyReference_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7227,7 +7227,7 @@ func (n *ForeignKeyReferenceNode) TableName() *PathExpressionNode {
 
 func (n *ForeignKeyReferenceNode) ColumnList() *ColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKeyReference_column_list(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyReference_column_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7236,7 +7236,7 @@ func (n *ForeignKeyReferenceNode) ColumnList() *ColumnListNode {
 
 func (n *ForeignKeyReferenceNode) Actions() *ForeignKeyActionsNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKeyReference_actions(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKeyReference_actions(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7249,7 +7249,7 @@ type ScriptBaseNode struct {
 
 func (n *ScriptBaseNode) StatementListNode() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTScript_statement_list_node(n.getRaw(), &v)
+	zetasqlparser.ASTScript_statement_list_node(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7258,11 +7258,11 @@ func (n *ScriptBaseNode) StatementListNode() *StatementListNode {
 
 func (n *ScriptBaseNode) StatementList() []StatementNode {
 	var num int
-	internal.ASTScript_statement_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTScript_statement_list_num(n.getRaw(), &num)
 	ret := make([]StatementNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTScript_statement_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTScript_statement_list(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(StatementNode))
 	}
 	return ret
@@ -7274,7 +7274,7 @@ type ElseifClauseNode struct {
 
 func (n *ElseifClauseNode) Condition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTElseifClause_condition(n.getRaw(), &v)
+	zetasqlparser.ASTElseifClause_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7283,7 +7283,7 @@ func (n *ElseifClauseNode) Condition() ExpressionNode {
 
 func (n *ElseifClauseNode) Body() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTElseifClause_body(n.getRaw(), &v)
+	zetasqlparser.ASTElseifClause_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7292,7 +7292,7 @@ func (n *ElseifClauseNode) Body() *StatementListNode {
 
 func (n *ElseifClauseNode) IfStmt() *IfStatementNode {
 	var v unsafe.Pointer
-	internal.ASTElseifClause_if_stmt(n.getRaw(), &v)
+	zetasqlparser.ASTElseifClause_if_stmt(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7305,11 +7305,11 @@ type ElseifClauseListNode struct {
 
 func (n *ElseifClauseListNode) ElseifClauses() []*ElseifClauseNode {
 	var num int
-	internal.ASTElseifClauseList_elseif_clauses_num(n.getRaw(), &num)
+	zetasqlparser.ASTElseifClauseList_elseif_clauses_num(n.getRaw(), &num)
 	ret := make([]*ElseifClauseNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTElseifClauseList_elseif_clause(n.getRaw(), i, &v)
+		zetasqlparser.ASTElseifClauseList_elseif_clause(n.getRaw(), i, &v)
 		ret = append(ret, newElseifClauseNode(v))
 	}
 	return ret
@@ -7321,7 +7321,7 @@ type IfStatementNode struct {
 
 func (n *IfStatementNode) Condition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTIfStatement_condition(n.getRaw(), &v)
+	zetasqlparser.ASTIfStatement_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7330,7 +7330,7 @@ func (n *IfStatementNode) Condition() ExpressionNode {
 
 func (n *IfStatementNode) ThenList() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTIfStatement_then_list(n.getRaw(), &v)
+	zetasqlparser.ASTIfStatement_then_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7339,7 +7339,7 @@ func (n *IfStatementNode) ThenList() *StatementListNode {
 
 func (n *IfStatementNode) ElseifClauses() *ElseifClauseListNode {
 	var v unsafe.Pointer
-	internal.ASTIfStatement_elseif_clauses(n.getRaw(), &v)
+	zetasqlparser.ASTIfStatement_elseif_clauses(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7348,7 +7348,7 @@ func (n *IfStatementNode) ElseifClauses() *ElseifClauseListNode {
 
 func (n *IfStatementNode) ElseList() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTIfStatement_else_list(n.getRaw(), &v)
+	zetasqlparser.ASTIfStatement_else_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7361,7 +7361,7 @@ type WhenThenClauseNode struct {
 
 func (n *WhenThenClauseNode) Condition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTWhenThenClause_condition(n.getRaw(), &v)
+	zetasqlparser.ASTWhenThenClause_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7370,7 +7370,7 @@ func (n *WhenThenClauseNode) Condition() ExpressionNode {
 
 func (n *WhenThenClauseNode) Body() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTWhenThenClause_body(n.getRaw(), &v)
+	zetasqlparser.ASTWhenThenClause_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7379,7 +7379,7 @@ func (n *WhenThenClauseNode) Body() *StatementListNode {
 
 func (n *WhenThenClauseNode) CaseStmt() *CaseStatementNode {
 	var v unsafe.Pointer
-	internal.ASTWhenThenClause_case_stmt(n.getRaw(), &v)
+	zetasqlparser.ASTWhenThenClause_case_stmt(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7392,11 +7392,11 @@ type WhenThenClauseListNode struct {
 
 func (n *WhenThenClauseListNode) WhenThenClauses() []*WhenThenClauseNode {
 	var num int
-	internal.ASTWhenThenClauseList_when_then_clauses_num(n.getRaw(), &num)
+	zetasqlparser.ASTWhenThenClauseList_when_then_clauses_num(n.getRaw(), &num)
 	ret := make([]*WhenThenClauseNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTWhenThenClauseList_when_then_clause(n.getRaw(), i, &v)
+		zetasqlparser.ASTWhenThenClauseList_when_then_clause(n.getRaw(), i, &v)
 		ret = append(ret, newWhenThenClauseNode(v))
 	}
 	return ret
@@ -7408,7 +7408,7 @@ type CaseStatementNode struct {
 
 func (n *CaseStatementNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCaseStatement_expression(n.getRaw(), &v)
+	zetasqlparser.ASTCaseStatement_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7417,7 +7417,7 @@ func (n *CaseStatementNode) Expression() ExpressionNode {
 
 func (n *CaseStatementNode) WhenThenClauses() *WhenThenClauseListNode {
 	var v unsafe.Pointer
-	internal.ASTCaseStatement_when_then_clauses(n.getRaw(), &v)
+	zetasqlparser.ASTCaseStatement_when_then_clauses(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7426,7 +7426,7 @@ func (n *CaseStatementNode) WhenThenClauses() *WhenThenClauseListNode {
 
 func (n *CaseStatementNode) ElseList() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTCaseStatement_else_list(n.getRaw(), &v)
+	zetasqlparser.ASTCaseStatement_else_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7439,7 +7439,7 @@ type HintNode struct {
 
 func (n *HintNode) NumShardsHint() *IntLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTHint_num_shards_hint(n.getRaw(), &v)
+	zetasqlparser.ASTHint_num_shards_hint(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7448,11 +7448,11 @@ func (n *HintNode) NumShardsHint() *IntLiteralNode {
 
 func (n *HintNode) HintEntries() []*HintEntryNode {
 	var num int
-	internal.ASTHint_hint_entries_num(n.getRaw(), &num)
+	zetasqlparser.ASTHint_hint_entries_num(n.getRaw(), &num)
 	ret := make([]*HintEntryNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTHint_hint_entry(n.getRaw(), i, &v)
+		zetasqlparser.ASTHint_hint_entry(n.getRaw(), i, &v)
 		ret = append(ret, newHintEntryNode(v))
 	}
 	return ret
@@ -7464,7 +7464,7 @@ type HintEntryNode struct {
 
 func (n *HintEntryNode) Qualifier() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTHintEntry_qualifier(n.getRaw(), &v)
+	zetasqlparser.ASTHintEntry_qualifier(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7473,7 +7473,7 @@ func (n *HintEntryNode) Qualifier() *IdentifierNode {
 
 func (n *HintEntryNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTHintEntry_name(n.getRaw(), &v)
+	zetasqlparser.ASTHintEntry_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7482,7 +7482,7 @@ func (n *HintEntryNode) Name() *IdentifierNode {
 
 func (n *HintEntryNode) Value() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTHintEntry_value(n.getRaw(), &v)
+	zetasqlparser.ASTHintEntry_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7495,7 +7495,7 @@ type UnpivotInItemLabelNode struct {
 
 func (n *UnpivotInItemLabelNode) Label() LeafNode {
 	var v unsafe.Pointer
-	internal.ASTUnpivotInItemLabel_label(n.getRaw(), &v)
+	zetasqlparser.ASTUnpivotInItemLabel_label(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7508,7 +7508,7 @@ type DescriptorNode struct {
 
 func (n *DescriptorNode) Columns() *DescriptorColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTDescriptor_columns(n.getRaw(), &v)
+	zetasqlparser.ASTDescriptor_columns(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7521,7 +7521,7 @@ type ColumnSchemaNode struct {
 
 func (n *ColumnSchemaNode) TypeParameters() *TypeParameterListNode {
 	var v unsafe.Pointer
-	internal.ASTColumnSchema_type_parameters(n.getRaw(), &v)
+	zetasqlparser.ASTColumnSchema_type_parameters(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7530,7 +7530,7 @@ func (n *ColumnSchemaNode) TypeParameters() *TypeParameterListNode {
 
 func (n *ColumnSchemaNode) GeneratedColumnInfo() *GeneratedColumnInfoNode {
 	var v unsafe.Pointer
-	internal.ASTColumnSchema_generated_column_info(n.getRaw(), &v)
+	zetasqlparser.ASTColumnSchema_generated_column_info(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7539,7 +7539,7 @@ func (n *ColumnSchemaNode) GeneratedColumnInfo() *GeneratedColumnInfoNode {
 
 func (n *ColumnSchemaNode) DefaultExpression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTColumnSchema_default_expression(n.getRaw(), &v)
+	zetasqlparser.ASTColumnSchema_default_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7548,7 +7548,7 @@ func (n *ColumnSchemaNode) DefaultExpression() ExpressionNode {
 
 func (n *ColumnSchemaNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTColumnSchema_collate(n.getRaw(), &v)
+	zetasqlparser.ASTColumnSchema_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7557,7 +7557,7 @@ func (n *ColumnSchemaNode) Collate() *CollateNode {
 
 func (n *ColumnSchemaNode) Attributes() *ColumnAttributeListNode {
 	var v unsafe.Pointer
-	internal.ASTColumnSchema_attributes(n.getRaw(), &v)
+	zetasqlparser.ASTColumnSchema_attributes(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7566,7 +7566,7 @@ func (n *ColumnSchemaNode) Attributes() *ColumnAttributeListNode {
 
 func (n *ColumnSchemaNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTColumnSchema_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTColumnSchema_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7575,7 +7575,7 @@ func (n *ColumnSchemaNode) OptionsList() *OptionsListNode {
 
 func (n *ColumnSchemaNode) ContainsAttribute(kind Kind) bool {
 	var v bool
-	internal.ASTColumnSchema_ContainsAttribute(n.getRaw(), int(kind), &v)
+	zetasqlparser.ASTColumnSchema_ContainsAttribute(n.getRaw(), int(kind), &v)
 	return v
 }
 
@@ -7585,7 +7585,7 @@ type SimpleColumnSchemaNode struct {
 
 func (n *SimpleColumnSchemaNode) TypeName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSimpleColumnSchema_type_name(n.getRaw(), &v)
+	zetasqlparser.ASTSimpleColumnSchema_type_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7598,7 +7598,7 @@ type ArrayColumnSchemaNode struct {
 
 func (n *ArrayColumnSchemaNode) ElementSchema() *ColumnSchemaNode {
 	var v unsafe.Pointer
-	internal.ASTArrayColumnSchema_element_schema(n.getRaw(), &v)
+	zetasqlparser.ASTArrayColumnSchema_element_schema(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7611,7 +7611,7 @@ type TableConstraintBaseNode struct {
 
 func (n *TableConstraintBaseNode) ConstraintName() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTTableConstraint_constraint_name(n.getRaw(), &v)
+	zetasqlparser.ASTTableConstraint_constraint_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7623,18 +7623,18 @@ type PrimaryKeyNode struct {
 }
 
 func (n *PrimaryKeyNode) SetEnforced(enforced bool) {
-	internal.ASTPrimaryKey_set_enforced(n.getRaw(), helper.BoolToInt(enforced))
+	zetasqlparser.ASTPrimaryKey_set_enforced(n.getRaw(), helper.BoolToInt(enforced))
 }
 
 func (n *PrimaryKeyNode) Enforced() bool {
 	var v bool
-	internal.ASTPrimaryKey_enforced(n.getRaw(), &v)
+	zetasqlparser.ASTPrimaryKey_enforced(n.getRaw(), &v)
 	return v
 }
 
 func (n *PrimaryKeyNode) ColumnList() Node {
 	var v unsafe.Pointer
-	internal.ASTPrimaryKey_element_list(n.getRaw(), &v)
+	zetasqlparser.ASTPrimaryKey_element_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7647,7 +7647,7 @@ func (n *PrimaryKeyNode) ElementList() Node {
 
 func (n *PrimaryKeyNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTPrimaryKey_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTPrimaryKey_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7660,7 +7660,7 @@ type ForeignKeyNode struct {
 
 func (n *ForeignKeyNode) ColumnList() *ColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKey_column_list(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKey_column_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7669,7 +7669,7 @@ func (n *ForeignKeyNode) ColumnList() *ColumnListNode {
 
 func (n *ForeignKeyNode) Reference() *ForeignKeyReferenceNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKey_reference(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKey_reference(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7678,7 +7678,7 @@ func (n *ForeignKeyNode) Reference() *ForeignKeyReferenceNode {
 
 func (n *ForeignKeyNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTForeignKey_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTForeignKey_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7690,18 +7690,18 @@ type CheckConstraintNode struct {
 }
 
 func (n *CheckConstraintNode) SetIsEnforced(enforced bool) {
-	internal.ASTCheckConstraint_set_is_enforced(n.getRaw(), helper.BoolToInt(enforced))
+	zetasqlparser.ASTCheckConstraint_set_is_enforced(n.getRaw(), helper.BoolToInt(enforced))
 }
 
 func (n *CheckConstraintNode) IsEnforced() bool {
 	var v bool
-	internal.ASTCheckConstraint_is_enforced(n.getRaw(), &v)
+	zetasqlparser.ASTCheckConstraint_is_enforced(n.getRaw(), &v)
 	return v
 }
 
 func (n *CheckConstraintNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCheckConstraint_expression(n.getRaw(), &v)
+	zetasqlparser.ASTCheckConstraint_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7710,7 +7710,7 @@ func (n *CheckConstraintNode) Expression() ExpressionNode {
 
 func (n *CheckConstraintNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCheckConstraint_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCheckConstraint_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7723,7 +7723,7 @@ type DescriptorColumnNode struct {
 
 func (n *DescriptorColumnNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDescriptorColumn_name(n.getRaw(), &v)
+	zetasqlparser.ASTDescriptorColumn_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7736,11 +7736,11 @@ type DescriptorColumnListNode struct {
 
 func (n *DescriptorColumnListNode) DescriptorColumnList() []*DescriptorColumnNode {
 	var num int
-	internal.ASTDescriptorColumnList_descriptor_column_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTDescriptorColumnList_descriptor_column_list_num(n.getRaw(), &num)
 	ret := make([]*DescriptorColumnNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTDescriptorColumnList_descriptor_column_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTDescriptorColumnList_descriptor_column_list(n.getRaw(), i, &v)
 		ret = append(ret, newDescriptorColumnNode(v))
 	}
 	return ret
@@ -7752,7 +7752,7 @@ type CreateEntityStatementNode struct {
 
 func (n *CreateEntityStatementNode) Type() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTCreateEntityStatement_type(n.getRaw(), &v)
+	zetasqlparser.ASTCreateEntityStatement_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7761,7 +7761,7 @@ func (n *CreateEntityStatementNode) Type() *IdentifierNode {
 
 func (n *CreateEntityStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateEntityStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateEntityStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7770,7 +7770,7 @@ func (n *CreateEntityStatementNode) Name() *PathExpressionNode {
 
 func (n *CreateEntityStatementNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateEntityStatement_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateEntityStatement_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7779,7 +7779,7 @@ func (n *CreateEntityStatementNode) OptionsList() *OptionsListNode {
 
 func (n *CreateEntityStatementNode) JSONBody() *JSONLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTCreateEntityStatement_json_body(n.getRaw(), &v)
+	zetasqlparser.ASTCreateEntityStatement_json_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7788,7 +7788,7 @@ func (n *CreateEntityStatementNode) JSONBody() *JSONLiteralNode {
 
 func (n *CreateEntityStatementNode) TextBody() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTCreateEntityStatement_text_body(n.getRaw(), &v)
+	zetasqlparser.ASTCreateEntityStatement_text_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7801,7 +7801,7 @@ type RaiseStatementNode struct {
 
 func (n *RaiseStatementNode) Message() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTRaiseStatement_message(n.getRaw(), &v)
+	zetasqlparser.ASTRaiseStatement_message(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7810,7 +7810,7 @@ func (n *RaiseStatementNode) Message() ExpressionNode {
 
 func (n *RaiseStatementNode) IsRethrow() bool {
 	var v bool
-	internal.ASTRaiseStatement_is_rethrow(n.getRaw(), &v)
+	zetasqlparser.ASTRaiseStatement_is_rethrow(n.getRaw(), &v)
 	return v
 }
 
@@ -7820,7 +7820,7 @@ type ExceptionHandlerNode struct {
 
 func (n *ExceptionHandlerNode) StatementList() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTExceptionHandler_statement_list(n.getRaw(), &v)
+	zetasqlparser.ASTExceptionHandler_statement_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7833,11 +7833,11 @@ type ExceptionHandlerListNode struct {
 
 func (n *ExceptionHandlerListNode) ExceptionHandlerList() []*ExceptionHandlerNode {
 	var num int
-	internal.ASTExceptionHandlerList_exception_handler_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTExceptionHandlerList_exception_handler_list_num(n.getRaw(), &num)
 	ret := make([]*ExceptionHandlerNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTExceptionHandlerList_exception_handler_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTExceptionHandlerList_exception_handler_list(n.getRaw(), i, &v)
 		ret = append(ret, newExceptionHandlerNode(v))
 	}
 	return ret
@@ -7849,7 +7849,7 @@ type BeginEndBlockNode struct {
 
 func (n *BeginEndBlockNode) Label() *LabelNode {
 	var v unsafe.Pointer
-	internal.ASTBeginEndBlock_label(n.getRaw(), &v)
+	zetasqlparser.ASTBeginEndBlock_label(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7858,7 +7858,7 @@ func (n *BeginEndBlockNode) Label() *LabelNode {
 
 func (n *BeginEndBlockNode) StatementListNode() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTBeginEndBlock_statement_list_node(n.getRaw(), &v)
+	zetasqlparser.ASTBeginEndBlock_statement_list_node(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7867,7 +7867,7 @@ func (n *BeginEndBlockNode) StatementListNode() *StatementListNode {
 
 func (n *BeginEndBlockNode) HandlerList() *ExceptionHandlerListNode {
 	var v unsafe.Pointer
-	internal.ASTBeginEndBlock_handler_list(n.getRaw(), &v)
+	zetasqlparser.ASTBeginEndBlock_handler_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7876,11 +7876,11 @@ func (n *BeginEndBlockNode) HandlerList() *ExceptionHandlerListNode {
 
 func (n *BeginEndBlockNode) StatementList() []StatementNode {
 	var num int
-	internal.ASTBeginEndBlock_statement_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTBeginEndBlock_statement_list_num(n.getRaw(), &num)
 	ret := make([]StatementNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTBeginEndBlock_statement_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTBeginEndBlock_statement_list(n.getRaw(), i, &v)
 		ret = append(ret, newNode(v).(StatementNode))
 	}
 	return ret
@@ -7888,7 +7888,7 @@ func (n *BeginEndBlockNode) StatementList() []StatementNode {
 
 func (n *BeginEndBlockNode) HasExceptionHandler() bool {
 	var v bool
-	internal.ASTBeginEndBlock_has_exception_handler(n.getRaw(), &v)
+	zetasqlparser.ASTBeginEndBlock_has_exception_handler(n.getRaw(), &v)
 	return v
 }
 
@@ -7898,11 +7898,11 @@ type IdentifierListNode struct {
 
 func (n *IdentifierListNode) IdentifierList() []*IdentifierNode {
 	var num int
-	internal.ASTIdentifierList_identifier_list_num(n.getRaw(), &num)
+	zetasqlparser.ASTIdentifierList_identifier_list_num(n.getRaw(), &num)
 	ret := make([]*IdentifierNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTIdentifierList_identifier_list(n.getRaw(), i, &v)
+		zetasqlparser.ASTIdentifierList_identifier_list(n.getRaw(), i, &v)
 		ret = append(ret, newIdentifierNode(v))
 	}
 	return ret
@@ -7914,7 +7914,7 @@ type VariableDeclarationNode struct {
 
 func (n *VariableDeclarationNode) VariableList() *IdentifierListNode {
 	var v unsafe.Pointer
-	internal.ASTVariableDeclaration_variable_list(n.getRaw(), &v)
+	zetasqlparser.ASTVariableDeclaration_variable_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7923,7 +7923,7 @@ func (n *VariableDeclarationNode) VariableList() *IdentifierListNode {
 
 func (n *VariableDeclarationNode) Type() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTVariableDeclaration_type(n.getRaw(), &v)
+	zetasqlparser.ASTVariableDeclaration_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7932,7 +7932,7 @@ func (n *VariableDeclarationNode) Type() TypeNode {
 
 func (n *VariableDeclarationNode) DefaultValue() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTVariableDeclaration_default_value(n.getRaw(), &v)
+	zetasqlparser.ASTVariableDeclaration_default_value(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7945,7 +7945,7 @@ type UntilClauseNode struct {
 
 func (n *UntilClauseNode) Condition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTUntilClause_condition(n.getRaw(), &v)
+	zetasqlparser.ASTUntilClause_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7954,7 +7954,7 @@ func (n *UntilClauseNode) Condition() ExpressionNode {
 
 func (n *UntilClauseNode) RepeatStmt() *RepeatStatementNode {
 	var v unsafe.Pointer
-	internal.ASTUntilClause_repeat_stmt(n.getRaw(), &v)
+	zetasqlparser.ASTUntilClause_repeat_stmt(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7990,7 +7990,7 @@ type BreakContinueStatementNode struct {
 
 func (n *BreakContinueStatementNode) Label() *LabelNode {
 	var v unsafe.Pointer
-	internal.ASTBreakContinueStatement_label(n.getRaw(), &v)
+	zetasqlparser.ASTBreakContinueStatement_label(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -7998,12 +7998,12 @@ func (n *BreakContinueStatementNode) Label() *LabelNode {
 }
 
 func (n *BreakContinueStatementNode) SetKeyword(keyword BreakContinueKeyword) {
-	internal.ASTBreakContinueStatement_set_keyword(n.getRaw(), int(keyword))
+	zetasqlparser.ASTBreakContinueStatement_set_keyword(n.getRaw(), int(keyword))
 }
 
 func (n *BreakContinueStatementNode) Keyword() BreakContinueKeyword {
 	var v int
-	internal.ASTBreakContinueStatement_keyword(n.getRaw(), &v)
+	zetasqlparser.ASTBreakContinueStatement_keyword(n.getRaw(), &v)
 	return BreakContinueKeyword(v)
 }
 
@@ -8012,12 +8012,12 @@ type BreakStatementNode struct {
 }
 
 func (n *BreakStatementNode) SetKeyword(keyword BreakContinueKeyword) {
-	internal.ASTBreakStatement_set_keyword(n.getRaw(), int(keyword))
+	zetasqlparser.ASTBreakStatement_set_keyword(n.getRaw(), int(keyword))
 }
 
 func (n *BreakStatementNode) Keyword() BreakContinueKeyword {
 	var v int
-	internal.ASTBreakStatement_keyword(n.getRaw(), &v)
+	zetasqlparser.ASTBreakStatement_keyword(n.getRaw(), &v)
 	return BreakContinueKeyword(v)
 }
 
@@ -8026,12 +8026,12 @@ type ContinueStatementNode struct {
 }
 
 func (n *ContinueStatementNode) SetKeyword(keyword BreakContinueKeyword) {
-	internal.ASTContinueStatement_set_keyword(n.getRaw(), int(keyword))
+	zetasqlparser.ASTContinueStatement_set_keyword(n.getRaw(), int(keyword))
 }
 
 func (n *ContinueStatementNode) Keyword() BreakContinueKeyword {
 	var v int
-	internal.ASTContinueStatement_keyword(n.getRaw(), &v)
+	zetasqlparser.ASTContinueStatement_keyword(n.getRaw(), &v)
 	return BreakContinueKeyword(v)
 }
 
@@ -8040,18 +8040,18 @@ type DropPrivilegeRestrictionStatementNode struct {
 }
 
 func (n *DropPrivilegeRestrictionStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropPrivilegeRestrictionStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropPrivilegeRestrictionStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropPrivilegeRestrictionStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropPrivilegeRestrictionStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropPrivilegeRestrictionStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropPrivilegeRestrictionStatementNode) Privileges() *PrivilegesNode {
 	var v unsafe.Pointer
-	internal.ASTDropPrivilegeRestrictionStatement_privileges(n.getRaw(), &v)
+	zetasqlparser.ASTDropPrivilegeRestrictionStatement_privileges(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8060,7 +8060,7 @@ func (n *DropPrivilegeRestrictionStatementNode) Privileges() *PrivilegesNode {
 
 func (n *DropPrivilegeRestrictionStatementNode) ObjectType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDropPrivilegeRestrictionStatement_object_type(n.getRaw(), &v)
+	zetasqlparser.ASTDropPrivilegeRestrictionStatement_object_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8069,7 +8069,7 @@ func (n *DropPrivilegeRestrictionStatementNode) ObjectType() *IdentifierNode {
 
 func (n *DropPrivilegeRestrictionStatementNode) NamePath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropPrivilegeRestrictionStatement_name_path(n.getRaw(), &v)
+	zetasqlparser.ASTDropPrivilegeRestrictionStatement_name_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8081,18 +8081,18 @@ type DropRowAccessPolicyStatementNode struct {
 }
 
 func (n *DropRowAccessPolicyStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropRowAccessPolicyStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropRowAccessPolicyStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropRowAccessPolicyStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropRowAccessPolicyStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropRowAccessPolicyStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropRowAccessPolicyStatementNode) TableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropRowAccessPolicyStatement_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropRowAccessPolicyStatement_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8101,7 +8101,7 @@ func (n *DropRowAccessPolicyStatementNode) TableName() *PathExpressionNode {
 
 func (n *DropRowAccessPolicyStatementNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTDropRowAccessPolicyStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropRowAccessPolicyStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8114,7 +8114,7 @@ type CreatePrivilegeRestrictionStatementNode struct {
 
 func (n *CreatePrivilegeRestrictionStatementNode) Privileges() *PrivilegesNode {
 	var v unsafe.Pointer
-	internal.ASTCreatePrivilegeRestrictionStatement_privileges(n.getRaw(), &v)
+	zetasqlparser.ASTCreatePrivilegeRestrictionStatement_privileges(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8123,7 +8123,7 @@ func (n *CreatePrivilegeRestrictionStatementNode) Privileges() *PrivilegesNode {
 
 func (n *CreatePrivilegeRestrictionStatementNode) ObjectType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTCreatePrivilegeRestrictionStatement_object_type(n.getRaw(), &v)
+	zetasqlparser.ASTCreatePrivilegeRestrictionStatement_object_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8132,7 +8132,7 @@ func (n *CreatePrivilegeRestrictionStatementNode) ObjectType() *IdentifierNode {
 
 func (n *CreatePrivilegeRestrictionStatementNode) NamePath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreatePrivilegeRestrictionStatement_name_path(n.getRaw(), &v)
+	zetasqlparser.ASTCreatePrivilegeRestrictionStatement_name_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8141,7 +8141,7 @@ func (n *CreatePrivilegeRestrictionStatementNode) NamePath() *PathExpressionNode
 
 func (n *CreatePrivilegeRestrictionStatementNode) RestrictTo() *RestrictToClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreatePrivilegeRestrictionStatement_restrict_to(n.getRaw(), &v)
+	zetasqlparser.ASTCreatePrivilegeRestrictionStatement_restrict_to(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8153,18 +8153,18 @@ type CreateRowAccessPolicyStatementNode struct {
 }
 
 func (n *CreateRowAccessPolicyStatementNode) SetHasAccessKeyword(v bool) {
-	internal.ASTCreateRowAccessPolicyStatement_set_has_access_keyword(n.getRaw(), helper.BoolToInt(v))
+	zetasqlparser.ASTCreateRowAccessPolicyStatement_set_has_access_keyword(n.getRaw(), helper.BoolToInt(v))
 }
 
 func (n *CreateRowAccessPolicyStatementNode) HasAccessKeyword() bool {
 	var v bool
-	internal.ASTCreateRowAccessPolicyStatement_has_access_keyword(n.getRaw(), &v)
+	zetasqlparser.ASTCreateRowAccessPolicyStatement_has_access_keyword(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateRowAccessPolicyStatementNode) TargetPath() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateRowAccessPolicyStatement_target_path(n.getRaw(), &v)
+	zetasqlparser.ASTCreateRowAccessPolicyStatement_target_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8173,7 +8173,7 @@ func (n *CreateRowAccessPolicyStatementNode) TargetPath() *PathExpressionNode {
 
 func (n *CreateRowAccessPolicyStatementNode) GrantTo() *GrantToClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreateRowAccessPolicyStatement_grant_to(n.getRaw(), &v)
+	zetasqlparser.ASTCreateRowAccessPolicyStatement_grant_to(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8182,7 +8182,7 @@ func (n *CreateRowAccessPolicyStatementNode) GrantTo() *GrantToClauseNode {
 
 func (n *CreateRowAccessPolicyStatementNode) FilterUsing() *FilterUsingClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreateRowAccessPolicyStatement_filter_using(n.getRaw(), &v)
+	zetasqlparser.ASTCreateRowAccessPolicyStatement_filter_using(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8191,7 +8191,7 @@ func (n *CreateRowAccessPolicyStatementNode) FilterUsing() *FilterUsingClauseNod
 
 func (n *CreateRowAccessPolicyStatementNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTCreateRowAccessPolicyStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateRowAccessPolicyStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8223,38 +8223,38 @@ type DropStatementNode struct {
 }
 
 func (n *DropStatementNode) SetDropMode(mode DropMode) {
-	internal.ASTDropStatement_set_drop_mode(n.getRaw(), int(mode))
+	zetasqlparser.ASTDropStatement_set_drop_mode(n.getRaw(), int(mode))
 }
 
 func (n *DropStatementNode) DropMode() DropMode {
 	var v int
-	internal.ASTDropStatement_drop_mode(n.getRaw(), &v)
+	zetasqlparser.ASTDropStatement_drop_mode(n.getRaw(), &v)
 	return DropMode(v)
 }
 
 func (n *DropStatementNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTDropStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTDropStatement_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *DropStatementNode) IsIfExists() bool {
 	var v bool
-	internal.ASTDropStatement_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTDropStatement_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *DropStatementNode) SetSchemaObjectKind(kind SchemaObjectKind) {
-	internal.ASTDropStatement_set_schema_object_kind(n.getRaw(), int(kind))
+	zetasqlparser.ASTDropStatement_set_schema_object_kind(n.getRaw(), int(kind))
 }
 
 func (n *DropStatementNode) SchemaObjectKind() SchemaObjectKind {
 	var v int
-	internal.ASTDropStatement_schema_object_kind(n.getRaw(), &v)
+	zetasqlparser.ASTDropStatement_schema_object_kind(n.getRaw(), &v)
 	return SchemaObjectKind(v)
 }
 
 func (n *DropStatementNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTDropStatemnt_name(n.getRaw(), &v)
+	zetasqlparser.ASTDropStatemnt_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8271,7 +8271,7 @@ type SingleAssignmentNode struct {
 
 func (n *SingleAssignmentNode) Variable() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTSingleAssignment_variable(n.getRaw(), &v)
+	zetasqlparser.ASTSingleAssignment_variable(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8280,7 +8280,7 @@ func (n *SingleAssignmentNode) Variable() *IdentifierNode {
 
 func (n *SingleAssignmentNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSingleAssignment_expression(n.getRaw(), &v)
+	zetasqlparser.ASTSingleAssignment_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8293,7 +8293,7 @@ type ParameterAssignmentNode struct {
 
 func (n *ParameterAssignmentNode) Parameter() *ParameterExprNode {
 	var v unsafe.Pointer
-	internal.ASTParameterAssignment_parameter(n.getRaw(), &v)
+	zetasqlparser.ASTParameterAssignment_parameter(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8302,7 +8302,7 @@ func (n *ParameterAssignmentNode) Parameter() *ParameterExprNode {
 
 func (n *ParameterAssignmentNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTParameterAssignment_expression(n.getRaw(), &v)
+	zetasqlparser.ASTParameterAssignment_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8315,7 +8315,7 @@ type SystemVariableAssignmentNode struct {
 
 func (n *SystemVariableAssignmentNode) SystemVariable() *SystemVariableExprNode {
 	var v unsafe.Pointer
-	internal.ASTSystemVariableAssignment_system_variable(n.getRaw(), &v)
+	zetasqlparser.ASTSystemVariableAssignment_system_variable(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8324,7 +8324,7 @@ func (n *SystemVariableAssignmentNode) SystemVariable() *SystemVariableExprNode 
 
 func (n *SystemVariableAssignmentNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTSystemVariableAssignment_expression(n.getRaw(), &v)
+	zetasqlparser.ASTSystemVariableAssignment_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8337,7 +8337,7 @@ type AssignmentFromStructNode struct {
 
 func (n *AssignmentFromStructNode) Variables() *IdentifierListNode {
 	var v unsafe.Pointer
-	internal.ASTAssignmentFromStruct_variables(n.getRaw(), &v)
+	zetasqlparser.ASTAssignmentFromStruct_variables(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8346,7 +8346,7 @@ func (n *AssignmentFromStructNode) Variables() *IdentifierListNode {
 
 func (n *AssignmentFromStructNode) StructExpression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAssignmentFromStruct_struct_expression(n.getRaw(), &v)
+	zetasqlparser.ASTAssignmentFromStruct_struct_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8359,7 +8359,7 @@ type CreateTableStmtBaseNode struct {
 
 func (n *CreateTableStmtBaseNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStmtBase_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStmtBase_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8368,7 +8368,7 @@ func (n *CreateTableStmtBaseNode) Name() *PathExpressionNode {
 
 func (n *CreateTableStmtBaseNode) TableElementList() *TableElementListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStmtBase_table_element_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStmtBase_table_element_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8377,7 +8377,7 @@ func (n *CreateTableStmtBaseNode) TableElementList() *TableElementListNode {
 
 func (n *CreateTableStmtBaseNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStmtBase_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStmtBase_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8386,7 +8386,7 @@ func (n *CreateTableStmtBaseNode) OptionsList() *OptionsListNode {
 
 func (n *CreateTableStmtBaseNode) LikeTableName() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStmtBase_like_table_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStmtBase_like_table_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8395,7 +8395,7 @@ func (n *CreateTableStmtBaseNode) LikeTableName() *PathExpressionNode {
 
 func (n *CreateTableStmtBaseNode) Collate() *CollateNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStmtBase_collate(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStmtBase_collate(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8408,7 +8408,7 @@ type CreateTableStatementNode struct {
 
 func (n *CreateTableStatementNode) CloneDataSource() *CloneDataSourceNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStatement_clone_data_source(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStatement_clone_data_source(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8417,7 +8417,7 @@ func (n *CreateTableStatementNode) CloneDataSource() *CloneDataSourceNode {
 
 func (n *CreateTableStatementNode) CopyDataSource() *CopyDataSourceNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStatement_copy_data_source(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStatement_copy_data_source(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8426,7 +8426,7 @@ func (n *CreateTableStatementNode) CopyDataSource() *CopyDataSourceNode {
 
 func (n *CreateTableStatementNode) PartitionBy() *PartitionByNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStatement_partition_by(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStatement_partition_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8435,7 +8435,7 @@ func (n *CreateTableStatementNode) PartitionBy() *PartitionByNode {
 
 func (n *CreateTableStatementNode) ClusterBy() *ClusterByNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStatement_cluster_by(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStatement_cluster_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8444,7 +8444,7 @@ func (n *CreateTableStatementNode) ClusterBy() *ClusterByNode {
 
 func (n *CreateTableStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8457,7 +8457,7 @@ type CreateExternalTableStatementNode struct {
 
 func (n *CreateExternalTableStatementNode) WithPartitionColumnsClause() *WithPartitionColumnsClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreateExternalTableStatement_with_partition_columns_clause(n.getRaw(), &v)
+	zetasqlparser.ASTCreateExternalTableStatement_with_partition_columns_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8466,7 +8466,7 @@ func (n *CreateExternalTableStatementNode) WithPartitionColumnsClause() *WithPar
 
 func (n *CreateExternalTableStatementNode) WithConnectionClause() *WithConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreateExternalTableStatement_with_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTCreateExternalTableStatement_with_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8479,7 +8479,7 @@ type CreateViewStatementBaseNode struct {
 
 func (n *CreateViewStatementBaseNode) Name() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTCreateViewStatementBase_name(n.getRaw(), &v)
+	zetasqlparser.ASTCreateViewStatementBase_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8488,7 +8488,7 @@ func (n *CreateViewStatementBaseNode) Name() *PathExpressionNode {
 
 func (n *CreateViewStatementBaseNode) ColumnList() *ColumnListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateViewStatementBase_column_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateViewStatementBase_column_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8497,7 +8497,7 @@ func (n *CreateViewStatementBaseNode) ColumnList() *ColumnListNode {
 
 func (n *CreateViewStatementBaseNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateViewStatementBase_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateViewStatementBase_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8506,7 +8506,7 @@ func (n *CreateViewStatementBaseNode) OptionsList() *OptionsListNode {
 
 func (n *CreateViewStatementBaseNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTCreateViewStatementBase_query(n.getRaw(), &v)
+	zetasqlparser.ASTCreateViewStatementBase_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8523,7 +8523,7 @@ type CreateMaterializedViewStatementNode struct {
 
 func (n *CreateMaterializedViewStatementNode) PartitionBy() *PartitionByNode {
 	var v unsafe.Pointer
-	internal.ASTCreateMaterializedViewStatement_partition_by(n.getRaw(), &v)
+	zetasqlparser.ASTCreateMaterializedViewStatement_partition_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8532,7 +8532,7 @@ func (n *CreateMaterializedViewStatementNode) PartitionBy() *PartitionByNode {
 
 func (n *CreateMaterializedViewStatementNode) ClusterBy() *ClusterByNode {
 	var v unsafe.Pointer
-	internal.ASTCreateMaterializedViewStatement_cluster_by(n.getRaw(), &v)
+	zetasqlparser.ASTCreateMaterializedViewStatement_cluster_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8545,7 +8545,7 @@ type LoopStatementNode struct {
 
 func (n *LoopStatementNode) Label() *LabelNode {
 	var v unsafe.Pointer
-	internal.ASTLoopStatement_label(n.getRaw(), &v)
+	zetasqlparser.ASTLoopStatement_label(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8554,7 +8554,7 @@ func (n *LoopStatementNode) Label() *LabelNode {
 
 func (n *LoopStatementNode) Body() *StatementListNode {
 	var v unsafe.Pointer
-	internal.ASTLoopStatement_body(n.getRaw(), &v)
+	zetasqlparser.ASTLoopStatement_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8563,7 +8563,7 @@ func (n *LoopStatementNode) Body() *StatementListNode {
 
 func (n *LoopStatementNode) IsLoopStatement() bool {
 	var v bool
-	internal.ASTLoopStatement_IsLoopStatement(n.getRaw(), &v)
+	zetasqlparser.ASTLoopStatement_IsLoopStatement(n.getRaw(), &v)
 	return v
 }
 
@@ -8573,7 +8573,7 @@ type WhileStatementNode struct {
 
 func (n *WhileStatementNode) Condition() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTWhileStatement_condition(n.getRaw(), &v)
+	zetasqlparser.ASTWhileStatement_condition(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8586,7 +8586,7 @@ type RepeatStatementNode struct {
 
 func (n *RepeatStatementNode) UntilClause() *UntilClauseNode {
 	var v unsafe.Pointer
-	internal.ASTRepeatStatement_until_clause(n.getRaw(), &v)
+	zetasqlparser.ASTRepeatStatement_until_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8599,7 +8599,7 @@ type ForInStatementNode struct {
 
 func (n *ForInStatementNode) Variable() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTForInStatement_variable(n.getRaw(), &v)
+	zetasqlparser.ASTForInStatement_variable(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8608,7 +8608,7 @@ func (n *ForInStatementNode) Variable() *IdentifierNode {
 
 func (n *ForInStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTForInStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTForInStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8620,18 +8620,18 @@ type AlterStatementBaseNode struct {
 }
 
 func (n *AlterStatementBaseNode) SetIsIfExists(isIfExists bool) {
-	internal.ASTAlterStatementBase_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
+	zetasqlparser.ASTAlterStatementBase_set_is_if_exists(n.getRaw(), helper.BoolToInt(isIfExists))
 }
 
 func (n *AlterStatementBaseNode) IsIfExists() bool {
 	var v bool
-	internal.ASTAlterStatementBase_is_if_exists(n.getRaw(), &v)
+	zetasqlparser.ASTAlterStatementBase_is_if_exists(n.getRaw(), &v)
 	return v
 }
 
 func (n *AlterStatementBaseNode) Path() *PathExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTAlterStatementBase_path(n.getRaw(), &v)
+	zetasqlparser.ASTAlterStatementBase_path(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8640,7 +8640,7 @@ func (n *AlterStatementBaseNode) Path() *PathExpressionNode {
 
 func (n *AlterStatementBaseNode) ActionList() *AlterActionListNode {
 	var v unsafe.Pointer
-	internal.ASTAlterStatementBase_action_list(n.getRaw(), &v)
+	zetasqlparser.ASTAlterStatementBase_action_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8673,7 +8673,7 @@ type AlterPrivilegeRestrictionStatementNode struct {
 
 func (n *AlterPrivilegeRestrictionStatementNode) Privileges() *PrivilegesNode {
 	var v unsafe.Pointer
-	internal.ASTAlterPrivilegeRestrictionStatement_privileges(n.getRaw(), &v)
+	zetasqlparser.ASTAlterPrivilegeRestrictionStatement_privileges(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8682,7 +8682,7 @@ func (n *AlterPrivilegeRestrictionStatementNode) Privileges() *PrivilegesNode {
 
 func (n *AlterPrivilegeRestrictionStatementNode) ObjectType() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterPrivilegeRestrictionStatement_object_type(n.getRaw(), &v)
+	zetasqlparser.ASTAlterPrivilegeRestrictionStatement_object_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8695,7 +8695,7 @@ type AlterRowAccessPolicyStatementNode struct {
 
 func (n *AlterRowAccessPolicyStatementNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterRowAccessPolicyStatement_name(n.getRaw(), &v)
+	zetasqlparser.ASTAlterRowAccessPolicyStatement_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8708,7 +8708,7 @@ type AlterEntityStatementNode struct {
 
 func (n *AlterEntityStatementNode) Type() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTAlterEntityStatement_type(n.getRaw(), &v)
+	zetasqlparser.ASTAlterEntityStatement_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8749,28 +8749,28 @@ type CreateFunctionStmtBaseNode struct {
 }
 
 func (n *CreateFunctionStmtBaseNode) SetDeterminismLevel(level DeterminismLevel) {
-	internal.ASTCreateFunctionStmtBase_set_determinism_level(n.getRaw(), int(level))
+	zetasqlparser.ASTCreateFunctionStmtBase_set_determinism_level(n.getRaw(), int(level))
 }
 
 func (n *CreateFunctionStmtBaseNode) DeterminismLevel() DeterminismLevel {
 	var v int
-	internal.ASTCreateFunctionStmtBase_determinism_level(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStmtBase_determinism_level(n.getRaw(), &v)
 	return DeterminismLevel(v)
 }
 
 func (n *CreateFunctionStmtBaseNode) SetSqlSecurity(security SqlSecurity) {
-	internal.ASTCreateFunctionStmtBase_set_sql_security(n.getRaw(), int(security))
+	zetasqlparser.ASTCreateFunctionStmtBase_set_sql_security(n.getRaw(), int(security))
 }
 
 func (n *CreateFunctionStmtBaseNode) SqlSecurity() SqlSecurity {
 	var v int
-	internal.ASTCreateFunctionStmtBase_sql_security(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStmtBase_sql_security(n.getRaw(), &v)
 	return SqlSecurity(v)
 }
 
 func (n *CreateFunctionStmtBaseNode) FunctionDeclaration() *FunctionDeclarationNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStmtBase_function_declaration(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStmtBase_function_declaration(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8779,7 +8779,7 @@ func (n *CreateFunctionStmtBaseNode) FunctionDeclaration() *FunctionDeclarationN
 
 func (n *CreateFunctionStmtBaseNode) Language() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStmtBase_language(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStmtBase_language(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8788,7 +8788,7 @@ func (n *CreateFunctionStmtBaseNode) Language() *IdentifierNode {
 
 func (n *CreateFunctionStmtBaseNode) Code() *StringLiteralNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStmtBase_code(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStmtBase_code(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8797,7 +8797,7 @@ func (n *CreateFunctionStmtBaseNode) Code() *StringLiteralNode {
 
 func (n *CreateFunctionStmtBaseNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStmtBase_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStmtBase_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8809,28 +8809,28 @@ type CreateFunctionStatementNode struct {
 }
 
 func (n *CreateFunctionStatementNode) SetIsAggregate(isAggregate bool) {
-	internal.ASTCreateFunctionStatement_set_is_aggregate(n.getRaw(), helper.BoolToInt(isAggregate))
+	zetasqlparser.ASTCreateFunctionStatement_set_is_aggregate(n.getRaw(), helper.BoolToInt(isAggregate))
 }
 
 func (n *CreateFunctionStatementNode) IsAggregate() bool {
 	var v bool
-	internal.ASTCreateFunctionStatement_is_aggregate(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStatement_is_aggregate(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateFunctionStatementNode) SetIsRemote(isRemote bool) {
-	internal.ASTCreateFunctionStatement_set_is_remote(n.getRaw(), helper.BoolToInt(isRemote))
+	zetasqlparser.ASTCreateFunctionStatement_set_is_remote(n.getRaw(), helper.BoolToInt(isRemote))
 }
 
 func (n *CreateFunctionStatementNode) IsRemote() bool {
 	var v bool
-	internal.ASTCreateFunctionStatement_is_remote(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStatement_is_remote(n.getRaw(), &v)
 	return v
 }
 
 func (n *CreateFunctionStatementNode) ReturnType() TypeNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStatement_return_type(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStatement_return_type(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8839,7 +8839,7 @@ func (n *CreateFunctionStatementNode) ReturnType() TypeNode {
 
 func (n *CreateFunctionStatementNode) SqlFunctionBody() *SqlFunctionBodyNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStatement_sql_function_body(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStatement_sql_function_body(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8848,7 +8848,7 @@ func (n *CreateFunctionStatementNode) SqlFunctionBody() *SqlFunctionBodyNode {
 
 func (n *CreateFunctionStatementNode) WithConnectionClause() *WithConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTCreateFunctionStatement_with_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTCreateFunctionStatement_with_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8861,7 +8861,7 @@ type CreateTableFunctionStatementNode struct {
 
 func (n *CreateTableFunctionStatementNode) ReturnTVFSchema() *TVFSchemaNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableFunctionStatement_return_tvf_schema(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableFunctionStatement_return_tvf_schema(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8870,7 +8870,7 @@ func (n *CreateTableFunctionStatementNode) ReturnTVFSchema() *TVFSchemaNode {
 
 func (n *CreateTableFunctionStatementNode) Query() *QueryNode {
 	var v unsafe.Pointer
-	internal.ASTCreateTableFunctionStatement_query(n.getRaw(), &v)
+	zetasqlparser.ASTCreateTableFunctionStatement_query(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8883,11 +8883,11 @@ type StructColumnSchemaNode struct {
 
 func (n *StructColumnSchemaNode) StructFields() []*StructColumnFieldNode {
 	var num int
-	internal.ASTStructColumnSchema_struct_fields_num(n.getRaw(), &num)
+	zetasqlparser.ASTStructColumnSchema_struct_fields_num(n.getRaw(), &num)
 	ret := make([]*StructColumnFieldNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTStructColumnSchema_struct_field(n.getRaw(), i, &v)
+		zetasqlparser.ASTStructColumnSchema_struct_field(n.getRaw(), i, &v)
 		ret = append(ret, newStructColumnFieldNode(v))
 	}
 	return ret
@@ -8903,7 +8903,7 @@ type ExecuteIntoClauseNode struct {
 
 func (n *ExecuteIntoClauseNode) Identifiers() *IdentifierListNode {
 	var v unsafe.Pointer
-	internal.ASTExecuteIntoClause_identifiers(n.getRaw(), &v)
+	zetasqlparser.ASTExecuteIntoClause_identifiers(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8916,7 +8916,7 @@ type ExecuteUsingArgumentNode struct {
 
 func (n *ExecuteUsingArgumentNode) Expression() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTExecuteUsingArgument_expression(n.getRaw(), &v)
+	zetasqlparser.ASTExecuteUsingArgument_expression(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8925,7 +8925,7 @@ func (n *ExecuteUsingArgumentNode) Expression() ExpressionNode {
 
 func (n *ExecuteUsingArgumentNode) Alias() *AliasNode {
 	var v unsafe.Pointer
-	internal.ASTExecuteUsingArgument_alias(n.getRaw(), &v)
+	zetasqlparser.ASTExecuteUsingArgument_alias(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8938,11 +8938,11 @@ type ExecuteUsingClauseNode struct {
 
 func (n *ExecuteUsingClauseNode) Arguments() []*ExecuteUsingArgumentNode {
 	var num int
-	internal.ASTExecuteUsingClause_arguments_num(n.getRaw(), &num)
+	zetasqlparser.ASTExecuteUsingClause_arguments_num(n.getRaw(), &num)
 	ret := make([]*ExecuteUsingArgumentNode, 0, num)
 	for i := 0; i < num; i++ {
 		var v unsafe.Pointer
-		internal.ASTExecuteUsingClause_argument(n.getRaw(), i, &v)
+		zetasqlparser.ASTExecuteUsingClause_argument(n.getRaw(), i, &v)
 		ret = append(ret, newExecuteUsingArgumentNode(v))
 	}
 	return ret
@@ -8954,7 +8954,7 @@ type ExecuteImmediateStatementNode struct {
 
 func (n *ExecuteImmediateStatementNode) SQL() ExpressionNode {
 	var v unsafe.Pointer
-	internal.ASTExecuteImmediateStatement_sql(n.getRaw(), &v)
+	zetasqlparser.ASTExecuteImmediateStatement_sql(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8963,7 +8963,7 @@ func (n *ExecuteImmediateStatementNode) SQL() ExpressionNode {
 
 func (n *ExecuteImmediateStatementNode) IntoClause() *ExecuteIntoClauseNode {
 	var v unsafe.Pointer
-	internal.ASTExecuteImmediateStatement_into_clause(n.getRaw(), &v)
+	zetasqlparser.ASTExecuteImmediateStatement_into_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8972,7 +8972,7 @@ func (n *ExecuteImmediateStatementNode) IntoClause() *ExecuteIntoClauseNode {
 
 func (n *ExecuteImmediateStatementNode) UsingClause() *ExecuteUsingClauseNode {
 	var v unsafe.Pointer
-	internal.ASTExecuteImmediateStatement_using_clause(n.getRaw(), &v)
+	zetasqlparser.ASTExecuteImmediateStatement_using_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -8985,7 +8985,7 @@ type AuxLoadDataFromFilesOptionsListNode struct {
 
 func (n *AuxLoadDataFromFilesOptionsListNode) OptionsList() *OptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTAuxLoadDataFromFilesOptionsList_options_list(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataFromFilesOptionsList_options_list(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -9017,18 +9017,18 @@ type AuxLoadDataStatementNode struct {
 }
 
 func (n *AuxLoadDataStatementNode) SetInsertionMode(mode InsertionMode) {
-	internal.ASTAuxLoadDataStatement_set_insertion_mode(n.getRaw(), int(mode))
+	zetasqlparser.ASTAuxLoadDataStatement_set_insertion_mode(n.getRaw(), int(mode))
 }
 
 func (n *AuxLoadDataStatementNode) InsertionMode() InsertionMode {
 	var v int
-	internal.ASTAuxLoadDataStatement_insertion_mode(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataStatement_insertion_mode(n.getRaw(), &v)
 	return InsertionMode(v)
 }
 
 func (n *AuxLoadDataStatementNode) PartitionBy() *PartitionByNode {
 	var v unsafe.Pointer
-	internal.ASTAuxLoadDataStatement_partition_by(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataStatement_partition_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -9037,7 +9037,7 @@ func (n *AuxLoadDataStatementNode) PartitionBy() *PartitionByNode {
 
 func (n *AuxLoadDataStatementNode) ClusterBy() *ClusterByNode {
 	var v unsafe.Pointer
-	internal.ASTAuxLoadDataStatement_cluster_by(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataStatement_cluster_by(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -9046,7 +9046,7 @@ func (n *AuxLoadDataStatementNode) ClusterBy() *ClusterByNode {
 
 func (n *AuxLoadDataStatementNode) FromFiles() *AuxLoadDataFromFilesOptionsListNode {
 	var v unsafe.Pointer
-	internal.ASTAuxLoadDataStatement_from_files(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataStatement_from_files(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -9055,7 +9055,7 @@ func (n *AuxLoadDataStatementNode) FromFiles() *AuxLoadDataFromFilesOptionsListN
 
 func (n *AuxLoadDataStatementNode) WithPartitionColumnsClause() *WithPartitionColumnsClauseNode {
 	var v unsafe.Pointer
-	internal.ASTAuxLoadDataStatement_with_partition_columns_clause(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataStatement_with_partition_columns_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -9064,7 +9064,7 @@ func (n *AuxLoadDataStatementNode) WithPartitionColumnsClause() *WithPartitionCo
 
 func (n *AuxLoadDataStatementNode) WithConnectionClause() *WithConnectionClauseNode {
 	var v unsafe.Pointer
-	internal.ASTAuxLoadDataStatement_with_connection_clause(n.getRaw(), &v)
+	zetasqlparser.ASTAuxLoadDataStatement_with_connection_clause(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -9077,7 +9077,7 @@ type LabelNode struct {
 
 func (n *LabelNode) Name() *IdentifierNode {
 	var v unsafe.Pointer
-	internal.ASTLabel_name(n.getRaw(), &v)
+	zetasqlparser.ASTLabel_name(n.getRaw(), &v)
 	if v == nil {
 		return nil
 	}
@@ -11410,7 +11410,7 @@ func newLabelNode(n unsafe.Pointer) *LabelNode {
 
 func nodeKindName(n unsafe.Pointer) string {
 	var v unsafe.Pointer
-	internal.ASTNode_GetNodeKindString(n, &v)
+	zetasqlparser.ASTNode_GetNodeKindString(n, &v)
 	return helper.PtrToString(v)
 }
 

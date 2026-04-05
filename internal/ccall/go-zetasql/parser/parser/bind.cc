@@ -2,6 +2,10 @@
 #ifndef zetasql_parser_parser_bind_cc
 #define zetasql_parser_parser_bind_cc
 
+// CGO: Go invalidates cgo cache from this file only; bump when changing any
+// included zetasql source under internal/ccall/zetasql (e.g. error_helpers,
+// status_payload.h).
+
 // switch namespace
 #define absl zetasql_parser_parser_absl
 #define differential_privacy zetasql_parser_parser_differential_privacy
@@ -234,6 +238,10 @@
 #define GO_EXPORT(def) export_zetasql_parser_parser_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
+// Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h, or the
+// include guard prevents a later SUPPRESS include from skipping stub definitions.
+#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+
 // include headers
 //#define private public
 #include "zetasql/parser/ast_node.h"
@@ -251,10 +259,21 @@
 
 // include sources
 #include "zetasql/parser/ast_node_internal.h"
+#include "zetasql/parser/bison_parser.bison.cc"
+
+// bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
+#undef yylex
+#include "zetasql/parser/join_processor.cc"
+#include "zetasql/parser/flex_tokenizer.h"
+#include "zetasql/parser/flex_tokenizer.flex.cc"
+
+
+
 #include "zetasql/parser/bison_parser.cc"
+#include "zetasql/parser/flex_tokenizer.cc"
+
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/flex_tokenizer.cc"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
 
@@ -267,6 +286,7 @@
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

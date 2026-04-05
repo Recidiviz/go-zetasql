@@ -20,8 +20,10 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <unordered_map>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "zetasql/base/logging.h"
@@ -65,7 +67,7 @@ struct ConditionallyReservedToken {
 
 struct KeywordInfoPOD {
   absl::string_view keyword;
-  absl::variant<int, ConditionallyReservedToken> bison_token;
+  std::variant<int, ConditionallyReservedToken> bison_token;
   KeywordClass keyword_class = kNotReserved;
 };
 
@@ -480,10 +482,10 @@ const std::vector<KeywordInfo>& GetAllKeywords() {
         case kReserved:
           keywords->push_back({keyword.keyword,
                                std::get<int>(keyword.bison_token),
-                               absl::nullopt});
+                               std::nullopt});
           break;
         case kNotReserved:
-          keywords->push_back({keyword.keyword, absl::nullopt,
+          keywords->push_back({keyword.keyword, std::nullopt,
                                std::get<int>(keyword.bison_token)});
           break;
         case kConditionallyReserved: {
@@ -519,7 +521,7 @@ CreateKeywordInTokenizerTrie() {
     // We don't care about the KeywordInfo, but we have to create one because
     // the trie needs a non-NULL value. We use an arbitrary bison token.
     KeywordInfo* keyword_info =
-        new KeywordInfo(keyword, KW_SELECT, absl::nullopt);
+        new KeywordInfo(keyword, KW_SELECT, std::nullopt);
     trie->Insert(keyword_info->keyword(), keyword_info);
   }
   return std::move(trie);
@@ -566,7 +568,7 @@ CreateNonReservedIdentifiersThatMustBeBackquotedTrie() {
     // We don't care about the KeywordInfo, but we have to create one because
     // the trie needs a non-NULL value. We use an arbitrary bison token.
     KeywordInfo* keyword_info =
-        new KeywordInfo(keyword, KW_SELECT, absl::nullopt);
+        new KeywordInfo(keyword, KW_SELECT, std::nullopt);
     trie->Insert(keyword_info->keyword(), keyword_info);
   }
   return std::move(trie);

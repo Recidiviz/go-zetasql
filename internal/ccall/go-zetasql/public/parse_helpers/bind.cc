@@ -232,6 +232,9 @@
 #define GO_EXPORT(def) export_zetasql_public_parse_helpers_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
+// parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
+#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+
 // include headers
 //#define private public
 #include "zetasql/public/parse_helpers.h"

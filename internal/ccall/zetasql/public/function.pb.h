@@ -300,12 +300,43 @@ inline bool FunctionEnums_NamedArgumentKind_Parse(absl::string_view name, Functi
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FunctionEnums_NamedArgumentKind>(
       FunctionEnums_NamedArgumentKind_descriptor(), name, value);
 }
+enum FunctionEnums_ArgumentAliasKind : int {
+  FunctionEnums_ArgumentAliasKind_ARGUMENT_ALIAS_KIND_UNSPECIFIED = 0,
+  FunctionEnums_ArgumentAliasKind_ARGUMENT_NON_ALIASED = 1,
+  FunctionEnums_ArgumentAliasKind_ARGUMENT_ALIASED = 2,
+};
+
+bool FunctionEnums_ArgumentAliasKind_IsValid(int value);
+constexpr FunctionEnums_ArgumentAliasKind FunctionEnums_ArgumentAliasKind_ArgumentAliasKind_MIN = static_cast<FunctionEnums_ArgumentAliasKind>(0);
+constexpr FunctionEnums_ArgumentAliasKind FunctionEnums_ArgumentAliasKind_ArgumentAliasKind_MAX = static_cast<FunctionEnums_ArgumentAliasKind>(2);
+constexpr int FunctionEnums_ArgumentAliasKind_ArgumentAliasKind_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+FunctionEnums_ArgumentAliasKind_descriptor();
+template <typename T>
+const std::string& FunctionEnums_ArgumentAliasKind_Name(T value) {
+  static_assert(std::is_same<T, FunctionEnums_ArgumentAliasKind>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to ArgumentAliasKind_Name().");
+  return FunctionEnums_ArgumentAliasKind_Name(static_cast<FunctionEnums_ArgumentAliasKind>(value));
+}
+template <>
+inline const std::string& FunctionEnums_ArgumentAliasKind_Name(FunctionEnums_ArgumentAliasKind value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<FunctionEnums_ArgumentAliasKind_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool FunctionEnums_ArgumentAliasKind_Parse(absl::string_view name, FunctionEnums_ArgumentAliasKind* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FunctionEnums_ArgumentAliasKind>(
+      FunctionEnums_ArgumentAliasKind_descriptor(), name, value);
+}
 enum SignatureArgumentKind : int {
   ARG_TYPE_FIXED = 0,
   ARG_TYPE_ANY_1 = 1,
   ARG_TYPE_ANY_2 = 2,
+  ARG_TYPE_ANY_3 = 23,
   ARG_ARRAY_TYPE_ANY_1 = 3,
   ARG_ARRAY_TYPE_ANY_2 = 4,
+  ARG_ARRAY_TYPE_ANY_3 = 24,
   ARG_PROTO_MAP_ANY = 14,
   ARG_PROTO_MAP_KEY_ANY = 15,
   ARG_PROTO_MAP_VALUE_ANY = 16,
@@ -326,8 +357,8 @@ enum SignatureArgumentKind : int {
 
 bool SignatureArgumentKind_IsValid(int value);
 constexpr SignatureArgumentKind SignatureArgumentKind_MIN = static_cast<SignatureArgumentKind>(-1);
-constexpr SignatureArgumentKind SignatureArgumentKind_MAX = static_cast<SignatureArgumentKind>(22);
-constexpr int SignatureArgumentKind_ARRAYSIZE = 22 + 1;
+constexpr SignatureArgumentKind SignatureArgumentKind_MAX = static_cast<SignatureArgumentKind>(24);
+constexpr int SignatureArgumentKind_ARRAYSIZE = 24 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 SignatureArgumentKind_descriptor();
 template <typename T>
@@ -340,7 +371,7 @@ const std::string& SignatureArgumentKind_Name(T value) {
 template <>
 inline const std::string& SignatureArgumentKind_Name(SignatureArgumentKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<SignatureArgumentKind_descriptor,
-                                                 -1, 22>(
+                                                 -1, 24>(
       static_cast<int>(value));
 }
 inline bool SignatureArgumentKind_Parse(absl::string_view name, SignatureArgumentKind* value) {
@@ -636,6 +667,27 @@ class FunctionEnums final :
     return FunctionEnums_NamedArgumentKind_Parse(name, value);
   }
 
+  using ArgumentAliasKind = FunctionEnums_ArgumentAliasKind;
+  static constexpr ArgumentAliasKind ARGUMENT_ALIAS_KIND_UNSPECIFIED = FunctionEnums_ArgumentAliasKind_ARGUMENT_ALIAS_KIND_UNSPECIFIED;
+  static constexpr ArgumentAliasKind ARGUMENT_NON_ALIASED = FunctionEnums_ArgumentAliasKind_ARGUMENT_NON_ALIASED;
+  static constexpr ArgumentAliasKind ARGUMENT_ALIASED = FunctionEnums_ArgumentAliasKind_ARGUMENT_ALIASED;
+  static inline bool ArgumentAliasKind_IsValid(int value) {
+    return FunctionEnums_ArgumentAliasKind_IsValid(value);
+  }
+  static constexpr ArgumentAliasKind ArgumentAliasKind_MIN = FunctionEnums_ArgumentAliasKind_ArgumentAliasKind_MIN;
+  static constexpr ArgumentAliasKind ArgumentAliasKind_MAX = FunctionEnums_ArgumentAliasKind_ArgumentAliasKind_MAX;
+  static constexpr int ArgumentAliasKind_ARRAYSIZE = FunctionEnums_ArgumentAliasKind_ArgumentAliasKind_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ArgumentAliasKind_descriptor() {
+    return FunctionEnums_ArgumentAliasKind_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& ArgumentAliasKind_Name(T value) {
+    return FunctionEnums_ArgumentAliasKind_Name(value);
+  }
+  static inline bool ArgumentAliasKind_Parse(absl::string_view name, ArgumentAliasKind* value) {
+    return FunctionEnums_ArgumentAliasKind_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:zetasql.FunctionEnums)
@@ -723,6 +775,12 @@ struct is_proto_enum<::zetasql::FunctionEnums_NamedArgumentKind> : std::true_typ
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::FunctionEnums_NamedArgumentKind>() {
   return ::zetasql::FunctionEnums_NamedArgumentKind_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::FunctionEnums_ArgumentAliasKind> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::FunctionEnums_ArgumentAliasKind>() {
+  return ::zetasql::FunctionEnums_ArgumentAliasKind_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::SignatureArgumentKind> : std::true_type {};

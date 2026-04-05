@@ -84,8 +84,10 @@ func PreludeLinesFromBindCC(bindCC []byte) ([]string, error) {
 	return lines, nil
 }
 
-// applyExportPreludePolicy applies the go-absl/types/ dependency-only exception.
+// applyExportPreludePolicy applies export.inc exceptions derived from bind.cc preludes.
 func applyExportPreludePolicy(packageDir string, prelude []string) []string {
+	prelude = prependParserExportFlexSuppress(packageDir, prelude)
+	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
 	}
@@ -95,6 +97,45 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 		}
 	}
 	return prelude
+}
+
+// filterBisonExportDuplicateFlexTokenizer drops flex_tokenizer.cc from the bison generated-lib
+// export prelude. The parser package bind.cc already amalgamates that TU; re-exporting it pulls
+// duplicate definitions when parser includes bison's export.inc.
+func filterBisonExportDuplicateFlexTokenizer(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "/parser/bison_parser_generated_lib") {
+		return prelude
+	}
+	const drop = `#include "zetasql/parser/flex_tokenizer.cc"`
+	out := make([]string, 0, len(prelude))
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == drop {
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
+// prependParserExportFlexSuppress ensures parser/export.inc defines SUPPRESS before parser.h (line ~10)
+// pulls flex_tokenizer.h. Dependent packages (parse_helpers, etc.) amalgamate via export.inc only;
+// without this, the include guard skips a later SUPPRESS include and flex.cc conflicts with header stubs.
+func prependParserExportFlexSuppress(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "/parser/parser") {
+		return prelude
+	}
+	for i := 0; i < len(prelude) && i < 8; i++ {
+		if strings.Contains(prelude[i], "ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS") {
+			return prelude
+		}
+	}
+	out := make([]string, 0, len(prelude)+3)
+	out = append(out,
+		"// Must precede any header (e.g. parser.h) that pulls in flex_tokenizer.h.",
+		"#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS",
+		"")
+	out = append(out, prelude...)
+	return out
 }
 
 // PreludeForExport returns the prelude lines that export.inc should contain (raw extraction plus policy).

@@ -24,15 +24,11 @@
 #include <stack>
 #include <vector>
 
-// FlexLexer.h is included early in the generated flex_tokenizer.flex.cc (before
-// this header is pulled in from the lex file's %{...%} section). That include
-// defines yyFlexLexerOnce; including FlexLexer.h again would redefine
-// ZetaSqlFlexLexer.
-#ifndef yyFlexLexerOnce
+// Some contortions to avoid duplicate inclusion of FlexLexer.h in the
+// generated flex_tokenizer.flex.cc.
 #undef yyFlexLexer
-#define yyFlexLexer ZetaSqlFlexLexer
+#define yyFlexLexer ZetaSqlFlexTokenizerBase
 #include <FlexLexer.h>
-#endif
 
 #include "zetasql/parser/bison_parser_mode.h"
 #include "zetasql/parser/location.hh"
@@ -48,7 +44,7 @@ namespace zetasql {
 namespace parser {
 
 // Flex-based tokenizer for the ZetaSQL Bison parser.
-class ZetaSqlFlexTokenizer final : public ZetaSqlFlexLexer {
+class ZetaSqlFlexTokenizer final : public ZetaSqlFlexTokenizerBase {
  public:
   // Type aliases to improve readability of API.
   using TokenKind = int;
@@ -133,6 +129,8 @@ class ZetaSqlFlexTokenizer final : public ZetaSqlFlexLexer {
 
   bool AreMacrosEnabled() const;
 
+  bool AreAlterArrayOptionsEnabled() const;
+
   // EOF sentinel input. This is appended to the input and used as a sentinel in
   // the tokenizer. The reason for doing this is that some tokenizer rules
   // try to match trailing context of the form [^...] where "..." is a set of
@@ -212,11 +210,11 @@ class ZetaSqlFlexTokenizer final : public ZetaSqlFlexLexer {
 }  // namespace parser
 }  // namespace zetasql
 
-// Stubs for yyFlexLexer members referenced when %option yyclass is used; the
-// generated flex_tokenizer.flex.cc also emits definitions after FlexLexer.h
-// unless removed there—keep these for translation units that only include this
-// header without that generated block.
-inline int ZetaSqlFlexLexer::yylex() { return 0; }
-inline int ZetaSqlFlexLexer::yywrap() { return 1; }
+// This incantation is necessary because for some reason these functions are not
+// generated for ZetaSqlFlexTokenizerBase, but the class does reference them.
+#ifndef ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+inline int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
+inline int ZetaSqlFlexTokenizerBase::yywrap() { return 1; }
+#endif
 
 #endif  // ZETASQL_PARSER_FLEX_TOKENIZER_H_

@@ -659,6 +659,26 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGetProtoOneof> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGetProtoOneof(*node));
+  ResolvedGetProtoOneofBuilder builder = ToBuilder(std::move(node));
+  if (builder.expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGetProtoOneof(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedSubqueryExpr> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedSubqueryExpr(*node));
   ResolvedSubqueryExprBuilder builder = ToBuilder(std::move(node));

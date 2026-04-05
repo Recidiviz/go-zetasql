@@ -284,8 +284,6 @@
 
 #include "bridge_cc.inc"
 
-#include "zetasql/public/types/type_modifiers.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -21,7 +21,6 @@ import (
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/base/map_util"
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/base/ret_check"
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/base/status"
-	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/parser"
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/public/catalog"
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/public/id_string"
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/public/strings"

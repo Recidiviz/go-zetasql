@@ -421,6 +421,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedReplaceField(
       const ResolvedReplaceField* node);
 
+  absl::Status CopyVisitResolvedGetProtoOneof(
+      const ResolvedGetProtoOneof* node);
+
   absl::Status CopyVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node);
 
@@ -1027,6 +1030,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedReplaceField(
       const ResolvedReplaceField* node) override;
+
+  absl::Status VisitResolvedGetProtoOneof(
+      const ResolvedGetProtoOneof* node) override;
 
   absl::Status VisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node) override;

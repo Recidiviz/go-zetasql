@@ -106,6 +106,8 @@ class ResolvedReplaceFieldItem;
 class ResolvedReplaceFieldItemBuilder;
 class ResolvedReplaceField;
 class ResolvedReplaceFieldBuilder;
+class ResolvedGetProtoOneof;
+class ResolvedGetProtoOneofBuilder;
 class ResolvedSubqueryExpr;
 class ResolvedSubqueryExprBuilder;
 class ResolvedWithExpr;
@@ -590,7 +592,7 @@ class ResolvedExpr  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 24;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 25;
 
   bool IsExpression() const final { return true; }
 
@@ -704,6 +706,7 @@ class ResolvedExpr  : public ResolvedNode {
   friend class ResolvedFlattenBuilder;
   friend class ResolvedFlattenedArgBuilder;
   friend class ResolvedReplaceFieldBuilder;
+  friend class ResolvedGetProtoOneofBuilder;
   friend class ResolvedSubqueryExprBuilder;
   friend class ResolvedWithExprBuilder;
   friend class ResolvedDMLDefaultBuilder;
@@ -712,11 +715,11 @@ class ResolvedExpr  : public ResolvedNode {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool type_accessed() const {
-   return accessed_ & (1<<0);
+  bool type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool type_annotation_map_accessed() const {
-   return accessed_ & (1<<1);
+  bool type_annotation_map_accessed() const {
+    return accessed_ & (1<<1);
  }
   const Type* type_;
   const AnnotationMap* type_annotation_map_;
@@ -872,17 +875,17 @@ class ResolvedLiteral final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool value_accessed() const {
-   return accessed_ & (1<<0);
+  bool value_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool has_explicit_type_accessed() const {
-   return accessed_ & (1<<1);
+  bool has_explicit_type_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool float_literal_id_accessed() const {
-   return accessed_ & (1<<2);
+  bool float_literal_id_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool preserve_in_literal_remover_accessed() const {
-   return accessed_ & (1<<3);
+  bool preserve_in_literal_remover_accessed() const {
+    return accessed_ & (1<<3);
  }
   Value value_;
   bool has_explicit_type_;
@@ -1053,14 +1056,14 @@ class ResolvedParameter final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool position_accessed() const {
-   return accessed_ & (1<<1);
+  bool position_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_untyped_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_untyped_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string name_;
   int position_;
@@ -1199,8 +1202,8 @@ class ResolvedExpressionColumn final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::string name_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -1323,8 +1326,8 @@ class ResolvedCatalogColumnRef final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_accessed() const {
+    return accessed_ & (1<<0);
  }
   const Column* column_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -1466,11 +1469,11 @@ class ResolvedColumnRef final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_correlated_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_correlated_accessed() const {
+    return accessed_ & (1<<1);
  }
   ResolvedColumn column_;
   bool is_correlated_;
@@ -1614,8 +1617,8 @@ class ResolvedGroupingSetMultiColumn final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedColumnRef>> column_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -1760,8 +1763,8 @@ class ResolvedConstant final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool constant_accessed() const {
-   return accessed_ & (1<<0);
+  bool constant_accessed() const {
+    return accessed_ & (1<<0);
  }
   const Constant* constant_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -1898,8 +1901,8 @@ class ResolvedSystemVariable final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::string> name_path_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -2098,14 +2101,14 @@ class ResolvedInlineLambda final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool argument_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool argument_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool parameter_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool parameter_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool body_accessed() const {
-   return accessed_ & (1<<2);
+  bool body_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<ResolvedColumn> argument_list_;
   std::vector<std::unique_ptr<const ResolvedColumnRef>> parameter_list_;
@@ -2255,8 +2258,8 @@ class ResolvedSequence final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool sequence_accessed() const {
-   return accessed_ & (1<<0);
+  bool sequence_accessed() const {
+    return accessed_ & (1<<0);
  }
   const Sequence* sequence_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -2405,11 +2408,11 @@ class ResolvedFilterFieldArg final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool include_accessed() const {
-   return accessed_ & (1<<0);
+  bool include_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool field_descriptor_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool field_descriptor_path_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool include_;
   std::vector<const google::protobuf::FieldDescriptor*> field_descriptor_path_;
@@ -2609,14 +2612,14 @@ class ResolvedFilterField final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool filter_field_arg_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool filter_field_arg_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool reset_cleared_required_fields_accessed() const {
-   return accessed_ & (1<<2);
+  bool reset_cleared_required_fields_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   std::vector<std::unique_ptr<const ResolvedFilterFieldArg>> filter_field_arg_list_;
@@ -2931,26 +2934,26 @@ class ResolvedFunctionCallBase  : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool function_accessed() const {
-   return accessed_ & (1<<0);
+  bool function_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<1);
+  bool signature_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool argument_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool argument_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool generic_argument_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool generic_argument_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool error_mode_accessed() const {
-   return accessed_ & (1<<4);
+  bool error_mode_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool hint_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool hint_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool collation_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool collation_list_accessed() const {
+    return accessed_ & (1<<6);
  }
   const Function* function_;
   absl::optional<FunctionSignature> signature_;
@@ -3088,8 +3091,8 @@ class ResolvedFunctionCall final : public ResolvedFunctionCallBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool function_call_info_accessed() const {
-   return accessed_ & (1<<0);
+  bool function_call_info_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::shared_ptr<ResolvedFunctionCallInfo> function_call_info_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -3366,17 +3369,17 @@ class ResolvedNonScalarFunctionCallBase  : public ResolvedFunctionCallBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool distinct_accessed() const {
-   return accessed_ & (1<<0);
+  bool distinct_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool null_handling_modifier_accessed() const {
-   return accessed_ & (1<<1);
+  bool null_handling_modifier_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool with_group_rows_subquery_accessed() const {
-   return accessed_ & (1<<2);
+  bool with_group_rows_subquery_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool with_group_rows_parameter_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool with_group_rows_parameter_list_accessed() const {
+    return accessed_ & (1<<3);
  }
   bool distinct_;
   ResolvedNonScalarFunctionCallBase::NullHandlingModifier null_handling_modifier_;
@@ -3582,17 +3585,17 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool having_modifier_accessed() const {
-   return accessed_ & (1<<0);
+  bool having_modifier_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool order_by_item_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool order_by_item_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool limit_accessed() const {
-   return accessed_ & (1<<2);
+  bool limit_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool function_call_info_accessed() const {
-   return accessed_ & (1<<3);
+  bool function_call_info_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::unique_ptr<const ResolvedAggregateHavingModifier> having_modifier_;
   std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list_;
@@ -3846,8 +3849,8 @@ class ResolvedAnalyticFunctionCall final : public ResolvedNonScalarFunctionCallB
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool window_frame_accessed() const {
-   return accessed_ & (1<<0);
+  bool window_frame_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedWindowFrame> window_frame_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -4068,14 +4071,14 @@ class ResolvedExtendedCastElement final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool from_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool from_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool to_type_accessed() const {
-   return accessed_ & (1<<1);
+  bool to_type_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool function_accessed() const {
-   return accessed_ & (1<<2);
+  bool function_accessed() const {
+    return accessed_ & (1<<2);
  }
   const Type* from_type_;
   const Type* to_type_;
@@ -4220,8 +4223,8 @@ class ResolvedExtendedCast final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool element_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool element_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedExtendedCastElement>> element_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -4495,23 +4498,23 @@ class ResolvedCast final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool return_null_on_error_accessed() const {
-   return accessed_ & (1<<1);
+  bool return_null_on_error_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool extended_cast_accessed() const {
-   return accessed_ & (1<<2);
+  bool extended_cast_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool format_accessed() const {
-   return accessed_ & (1<<3);
+  bool format_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool time_zone_accessed() const {
-   return accessed_ & (1<<4);
+  bool time_zone_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool type_modifiers_accessed() const {
-   return accessed_ & (1<<5);
+  bool type_modifiers_accessed() const {
+    return accessed_ & (1<<5);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   bool return_null_on_error_;
@@ -4678,8 +4681,8 @@ class ResolvedMakeStruct final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool field_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool field_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedExpr>> field_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -4845,8 +4848,8 @@ class ResolvedMakeProto final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool field_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool field_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedMakeProtoField>> field_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -5029,14 +5032,14 @@ class ResolvedMakeProtoField final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool field_descriptor_accessed() const {
-   return accessed_ & (1<<0);
+  bool field_descriptor_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool format_accessed() const {
-   return accessed_ & (1<<1);
+  bool format_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool expr_accessed() const {
-   return accessed_ & (1<<2);
+  bool expr_accessed() const {
+    return accessed_ & (1<<2);
  }
   const google::protobuf::FieldDescriptor* field_descriptor_;
   FieldFormat::Format format_;
@@ -5192,14 +5195,14 @@ class ResolvedGetStructField final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool field_idx_accessed() const {
-   return accessed_ & (1<<1);
+  bool field_idx_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool field_expr_is_positional_accessed() const {
-   return accessed_ & (1<<2);
+  bool field_expr_is_positional_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   int field_idx_;
@@ -5447,23 +5450,23 @@ class ResolvedGetProtoField final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool field_descriptor_accessed() const {
-   return accessed_ & (1<<1);
+  bool field_descriptor_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool default_value_accessed() const {
-   return accessed_ & (1<<2);
+  bool default_value_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool get_has_bit_accessed() const {
-   return accessed_ & (1<<3);
+  bool get_has_bit_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool format_accessed() const {
-   return accessed_ & (1<<4);
+  bool format_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool return_default_value_when_unset_accessed() const {
-   return accessed_ & (1<<5);
+  bool return_default_value_when_unset_accessed() const {
+    return accessed_ & (1<<5);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   const google::protobuf::FieldDescriptor* field_descriptor_;
@@ -5614,11 +5617,11 @@ class ResolvedGetJsonField final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool field_name_accessed() const {
-   return accessed_ & (1<<1);
+  bool field_name_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   std::string field_name_;
@@ -5790,11 +5793,11 @@ class ResolvedFlatten final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool get_field_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool get_field_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   std::vector<std::unique_ptr<const ResolvedExpr>> get_field_list_;
@@ -6122,14 +6125,14 @@ class ResolvedReplaceFieldItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool struct_index_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool struct_index_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool proto_field_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool proto_field_path_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   std::vector<int> struct_index_path_;
@@ -6301,11 +6304,11 @@ class ResolvedReplaceField final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool replace_field_item_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool replace_field_item_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   std::vector<std::unique_ptr<const ResolvedReplaceFieldItem>> replace_field_item_list_;
@@ -6355,6 +6358,156 @@ std::unique_ptr<ResolvedReplaceField> MakeResolvedReplaceField(
 inline std::unique_ptr<ResolvedReplaceField> MakeResolvedReplaceField() {
   return std::unique_ptr<ResolvedReplaceField>(
       new ResolvedReplaceField());
+}
+
+// Returns a string value indicating which field of <oneof_descriptor> is
+// set in the containing proto <expr>. If none of the fields are set, an
+// empty string is returned.
+//
+// See (broken link) for more detail.
+class ResolvedGetProtoOneof final : public ResolvedExpr {
+ public:
+  typedef ResolvedExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GET_PROTO_ONEOF;
+
+ protected:
+  ResolvedGetProtoOneof()
+      : ResolvedExpr()
+      , expr_()
+      , oneof_descriptor_()
+  {}
+
+ public:
+
+  ResolvedGetProtoOneof(const ResolvedGetProtoOneof&) = delete;
+  ResolvedGetProtoOneof& operator=(const ResolvedGetProtoOneof&) = delete;
+
+  friend std::unique_ptr<ResolvedGetProtoOneof> MakeResolvedGetProtoOneof(
+      const Type* type,
+      std::unique_ptr<const ResolvedExpr> expr,
+      const google::protobuf::OneofDescriptor* oneof_descriptor
+  );
+  ~ResolvedGetProtoOneof() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GET_PROTO_ONEOF; }
+  std::string node_kind_string() const final { return "GetProtoOneof"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGetProtoOneofProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGetProtoOneof>> RestoreFrom(
+      const ResolvedGetProtoOneofProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedExpr* expr() const {
+    accessed_ |= (1<<0);
+    return expr_.get();
+  }
+  void set_expr(std::unique_ptr<const ResolvedExpr> v) {
+    expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return std::move(expr_);
+  }
+
+  // The google::protobuf::OneofDescriptor for a Oneof contained in <expr>.
+  // This descriptor provides google::protobuf::FieldDescriptors for each of
+  // the fields contained in the Oneof.
+  const google::protobuf::OneofDescriptor* oneof_descriptor() const {
+    accessed_ |= (1<<1);
+    return oneof_descriptor_;
+  }
+  void set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) {
+    oneof_descriptor_ = v;
+  }
+
+ protected:
+  explicit ResolvedGetProtoOneof(
+      const Type* type,
+      std::unique_ptr<const ResolvedExpr> expr,
+      const google::protobuf::OneofDescriptor* oneof_descriptor,
+      ConstructorOverload)
+      : ResolvedExpr(
+            type,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      expr_(std::move(expr)),
+      oneof_descriptor_(oneof_descriptor) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGetProtoOneof> MakeResolvedGetProtoOneof();
+  friend class ResolvedGetProtoOneofBuilder;
+  friend ResolvedGetProtoOneofBuilder ToBuilder(std::unique_ptr<const ResolvedGetProtoOneof>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool oneof_descriptor_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedExpr> expr_;
+  const google::protobuf::OneofDescriptor* oneof_descriptor_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGetProtoOneof> MakeResolvedGetProtoOneof(
+    const Type* type,
+    std::unique_ptr<const ResolvedExpr> expr,
+    const google::protobuf::OneofDescriptor* oneof_descriptor) {
+  return std::unique_ptr<ResolvedGetProtoOneof>(new ResolvedGetProtoOneof(
+        type,
+        std::move(expr),
+        oneof_descriptor,
+        ResolvedGetProtoOneof::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGetProtoOneof> MakeResolvedGetProtoOneof() {
+  return std::unique_ptr<ResolvedGetProtoOneof>(
+      new ResolvedGetProtoOneof());
 }
 
 // A subquery in an expression (not a FROM clause).  The subquery runs
@@ -6638,23 +6791,23 @@ class ResolvedSubqueryExpr final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool subquery_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool subquery_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool parameter_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool parameter_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool in_expr_accessed() const {
-   return accessed_ & (1<<2);
+  bool in_expr_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool in_collation_accessed() const {
-   return accessed_ & (1<<3);
+  bool in_collation_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool subquery_accessed() const {
-   return accessed_ & (1<<4);
+  bool subquery_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool hint_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool hint_list_accessed() const {
+    return accessed_ & (1<<5);
  }
   ResolvedSubqueryExpr::SubqueryType subquery_type_;
   std::vector<std::unique_ptr<const ResolvedColumnRef>> parameter_list_;
@@ -6859,11 +7012,11 @@ class ResolvedWithExpr final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool assignment_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool assignment_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool expr_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> assignment_list_;
   std::unique_ptr<const ResolvedExpr> expr_;
@@ -7106,17 +7259,17 @@ class ResolvedScan  : public ResolvedNode {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool hint_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool hint_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_ordered_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_ordered_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool node_source_accessed() const {
-   return accessed_ & (1<<3);
+  bool node_source_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::vector<ResolvedColumn> column_list_;
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list_;
@@ -7280,14 +7433,14 @@ class ResolvedExecuteAsRoleScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool original_inlined_view_accessed() const {
-   return accessed_ & (1<<1);
+  bool original_inlined_view_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool original_inlined_tvf_accessed() const {
-   return accessed_ & (1<<2);
+  bool original_inlined_tvf_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   const Table* original_inlined_view_;
@@ -7412,8 +7565,8 @@ class ResolvedModel final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool model_accessed() const {
-   return accessed_ & (1<<0);
+  bool model_accessed() const {
+    return accessed_ & (1<<0);
  }
   const Model* model_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -7530,8 +7683,8 @@ class ResolvedConnection final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool connection_accessed() const {
-   return accessed_ & (1<<0);
+  bool connection_accessed() const {
+    return accessed_ & (1<<0);
  }
   const Connection* connection_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -7697,11 +7850,11 @@ class ResolvedDescriptor final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool descriptor_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool descriptor_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool descriptor_column_name_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool descriptor_column_name_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<ResolvedColumn> descriptor_column_list_;
   std::vector<std::string> descriptor_column_name_list_;
@@ -7989,17 +8142,17 @@ class ResolvedTableScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool for_system_time_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool for_system_time_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool column_index_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool column_index_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool alias_accessed() const {
-   return accessed_ & (1<<3);
+  bool alias_accessed() const {
+    return accessed_ & (1<<3);
  }
   const Table* table_;
   std::unique_ptr<const ResolvedExpr> for_system_time_expr_;
@@ -8194,17 +8347,17 @@ class ResolvedJoinScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool join_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool join_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool left_scan_accessed() const {
-   return accessed_ & (1<<1);
+  bool left_scan_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool right_scan_accessed() const {
-   return accessed_ & (1<<2);
+  bool right_scan_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool join_expr_accessed() const {
-   return accessed_ & (1<<3);
+  bool join_expr_accessed() const {
+    return accessed_ & (1<<3);
  }
   ResolvedJoinScan::JoinType join_type_;
   std::unique_ptr<const ResolvedScan> left_scan_;
@@ -8435,23 +8588,23 @@ class ResolvedArrayScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool array_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool array_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool element_column_accessed() const {
-   return accessed_ & (1<<2);
+  bool element_column_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool array_offset_column_accessed() const {
-   return accessed_ & (1<<3);
+  bool array_offset_column_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool join_expr_accessed() const {
-   return accessed_ & (1<<4);
+  bool join_expr_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool is_outer_accessed() const {
-   return accessed_ & (1<<5);
+  bool is_outer_accessed() const {
+    return accessed_ & (1<<5);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::unique_ptr<const ResolvedExpr> array_expr_;
@@ -8583,8 +8736,8 @@ class ResolvedColumnHolder final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_accessed() const {
+    return accessed_ & (1<<0);
  }
   ResolvedColumn column_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -8724,11 +8877,11 @@ class ResolvedFilterScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool filter_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool filter_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::unique_ptr<const ResolvedExpr> filter_expr_;
@@ -8868,11 +9021,11 @@ class ResolvedGroupingCall final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool group_by_column_accessed() const {
-   return accessed_ & (1<<0);
+  bool group_by_column_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool output_column_accessed() const {
-   return accessed_ & (1<<1);
+  bool output_column_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedColumnRef> group_by_column_;
   ResolvedColumn output_column_;
@@ -9084,8 +9237,8 @@ class ResolvedGroupingSet final : public ResolvedGroupingSetBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool group_by_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool group_by_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedColumnRef>> group_by_column_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -9252,8 +9405,8 @@ class ResolvedRollup final : public ResolvedGroupingSetBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool rollup_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool rollup_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> rollup_column_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -9413,8 +9566,8 @@ class ResolvedCube final : public ResolvedGroupingSetBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool cube_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool cube_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> cube_column_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -9772,26 +9925,26 @@ class ResolvedAggregateScanBase  : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool group_by_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool group_by_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool collation_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool collation_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool aggregate_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool aggregate_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool grouping_set_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool grouping_set_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool rollup_column_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool rollup_column_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool grouping_call_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool grouping_call_list_accessed() const {
+    return accessed_ & (1<<6);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> group_by_list_;
@@ -10169,11 +10322,11 @@ class ResolvedAnonymizedAggregateScan final : public ResolvedAggregateScanBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool k_threshold_expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool k_threshold_expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool anonymization_option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool anonymization_option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> k_threshold_expr_;
   std::vector<std::unique_ptr<const ResolvedOption>> anonymization_option_list_;
@@ -10474,11 +10627,11 @@ class ResolvedDifferentialPrivacyAggregateScan final : public ResolvedAggregateS
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool group_selection_threshold_expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool group_selection_threshold_expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> group_selection_threshold_expr_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -10755,8 +10908,8 @@ class ResolvedAggregationThresholdAggregateScan final : public ResolvedAggregate
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -11016,11 +11169,11 @@ class ResolvedSetOperationItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedScan> scan_;
   std::vector<ResolvedColumn> output_column_list_;
@@ -11239,17 +11392,17 @@ class ResolvedSetOperationScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool op_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool op_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool input_item_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool input_item_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool column_match_mode_accessed() const {
-   return accessed_ & (1<<2);
+  bool column_match_mode_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool column_propagation_mode_accessed() const {
-   return accessed_ & (1<<3);
+  bool column_propagation_mode_accessed() const {
+    return accessed_ & (1<<3);
  }
   ResolvedSetOperationScan::SetOperationType op_type_;
   std::vector<std::unique_ptr<const ResolvedSetOperationItem>> input_item_list_;
@@ -11454,11 +11607,11 @@ class ResolvedOrderByScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool order_by_item_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool order_by_item_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list_;
@@ -11662,14 +11815,14 @@ class ResolvedLimitOffsetScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool limit_accessed() const {
-   return accessed_ & (1<<1);
+  bool limit_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool offset_accessed() const {
-   return accessed_ & (1<<2);
+  bool offset_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::unique_ptr<const ResolvedExpr> limit_;
@@ -11799,8 +11952,8 @@ class ResolvedWithRefScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool with_query_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool with_query_name_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::string with_query_name_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -11961,11 +12114,11 @@ class ResolvedAnalyticScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool function_group_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool function_group_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::vector<std::unique_ptr<const ResolvedAnalyticFunctionGroup>> function_group_list_;
@@ -12249,26 +12402,26 @@ class ResolvedSampleScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool method_accessed() const {
-   return accessed_ & (1<<1);
+  bool method_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool size_accessed() const {
-   return accessed_ & (1<<2);
+  bool size_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool unit_accessed() const {
-   return accessed_ & (1<<3);
+  bool unit_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool repeatable_argument_accessed() const {
-   return accessed_ & (1<<4);
+  bool repeatable_argument_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool weight_column_accessed() const {
-   return accessed_ & (1<<5);
+  bool weight_column_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool partition_by_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool partition_by_list_accessed() const {
+    return accessed_ & (1<<6);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::string method_;
@@ -12463,11 +12616,11 @@ class ResolvedComputedColumn final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool expr_accessed() const {
+    return accessed_ & (1<<1);
  }
   ResolvedColumn column_;
   std::unique_ptr<const ResolvedExpr> expr_;
@@ -12664,20 +12817,20 @@ class ResolvedOrderByItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_ref_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_ref_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool collation_name_accessed() const {
-   return accessed_ & (1<<1);
+  bool collation_name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_descending_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_descending_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool null_order_accessed() const {
-   return accessed_ & (1<<3);
+  bool null_order_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool collation_accessed() const {
-   return accessed_ & (1<<4);
+  bool collation_accessed() const {
+    return accessed_ & (1<<4);
  }
   std::unique_ptr<const ResolvedColumnRef> column_ref_;
   std::unique_ptr<const ResolvedExpr> collation_name_;
@@ -12917,20 +13070,20 @@ class ResolvedColumnAnnotations final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool collation_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool collation_name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool not_null_accessed() const {
-   return accessed_ & (1<<1);
+  bool not_null_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool child_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool child_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool type_parameters_accessed() const {
-   return accessed_ & (1<<4);
+  bool type_parameters_accessed() const {
+    return accessed_ & (1<<4);
  }
   std::unique_ptr<const ResolvedExpr> collation_name_;
   bool not_null_;
@@ -13134,11 +13287,11 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expression_accessed() const {
-   return accessed_ & (1<<0);
+  bool expression_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool stored_mode_accessed() const {
-   return accessed_ & (1<<1);
+  bool stored_mode_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> expression_;
   ResolvedGeneratedColumnInfo::StoredMode stored_mode_;
@@ -13282,11 +13435,11 @@ class ResolvedColumnDefaultValue final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expression_accessed() const {
-   return accessed_ & (1<<0);
+  bool expression_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool sql_accessed() const {
-   return accessed_ & (1<<1);
+  bool sql_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> expression_;
   std::string sql_;
@@ -13508,26 +13661,26 @@ class ResolvedColumnDefinition final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool type_accessed() const {
-   return accessed_ & (1<<1);
+  bool type_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool annotations_accessed() const {
-   return accessed_ & (1<<2);
+  bool annotations_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool is_hidden_accessed() const {
-   return accessed_ & (1<<3);
+  bool is_hidden_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool column_accessed() const {
-   return accessed_ & (1<<4);
+  bool column_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool generated_column_info_accessed() const {
-   return accessed_ & (1<<5);
+  bool generated_column_info_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool default_value_accessed() const {
-   return accessed_ & (1<<6);
+  bool default_value_accessed() const {
+    return accessed_ & (1<<6);
  }
   std::string name_;
   const Type* type_;
@@ -13832,20 +13985,20 @@ class ResolvedPrimaryKey final : public ResolvedConstraint {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_offset_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_offset_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool unenforced_accessed() const {
-   return accessed_ & (1<<2);
+  bool unenforced_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool constraint_name_accessed() const {
-   return accessed_ & (1<<3);
+  bool constraint_name_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool column_name_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool column_name_list_accessed() const {
+    return accessed_ & (1<<4);
  }
   std::vector<int> column_offset_list_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -14220,35 +14373,35 @@ class ResolvedForeignKey final : public ResolvedConstraint {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool constraint_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool constraint_name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool referencing_column_offset_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool referencing_column_offset_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool referenced_table_accessed() const {
-   return accessed_ & (1<<2);
+  bool referenced_table_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool referenced_column_offset_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool referenced_column_offset_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool match_mode_accessed() const {
-   return accessed_ & (1<<4);
+  bool match_mode_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool update_action_accessed() const {
-   return accessed_ & (1<<5);
+  bool update_action_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool delete_action_accessed() const {
-   return accessed_ & (1<<6);
+  bool delete_action_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool enforced_accessed() const {
-   return accessed_ & (1<<7);
+  bool enforced_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<8);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool referencing_column_list_accessed() const {
-   return accessed_ & (1<<9);
+  bool referencing_column_list_accessed() const {
+    return accessed_ & (1<<9);
  }
   std::string constraint_name_;
   std::vector<int> referencing_column_offset_list_;
@@ -14506,17 +14659,17 @@ class ResolvedCheckConstraint final : public ResolvedConstraint {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool constraint_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool constraint_name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool expression_accessed() const {
-   return accessed_ & (1<<1);
+  bool expression_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool enforced_accessed() const {
-   return accessed_ & (1<<2);
+  bool enforced_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string constraint_name_;
   std::unique_ptr<const ResolvedExpr> expression_;
@@ -14685,11 +14838,11 @@ class ResolvedOutputColumn final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string name_;
   ResolvedColumn column_;
@@ -14857,11 +15010,11 @@ class ResolvedProjectScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool input_scan_accessed() const {
-   return accessed_ & (1<<1);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> expr_list_;
   std::unique_ptr<const ResolvedScan> input_scan_;
@@ -15166,23 +15319,23 @@ class ResolvedTVFScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool tvf_accessed() const {
-   return accessed_ & (1<<0);
+  bool tvf_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<1);
+  bool signature_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool argument_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool argument_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool column_index_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool column_index_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool alias_accessed() const {
-   return accessed_ & (1<<4);
+  bool alias_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool function_call_signature_accessed() const {
-   return accessed_ & (1<<5);
+  bool function_call_signature_accessed() const {
+    return accessed_ & (1<<5);
  }
   const TableValuedFunction* tvf_;
   std::shared_ptr<TVFSignature> signature_;
@@ -15403,11 +15556,11 @@ class ResolvedGroupRowsScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool alias_accessed() const {
-   return accessed_ & (1<<1);
+  bool alias_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> input_column_list_;
   std::string alias_;
@@ -15457,25 +15610,29 @@ std::unique_ptr<ResolvedGroupRowsScan> MakeResolvedGroupRowsScan(
 // This represents a generic argument to a function. The argument can be
 // semantically an expression, relation, model, connection descriptor, or
 // sequence.
-// Only one of the six fields will be set.
 //
-// <expr> represents a scalar function argument.
-// <scan> represents a table-typed argument.
-// <model> represents a ML model function argument.
-// <connection> represents a connection object function argument.
-// <descriptor_arg> represents a descriptor object function argument.
-// <sequence> represents a sequence object function argument.
+// The following fields are mutally exclusive:
+// * `expr` represents a scalar function argument.
+// * `scan` represents a table-typed argument.
+// * `model` represents a ML model function argument.
+// * `connection` represents a connection object function argument.
+// * `descriptor_arg` represents a descriptor object function argument.
+// * `inline_lambda` represents a lambda function argument.
+// * `sequence` represents a sequence object function argument.
 //
 // This node could be used in multiple places:
 // * ResolvedTVFScan supports all of these.
-// * ResolvedFunctionCall supports <expr> and <sequence>.
-// * ResolvedCallStmt supports only <expr>.
+// * ResolvedFunctionCall supports `expr`, `inline_lambda`, and `sequence`.
+// * ResolvedCallStmt supports only `expr`.
 //
-// If the argument has type <scan>, <argument_column_list> maps columns from
-// <scan> into specific columns of the argument's input schema, matching
-// those columns positionally. i.e. <scan>'s column_list may have fewer
+// If the argument has type `scan`, `argument_column_list` maps columns from
+// `scan` into specific columns of the argument's input schema, matching
+// those columns positionally. i.e. `scan`'s column_list may have fewer
 // columns or out-of-order columns, and this vector maps those columns into
 // specific input columns.
+//
+// Some arguments may also have an alias, stored in the `argument_alias`
+// field, which is not mutally exclusive with the fields above.
 class ResolvedFunctionArgument final : public ResolvedArgument {
  public:
   typedef ResolvedArgument SUPER;
@@ -15493,6 +15650,7 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
       , argument_column_list_()
       , inline_lambda_()
       , sequence_()
+      , argument_alias_()
   {}
 
  public:
@@ -15508,7 +15666,8 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
       std::unique_ptr<const ResolvedDescriptor> descriptor_arg,
       const std::vector<ResolvedColumn>& argument_column_list,
       std::unique_ptr<const ResolvedInlineLambda> inline_lambda,
-      std::unique_ptr<const ResolvedSequence> sequence
+      std::unique_ptr<const ResolvedSequence> sequence,
+      const std::string& argument_alias
   );
   ~ResolvedFunctionArgument() final;
 
@@ -15666,6 +15825,35 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
     return std::move(sequence_);
   }
 
+  // Stores the alias of the argument, either provided by the user or
+  // generated by the resolver. This can only be populated if allowed
+  // by `FunctionArgumentTypeOptions::argument_alias_kind`.
+  //
+  // An argument alias is an identifier associated with a function
+  // argument in the form of F(<arg> AS <alias>), where <alias> is the
+  // argument alias for the function argument <arg>.
+  //
+  // Examples include
+  //   * STRUCT(1 AS x, 2 AS y)
+  //   * ARRAY_ZIP(arr1 AS a, arr2 AS b)
+  // where the argument alias is used as a field name in an output
+  // STRUCT value. For dynamic types like JSON, these aliases may be
+  // used at run-time.
+  //
+  // This field will be empty if the argument does not support aliases,
+  // or an alias could not be inferred.
+  //
+  // The current implementation only allows an argument to have an
+  // alias if its type is `expr`, but the support may be extended to
+  // other types, e.g. `scan` or `model` in the future.
+  const std::string& argument_alias() const {
+    accessed_ |= (1<<8);
+    return argument_alias_;
+  }
+  void set_argument_alias(const std::string& v) {
+    argument_alias_ = v;
+  }
+
  protected:
   explicit ResolvedFunctionArgument(
       std::unique_ptr<const ResolvedExpr> expr,
@@ -15676,6 +15864,7 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
       const std::vector<ResolvedColumn>& argument_column_list,
       std::unique_ptr<const ResolvedInlineLambda> inline_lambda,
       std::unique_ptr<const ResolvedSequence> sequence,
+      const std::string& argument_alias,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -15686,7 +15875,8 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
       descriptor_arg_(std::move(descriptor_arg)),
       argument_column_list_(argument_column_list),
       inline_lambda_(std::move(inline_lambda)),
-      sequence_(std::move(sequence)) {
+      sequence_(std::move(sequence)),
+      argument_alias_(argument_alias) {
   }
 
   void CollectDebugStringFields(
@@ -15699,29 +15889,32 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool scan_accessed() const {
-   return accessed_ & (1<<1);
+  bool scan_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool model_accessed() const {
-   return accessed_ & (1<<2);
+  bool model_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<3);
+  bool connection_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool descriptor_arg_accessed() const {
-   return accessed_ & (1<<4);
+  bool descriptor_arg_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool argument_column_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool argument_column_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool inline_lambda_accessed() const {
-   return accessed_ & (1<<6);
+  bool inline_lambda_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool sequence_accessed() const {
-   return accessed_ & (1<<7);
+  bool sequence_accessed() const {
+    return accessed_ & (1<<7);
+ }
+  bool argument_alias_accessed() const {
+    return accessed_ & (1<<8);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   std::unique_ptr<const ResolvedScan> scan_;
@@ -15731,6 +15924,7 @@ class ResolvedFunctionArgument final : public ResolvedArgument {
   std::vector<ResolvedColumn> argument_column_list_;
   std::unique_ptr<const ResolvedInlineLambda> inline_lambda_;
   std::unique_ptr<const ResolvedSequence> sequence_;
+  std::string argument_alias_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -15742,7 +15936,8 @@ inline std::unique_ptr<ResolvedFunctionArgument> MakeResolvedFunctionArgument(
     std::unique_ptr<const ResolvedDescriptor> descriptor_arg,
     const std::vector<ResolvedColumn>& argument_column_list,
     std::unique_ptr<const ResolvedInlineLambda> inline_lambda,
-    std::unique_ptr<const ResolvedSequence> sequence) {
+    std::unique_ptr<const ResolvedSequence> sequence,
+    const std::string& argument_alias) {
   return std::unique_ptr<ResolvedFunctionArgument>(new ResolvedFunctionArgument(
         std::move(expr),
         std::move(scan),
@@ -15752,7 +15947,28 @@ inline std::unique_ptr<ResolvedFunctionArgument> MakeResolvedFunctionArgument(
         argument_column_list,
         std::move(inline_lambda),
         std::move(sequence),
+        argument_alias,
         ResolvedFunctionArgument::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedFunctionArgument> MakeResolvedFunctionArgument(
+    std::unique_ptr<const ResolvedExpr> expr,
+    std::unique_ptr<const ResolvedScan> scan,
+    std::unique_ptr<const ResolvedModel> model,
+    std::unique_ptr<const ResolvedConnection> connection,
+    std::unique_ptr<const ResolvedDescriptor> descriptor_arg,
+    const std::vector<ResolvedColumn>& argument_column_list,
+    std::unique_ptr<const ResolvedInlineLambda> inline_lambda,
+    std::unique_ptr<const ResolvedSequence> sequence) {
+  return MakeResolvedFunctionArgument(
+      std::move(expr),
+      std::move(scan),
+      std::move(model),
+      std::move(connection),
+      std::move(descriptor_arg),
+      argument_column_list,
+      std::move(inline_lambda),
+      std::move(sequence),
+      /*argument_alias=*/{});
 }
 
 inline std::unique_ptr<ResolvedFunctionArgument> MakeResolvedFunctionArgument() {
@@ -15917,8 +16133,8 @@ class ResolvedStatement  : public ResolvedNode {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool hint_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool hint_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -16029,8 +16245,8 @@ class ResolvedExplainStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool statement_accessed() const {
-   return accessed_ & (1<<0);
+  bool statement_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedStatement> statement_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -16201,14 +16417,14 @@ class ResolvedQueryStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_value_table_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<2);
+  bool query_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
   bool is_value_table_;
@@ -16405,11 +16621,11 @@ class ResolvedCreateDatabaseStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::string> name_path_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -16626,14 +16842,14 @@ class ResolvedCreateStatement  : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool create_scope_accessed() const {
-   return accessed_ & (1<<1);
+  bool create_scope_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool create_mode_accessed() const {
-   return accessed_ & (1<<2);
+  bool create_mode_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::string> name_path_;
   ResolvedCreateStatement::CreateScope create_scope_;
@@ -16755,11 +16971,11 @@ class ResolvedIndexItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_ref_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_ref_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool descending_accessed() const {
-   return accessed_ & (1<<1);
+  bool descending_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedColumnRef> column_ref_;
   bool descending_;
@@ -16919,14 +17135,14 @@ class ResolvedUnnestItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool array_expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool array_expr_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool element_column_accessed() const {
-   return accessed_ & (1<<1);
+  bool element_column_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool array_offset_column_accessed() const {
-   return accessed_ & (1<<2);
+  bool array_offset_column_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedExpr> array_expr_;
   ResolvedColumn element_column_;
@@ -17308,38 +17524,38 @@ class ResolvedCreateIndexStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool table_scan_accessed() const {
-   return accessed_ & (1<<1);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_unique_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_unique_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool is_search_accessed() const {
-   return accessed_ & (1<<3);
+  bool is_search_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool is_vector_accessed() const {
-   return accessed_ & (1<<4);
+  bool is_vector_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool index_all_columns_accessed() const {
-   return accessed_ & (1<<5);
+  bool index_all_columns_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool index_item_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool index_item_list_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool storing_expression_list_accessed() const {
-   return accessed_ & (1<<7);
+  bool storing_expression_list_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<8);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool computed_columns_list_accessed() const {
-   return accessed_ & (1<<9);
+  bool computed_columns_list_accessed() const {
+    return accessed_ & (1<<9);
  }
- bool unnest_expressions_list_accessed() const {
-   return accessed_ & (1<<10);
+  bool unnest_expressions_list_accessed() const {
+    return accessed_ & (1<<10);
  }
   std::vector<std::string> table_name_path_;
   std::unique_ptr<const ResolvedTableScan> table_scan_;
@@ -17658,11 +17874,11 @@ class ResolvedCreateSchemaStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool collation_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool collation_name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> collation_name_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -18055,35 +18271,35 @@ class ResolvedCreateTableStmtBase  : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_definition_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_definition_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool pseudo_column_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool pseudo_column_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool primary_key_accessed() const {
-   return accessed_ & (1<<3);
+  bool primary_key_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool foreign_key_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool foreign_key_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool check_constraint_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool check_constraint_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool is_value_table_accessed() const {
-   return accessed_ & (1<<6);
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool like_table_accessed() const {
-   return accessed_ & (1<<7);
+  bool like_table_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool collation_name_accessed() const {
-   return accessed_ & (1<<8);
+  bool collation_name_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<9);
+  bool connection_accessed() const {
+    return accessed_ & (1<<9);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list_;
@@ -18340,17 +18556,17 @@ class ResolvedCreateTableStmt final : public ResolvedCreateTableStmtBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool clone_from_accessed() const {
-   return accessed_ & (1<<0);
+  bool clone_from_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool copy_from_accessed() const {
-   return accessed_ & (1<<1);
+  bool copy_from_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool partition_by_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool partition_by_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool cluster_by_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool cluster_by_list_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::unique_ptr<const ResolvedScan> clone_from_;
   std::unique_ptr<const ResolvedScan> copy_from_;
@@ -18748,17 +18964,17 @@ class ResolvedCreateTableAsSelectStmt final : public ResolvedCreateTableStmtBase
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool partition_by_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool partition_by_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool cluster_by_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool cluster_by_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<3);
+  bool query_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::vector<std::unique_ptr<const ResolvedExpr>> partition_by_list_;
   std::vector<std::unique_ptr<const ResolvedExpr>> cluster_by_list_;
@@ -19064,14 +19280,14 @@ class ResolvedCreateModelAliasedQuery final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool alias_accessed() const {
-   return accessed_ & (1<<0);
+  bool alias_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<1);
+  bool query_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string alias_;
   std::unique_ptr<const ResolvedScan> query_;
@@ -19598,41 +19814,41 @@ class ResolvedCreateModelStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<2);
+  bool query_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool aliased_query_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool aliased_query_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool transform_input_column_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool transform_input_column_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool transform_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool transform_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool transform_output_column_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool transform_output_column_list_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool transform_analytic_function_group_list_accessed() const {
-   return accessed_ & (1<<7);
+  bool transform_analytic_function_group_list_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool input_column_definition_list_accessed() const {
-   return accessed_ & (1<<8);
+  bool input_column_definition_list_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool output_column_definition_list_accessed() const {
-   return accessed_ & (1<<9);
+  bool output_column_definition_list_accessed() const {
+    return accessed_ & (1<<9);
  }
- bool is_remote_accessed() const {
-   return accessed_ & (1<<10);
+  bool is_remote_accessed() const {
+    return accessed_ & (1<<10);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<11);
+  bool connection_accessed() const {
+    return accessed_ & (1<<11);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
@@ -20093,32 +20309,32 @@ class ResolvedCreateViewBase  : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool has_explicit_columns_accessed() const {
-   return accessed_ & (1<<2);
+  bool has_explicit_columns_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<3);
+  bool query_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool sql_accessed() const {
-   return accessed_ & (1<<4);
+  bool sql_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool sql_security_accessed() const {
-   return accessed_ & (1<<5);
+  bool sql_security_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool is_value_table_accessed() const {
-   return accessed_ & (1<<6);
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool recursive_accessed() const {
-   return accessed_ & (1<<7);
+  bool recursive_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool column_definition_list_accessed() const {
-   return accessed_ & (1<<8);
+  bool column_definition_list_accessed() const {
+    return accessed_ & (1<<8);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
@@ -20452,8 +20668,8 @@ class ResolvedWithPartitionColumns final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_definition_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_definition_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedColumnDefinition>> column_definition_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -20651,11 +20867,11 @@ class ResolvedCreateSnapshotTableStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool clone_from_accessed() const {
-   return accessed_ & (1<<0);
+  bool clone_from_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedScan> clone_from_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -20860,8 +21076,8 @@ class ResolvedCreateExternalTableStmt final : public ResolvedCreateTableStmtBase
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool with_partition_columns_accessed() const {
-   return accessed_ & (1<<0);
+  bool with_partition_columns_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedWithPartitionColumns> with_partition_columns_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -21143,14 +21359,14 @@ class ResolvedExportModelStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool model_name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool model_name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<1);
+  bool connection_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::string> model_name_path_;
   std::unique_ptr<const ResolvedConnection> connection_;
@@ -21407,20 +21623,20 @@ class ResolvedExportDataStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool connection_accessed() const {
-   return accessed_ & (1<<0);
+  bool connection_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool is_value_table_accessed() const {
-   return accessed_ & (1<<3);
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<4);
+  bool query_accessed() const {
+    return accessed_ & (1<<4);
  }
   std::unique_ptr<const ResolvedConnection> connection_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -21670,17 +21886,17 @@ class ResolvedExportMetadataStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool schema_object_kind_accessed() const {
-   return accessed_ & (1<<0);
+  bool schema_object_kind_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<2);
+  bool connection_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string schema_object_kind_;
   std::vector<std::string> name_path_;
@@ -21884,11 +22100,11 @@ class ResolvedDefineTableStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::string> name_path_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -22094,14 +22310,14 @@ class ResolvedDescribeStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool object_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool object_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool from_name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool from_name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string object_type_;
   std::vector<std::string> name_path_;
@@ -22274,14 +22490,14 @@ class ResolvedShowStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool identifier_accessed() const {
-   return accessed_ & (1<<0);
+  bool identifier_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool like_expr_accessed() const {
-   return accessed_ & (1<<2);
+  bool like_expr_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string identifier_;
   std::vector<std::string> name_path_;
@@ -22451,11 +22667,11 @@ class ResolvedBeginStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool read_write_mode_accessed() const {
-   return accessed_ & (1<<0);
+  bool read_write_mode_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool isolation_level_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool isolation_level_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   ResolvedBeginStmt::ReadWriteMode read_write_mode_;
   std::vector<std::string> isolation_level_list_;
@@ -22619,11 +22835,11 @@ class ResolvedSetTransactionStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool read_write_mode_accessed() const {
-   return accessed_ & (1<<0);
+  bool read_write_mode_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool isolation_level_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool isolation_level_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   ResolvedBeginStmt::ReadWriteMode read_write_mode_;
   std::vector<std::string> isolation_level_list_;
@@ -22892,8 +23108,8 @@ class ResolvedStartBatchStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool batch_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool batch_type_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::string batch_type_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -23219,17 +23435,17 @@ class ResolvedDropStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool object_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool object_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool drop_mode_accessed() const {
-   return accessed_ & (1<<3);
+  bool drop_mode_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string object_type_;
   bool is_if_exists_;
@@ -23384,11 +23600,11 @@ class ResolvedDropMaterializedViewStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::vector<std::string> name_path_;
@@ -23537,11 +23753,11 @@ class ResolvedDropSnapshotTableStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::vector<std::string> name_path_;
@@ -23824,14 +24040,14 @@ class ResolvedRecursiveScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool op_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool op_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool non_recursive_term_accessed() const {
-   return accessed_ & (1<<1);
+  bool non_recursive_term_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool recursive_term_accessed() const {
-   return accessed_ & (1<<2);
+  bool recursive_term_accessed() const {
+    return accessed_ & (1<<2);
  }
   ResolvedRecursiveScan::RecursiveSetOperationType op_type_;
   std::unique_ptr<const ResolvedSetOperationItem> non_recursive_term_;
@@ -24058,14 +24274,14 @@ class ResolvedWithScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool with_entry_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool with_entry_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<1);
+  bool query_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool recursive_accessed() const {
-   return accessed_ & (1<<2);
+  bool recursive_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::unique_ptr<const ResolvedWithEntry>> with_entry_list_;
   std::unique_ptr<const ResolvedScan> query_;
@@ -24241,11 +24457,11 @@ class ResolvedWithEntry final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool with_query_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool with_query_name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool with_subquery_accessed() const {
-   return accessed_ & (1<<1);
+  bool with_subquery_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string with_query_name_;
   std::unique_ptr<const ResolvedScan> with_subquery_;
@@ -24423,14 +24639,14 @@ class ResolvedOption final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool qualifier_accessed() const {
-   return accessed_ & (1<<0);
+  bool qualifier_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool value_accessed() const {
-   return accessed_ & (1<<2);
+  bool value_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string qualifier_;
   std::string name_;
@@ -24631,14 +24847,14 @@ class ResolvedWindowPartitioning final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool partition_by_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool partition_by_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool hint_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool hint_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool collation_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool collation_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::unique_ptr<const ResolvedColumnRef>> partition_by_list_;
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list_;
@@ -24827,11 +25043,11 @@ class ResolvedWindowOrdering final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool order_by_item_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool order_by_item_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool hint_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool hint_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list_;
   std::vector<std::unique_ptr<const ResolvedOption>> hint_list_;
@@ -25022,14 +25238,14 @@ class ResolvedWindowFrame final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool frame_unit_accessed() const {
-   return accessed_ & (1<<0);
+  bool frame_unit_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool start_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool start_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool end_expr_accessed() const {
-   return accessed_ & (1<<2);
+  bool end_expr_accessed() const {
+    return accessed_ & (1<<2);
  }
   ResolvedWindowFrame::FrameUnit frame_unit_;
   std::unique_ptr<const ResolvedWindowFrameExpr> start_expr_;
@@ -25208,14 +25424,14 @@ class ResolvedAnalyticFunctionGroup final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool partition_by_accessed() const {
-   return accessed_ & (1<<0);
+  bool partition_by_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool order_by_accessed() const {
-   return accessed_ & (1<<1);
+  bool order_by_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool analytic_function_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool analytic_function_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedWindowPartitioning> partition_by_;
   std::unique_ptr<const ResolvedWindowOrdering> order_by_;
@@ -25400,11 +25616,11 @@ class ResolvedWindowFrameExpr final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool boundary_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool boundary_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool expression_accessed() const {
-   return accessed_ & (1<<1);
+  bool expression_accessed() const {
+    return accessed_ & (1<<1);
  }
   ResolvedWindowFrameExpr::BoundaryType boundary_type_;
   std::unique_ptr<const ResolvedExpr> expression_;
@@ -25530,8 +25746,8 @@ class ResolvedDMLValue final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool value_accessed() const {
-   return accessed_ & (1<<0);
+  bool value_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedExpr> value_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -25758,11 +25974,11 @@ class ResolvedAssertStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expression_accessed() const {
-   return accessed_ & (1<<0);
+  bool expression_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool description_accessed() const {
-   return accessed_ & (1<<1);
+  bool description_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> expression_;
   std::string description_;
@@ -25888,8 +26104,8 @@ class ResolvedAssertRowsModified final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool rows_accessed() const {
-   return accessed_ & (1<<0);
+  bool rows_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedExpr> rows_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -26021,8 +26237,8 @@ class ResolvedInsertRow final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool value_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool value_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedDMLValue>> value_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -26134,6 +26350,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       , query_output_column_list_()
       , row_list_()
       , column_access_list_()
+      , topologically_sorted_generated_column_index_list_()
   {}
 
  public:
@@ -26150,7 +26367,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       std::vector<std::unique_ptr<const ResolvedColumnRef>> query_parameter_list,
       std::unique_ptr<const ResolvedScan> query,
       const std::vector<ResolvedColumn>& query_output_column_list,
-      std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list
+      std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+      const std::vector<int>& topologically_sorted_generated_column_index_list
   );
   ~ResolvedInsertStmt() final;
 
@@ -26378,6 +26596,44 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     return &column_access_list_;
   }
 
+  // This returns a topologically sorted list of generated columns
+  //  indexes in the table accessed by insert statement.
+  //  For example for below table
+  //  CREATE TABLE T(
+  //  k1 INT64 NOT NULL,
+  //  data INT64,
+  //  gen1 INT64 AS data+1,
+  //  gen2 INT64 AS gen1*2,
+  //  gen3 INT64 AS data*2 + gen1,
+  //  ) PRIMARY KEY(k1);
+  // data------------------->gen1--------------------->gen2
+  //   *                      *----------> *
+  //   *  ------------------------------->gen3
+  // the vector would have corresponding indexes of one of these values
+  // gen1 gen2 gen3 OR gen1 gen3 gen2.
+  const std::vector<int>& topologically_sorted_generated_column_index_list() const {
+    accessed_ |= (1<<10);
+    return topologically_sorted_generated_column_index_list_;
+  }
+  int topologically_sorted_generated_column_index_list_size() const {
+    if (topologically_sorted_generated_column_index_list_.empty()) accessed_ |= (1<<10);
+    return static_cast<int>(topologically_sorted_generated_column_index_list_.size());
+  }
+  int topologically_sorted_generated_column_index_list(int i) const {
+    accessed_ |= (1<<10);
+    return topologically_sorted_generated_column_index_list_.at(i);
+  }
+  void add_topologically_sorted_generated_column_index_list(int v) {
+    topologically_sorted_generated_column_index_list_.push_back(v);
+  }
+  void set_topologically_sorted_generated_column_index_list(const std::vector<int>& v) {
+    topologically_sorted_generated_column_index_list_ = v;
+  }
+  std::vector<int>* mutable_topologically_sorted_generated_column_index_list() {
+    accessed_ |= (1<<10);
+    return &topologically_sorted_generated_column_index_list_;
+  }
+
  protected:
   explicit ResolvedInsertStmt(
       std::unique_ptr<const ResolvedTableScan> table_scan,
@@ -26389,6 +26645,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedScan> query,
       const std::vector<ResolvedColumn>& query_output_column_list,
       std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+      const std::vector<int>& topologically_sorted_generated_column_index_list,
       ConstructorOverload)
       : ResolvedStatement(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -26401,7 +26658,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       query_(std::move(query)),
       query_output_column_list_(query_output_column_list),
       row_list_(std::move(row_list)),
-      column_access_list_() {
+      column_access_list_(),
+      topologically_sorted_generated_column_index_list_(topologically_sorted_generated_column_index_list) {
   }
 
   void CollectDebugStringFields(
@@ -26414,35 +26672,38 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool insert_mode_accessed() const {
-   return accessed_ & (1<<1);
+  bool insert_mode_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool assert_rows_modified_accessed() const {
-   return accessed_ & (1<<2);
+  bool assert_rows_modified_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool returning_accessed() const {
-   return accessed_ & (1<<3);
+  bool returning_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool insert_column_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool insert_column_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool query_parameter_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool query_parameter_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<6);
+  bool query_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool query_output_column_list_accessed() const {
-   return accessed_ & (1<<7);
+  bool query_output_column_list_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool row_list_accessed() const {
-   return accessed_ & (1<<8);
+  bool row_list_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool column_access_list_accessed() const {
-   return accessed_ & (1<<9);
+  bool column_access_list_accessed() const {
+    return accessed_ & (1<<9);
+ }
+  bool topologically_sorted_generated_column_index_list_accessed() const {
+    return accessed_ & (1<<10);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   ResolvedInsertStmt::InsertMode insert_mode_;
@@ -26454,6 +26715,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   std::vector<ResolvedColumn> query_output_column_list_;
   std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list_;
   std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
+  std::vector<int> topologically_sorted_generated_column_index_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -26466,7 +26728,8 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::vector<std::unique_ptr<const ResolvedColumnRef>> query_parameter_list,
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
-    std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list) {
+    std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+    const std::vector<int>& topologically_sorted_generated_column_index_list) {
   return std::unique_ptr<ResolvedInsertStmt>(new ResolvedInsertStmt(
         std::move(table_scan),
         insert_mode,
@@ -26477,7 +26740,30 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
         std::move(query),
         query_output_column_list,
         std::move(row_list),
+        topologically_sorted_generated_column_index_list,
         ResolvedInsertStmt::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
+    std::unique_ptr<const ResolvedTableScan> table_scan,
+    ResolvedInsertStmt::InsertMode insert_mode,
+    std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified,
+    std::unique_ptr<const ResolvedReturningClause> returning,
+    const std::vector<ResolvedColumn>& insert_column_list,
+    std::vector<std::unique_ptr<const ResolvedColumnRef>> query_parameter_list,
+    std::unique_ptr<const ResolvedScan> query,
+    const std::vector<ResolvedColumn>& query_output_column_list,
+    std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list) {
+  return MakeResolvedInsertStmt(
+      std::move(table_scan),
+      insert_mode,
+      std::move(assert_rows_modified),
+      std::move(returning),
+      insert_column_list,
+      std::move(query_parameter_list),
+      std::move(query),
+      query_output_column_list,
+      std::move(row_list),
+      /*topologically_sorted_generated_column_index_list=*/{});
 }
 
 // Overloaded factory method for the construction of ResolvedInsertStmt with
@@ -26504,7 +26790,8 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     query_parameter_list_t query_parameter_list,
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
-    row_list_t row_list) {
+    row_list_t row_list,
+    const std::vector<int>& topologically_sorted_generated_column_index_list) {
   static_assert(std::is_base_of<
       ResolvedColumnRef,
       typename std::decay<decltype(**(query_parameter_list.begin()))>::type>::value,
@@ -26526,7 +26813,8 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       std::move(query),
       query_output_column_list,
       {std::make_move_iterator(row_list.begin()),
-       std::make_move_iterator(row_list.end())});
+       std::make_move_iterator(row_list.end())},
+      topologically_sorted_generated_column_index_list);
 }
 
 inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt() {
@@ -26750,23 +27038,23 @@ class ResolvedDeleteStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool assert_rows_modified_accessed() const {
-   return accessed_ & (1<<1);
+  bool assert_rows_modified_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool returning_accessed() const {
-   return accessed_ & (1<<2);
+  bool returning_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool column_access_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool column_access_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool array_offset_column_accessed() const {
-   return accessed_ & (1<<4);
+  bool array_offset_column_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool where_expr_accessed() const {
-   return accessed_ & (1<<5);
+  bool where_expr_accessed() const {
+    return accessed_ & (1<<5);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified_;
@@ -27185,26 +27473,26 @@ class ResolvedUpdateItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool target_accessed() const {
-   return accessed_ & (1<<0);
+  bool target_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool set_value_accessed() const {
-   return accessed_ & (1<<1);
+  bool set_value_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool element_column_accessed() const {
-   return accessed_ & (1<<2);
+  bool element_column_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool array_update_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool array_update_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool delete_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool delete_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool update_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool update_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool insert_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool insert_list_accessed() const {
+    return accessed_ & (1<<6);
  }
   std::unique_ptr<const ResolvedExpr> target_;
   std::unique_ptr<const ResolvedDMLValue> set_value_;
@@ -27423,11 +27711,11 @@ class ResolvedUpdateArrayItem final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool offset_accessed() const {
-   return accessed_ & (1<<0);
+  bool offset_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool update_item_accessed() const {
-   return accessed_ & (1<<1);
+  bool update_item_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> offset_;
   std::unique_ptr<const ResolvedUpdateItem> update_item_;
@@ -27725,29 +28013,29 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_access_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_access_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool assert_rows_modified_accessed() const {
-   return accessed_ & (1<<2);
+  bool assert_rows_modified_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool returning_accessed() const {
-   return accessed_ & (1<<3);
+  bool returning_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool array_offset_column_accessed() const {
-   return accessed_ & (1<<4);
+  bool array_offset_column_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool where_expr_accessed() const {
-   return accessed_ & (1<<5);
+  bool where_expr_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool update_item_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool update_item_list_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool from_scan_accessed() const {
-   return accessed_ & (1<<7);
+  bool from_scan_accessed() const {
+    return accessed_ & (1<<7);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
@@ -28069,23 +28357,23 @@ class ResolvedMergeWhen final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool match_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool match_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool match_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool match_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool action_type_accessed() const {
-   return accessed_ & (1<<2);
+  bool action_type_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool insert_column_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool insert_column_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool insert_row_accessed() const {
-   return accessed_ & (1<<4);
+  bool insert_row_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool update_item_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool update_item_list_accessed() const {
+    return accessed_ & (1<<5);
  }
   ResolvedMergeWhen::MatchType match_type_;
   std::unique_ptr<const ResolvedExpr> match_expr_;
@@ -28361,20 +28649,20 @@ class ResolvedMergeStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_access_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_access_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool from_scan_accessed() const {
-   return accessed_ & (1<<2);
+  bool from_scan_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool merge_expr_accessed() const {
-   return accessed_ & (1<<3);
+  bool merge_expr_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool when_clause_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool when_clause_list_accessed() const {
+    return accessed_ & (1<<4);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
@@ -28561,11 +28849,11 @@ class ResolvedTruncateStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool where_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool where_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   std::unique_ptr<const ResolvedExpr> where_expr_;
@@ -28700,8 +28988,8 @@ class ResolvedObjectUnit final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::string> name_path_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -28851,11 +29139,11 @@ class ResolvedPrivilege final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool action_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool action_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool unit_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool unit_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string action_type_;
   std::vector<std::unique_ptr<const ResolvedObjectUnit>> unit_list_;
@@ -29139,20 +29427,20 @@ class ResolvedGrantOrRevokeStmt  : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool privilege_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool privilege_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool object_type_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool object_type_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool grantee_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool grantee_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool grantee_expr_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool grantee_expr_list_accessed() const {
+    return accessed_ & (1<<4);
  }
   std::vector<std::unique_ptr<const ResolvedPrivilege>> privilege_list_;
   std::vector<std::string> object_type_list_;
@@ -29621,14 +29909,14 @@ class ResolvedAlterObjectStmt  : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool alter_action_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool alter_action_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::string> name_path_;
   std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list_;
@@ -30772,11 +31060,11 @@ class ResolvedAlterColumnAction  : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::string column_;
@@ -30900,8 +31188,8 @@ class ResolvedSetOptionsAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -31091,17 +31379,17 @@ class ResolvedAlterSubEntityAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool entity_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool entity_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool alter_action_accessed() const {
-   return accessed_ & (1<<2);
+  bool alter_action_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<3);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string entity_type_;
   std::string name_;
@@ -31287,17 +31575,17 @@ class ResolvedAddSubEntityAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool entity_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool entity_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool options_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool options_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool is_if_not_exists_accessed() const {
-   return accessed_ & (1<<3);
+  bool is_if_not_exists_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string entity_type_;
   std::string name_;
@@ -31484,14 +31772,14 @@ class ResolvedDropSubEntityAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool entity_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool entity_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string entity_type_;
   std::string name_;
@@ -31628,11 +31916,11 @@ class ResolvedAddColumnAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_not_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_not_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_definition_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_definition_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_not_exists_;
   std::unique_ptr<const ResolvedColumnDefinition> column_definition_;
@@ -31778,14 +32066,14 @@ class ResolvedAddConstraintAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_not_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_not_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool constraint_accessed() const {
-   return accessed_ & (1<<1);
+  bool constraint_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool table_accessed() const {
-   return accessed_ & (1<<2);
+  bool table_accessed() const {
+    return accessed_ & (1<<2);
  }
   bool is_if_not_exists_;
   std::unique_ptr<const ResolvedConstraint> constraint_;
@@ -31918,11 +32206,11 @@ class ResolvedDropConstraintAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::string name_;
@@ -32040,8 +32328,8 @@ class ResolvedDropPrimaryKeyAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
   bool is_if_exists_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -32183,8 +32471,8 @@ class ResolvedAlterColumnOptionsAction final : public ResolvedAlterColumnAction 
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -32471,14 +32759,14 @@ class ResolvedAlterColumnSetDataTypeAction final : public ResolvedAlterColumnAct
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool updated_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool updated_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool updated_type_parameters_accessed() const {
-   return accessed_ & (1<<1);
+  bool updated_type_parameters_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool updated_annotations_accessed() const {
-   return accessed_ & (1<<2);
+  bool updated_annotations_accessed() const {
+    return accessed_ & (1<<2);
  }
   const Type* updated_type_;
   TypeParameters updated_type_parameters_;
@@ -32622,8 +32910,8 @@ class ResolvedAlterColumnSetDefaultAction final : public ResolvedAlterColumnActi
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool default_value_accessed() const {
-   return accessed_ & (1<<0);
+  bool default_value_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedColumnDefaultValue> default_value_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -32850,11 +33138,11 @@ class ResolvedDropColumnAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::string name_;
@@ -33005,14 +33293,14 @@ class ResolvedRenameColumnAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool new_name_accessed() const {
-   return accessed_ & (1<<2);
+  bool new_name_accessed() const {
+    return accessed_ & (1<<2);
  }
   bool is_if_exists_;
   std::string name_;
@@ -33149,11 +33437,11 @@ class ResolvedSetAsAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool entity_body_json_accessed() const {
-   return accessed_ & (1<<0);
+  bool entity_body_json_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool entity_body_text_accessed() const {
-   return accessed_ & (1<<1);
+  bool entity_body_text_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string entity_body_json_;
   std::string entity_body_text_;
@@ -33281,8 +33569,8 @@ class ResolvedSetCollateClause final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool collation_name_accessed() const {
-   return accessed_ & (1<<0);
+  bool collation_name_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedExpr> collation_name_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -33461,14 +33749,14 @@ class ResolvedAlterTableSetOptionsStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<2);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::string> name_path_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -33679,14 +33967,14 @@ class ResolvedRenameStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool object_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool object_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool old_name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool old_name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool new_name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool new_name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string object_type_;
   std::vector<std::string> old_name_path_;
@@ -33885,14 +34173,14 @@ class ResolvedCreatePrivilegeRestrictionStmt final : public ResolvedCreateStatem
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_privilege_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_privilege_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool object_type_accessed() const {
-   return accessed_ & (1<<1);
+  bool object_type_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool restrictee_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool restrictee_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::unique_ptr<const ResolvedPrivilege>> column_privilege_list_;
   std::string object_type_;
@@ -34230,29 +34518,29 @@ class ResolvedCreateRowAccessPolicyStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool create_mode_accessed() const {
-   return accessed_ & (1<<0);
+  bool create_mode_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool target_name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool target_name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool grantee_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool grantee_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool grantee_expr_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool grantee_expr_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool table_scan_accessed() const {
-   return accessed_ & (1<<5);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool predicate_accessed() const {
-   return accessed_ & (1<<6);
+  bool predicate_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool predicate_str_accessed() const {
-   return accessed_ & (1<<7);
+  bool predicate_str_accessed() const {
+    return accessed_ & (1<<7);
  }
   ResolvedCreateStatement::CreateMode create_mode_;
   std::string name_;
@@ -34503,17 +34791,17 @@ class ResolvedDropPrivilegeRestrictionStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool object_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool object_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool column_privilege_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool column_privilege_list_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string object_type_;
   bool is_if_exists_;
@@ -34728,17 +35016,17 @@ class ResolvedDropRowAccessPolicyStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_drop_all_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_drop_all_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<2);
+  bool name_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool target_name_path_accessed() const {
-   return accessed_ & (1<<3);
+  bool target_name_path_accessed() const {
+    return accessed_ & (1<<3);
  }
   bool is_drop_all_;
   bool is_if_exists_;
@@ -34928,17 +35216,17 @@ class ResolvedDropIndexStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool table_name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool table_name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool index_type_accessed() const {
-   return accessed_ & (1<<3);
+  bool index_type_accessed() const {
+    return accessed_ & (1<<3);
  }
   bool is_if_exists_;
   std::string name_;
@@ -35081,8 +35369,8 @@ class ResolvedGrantToAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool grantee_expr_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool grantee_expr_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedExpr>> grantee_expr_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -35244,8 +35532,8 @@ class ResolvedRestrictToAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool restrictee_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool restrictee_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedExpr>> restrictee_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -35419,11 +35707,11 @@ class ResolvedAddToRestricteeListAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_not_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_not_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool restrictee_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool restrictee_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_not_exists_;
   std::vector<std::unique_ptr<const ResolvedExpr>> restrictee_list_;
@@ -35602,11 +35890,11 @@ class ResolvedRemoveFromRestricteeListAction final : public ResolvedAlterAction 
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool restrictee_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool restrictee_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::vector<std::unique_ptr<const ResolvedExpr>> restrictee_list_;
@@ -35771,11 +36059,11 @@ class ResolvedFilterUsingAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool predicate_accessed() const {
-   return accessed_ & (1<<0);
+  bool predicate_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool predicate_str_accessed() const {
-   return accessed_ & (1<<1);
+  bool predicate_str_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> predicate_;
   std::string predicate_str_;
@@ -35926,11 +36214,11 @@ class ResolvedRevokeFromAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool revokee_expr_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool revokee_expr_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_revoke_from_all_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_revoke_from_all_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedExpr>> revokee_expr_list_;
   bool is_revoke_from_all_;
@@ -36094,8 +36382,8 @@ class ResolvedRenameToAction final : public ResolvedAlterAction {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool new_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool new_path_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::string> new_path_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -36256,11 +36544,11 @@ class ResolvedAlterPrivilegeRestrictionStmt final : public ResolvedAlterObjectSt
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_privilege_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_privilege_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool object_type_accessed() const {
-   return accessed_ & (1<<1);
+  bool object_type_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedPrivilege>> column_privilege_list_;
   std::string object_type_;
@@ -36471,11 +36759,11 @@ class ResolvedAlterRowAccessPolicyStmt final : public ResolvedAlterObjectStmt {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool table_scan_accessed() const {
-   return accessed_ & (1<<1);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string name_;
   std::unique_ptr<const ResolvedTableScan> table_scan_;
@@ -36666,8 +36954,8 @@ class ResolvedAlterAllRowAccessPoliciesStmt final : public ResolvedAlterObjectSt
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -36849,8 +37137,8 @@ class ResolvedCreateConstantStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool expr_accessed() const {
-   return accessed_ & (1<<0);
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::unique_ptr<const ResolvedExpr> expr_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -37291,47 +37579,47 @@ class ResolvedCreateFunctionStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool has_explicit_return_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool has_explicit_return_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool return_type_accessed() const {
-   return accessed_ & (1<<1);
+  bool return_type_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool argument_name_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool argument_name_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<3);
+  bool signature_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool is_aggregate_accessed() const {
-   return accessed_ & (1<<4);
+  bool is_aggregate_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool language_accessed() const {
-   return accessed_ & (1<<5);
+  bool language_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool code_accessed() const {
-   return accessed_ & (1<<6);
+  bool code_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool aggregate_expression_list_accessed() const {
-   return accessed_ & (1<<7);
+  bool aggregate_expression_list_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool function_expression_accessed() const {
-   return accessed_ & (1<<8);
+  bool function_expression_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<9);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<9);
  }
- bool sql_security_accessed() const {
-   return accessed_ & (1<<10);
+  bool sql_security_accessed() const {
+    return accessed_ & (1<<10);
  }
- bool determinism_level_accessed() const {
-   return accessed_ & (1<<11);
+  bool determinism_level_accessed() const {
+    return accessed_ & (1<<11);
  }
- bool is_remote_accessed() const {
-   return accessed_ & (1<<12);
+  bool is_remote_accessed() const {
+    return accessed_ & (1<<12);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<13);
+  bool connection_accessed() const {
+    return accessed_ & (1<<13);
  }
   bool has_explicit_return_type_;
   const Type* return_type_;
@@ -37630,14 +37918,14 @@ class ResolvedArgumentDef final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool type_accessed() const {
-   return accessed_ & (1<<1);
+  bool type_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool argument_kind_accessed() const {
-   return accessed_ & (1<<2);
+  bool argument_kind_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::string name_;
   const Type* type_;
@@ -37786,11 +38074,11 @@ class ResolvedArgumentRef final : public ResolvedExpr {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool argument_kind_accessed() const {
-   return accessed_ & (1<<1);
+  bool argument_kind_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string name_;
   ResolvedArgumentDef::ArgumentKind argument_kind_;
@@ -38168,35 +38456,35 @@ class ResolvedCreateTableFunctionStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool argument_name_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool argument_name_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<1);
+  bool signature_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool has_explicit_return_schema_accessed() const {
-   return accessed_ & (1<<2);
+  bool has_explicit_return_schema_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool language_accessed() const {
-   return accessed_ & (1<<4);
+  bool language_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool code_accessed() const {
-   return accessed_ & (1<<5);
+  bool code_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool query_accessed() const {
-   return accessed_ & (1<<6);
+  bool query_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<7);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool is_value_table_accessed() const {
-   return accessed_ & (1<<8);
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool sql_security_accessed() const {
-   return accessed_ & (1<<9);
+  bool sql_security_accessed() const {
+    return accessed_ & (1<<9);
  }
   std::vector<std::string> argument_name_list_;
   absl::optional<FunctionSignature> signature_;
@@ -38420,11 +38708,11 @@ class ResolvedRelationArgumentScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_value_table_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string name_;
   bool is_value_table_;
@@ -38570,8 +38858,8 @@ class ResolvedArgumentList final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool arg_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool arg_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedArgumentDef>> arg_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -38709,8 +38997,8 @@ class ResolvedFunctionSignatureHolder final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool signature_accessed() const {
-   return accessed_ & (1<<0);
+  bool signature_accessed() const {
+    return accessed_ & (1<<0);
  }
   absl::optional<FunctionSignature> signature_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -38901,17 +39189,17 @@ class ResolvedDropFunctionStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool arguments_accessed() const {
-   return accessed_ & (1<<2);
+  bool arguments_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<3);
+  bool signature_accessed() const {
+    return accessed_ & (1<<3);
  }
   bool is_if_exists_;
   std::vector<std::string> name_path_;
@@ -39065,11 +39353,11 @@ class ResolvedDropTableFunctionStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool is_if_exists_accessed() const {
-   return accessed_ & (1<<0);
+  bool is_if_exists_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
   bool is_if_exists_;
   std::vector<std::string> name_path_;
@@ -39230,14 +39518,14 @@ class ResolvedCallStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool procedure_accessed() const {
-   return accessed_ & (1<<0);
+  bool procedure_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<1);
+  bool signature_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool argument_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool argument_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   const Procedure* procedure_;
   absl::optional<FunctionSignature> signature_;
@@ -39537,23 +39825,23 @@ class ResolvedImportStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool import_kind_accessed() const {
-   return accessed_ & (1<<0);
+  bool import_kind_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<1);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool file_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool file_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool alias_path_accessed() const {
-   return accessed_ & (1<<3);
+  bool alias_path_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool into_alias_path_accessed() const {
-   return accessed_ & (1<<4);
+  bool into_alias_path_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<5);
  }
   ResolvedImportStmt::ImportKind import_kind_;
   std::vector<std::string> name_path_;
@@ -39767,11 +40055,11 @@ class ResolvedModuleStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_path_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::string> name_path_;
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
@@ -39946,11 +40234,11 @@ class ResolvedAggregateHavingModifier final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool kind_accessed() const {
-   return accessed_ & (1<<0);
+  bool kind_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool having_expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool having_expr_accessed() const {
+    return accessed_ & (1<<1);
  }
   ResolvedAggregateHavingModifier::HavingModifierKind kind_;
   std::unique_ptr<const ResolvedExpr> having_expr_;
@@ -40174,14 +40462,14 @@ class ResolvedCreateMaterializedViewStmt final : public ResolvedCreateViewBase {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool partition_by_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool partition_by_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool cluster_by_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool cluster_by_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool replica_source_accessed() const {
-   return accessed_ & (1<<2);
+  bool replica_source_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::unique_ptr<const ResolvedExpr>> partition_by_list_;
   std::vector<std::unique_ptr<const ResolvedExpr>> cluster_by_list_;
@@ -40783,29 +41071,29 @@ class ResolvedCreateProcedureStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool argument_name_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool argument_name_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool signature_accessed() const {
-   return accessed_ & (1<<1);
+  bool signature_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool procedure_body_accessed() const {
-   return accessed_ & (1<<3);
+  bool procedure_body_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<4);
+  bool connection_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool language_accessed() const {
-   return accessed_ & (1<<5);
+  bool language_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool code_accessed() const {
-   return accessed_ & (1<<6);
+  bool code_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool external_security_accessed() const {
-   return accessed_ & (1<<7);
+  bool external_security_accessed() const {
+    return accessed_ & (1<<7);
  }
   std::vector<std::string> argument_name_list_;
   absl::optional<FunctionSignature> signature_;
@@ -41006,11 +41294,11 @@ class ResolvedExecuteImmediateArgument final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool name_accessed() const {
-   return accessed_ & (1<<0);
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool expression_accessed() const {
-   return accessed_ & (1<<1);
+  bool expression_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::string name_;
   std::unique_ptr<const ResolvedExpr> expression_;
@@ -41197,14 +41485,14 @@ class ResolvedExecuteImmediateStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool sql_accessed() const {
-   return accessed_ & (1<<0);
+  bool sql_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool into_identifier_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool into_identifier_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool using_argument_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool using_argument_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::unique_ptr<const ResolvedExpr> sql_;
   std::vector<std::string> into_identifier_list_;
@@ -41379,11 +41667,11 @@ class ResolvedAssignmentStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool target_accessed() const {
-   return accessed_ & (1<<0);
+  bool target_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool expr_accessed() const {
-   return accessed_ & (1<<1);
+  bool expr_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> target_;
   std::unique_ptr<const ResolvedExpr> expr_;
@@ -41575,17 +41863,17 @@ class ResolvedCreateEntityStmt final : public ResolvedCreateStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool entity_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool entity_type_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool entity_body_json_accessed() const {
-   return accessed_ & (1<<1);
+  bool entity_body_json_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool entity_body_text_accessed() const {
-   return accessed_ & (1<<2);
+  bool entity_body_text_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string entity_type_;
   std::string entity_body_json_;
@@ -41766,8 +42054,8 @@ class ResolvedAlterEntityStmt final : public ResolvedAlterObjectStmt {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool entity_type_accessed() const {
-   return accessed_ & (1<<0);
+  bool entity_type_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::string entity_type_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -41973,14 +42261,14 @@ class ResolvedPivotColumn final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool pivot_expr_index_accessed() const {
-   return accessed_ & (1<<1);
+  bool pivot_expr_index_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool pivot_value_index_accessed() const {
-   return accessed_ & (1<<2);
+  bool pivot_value_index_accessed() const {
+    return accessed_ & (1<<2);
  }
   ResolvedColumn column_;
   int pivot_expr_index_;
@@ -42273,23 +42561,23 @@ class ResolvedPivotScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool group_by_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool group_by_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool pivot_expr_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool pivot_expr_list_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool for_expr_accessed() const {
-   return accessed_ & (1<<3);
+  bool for_expr_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool pivot_value_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool pivot_value_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool pivot_column_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool pivot_column_list_accessed() const {
+    return accessed_ & (1<<5);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::vector<std::unique_ptr<const ResolvedComputedColumn>> group_by_list_;
@@ -42555,14 +42843,14 @@ class ResolvedReturningClause final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool action_column_accessed() const {
-   return accessed_ & (1<<1);
+  bool action_column_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool expr_list_accessed() const {
-   return accessed_ & (1<<2);
+  bool expr_list_accessed() const {
+    return accessed_ & (1<<2);
  }
   std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
   std::unique_ptr<const ResolvedColumnHolder> action_column_;
@@ -42744,8 +43032,8 @@ class ResolvedUnpivotArg final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool column_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool column_list_accessed() const {
+    return accessed_ & (1<<0);
  }
   std::vector<std::unique_ptr<const ResolvedColumnRef>> column_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -43094,26 +43382,26 @@ class ResolvedUnpivotScan final : public ResolvedScan {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool input_scan_accessed() const {
-   return accessed_ & (1<<0);
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool value_column_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool value_column_list_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool label_column_accessed() const {
-   return accessed_ & (1<<2);
+  bool label_column_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool label_list_accessed() const {
-   return accessed_ & (1<<3);
+  bool label_list_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool unpivot_arg_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool unpivot_arg_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool projected_input_column_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool projected_input_column_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool include_nulls_accessed() const {
-   return accessed_ & (1<<6);
+  bool include_nulls_accessed() const {
+    return accessed_ & (1<<6);
  }
   std::unique_ptr<const ResolvedScan> input_scan_;
   std::vector<ResolvedColumn> value_column_list_;
@@ -43340,11 +43628,11 @@ class ResolvedCloneDataStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool target_table_accessed() const {
-   return accessed_ & (1<<0);
+  bool target_table_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool clone_from_accessed() const {
-   return accessed_ & (1<<1);
+  bool clone_from_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedTableScan> target_table_;
   std::unique_ptr<const ResolvedScan> clone_from_;
@@ -43491,11 +43779,11 @@ class ResolvedTableAndColumnInfo final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool table_accessed() const {
-   return accessed_ & (1<<0);
+  bool table_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool column_index_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool column_index_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   const Table* table_;
   std::vector<int> column_index_list_;
@@ -43663,11 +43951,11 @@ class ResolvedAnalyzeStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool option_list_accessed() const {
-   return accessed_ & (1<<0);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool table_and_column_index_list_accessed() const {
-   return accessed_ & (1<<1);
+  bool table_and_column_index_list_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   std::vector<std::unique_ptr<const ResolvedTableAndColumnInfo>> table_and_column_index_list_;
@@ -43845,11 +44133,11 @@ class ResolvedAuxLoadDataPartitionFilter final : public ResolvedArgument {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool filter_accessed() const {
-   return accessed_ & (1<<0);
+  bool filter_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_overwrite_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_overwrite_accessed() const {
+    return accessed_ & (1<<1);
  }
   std::unique_ptr<const ResolvedExpr> filter_;
   bool is_overwrite_;
@@ -44396,53 +44684,53 @@ class ResolvedAuxLoadDataStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool insertion_mode_accessed() const {
-   return accessed_ & (1<<0);
+  bool insertion_mode_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_temp_table_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_temp_table_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool partition_filter_accessed() const {
-   return accessed_ & (1<<3);
+  bool partition_filter_accessed() const {
+    return accessed_ & (1<<3);
  }
- bool output_column_list_accessed() const {
-   return accessed_ & (1<<4);
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<4);
  }
- bool column_definition_list_accessed() const {
-   return accessed_ & (1<<5);
+  bool column_definition_list_accessed() const {
+    return accessed_ & (1<<5);
  }
- bool pseudo_column_list_accessed() const {
-   return accessed_ & (1<<6);
+  bool pseudo_column_list_accessed() const {
+    return accessed_ & (1<<6);
  }
- bool primary_key_accessed() const {
-   return accessed_ & (1<<7);
+  bool primary_key_accessed() const {
+    return accessed_ & (1<<7);
  }
- bool foreign_key_list_accessed() const {
-   return accessed_ & (1<<8);
+  bool foreign_key_list_accessed() const {
+    return accessed_ & (1<<8);
  }
- bool check_constraint_list_accessed() const {
-   return accessed_ & (1<<9);
+  bool check_constraint_list_accessed() const {
+    return accessed_ & (1<<9);
  }
- bool partition_by_list_accessed() const {
-   return accessed_ & (1<<10);
+  bool partition_by_list_accessed() const {
+    return accessed_ & (1<<10);
  }
- bool cluster_by_list_accessed() const {
-   return accessed_ & (1<<11);
+  bool cluster_by_list_accessed() const {
+    return accessed_ & (1<<11);
  }
- bool option_list_accessed() const {
-   return accessed_ & (1<<12);
+  bool option_list_accessed() const {
+    return accessed_ & (1<<12);
  }
- bool with_partition_columns_accessed() const {
-   return accessed_ & (1<<13);
+  bool with_partition_columns_accessed() const {
+    return accessed_ & (1<<13);
  }
- bool connection_accessed() const {
-   return accessed_ & (1<<14);
+  bool connection_accessed() const {
+    return accessed_ & (1<<14);
  }
- bool from_files_option_list_accessed() const {
-   return accessed_ & (1<<15);
+  bool from_files_option_list_accessed() const {
+    return accessed_ & (1<<15);
  }
   ResolvedAuxLoadDataStmt::InsertionMode insertion_mode_;
   bool is_temp_table_;
@@ -44782,17 +45070,17 @@ class ResolvedUndropStmt final : public ResolvedStatement {
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
 
- bool schema_object_kind_accessed() const {
-   return accessed_ & (1<<0);
+  bool schema_object_kind_accessed() const {
+    return accessed_ & (1<<0);
  }
- bool is_if_not_exists_accessed() const {
-   return accessed_ & (1<<1);
+  bool is_if_not_exists_accessed() const {
+    return accessed_ & (1<<1);
  }
- bool name_path_accessed() const {
-   return accessed_ & (1<<2);
+  bool name_path_accessed() const {
+    return accessed_ & (1<<2);
  }
- bool for_system_time_expr_accessed() const {
-   return accessed_ & (1<<3);
+  bool for_system_time_expr_accessed() const {
+    return accessed_ & (1<<3);
  }
   std::string schema_object_kind_;
   bool is_if_not_exists_;

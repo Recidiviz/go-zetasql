@@ -47,6 +47,11 @@ std::string GetTypeUrl() {
 // Whether the given status has exactly one payload of type T.
 template <class T>
 bool HasPayloadWithType(const absl::Status& status) {
+  // Avoid GetTypeUrl() (protobuf descriptors) for OK statuses — e.g.
+  // ConvertInternalErrorLocationToExternal always checks payload type first.
+  if (status.ok()) {
+    return false;
+  }
   return status.GetPayload(zetasql_base::GetTypeUrl<T>()).has_value();
 }
 

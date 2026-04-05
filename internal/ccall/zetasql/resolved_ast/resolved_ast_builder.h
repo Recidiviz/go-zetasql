@@ -60,6 +60,7 @@ class ResolvedFlattenBuilder;
 class ResolvedFlattenedArgBuilder;
 class ResolvedReplaceFieldItemBuilder;
 class ResolvedReplaceFieldBuilder;
+class ResolvedGetProtoOneofBuilder;
 class ResolvedSubqueryExprBuilder;
 class ResolvedWithExprBuilder;
 class ResolvedExecuteAsRoleScanBuilder;
@@ -6701,6 +6702,194 @@ inline ResolvedReplaceFieldBuilder ToBuilder(
   // All required nodes are evidently already set
   builder.field_is_set_.set(0, true);
   builder.field_is_set_.set(2, true);
+  return builder;
+}
+
+class ResolvedGetProtoOneofBuilder final {
+ public:
+  ResolvedGetProtoOneofBuilder() : ResolvedGetProtoOneofBuilder(absl::WrapUnique(new ResolvedGetProtoOneof)) {}
+
+  ResolvedGetProtoOneofBuilder(const ResolvedGetProtoOneofBuilder&) = delete;
+  ResolvedGetProtoOneofBuilder& operator=(const ResolvedGetProtoOneofBuilder&) = delete;
+  ResolvedGetProtoOneofBuilder(ResolvedGetProtoOneofBuilder&& other)
+      : ResolvedGetProtoOneofBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedGetProtoOneofBuilder& operator=(ResolvedGetProtoOneofBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // Build() releases the current inner node, so it is callable only on an
+  // r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<const ResolvedGetProtoOneof>> Build() && {
+  // Performs an emptiness check on node.fields to determine if accessed_ should
+  // be created. In the case of a concrete node without fields it will not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGetProtoOneof::type was not set on the builder");
+    }
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGetProtoOneof::expr was not set on the builder");
+    }
+    if (!field_is_set_.test(3)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGetProtoOneof::oneof_descriptor was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+
+    return deferred_build_status_;
+  }
+
+  // Getters and chained setters
+  const ResolvedExpr* expr() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->expr();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return node_->release_expr();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder&& set_expr(T v) && {
+    node_->set_expr(std::move(v));
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder& set_expr(T v) & {
+    node_->set_expr(std::move(v));
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder&& set_expr(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder& set_expr(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  // The google::protobuf::OneofDescriptor for a Oneof contained in <expr>.
+  // This descriptor provides google::protobuf::FieldDescriptors for each of
+  // the fields contained in the Oneof.
+  const google::protobuf::OneofDescriptor* oneof_descriptor() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->oneof_descriptor();
+  }
+
+  ResolvedGetProtoOneofBuilder&& set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) && {
+    node_->set_oneof_descriptor(v);
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetProtoOneofBuilder& set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) & {
+    node_->set_oneof_descriptor(v);
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  const Type* type() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->type();
+  }
+
+  ResolvedGetProtoOneofBuilder&& set_type(const Type* v) && {
+    node_->set_type(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetProtoOneofBuilder& set_type(const Type* v) & {
+    node_->set_type(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const AnnotationMap* type_annotation_map() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->type_annotation_map();
+  }
+
+  ResolvedGetProtoOneofBuilder&& set_type_annotation_map(const AnnotationMap* v) && {
+    node_->set_type_annotation_map(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetProtoOneofBuilder& set_type_annotation_map(const AnnotationMap* v) & {
+    node_->set_type_annotation_map(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedGetProtoOneof> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<4> field_is_set_ = {0};
+  friend ResolvedGetProtoOneofBuilder ToBuilder(
+      std::unique_ptr<const ResolvedGetProtoOneof> node);
+
+  ResolvedGetProtoOneofBuilder(std::unique_ptr<ResolvedGetProtoOneof> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedGetProtoOneofBuilder ToBuilder(
+    std::unique_ptr<const ResolvedGetProtoOneof> node) {
+  ResolvedGetProtoOneofBuilder builder(absl::WrapUnique<ResolvedGetProtoOneof>(
+      const_cast<ResolvedGetProtoOneof*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(2, true);
+  builder.field_is_set_.set(3, true);
   return builder;
 }
 
@@ -19318,6 +19507,44 @@ class ResolvedFunctionArgumentBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
+
+    return *this;
+  }
+
+  // Stores the alias of the argument, either provided by the user or
+  // generated by the resolver. This can only be populated if allowed
+  // by `FunctionArgumentTypeOptions::argument_alias_kind`.
+  //
+  // An argument alias is an identifier associated with a function
+  // argument in the form of F(<arg> AS <alias>), where <alias> is the
+  // argument alias for the function argument <arg>.
+  //
+  // Examples include
+  //   * STRUCT(1 AS x, 2 AS y)
+  //   * ARRAY_ZIP(arr1 AS a, arr2 AS b)
+  // where the argument alias is used as a field name in an output
+  // STRUCT value. For dynamic types like JSON, these aliases may be
+  // used at run-time.
+  //
+  // This field will be empty if the argument does not support aliases,
+  // or an alias could not be inferred.
+  //
+  // The current implementation only allows an argument to have an
+  // alias if its type is `expr`, but the support may be extended to
+  // other types, e.g. `scan` or `model` in the future.
+  const std::string& argument_alias() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->argument_alias();
+  }
+
+  ResolvedFunctionArgumentBuilder&& set_argument_alias(const std::string& v) && {
+    node_->set_argument_alias(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedFunctionArgumentBuilder& set_argument_alias(const std::string& v) & {
+    node_->set_argument_alias(v);
 
     return *this;
   }
@@ -33211,6 +33438,60 @@ class ResolvedInsertStmtBuilder final {
 
   ResolvedInsertStmtBuilder& set_column_access_list(const std::vector<ResolvedStatement::ObjectAccess>& v) & {
     node_->set_column_access_list(v);
+
+    return *this;
+  }
+
+  // This returns a topologically sorted list of generated columns
+  //  indexes in the table accessed by insert statement.
+  //  For example for below table
+  //  CREATE TABLE T(
+  //  k1 INT64 NOT NULL,
+  //  data INT64,
+  //  gen1 INT64 AS data+1,
+  //  gen2 INT64 AS gen1*2,
+  //  gen3 INT64 AS data*2 + gen1,
+  //  ) PRIMARY KEY(k1);
+  // data------------------->gen1--------------------->gen2
+  //   *                      *----------> *
+  //   *  ------------------------------->gen3
+  // the vector would have corresponding indexes of one of these values
+  // gen1 gen2 gen3 OR gen1 gen3 gen2.
+  const std::vector<int>& topologically_sorted_generated_column_index_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_index_list();
+  }
+
+  int topologically_sorted_generated_column_index_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_index_list_size();
+  }
+
+  int topologically_sorted_generated_column_index_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_index_list(i);
+  }
+
+  ResolvedInsertStmtBuilder&& add_topologically_sorted_generated_column_index_list(int v) && {
+    node_->add_topologically_sorted_generated_column_index_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedInsertStmtBuilder& add_topologically_sorted_generated_column_index_list(int v) & {
+    node_->add_topologically_sorted_generated_column_index_list(v);
+
+    return *this;
+  }
+
+  ResolvedInsertStmtBuilder&& set_topologically_sorted_generated_column_index_list(const std::vector<int>& v) && {
+    node_->set_topologically_sorted_generated_column_index_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedInsertStmtBuilder& set_topologically_sorted_generated_column_index_list(const std::vector<int>& v) & {
+    node_->set_topologically_sorted_generated_column_index_list(v);
 
     return *this;
   }

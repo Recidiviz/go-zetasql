@@ -413,6 +413,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedGetProtoOneof(
+      const ResolvedGetProtoOneof&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedGetProtoOneof (
+      std::unique_ptr<const ResolvedGetProtoOneof> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr&) {
     return absl::OkStatus();
@@ -2396,6 +2407,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedReplaceField> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedGetProtoOneof> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSubqueryExpr> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedWithExpr> node);
@@ -2946,6 +2959,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedReplaceField>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedReplaceField>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedGetProtoOneof::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedGetProtoOneof>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedGetProtoOneof>(std::move(node)));
         }
         break;
       }

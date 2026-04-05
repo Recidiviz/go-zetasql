@@ -176,6 +176,11 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedReplaceField(
   return CopyVisitResolvedReplaceField(node);
 }
 
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGetProtoOneof(
+    const ResolvedGetProtoOneof* node) {
+  return CopyVisitResolvedGetProtoOneof(node);
+}
+
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSubqueryExpr(
     const ResolvedSubqueryExpr* node) {
   return CopyVisitResolvedSubqueryExpr(node);
@@ -1987,6 +1992,37 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedReplaceField(
     node->type(),
     std::move(expr),
     std::move(replace_field_item_list)
+  );
+
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetProtoOneof(
+    const ResolvedGetProtoOneof* node) {
+  // Get deep copy of expr field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> expr,
+      ProcessNode(node->expr()));
+
+  // Create a mutable instance of ResolvedGetProtoOneof.
+  auto copy = MakeResolvedGetProtoOneof(
+    node->type(),
+    std::move(expr),
+    node->oneof_descriptor()
   );
 
   // Copy the type_annotation_map field explicitly because it is not a
@@ -3931,7 +3967,8 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionArgument(
     std::move(descriptor_arg),
     argument_column_list,
     std::move(inline_lambda),
-    std::move(sequence)
+    std::move(sequence),
+    node->argument_alias()
   );
 
   // Set parse location range if it was previously set, as this is not a
@@ -5928,7 +5965,8 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertStmt(
     std::move(query_parameter_list),
     std::move(query),
     query_output_column_list,
-    std::move(row_list)
+    std::move(row_list),
+    node->topologically_sorted_generated_column_index_list()
   );
 
   // Copy the hint list explicitly because hint_list is not a constructor arg.

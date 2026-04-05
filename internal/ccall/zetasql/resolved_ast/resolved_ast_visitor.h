@@ -139,6 +139,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedReplaceField(const ResolvedReplaceField* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedGetProtoOneof(const ResolvedGetProtoOneof* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedSubqueryExpr(const ResolvedSubqueryExpr* node) {
     return DefaultVisit(node);
   }

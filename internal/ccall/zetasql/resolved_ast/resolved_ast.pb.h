@@ -497,6 +497,9 @@ extern ResolvedGetJsonFieldProtoDefaultTypeInternal _ResolvedGetJsonFieldProto_d
 class ResolvedGetProtoFieldProto;
 struct ResolvedGetProtoFieldProtoDefaultTypeInternal;
 extern ResolvedGetProtoFieldProtoDefaultTypeInternal _ResolvedGetProtoFieldProto_default_instance_;
+class ResolvedGetProtoOneofProto;
+struct ResolvedGetProtoOneofProtoDefaultTypeInternal;
+extern ResolvedGetProtoOneofProtoDefaultTypeInternal _ResolvedGetProtoOneofProto_default_instance_;
 class ResolvedGetStructFieldProto;
 struct ResolvedGetStructFieldProtoDefaultTypeInternal;
 extern ResolvedGetStructFieldProtoDefaultTypeInternal _ResolvedGetStructFieldProto_default_instance_;
@@ -1055,6 +1058,8 @@ template <>
 ::zetasql::ResolvedGetJsonFieldProto* Arena::CreateMaybeMessage<::zetasql::ResolvedGetJsonFieldProto>(Arena*);
 template <>
 ::zetasql::ResolvedGetProtoFieldProto* Arena::CreateMaybeMessage<::zetasql::ResolvedGetProtoFieldProto>(Arena*);
+template <>
+::zetasql::ResolvedGetProtoOneofProto* Arena::CreateMaybeMessage<::zetasql::ResolvedGetProtoOneofProto>(Arena*);
 template <>
 ::zetasql::ResolvedGetStructFieldProto* Arena::CreateMaybeMessage<::zetasql::ResolvedGetStructFieldProto>(Arena*);
 template <>
@@ -3002,6 +3007,7 @@ class AnyResolvedExprProto final :
     kResolvedArgumentRefNode = 78,
     kResolvedConstantNode = 103,
     kResolvedReplaceFieldNode = 129,
+    kResolvedGetProtoOneofNode = 130,
     kResolvedSystemVariableNode = 139,
     kResolvedFlattenNode = 149,
     kResolvedFlattenedArgNode = 150,
@@ -3085,6 +3091,7 @@ class AnyResolvedExprProto final :
     kResolvedArgumentRefNodeFieldNumber = 78,
     kResolvedConstantNodeFieldNumber = 103,
     kResolvedReplaceFieldNodeFieldNumber = 129,
+    kResolvedGetProtoOneofNodeFieldNumber = 130,
     kResolvedSystemVariableNodeFieldNumber = 139,
     kResolvedFlattenNodeFieldNumber = 149,
     kResolvedFlattenedArgNodeFieldNumber = 150,
@@ -3363,6 +3370,24 @@ class AnyResolvedExprProto final :
   void unsafe_arena_set_allocated_resolved_replace_field_node(
       ::zetasql::ResolvedReplaceFieldProto* resolved_replace_field_node);
   ::zetasql::ResolvedReplaceFieldProto* unsafe_arena_release_resolved_replace_field_node();
+  // .zetasql.ResolvedGetProtoOneofProto resolved_get_proto_oneof_node = 130;
+  bool has_resolved_get_proto_oneof_node() const;
+  private:
+  bool _internal_has_resolved_get_proto_oneof_node() const;
+
+  public:
+  void clear_resolved_get_proto_oneof_node() ;
+  const ::zetasql::ResolvedGetProtoOneofProto& resolved_get_proto_oneof_node() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedGetProtoOneofProto* release_resolved_get_proto_oneof_node();
+  ::zetasql::ResolvedGetProtoOneofProto* mutable_resolved_get_proto_oneof_node();
+  void set_allocated_resolved_get_proto_oneof_node(::zetasql::ResolvedGetProtoOneofProto* resolved_get_proto_oneof_node);
+  private:
+  const ::zetasql::ResolvedGetProtoOneofProto& _internal_resolved_get_proto_oneof_node() const;
+  ::zetasql::ResolvedGetProtoOneofProto* _internal_mutable_resolved_get_proto_oneof_node();
+  public:
+  void unsafe_arena_set_allocated_resolved_get_proto_oneof_node(
+      ::zetasql::ResolvedGetProtoOneofProto* resolved_get_proto_oneof_node);
+  ::zetasql::ResolvedGetProtoOneofProto* unsafe_arena_release_resolved_get_proto_oneof_node();
   // .zetasql.ResolvedSystemVariableProto resolved_system_variable_node = 139;
   bool has_resolved_system_variable_node() const;
   private:
@@ -3509,6 +3534,7 @@ class AnyResolvedExprProto final :
   void set_has_resolved_argument_ref_node();
   void set_has_resolved_constant_node();
   void set_has_resolved_replace_field_node();
+  void set_has_resolved_get_proto_oneof_node();
   void set_has_resolved_system_variable_node();
   void set_has_resolved_flatten_node();
   void set_has_resolved_flattened_arg_node();
@@ -3542,6 +3568,7 @@ class AnyResolvedExprProto final :
       ::zetasql::ResolvedArgumentRefProto* resolved_argument_ref_node_;
       ::zetasql::ResolvedConstantProto* resolved_constant_node_;
       ::zetasql::ResolvedReplaceFieldProto* resolved_replace_field_node_;
+      ::zetasql::ResolvedGetProtoOneofProto* resolved_get_proto_oneof_node_;
       ::zetasql::ResolvedSystemVariableProto* resolved_system_variable_node_;
       ::zetasql::ResolvedFlattenProto* resolved_flatten_node_;
       ::zetasql::ResolvedFlattenedArgProto* resolved_flattened_arg_node_;
@@ -9586,6 +9613,179 @@ class ResolvedReplaceFieldProto final :
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
 };// -------------------------------------------------------------------
 
+class ResolvedGetProtoOneofProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedGetProtoOneofProto) */ {
+ public:
+  inline ResolvedGetProtoOneofProto() : ResolvedGetProtoOneofProto(nullptr) {}
+  ~ResolvedGetProtoOneofProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedGetProtoOneofProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedGetProtoOneofProto(const ResolvedGetProtoOneofProto& from);
+  ResolvedGetProtoOneofProto(ResolvedGetProtoOneofProto&& from) noexcept
+    : ResolvedGetProtoOneofProto() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedGetProtoOneofProto& operator=(const ResolvedGetProtoOneofProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedGetProtoOneofProto& operator=(ResolvedGetProtoOneofProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedGetProtoOneofProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedGetProtoOneofProto* internal_default_instance() {
+    return reinterpret_cast<const ResolvedGetProtoOneofProto*>(
+               &_ResolvedGetProtoOneofProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    37;
+
+  friend void swap(ResolvedGetProtoOneofProto& a, ResolvedGetProtoOneofProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedGetProtoOneofProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedGetProtoOneofProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedGetProtoOneofProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedGetProtoOneofProto>(arena);
+  }
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ResolvedGetProtoOneofProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedGetProtoOneofProto";
+  }
+  protected:
+  explicit ResolvedGetProtoOneofProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kParentFieldNumber = 1,
+    kExprFieldNumber = 2,
+    kOneofDescriptorFieldNumber = 3,
+  };
+  // optional .zetasql.ResolvedExprProto parent = 1;
+  bool has_parent() const;
+  void clear_parent() ;
+  const ::zetasql::ResolvedExprProto& parent() const;
+  PROTOBUF_NODISCARD ::zetasql::ResolvedExprProto* release_parent();
+  ::zetasql::ResolvedExprProto* mutable_parent();
+  void set_allocated_parent(::zetasql::ResolvedExprProto* parent);
+  private:
+  const ::zetasql::ResolvedExprProto& _internal_parent() const;
+  ::zetasql::ResolvedExprProto* _internal_mutable_parent();
+  public:
+  void unsafe_arena_set_allocated_parent(
+      ::zetasql::ResolvedExprProto* parent);
+  ::zetasql::ResolvedExprProto* unsafe_arena_release_parent();
+  // optional .zetasql.AnyResolvedExprProto expr = 2;
+  bool has_expr() const;
+  void clear_expr() ;
+  const ::zetasql::AnyResolvedExprProto& expr() const;
+  PROTOBUF_NODISCARD ::zetasql::AnyResolvedExprProto* release_expr();
+  ::zetasql::AnyResolvedExprProto* mutable_expr();
+  void set_allocated_expr(::zetasql::AnyResolvedExprProto* expr);
+  private:
+  const ::zetasql::AnyResolvedExprProto& _internal_expr() const;
+  ::zetasql::AnyResolvedExprProto* _internal_mutable_expr();
+  public:
+  void unsafe_arena_set_allocated_expr(
+      ::zetasql::AnyResolvedExprProto* expr);
+  ::zetasql::AnyResolvedExprProto* unsafe_arena_release_expr();
+  // optional .zetasql.OneofDescriptorRefProto oneof_descriptor = 3;
+  bool has_oneof_descriptor() const;
+  void clear_oneof_descriptor() ;
+  const ::zetasql::OneofDescriptorRefProto& oneof_descriptor() const;
+  PROTOBUF_NODISCARD ::zetasql::OneofDescriptorRefProto* release_oneof_descriptor();
+  ::zetasql::OneofDescriptorRefProto* mutable_oneof_descriptor();
+  void set_allocated_oneof_descriptor(::zetasql::OneofDescriptorRefProto* oneof_descriptor);
+  private:
+  const ::zetasql::OneofDescriptorRefProto& _internal_oneof_descriptor() const;
+  ::zetasql::OneofDescriptorRefProto* _internal_mutable_oneof_descriptor();
+  public:
+  void unsafe_arena_set_allocated_oneof_descriptor(
+      ::zetasql::OneofDescriptorRefProto* oneof_descriptor);
+  ::zetasql::OneofDescriptorRefProto* unsafe_arena_release_oneof_descriptor();
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedGetProtoOneofProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::zetasql::ResolvedExprProto* parent_;
+    ::zetasql::AnyResolvedExprProto* expr_;
+    ::zetasql::OneofDescriptorRefProto* oneof_descriptor_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_2eproto;
+};// -------------------------------------------------------------------
+
 class ResolvedSubqueryExprProto final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ResolvedSubqueryExprProto) */ {
  public:
@@ -9642,7 +9842,7 @@ class ResolvedSubqueryExprProto final :
                &_ResolvedSubqueryExprProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    38;
 
   friend void swap(ResolvedSubqueryExprProto& a, ResolvedSubqueryExprProto& b) {
     a.Swap(&b);
@@ -9888,7 +10088,7 @@ class ResolvedWithExprProto final :
                &_ResolvedWithExprProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    39;
 
   friend void swap(ResolvedWithExprProto& a, ResolvedWithExprProto& b) {
     a.Swap(&b);
@@ -10093,7 +10293,7 @@ class AnyResolvedScanProto final :
                &_AnyResolvedScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    40;
 
   friend void swap(AnyResolvedScanProto& a, AnyResolvedScanProto& b) {
     a.Swap(&b);
@@ -10690,7 +10890,7 @@ class ResolvedScanProto final :
                &_ResolvedScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    41;
 
   friend void swap(ResolvedScanProto& a, ResolvedScanProto& b) {
     a.Swap(&b);
@@ -10911,7 +11111,7 @@ class ResolvedExecuteAsRoleScanProto final :
                &_ResolvedExecuteAsRoleScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    42;
 
   friend void swap(ResolvedExecuteAsRoleScanProto& a, ResolvedExecuteAsRoleScanProto& b) {
     a.Swap(&b);
@@ -11100,7 +11300,7 @@ class ResolvedModelProto final :
                &_ResolvedModelProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    43;
 
   friend void swap(ResolvedModelProto& a, ResolvedModelProto& b) {
     a.Swap(&b);
@@ -11257,7 +11457,7 @@ class ResolvedConnectionProto final :
                &_ResolvedConnectionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    44;
 
   friend void swap(ResolvedConnectionProto& a, ResolvedConnectionProto& b) {
     a.Swap(&b);
@@ -11414,7 +11614,7 @@ class ResolvedDescriptorProto final :
                &_ResolvedDescriptorProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    45;
 
   friend void swap(ResolvedDescriptorProto& a, ResolvedDescriptorProto& b) {
     a.Swap(&b);
@@ -11609,7 +11809,7 @@ class ResolvedSingleRowScanProto final :
                &_ResolvedSingleRowScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    46;
 
   friend void swap(ResolvedSingleRowScanProto& a, ResolvedSingleRowScanProto& b) {
     a.Swap(&b);
@@ -11750,7 +11950,7 @@ class ResolvedTableScanProto final :
                &_ResolvedTableScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    46;
+    47;
 
   friend void swap(ResolvedTableScanProto& a, ResolvedTableScanProto& b) {
     a.Swap(&b);
@@ -11968,7 +12168,7 @@ class ResolvedJoinScanProto final :
                &_ResolvedJoinScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    47;
+    48;
 
   friend void swap(ResolvedJoinScanProto& a, ResolvedJoinScanProto& b) {
     a.Swap(&b);
@@ -12170,7 +12370,7 @@ class ResolvedArrayScanProto final :
                &_ResolvedArrayScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    48;
+    49;
 
   friend void swap(ResolvedArrayScanProto& a, ResolvedArrayScanProto& b) {
     a.Swap(&b);
@@ -12404,7 +12604,7 @@ class ResolvedColumnHolderProto final :
                &_ResolvedColumnHolderProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    49;
+    50;
 
   friend void swap(ResolvedColumnHolderProto& a, ResolvedColumnHolderProto& b) {
     a.Swap(&b);
@@ -12561,7 +12761,7 @@ class ResolvedFilterScanProto final :
                &_ResolvedFilterScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    50;
+    51;
 
   friend void swap(ResolvedFilterScanProto& a, ResolvedFilterScanProto& b) {
     a.Swap(&b);
@@ -12734,7 +12934,7 @@ class ResolvedGroupingCallProto final :
                &_ResolvedGroupingCallProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    51;
+    52;
 
   friend void swap(ResolvedGroupingCallProto& a, ResolvedGroupingCallProto& b) {
     a.Swap(&b);
@@ -12914,7 +13114,7 @@ class AnyResolvedGroupingSetBaseProto final :
                &_AnyResolvedGroupingSetBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    52;
+    53;
 
   friend void swap(AnyResolvedGroupingSetBaseProto& a, AnyResolvedGroupingSetBaseProto& b) {
     a.Swap(&b);
@@ -13112,7 +13312,7 @@ class ResolvedGroupingSetBaseProto final :
                &_ResolvedGroupingSetBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    53;
+    54;
 
   friend void swap(ResolvedGroupingSetBaseProto& a, ResolvedGroupingSetBaseProto& b) {
     a.Swap(&b);
@@ -13253,7 +13453,7 @@ class ResolvedGroupingSetProto final :
                &_ResolvedGroupingSetProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    54;
+    55;
 
   friend void swap(ResolvedGroupingSetProto& a, ResolvedGroupingSetProto& b) {
     a.Swap(&b);
@@ -13416,7 +13616,7 @@ class ResolvedRollupProto final :
                &_ResolvedRollupProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    55;
+    56;
 
   friend void swap(ResolvedRollupProto& a, ResolvedRollupProto& b) {
     a.Swap(&b);
@@ -13579,7 +13779,7 @@ class ResolvedCubeProto final :
                &_ResolvedCubeProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    56;
+    57;
 
   friend void swap(ResolvedCubeProto& a, ResolvedCubeProto& b) {
     a.Swap(&b);
@@ -13750,7 +13950,7 @@ class AnyResolvedAggregateScanBaseProto final :
                &_AnyResolvedAggregateScanBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    57;
+    58;
 
   friend void swap(AnyResolvedAggregateScanBaseProto& a, AnyResolvedAggregateScanBaseProto& b) {
     a.Swap(&b);
@@ -13969,7 +14169,7 @@ class ResolvedAggregateScanBaseProto final :
                &_ResolvedAggregateScanBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    58;
+    59;
 
   friend void swap(ResolvedAggregateScanBaseProto& a, ResolvedAggregateScanBaseProto& b) {
     a.Swap(&b);
@@ -14258,7 +14458,7 @@ class ResolvedAggregateScanProto final :
                &_ResolvedAggregateScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    59;
+    60;
 
   friend void swap(ResolvedAggregateScanProto& a, ResolvedAggregateScanProto& b) {
     a.Swap(&b);
@@ -14399,7 +14599,7 @@ class ResolvedAnonymizedAggregateScanProto final :
                &_ResolvedAnonymizedAggregateScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    60;
+    61;
 
   friend void swap(ResolvedAnonymizedAggregateScanProto& a, ResolvedAnonymizedAggregateScanProto& b) {
     a.Swap(&b);
@@ -14578,7 +14778,7 @@ class ResolvedDifferentialPrivacyAggregateScanProto final :
                &_ResolvedDifferentialPrivacyAggregateScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    61;
+    62;
 
   friend void swap(ResolvedDifferentialPrivacyAggregateScanProto& a, ResolvedDifferentialPrivacyAggregateScanProto& b) {
     a.Swap(&b);
@@ -14757,7 +14957,7 @@ class ResolvedAggregationThresholdAggregateScanProto final :
                &_ResolvedAggregationThresholdAggregateScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    62;
+    63;
 
   friend void swap(ResolvedAggregationThresholdAggregateScanProto& a, ResolvedAggregationThresholdAggregateScanProto& b) {
     a.Swap(&b);
@@ -14920,7 +15120,7 @@ class ResolvedSetOperationItemProto final :
                &_ResolvedSetOperationItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    63;
+    64;
 
   friend void swap(ResolvedSetOperationItemProto& a, ResolvedSetOperationItemProto& b) {
     a.Swap(&b);
@@ -15099,7 +15299,7 @@ class ResolvedSetOperationScanProto final :
                &_ResolvedSetOperationScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    64;
+    65;
 
   friend void swap(ResolvedSetOperationScanProto& a, ResolvedSetOperationScanProto& b) {
     a.Swap(&b);
@@ -15301,7 +15501,7 @@ class ResolvedOrderByScanProto final :
                &_ResolvedOrderByScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    65;
+    66;
 
   friend void swap(ResolvedOrderByScanProto& a, ResolvedOrderByScanProto& b) {
     a.Swap(&b);
@@ -15480,7 +15680,7 @@ class ResolvedLimitOffsetScanProto final :
                &_ResolvedLimitOffsetScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    66;
+    67;
 
   friend void swap(ResolvedLimitOffsetScanProto& a, ResolvedLimitOffsetScanProto& b) {
     a.Swap(&b);
@@ -15669,7 +15869,7 @@ class ResolvedWithRefScanProto final :
                &_ResolvedWithRefScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    67;
+    68;
 
   friend void swap(ResolvedWithRefScanProto& a, ResolvedWithRefScanProto& b) {
     a.Swap(&b);
@@ -15833,7 +16033,7 @@ class ResolvedAnalyticScanProto final :
                &_ResolvedAnalyticScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    68;
+    69;
 
   friend void swap(ResolvedAnalyticScanProto& a, ResolvedAnalyticScanProto& b) {
     a.Swap(&b);
@@ -16012,7 +16212,7 @@ class ResolvedSampleScanProto final :
                &_ResolvedSampleScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    69;
+    70;
 
   friend void swap(ResolvedSampleScanProto& a, ResolvedSampleScanProto& b) {
     a.Swap(&b);
@@ -16275,7 +16475,7 @@ class ResolvedComputedColumnProto final :
                &_ResolvedComputedColumnProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    70;
+    71;
 
   friend void swap(ResolvedComputedColumnProto& a, ResolvedComputedColumnProto& b) {
     a.Swap(&b);
@@ -16448,7 +16648,7 @@ class ResolvedOrderByItemProto final :
                &_ResolvedOrderByItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    71;
+    72;
 
   friend void swap(ResolvedOrderByItemProto& a, ResolvedOrderByItemProto& b) {
     a.Swap(&b);
@@ -16663,7 +16863,7 @@ class ResolvedColumnAnnotationsProto final :
                &_ResolvedColumnAnnotationsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    72;
+    73;
 
   friend void swap(ResolvedColumnAnnotationsProto& a, ResolvedColumnAnnotationsProto& b) {
     a.Swap(&b);
@@ -16893,7 +17093,7 @@ class ResolvedGeneratedColumnInfoProto final :
                &_ResolvedGeneratedColumnInfoProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    73;
+    74;
 
   friend void swap(ResolvedGeneratedColumnInfoProto& a, ResolvedGeneratedColumnInfoProto& b) {
     a.Swap(&b);
@@ -17063,7 +17263,7 @@ class ResolvedColumnDefaultValueProto final :
                &_ResolvedColumnDefaultValueProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    74;
+    75;
 
   friend void swap(ResolvedColumnDefaultValueProto& a, ResolvedColumnDefaultValueProto& b) {
     a.Swap(&b);
@@ -17243,7 +17443,7 @@ class ResolvedColumnDefinitionProto final :
                &_ResolvedColumnDefinitionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    75;
+    76;
 
   friend void swap(ResolvedColumnDefinitionProto& a, ResolvedColumnDefinitionProto& b) {
     a.Swap(&b);
@@ -17507,7 +17707,7 @@ class AnyResolvedConstraintProto final :
                &_AnyResolvedConstraintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    76;
+    77;
 
   friend void swap(AnyResolvedConstraintProto& a, AnyResolvedConstraintProto& b) {
     a.Swap(&b);
@@ -17705,7 +17905,7 @@ class ResolvedConstraintProto final :
                &_ResolvedConstraintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    77;
+    78;
 
   friend void swap(ResolvedConstraintProto& a, ResolvedConstraintProto& b) {
     a.Swap(&b);
@@ -17846,7 +18046,7 @@ class ResolvedPrimaryKeyProto final :
                &_ResolvedPrimaryKeyProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    78;
+    79;
 
   friend void swap(ResolvedPrimaryKeyProto& a, ResolvedPrimaryKeyProto& b) {
     a.Swap(&b);
@@ -18099,7 +18299,7 @@ class ResolvedForeignKeyProto final :
                &_ResolvedForeignKeyProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    79;
+    80;
 
   friend void swap(ResolvedForeignKeyProto& a, ResolvedForeignKeyProto& b) {
     a.Swap(&b);
@@ -18429,7 +18629,7 @@ class ResolvedCheckConstraintProto final :
                &_ResolvedCheckConstraintProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    80;
+    81;
 
   friend void swap(ResolvedCheckConstraintProto& a, ResolvedCheckConstraintProto& b) {
     a.Swap(&b);
@@ -18644,7 +18844,7 @@ class ResolvedOutputColumnProto final :
                &_ResolvedOutputColumnProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    81;
+    82;
 
   friend void swap(ResolvedOutputColumnProto& a, ResolvedOutputColumnProto& b) {
     a.Swap(&b);
@@ -18824,7 +19024,7 @@ class ResolvedProjectScanProto final :
                &_ResolvedProjectScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    82;
+    83;
 
   friend void swap(ResolvedProjectScanProto& a, ResolvedProjectScanProto& b) {
     a.Swap(&b);
@@ -19003,7 +19203,7 @@ class ResolvedTVFScanProto final :
                &_ResolvedTVFScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    83;
+    84;
 
   friend void swap(ResolvedTVFScanProto& a, ResolvedTVFScanProto& b) {
     a.Swap(&b);
@@ -19259,7 +19459,7 @@ class ResolvedGroupRowsScanProto final :
                &_ResolvedGroupRowsScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    84;
+    85;
 
   friend void swap(ResolvedGroupRowsScanProto& a, ResolvedGroupRowsScanProto& b) {
     a.Swap(&b);
@@ -19445,7 +19645,7 @@ class ResolvedFunctionArgumentProto final :
                &_ResolvedFunctionArgumentProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    85;
+    86;
 
   friend void swap(ResolvedFunctionArgumentProto& a, ResolvedFunctionArgumentProto& b) {
     a.Swap(&b);
@@ -19499,6 +19699,7 @@ class ResolvedFunctionArgumentProto final :
 
   enum : int {
     kArgumentColumnListFieldNumber = 4,
+    kArgumentAliasFieldNumber = 10,
     kParentFieldNumber = 1,
     kExprFieldNumber = 2,
     kScanFieldNumber = 3,
@@ -19528,6 +19729,27 @@ class ResolvedFunctionArgumentProto final :
   ::zetasql::ResolvedColumnProto* add_argument_column_list();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnProto >&
       argument_column_list() const;
+  // optional string argument_alias = 10;
+  bool has_argument_alias() const;
+  void clear_argument_alias() ;
+  const std::string& argument_alias() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_argument_alias(Arg_&& arg, Args_... args);
+  std::string* mutable_argument_alias();
+  PROTOBUF_NODISCARD std::string* release_argument_alias();
+  void set_allocated_argument_alias(std::string* ptr);
+
+  private:
+  const std::string& _internal_argument_alias() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_argument_alias(
+      const std::string& value);
+  std::string* _internal_mutable_argument_alias();
+
+  public:
   // optional .zetasql.ResolvedArgumentProto parent = 1;
   bool has_parent() const;
   void clear_parent() ;
@@ -19651,6 +19873,7 @@ class ResolvedFunctionArgumentProto final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnProto > argument_column_list_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr argument_alias_;
     ::zetasql::ResolvedArgumentProto* parent_;
     ::zetasql::AnyResolvedExprProto* expr_;
     ::zetasql::AnyResolvedScanProto* scan_;
@@ -19769,7 +19992,7 @@ class AnyResolvedStatementProto final :
                &_AnyResolvedStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    86;
+    87;
 
   friend void swap(AnyResolvedStatementProto& a, AnyResolvedStatementProto& b) {
     a.Swap(&b);
@@ -20849,7 +21072,7 @@ class ResolvedStatementProto final :
                &_ResolvedStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    87;
+    88;
 
   friend void swap(ResolvedStatementProto& a, ResolvedStatementProto& b) {
     a.Swap(&b);
@@ -21012,7 +21235,7 @@ class ResolvedExplainStmtProto final :
                &_ResolvedExplainStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    88;
+    89;
 
   friend void swap(ResolvedExplainStmtProto& a, ResolvedExplainStmtProto& b) {
     a.Swap(&b);
@@ -21169,7 +21392,7 @@ class ResolvedQueryStmtProto final :
                &_ResolvedQueryStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    89;
+    90;
 
   friend void swap(ResolvedQueryStmtProto& a, ResolvedQueryStmtProto& b) {
     a.Swap(&b);
@@ -21361,7 +21584,7 @@ class ResolvedCreateDatabaseStmtProto final :
                &_ResolvedCreateDatabaseStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    90;
+    91;
 
   friend void swap(ResolvedCreateDatabaseStmtProto& a, ResolvedCreateDatabaseStmtProto& b) {
     a.Swap(&b);
@@ -21572,7 +21795,7 @@ class AnyResolvedCreateStatementProto final :
                &_AnyResolvedCreateStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    91;
+    92;
 
   friend void swap(AnyResolvedCreateStatementProto& a, AnyResolvedCreateStatementProto& b) {
     a.Swap(&b);
@@ -21959,7 +22182,7 @@ class ResolvedCreateStatementProto final :
                &_ResolvedCreateStatementProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    92;
+    93;
 
   friend void swap(ResolvedCreateStatementProto& a, ResolvedCreateStatementProto& b) {
     a.Swap(&b);
@@ -22158,7 +22381,7 @@ class ResolvedIndexItemProto final :
                &_ResolvedIndexItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    93;
+    94;
 
   friend void swap(ResolvedIndexItemProto& a, ResolvedIndexItemProto& b) {
     a.Swap(&b);
@@ -22328,7 +22551,7 @@ class ResolvedUnnestItemProto final :
                &_ResolvedUnnestItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    94;
+    95;
 
   friend void swap(ResolvedUnnestItemProto& a, ResolvedUnnestItemProto& b) {
     a.Swap(&b);
@@ -22517,7 +22740,7 @@ class ResolvedCreateIndexStmtProto final :
                &_ResolvedCreateIndexStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    95;
+    96;
 
   friend void swap(ResolvedCreateIndexStmtProto& a, ResolvedCreateIndexStmtProto& b) {
     a.Swap(&b);
@@ -22868,7 +23091,7 @@ class ResolvedCreateSchemaStmtProto final :
                &_ResolvedCreateSchemaStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    96;
+    97;
 
   friend void swap(ResolvedCreateSchemaStmtProto& a, ResolvedCreateSchemaStmtProto& b) {
     a.Swap(&b);
@@ -23054,7 +23277,7 @@ class AnyResolvedCreateTableStmtBaseProto final :
                &_AnyResolvedCreateTableStmtBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    97;
+    98;
 
   friend void swap(AnyResolvedCreateTableStmtBaseProto& a, AnyResolvedCreateTableStmtBaseProto& b) {
     a.Swap(&b);
@@ -23252,7 +23475,7 @@ class ResolvedCreateTableStmtBaseProto final :
                &_ResolvedCreateTableStmtBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    98;
+    99;
 
   friend void swap(ResolvedCreateTableStmtBaseProto& a, ResolvedCreateTableStmtBaseProto& b) {
     a.Swap(&b);
@@ -23580,7 +23803,7 @@ class ResolvedCreateTableStmtProto final :
                &_ResolvedCreateTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    99;
+    100;
 
   friend void swap(ResolvedCreateTableStmtProto& a, ResolvedCreateTableStmtProto& b) {
     a.Swap(&b);
@@ -23797,7 +24020,7 @@ class ResolvedCreateTableAsSelectStmtProto final :
                &_ResolvedCreateTableAsSelectStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    100;
+    101;
 
   friend void swap(ResolvedCreateTableAsSelectStmtProto& a, ResolvedCreateTableAsSelectStmtProto& b) {
     a.Swap(&b);
@@ -24020,7 +24243,7 @@ class ResolvedCreateModelAliasedQueryProto final :
                &_ResolvedCreateModelAliasedQueryProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    101;
+    102;
 
   friend void swap(ResolvedCreateModelAliasedQueryProto& a, ResolvedCreateModelAliasedQueryProto& b) {
     a.Swap(&b);
@@ -24222,7 +24445,7 @@ class ResolvedCreateModelStmtProto final :
                &_ResolvedCreateModelStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    102;
+    103;
 
   friend void swap(ResolvedCreateModelStmtProto& a, ResolvedCreateModelStmtProto& b) {
     a.Swap(&b);
@@ -24613,7 +24836,7 @@ class AnyResolvedCreateViewBaseProto final :
                &_AnyResolvedCreateViewBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    103;
+    104;
 
   friend void swap(AnyResolvedCreateViewBaseProto& a, AnyResolvedCreateViewBaseProto& b) {
     a.Swap(&b);
@@ -24811,7 +25034,7 @@ class ResolvedCreateViewBaseProto final :
                &_ResolvedCreateViewBaseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    104;
+    105;
 
   friend void swap(ResolvedCreateViewBaseProto& a, ResolvedCreateViewBaseProto& b) {
     a.Swap(&b);
@@ -25109,7 +25332,7 @@ class ResolvedCreateViewStmtProto final :
                &_ResolvedCreateViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    105;
+    106;
 
   friend void swap(ResolvedCreateViewStmtProto& a, ResolvedCreateViewStmtProto& b) {
     a.Swap(&b);
@@ -25250,7 +25473,7 @@ class ResolvedWithPartitionColumnsProto final :
                &_ResolvedWithPartitionColumnsProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    106;
+    107;
 
   friend void swap(ResolvedWithPartitionColumnsProto& a, ResolvedWithPartitionColumnsProto& b) {
     a.Swap(&b);
@@ -25413,7 +25636,7 @@ class ResolvedCreateSnapshotTableStmtProto final :
                &_ResolvedCreateSnapshotTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    107;
+    108;
 
   friend void swap(ResolvedCreateSnapshotTableStmtProto& a, ResolvedCreateSnapshotTableStmtProto& b) {
     a.Swap(&b);
@@ -25592,7 +25815,7 @@ class ResolvedCreateExternalTableStmtProto final :
                &_ResolvedCreateExternalTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    108;
+    109;
 
   friend void swap(ResolvedCreateExternalTableStmtProto& a, ResolvedCreateExternalTableStmtProto& b) {
     a.Swap(&b);
@@ -25749,7 +25972,7 @@ class ResolvedExportModelStmtProto final :
                &_ResolvedExportModelStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    109;
+    110;
 
   friend void swap(ResolvedExportModelStmtProto& a, ResolvedExportModelStmtProto& b) {
     a.Swap(&b);
@@ -25960,7 +26183,7 @@ class ResolvedExportDataStmtProto final :
                &_ResolvedExportDataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    110;
+    111;
 
   friend void swap(ResolvedExportDataStmtProto& a, ResolvedExportDataStmtProto& b) {
     a.Swap(&b);
@@ -26190,7 +26413,7 @@ class ResolvedExportMetadataStmtProto final :
                &_ResolvedExportMetadataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    111;
+    112;
 
   friend void swap(ResolvedExportMetadataStmtProto& a, ResolvedExportMetadataStmtProto& b) {
     a.Swap(&b);
@@ -26424,7 +26647,7 @@ class ResolvedDefineTableStmtProto final :
                &_ResolvedDefineTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    112;
+    113;
 
   friend void swap(ResolvedDefineTableStmtProto& a, ResolvedDefineTableStmtProto& b) {
     a.Swap(&b);
@@ -26619,7 +26842,7 @@ class ResolvedDescribeStmtProto final :
                &_ResolvedDescribeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    113;
+    114;
 
   friend void swap(ResolvedDescribeStmtProto& a, ResolvedDescribeStmtProto& b) {
     a.Swap(&b);
@@ -26847,7 +27070,7 @@ class ResolvedShowStmtProto final :
                &_ResolvedShowStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    114;
+    115;
 
   friend void swap(ResolvedShowStmtProto& a, ResolvedShowStmtProto& b) {
     a.Swap(&b);
@@ -27059,7 +27282,7 @@ class ResolvedBeginStmtProto final :
                &_ResolvedBeginStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    115;
+    116;
 
   friend void swap(ResolvedBeginStmtProto& a, ResolvedBeginStmtProto& b) {
     a.Swap(&b);
@@ -27245,7 +27468,7 @@ class ResolvedSetTransactionStmtProto final :
                &_ResolvedSetTransactionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    116;
+    117;
 
   friend void swap(ResolvedSetTransactionStmtProto& a, ResolvedSetTransactionStmtProto& b) {
     a.Swap(&b);
@@ -27431,7 +27654,7 @@ class ResolvedCommitStmtProto final :
                &_ResolvedCommitStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    117;
+    118;
 
   friend void swap(ResolvedCommitStmtProto& a, ResolvedCommitStmtProto& b) {
     a.Swap(&b);
@@ -27572,7 +27795,7 @@ class ResolvedRollbackStmtProto final :
                &_ResolvedRollbackStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    118;
+    119;
 
   friend void swap(ResolvedRollbackStmtProto& a, ResolvedRollbackStmtProto& b) {
     a.Swap(&b);
@@ -27713,7 +27936,7 @@ class ResolvedStartBatchStmtProto final :
                &_ResolvedStartBatchStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    119;
+    120;
 
   friend void swap(ResolvedStartBatchStmtProto& a, ResolvedStartBatchStmtProto& b) {
     a.Swap(&b);
@@ -27877,7 +28100,7 @@ class ResolvedRunBatchStmtProto final :
                &_ResolvedRunBatchStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    120;
+    121;
 
   friend void swap(ResolvedRunBatchStmtProto& a, ResolvedRunBatchStmtProto& b) {
     a.Swap(&b);
@@ -28018,7 +28241,7 @@ class ResolvedAbortBatchStmtProto final :
                &_ResolvedAbortBatchStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    121;
+    122;
 
   friend void swap(ResolvedAbortBatchStmtProto& a, ResolvedAbortBatchStmtProto& b) {
     a.Swap(&b);
@@ -28159,7 +28382,7 @@ class ResolvedDropStmtProto final :
                &_ResolvedDropStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    122;
+    123;
 
   friend void swap(ResolvedDropStmtProto& a, ResolvedDropStmtProto& b) {
     a.Swap(&b);
@@ -28381,7 +28604,7 @@ class ResolvedDropMaterializedViewStmtProto final :
                &_ResolvedDropMaterializedViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    123;
+    124;
 
   friend void swap(ResolvedDropMaterializedViewStmtProto& a, ResolvedDropMaterializedViewStmtProto& b) {
     a.Swap(&b);
@@ -28567,7 +28790,7 @@ class ResolvedDropSnapshotTableStmtProto final :
                &_ResolvedDropSnapshotTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    124;
+    125;
 
   friend void swap(ResolvedDropSnapshotTableStmtProto& a, ResolvedDropSnapshotTableStmtProto& b) {
     a.Swap(&b);
@@ -28753,7 +28976,7 @@ class ResolvedRecursiveRefScanProto final :
                &_ResolvedRecursiveRefScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    125;
+    126;
 
   friend void swap(ResolvedRecursiveRefScanProto& a, ResolvedRecursiveRefScanProto& b) {
     a.Swap(&b);
@@ -28894,7 +29117,7 @@ class ResolvedRecursiveScanProto final :
                &_ResolvedRecursiveScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    126;
+    127;
 
   friend void swap(ResolvedRecursiveScanProto& a, ResolvedRecursiveScanProto& b) {
     a.Swap(&b);
@@ -29080,7 +29303,7 @@ class ResolvedWithScanProto final :
                &_ResolvedWithScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    127;
+    128;
 
   friend void swap(ResolvedWithScanProto& a, ResolvedWithScanProto& b) {
     a.Swap(&b);
@@ -29272,7 +29495,7 @@ class ResolvedWithEntryProto final :
                &_ResolvedWithEntryProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    128;
+    129;
 
   friend void swap(ResolvedWithEntryProto& a, ResolvedWithEntryProto& b) {
     a.Swap(&b);
@@ -29452,7 +29675,7 @@ class ResolvedOptionProto final :
                &_ResolvedOptionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    129;
+    130;
 
   friend void swap(ResolvedOptionProto& a, ResolvedOptionProto& b) {
     a.Swap(&b);
@@ -29655,7 +29878,7 @@ class ResolvedWindowPartitioningProto final :
                &_ResolvedWindowPartitioningProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    130;
+    131;
 
   friend void swap(ResolvedWindowPartitioningProto& a, ResolvedWindowPartitioningProto& b) {
     a.Swap(&b);
@@ -29862,7 +30085,7 @@ class ResolvedWindowOrderingProto final :
                &_ResolvedWindowOrderingProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    131;
+    132;
 
   friend void swap(ResolvedWindowOrderingProto& a, ResolvedWindowOrderingProto& b) {
     a.Swap(&b);
@@ -30047,7 +30270,7 @@ class ResolvedWindowFrameProto final :
                &_ResolvedWindowFrameProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    132;
+    133;
 
   friend void swap(ResolvedWindowFrameProto& a, ResolvedWindowFrameProto& b) {
     a.Swap(&b);
@@ -30233,7 +30456,7 @@ class ResolvedAnalyticFunctionGroupProto final :
                &_ResolvedAnalyticFunctionGroupProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    133;
+    134;
 
   friend void swap(ResolvedAnalyticFunctionGroupProto& a, ResolvedAnalyticFunctionGroupProto& b) {
     a.Swap(&b);
@@ -30428,7 +30651,7 @@ class ResolvedWindowFrameExprProto final :
                &_ResolvedWindowFrameExprProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    134;
+    135;
 
   friend void swap(ResolvedWindowFrameExprProto& a, ResolvedWindowFrameExprProto& b) {
     a.Swap(&b);
@@ -30598,7 +30821,7 @@ class ResolvedDMLValueProto final :
                &_ResolvedDMLValueProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    135;
+    136;
 
   friend void swap(ResolvedDMLValueProto& a, ResolvedDMLValueProto& b) {
     a.Swap(&b);
@@ -30755,7 +30978,7 @@ class ResolvedDMLDefaultProto final :
                &_ResolvedDMLDefaultProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    136;
+    137;
 
   friend void swap(ResolvedDMLDefaultProto& a, ResolvedDMLDefaultProto& b) {
     a.Swap(&b);
@@ -30896,7 +31119,7 @@ class ResolvedAssertStmtProto final :
                &_ResolvedAssertStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    137;
+    138;
 
   friend void swap(ResolvedAssertStmtProto& a, ResolvedAssertStmtProto& b) {
     a.Swap(&b);
@@ -31076,7 +31299,7 @@ class ResolvedAssertRowsModifiedProto final :
                &_ResolvedAssertRowsModifiedProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    138;
+    139;
 
   friend void swap(ResolvedAssertRowsModifiedProto& a, ResolvedAssertRowsModifiedProto& b) {
     a.Swap(&b);
@@ -31233,7 +31456,7 @@ class ResolvedInsertRowProto final :
                &_ResolvedInsertRowProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    139;
+    140;
 
   friend void swap(ResolvedInsertRowProto& a, ResolvedInsertRowProto& b) {
     a.Swap(&b);
@@ -31396,7 +31619,7 @@ class ResolvedInsertStmtProto final :
                &_ResolvedInsertStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    140;
+    141;
 
   friend void swap(ResolvedInsertStmtProto& a, ResolvedInsertStmtProto& b) {
     a.Swap(&b);
@@ -31454,6 +31677,7 @@ class ResolvedInsertStmtProto final :
     kQueryOutputColumnListFieldNumber = 8,
     kQueryParameterListFieldNumber = 9,
     kColumnAccessListFieldNumber = 11,
+    kTopologicallySortedGeneratedColumnIndexListFieldNumber = 14,
     kParentFieldNumber = 1,
     kTableScanFieldNumber = 2,
     kAssertRowsModifiedFieldNumber = 4,
@@ -31562,6 +31786,26 @@ class ResolvedInsertStmtProto final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_column_access_list();
 
   public:
+  // repeated int64 topologically_sorted_generated_column_index_list = 14;
+  int topologically_sorted_generated_column_index_list_size() const;
+  private:
+  int _internal_topologically_sorted_generated_column_index_list_size() const;
+
+  public:
+  void clear_topologically_sorted_generated_column_index_list() ;
+  ::int64_t topologically_sorted_generated_column_index_list(int index) const;
+  void set_topologically_sorted_generated_column_index_list(int index, ::int64_t value);
+  void add_topologically_sorted_generated_column_index_list(::int64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>& topologically_sorted_generated_column_index_list() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>* mutable_topologically_sorted_generated_column_index_list();
+
+  private:
+  ::int64_t _internal_topologically_sorted_generated_column_index_list(int index) const;
+  void _internal_add_topologically_sorted_generated_column_index_list(::int64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>& _internal_topologically_sorted_generated_column_index_list() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>* _internal_mutable_topologically_sorted_generated_column_index_list();
+
+  public:
   // optional .zetasql.ResolvedStatementProto parent = 1;
   bool has_parent() const;
   void clear_parent() ;
@@ -31658,6 +31902,7 @@ class ResolvedInsertStmtProto final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnProto > query_output_column_list_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ResolvedColumnRefProto > query_parameter_list_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> column_access_list_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t> topologically_sorted_generated_column_index_list_;
     ::zetasql::ResolvedStatementProto* parent_;
     ::zetasql::ResolvedTableScanProto* table_scan_;
     ::zetasql::ResolvedAssertRowsModifiedProto* assert_rows_modified_;
@@ -31725,7 +31970,7 @@ class ResolvedDeleteStmtProto final :
                &_ResolvedDeleteStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    141;
+    142;
 
   friend void swap(ResolvedDeleteStmtProto& a, ResolvedDeleteStmtProto& b) {
     a.Swap(&b);
@@ -31969,7 +32214,7 @@ class ResolvedUpdateItemProto final :
                &_ResolvedUpdateItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    142;
+    143;
 
   friend void swap(ResolvedUpdateItemProto& a, ResolvedUpdateItemProto& b) {
     a.Swap(&b);
@@ -32246,7 +32491,7 @@ class ResolvedUpdateArrayItemProto final :
                &_ResolvedUpdateArrayItemProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    143;
+    144;
 
   friend void swap(ResolvedUpdateArrayItemProto& a, ResolvedUpdateArrayItemProto& b) {
     a.Swap(&b);
@@ -32419,7 +32664,7 @@ class ResolvedUpdateStmtProto final :
                &_ResolvedUpdateStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    144;
+    145;
 
   friend void swap(ResolvedUpdateStmtProto& a, ResolvedUpdateStmtProto& b) {
     a.Swap(&b);
@@ -32701,7 +32946,7 @@ class ResolvedMergeWhenProto final :
                &_ResolvedMergeWhenProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    145;
+    146;
 
   friend void swap(ResolvedMergeWhenProto& a, ResolvedMergeWhenProto& b) {
     a.Swap(&b);
@@ -32944,7 +33189,7 @@ class ResolvedMergeStmtProto final :
                &_ResolvedMergeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    146;
+    147;
 
   friend void swap(ResolvedMergeStmtProto& a, ResolvedMergeStmtProto& b) {
     a.Swap(&b);
@@ -33178,7 +33423,7 @@ class ResolvedTruncateStmtProto final :
                &_ResolvedTruncateStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    147;
+    148;
 
   friend void swap(ResolvedTruncateStmtProto& a, ResolvedTruncateStmtProto& b) {
     a.Swap(&b);
@@ -33351,7 +33596,7 @@ class ResolvedObjectUnitProto final :
                &_ResolvedObjectUnitProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    148;
+    149;
 
   friend void swap(ResolvedObjectUnitProto& a, ResolvedObjectUnitProto& b) {
     a.Swap(&b);
@@ -33524,7 +33769,7 @@ class ResolvedPrivilegeProto final :
                &_ResolvedPrivilegeProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    149;
+    150;
 
   friend void swap(ResolvedPrivilegeProto& a, ResolvedPrivilegeProto& b) {
     a.Swap(&b);
@@ -33716,7 +33961,7 @@ class AnyResolvedGrantOrRevokeStmtProto final :
                &_AnyResolvedGrantOrRevokeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    150;
+    151;
 
   friend void swap(AnyResolvedGrantOrRevokeStmtProto& a, AnyResolvedGrantOrRevokeStmtProto& b) {
     a.Swap(&b);
@@ -33893,7 +34138,7 @@ class ResolvedGrantOrRevokeStmtProto final :
                &_ResolvedGrantOrRevokeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    151;
+    152;
 
   friend void swap(ResolvedGrantOrRevokeStmtProto& a, ResolvedGrantOrRevokeStmtProto& b) {
     a.Swap(&b);
@@ -34174,7 +34419,7 @@ class ResolvedGrantStmtProto final :
                &_ResolvedGrantStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    152;
+    153;
 
   friend void swap(ResolvedGrantStmtProto& a, ResolvedGrantStmtProto& b) {
     a.Swap(&b);
@@ -34315,7 +34560,7 @@ class ResolvedRevokeStmtProto final :
                &_ResolvedRevokeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    153;
+    154;
 
   friend void swap(ResolvedRevokeStmtProto& a, ResolvedRevokeStmtProto& b) {
     a.Swap(&b);
@@ -34471,7 +34716,7 @@ class AnyResolvedAlterObjectStmtProto final :
                &_AnyResolvedAlterObjectStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    154;
+    155;
 
   friend void swap(AnyResolvedAlterObjectStmtProto& a, AnyResolvedAlterObjectStmtProto& b) {
     a.Swap(&b);
@@ -34837,7 +35082,7 @@ class ResolvedAlterObjectStmtProto final :
                &_ResolvedAlterObjectStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    155;
+    156;
 
   friend void swap(ResolvedAlterObjectStmtProto& a, ResolvedAlterObjectStmtProto& b) {
     a.Swap(&b);
@@ -35045,7 +35290,7 @@ class ResolvedAlterDatabaseStmtProto final :
                &_ResolvedAlterDatabaseStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    156;
+    157;
 
   friend void swap(ResolvedAlterDatabaseStmtProto& a, ResolvedAlterDatabaseStmtProto& b) {
     a.Swap(&b);
@@ -35186,7 +35431,7 @@ class ResolvedAlterMaterializedViewStmtProto final :
                &_ResolvedAlterMaterializedViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    157;
+    158;
 
   friend void swap(ResolvedAlterMaterializedViewStmtProto& a, ResolvedAlterMaterializedViewStmtProto& b) {
     a.Swap(&b);
@@ -35327,7 +35572,7 @@ class ResolvedAlterApproxViewStmtProto final :
                &_ResolvedAlterApproxViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    158;
+    159;
 
   friend void swap(ResolvedAlterApproxViewStmtProto& a, ResolvedAlterApproxViewStmtProto& b) {
     a.Swap(&b);
@@ -35468,7 +35713,7 @@ class ResolvedAlterSchemaStmtProto final :
                &_ResolvedAlterSchemaStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    159;
+    160;
 
   friend void swap(ResolvedAlterSchemaStmtProto& a, ResolvedAlterSchemaStmtProto& b) {
     a.Swap(&b);
@@ -35609,7 +35854,7 @@ class ResolvedAlterModelStmtProto final :
                &_ResolvedAlterModelStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    160;
+    161;
 
   friend void swap(ResolvedAlterModelStmtProto& a, ResolvedAlterModelStmtProto& b) {
     a.Swap(&b);
@@ -35750,7 +35995,7 @@ class ResolvedAlterTableStmtProto final :
                &_ResolvedAlterTableStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    161;
+    162;
 
   friend void swap(ResolvedAlterTableStmtProto& a, ResolvedAlterTableStmtProto& b) {
     a.Swap(&b);
@@ -35891,7 +36136,7 @@ class ResolvedAlterViewStmtProto final :
                &_ResolvedAlterViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    162;
+    163;
 
   friend void swap(ResolvedAlterViewStmtProto& a, ResolvedAlterViewStmtProto& b) {
     a.Swap(&b);
@@ -36056,7 +36301,7 @@ class AnyResolvedAlterActionProto final :
                &_AnyResolvedAlterActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    163;
+    164;
 
   friend void swap(AnyResolvedAlterActionProto& a, AnyResolvedAlterActionProto& b) {
     a.Swap(&b);
@@ -36611,7 +36856,7 @@ class ResolvedAlterActionProto final :
                &_ResolvedAlterActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    164;
+    165;
 
   friend void swap(ResolvedAlterActionProto& a, ResolvedAlterActionProto& b) {
     a.Swap(&b);
@@ -36761,7 +37006,7 @@ class AnyResolvedAlterColumnActionProto final :
                &_AnyResolvedAlterColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    165;
+    166;
 
   friend void swap(AnyResolvedAlterColumnActionProto& a, AnyResolvedAlterColumnActionProto& b) {
     a.Swap(&b);
@@ -37001,7 +37246,7 @@ class ResolvedAlterColumnActionProto final :
                &_ResolvedAlterColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    166;
+    167;
 
   friend void swap(ResolvedAlterColumnActionProto& a, ResolvedAlterColumnActionProto& b) {
     a.Swap(&b);
@@ -37178,7 +37423,7 @@ class ResolvedSetOptionsActionProto final :
                &_ResolvedSetOptionsActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    167;
+    168;
 
   friend void swap(ResolvedSetOptionsActionProto& a, ResolvedSetOptionsActionProto& b) {
     a.Swap(&b);
@@ -37341,7 +37586,7 @@ class ResolvedAlterSubEntityActionProto final :
                &_ResolvedAlterSubEntityActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    168;
+    169;
 
   friend void swap(ResolvedAlterSubEntityActionProto& a, ResolvedAlterSubEntityActionProto& b) {
     a.Swap(&b);
@@ -37557,7 +37802,7 @@ class ResolvedAddSubEntityActionProto final :
                &_ResolvedAddSubEntityActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    169;
+    170;
 
   friend void swap(ResolvedAddSubEntityActionProto& a, ResolvedAddSubEntityActionProto& b) {
     a.Swap(&b);
@@ -37779,7 +38024,7 @@ class ResolvedDropSubEntityActionProto final :
                &_ResolvedDropSubEntityActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    170;
+    171;
 
   friend void swap(ResolvedDropSubEntityActionProto& a, ResolvedDropSubEntityActionProto& b) {
     a.Swap(&b);
@@ -37979,7 +38224,7 @@ class ResolvedAddColumnActionProto final :
                &_ResolvedAddColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    171;
+    172;
 
   friend void swap(ResolvedAddColumnActionProto& a, ResolvedAddColumnActionProto& b) {
     a.Swap(&b);
@@ -38149,7 +38394,7 @@ class ResolvedAddConstraintActionProto final :
                &_ResolvedAddConstraintActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    172;
+    173;
 
   friend void swap(ResolvedAddConstraintActionProto& a, ResolvedAddConstraintActionProto& b) {
     a.Swap(&b);
@@ -38335,7 +38580,7 @@ class ResolvedDropConstraintActionProto final :
                &_ResolvedDropConstraintActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    173;
+    174;
 
   friend void swap(ResolvedDropConstraintActionProto& a, ResolvedDropConstraintActionProto& b) {
     a.Swap(&b);
@@ -38512,7 +38757,7 @@ class ResolvedDropPrimaryKeyActionProto final :
                &_ResolvedDropPrimaryKeyActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    174;
+    175;
 
   friend void swap(ResolvedDropPrimaryKeyActionProto& a, ResolvedDropPrimaryKeyActionProto& b) {
     a.Swap(&b);
@@ -38666,7 +38911,7 @@ class ResolvedAlterColumnOptionsActionProto final :
                &_ResolvedAlterColumnOptionsActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    175;
+    176;
 
   friend void swap(ResolvedAlterColumnOptionsActionProto& a, ResolvedAlterColumnOptionsActionProto& b) {
     a.Swap(&b);
@@ -38829,7 +39074,7 @@ class ResolvedAlterColumnDropNotNullActionProto final :
                &_ResolvedAlterColumnDropNotNullActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    176;
+    177;
 
   friend void swap(ResolvedAlterColumnDropNotNullActionProto& a, ResolvedAlterColumnDropNotNullActionProto& b) {
     a.Swap(&b);
@@ -38970,7 +39215,7 @@ class ResolvedAlterColumnSetDataTypeActionProto final :
                &_ResolvedAlterColumnSetDataTypeActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    177;
+    178;
 
   friend void swap(ResolvedAlterColumnSetDataTypeActionProto& a, ResolvedAlterColumnSetDataTypeActionProto& b) {
     a.Swap(&b);
@@ -39159,7 +39404,7 @@ class ResolvedAlterColumnSetDefaultActionProto final :
                &_ResolvedAlterColumnSetDefaultActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    178;
+    179;
 
   friend void swap(ResolvedAlterColumnSetDefaultActionProto& a, ResolvedAlterColumnSetDefaultActionProto& b) {
     a.Swap(&b);
@@ -39316,7 +39561,7 @@ class ResolvedAlterColumnDropDefaultActionProto final :
                &_ResolvedAlterColumnDropDefaultActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    179;
+    180;
 
   friend void swap(ResolvedAlterColumnDropDefaultActionProto& a, ResolvedAlterColumnDropDefaultActionProto& b) {
     a.Swap(&b);
@@ -39457,7 +39702,7 @@ class ResolvedDropColumnActionProto final :
                &_ResolvedDropColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    180;
+    181;
 
   friend void swap(ResolvedDropColumnActionProto& a, ResolvedDropColumnActionProto& b) {
     a.Swap(&b);
@@ -39634,7 +39879,7 @@ class ResolvedRenameColumnActionProto final :
                &_ResolvedRenameColumnActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    181;
+    182;
 
   friend void swap(ResolvedRenameColumnActionProto& a, ResolvedRenameColumnActionProto& b) {
     a.Swap(&b);
@@ -39834,7 +40079,7 @@ class ResolvedSetAsActionProto final :
                &_ResolvedSetAsActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    182;
+    183;
 
   friend void swap(ResolvedSetAsActionProto& a, ResolvedSetAsActionProto& b) {
     a.Swap(&b);
@@ -40021,7 +40266,7 @@ class ResolvedSetCollateClauseProto final :
                &_ResolvedSetCollateClauseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    183;
+    184;
 
   friend void swap(ResolvedSetCollateClauseProto& a, ResolvedSetCollateClauseProto& b) {
     a.Swap(&b);
@@ -40178,7 +40423,7 @@ class ResolvedAlterTableSetOptionsStmtProto final :
                &_ResolvedAlterTableSetOptionsStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    184;
+    185;
 
   friend void swap(ResolvedAlterTableSetOptionsStmtProto& a, ResolvedAlterTableSetOptionsStmtProto& b) {
     a.Swap(&b);
@@ -40386,7 +40631,7 @@ class ResolvedRenameStmtProto final :
                &_ResolvedRenameStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    185;
+    186;
 
   friend void swap(ResolvedRenameStmtProto& a, ResolvedRenameStmtProto& b) {
     a.Swap(&b);
@@ -40614,7 +40859,7 @@ class ResolvedCreatePrivilegeRestrictionStmtProto final :
                &_ResolvedCreatePrivilegeRestrictionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    186;
+    187;
 
   friend void swap(ResolvedCreatePrivilegeRestrictionStmtProto& a, ResolvedCreatePrivilegeRestrictionStmtProto& b) {
     a.Swap(&b);
@@ -40822,7 +41067,7 @@ class ResolvedCreateRowAccessPolicyStmtProto final :
                &_ResolvedCreateRowAccessPolicyStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    187;
+    188;
 
   friend void swap(ResolvedCreateRowAccessPolicyStmtProto& a, ResolvedCreateRowAccessPolicyStmtProto& b) {
     a.Swap(&b);
@@ -41140,7 +41385,7 @@ class ResolvedDropPrivilegeRestrictionStmtProto final :
                &_ResolvedDropPrivilegeRestrictionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    188;
+    189;
 
   friend void swap(ResolvedDropPrivilegeRestrictionStmtProto& a, ResolvedDropPrivilegeRestrictionStmtProto& b) {
     a.Swap(&b);
@@ -41371,7 +41616,7 @@ class ResolvedDropRowAccessPolicyStmtProto final :
                &_ResolvedDropRowAccessPolicyStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    189;
+    190;
 
   friend void swap(ResolvedDropRowAccessPolicyStmtProto& a, ResolvedDropRowAccessPolicyStmtProto& b) {
     a.Swap(&b);
@@ -41593,7 +41838,7 @@ class ResolvedDropIndexStmtProto final :
                &_ResolvedDropIndexStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    190;
+    191;
 
   friend void swap(ResolvedDropIndexStmtProto& a, ResolvedDropIndexStmtProto& b) {
     a.Swap(&b);
@@ -41815,7 +42060,7 @@ class ResolvedGrantToActionProto final :
                &_ResolvedGrantToActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    191;
+    192;
 
   friend void swap(ResolvedGrantToActionProto& a, ResolvedGrantToActionProto& b) {
     a.Swap(&b);
@@ -41978,7 +42223,7 @@ class ResolvedRestrictToActionProto final :
                &_ResolvedRestrictToActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    192;
+    193;
 
   friend void swap(ResolvedRestrictToActionProto& a, ResolvedRestrictToActionProto& b) {
     a.Swap(&b);
@@ -42141,7 +42386,7 @@ class ResolvedAddToRestricteeListActionProto final :
                &_ResolvedAddToRestricteeListActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    193;
+    194;
 
   friend void swap(ResolvedAddToRestricteeListActionProto& a, ResolvedAddToRestricteeListActionProto& b) {
     a.Swap(&b);
@@ -42317,7 +42562,7 @@ class ResolvedRemoveFromRestricteeListActionProto final :
                &_ResolvedRemoveFromRestricteeListActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    194;
+    195;
 
   friend void swap(ResolvedRemoveFromRestricteeListActionProto& a, ResolvedRemoveFromRestricteeListActionProto& b) {
     a.Swap(&b);
@@ -42493,7 +42738,7 @@ class ResolvedFilterUsingActionProto final :
                &_ResolvedFilterUsingActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    195;
+    196;
 
   friend void swap(ResolvedFilterUsingActionProto& a, ResolvedFilterUsingActionProto& b) {
     a.Swap(&b);
@@ -42673,7 +42918,7 @@ class ResolvedRevokeFromActionProto final :
                &_ResolvedRevokeFromActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    196;
+    197;
 
   friend void swap(ResolvedRevokeFromActionProto& a, ResolvedRevokeFromActionProto& b) {
     a.Swap(&b);
@@ -42849,7 +43094,7 @@ class ResolvedRenameToActionProto final :
                &_ResolvedRenameToActionProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    197;
+    198;
 
   friend void swap(ResolvedRenameToActionProto& a, ResolvedRenameToActionProto& b) {
     a.Swap(&b);
@@ -43022,7 +43267,7 @@ class ResolvedAlterPrivilegeRestrictionStmtProto final :
                &_ResolvedAlterPrivilegeRestrictionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    198;
+    199;
 
   friend void swap(ResolvedAlterPrivilegeRestrictionStmtProto& a, ResolvedAlterPrivilegeRestrictionStmtProto& b) {
     a.Swap(&b);
@@ -43208,7 +43453,7 @@ class ResolvedAlterRowAccessPolicyStmtProto final :
                &_ResolvedAlterRowAccessPolicyStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    199;
+    200;
 
   friend void swap(ResolvedAlterRowAccessPolicyStmtProto& a, ResolvedAlterRowAccessPolicyStmtProto& b) {
     a.Swap(&b);
@@ -43388,7 +43633,7 @@ class ResolvedAlterAllRowAccessPoliciesStmtProto final :
                &_ResolvedAlterAllRowAccessPoliciesStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    200;
+    201;
 
   friend void swap(ResolvedAlterAllRowAccessPoliciesStmtProto& a, ResolvedAlterAllRowAccessPoliciesStmtProto& b) {
     a.Swap(&b);
@@ -43545,7 +43790,7 @@ class ResolvedCreateConstantStmtProto final :
                &_ResolvedCreateConstantStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    201;
+    202;
 
   friend void swap(ResolvedCreateConstantStmtProto& a, ResolvedCreateConstantStmtProto& b) {
     a.Swap(&b);
@@ -43702,7 +43947,7 @@ class ResolvedCreateFunctionStmtProto final :
                &_ResolvedCreateFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    202;
+    203;
 
   friend void swap(ResolvedCreateFunctionStmtProto& a, ResolvedCreateFunctionStmtProto& b) {
     a.Swap(&b);
@@ -44094,7 +44339,7 @@ class ResolvedArgumentDefProto final :
                &_ResolvedArgumentDefProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    203;
+    204;
 
   friend void swap(ResolvedArgumentDefProto& a, ResolvedArgumentDefProto& b) {
     a.Swap(&b);
@@ -44287,7 +44532,7 @@ class ResolvedArgumentRefProto final :
                &_ResolvedArgumentRefProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    204;
+    205;
 
   friend void swap(ResolvedArgumentRefProto& a, ResolvedArgumentRefProto& b) {
     a.Swap(&b);
@@ -44464,7 +44709,7 @@ class ResolvedCreateTableFunctionStmtProto final :
                &_ResolvedCreateTableFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    205;
+    206;
 
   friend void swap(ResolvedCreateTableFunctionStmtProto& a, ResolvedCreateTableFunctionStmtProto& b) {
     a.Swap(&b);
@@ -44798,7 +45043,7 @@ class ResolvedRelationArgumentScanProto final :
                &_ResolvedRelationArgumentScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    206;
+    207;
 
   friend void swap(ResolvedRelationArgumentScanProto& a, ResolvedRelationArgumentScanProto& b) {
     a.Swap(&b);
@@ -44975,7 +45220,7 @@ class ResolvedArgumentListProto final :
                &_ResolvedArgumentListProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    207;
+    208;
 
   friend void swap(ResolvedArgumentListProto& a, ResolvedArgumentListProto& b) {
     a.Swap(&b);
@@ -45138,7 +45383,7 @@ class ResolvedFunctionSignatureHolderProto final :
                &_ResolvedFunctionSignatureHolderProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    208;
+    209;
 
   friend void swap(ResolvedFunctionSignatureHolderProto& a, ResolvedFunctionSignatureHolderProto& b) {
     a.Swap(&b);
@@ -45295,7 +45540,7 @@ class ResolvedDropFunctionStmtProto final :
                &_ResolvedDropFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    209;
+    210;
 
   friend void swap(ResolvedDropFunctionStmtProto& a, ResolvedDropFunctionStmtProto& b) {
     a.Swap(&b);
@@ -45513,7 +45758,7 @@ class ResolvedDropTableFunctionStmtProto final :
                &_ResolvedDropTableFunctionStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    210;
+    211;
 
   friend void swap(ResolvedDropTableFunctionStmtProto& a, ResolvedDropTableFunctionStmtProto& b) {
     a.Swap(&b);
@@ -45699,7 +45944,7 @@ class ResolvedCallStmtProto final :
                &_ResolvedCallStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    211;
+    212;
 
   friend void swap(ResolvedCallStmtProto& a, ResolvedCallStmtProto& b) {
     a.Swap(&b);
@@ -45894,7 +46139,7 @@ class ResolvedImportStmtProto final :
                &_ResolvedImportStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    212;
+    213;
 
   friend void swap(ResolvedImportStmtProto& a, ResolvedImportStmtProto& b) {
     a.Swap(&b);
@@ -46189,7 +46434,7 @@ class ResolvedModuleStmtProto final :
                &_ResolvedModuleStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    213;
+    214;
 
   friend void swap(ResolvedModuleStmtProto& a, ResolvedModuleStmtProto& b) {
     a.Swap(&b);
@@ -46384,7 +46629,7 @@ class ResolvedAggregateHavingModifierProto final :
                &_ResolvedAggregateHavingModifierProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    214;
+    215;
 
   friend void swap(ResolvedAggregateHavingModifierProto& a, ResolvedAggregateHavingModifierProto& b) {
     a.Swap(&b);
@@ -46554,7 +46799,7 @@ class ResolvedCreateMaterializedViewStmtProto final :
                &_ResolvedCreateMaterializedViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    215;
+    216;
 
   friend void swap(ResolvedCreateMaterializedViewStmtProto& a, ResolvedCreateMaterializedViewStmtProto& b) {
     a.Swap(&b);
@@ -46755,7 +47000,7 @@ class ResolvedCreateApproxViewStmtProto final :
                &_ResolvedCreateApproxViewStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    216;
+    217;
 
   friend void swap(ResolvedCreateApproxViewStmtProto& a, ResolvedCreateApproxViewStmtProto& b) {
     a.Swap(&b);
@@ -46896,7 +47141,7 @@ class ResolvedCreateProcedureStmtProto final :
                &_ResolvedCreateProcedureStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    217;
+    218;
 
   friend void swap(ResolvedCreateProcedureStmtProto& a, ResolvedCreateProcedureStmtProto& b) {
     a.Swap(&b);
@@ -47205,7 +47450,7 @@ class ResolvedExecuteImmediateArgumentProto final :
                &_ResolvedExecuteImmediateArgumentProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    218;
+    219;
 
   friend void swap(ResolvedExecuteImmediateArgumentProto& a, ResolvedExecuteImmediateArgumentProto& b) {
     a.Swap(&b);
@@ -47385,7 +47630,7 @@ class ResolvedExecuteImmediateStmtProto final :
                &_ResolvedExecuteImmediateStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    219;
+    220;
 
   friend void swap(ResolvedExecuteImmediateStmtProto& a, ResolvedExecuteImmediateStmtProto& b) {
     a.Swap(&b);
@@ -47596,7 +47841,7 @@ class ResolvedAssignmentStmtProto final :
                &_ResolvedAssignmentStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    220;
+    221;
 
   friend void swap(ResolvedAssignmentStmtProto& a, ResolvedAssignmentStmtProto& b) {
     a.Swap(&b);
@@ -47769,7 +48014,7 @@ class ResolvedCreateEntityStmtProto final :
                &_ResolvedCreateEntityStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    221;
+    222;
 
   friend void swap(ResolvedCreateEntityStmtProto& a, ResolvedCreateEntityStmtProto& b) {
     a.Swap(&b);
@@ -48001,7 +48246,7 @@ class ResolvedAlterEntityStmtProto final :
                &_ResolvedAlterEntityStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    222;
+    223;
 
   friend void swap(ResolvedAlterEntityStmtProto& a, ResolvedAlterEntityStmtProto& b) {
     a.Swap(&b);
@@ -48165,7 +48410,7 @@ class ResolvedPivotColumnProto final :
                &_ResolvedPivotColumnProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    223;
+    224;
 
   friend void swap(ResolvedPivotColumnProto& a, ResolvedPivotColumnProto& b) {
     a.Swap(&b);
@@ -48348,7 +48593,7 @@ class ResolvedPivotScanProto final :
                &_ResolvedPivotScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    224;
+    225;
 
   friend void swap(ResolvedPivotScanProto& a, ResolvedPivotScanProto& b) {
     a.Swap(&b);
@@ -48609,7 +48854,7 @@ class ResolvedReturningClauseProto final :
                &_ResolvedReturningClauseProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    225;
+    226;
 
   friend void swap(ResolvedReturningClauseProto& a, ResolvedReturningClauseProto& b) {
     a.Swap(&b);
@@ -48810,7 +49055,7 @@ class ResolvedUnpivotArgProto final :
                &_ResolvedUnpivotArgProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    226;
+    227;
 
   friend void swap(ResolvedUnpivotArgProto& a, ResolvedUnpivotArgProto& b) {
     a.Swap(&b);
@@ -48973,7 +49218,7 @@ class ResolvedUnpivotScanProto final :
                &_ResolvedUnpivotScanProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    227;
+    228;
 
   friend void swap(ResolvedUnpivotScanProto& a, ResolvedUnpivotScanProto& b) {
     a.Swap(&b);
@@ -49247,7 +49492,7 @@ class ResolvedCloneDataStmtProto final :
                &_ResolvedCloneDataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    228;
+    229;
 
   friend void swap(ResolvedCloneDataStmtProto& a, ResolvedCloneDataStmtProto& b) {
     a.Swap(&b);
@@ -49420,7 +49665,7 @@ class ResolvedTableAndColumnInfoProto final :
                &_ResolvedTableAndColumnInfoProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    229;
+    230;
 
   friend void swap(ResolvedTableAndColumnInfoProto& a, ResolvedTableAndColumnInfoProto& b) {
     a.Swap(&b);
@@ -49599,7 +49844,7 @@ class ResolvedAnalyzeStmtProto final :
                &_ResolvedAnalyzeStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    230;
+    231;
 
   friend void swap(ResolvedAnalyzeStmtProto& a, ResolvedAnalyzeStmtProto& b) {
     a.Swap(&b);
@@ -49784,7 +50029,7 @@ class ResolvedAuxLoadDataPartitionFilterProto final :
                &_ResolvedAuxLoadDataPartitionFilterProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    231;
+    232;
 
   friend void swap(ResolvedAuxLoadDataPartitionFilterProto& a, ResolvedAuxLoadDataPartitionFilterProto& b) {
     a.Swap(&b);
@@ -49954,7 +50199,7 @@ class ResolvedAuxLoadDataStmtProto final :
                &_ResolvedAuxLoadDataStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    232;
+    233;
 
   friend void swap(ResolvedAuxLoadDataStmtProto& a, ResolvedAuxLoadDataStmtProto& b) {
     a.Swap(&b);
@@ -50415,7 +50660,7 @@ class ResolvedUndropStmtProto final :
                &_ResolvedUndropStmtProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    233;
+    234;
 
   friend void swap(ResolvedUndropStmtProto& a, ResolvedUndropStmtProto& b) {
     a.Swap(&b);
@@ -56113,6 +56358,80 @@ inline ::zetasql::ResolvedReplaceFieldProto* AnyResolvedExprProto::_internal_mut
 inline ::zetasql::ResolvedReplaceFieldProto* AnyResolvedExprProto::mutable_resolved_replace_field_node() {
   ::zetasql::ResolvedReplaceFieldProto* _msg = _internal_mutable_resolved_replace_field_node();
   // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedExprProto.resolved_replace_field_node)
+  return _msg;
+}
+
+// .zetasql.ResolvedGetProtoOneofProto resolved_get_proto_oneof_node = 130;
+inline bool AnyResolvedExprProto::has_resolved_get_proto_oneof_node() const {
+  return node_case() == kResolvedGetProtoOneofNode;
+}
+inline bool AnyResolvedExprProto::_internal_has_resolved_get_proto_oneof_node() const {
+  return node_case() == kResolvedGetProtoOneofNode;
+}
+inline void AnyResolvedExprProto::set_has_resolved_get_proto_oneof_node() {
+  _impl_._oneof_case_[0] = kResolvedGetProtoOneofNode;
+}
+inline void AnyResolvedExprProto::clear_resolved_get_proto_oneof_node() {
+  if (node_case() == kResolvedGetProtoOneofNode) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.node_.resolved_get_proto_oneof_node_;
+    }
+    clear_has_node();
+  }
+}
+inline ::zetasql::ResolvedGetProtoOneofProto* AnyResolvedExprProto::release_resolved_get_proto_oneof_node() {
+  // @@protoc_insertion_point(field_release:zetasql.AnyResolvedExprProto.resolved_get_proto_oneof_node)
+  if (node_case() == kResolvedGetProtoOneofNode) {
+    clear_has_node();
+    ::zetasql::ResolvedGetProtoOneofProto* temp = _impl_.node_.resolved_get_proto_oneof_node_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.node_.resolved_get_proto_oneof_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::ResolvedGetProtoOneofProto& AnyResolvedExprProto::_internal_resolved_get_proto_oneof_node() const {
+  return node_case() == kResolvedGetProtoOneofNode
+      ? *_impl_.node_.resolved_get_proto_oneof_node_
+      : reinterpret_cast<::zetasql::ResolvedGetProtoOneofProto&>(::zetasql::_ResolvedGetProtoOneofProto_default_instance_);
+}
+inline const ::zetasql::ResolvedGetProtoOneofProto& AnyResolvedExprProto::resolved_get_proto_oneof_node() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnyResolvedExprProto.resolved_get_proto_oneof_node)
+  return _internal_resolved_get_proto_oneof_node();
+}
+inline ::zetasql::ResolvedGetProtoOneofProto* AnyResolvedExprProto::unsafe_arena_release_resolved_get_proto_oneof_node() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.AnyResolvedExprProto.resolved_get_proto_oneof_node)
+  if (node_case() == kResolvedGetProtoOneofNode) {
+    clear_has_node();
+    ::zetasql::ResolvedGetProtoOneofProto* temp = _impl_.node_.resolved_get_proto_oneof_node_;
+    _impl_.node_.resolved_get_proto_oneof_node_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void AnyResolvedExprProto::unsafe_arena_set_allocated_resolved_get_proto_oneof_node(::zetasql::ResolvedGetProtoOneofProto* resolved_get_proto_oneof_node) {
+  clear_node();
+  if (resolved_get_proto_oneof_node) {
+    set_has_resolved_get_proto_oneof_node();
+    _impl_.node_.resolved_get_proto_oneof_node_ = resolved_get_proto_oneof_node;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.AnyResolvedExprProto.resolved_get_proto_oneof_node)
+}
+inline ::zetasql::ResolvedGetProtoOneofProto* AnyResolvedExprProto::_internal_mutable_resolved_get_proto_oneof_node() {
+  if (node_case() != kResolvedGetProtoOneofNode) {
+    clear_node();
+    set_has_resolved_get_proto_oneof_node();
+    _impl_.node_.resolved_get_proto_oneof_node_ = CreateMaybeMessage< ::zetasql::ResolvedGetProtoOneofProto >(GetArenaForAllocation());
+  }
+  return _impl_.node_.resolved_get_proto_oneof_node_;
+}
+inline ::zetasql::ResolvedGetProtoOneofProto* AnyResolvedExprProto::mutable_resolved_get_proto_oneof_node() {
+  ::zetasql::ResolvedGetProtoOneofProto* _msg = _internal_mutable_resolved_get_proto_oneof_node();
+  // @@protoc_insertion_point(field_mutable:zetasql.AnyResolvedExprProto.resolved_get_proto_oneof_node)
   return _msg;
 }
 
@@ -64362,6 +64681,268 @@ ResolvedReplaceFieldProto::_internal_replace_field_item_list() const {
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::ResolvedReplaceFieldItemProto>*
 ResolvedReplaceFieldProto::_internal_mutable_replace_field_item_list() {
   return &_impl_.replace_field_item_list_;
+}
+
+// -------------------------------------------------------------------
+
+// ResolvedGetProtoOneofProto
+
+// optional .zetasql.ResolvedExprProto parent = 1;
+inline bool ResolvedGetProtoOneofProto::has_parent() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.parent_ != nullptr);
+  return value;
+}
+inline void ResolvedGetProtoOneofProto::clear_parent() {
+  if (_impl_.parent_ != nullptr) _impl_.parent_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::ResolvedExprProto& ResolvedGetProtoOneofProto::_internal_parent() const {
+  const ::zetasql::ResolvedExprProto* p = _impl_.parent_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::ResolvedExprProto&>(
+      ::zetasql::_ResolvedExprProto_default_instance_);
+}
+inline const ::zetasql::ResolvedExprProto& ResolvedGetProtoOneofProto::parent() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedGetProtoOneofProto.parent)
+  return _internal_parent();
+}
+inline void ResolvedGetProtoOneofProto::unsafe_arena_set_allocated_parent(
+    ::zetasql::ResolvedExprProto* parent) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.parent_);
+  }
+  _impl_.parent_ = parent;
+  if (parent) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedGetProtoOneofProto.parent)
+}
+inline ::zetasql::ResolvedExprProto* ResolvedGetProtoOneofProto::release_parent() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedExprProto* temp = _impl_.parent_;
+  _impl_.parent_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::ResolvedExprProto* ResolvedGetProtoOneofProto::unsafe_arena_release_parent() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedGetProtoOneofProto.parent)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::ResolvedExprProto* temp = _impl_.parent_;
+  _impl_.parent_ = nullptr;
+  return temp;
+}
+inline ::zetasql::ResolvedExprProto* ResolvedGetProtoOneofProto::_internal_mutable_parent() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.parent_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::ResolvedExprProto>(GetArenaForAllocation());
+    _impl_.parent_ = p;
+  }
+  return _impl_.parent_;
+}
+inline ::zetasql::ResolvedExprProto* ResolvedGetProtoOneofProto::mutable_parent() {
+  ::zetasql::ResolvedExprProto* _msg = _internal_mutable_parent();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedGetProtoOneofProto.parent)
+  return _msg;
+}
+inline void ResolvedGetProtoOneofProto::set_allocated_parent(::zetasql::ResolvedExprProto* parent) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.parent_;
+  }
+  if (parent) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(parent);
+    if (message_arena != submessage_arena) {
+      parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, parent, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.parent_ = parent;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedGetProtoOneofProto.parent)
+}
+
+// optional .zetasql.AnyResolvedExprProto expr = 2;
+inline bool ResolvedGetProtoOneofProto::has_expr() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.expr_ != nullptr);
+  return value;
+}
+inline void ResolvedGetProtoOneofProto::clear_expr() {
+  if (_impl_.expr_ != nullptr) _impl_.expr_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::AnyResolvedExprProto& ResolvedGetProtoOneofProto::_internal_expr() const {
+  const ::zetasql::AnyResolvedExprProto* p = _impl_.expr_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::AnyResolvedExprProto&>(
+      ::zetasql::_AnyResolvedExprProto_default_instance_);
+}
+inline const ::zetasql::AnyResolvedExprProto& ResolvedGetProtoOneofProto::expr() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedGetProtoOneofProto.expr)
+  return _internal_expr();
+}
+inline void ResolvedGetProtoOneofProto::unsafe_arena_set_allocated_expr(
+    ::zetasql::AnyResolvedExprProto* expr) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.expr_);
+  }
+  _impl_.expr_ = expr;
+  if (expr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedGetProtoOneofProto.expr)
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedGetProtoOneofProto::release_expr() {
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedExprProto* temp = _impl_.expr_;
+  _impl_.expr_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedGetProtoOneofProto::unsafe_arena_release_expr() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedGetProtoOneofProto.expr)
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::AnyResolvedExprProto* temp = _impl_.expr_;
+  _impl_.expr_ = nullptr;
+  return temp;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedGetProtoOneofProto::_internal_mutable_expr() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.expr_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::AnyResolvedExprProto>(GetArenaForAllocation());
+    _impl_.expr_ = p;
+  }
+  return _impl_.expr_;
+}
+inline ::zetasql::AnyResolvedExprProto* ResolvedGetProtoOneofProto::mutable_expr() {
+  ::zetasql::AnyResolvedExprProto* _msg = _internal_mutable_expr();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedGetProtoOneofProto.expr)
+  return _msg;
+}
+inline void ResolvedGetProtoOneofProto::set_allocated_expr(::zetasql::AnyResolvedExprProto* expr) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.expr_;
+  }
+  if (expr) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(expr);
+    if (message_arena != submessage_arena) {
+      expr = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, expr, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.expr_ = expr;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedGetProtoOneofProto.expr)
+}
+
+// optional .zetasql.OneofDescriptorRefProto oneof_descriptor = 3;
+inline bool ResolvedGetProtoOneofProto::has_oneof_descriptor() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.oneof_descriptor_ != nullptr);
+  return value;
+}
+inline const ::zetasql::OneofDescriptorRefProto& ResolvedGetProtoOneofProto::_internal_oneof_descriptor() const {
+  const ::zetasql::OneofDescriptorRefProto* p = _impl_.oneof_descriptor_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::OneofDescriptorRefProto&>(
+      ::zetasql::_OneofDescriptorRefProto_default_instance_);
+}
+inline const ::zetasql::OneofDescriptorRefProto& ResolvedGetProtoOneofProto::oneof_descriptor() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedGetProtoOneofProto.oneof_descriptor)
+  return _internal_oneof_descriptor();
+}
+inline void ResolvedGetProtoOneofProto::unsafe_arena_set_allocated_oneof_descriptor(
+    ::zetasql::OneofDescriptorRefProto* oneof_descriptor) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.oneof_descriptor_);
+  }
+  _impl_.oneof_descriptor_ = oneof_descriptor;
+  if (oneof_descriptor) {
+    _impl_._has_bits_[0] |= 0x00000004u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedGetProtoOneofProto.oneof_descriptor)
+}
+inline ::zetasql::OneofDescriptorRefProto* ResolvedGetProtoOneofProto::release_oneof_descriptor() {
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  ::zetasql::OneofDescriptorRefProto* temp = _impl_.oneof_descriptor_;
+  _impl_.oneof_descriptor_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::OneofDescriptorRefProto* ResolvedGetProtoOneofProto::unsafe_arena_release_oneof_descriptor() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedGetProtoOneofProto.oneof_descriptor)
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  ::zetasql::OneofDescriptorRefProto* temp = _impl_.oneof_descriptor_;
+  _impl_.oneof_descriptor_ = nullptr;
+  return temp;
+}
+inline ::zetasql::OneofDescriptorRefProto* ResolvedGetProtoOneofProto::_internal_mutable_oneof_descriptor() {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  if (_impl_.oneof_descriptor_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::OneofDescriptorRefProto>(GetArenaForAllocation());
+    _impl_.oneof_descriptor_ = p;
+  }
+  return _impl_.oneof_descriptor_;
+}
+inline ::zetasql::OneofDescriptorRefProto* ResolvedGetProtoOneofProto::mutable_oneof_descriptor() {
+  ::zetasql::OneofDescriptorRefProto* _msg = _internal_mutable_oneof_descriptor();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedGetProtoOneofProto.oneof_descriptor)
+  return _msg;
+}
+inline void ResolvedGetProtoOneofProto::set_allocated_oneof_descriptor(::zetasql::OneofDescriptorRefProto* oneof_descriptor) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.oneof_descriptor_);
+  }
+  if (oneof_descriptor) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(oneof_descriptor));
+    if (message_arena != submessage_arena) {
+      oneof_descriptor = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, oneof_descriptor, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000004u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004u;
+  }
+  _impl_.oneof_descriptor_ = oneof_descriptor;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedGetProtoOneofProto.oneof_descriptor)
 }
 
 // -------------------------------------------------------------------
@@ -79021,13 +79602,13 @@ inline void ResolvedGroupRowsScanProto::set_allocated_alias(std::string* value) 
 
 // optional .zetasql.ResolvedArgumentProto parent = 1;
 inline bool ResolvedFunctionArgumentProto::has_parent() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.parent_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_parent() {
   if (_impl_.parent_ != nullptr) _impl_.parent_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline const ::zetasql::ResolvedArgumentProto& ResolvedFunctionArgumentProto::_internal_parent() const {
   const ::zetasql::ResolvedArgumentProto* p = _impl_.parent_;
@@ -79045,14 +79626,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_parent(
   }
   _impl_.parent_ = parent;
   if (parent) {
-    _impl_._has_bits_[0] |= 0x00000001u;
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.parent)
 }
 inline ::zetasql::ResolvedArgumentProto* ResolvedFunctionArgumentProto::release_parent() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
   ::zetasql::ResolvedArgumentProto* temp = _impl_.parent_;
   _impl_.parent_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79068,13 +79649,13 @@ inline ::zetasql::ResolvedArgumentProto* ResolvedFunctionArgumentProto::release_
 }
 inline ::zetasql::ResolvedArgumentProto* ResolvedFunctionArgumentProto::unsafe_arena_release_parent() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.parent)
-  _impl_._has_bits_[0] &= ~0x00000001u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
   ::zetasql::ResolvedArgumentProto* temp = _impl_.parent_;
   _impl_.parent_ = nullptr;
   return temp;
 }
 inline ::zetasql::ResolvedArgumentProto* ResolvedFunctionArgumentProto::_internal_mutable_parent() {
-  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_._has_bits_[0] |= 0x00000002u;
   if (_impl_.parent_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::ResolvedArgumentProto>(GetArenaForAllocation());
     _impl_.parent_ = p;
@@ -79098,9 +79679,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_parent(::zetasql::Resol
       parent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, parent, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000001u;
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   _impl_.parent_ = parent;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.parent)
@@ -79108,13 +79689,13 @@ inline void ResolvedFunctionArgumentProto::set_allocated_parent(::zetasql::Resol
 
 // optional .zetasql.AnyResolvedExprProto expr = 2;
 inline bool ResolvedFunctionArgumentProto::has_expr() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.expr_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_expr() {
   if (_impl_.expr_ != nullptr) _impl_.expr_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 inline const ::zetasql::AnyResolvedExprProto& ResolvedFunctionArgumentProto::_internal_expr() const {
   const ::zetasql::AnyResolvedExprProto* p = _impl_.expr_;
@@ -79132,14 +79713,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_expr(
   }
   _impl_.expr_ = expr;
   if (expr) {
-    _impl_._has_bits_[0] |= 0x00000002u;
+    _impl_._has_bits_[0] |= 0x00000004u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
+    _impl_._has_bits_[0] &= ~0x00000004u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.expr)
 }
 inline ::zetasql::AnyResolvedExprProto* ResolvedFunctionArgumentProto::release_expr() {
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
   ::zetasql::AnyResolvedExprProto* temp = _impl_.expr_;
   _impl_.expr_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79155,13 +79736,13 @@ inline ::zetasql::AnyResolvedExprProto* ResolvedFunctionArgumentProto::release_e
 }
 inline ::zetasql::AnyResolvedExprProto* ResolvedFunctionArgumentProto::unsafe_arena_release_expr() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.expr)
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
   ::zetasql::AnyResolvedExprProto* temp = _impl_.expr_;
   _impl_.expr_ = nullptr;
   return temp;
 }
 inline ::zetasql::AnyResolvedExprProto* ResolvedFunctionArgumentProto::_internal_mutable_expr() {
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000004u;
   if (_impl_.expr_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::AnyResolvedExprProto>(GetArenaForAllocation());
     _impl_.expr_ = p;
@@ -79185,9 +79766,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_expr(::zetasql::AnyReso
       expr = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, expr, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000002u;
+    _impl_._has_bits_[0] |= 0x00000004u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
+    _impl_._has_bits_[0] &= ~0x00000004u;
   }
   _impl_.expr_ = expr;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.expr)
@@ -79195,13 +79776,13 @@ inline void ResolvedFunctionArgumentProto::set_allocated_expr(::zetasql::AnyReso
 
 // optional .zetasql.AnyResolvedScanProto scan = 3;
 inline bool ResolvedFunctionArgumentProto::has_scan() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.scan_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_scan() {
   if (_impl_.scan_ != nullptr) _impl_.scan_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
 inline const ::zetasql::AnyResolvedScanProto& ResolvedFunctionArgumentProto::_internal_scan() const {
   const ::zetasql::AnyResolvedScanProto* p = _impl_.scan_;
@@ -79219,14 +79800,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_scan(
   }
   _impl_.scan_ = scan;
   if (scan) {
-    _impl_._has_bits_[0] |= 0x00000004u;
+    _impl_._has_bits_[0] |= 0x00000008u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000004u;
+    _impl_._has_bits_[0] &= ~0x00000008u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.scan)
 }
 inline ::zetasql::AnyResolvedScanProto* ResolvedFunctionArgumentProto::release_scan() {
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000008u;
   ::zetasql::AnyResolvedScanProto* temp = _impl_.scan_;
   _impl_.scan_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79242,13 +79823,13 @@ inline ::zetasql::AnyResolvedScanProto* ResolvedFunctionArgumentProto::release_s
 }
 inline ::zetasql::AnyResolvedScanProto* ResolvedFunctionArgumentProto::unsafe_arena_release_scan() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.scan)
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000008u;
   ::zetasql::AnyResolvedScanProto* temp = _impl_.scan_;
   _impl_.scan_ = nullptr;
   return temp;
 }
 inline ::zetasql::AnyResolvedScanProto* ResolvedFunctionArgumentProto::_internal_mutable_scan() {
-  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_._has_bits_[0] |= 0x00000008u;
   if (_impl_.scan_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::AnyResolvedScanProto>(GetArenaForAllocation());
     _impl_.scan_ = p;
@@ -79272,9 +79853,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_scan(::zetasql::AnyReso
       scan = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, scan, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000004u;
+    _impl_._has_bits_[0] |= 0x00000008u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000004u;
+    _impl_._has_bits_[0] &= ~0x00000008u;
   }
   _impl_.scan_ = scan;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.scan)
@@ -79282,13 +79863,13 @@ inline void ResolvedFunctionArgumentProto::set_allocated_scan(::zetasql::AnyReso
 
 // optional .zetasql.ResolvedModelProto model = 5;
 inline bool ResolvedFunctionArgumentProto::has_model() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.model_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_model() {
   if (_impl_.model_ != nullptr) _impl_.model_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000008u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 inline const ::zetasql::ResolvedModelProto& ResolvedFunctionArgumentProto::_internal_model() const {
   const ::zetasql::ResolvedModelProto* p = _impl_.model_;
@@ -79306,14 +79887,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_model(
   }
   _impl_.model_ = model;
   if (model) {
-    _impl_._has_bits_[0] |= 0x00000008u;
+    _impl_._has_bits_[0] |= 0x00000010u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000008u;
+    _impl_._has_bits_[0] &= ~0x00000010u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.model)
 }
 inline ::zetasql::ResolvedModelProto* ResolvedFunctionArgumentProto::release_model() {
-  _impl_._has_bits_[0] &= ~0x00000008u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
   ::zetasql::ResolvedModelProto* temp = _impl_.model_;
   _impl_.model_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79329,13 +79910,13 @@ inline ::zetasql::ResolvedModelProto* ResolvedFunctionArgumentProto::release_mod
 }
 inline ::zetasql::ResolvedModelProto* ResolvedFunctionArgumentProto::unsafe_arena_release_model() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.model)
-  _impl_._has_bits_[0] &= ~0x00000008u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
   ::zetasql::ResolvedModelProto* temp = _impl_.model_;
   _impl_.model_ = nullptr;
   return temp;
 }
 inline ::zetasql::ResolvedModelProto* ResolvedFunctionArgumentProto::_internal_mutable_model() {
-  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_._has_bits_[0] |= 0x00000010u;
   if (_impl_.model_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::ResolvedModelProto>(GetArenaForAllocation());
     _impl_.model_ = p;
@@ -79359,9 +79940,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_model(::zetasql::Resolv
       model = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, model, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000008u;
+    _impl_._has_bits_[0] |= 0x00000010u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000008u;
+    _impl_._has_bits_[0] &= ~0x00000010u;
   }
   _impl_.model_ = model;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.model)
@@ -79369,13 +79950,13 @@ inline void ResolvedFunctionArgumentProto::set_allocated_model(::zetasql::Resolv
 
 // optional .zetasql.ResolvedConnectionProto connection = 6;
 inline bool ResolvedFunctionArgumentProto::has_connection() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_connection() {
   if (_impl_.connection_ != nullptr) _impl_.connection_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000010u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
 }
 inline const ::zetasql::ResolvedConnectionProto& ResolvedFunctionArgumentProto::_internal_connection() const {
   const ::zetasql::ResolvedConnectionProto* p = _impl_.connection_;
@@ -79393,14 +79974,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_connection
   }
   _impl_.connection_ = connection;
   if (connection) {
-    _impl_._has_bits_[0] |= 0x00000010u;
+    _impl_._has_bits_[0] |= 0x00000020u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000010u;
+    _impl_._has_bits_[0] &= ~0x00000020u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.connection)
 }
 inline ::zetasql::ResolvedConnectionProto* ResolvedFunctionArgumentProto::release_connection() {
-  _impl_._has_bits_[0] &= ~0x00000010u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
   ::zetasql::ResolvedConnectionProto* temp = _impl_.connection_;
   _impl_.connection_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79416,13 +79997,13 @@ inline ::zetasql::ResolvedConnectionProto* ResolvedFunctionArgumentProto::releas
 }
 inline ::zetasql::ResolvedConnectionProto* ResolvedFunctionArgumentProto::unsafe_arena_release_connection() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.connection)
-  _impl_._has_bits_[0] &= ~0x00000010u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
   ::zetasql::ResolvedConnectionProto* temp = _impl_.connection_;
   _impl_.connection_ = nullptr;
   return temp;
 }
 inline ::zetasql::ResolvedConnectionProto* ResolvedFunctionArgumentProto::_internal_mutable_connection() {
-  _impl_._has_bits_[0] |= 0x00000010u;
+  _impl_._has_bits_[0] |= 0x00000020u;
   if (_impl_.connection_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::ResolvedConnectionProto>(GetArenaForAllocation());
     _impl_.connection_ = p;
@@ -79446,9 +80027,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_connection(::zetasql::R
       connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, connection, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000010u;
+    _impl_._has_bits_[0] |= 0x00000020u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000010u;
+    _impl_._has_bits_[0] &= ~0x00000020u;
   }
   _impl_.connection_ = connection;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.connection)
@@ -79456,13 +80037,13 @@ inline void ResolvedFunctionArgumentProto::set_allocated_connection(::zetasql::R
 
 // optional .zetasql.ResolvedDescriptorProto descriptor_arg = 7;
 inline bool ResolvedFunctionArgumentProto::has_descriptor_arg() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.descriptor_arg_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_descriptor_arg() {
   if (_impl_.descriptor_arg_ != nullptr) _impl_.descriptor_arg_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000020u;
+  _impl_._has_bits_[0] &= ~0x00000040u;
 }
 inline const ::zetasql::ResolvedDescriptorProto& ResolvedFunctionArgumentProto::_internal_descriptor_arg() const {
   const ::zetasql::ResolvedDescriptorProto* p = _impl_.descriptor_arg_;
@@ -79480,14 +80061,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_descriptor
   }
   _impl_.descriptor_arg_ = descriptor_arg;
   if (descriptor_arg) {
-    _impl_._has_bits_[0] |= 0x00000020u;
+    _impl_._has_bits_[0] |= 0x00000040u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000020u;
+    _impl_._has_bits_[0] &= ~0x00000040u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.descriptor_arg)
 }
 inline ::zetasql::ResolvedDescriptorProto* ResolvedFunctionArgumentProto::release_descriptor_arg() {
-  _impl_._has_bits_[0] &= ~0x00000020u;
+  _impl_._has_bits_[0] &= ~0x00000040u;
   ::zetasql::ResolvedDescriptorProto* temp = _impl_.descriptor_arg_;
   _impl_.descriptor_arg_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79503,13 +80084,13 @@ inline ::zetasql::ResolvedDescriptorProto* ResolvedFunctionArgumentProto::releas
 }
 inline ::zetasql::ResolvedDescriptorProto* ResolvedFunctionArgumentProto::unsafe_arena_release_descriptor_arg() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.descriptor_arg)
-  _impl_._has_bits_[0] &= ~0x00000020u;
+  _impl_._has_bits_[0] &= ~0x00000040u;
   ::zetasql::ResolvedDescriptorProto* temp = _impl_.descriptor_arg_;
   _impl_.descriptor_arg_ = nullptr;
   return temp;
 }
 inline ::zetasql::ResolvedDescriptorProto* ResolvedFunctionArgumentProto::_internal_mutable_descriptor_arg() {
-  _impl_._has_bits_[0] |= 0x00000020u;
+  _impl_._has_bits_[0] |= 0x00000040u;
   if (_impl_.descriptor_arg_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::ResolvedDescriptorProto>(GetArenaForAllocation());
     _impl_.descriptor_arg_ = p;
@@ -79533,9 +80114,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_descriptor_arg(::zetasq
       descriptor_arg = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, descriptor_arg, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000020u;
+    _impl_._has_bits_[0] |= 0x00000040u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000020u;
+    _impl_._has_bits_[0] &= ~0x00000040u;
   }
   _impl_.descriptor_arg_ = descriptor_arg;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.descriptor_arg)
@@ -79588,13 +80169,13 @@ ResolvedFunctionArgumentProto::_internal_mutable_argument_column_list() {
 
 // optional .zetasql.ResolvedInlineLambdaProto inline_lambda = 8;
 inline bool ResolvedFunctionArgumentProto::has_inline_lambda() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.inline_lambda_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_inline_lambda() {
   if (_impl_.inline_lambda_ != nullptr) _impl_.inline_lambda_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
 }
 inline const ::zetasql::ResolvedInlineLambdaProto& ResolvedFunctionArgumentProto::_internal_inline_lambda() const {
   const ::zetasql::ResolvedInlineLambdaProto* p = _impl_.inline_lambda_;
@@ -79612,14 +80193,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_inline_lam
   }
   _impl_.inline_lambda_ = inline_lambda;
   if (inline_lambda) {
-    _impl_._has_bits_[0] |= 0x00000040u;
+    _impl_._has_bits_[0] |= 0x00000080u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000040u;
+    _impl_._has_bits_[0] &= ~0x00000080u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.inline_lambda)
 }
 inline ::zetasql::ResolvedInlineLambdaProto* ResolvedFunctionArgumentProto::release_inline_lambda() {
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
   ::zetasql::ResolvedInlineLambdaProto* temp = _impl_.inline_lambda_;
   _impl_.inline_lambda_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79635,13 +80216,13 @@ inline ::zetasql::ResolvedInlineLambdaProto* ResolvedFunctionArgumentProto::rele
 }
 inline ::zetasql::ResolvedInlineLambdaProto* ResolvedFunctionArgumentProto::unsafe_arena_release_inline_lambda() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.inline_lambda)
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
   ::zetasql::ResolvedInlineLambdaProto* temp = _impl_.inline_lambda_;
   _impl_.inline_lambda_ = nullptr;
   return temp;
 }
 inline ::zetasql::ResolvedInlineLambdaProto* ResolvedFunctionArgumentProto::_internal_mutable_inline_lambda() {
-  _impl_._has_bits_[0] |= 0x00000040u;
+  _impl_._has_bits_[0] |= 0x00000080u;
   if (_impl_.inline_lambda_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::ResolvedInlineLambdaProto>(GetArenaForAllocation());
     _impl_.inline_lambda_ = p;
@@ -79665,9 +80246,9 @@ inline void ResolvedFunctionArgumentProto::set_allocated_inline_lambda(::zetasql
       inline_lambda = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, inline_lambda, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000040u;
+    _impl_._has_bits_[0] |= 0x00000080u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000040u;
+    _impl_._has_bits_[0] &= ~0x00000080u;
   }
   _impl_.inline_lambda_ = inline_lambda;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.inline_lambda)
@@ -79675,13 +80256,13 @@ inline void ResolvedFunctionArgumentProto::set_allocated_inline_lambda(::zetasql
 
 // optional .zetasql.ResolvedSequenceProto sequence = 9;
 inline bool ResolvedFunctionArgumentProto::has_sequence() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000100u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.sequence_ != nullptr);
   return value;
 }
 inline void ResolvedFunctionArgumentProto::clear_sequence() {
   if (_impl_.sequence_ != nullptr) _impl_.sequence_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000080u;
+  _impl_._has_bits_[0] &= ~0x00000100u;
 }
 inline const ::zetasql::ResolvedSequenceProto& ResolvedFunctionArgumentProto::_internal_sequence() const {
   const ::zetasql::ResolvedSequenceProto* p = _impl_.sequence_;
@@ -79699,14 +80280,14 @@ inline void ResolvedFunctionArgumentProto::unsafe_arena_set_allocated_sequence(
   }
   _impl_.sequence_ = sequence;
   if (sequence) {
-    _impl_._has_bits_[0] |= 0x00000080u;
+    _impl_._has_bits_[0] |= 0x00000100u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000080u;
+    _impl_._has_bits_[0] &= ~0x00000100u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.ResolvedFunctionArgumentProto.sequence)
 }
 inline ::zetasql::ResolvedSequenceProto* ResolvedFunctionArgumentProto::release_sequence() {
-  _impl_._has_bits_[0] &= ~0x00000080u;
+  _impl_._has_bits_[0] &= ~0x00000100u;
   ::zetasql::ResolvedSequenceProto* temp = _impl_.sequence_;
   _impl_.sequence_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -79722,13 +80303,13 @@ inline ::zetasql::ResolvedSequenceProto* ResolvedFunctionArgumentProto::release_
 }
 inline ::zetasql::ResolvedSequenceProto* ResolvedFunctionArgumentProto::unsafe_arena_release_sequence() {
   // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.sequence)
-  _impl_._has_bits_[0] &= ~0x00000080u;
+  _impl_._has_bits_[0] &= ~0x00000100u;
   ::zetasql::ResolvedSequenceProto* temp = _impl_.sequence_;
   _impl_.sequence_ = nullptr;
   return temp;
 }
 inline ::zetasql::ResolvedSequenceProto* ResolvedFunctionArgumentProto::_internal_mutable_sequence() {
-  _impl_._has_bits_[0] |= 0x00000080u;
+  _impl_._has_bits_[0] |= 0x00000100u;
   if (_impl_.sequence_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::ResolvedSequenceProto>(GetArenaForAllocation());
     _impl_.sequence_ = p;
@@ -79752,12 +80333,77 @@ inline void ResolvedFunctionArgumentProto::set_allocated_sequence(::zetasql::Res
       sequence = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, sequence, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000080u;
+    _impl_._has_bits_[0] |= 0x00000100u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000080u;
+    _impl_._has_bits_[0] &= ~0x00000100u;
   }
   _impl_.sequence_ = sequence;
   // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.sequence)
+}
+
+// optional string argument_alias = 10;
+inline bool ResolvedFunctionArgumentProto::has_argument_alias() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void ResolvedFunctionArgumentProto::clear_argument_alias() {
+  _impl_.argument_alias_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& ResolvedFunctionArgumentProto::argument_alias() const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedFunctionArgumentProto.argument_alias)
+  return _internal_argument_alias();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ResolvedFunctionArgumentProto::set_argument_alias(Arg_&& arg,
+                                                     Args_... args) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.argument_alias_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedFunctionArgumentProto.argument_alias)
+}
+inline std::string* ResolvedFunctionArgumentProto::mutable_argument_alias() {
+  std::string* _s = _internal_mutable_argument_alias();
+  // @@protoc_insertion_point(field_mutable:zetasql.ResolvedFunctionArgumentProto.argument_alias)
+  return _s;
+}
+inline const std::string& ResolvedFunctionArgumentProto::_internal_argument_alias() const {
+  return _impl_.argument_alias_.Get();
+}
+inline void ResolvedFunctionArgumentProto::_internal_set_argument_alias(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+
+
+  _impl_.argument_alias_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ResolvedFunctionArgumentProto::_internal_mutable_argument_alias() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.argument_alias_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ResolvedFunctionArgumentProto::release_argument_alias() {
+  // @@protoc_insertion_point(field_release:zetasql.ResolvedFunctionArgumentProto.argument_alias)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.argument_alias_.Release();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.argument_alias_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return released;
+}
+inline void ResolvedFunctionArgumentProto::set_allocated_argument_alias(std::string* value) {
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.argument_alias_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.argument_alias_.IsDefault()) {
+          _impl_.argument_alias_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ResolvedFunctionArgumentProto.argument_alias)
 }
 
 // -------------------------------------------------------------------
@@ -98003,6 +98649,50 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& ResolvedInsertStmtProt
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* ResolvedInsertStmtProto::_internal_mutable_column_access_list() {
   return &_impl_.column_access_list_;
+}
+
+// repeated int64 topologically_sorted_generated_column_index_list = 14;
+inline int ResolvedInsertStmtProto::_internal_topologically_sorted_generated_column_index_list_size() const {
+  return _impl_.topologically_sorted_generated_column_index_list_.size();
+}
+inline int ResolvedInsertStmtProto::topologically_sorted_generated_column_index_list_size() const {
+  return _internal_topologically_sorted_generated_column_index_list_size();
+}
+inline void ResolvedInsertStmtProto::clear_topologically_sorted_generated_column_index_list() {
+  _internal_mutable_topologically_sorted_generated_column_index_list()->Clear();
+}
+inline ::int64_t ResolvedInsertStmtProto::topologically_sorted_generated_column_index_list(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.ResolvedInsertStmtProto.topologically_sorted_generated_column_index_list)
+  return _internal_topologically_sorted_generated_column_index_list(index);
+}
+inline void ResolvedInsertStmtProto::set_topologically_sorted_generated_column_index_list(int index, ::int64_t value) {
+  _internal_mutable_topologically_sorted_generated_column_index_list()->Set(index, value);
+  // @@protoc_insertion_point(field_set:zetasql.ResolvedInsertStmtProto.topologically_sorted_generated_column_index_list)
+}
+inline void ResolvedInsertStmtProto::add_topologically_sorted_generated_column_index_list(::int64_t value) {
+  _internal_add_topologically_sorted_generated_column_index_list(value);
+  // @@protoc_insertion_point(field_add:zetasql.ResolvedInsertStmtProto.topologically_sorted_generated_column_index_list)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>& ResolvedInsertStmtProto::topologically_sorted_generated_column_index_list() const {
+  // @@protoc_insertion_point(field_list:zetasql.ResolvedInsertStmtProto.topologically_sorted_generated_column_index_list)
+  return _internal_topologically_sorted_generated_column_index_list();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>* ResolvedInsertStmtProto::mutable_topologically_sorted_generated_column_index_list() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.ResolvedInsertStmtProto.topologically_sorted_generated_column_index_list)
+  return _internal_mutable_topologically_sorted_generated_column_index_list();
+}
+
+inline ::int64_t ResolvedInsertStmtProto::_internal_topologically_sorted_generated_column_index_list(int index) const {
+  return _internal_topologically_sorted_generated_column_index_list().Get(index);
+}
+inline void ResolvedInsertStmtProto::_internal_add_topologically_sorted_generated_column_index_list(::int64_t value) {
+  _internal_mutable_topologically_sorted_generated_column_index_list()->Add(value);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>& ResolvedInsertStmtProto::_internal_topologically_sorted_generated_column_index_list() const {
+  return _impl_.topologically_sorted_generated_column_index_list_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int64_t>* ResolvedInsertStmtProto::_internal_mutable_topologically_sorted_generated_column_index_list() {
+  return &_impl_.topologically_sorted_generated_column_index_list_;
 }
 
 // -------------------------------------------------------------------

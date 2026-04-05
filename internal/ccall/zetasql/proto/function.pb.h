@@ -1303,6 +1303,7 @@ class FunctionArgumentTypeOptionsProto final :
     kArrayElementMustSupportOrderingFieldNumber = 23,
     kArrayElementMustSupportGroupingFieldNumber = 24,
     kNamedArgumentKindFieldNumber = 25,
+    kArgumentAliasKindFieldNumber = 26,
     kDescriptorResolutionTableOffsetFieldNumber = 16,
     kArgumentCollationModeFieldNumber = 19,
   };
@@ -1584,6 +1585,17 @@ class FunctionArgumentTypeOptionsProto final :
   void _internal_set_named_argument_kind(::zetasql::FunctionEnums_NamedArgumentKind value);
 
   public:
+  // optional .zetasql.FunctionEnums.ArgumentAliasKind argument_alias_kind = 26 [default = ARGUMENT_NON_ALIASED];
+  bool has_argument_alias_kind() const;
+  void clear_argument_alias_kind() ;
+  ::zetasql::FunctionEnums_ArgumentAliasKind argument_alias_kind() const;
+  void set_argument_alias_kind(::zetasql::FunctionEnums_ArgumentAliasKind value);
+
+  private:
+  ::zetasql::FunctionEnums_ArgumentAliasKind _internal_argument_alias_kind() const;
+  void _internal_set_argument_alias_kind(::zetasql::FunctionEnums_ArgumentAliasKind value);
+
+  public:
   // optional int32 descriptor_resolution_table_offset = 16 [default = -1];
   bool has_descriptor_resolution_table_offset() const;
   void clear_descriptor_resolution_table_offset() ;
@@ -1639,6 +1651,7 @@ class FunctionArgumentTypeOptionsProto final :
     bool array_element_must_support_ordering_;
     bool array_element_must_support_grouping_;
     int named_argument_kind_;
+    int argument_alias_kind_;
     ::int32_t descriptor_resolution_table_offset_;
     int argument_collation_mode_;
   };
@@ -6294,12 +6307,12 @@ inline void FunctionArgumentTypeOptionsProto::_internal_set_argument_name_is_man
 
 // optional int32 descriptor_resolution_table_offset = 16 [default = -1];
 inline bool FunctionArgumentTypeOptionsProto::has_descriptor_resolution_table_offset() const {
-  bool value = (_impl_._has_bits_[0] & 0x00800000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x01000000u) != 0;
   return value;
 }
 inline void FunctionArgumentTypeOptionsProto::clear_descriptor_resolution_table_offset() {
   _impl_.descriptor_resolution_table_offset_ = -1;
-  _impl_._has_bits_[0] &= ~0x00800000u;
+  _impl_._has_bits_[0] &= ~0x01000000u;
 }
 inline ::int32_t FunctionArgumentTypeOptionsProto::descriptor_resolution_table_offset() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionArgumentTypeOptionsProto.descriptor_resolution_table_offset)
@@ -6313,7 +6326,7 @@ inline ::int32_t FunctionArgumentTypeOptionsProto::_internal_descriptor_resoluti
   return _impl_.descriptor_resolution_table_offset_;
 }
 inline void FunctionArgumentTypeOptionsProto::_internal_set_descriptor_resolution_table_offset(::int32_t value) {
-  _impl_._has_bits_[0] |= 0x00800000u;
+  _impl_._has_bits_[0] |= 0x01000000u;
   _impl_.descriptor_resolution_table_offset_ = value;
 }
 
@@ -6487,12 +6500,12 @@ inline void FunctionArgumentTypeOptionsProto::set_allocated_default_value_type(:
 
 // optional .zetasql.FunctionEnums.ArgumentCollationMode argument_collation_mode = 19 [default = AFFECTS_OPERATION_AND_PROPAGATION];
 inline bool FunctionArgumentTypeOptionsProto::has_argument_collation_mode() const {
-  bool value = (_impl_._has_bits_[0] & 0x01000000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x02000000u) != 0;
   return value;
 }
 inline void FunctionArgumentTypeOptionsProto::clear_argument_collation_mode() {
   _impl_.argument_collation_mode_ = 3;
-  _impl_._has_bits_[0] &= ~0x01000000u;
+  _impl_._has_bits_[0] &= ~0x02000000u;
 }
 inline ::zetasql::FunctionEnums_ArgumentCollationMode FunctionArgumentTypeOptionsProto::argument_collation_mode() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionArgumentTypeOptionsProto.argument_collation_mode)
@@ -6507,7 +6520,7 @@ inline ::zetasql::FunctionEnums_ArgumentCollationMode FunctionArgumentTypeOption
 }
 inline void FunctionArgumentTypeOptionsProto::_internal_set_argument_collation_mode(::zetasql::FunctionEnums_ArgumentCollationMode value) {
   assert(::zetasql::FunctionEnums_ArgumentCollationMode_IsValid(value));
-  _impl_._has_bits_[0] |= 0x01000000u;
+  _impl_._has_bits_[0] |= 0x02000000u;
   _impl_.argument_collation_mode_ = value;
 }
 
@@ -6660,6 +6673,32 @@ inline void FunctionArgumentTypeOptionsProto::_internal_set_named_argument_kind(
   assert(::zetasql::FunctionEnums_NamedArgumentKind_IsValid(value));
   _impl_._has_bits_[0] |= 0x00400000u;
   _impl_.named_argument_kind_ = value;
+}
+
+// optional .zetasql.FunctionEnums.ArgumentAliasKind argument_alias_kind = 26 [default = ARGUMENT_NON_ALIASED];
+inline bool FunctionArgumentTypeOptionsProto::has_argument_alias_kind() const {
+  bool value = (_impl_._has_bits_[0] & 0x00800000u) != 0;
+  return value;
+}
+inline void FunctionArgumentTypeOptionsProto::clear_argument_alias_kind() {
+  _impl_.argument_alias_kind_ = 1;
+  _impl_._has_bits_[0] &= ~0x00800000u;
+}
+inline ::zetasql::FunctionEnums_ArgumentAliasKind FunctionArgumentTypeOptionsProto::argument_alias_kind() const {
+  // @@protoc_insertion_point(field_get:zetasql.FunctionArgumentTypeOptionsProto.argument_alias_kind)
+  return _internal_argument_alias_kind();
+}
+inline void FunctionArgumentTypeOptionsProto::set_argument_alias_kind(::zetasql::FunctionEnums_ArgumentAliasKind value) {
+   _internal_set_argument_alias_kind(value);
+  // @@protoc_insertion_point(field_set:zetasql.FunctionArgumentTypeOptionsProto.argument_alias_kind)
+}
+inline ::zetasql::FunctionEnums_ArgumentAliasKind FunctionArgumentTypeOptionsProto::_internal_argument_alias_kind() const {
+  return static_cast<::zetasql::FunctionEnums_ArgumentAliasKind>(_impl_.argument_alias_kind_);
+}
+inline void FunctionArgumentTypeOptionsProto::_internal_set_argument_alias_kind(::zetasql::FunctionEnums_ArgumentAliasKind value) {
+  assert(::zetasql::FunctionEnums_ArgumentAliasKind_IsValid(value));
+  _impl_._has_bits_[0] |= 0x00800000u;
+  _impl_.argument_alias_kind_ = value;
 }
 
 // -------------------------------------------------------------------

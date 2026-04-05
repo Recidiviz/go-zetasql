@@ -10,9 +10,6 @@
 #include "zetasql/parser/parser_runtime_info.h"
 #include "zetasql/parser/statement_properties.h"
 // include sources
-#include "zetasql/parser/bison_parser.bison.cc"
-#include "zetasql/parser/flex_tokenizer.cc"
-#include "zetasql/parser/join_processor.cc"
 // include dependencies
 #include "go-zetasql/parser/keywords/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"

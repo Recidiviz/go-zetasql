@@ -3,7 +3,7 @@ package types
 import (
 	"unsafe"
 
-	internal "github.com/goccy/go-zetasql/internal/ccall/go-zetasql"
+	zetasqlparser "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/parser"
 	"github.com/goccy/go-zetasql/internal/helper"
 )
 
@@ -17,19 +17,19 @@ func (p *ParseLocationPoint) getRaw() unsafe.Pointer {
 
 func (p *ParseLocationPoint) Filename() string {
 	var v unsafe.Pointer
-	internal.ParseLocationPoint_filename(p.raw, &v)
+	zetasqlparser.ParseLocationPoint_filename(p.raw, &v)
 	return helper.PtrToString(v)
 }
 
 func (p *ParseLocationPoint) ByteOffset() int {
 	var v int
-	internal.ParseLocationPoint_GetByteOffset(p.raw, &v)
+	zetasqlparser.ParseLocationPoint_GetByteOffset(p.raw, &v)
 	return v
 }
 
 func (p *ParseLocationPoint) String() string {
 	var v unsafe.Pointer
-	internal.ParseLocationPoint_GetString(p.raw, &v)
+	zetasqlparser.ParseLocationPoint_GetString(p.raw, &v)
 	return helper.PtrToString(v)
 }
 
@@ -43,19 +43,19 @@ func (r *ParseLocationRange) getRaw() unsafe.Pointer {
 
 func (r *ParseLocationRange) Start() *ParseLocationPoint {
 	var v unsafe.Pointer
-	internal.ParseLocationRange_start(r.raw, &v)
+	zetasqlparser.ParseLocationRange_start(r.raw, &v)
 	return newParseLocationPoint(v)
 }
 
 func (r *ParseLocationRange) End() *ParseLocationPoint {
 	var v unsafe.Pointer
-	internal.ParseLocationRange_end(r.raw, &v)
+	zetasqlparser.ParseLocationRange_end(r.raw, &v)
 	return newParseLocationPoint(v)
 }
 
 func (r *ParseLocationRange) String() string {
 	var v unsafe.Pointer
-	internal.ParseLocationRange_GetString(r.raw, &v)
+	zetasqlparser.ParseLocationRange_GetString(r.raw, &v)
 	return helper.PtrToString(v)
 }
 
