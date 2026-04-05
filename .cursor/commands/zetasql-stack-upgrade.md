@@ -15,6 +15,8 @@ This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulato
 2. **Regeneration pipeline** — Submodule → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
 3. **Canonical green definition** — **go-zetasql:** `make local/test` (`TESTPKG` defaults to `./`, root package — matches CI). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
 4. **Classify the failure** — Sync drift, linker/amalgamation, protobuf vendoring, or runtime/semantic (parser, language features, emulator path). Fix the matching layer; avoid alternating random edits with full tree rebuilds.
+5. **Generator and exportinc** — Manual edits to `bind.cc` templates, `export.inc`, or [`internal/cmd/generator`](../../internal/cmd/generator) / `exportinc` can be **overwritten** on the next generate pass. If a fix “comes back” after regeneration, change the **generator or policy** (e.g. flex suppress flags), not only the generated file.
+6. **Resume after OOM or agent crash** — Re-read `git status` in each repo; do not assume partial work was saved. Continue with **one repo**, `go test -p 1` / `GOMAXPROCS=1`, and narrowed `TESTPKG` before broad suites.
 
 # ZetaSQL stack upgrade
 
@@ -52,6 +54,7 @@ For **each** of `GO_ZETASQL_ROOT`, `GO_ZETASQLITE_ROOT`, `BIGQUERY_EMULATOR_ROOT
 
 Before large mechanical edits, understand what changed between **`from`** and **`to`**:
 
+- **Confirm the target tag exists** in the sibling clone: `git -C "$GOOGLESQL_ROOT" fetch --tags` then `git -C "$GOOGLESQL_ROOT" rev-parse "$TO_TAG^{}"` (fail fast before submodule checkout).
 - `git -C "$GOOGLESQL_ROOT" log <from>..<to>` — commit messages may be sparse; **file diffs** carry the signal.
 - Optionally: `git -C "$GOOGLESQL_ROOT" diff --stat <from>..<to>` or path-limited diffs for `zetasql/public`, `zetasql/resolved_ast`, protos, builtins.
 
@@ -62,6 +65,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
 ## Phase 2 — go-zetasql
 
 1. **Submodule:** In `GO_ZETASQL_ROOT`, update [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) to tag `<to>` (`git checkout <to>` inside submodule), commit the submodule pointer when ready.
+   - **Vendor patches on top of the tag:** If you add commits in the submodule (patches above the upstream tag), the parent repo will point at a **specific submodule SHA**, not the tag tip. **Push that submodule commit** to whatever remote CI and teammates use *before* (or with) pushing `go-zetasql`, so clones resolve the submodule. Split commits logically: submodule pointer vs generator/ccall mirror in the parent.
 2. **Regeneration / vendoring:**
    - A **full** run of `internal/cmd/updater` can **break the CGO link** (duplicate symbols, protobuf/flex skew). Prefer **incremental** steps and document what you ran.
    - Use `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when refreshing ZetaSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
@@ -99,10 +103,11 @@ Use [`.cursor/skills/zetasql-stack-debug/SKILL.md`](../skills/zetasql-stack-debu
 | Symptom | Where to look |
 |---------|---------------|
 | Many failures only under `go test ./...` / isolated `internal/ccall` packages; root `make local/test` passes | Often **unsupported** standalone shard builds — confirm CI/Makefile default (`TESTPKG=./`) before “fixing” |
-| Duplicate symbols / link failures after updater | [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), `vendorpatch`, partial vs full updater run; which TU owns shared `.cc` (e.g. protobuf utf8) |
+| Duplicate symbols / link failures after updater | [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), `vendorpatch`, partial vs full updater run; which TU owns shared `.cc` (e.g. `utf8_validity` / `utf8_range` — avoid linking the same `.cc` in multiple CGO packages). **Do not** “fix” with `-Wl,--allow-multiple-definition` — it can **crash at runtime**; fix ownership instead (see skill). |
+| Undefined `yywrap` / duplicate flex globals / parser segfaults | Multiple TUs compiling the same flex/bison stack; `YY_DECL` / tokenizer name drift; `ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS` interaction with [`flex_tokenizer`](../../internal/ccall/zetasql/parser/flex_tokenizer.h); namespace macros must match between root and parser/analyzer amalgamation — use **zetasql-stack-debug** before large structural experiments (e.g. “header-only” parser binds can duplicate ICU). |
 | Protobuf version / `port_def` errors | Amalgamation guards, `go run ./internal/cmd/vendorpatch` |
 | Stale behavior after C++ header edits | CGO/cache: may need `bind.cc` bump or clean rebuild of affected package |
-| Crashes in parse/analyze / odd status handling | Minimal repro; not always fixed by rerunning full suite |
+| Crashes in parse/analyze / odd status handling | Minimal repro; CGO/amalgamation **renamed namespaces** can break template matches; `Status` payload / `GetTypeUrl` paths may need explicit handling vs `descriptor()` — not always fixed by rerunning the full suite |
 | OOM during tests | Sequential repo tests; `GOMAXPROCS` + `-p 1`; [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh); narrow `TESTPKG` |
 | New builtins fail in emulator only | zetasqlite registration vs server query path |
 
@@ -204,6 +209,8 @@ export GOMODCACHE="${GOMODCACHE:-$HOME/.cache/go-mod}"
 mkdir -p "$GOCACHE" "$GOMODCACHE"
 export CGO_ENABLED=1
 export CXX=clang++
+# Optional after OOM or on memory-constrained hosts:
+# export GOMAXPROCS=1
 ```
 
 ### Tests (sequential — one repo at a time)
@@ -215,6 +222,7 @@ cd "$GO_ZETASQL_ROOT"
 make local/test
 # or: make test/linux
 # narrow: TESTPKG=./internal/... make local/test
+# After OOM: narrow TESTPKG, use go test -p 1, optional GOMAXPROCS=1 (see Phase 2 and zetasql-stack-debug)
 ```
 
 **go-zetasqlite:**
