@@ -8,6 +8,7 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/functions/hash/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
+#include "go-absl/log/log/export.inc"
 #include "go-absl/status/statusor/export.inc"
 
 #endif

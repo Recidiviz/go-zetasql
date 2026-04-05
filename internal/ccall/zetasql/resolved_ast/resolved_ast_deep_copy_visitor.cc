@@ -761,6 +761,11 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnDropNotNullActi
   return CopyVisitResolvedAlterColumnDropNotNullAction(node);
 }
 
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnDropGeneratedAction(
+    const ResolvedAlterColumnDropGeneratedAction* node) {
+  return CopyVisitResolvedAlterColumnDropGeneratedAction(node);
+}
+
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnSetDataTypeAction(
     const ResolvedAlterColumnSetDataTypeAction* node) {
   return CopyVisitResolvedAlterColumnSetDataTypeAction(node);
@@ -1044,6 +1049,11 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAuxLoadDataStmt(
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUndropStmt(
     const ResolvedUndropStmt* node) {
   return CopyVisitResolvedUndropStmt(node);
+}
+
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedIdentityColumnInfo(
+    const ResolvedIdentityColumnInfo* node) {
+  return CopyVisitResolvedIdentityColumnInfo(node);
 }
 
 absl::Status
@@ -1413,7 +1423,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionCall(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedFunctionCall>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the collation field explicitly because it is not a constructor arg.
   copy.get()->set_collation_list(node->collation_list());
@@ -1496,7 +1509,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateFunctionCall(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregateFunctionCall>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the collation field explicitly because it is not a constructor arg.
   copy.get()->set_collation_list(node->collation_list());
@@ -1577,7 +1593,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticFunctionCall(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnalyticFunctionCall>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the collation field explicitly because it is not a constructor arg.
   copy.get()->set_collation_list(node->collation_list());
@@ -2083,7 +2102,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSubqueryExpr(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSubqueryExpr>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -2164,7 +2186,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteAsRoleScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExecuteAsRoleScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2276,7 +2301,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSingleRowScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSingleRowScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2328,7 +2356,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTableScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedTableScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2395,7 +2426,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedJoinScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedJoinScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2424,14 +2458,17 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArrayScan(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
-  // Get deep copy of array_expr field.
+  // Get a deep copy of array_expr_list vector.
   ZETASQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> array_expr,
-      ProcessNode(node->array_expr()));
+      std::vector<std::unique_ptr<ResolvedExpr>> array_expr_list,
+      ProcessNodeList(node->array_expr_list()));
 
-  ZETASQL_ASSIGN_OR_RETURN(
-      ResolvedColumn element_column,
-      CopyResolvedColumn(node->element_column()));
+  std::vector<ResolvedColumn> element_column_list;
+  for (int i = 0; i < node->element_column_list().size(); ++i) {
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+                     CopyResolvedColumn(node->element_column_list()[i]));
+    element_column_list.push_back(elem);
+  }
 
   // Get deep copy of array_offset_column field.
   ZETASQL_ASSIGN_OR_RETURN(
@@ -2442,6 +2479,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArrayScan(
   ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> join_expr,
       ProcessNode(node->join_expr()));
+
+  // Get deep copy of array_zip_mode field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> array_zip_mode,
+      ProcessNode(node->array_zip_mode()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
@@ -2459,17 +2501,21 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArrayScan(
   auto copy = MakeResolvedArrayScan(
     column_list,
     std::move(input_scan),
-    std::move(array_expr),
-    element_column,
+    std::move(array_expr_list),
+    element_column_list,
     std::move(array_offset_column),
     std::move(join_expr),
-    node->is_outer()
+    node->is_outer(),
+    std::move(array_zip_mode)
   );
 
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedArrayScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2549,7 +2595,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedFilterScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2734,7 +2783,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregateScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2829,7 +2881,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnonymizedAggregateScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnonymizedAggregateScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -2924,7 +2979,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDifferentialPrivacyAggregateScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDifferentialPrivacyAggregateScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3013,7 +3071,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregationThresholdAggregateScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregationThresholdAggregateScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3100,7 +3161,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSetOperationScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3164,7 +3228,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedOrderByScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedOrderByScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3226,7 +3293,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedLimitOffsetScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedLimitOffsetScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3271,7 +3341,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithRefScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWithRefScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3327,7 +3400,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnalyticScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3403,7 +3479,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSampleScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSampleScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3537,10 +3616,17 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGeneratedColumnInfo(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
 
+  // Get deep copy of identity_column_info field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedIdentityColumnInfo> identity_column_info,
+      ProcessNode(node->identity_column_info()));
+
   // Create a mutable instance of ResolvedGeneratedColumnInfo.
   auto copy = MakeResolvedGeneratedColumnInfo(
     std::move(expression),
-    node->stored_mode()
+    node->stored_mode(),
+    node->generated_mode(),
+    std::move(identity_column_info)
   );
 
   // Set parse location range if it was previously set, as this is not a
@@ -3782,7 +3868,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedProjectScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedProjectScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3837,7 +3926,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTVFScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedTVFScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -3892,7 +3984,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupRowsScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedGroupRowsScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -4004,7 +4099,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExplainStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExplainStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4046,7 +4144,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedQueryStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedQueryStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4082,7 +4183,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateDatabaseStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateDatabaseStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4217,7 +4321,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateIndexStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateIndexStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4261,7 +4368,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateSchemaStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateSchemaStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4369,7 +4479,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateTableStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4477,7 +4590,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableAsSelectStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateTableAsSelectStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4608,7 +4724,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateModelStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateModelStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4669,7 +4788,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4738,7 +4860,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateSnapshotTableStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateSnapshotTableStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4828,7 +4953,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateExternalTableStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateExternalTableStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4870,7 +4998,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportModelStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExportModelStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4924,7 +5055,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportDataStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExportDataStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -4967,7 +5101,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportMetadataStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExportMetadataStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5003,7 +5140,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDefineTableStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDefineTableStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5035,7 +5175,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDescribeStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDescribeStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5072,7 +5215,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedShowStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedShowStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5103,7 +5249,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedBeginStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedBeginStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5134,7 +5283,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetTransactionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSetTransactionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5163,7 +5315,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCommitStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCommitStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5192,7 +5347,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRollbackStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRollbackStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5222,7 +5380,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedStartBatchStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedStartBatchStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5251,7 +5412,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRunBatchStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRunBatchStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5280,7 +5444,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAbortBatchStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAbortBatchStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5313,7 +5480,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5344,7 +5514,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropMaterializedViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropMaterializedViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5375,7 +5548,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropSnapshotTableStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropSnapshotTableStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5412,7 +5588,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRecursiveRefScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRecursiveRefScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -5469,7 +5648,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRecursiveScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRecursiveScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -5526,7 +5708,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWithScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -5588,6 +5773,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedOption(
     std::move(value)
   );
 
+  // Copy the `assignment_op` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_assignment_op(node->assignment_op());
+
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
@@ -5621,7 +5810,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowPartitioning(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWindowPartitioning>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the collation field explicitly because it is not a constructor arg.
   copy.get()->set_collation_list(node->collation_list());
@@ -5659,7 +5851,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowOrdering(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWindowOrdering>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5839,7 +6034,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAssertStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -5950,6 +6148,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertStmt(
       std::vector<std::unique_ptr<ResolvedInsertRow>> row_list,
       ProcessNodeList(node->row_list()));
 
+  // Get a deep copy of generated_column_expr_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedExpr>> generated_column_expr_list,
+      ProcessNodeList(node->generated_column_expr_list()));
+
   // Get a deep copy of hint_list vector.
   ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> hint_list,
@@ -5966,13 +6169,17 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertStmt(
     std::move(query),
     query_output_column_list,
     std::move(row_list),
-    node->topologically_sorted_generated_column_index_list()
+    node->topologically_sorted_generated_column_id_list(),
+    std::move(generated_column_expr_list)
   );
 
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedInsertStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the column_access_list field explicitly because it is not a
   // constructor arg.
@@ -6035,7 +6242,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDeleteStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDeleteStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the column_access_list field explicitly because it is not a
   // constructor arg.
@@ -6183,6 +6393,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateStmt(
       std::unique_ptr<ResolvedScan> from_scan,
       ProcessNode(node->from_scan()));
 
+  // Get a deep copy of generated_column_expr_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedExpr>> generated_column_expr_list,
+      ProcessNodeList(node->generated_column_expr_list()));
+
   // Get a deep copy of hint_list vector.
   ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> hint_list,
@@ -6196,13 +6411,18 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateStmt(
     std::move(array_offset_column),
     std::move(where_expr),
     std::move(update_item_list),
-    std::move(from_scan)
+    std::move(from_scan),
+    node->topologically_sorted_generated_column_id_list(),
+    std::move(generated_column_expr_list)
   );
 
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUpdateStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the column_access_list field explicitly because it is not a
   // constructor arg.
@@ -6306,7 +6526,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedMergeStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedMergeStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the column_access_list field explicitly because it is not a
   // constructor arg.
@@ -6351,7 +6574,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTruncateStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedTruncateStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6441,7 +6667,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGrantStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedGrantStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6485,7 +6714,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRevokeStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRevokeStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6522,7 +6754,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterDatabaseStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterDatabaseStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6559,7 +6794,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterMaterializedViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterMaterializedViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6596,7 +6834,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterApproxViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterApproxViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6633,7 +6874,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterSchemaStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterSchemaStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6670,7 +6914,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterModelStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterModelStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6707,7 +6954,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterTableStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -6744,7 +6994,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7004,6 +7257,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnDropNotNullAction(
 }
 
 absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnDropGeneratedAction(
+    const ResolvedAlterColumnDropGeneratedAction* node) {
+  // Create a mutable instance of ResolvedAlterColumnDropGeneratedAction.
+  auto copy = MakeResolvedAlterColumnDropGeneratedAction(
+    node->is_if_exists(),
+    node->column()
+  );
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnSetDataTypeAction(
     const ResolvedAlterColumnSetDataTypeAction* node) {
   // Get deep copy of updated_annotations field.
@@ -7192,7 +7466,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableSetOptionsStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterTableSetOptionsStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7224,7 +7501,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRenameStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRenameStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7269,7 +7549,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreatePrivilegeRestrictionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreatePrivilegeRestrictionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7321,7 +7604,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateRowAccessPolicyStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateRowAccessPolicyStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7359,7 +7645,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropPrivilegeRestrictionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropPrivilegeRestrictionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7392,7 +7681,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropRowAccessPolicyStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropRowAccessPolicyStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7425,7 +7717,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropIndexStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropIndexStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7643,7 +7938,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterPrivilegeRestrictionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterPrivilegeRestrictionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7687,7 +7985,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterRowAccessPolicyStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterRowAccessPolicyStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7730,7 +8031,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterAllRowAccessPoliciesStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterAllRowAccessPoliciesStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7768,7 +8072,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateConstantStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateConstantStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7834,7 +8141,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateFunctionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateFunctionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7939,7 +8249,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableFunctionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateTableFunctionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -7978,7 +8291,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRelationArgumentScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRelationArgumentScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -8073,7 +8389,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropFunctionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropFunctionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8104,7 +8423,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropTableFunctionStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropTableFunctionStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8141,7 +8463,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCallStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCallStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8181,7 +8506,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedImportStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedImportStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8217,7 +8545,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedModuleStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedModuleStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8322,7 +8653,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateMaterializedViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateMaterializedViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8383,7 +8717,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateApproxViewStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateApproxViewStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8433,7 +8770,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateProcedureStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateProcedureStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8501,7 +8841,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteImmediateStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExecuteImmediateStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8542,7 +8885,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssignmentStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAssignmentStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8583,7 +8929,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateEntityStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateEntityStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8621,7 +8970,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterEntityStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterEntityStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8720,7 +9072,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedPivotScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedPivotScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -8864,7 +9219,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnpivotScan(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUnpivotScan>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Copy the is_ordered field explicitly because it is not a constructor arg.
   copy.get()->set_is_ordered(node->is_ordered());
@@ -8912,7 +9270,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCloneDataStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCloneDataStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -8977,7 +9338,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyzeStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnalyzeStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -9115,7 +9479,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAuxLoadDataStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAuxLoadDataStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -9153,7 +9520,34 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUndropStmt(
   // Copy the hint list explicitly because hint_list is not a constructor arg.
   // Because it is not a constructor arg, the only way to copy the value is to
   // copy it explicitly.
-  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUndropStmt>(node, copy.get()));
+  ZETASQL_RETURN_IF_ERROR(CopyHintList(node->hint_list(), [&copy](
+    std::unique_ptr<const zetasql::ResolvedOption> hint) {
+    copy->add_hint_list(std::move(hint));
+  }));
+
+  // Set parse location range if it was previously set, as this is not a
+  // constructor arg.
+  const auto parse_location = node->GetParseLocationRangeOrNULL();
+  if (parse_location != nullptr) {
+    copy.get()->SetParseLocationRange(*parse_location);
+  }
+
+  // Add the non-abstract node to the stack.
+  PushNodeToStack(std::move(copy));
+  return absl::OkStatus();
+}
+
+absl::Status
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedIdentityColumnInfo(
+    const ResolvedIdentityColumnInfo* node) {
+  // Create a mutable instance of ResolvedIdentityColumnInfo.
+  auto copy = MakeResolvedIdentityColumnInfo(
+    node->start_with_value(),
+    node->increment_by_value(),
+    node->max_value(),
+    node->min_value(),
+    node->cycling_enabled()
+  );
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.

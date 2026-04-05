@@ -13,6 +13,7 @@
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
+#include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-zetasql/public/type/export.inc"

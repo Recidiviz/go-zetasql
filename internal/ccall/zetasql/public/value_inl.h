@@ -44,7 +44,6 @@
 #include "zetasql/public/type.pb.h"
 #include "zetasql/public/types/value_representations.h"
 #include "zetasql/public/value.h"  
-#include <cstdint>
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"
 #include "absl/strings/cord.h"
@@ -226,6 +225,16 @@ inline absl::StatusOr<Value> Value::MakeStructFromValidatedInputs(
     const StructType* type, std::vector<Value>&& values) {
   return MakeStructInternal(/*already_validated=*/true, type,
                             std::move(values));
+}
+
+inline absl::StatusOr<Value> Value::MakeRange(const Value& start,
+                                              const Value& end) {
+  return MakeRangeInternal(/*is_validated=*/false, start, end);
+}
+
+inline absl::StatusOr<Value> Value::MakeRangeFromValidatedInputs(
+    const RangeType* range_type, const Value& start, const Value& end) {
+  return MakeRangeInternal(/*is_validated=*/true, start, end, range_type);
 }
 
 inline absl::StatusOr<Value> Value::MakeArray(const ArrayType* array_type,

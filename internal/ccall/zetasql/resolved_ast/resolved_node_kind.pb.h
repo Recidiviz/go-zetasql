@@ -199,6 +199,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_DROP_PRIMARY_KEY_ACTION = 184,
   RESOLVED_ALTER_COLUMN_OPTIONS_ACTION = 169,
   RESOLVED_ALTER_COLUMN_DROP_NOT_NULL_ACTION = 178,
+  RESOLVED_ALTER_COLUMN_DROP_GENERATED_ACTION = 243,
   RESOLVED_ALTER_COLUMN_SET_DATA_TYPE_ACTION = 181,
   RESOLVED_ALTER_COLUMN_SET_DEFAULT_ACTION = 198,
   RESOLVED_ALTER_COLUMN_DROP_DEFAULT_ACTION = 199,
@@ -256,13 +257,14 @@ enum ResolvedNodeKind : int {
   RESOLVED_AUX_LOAD_DATA_PARTITION_FILTER = 222,
   RESOLVED_AUX_LOAD_DATA_STMT = 186,
   RESOLVED_UNDROP_STMT = 227,
+  RESOLVED_IDENTITY_COLUMN_INFO = 244,
   __ResolvedNodeKind__switch_must_have_default__ = -1,
 };
 
 bool ResolvedNodeKind_IsValid(int value);
 constexpr ResolvedNodeKind ResolvedNodeKind_MIN = static_cast<ResolvedNodeKind>(-1);
-constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(242);
-constexpr int ResolvedNodeKind_ARRAYSIZE = 242 + 1;
+constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(244);
+constexpr int ResolvedNodeKind_ARRAYSIZE = 244 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 ResolvedNodeKind_descriptor();
 template <typename T>
@@ -275,7 +277,7 @@ const std::string& ResolvedNodeKind_Name(T value) {
 template <>
 inline const std::string& ResolvedNodeKind_Name(ResolvedNodeKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedNodeKind_descriptor,
-                                                 -1, 242>(
+                                                 -1, 244>(
       static_cast<int>(value));
 }
 inline bool ResolvedNodeKind_Parse(absl::string_view name, ResolvedNodeKind* value) {

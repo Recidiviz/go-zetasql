@@ -191,6 +191,22 @@ int yyFlexLexer::yywrap()`,
 	); err != nil {
 		return err
 	}
+	// With %option yyclass="FlexTokenizer", yyFlexLexer stub definitions conflict with
+	// YY_DECL; flex_tokenizer.h supplies inline stubs unless SUPPRESS is set (see generator).
+	if err := replaceAllInFile(
+		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		`int yyFlexLexer::yywrap() { return 1; }
+int yyFlexLexer::yylex()
+	{
+	LexerError( "yyFlexLexer::yylex invoked but %option yyclass used" );
+	return 0;
+	}
+
+#define YY_DECL int FlexTokenizer::yylex()`,
+		`#define YY_DECL int FlexTokenizer::yylex()`,
+	); err != nil {
+		return err
+	}
 	// Stubs conflict with flex-generated yylex when amalgamated after flex_tokenizer.flex.cc.
 	if err := replaceAllInFile(
 		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.h"),

@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
@@ -37,7 +38,6 @@
 #include "absl/algorithm/container.h"
 #include "absl/base/attributes.h"
 #include "absl/base/const_init.h"
-#include <cstdint>
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/container/node_hash_set.h"
@@ -264,10 +264,10 @@ class IdString {
 
    private:
     // Hash of <str>.
-    mutable size_t hash_ = 0;
+    mutable std::atomic<size_t> hash_ = 0;
 
     // Hash of <str_casefolded>.
-    mutable size_t hash_case_ = 0;
+    mutable std::atomic<size_t> hash_case_ = 0;
   };
 
   // Returns true if the first num_words values pointed to by 'lhs' and 'rhs'

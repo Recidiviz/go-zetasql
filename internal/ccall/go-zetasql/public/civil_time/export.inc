@@ -6,7 +6,6 @@
 #include "zetasql/public/civil_time.cc"
 // include dependencies
 #include "go-zetasql/base/mathutil/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"

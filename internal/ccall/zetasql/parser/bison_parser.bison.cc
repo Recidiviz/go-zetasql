@@ -34,11 +34,12 @@
 // are private implementation details.  Do not rely on them.
 
 
-#include "bison_parser.bison.h"
+// Take the name prefix into account.
+#define yylex   zetasql_bison_parserlex
 
-// Take the name prefix into account (must follow bison_parser.bison.h so FlexLexer.h
-// sees `virtual int yylex()` and not a macro-expanded name).
-#define yylex zetasql_bison_parserlex
+
+
+#include "bison_parser.bison.h"
 
 
 // Unqualified %code blocks.

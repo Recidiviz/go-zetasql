@@ -5,6 +5,5 @@
 // include sources
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 
 #endif

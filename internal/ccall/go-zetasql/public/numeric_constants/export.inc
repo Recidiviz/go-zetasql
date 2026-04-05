@@ -4,6 +4,5 @@
 #include "zetasql/public/numeric_constants.h"
 // include sources
 // include dependencies
-#include "go-absl/base/core_headers/export.inc"
 
 #endif

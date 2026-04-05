@@ -10,7 +10,6 @@
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/time/time/export.inc"
 

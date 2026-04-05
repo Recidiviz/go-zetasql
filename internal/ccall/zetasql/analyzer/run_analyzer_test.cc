@@ -171,7 +171,8 @@ static AllowedHintsAndOptions GetAllowedHintsAndOptions(
 
   allowed.AddOption("int64_option", types::Int64Type());
   allowed.AddOption("int32_option", types::Int32Type());
-  allowed.AddOption("string_option", types::StringType());
+  allowed.AddOption("string_option", types::StringType(),
+                    /*allow_alter_array=*/true);
   allowed.AddOption("string_array_option", string_array_type);
   allowed.AddOption("date_option", types::DateType());
   allowed.AddOption("enum_option", enum_type);
@@ -179,6 +180,10 @@ static AllowedHintsAndOptions GetAllowedHintsAndOptions(
   allowed.AddOption("struct_option", struct_type);
   allowed.AddOption("enum_array_option", enum_array_type);
   allowed.AddOption("untyped_option", nullptr);
+  allowed.AddOption("string_array_allow_alter_option", string_array_type,
+                    /*allow_alter_array=*/true);
+  allowed.AddOption("enum_array_allow_alter_option", enum_array_type,
+                    /*allow_alter_array=*/true);
 
   allowed.AddHint(kQualifier, "int64_hint", types::Int64Type());
   allowed.AddHint(kQualifier, "int32_hint", types::Int32Type());
@@ -829,6 +834,9 @@ class AnalyzerTestRunner {
       }
       options.set_allowed_hints_and_options(updated_hints_and_options);
     }
+    options.set_replace_table_not_found_error_with_tvf_error_if_applicable(
+        test_case_options_.GetBool(
+            kReplaceTableNotFoundErrorWithTvfErrorIfApplicable));
 
     SetupSampleSystemVariables(&type_factory, &options);
     auto catalog_holder = CreateCatalog(options);
@@ -844,7 +852,7 @@ class AnalyzerTestRunner {
 
  private:
   void TestOne(const std::string& test_case, const AnalyzerOptions& options,
-               const std::string& mode, Catalog* catalog,
+               absl::string_view mode, Catalog* catalog,
                std::unique_ptr<TypeFactory> type_factory_memory,
                file_based_test_driver::RunTestCaseResult* test_result) {
     TypeFactory* type_factory = type_factory_memory.get();
@@ -875,7 +883,10 @@ class AnalyzerTestRunner {
       if (!test_case_options_.GetBool(kUseSharedIdSequence)) {
         std::unique_ptr<ParserOutput> parser_output;
         ParserOptions parser_options = options.GetParserOptions();
-        if (ParseStatement(test_case, parser_options, &parser_output).ok()) {
+
+        absl::Status parse_status =
+            ParseStatement(test_case, parser_options, &parser_output);
+        if (parse_status.ok()) {
           std::unique_ptr<const AnalyzerOutput> analyze_from_ast_output;
           const absl::Status analyze_from_ast_status =
               AnalyzeStatementFromParserOutputOwnedOnSuccess(
@@ -997,7 +1008,7 @@ class AnalyzerTestRunner {
   }
 
   void TestMulti(const std::string& test_case, const AnalyzerOptions& options,
-                 const std::string& mode, Catalog* catalog,
+                 absl::string_view mode, Catalog* catalog,
                  TypeFactory* type_factory,
                  file_based_test_driver::RunTestCaseResult* test_result) {
     ASSERT_EQ("statement", mode)
@@ -1234,9 +1245,8 @@ class AnalyzerTestRunner {
     std::unique_ptr<ParserOutput> parser_output;
     absl::Status status =
         ParseStatement(test_case, options.GetParserOptions(), &parser_output);
-    status = MaybeUpdateErrorFromPayload(
-        options.error_message_mode(), options.attach_error_location_payload(),
-        test_case, status);
+    status = MaybeUpdateErrorFromPayload(options.error_message_options(),
+                                         test_case, status);
     TableResolutionTimeInfoMap table_resolution_time_info_map;
     if (status.ok()) {
       absl::Status status = ExtractTableResolutionTimeFromASTStatement(
@@ -2812,6 +2822,8 @@ class AnalyzerTestRunner {
     builder_options.undeclared_positional_parameters =
         analyzer_output->undeclared_positional_parameters();
     builder_options.catalog = catalog;
+    builder_options.target_syntax =
+        analyzer_output->analyzer_output_properties().target_syntax_;
     const std::string positional_parameter_mode =
         test_case_options_.GetString(kUnparserPositionalParameterMode);
     if (positional_parameter_mode == "question_mark") {

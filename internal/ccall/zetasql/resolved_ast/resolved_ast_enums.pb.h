@@ -98,6 +98,9 @@ extern ResolvedMergeWhenEnumsDefaultTypeInternal _ResolvedMergeWhenEnums_default
 class ResolvedNonScalarFunctionCallBaseEnums;
 struct ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal;
 extern ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal _ResolvedNonScalarFunctionCallBaseEnums_default_instance_;
+class ResolvedOptionEnums;
+struct ResolvedOptionEnumsDefaultTypeInternal;
+extern ResolvedOptionEnumsDefaultTypeInternal _ResolvedOptionEnums_default_instance_;
 class ResolvedOrderByItemEnums;
 struct ResolvedOrderByItemEnumsDefaultTypeInternal;
 extern ResolvedOrderByItemEnumsDefaultTypeInternal _ResolvedOrderByItemEnums_default_instance_;
@@ -154,6 +157,8 @@ template <>
 ::zetasql::ResolvedMergeWhenEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedMergeWhenEnums>(Arena*);
 template <>
 ::zetasql::ResolvedNonScalarFunctionCallBaseEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedNonScalarFunctionCallBaseEnums>(Arena*);
+template <>
+::zetasql::ResolvedOptionEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedOptionEnums>(Arena*);
 template <>
 ::zetasql::ResolvedOrderByItemEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedOrderByItemEnums>(Arena*);
 template <>
@@ -559,6 +564,34 @@ inline const std::string& ResolvedGeneratedColumnInfoEnums_StoredMode_Name(Resol
 inline bool ResolvedGeneratedColumnInfoEnums_StoredMode_Parse(absl::string_view name, ResolvedGeneratedColumnInfoEnums_StoredMode* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedGeneratedColumnInfoEnums_StoredMode>(
       ResolvedGeneratedColumnInfoEnums_StoredMode_descriptor(), name, value);
+}
+enum ResolvedGeneratedColumnInfoEnums_GeneratedMode : int {
+  ResolvedGeneratedColumnInfoEnums_GeneratedMode_ALWAYS = 0,
+  ResolvedGeneratedColumnInfoEnums_GeneratedMode_BY_DEFAULT = 1,
+};
+
+bool ResolvedGeneratedColumnInfoEnums_GeneratedMode_IsValid(int value);
+constexpr ResolvedGeneratedColumnInfoEnums_GeneratedMode ResolvedGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MIN = static_cast<ResolvedGeneratedColumnInfoEnums_GeneratedMode>(0);
+constexpr ResolvedGeneratedColumnInfoEnums_GeneratedMode ResolvedGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MAX = static_cast<ResolvedGeneratedColumnInfoEnums_GeneratedMode>(1);
+constexpr int ResolvedGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_ARRAYSIZE = 1 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedGeneratedColumnInfoEnums_GeneratedMode_descriptor();
+template <typename T>
+const std::string& ResolvedGeneratedColumnInfoEnums_GeneratedMode_Name(T value) {
+  static_assert(std::is_same<T, ResolvedGeneratedColumnInfoEnums_GeneratedMode>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to GeneratedMode_Name().");
+  return ResolvedGeneratedColumnInfoEnums_GeneratedMode_Name(static_cast<ResolvedGeneratedColumnInfoEnums_GeneratedMode>(value));
+}
+template <>
+inline const std::string& ResolvedGeneratedColumnInfoEnums_GeneratedMode_Name(ResolvedGeneratedColumnInfoEnums_GeneratedMode value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedGeneratedColumnInfoEnums_GeneratedMode_descriptor,
+                                                 0, 1>(
+      static_cast<int>(value));
+}
+inline bool ResolvedGeneratedColumnInfoEnums_GeneratedMode_Parse(absl::string_view name, ResolvedGeneratedColumnInfoEnums_GeneratedMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedGeneratedColumnInfoEnums_GeneratedMode>(
+      ResolvedGeneratedColumnInfoEnums_GeneratedMode_descriptor(), name, value);
 }
 enum ResolvedDropStmtEnums_DropMode : int {
   ResolvedDropStmtEnums_DropMode_DROP_MODE_UNSPECIFIED = 0,
@@ -1055,6 +1088,35 @@ inline const std::string& ResolvedDropIndexStmtEnums_IndexType_Name(ResolvedDrop
 inline bool ResolvedDropIndexStmtEnums_IndexType_Parse(absl::string_view name, ResolvedDropIndexStmtEnums_IndexType* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedDropIndexStmtEnums_IndexType>(
       ResolvedDropIndexStmtEnums_IndexType_descriptor(), name, value);
+}
+enum ResolvedOptionEnums_AssignmentOp : int {
+  ResolvedOptionEnums_AssignmentOp_DEFAULT_ASSIGN = 0,
+  ResolvedOptionEnums_AssignmentOp_ADD_ASSIGN = 1,
+  ResolvedOptionEnums_AssignmentOp_SUB_ASSIGN = 2,
+};
+
+bool ResolvedOptionEnums_AssignmentOp_IsValid(int value);
+constexpr ResolvedOptionEnums_AssignmentOp ResolvedOptionEnums_AssignmentOp_AssignmentOp_MIN = static_cast<ResolvedOptionEnums_AssignmentOp>(0);
+constexpr ResolvedOptionEnums_AssignmentOp ResolvedOptionEnums_AssignmentOp_AssignmentOp_MAX = static_cast<ResolvedOptionEnums_AssignmentOp>(2);
+constexpr int ResolvedOptionEnums_AssignmentOp_AssignmentOp_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedOptionEnums_AssignmentOp_descriptor();
+template <typename T>
+const std::string& ResolvedOptionEnums_AssignmentOp_Name(T value) {
+  static_assert(std::is_same<T, ResolvedOptionEnums_AssignmentOp>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to AssignmentOp_Name().");
+  return ResolvedOptionEnums_AssignmentOp_Name(static_cast<ResolvedOptionEnums_AssignmentOp>(value));
+}
+template <>
+inline const std::string& ResolvedOptionEnums_AssignmentOp_Name(ResolvedOptionEnums_AssignmentOp value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedOptionEnums_AssignmentOp_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedOptionEnums_AssignmentOp_Parse(absl::string_view name, ResolvedOptionEnums_AssignmentOp* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedOptionEnums_AssignmentOp>(
+      ResolvedOptionEnums_AssignmentOp_descriptor(), name, value);
 }
 
 // ===================================================================
@@ -2321,6 +2383,26 @@ class ResolvedGeneratedColumnInfoEnums final :
   }
   static inline bool StoredMode_Parse(absl::string_view name, StoredMode* value) {
     return ResolvedGeneratedColumnInfoEnums_StoredMode_Parse(name, value);
+  }
+
+  using GeneratedMode = ResolvedGeneratedColumnInfoEnums_GeneratedMode;
+  static constexpr GeneratedMode ALWAYS = ResolvedGeneratedColumnInfoEnums_GeneratedMode_ALWAYS;
+  static constexpr GeneratedMode BY_DEFAULT = ResolvedGeneratedColumnInfoEnums_GeneratedMode_BY_DEFAULT;
+  static inline bool GeneratedMode_IsValid(int value) {
+    return ResolvedGeneratedColumnInfoEnums_GeneratedMode_IsValid(value);
+  }
+  static constexpr GeneratedMode GeneratedMode_MIN = ResolvedGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MIN;
+  static constexpr GeneratedMode GeneratedMode_MAX = ResolvedGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MAX;
+  static constexpr int GeneratedMode_ARRAYSIZE = ResolvedGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* GeneratedMode_descriptor() {
+    return ResolvedGeneratedColumnInfoEnums_GeneratedMode_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& GeneratedMode_Name(T value) {
+    return ResolvedGeneratedColumnInfoEnums_GeneratedMode_Name(value);
+  }
+  static inline bool GeneratedMode_Parse(absl::string_view name, GeneratedMode* value) {
+    return ResolvedGeneratedColumnInfoEnums_GeneratedMode_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -4555,6 +4637,151 @@ class ResolvedDropIndexStmtEnums final :
   struct Impl_ {
   };
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedOptionEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedOptionEnums) */ {
+ public:
+  inline ResolvedOptionEnums() : ResolvedOptionEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedOptionEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedOptionEnums(const ResolvedOptionEnums& from);
+  ResolvedOptionEnums(ResolvedOptionEnums&& from) noexcept
+    : ResolvedOptionEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedOptionEnums& operator=(const ResolvedOptionEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedOptionEnums& operator=(ResolvedOptionEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedOptionEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedOptionEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedOptionEnums*>(
+               &_ResolvedOptionEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    23;
+
+  friend void swap(ResolvedOptionEnums& a, ResolvedOptionEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedOptionEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedOptionEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedOptionEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedOptionEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedOptionEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedOptionEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedOptionEnums";
+  }
+  protected:
+  explicit ResolvedOptionEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using AssignmentOp = ResolvedOptionEnums_AssignmentOp;
+  static constexpr AssignmentOp DEFAULT_ASSIGN = ResolvedOptionEnums_AssignmentOp_DEFAULT_ASSIGN;
+  static constexpr AssignmentOp ADD_ASSIGN = ResolvedOptionEnums_AssignmentOp_ADD_ASSIGN;
+  static constexpr AssignmentOp SUB_ASSIGN = ResolvedOptionEnums_AssignmentOp_SUB_ASSIGN;
+  static inline bool AssignmentOp_IsValid(int value) {
+    return ResolvedOptionEnums_AssignmentOp_IsValid(value);
+  }
+  static constexpr AssignmentOp AssignmentOp_MIN = ResolvedOptionEnums_AssignmentOp_AssignmentOp_MIN;
+  static constexpr AssignmentOp AssignmentOp_MAX = ResolvedOptionEnums_AssignmentOp_AssignmentOp_MAX;
+  static constexpr int AssignmentOp_ARRAYSIZE = ResolvedOptionEnums_AssignmentOp_AssignmentOp_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AssignmentOp_descriptor() {
+    return ResolvedOptionEnums_AssignmentOp_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& AssignmentOp_Name(T value) {
+    return ResolvedOptionEnums_AssignmentOp_Name(value);
+  }
+  static inline bool AssignmentOp_Parse(absl::string_view name, AssignmentOp* value) {
+    return ResolvedOptionEnums_AssignmentOp_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedOptionEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
 };
 
 // ===================================================================
@@ -4661,6 +4888,10 @@ class ResolvedDropIndexStmtEnums final :
 
 // ResolvedDropIndexStmtEnums
 
+// -------------------------------------------------------------------
+
+// ResolvedOptionEnums
+
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif  // __GNUC__
@@ -4748,6 +4979,12 @@ struct is_proto_enum<::zetasql::ResolvedGeneratedColumnInfoEnums_StoredMode> : s
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedGeneratedColumnInfoEnums_StoredMode>() {
   return ::zetasql::ResolvedGeneratedColumnInfoEnums_StoredMode_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedGeneratedColumnInfoEnums_GeneratedMode> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedGeneratedColumnInfoEnums_GeneratedMode>() {
+  return ::zetasql::ResolvedGeneratedColumnInfoEnums_GeneratedMode_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::ResolvedDropStmtEnums_DropMode> : std::true_type {};
@@ -4850,6 +5087,12 @@ struct is_proto_enum<::zetasql::ResolvedDropIndexStmtEnums_IndexType> : std::tru
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedDropIndexStmtEnums_IndexType>() {
   return ::zetasql::ResolvedDropIndexStmtEnums_IndexType_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedOptionEnums_AssignmentOp> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedOptionEnums_AssignmentOp>() {
+  return ::zetasql::ResolvedOptionEnums_AssignmentOp_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

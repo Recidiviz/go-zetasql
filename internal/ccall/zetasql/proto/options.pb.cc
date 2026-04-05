@@ -124,6 +124,8 @@ PROTOBUF_CONSTEXPR AllowedHintsAndOptionsProto_OptionProto::AllowedHintsAndOptio
 
   , /*decltype(_impl_.type_)*/nullptr
   , /*decltype(_impl_.resolving_kind_)*/ 0
+
+  , /*decltype(_impl_.allow_alter_array_)*/ false
 } {}
 struct AllowedHintsAndOptionsProto_OptionProtoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR AllowedHintsAndOptionsProto_OptionProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
@@ -241,6 +243,8 @@ PROTOBUF_CONSTEXPR AnalyzerOptionsProto::AnalyzerOptionsProto(
 
   , /*decltype(_impl_.show_function_signature_mismatch_details_)*/ false
 
+  , /*decltype(_impl_.replace_table_not_found_error_with_tvf_error_if_applicable_)*/ false
+
   , /*decltype(_impl_.default_anon_kappa_value_)*/ ::int64_t{0}
 } {}
 struct AnalyzerOptionsProtoDefaultTypeInternal {
@@ -339,9 +343,11 @@ const ::uint32_t TableStruct_zetasql_2fproto_2foptions_2eproto::offsets[] PROTOB
     PROTOBUF_FIELD_OFFSET(::zetasql::AllowedHintsAndOptionsProto_OptionProto, _impl_.name_),
     PROTOBUF_FIELD_OFFSET(::zetasql::AllowedHintsAndOptionsProto_OptionProto, _impl_.type_),
     PROTOBUF_FIELD_OFFSET(::zetasql::AllowedHintsAndOptionsProto_OptionProto, _impl_.resolving_kind_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AllowedHintsAndOptionsProto_OptionProto, _impl_.allow_alter_array_),
     0,
     1,
     2,
+    3,
     PROTOBUF_FIELD_OFFSET(::zetasql::AllowedHintsAndOptionsProto, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::AllowedHintsAndOptionsProto, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -420,6 +426,7 @@ const ::uint32_t TableStruct_zetasql_2fproto_2foptions_2eproto::offsets[] PROTOB
     PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, _impl_.default_anon_function_report_format_),
     PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, _impl_.default_anon_kappa_value_),
     PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, _impl_.rewrite_options_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::AnalyzerOptionsProto, _impl_.replace_table_not_found_error_with_tvf_error_if_applicable_),
     2,
     ~0u,
     ~0u,
@@ -442,8 +449,9 @@ const ::uint32_t TableStruct_zetasql_2fproto_2foptions_2eproto::offsets[] PROTOB
     14,
     15,
     1,
-    16,
+    17,
     5,
+    16,
 };
 
 static const ::_pbi::MigrationSchema
@@ -452,11 +460,11 @@ static const ::_pbi::MigrationSchema
         { 16, 26, -1, sizeof(::zetasql::EnabledRewriteProto)},
         { 28, 44, -1, sizeof(::zetasql::LanguageOptionsProto)},
         { 52, 64, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_HintProto)},
-        { 68, 79, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_OptionProto)},
-        { 82, 97, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto)},
-        { 104, 114, -1, sizeof(::zetasql::AnalyzerOptionsProto_QueryParameterProto)},
-        { 116, 126, -1, sizeof(::zetasql::AnalyzerOptionsProto_SystemVariableProto)},
-        { 128, 160, -1, sizeof(::zetasql::AnalyzerOptionsProto)},
+        { 68, 80, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto_OptionProto)},
+        { 84, 99, -1, sizeof(::zetasql::AllowedHintsAndOptionsProto)},
+        { 106, 116, -1, sizeof(::zetasql::AnalyzerOptionsProto_QueryParameterProto)},
+        { 118, 128, -1, sizeof(::zetasql::AnalyzerOptionsProto_SystemVariableProto)},
+        { 130, 163, -1, sizeof(::zetasql::AnalyzerOptionsProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -494,7 +502,7 @@ const char descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto[] PROTOBU
     " \003(\0162\031.zetasql.ResolvedNodeKind\022&\n\036suppo"
     "rted_generic_entity_types\030\007 \003(\t\022\031\n\021reser"
     "ved_keywords\030\010 \003(\t\022*\n\"supported_generic_"
-    "sub_entity_types\030\t \003(\tJ\004\010\001\020\002\"\237\006\n\033Allowed"
+    "sub_entity_types\030\t \003(\tJ\004\010\001\020\002\"\272\006\n\033Allowed"
     "HintsAndOptionsProto\022 \n\030disallow_unknown"
     "_options\030\001 \001(\010\022-\n%disallow_unknown_hints"
     "_with_qualifier\030\002 \003(\t\022<\n\004hint\030\003 \003(\0132..ze"
@@ -508,52 +516,54 @@ const char descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto[] PROTOBU
     "disallow_duplicate_option_names\030\007 \001(\010\032i\n"
     "\tHintProto\022\021\n\tqualifier\030\001 \001(\t\022\014\n\004name\030\002 "
     "\001(\t\022 \n\004type\030\003 \001(\0132\022.zetasql.TypeProto\022\031\n"
-    "\021allow_unqualified\030\004 \001(\010\032\363\001\n\013OptionProto"
+    "\021allow_unqualified\030\004 \001(\010\032\216\002\n\013OptionProto"
     "\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.T"
     "ypeProto\022V\n\016resolving_kind\030\003 \001(\0162>.zetas"
     "ql.AllowedHintsAndOptionsProto.OptionPro"
-    "to.ResolvingKind\"\\\n\rResolvingKind\022+\n\'CON"
-    "STANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER\020\000\022\036"
-    "\n\032FROM_NAME_SCOPE_IDENTIFIER\020\001\"\331\013\n\024Analy"
-    "zerOptionsProto\0227\n\020language_options\030\001 \001("
-    "\0132\035.zetasql.LanguageOptionsProto\022K\n\020quer"
-    "y_parameters\030\002 \003(\01321.zetasql.AnalyzerOpt"
-    "ionsProto.QueryParameterProto\0227\n\033positio"
-    "nal_query_parameters\030\014 \003(\0132\022.zetasql.Typ"
-    "eProto\022M\n\022expression_columns\030\003 \003(\01321.zet"
-    "asql.AnalyzerOptionsProto.QueryParameter"
-    "Proto\022U\n\032in_scope_expression_column\030\004 \001("
-    "\01321.zetasql.AnalyzerOptionsProto.QueryPa"
-    "rameterProto\022M\n\022ddl_pseudo_columns\030\017 \003(\013"
-    "21.zetasql.AnalyzerOptionsProto.QueryPar"
-    "ameterProto\0225\n\022error_message_mode\030\006 \001(\0162"
-    "\031.zetasql.ErrorMessageMode\022\030\n\020default_ti"
-    "mezone\030\007 \001(\t\0223\n+create_new_column_for_ea"
-    "ch_projected_output\030\024 \001(\010\022\034\n\024prune_unuse"
-    "d_columns\030\t \001(\010\022#\n\033allow_undeclared_para"
-    "meters\030\n \001(\010\022.\n\016parameter_mode\030\r \001(\0162\026.z"
-    "etasql.ParameterMode\022G\n\031allowed_hints_an"
-    "d_options\030\013 \001(\0132$.zetasql.AllowedHintsAn"
-    "dOptionsProto\0224\n\021statement_context\030\016 \001(\016"
-    "2\031.zetasql.StatementContext\022\037\n\027preserve_"
-    "column_aliases\030\021 \001(\010\022K\n\020system_variables"
-    "\030\022 \003(\01321.zetasql.AnalyzerOptionsProto.Sy"
-    "stemVariableProto\022/\n\023target_column_types"
-    "\030\023 \003(\0132\022.zetasql.TypeProto\0225\n\020enabled_re"
-    "writes\030\025 \003(\0162\033.zetasql.ResolvedASTRewrit"
-    "e\022D\n\032parse_location_record_type\030\027 \001(\0162 ."
-    "zetasql.ParseLocationRecordType\022!\n\031prese"
-    "rve_unnecessary_cast\030\030 \001(\010\0220\n(show_funct"
-    "ion_signature_mismatch_details\030\033 \001(\010\022+\n#"
-    "default_anon_function_report_format\030\031 \001("
-    "\t\022 \n\030default_anon_kappa_value\030\032 \001(\003\0220\n\017r"
-    "ewrite_options\030\034 \001(\0132\027.zetasql.RewriteOp"
-    "tions\032E\n\023QueryParameterProto\022\014\n\004name\030\001 \001"
-    "(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto\032J\n\023"
-    "SystemVariableProto\022\021\n\tname_path\030\001 \003(\t\022 "
-    "\n\004type\030\002 \001(\0132\022.zetasql.TypeProtoJ\004\010\010\020\tJ\004"
-    "\010\026\020\027J\004\010\020\020\021B)\n\022com.google.zetasqlB\023ZetaSQ"
-    "LOptionsProto"
+    "to.ResolvingKind\022\031\n\021allow_alter_array\030\004 "
+    "\001(\010\"\\\n\rResolvingKind\022+\n\'CONSTANT_OR_EMPT"
+    "Y_NAME_SCOPE_IDENTIFIER\020\000\022\036\n\032FROM_NAME_S"
+    "COPE_IDENTIFIER\020\001\"\235\014\n\024AnalyzerOptionsPro"
+    "to\0227\n\020language_options\030\001 \001(\0132\035.zetasql.L"
+    "anguageOptionsProto\022K\n\020query_parameters\030"
+    "\002 \003(\01321.zetasql.AnalyzerOptionsProto.Que"
+    "ryParameterProto\0227\n\033positional_query_par"
+    "ameters\030\014 \003(\0132\022.zetasql.TypeProto\022M\n\022exp"
+    "ression_columns\030\003 \003(\01321.zetasql.Analyzer"
+    "OptionsProto.QueryParameterProto\022U\n\032in_s"
+    "cope_expression_column\030\004 \001(\01321.zetasql.A"
+    "nalyzerOptionsProto.QueryParameterProto\022"
+    "M\n\022ddl_pseudo_columns\030\017 \003(\01321.zetasql.An"
+    "alyzerOptionsProto.QueryParameterProto\0225"
+    "\n\022error_message_mode\030\006 \001(\0162\031.zetasql.Err"
+    "orMessageMode\022\030\n\020default_timezone\030\007 \001(\t\022"
+    "3\n+create_new_column_for_each_projected_"
+    "output\030\024 \001(\010\022\034\n\024prune_unused_columns\030\t \001"
+    "(\010\022#\n\033allow_undeclared_parameters\030\n \001(\010\022"
+    ".\n\016parameter_mode\030\r \001(\0162\026.zetasql.Parame"
+    "terMode\022G\n\031allowed_hints_and_options\030\013 \001"
+    "(\0132$.zetasql.AllowedHintsAndOptionsProto"
+    "\0224\n\021statement_context\030\016 \001(\0162\031.zetasql.St"
+    "atementContext\022\037\n\027preserve_column_aliase"
+    "s\030\021 \001(\010\022K\n\020system_variables\030\022 \003(\01321.zeta"
+    "sql.AnalyzerOptionsProto.SystemVariableP"
+    "roto\022/\n\023target_column_types\030\023 \003(\0132\022.zeta"
+    "sql.TypeProto\0225\n\020enabled_rewrites\030\025 \003(\0162"
+    "\033.zetasql.ResolvedASTRewrite\022D\n\032parse_lo"
+    "cation_record_type\030\027 \001(\0162 .zetasql.Parse"
+    "LocationRecordType\022!\n\031preserve_unnecessa"
+    "ry_cast\030\030 \001(\010\0220\n(show_function_signature"
+    "_mismatch_details\030\033 \001(\010\022+\n#default_anon_"
+    "function_report_format\030\031 \001(\t\022 \n\030default_"
+    "anon_kappa_value\030\032 \001(\003\0220\n\017rewrite_option"
+    "s\030\034 \001(\0132\027.zetasql.RewriteOptions\022B\n:repl"
+    "ace_table_not_found_error_with_tvf_error"
+    "_if_applicable\030\035 \001(\010\032E\n\023QueryParameterPr"
+    "oto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasq"
+    "l.TypeProto\032J\n\023SystemVariableProto\022\021\n\tna"
+    "me_path\030\001 \003(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.Ty"
+    "peProtoJ\004\010\010\020\tJ\004\010\026\020\027J\004\010\020\020\021B)\n\022com.google."
+    "zetasqlB\023ZetaSQLOptionsProto"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2foptions_2eproto_deps[4] =
     {
@@ -566,7 +576,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fproto_2foptions_2eproto_once
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2foptions_2eproto = {
     false,
     false,
-    3293,
+    3388,
     descriptor_table_protodef_zetasql_2fproto_2foptions_2eproto,
     "zetasql/proto/options.proto",
     &descriptor_table_zetasql_2fproto_2foptions_2eproto_once,
@@ -2094,6 +2104,9 @@ class AllowedHintsAndOptionsProto_OptionProto::_Internal {
   static void set_has_resolving_kind(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
   }
+  static void set_has_allow_alter_array(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
 };
 
 const ::zetasql::TypeProto&
@@ -2119,6 +2132,8 @@ AllowedHintsAndOptionsProto_OptionProto::AllowedHintsAndOptionsProto_OptionProto
 
     , decltype(_impl_.type_){nullptr}
     , decltype(_impl_.resolving_kind_) {}
+
+    , decltype(_impl_.allow_alter_array_) {}
   };
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -2132,7 +2147,9 @@ AllowedHintsAndOptionsProto_OptionProto::AllowedHintsAndOptionsProto_OptionProto
   if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
     _this->_impl_.type_ = new ::zetasql::TypeProto(*from._impl_.type_);
   }
-  _this->_impl_.resolving_kind_ = from._impl_.resolving_kind_;
+  ::memcpy(&_impl_.resolving_kind_, &from._impl_.resolving_kind_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.allow_alter_array_) -
+    reinterpret_cast<char*>(&_impl_.resolving_kind_)) + sizeof(_impl_.allow_alter_array_));
   // @@protoc_insertion_point(copy_constructor:zetasql.AllowedHintsAndOptionsProto.OptionProto)
 }
 
@@ -2145,6 +2162,8 @@ inline void AllowedHintsAndOptionsProto_OptionProto::SharedCtor(::_pb::Arena* ar
 
     , decltype(_impl_.type_){nullptr}
     , decltype(_impl_.resolving_kind_) { 0 }
+
+    , decltype(_impl_.allow_alter_array_) { false }
 
   };
   _impl_.name_.InitDefault();
@@ -2188,7 +2207,11 @@ void AllowedHintsAndOptionsProto_OptionProto::Clear() {
       _impl_.type_->Clear();
     }
   }
-  _impl_.resolving_kind_ = 0;
+  if (cached_has_bits & 0x0000000cu) {
+    ::memset(&_impl_.resolving_kind_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.allow_alter_array_) -
+        reinterpret_cast<char*>(&_impl_.resolving_kind_)) + sizeof(_impl_.allow_alter_array_));
+  }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -2232,6 +2255,16 @@ const char* AllowedHintsAndOptionsProto_OptionProto::_InternalParse(const char* 
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(3, val, mutable_unknown_fields());
           }
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // optional bool allow_alter_array = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
+          _Internal::set_has_allow_alter_array(&has_bits);
+          _impl_.allow_alter_array_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else {
           goto handle_unusual;
         }
@@ -2289,6 +2322,13 @@ failure:
         3, this->_internal_resolving_kind(), target);
   }
 
+  // optional bool allow_alter_array = 4;
+  if (cached_has_bits & 0x00000008u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        4, this->_internal_allow_alter_array(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2306,7 +2346,7 @@ failure:
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000000fu) {
     // optional string name = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -2324,6 +2364,11 @@ failure:
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
                     ::_pbi::WireFormatLite::EnumSize(this->_internal_resolving_kind());
+    }
+
+    // optional bool allow_alter_array = 4;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 2;
     }
 
   }
@@ -2346,7 +2391,7 @@ void AllowedHintsAndOptionsProto_OptionProto::MergeImpl(::PROTOBUF_NAMESPACE_ID:
   (void) cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
       _this->_internal_set_name(from._internal_name());
     }
@@ -2356,6 +2401,9 @@ void AllowedHintsAndOptionsProto_OptionProto::MergeImpl(::PROTOBUF_NAMESPACE_ID:
     }
     if (cached_has_bits & 0x00000004u) {
       _this->_impl_.resolving_kind_ = from._impl_.resolving_kind_;
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _this->_impl_.allow_alter_array_ = from._impl_.allow_alter_array_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
@@ -2385,8 +2433,8 @@ void AllowedHintsAndOptionsProto_OptionProto::InternalSwap(AllowedHintsAndOption
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,
                                        &other->_impl_.name_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AllowedHintsAndOptionsProto_OptionProto, _impl_.resolving_kind_)
-      + sizeof(AllowedHintsAndOptionsProto_OptionProto::_impl_.resolving_kind_)
+      PROTOBUF_FIELD_OFFSET(AllowedHintsAndOptionsProto_OptionProto, _impl_.allow_alter_array_)
+      + sizeof(AllowedHintsAndOptionsProto_OptionProto::_impl_.allow_alter_array_)
       - PROTOBUF_FIELD_OFFSET(AllowedHintsAndOptionsProto_OptionProto, _impl_.type_)>(
           reinterpret_cast<char*>(&_impl_.type_),
           reinterpret_cast<char*>(&other->_impl_.type_));
@@ -3408,11 +3456,14 @@ class AnalyzerOptionsProto::_Internal {
     (*has_bits)[0] |= 2u;
   }
   static void set_has_default_anon_kappa_value(HasBits* has_bits) {
-    (*has_bits)[0] |= 65536u;
+    (*has_bits)[0] |= 131072u;
   }
   static const ::zetasql::RewriteOptions& rewrite_options(const AnalyzerOptionsProto* msg);
   static void set_has_rewrite_options(HasBits* has_bits) {
     (*has_bits)[0] |= 32u;
+  }
+  static void set_has_replace_table_not_found_error_with_tvf_error_if_applicable(HasBits* has_bits) {
+    (*has_bits)[0] |= 65536u;
   }
 };
 
@@ -3488,6 +3539,8 @@ AnalyzerOptionsProto::AnalyzerOptionsProto(const AnalyzerOptionsProto& from)
     , decltype(_impl_.preserve_unnecessary_cast_) {}
 
     , decltype(_impl_.show_function_signature_mismatch_details_) {}
+
+    , decltype(_impl_.replace_table_not_found_error_with_tvf_error_if_applicable_) {}
 
     , decltype(_impl_.default_anon_kappa_value_) {}
   };
@@ -3565,6 +3618,8 @@ inline void AnalyzerOptionsProto::SharedCtor(::_pb::Arena* arena) {
     , decltype(_impl_.preserve_unnecessary_cast_) { false }
 
     , decltype(_impl_.show_function_signature_mismatch_details_) { false }
+
+    , decltype(_impl_.replace_table_not_found_error_with_tvf_error_if_applicable_) { false }
 
     , decltype(_impl_.default_anon_kappa_value_) { ::int64_t{0} }
 
@@ -3657,7 +3712,11 @@ void AnalyzerOptionsProto::Clear() {
         reinterpret_cast<char*>(&_impl_.show_function_signature_mismatch_details_) -
         reinterpret_cast<char*>(&_impl_.statement_context_)) + sizeof(_impl_.show_function_signature_mismatch_details_));
   }
-  _impl_.default_anon_kappa_value_ = ::int64_t{0};
+  if (cached_has_bits & 0x00030000u) {
+    ::memset(&_impl_.replace_table_not_found_error_with_tvf_error_if_applicable_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.default_anon_kappa_value_) -
+        reinterpret_cast<char*>(&_impl_.replace_table_not_found_error_with_tvf_error_if_applicable_)) + sizeof(_impl_.default_anon_kappa_value_));
+  }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -3963,6 +4022,16 @@ const char* AnalyzerOptionsProto::_InternalParse(const char* ptr, ::_pbi::ParseC
           goto handle_unusual;
         }
         continue;
+      // optional bool replace_table_not_found_error_with_tvf_error_if_applicable = 29;
+      case 29:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 232)) {
+          _Internal::set_has_replace_table_not_found_error_with_tvf_error_if_applicable(&has_bits);
+          _impl_.replace_table_not_found_error_with_tvf_error_if_applicable_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -4150,7 +4219,7 @@ failure:
   }
 
   // optional int64 default_anon_kappa_value = 26;
-  if (cached_has_bits & 0x00010000u) {
+  if (cached_has_bits & 0x00020000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt64ToArray(
         26, this->_internal_default_anon_kappa_value(), target);
@@ -4168,6 +4237,13 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(28, _Internal::rewrite_options(this),
         _Internal::rewrite_options(this).GetCachedSize(), target, stream);
+  }
+
+  // optional bool replace_table_not_found_error_with_tvf_error_if_applicable = 29;
+  if (cached_has_bits & 0x00010000u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        29, this->_internal_replace_table_not_found_error_with_tvf_error_if_applicable(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -4340,12 +4416,19 @@ failure:
     }
 
   }
-  // optional int64 default_anon_kappa_value = 26;
-  if (cached_has_bits & 0x00010000u) {
-    total_size += 2 + ::_pbi::WireFormatLite::Int64Size(
-                                    this->_internal_default_anon_kappa_value());
-  }
+  if (cached_has_bits & 0x00030000u) {
+    // optional bool replace_table_not_found_error_with_tvf_error_if_applicable = 29;
+    if (cached_has_bits & 0x00010000u) {
+      total_size += 3;
+    }
 
+    // optional int64 default_anon_kappa_value = 26;
+    if (cached_has_bits & 0x00020000u) {
+      total_size += 2 + ::_pbi::WireFormatLite::Int64Size(
+                                      this->_internal_default_anon_kappa_value());
+    }
+
+  }
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -4430,8 +4513,14 @@ void AnalyzerOptionsProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, c
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (cached_has_bits & 0x00010000u) {
-    _this->_internal_set_default_anon_kappa_value(from._internal_default_anon_kappa_value());
+  if (cached_has_bits & 0x00030000u) {
+    if (cached_has_bits & 0x00010000u) {
+      _this->_impl_.replace_table_not_found_error_with_tvf_error_if_applicable_ = from._impl_.replace_table_not_found_error_with_tvf_error_if_applicable_;
+    }
+    if (cached_has_bits & 0x00020000u) {
+      _this->_impl_.default_anon_kappa_value_ = from._impl_.default_anon_kappa_value_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }

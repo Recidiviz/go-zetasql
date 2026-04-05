@@ -17,12 +17,11 @@
 #include "zetasql/scripting/script_executor_impl.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
-#include <numeric>
 #include <optional>
 #include <set>
-#include <stack>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -30,12 +29,12 @@
 #include <vector>
 
 #include "zetasql/base/logging.h"
+#include "zetasql/common/errors.h"
 #include "zetasql/common/status_payload_utils.h"
 #include "zetasql/parser/ast_node_kind.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/parser/parse_tree_decls.h"
 #include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/parser/parse_tree_visitor.h"
 #include "zetasql/parser/parser.h"
 #include "zetasql/public/analyzer.h"
 #include "zetasql/public/analyzer_options.h"
@@ -63,11 +62,10 @@
 #include "absl/strings/str_replace.h"
 #include "absl/strings/substitute.h"
 #include "absl/time/time.h"
+#include "absl/types/span.h"
 #include "zetasql/base/map_util.h"
 #include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
 #include "zetasql/base/status_macros.h"
-#include "zetasql/base/status_payload.h"
 
 namespace zetasql {
 namespace {
@@ -407,9 +405,11 @@ bool ScriptExecutorImpl::IsComplete() const {
 absl::Status ScriptExecutorImpl::ExecuteNext() {
   absl::Status status = ExecuteNextImpl();
   return ConvertInternalErrorLocationAndAdjustErrorString(
-      options_.error_message_mode(),
-      /*keep_error_location_payload=*/options_.error_message_mode() ==
-          ERROR_MESSAGE_WITH_PAYLOAD,
+      ErrorMessageOptions{
+          .mode = options_.error_message_mode(),
+          .attach_error_location_payload =
+              options_.error_message_mode() == ERROR_MESSAGE_WITH_PAYLOAD,
+          .stability = ERROR_MESSAGE_STABILITY_PRODUCTION},
       CurrentScript()->script_text(), status);
 }
 
@@ -699,10 +699,9 @@ absl::Status ScriptExecutorImpl::MakeVariableIsTooLargeError(
   return status;
 }
 
-
 absl::Status ScriptExecutorImpl::MakeNoSizeRemainingError(
     const ASTNode* node, int64_t total_size_limit,
-    const std::vector<StackFrameImpl>& callstack) {
+    absl::Span<const StackFrameImpl> callstack) {
   return MakeScriptExceptionAt(node)
      << "Script exceeded the memory limit of "
      << total_size_limit << "bytes";
@@ -793,10 +792,15 @@ absl::Status ScriptExecutorImpl::ExecuteAssignmentFromStruct() {
     TypeParameters type_param;
     auto it = GetCurrentVariableTypeParameters().find(var_name);
     if (it != GetCurrentVariableTypeParameters().end()) {
+      const ASTNode* error_location =
+          assignment->variables()->identifier_list().size() ==
+                  assignment->struct_expression()->num_children()
+              ? assignment->struct_expression()->child(i)
+              : assignment->struct_expression();
       type_param = it->second;
       ZETASQL_RETURN_IF_ERROR(CheckConstraintStatus(
           evaluator_->ApplyTypeParameterConstraints(type_param, &var_value),
-          assignment->struct_expression()->child(i)));
+          error_location));
     }
     ZETASQL_RETURN_IF_ERROR(UpdateAndCheckVariableSize(assignment, var_name,
                                                var_value.physical_byte_size(),
@@ -827,6 +831,10 @@ absl::Status ThrowErrorIfASTTypeHasCollation(const ASTType* type) {
     case AST_ARRAY_TYPE: {
       return ThrowErrorIfASTTypeHasCollation(
           type->GetAsOrDie<ASTArrayType>()->element_type());
+    }
+    case AST_RANGE_TYPE: {
+      return ThrowErrorIfASTTypeHasCollation(
+          type->GetAsOrDie<ASTRangeType>()->element_type());
     }
     case AST_STRUCT_TYPE: {
       for (auto struct_field :
@@ -923,7 +931,7 @@ absl::Status ScriptExecutorImpl::ExecuteVariableDeclaration() {
 
 absl::StatusOr<Value> ScriptExecutorImpl::EvaluateExpression(
     const ASTExpression* expr, const Type* target_type) const {
-  ScriptSegment segment = SegmentForScalarExpression(expr);
+  ZETASQL_ASSIGN_OR_RETURN(ScriptSegment segment, SegmentForScalarExpression(expr));
   ZETASQL_ASSIGN_OR_RETURN(Value value, evaluator_->EvaluateScalarExpression(
                                     *this, segment, target_type));
   return value;
@@ -965,14 +973,16 @@ absl::Status ScriptExecutorImpl::ExecuteCaseStatement() {
   auto when_clauses = case_stmt->when_then_clauses()->when_then_clauses();
   conditions.reserve(when_clauses.length());
   for (int i = 0; i < when_clauses.length(); i++) {
-    conditions.push_back(SegmentForScalarExpression(
-        when_clauses.at(i)->condition()));
+    ZETASQL_ASSIGN_OR_RETURN(
+        ScriptSegment condition_segment,
+        SegmentForScalarExpression(when_clauses.at(i)->condition()));
+    conditions.push_back(condition_segment);
   }
+  ZETASQL_ASSIGN_OR_RETURN(ScriptSegment segment,
+                   SegmentForScalarExpression(case_stmt->expression()));
   ZETASQL_ASSIGN_OR_RETURN(
       case_stmt_true_branch_index_,
-      evaluator_->EvaluateCaseExpression(
-          SegmentForScalarExpression(case_stmt->expression()),
-          conditions, *this));
+      evaluator_->EvaluateCaseExpression(segment, conditions, *this));
   // Reset WHEN branch tracker index.
   case_stmt_current_branch_index_ = -1;
 
@@ -1222,6 +1232,23 @@ absl::StatusOr<Value> ScriptExecutorImpl::EvaluateProcedureArgument(
   }
 }
 
+// Validates that the input `node` is not an ASTNamedArgument with ASTLambda as
+// its `expr` type.
+//
+// This check is needed in some context because it is possible that a grammar
+// does not allow lambda but named lambdas can go through.
+static absl::Status ValidateIsNotIsNamedLambda(const ASTNode* node) {
+  if (node == nullptr || !node->Is<ASTNamedArgument>()) {
+    return absl::OkStatus();
+  }
+  const ASTNamedArgument* named_argument = node->GetAsOrDie<ASTNamedArgument>();
+  if (named_argument->expr()->Is<ASTLambda>()) {
+    return MakeScriptExceptionAt(named_argument->expr())
+           << "Lambdas are not supported in this context";
+  }
+  return absl::OkStatus();
+}
+
 absl::Status ScriptExecutorImpl::CheckAndEvaluateProcedureArguments(
     const ASTCallStatement* call_statement,
     const ProcedureDefinition& procedure_definition,
@@ -1262,6 +1289,7 @@ absl::Status ScriptExecutorImpl::CheckAndEvaluateProcedureArguments(
     const ASTExpression* expr = call_statement->arguments().at(i)->expr();
     if (expr->Is<ASTNamedArgument>()) {
       allow_positional_args = false;
+      ZETASQL_RETURN_IF_ERROR(ValidateIsNotIsNamedLambda(expr));
     } else if (!allow_positional_args) {
       return MakeScriptExceptionAt(expr)
              << "Positional arguments must appear before named arguments";
@@ -1485,8 +1513,8 @@ ScriptExecutorImpl::EvaluateDynamicParams(
       }
     }
 
-    ScriptSegment param_statement_segment =
-        SegmentForScalarExpression(using_arg->expression());
+    ZETASQL_ASSIGN_OR_RETURN(ScriptSegment param_statement_segment,
+                     SegmentForScalarExpression(using_arg->expression()));
     ZETASQL_ASSIGN_OR_RETURN(Value param_value, evaluator_->EvaluateScalarExpression(
                                             *this, param_statement_segment,
                                             /*target_type=*/nullptr));
@@ -1649,8 +1677,9 @@ absl::Status ScriptExecutorImpl::ExecuteDynamicStatement() {
       }
     }
   }
-  ScriptSegment sql_statement_segment =
-      SegmentForScalarExpression(execute_immediate_statement->sql());
+  ZETASQL_ASSIGN_OR_RETURN(
+      ScriptSegment sql_statement_segment,
+      SegmentForScalarExpression(execute_immediate_statement->sql()));
   ZETASQL_ASSIGN_OR_RETURN(Value sql_value,
                    evaluator_->EvaluateScalarExpression(
                        *this, sql_statement_segment, types::StringType()));
@@ -2070,7 +2099,7 @@ absl::Status ScriptExecutorImpl::ResetVariableSizes(
 
 absl::Status ScriptExecutorImpl::ResetIteratorSizes(
     const ASTNode* node,
-    const std::vector<std::unique_ptr<EvaluatorTableIterator>>& iterator_vec) {
+    absl::Span<const std::unique_ptr<EvaluatorTableIterator>> iterator_vec) {
   for (const std::unique_ptr<EvaluatorTableIterator>& iterator : iterator_vec) {
     ZETASQL_ASSIGN_OR_RETURN(int64_t iterator_memory,
                      GetIteratorMemoryUsage(iterator.get()));
@@ -2355,9 +2384,10 @@ absl::StatusOr<Value> ScriptExecutorImpl::CastValueToType(
                    /*catalog=*/nullptr, /*canonicalize_zero=*/true);
 }
 
-ScriptSegment ScriptExecutorImpl::SegmentForScalarExpression(
+absl::StatusOr<ScriptSegment> ScriptExecutorImpl::SegmentForScalarExpression(
     const ASTExpression* expr) const {
   if (expr->Is<ASTNamedArgument>()) {
+    ZETASQL_RETURN_IF_ERROR(ValidateIsNotIsNamedLambda(expr));
     expr = expr->GetAs<ASTNamedArgument>()->expr();
   }
   return ScriptSegment::FromASTNode(CurrentScript()->script_text(), expr);

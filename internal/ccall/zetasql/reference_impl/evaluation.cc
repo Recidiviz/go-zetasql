@@ -28,7 +28,6 @@
 #include "zetasql/public/functions/datetime.pb.h"
 #include "zetasql/public/type.h"
 #include "zetasql/public/value.h"
-#include <cstdint>
 #include "absl/container/flat_hash_set.h"
 #include "absl/container/node_hash_set.h"
 #include "absl/flags/flag.h"
@@ -116,6 +115,11 @@ Value EvaluationContext::GetFunctionArgumentRef(std::string arg_name) {
     return it->second;
   }
   return Value();
+}
+
+bool EvaluationContext::HasFunctionArgumentRef(std::string arg_name) {
+  const auto it = udf_argument_references_.find(arg_name);
+  return it != udf_argument_references_.end();
 }
 
 absl::Status EvaluationContext::AddFunctionArgumentRef(std::string arg_name,

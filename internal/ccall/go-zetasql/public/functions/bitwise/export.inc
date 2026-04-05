@@ -6,7 +6,6 @@
 #include "zetasql/public/functions/bitwise.cc"
 // include dependencies
 #include "go-zetasql/public/functions/util/export.inc"
-#include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/bits/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-absl/base/base/export.inc"

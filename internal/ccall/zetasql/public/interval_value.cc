@@ -201,7 +201,8 @@ absl::StatusOr<IntervalValue> IntervalValue::operator*(int64_t value) const {
                                             static_cast<__int128>(nanos));
 }
 
-absl::StatusOr<IntervalValue> IntervalValue::operator/(int64_t value) const {
+absl::StatusOr<IntervalValue> IntervalValue::Divide(
+    int64_t value, bool round_to_micros) const {
   if (value == 0) {
     return absl::OutOfRangeError("Interval division by zero");
   }
@@ -222,8 +223,12 @@ absl::StatusOr<IntervalValue> IntervalValue::operator/(int64_t value) const {
     return absl::OutOfRangeError("Interval overflow during division");
   }
 
-  return IntervalValue::FromMonthsDaysNanos(months, days,
-                                            static_cast<__int128>(nanos));
+  __int128 nanos_value = static_cast<__int128>(nanos);
+  if (round_to_micros) {
+    int64_t micros_value = nanos_value / kNanosInMicro;
+    return FromMonthsDaysMicros(months, days, micros_value);
+  }
+  return FromMonthsDaysNanos(months, days, nanos_value);
 }
 
 void IntervalValue::SumAggregator::Add(IntervalValue value) {
@@ -381,7 +386,7 @@ absl::StatusOr<IntervalValue> IntervalValue::DeserializeFromBytes(
   return interval;
 }
 
-std::string IntervalValue::ToString() const {
+void IntervalValue::AppendToString(std::string* output) const {
   // Interval conversion to string always uses fully expanded form:
   // [<sign>]x-x [<sign>]x [<sign>]x:x:x[.ddd[ddd[ddd]]]
 
@@ -412,20 +417,19 @@ std::string IntervalValue::ToString() const {
   int64_t micros = total_nanos / kNanosInMicro;
   int64_t nanos = total_nanos % kNanosInMicro;
 
-  std::string result = absl::StrFormat(
-      "%s%d-%d %d %s%d:%d:%d", get_months() < 0 ? "-" : "", years, months,
-      get_days(), negative_nanos ? "-" : "", hours, minutes, seconds);
+  absl::StrAppendFormat(output, "%s%d-%d %d %s%d:%d:%d",
+                        get_months() < 0 ? "-" : "", years, months, get_days(),
+                        negative_nanos ? "-" : "", hours, minutes, seconds);
   // Fractions of second always come in group of 3
   if (has_millis) {
-    absl::StrAppendFormat(&result, ".%03d", millis);
+    absl::StrAppendFormat(output, ".%03d", millis);
     if (has_micros) {
-      absl::StrAppendFormat(&result, "%03d", micros);
+      absl::StrAppendFormat(output, "%03d", micros);
       if (nanos != 0) {
-        absl::StrAppendFormat(&result, "%03d", nanos);
+        absl::StrAppendFormat(output, "%03d", nanos);
       }
     }
   }
-  return result;
 }
 
 std::string IntervalValue::ToISO8601() const {
@@ -475,12 +479,14 @@ std::string IntervalValue::ToISO8601() const {
 }
 
 absl::StatusOr<int64_t> NanosFromFractionDigits(absl::string_view input,
-                                                absl::string_view digits) {
+                                                absl::string_view digits,
+                                                bool allow_nanos) {
   int64_t nano_fractions;
   if (!absl::SimpleAtoi(digits, &nano_fractions)) {
     return MakeIntervalParsingError(input);
   }
-  if (digits.size() > 9) {
+  size_t max_digits_size = allow_nanos ? 9 : 6;
+  if (digits.size() > max_digits_size) {
     return MakeIntervalParsingError(input);
   }
 
@@ -498,7 +504,8 @@ absl::StatusOr<int64_t> NanosFromFractionDigits(absl::string_view input,
 const LazyRE2 kRESecond = {R"(([-+])?(\d*)\.(\d+))"};
 
 absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
-    absl::string_view input, functions::DateTimestampPart part) {
+    absl::string_view input, functions::DateTimestampPart part,
+    bool allow_nanos) {
   absl::Status status;
   // SimpleAtoi ignores leading and trailing spaces, but we reject them.
   if (input.empty() || std::isspace(input.front()) ||
@@ -524,7 +531,7 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
     }
     ZETASQL_RET_CHECK(!digits.empty());
     ZETASQL_ASSIGN_OR_RETURN(__int128 nano_fractions,
-                     NanosFromFractionDigits(input, digits));
+                     NanosFromFractionDigits(input, digits, allow_nanos));
     // Result always fits into int128
     __int128 nanos = IntervalValue::kNanosInSecond * seconds + nano_fractions;
     bool negative = !sign.empty() && sign[0] == '-';
@@ -644,7 +651,7 @@ const LazyRE2 kREMinuteToSecondFractions = {R"(([-+])?(\d+):(\d+)\.(\d+))"};
 
 absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
     absl::string_view input, functions::DateTimestampPart from,
-    functions::DateTimestampPart to) {
+    functions::DateTimestampPart to, bool allow_nanos) {
   // Sign (empty, '-' or '+') for months and nano fields. There is no special
   // treatment for sign of days, because days are standalone number and are
   // matched and parsed by RE2 as part of ([-+]?\d+) group.
@@ -793,8 +800,9 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
                    IntervalValue::kNanosInMinute * minutes +
                    IntervalValue::kNanosInSecond * seconds;
   if (!fraction_digits.empty()) {
-    ZETASQL_ASSIGN_OR_RETURN(int64_t nano_fractions,
-                     NanosFromFractionDigits(input, fraction_digits));
+    ZETASQL_ASSIGN_OR_RETURN(
+        int64_t nano_fractions,
+        NanosFromFractionDigits(input, fraction_digits, allow_nanos));
     nanos += nano_fractions;
   }
   bool negative_nanos = !sign_nanos.empty() && sign_nanos[0] == '-';
@@ -805,7 +813,7 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
 }
 
 absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
-    absl::string_view input) {
+    absl::string_view input, bool allow_nanos) {
   // We can unambiguously determine possible datetime fields by counting number
   // of spaces, colons and dashes after digit in the input
   // (dash before digit could be a minus sign)
@@ -848,27 +856,27 @@ absl::StatusOr<IntervalValue> IntervalValue::ParseFromString(
   using functions::YEAR;
   switch (SCD(spaces, colons, dashes)) {
     case SCD(2, 2, 1):
-      return IntervalValue::ParseFromString(input, YEAR, SECOND);
+      return IntervalValue::ParseFromString(input, YEAR, SECOND, allow_nanos);
     case SCD(2, 1, 1):
-      return IntervalValue::ParseFromString(input, YEAR, MINUTE);
+      return IntervalValue::ParseFromString(input, YEAR, MINUTE, allow_nanos);
     case SCD(2, 0, 1):
-      return IntervalValue::ParseFromString(input, YEAR, HOUR);
+      return IntervalValue::ParseFromString(input, YEAR, HOUR, allow_nanos);
     case SCD(1, 0, 1):
-      return IntervalValue::ParseFromString(input, YEAR, DAY);
+      return IntervalValue::ParseFromString(input, YEAR, DAY, allow_nanos);
     case SCD(0, 0, 1):
-      return IntervalValue::ParseFromString(input, YEAR, MONTH);
+      return IntervalValue::ParseFromString(input, YEAR, MONTH, allow_nanos);
     case SCD(2, 0, 0):
-      return IntervalValue::ParseFromString(input, MONTH, HOUR);
+      return IntervalValue::ParseFromString(input, MONTH, HOUR, allow_nanos);
     case SCD(2, 1, 0):
-      return IntervalValue::ParseFromString(input, MONTH, MINUTE);
+      return IntervalValue::ParseFromString(input, MONTH, MINUTE, allow_nanos);
     case SCD(2, 2, 0):
-      return IntervalValue::ParseFromString(input, MONTH, SECOND);
+      return IntervalValue::ParseFromString(input, MONTH, SECOND, allow_nanos);
     case SCD(1, 1, 0):
-      return IntervalValue::ParseFromString(input, DAY, MINUTE);
+      return IntervalValue::ParseFromString(input, DAY, MINUTE, allow_nanos);
     case SCD(1, 2, 0):
-      return IntervalValue::ParseFromString(input, DAY, SECOND);
+      return IntervalValue::ParseFromString(input, DAY, SECOND, allow_nanos);
     case SCD(0, 2, 0):
-      return IntervalValue::ParseFromString(input, HOUR, SECOND);
+      return IntervalValue::ParseFromString(input, HOUR, SECOND, allow_nanos);
   }
 #undef SCD
   return MakeIntervalParsingError(input);
@@ -888,7 +896,8 @@ class ISO8601Parser {
   const char kEof = '\0';
 
  public:
-  absl::StatusOr<IntervalValue> Parse(absl::string_view input) {
+  absl::StatusOr<IntervalValue> Parse(absl::string_view input,
+                                      bool allow_nanos) {
     input_ = input;
     char c = GetChar();
     if (c != 'P') {
@@ -1000,8 +1009,9 @@ class ISO8601Parser {
               return status;
             }
             if (!decimal_point_.empty()) {
-              ZETASQL_ASSIGN_OR_RETURN(
-                  number, NanosFromFractionDigits(input_, decimal_digits_));
+              ZETASQL_ASSIGN_OR_RETURN(number,
+                               NanosFromFractionDigits(input_, decimal_digits_,
+                                                       allow_nanos));
               if (sign) number = -number;
               nano_fractions += number;
             }
@@ -1098,16 +1108,17 @@ class ISO8601Parser {
 }  // namespace
 
 absl::StatusOr<IntervalValue> IntervalValue::ParseFromISO8601(
-    absl::string_view input) {
+    absl::string_view input, bool allow_nanos) {
   ISO8601Parser parser;
-  return parser.Parse(input);
+  return parser.Parse(input, allow_nanos);
 }
 
-absl::StatusOr<IntervalValue> IntervalValue::Parse(absl::string_view input) {
+absl::StatusOr<IntervalValue> IntervalValue::Parse(absl::string_view input,
+                                                   bool allow_nanos) {
   if (absl::StartsWith(input, "P")) {
-    return ParseFromISO8601(input);
+    return ParseFromISO8601(input, allow_nanos);
   }
-  return ParseFromString(input);
+  return ParseFromString(input, allow_nanos);
 }
 
 absl::StatusOr<IntervalValue> IntervalValue::FromInteger(

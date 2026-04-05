@@ -1191,6 +1191,7 @@ NameList::~NameList() {
 
 absl::Status NameList::AddColumn(
     IdString name, const ResolvedColumn& column, bool is_explicit) {
+  ZETASQL_RET_CHECK(!is_value_table()) << "Cannot add more columns to a value table";
   columns_.emplace_back(name, column, is_explicit);
   if (!IsInternalAlias(name)) {
     name_scope_.AddColumn(name, column, is_explicit);
@@ -1202,6 +1203,7 @@ absl::Status NameList::AddValueTableColumn(
     IdString range_variable_name, const ResolvedColumn& column,
     const ASTNode* ast_location, const IdStringSetCase& excluded_field_names,
     const NameListPtr& pseudo_columns_name_list) {
+  ZETASQL_RET_CHECK(!is_value_table()) << "Cannot add more columns to a value table";
   if (pseudo_columns_name_list != nullptr) {
     // The only names present in pseudo_columns_name_list should be the
     // pseudo-columns.  No range variables or regular columns.
@@ -1237,7 +1239,7 @@ absl::Status NameList::AddValueTableColumn(
     ZETASQL_RETURN_IF_ERROR(value_table_name_list->MergeFrom(*pseudo_columns_name_list,
                                                      ast_location));
   }
-  value_table_name_list->set_is_value_table(true);
+  ZETASQL_RETURN_IF_ERROR(value_table_name_list->SetIsValueTable());
 
   if (HasRangeVariable(range_variable_name)) {
     return MakeSqlErrorAt(ast_location)
@@ -1264,6 +1266,18 @@ absl::Status NameList::AddValueTableColumn(
   return absl::OkStatus();
 }
 
+absl::Status NameList::AddColumnMaybeValueTable(IdString name,
+                                                const ResolvedColumn& column,
+                                                bool is_explicit,
+                                                const ASTNode* ast_location,
+                                                bool is_value_table_column) {
+  if (is_value_table_column) {
+    return AddValueTableColumn(name, column, ast_location);
+  } else {
+    return AddColumn(name, column, is_explicit);
+  }
+}
+
 absl::Status NameList::AddPseudoColumn(
     IdString name, const ResolvedColumn& column,
     const ASTNode* ast_location) {
@@ -1273,6 +1287,13 @@ absl::Status NameList::AddPseudoColumn(
   if (!IsInternalAlias(name)) {
     name_scope_.AddColumn(name, column, false /* is_explicit */);
   }
+  return absl::OkStatus();
+}
+
+absl::Status NameList::SetIsValueTable() {
+  ZETASQL_RET_CHECK(HasValueTableColumns());
+  ZETASQL_RET_CHECK_EQ(num_columns(), 1);
+  is_value_table_ = true;
   return absl::OkStatus();
 }
 
@@ -1310,12 +1331,6 @@ absl::Status NameList::AddAmbiguousColumn_Test(IdString name) {
   return AddColumn(name, {}, true /* is_explicit */);
 }
 
-absl::Status NameList::MergeFrom(const NameList& other,
-                                 const ASTNode* ast_location) {
-  return MergeFromExceptColumns(other, nullptr /* excluded_field_names */,
-                                ast_location);
-}
-
 // This is an optimized version of inserting all elements of <from> into <to>.
 // If we can just do assignment rather than an insert loop, that will be faster.
 template <class SET_TYPE>
@@ -1330,22 +1345,34 @@ static void InsertFrom(const SET_TYPE& from, SET_TYPE* to) {
   }
 }
 
-absl::Status NameList::MergeFromExceptColumns(
-    const NameList& other,
-    const IdStringSetCase* excluded_field_names,  // May be NULL
-    const ASTNode* ast_location) {
+absl::Status NameList::MergeFrom(const NameList& other,
+                                 const ASTNode* ast_location) {
   ABSL_DCHECK_NE(&other, this) << "Merging NameList with itself";
   ABSL_DCHECK(ast_location != nullptr);
 
-  if ((excluded_field_names == nullptr || excluded_field_names->empty()) &&
-      columns_.empty() && name_scope_.IsEmpty()) {
-    // Optimization: When merging into an empty NameList with no exclusions,
+  if (columns_.empty() && name_scope_.IsEmpty()) {
+    // Optimization: When merging into an empty NameList with no options,
     // we can just copy the full state.
     columns_ = other.columns_;
     name_scope_.CopyStateFrom(other.name_scope_);
-
     return absl::OkStatus();
   }
+
+  return MergeFrom(other, ast_location, MergeOptions());
+}
+
+absl::Status NameList::MergeFrom(const NameList& other,
+                                 const ASTNode* ast_location,
+                                 const MergeOptions& options) {
+  ABSL_DCHECK_NE(&other, this) << "Merging NameList with itself";
+  ABSL_DCHECK(ast_location != nullptr);
+
+  if (options.rename_value_table_to_name != nullptr) {
+    ZETASQL_RET_CHECK(!options.flatten_to_table);
+    ZETASQL_RET_CHECK(other.is_value_table());
+  }
+
+  const IdStringSetCase* excluded_field_names = options.excluded_field_names;
 
   // Copy the columns vector, with exclusions.
   // We're not using AddColumn because we're going to copy the NameScope
@@ -1355,7 +1382,9 @@ absl::Status NameList::MergeFromExceptColumns(
         !zetasql_base::ContainsKey(*excluded_field_names, named_column.name())) {
       // For value table columns, we add new excluded_field_names so fields
       // with those names won't show up in SELECT *.
-      if (named_column.is_value_table_column()) {
+      // With `flatten_to_table`, we skip handling the column as
+      // a value table and will add it as a regular column (in the else).
+      if (named_column.is_value_table_column() && !options.flatten_to_table) {
         // Compute the union of the existing excluded_field_names and the
         // newly added excluded_field_names.
         IdStringSetCase new_excluded_field_names;
@@ -1374,9 +1403,14 @@ absl::Status NameList::MergeFromExceptColumns(
              true /* is_valid_to_access */,
              {} /* valid_field_info_map */});
 
+        IdString new_name = named_column.name();
+        if (options.rename_value_table_to_name != nullptr) {
+          new_name = *options.rename_value_table_to_name;
+        }
+
         // Copy the column, but update excluded_field_names with the
         // new list.
-        columns_.emplace_back(named_column.name(), named_column.column(),
+        columns_.emplace_back(new_name, named_column.column(),
                               named_column.is_explicit(),
                               new_excluded_field_names);
       } else {
@@ -1388,7 +1422,7 @@ absl::Status NameList::MergeFromExceptColumns(
   // Copy columns (including pseudo-columns, and including ambiguous column
   // markers) and range variables from inside the NameScope.
   for (const auto& item : other.name_scope_.names()) {
-    const IdString name = item.first;
+    IdString name = item.first;
     const NameTarget& target = item.second;
 
     // Exclude both columns and range variables in the exclude set.
@@ -1398,6 +1432,23 @@ absl::Status NameList::MergeFromExceptColumns(
     }
 
     if (target.IsRangeVariable()) {
+      // With `flatten_to_table`, range variables are dropped, except for
+      // value table range variables, which will be converted to columns.
+      if (options.flatten_to_table) {
+        if (target.scan_columns()->is_value_table()) {
+          // Convert value table column to be a regular column.
+          NameTarget new_target(target.scan_columns()->column(0).column(),
+                                /*is_explicit=*/true);
+          name_scope_.AddNameTarget(name, new_target);
+        }
+        continue;
+      }
+
+      if (target.scan_columns()->is_value_table() &&
+          options.rename_value_table_to_name != nullptr) {
+        name = *options.rename_value_table_to_name;
+      }
+
       // For range variables, we need to check for duplicates while merging.
       // Normally this would happen in AddRangeVariable, but we are bypassing
       // that call and copying the existing NameTarget directly.
@@ -1421,11 +1472,20 @@ absl::StatusOr<std::shared_ptr<NameList>>
 NameList::AddRangeVariableInWrappingNameList(
     IdString alias, const ASTNode* ast_location,
     std::shared_ptr<const NameList> original_name_list) {
+  std::shared_ptr<NameList> range_variable_name_list =
+      std::make_shared<NameList>();
+
+  // When making the range variable, we don't want to include nested range
+  // variables, including for value tables, so we use `flatten_to_table`
+  // which drops range variables.
+  ZETASQL_RETURN_IF_ERROR(range_variable_name_list->MergeFrom(
+      *original_name_list, ast_location, {.flatten_to_table = true}));
+
   auto wrapper_name_list = std::make_shared<NameList>();
   ZETASQL_RETURN_IF_ERROR(
       wrapper_name_list->MergeFrom(*original_name_list, ast_location));
-  ZETASQL_RETURN_IF_ERROR(wrapper_name_list->AddRangeVariable(alias, original_name_list,
-                                                      ast_location));
+  ZETASQL_RETURN_IF_ERROR(wrapper_name_list->AddRangeVariable(
+      alias, range_variable_name_list, ast_location));
   return wrapper_name_list;
 }
 

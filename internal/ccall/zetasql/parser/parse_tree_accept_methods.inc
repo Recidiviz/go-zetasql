@@ -704,6 +704,10 @@ void ASTCreateSchemaStatement::Accept(ParseTreeVisitor* visitor, void* data) con
   visitor->visitASTCreateSchemaStatement(this, data);
 }
 
+void ASTCreateExternalSchemaStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTCreateExternalSchemaStatement(this, data);
+}
+
 void ASTAliasedQueryList::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAliasedQueryList(this, data);
 }
@@ -758,6 +762,10 @@ void ASTDefineTableStatement::Accept(ParseTreeVisitor* visitor, void* data) cons
 
 void ASTWithPartitionColumnsClause::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTWithPartitionColumnsClause(this, data);
+}
+
+void ASTCreateSnapshotStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTCreateSnapshotStatement(this, data);
 }
 
 void ASTCreateSnapshotTableStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1014,6 +1022,10 @@ void ASTAlterColumnDropDefaultAction::Accept(ParseTreeVisitor* visitor, void* da
 
 void ASTAlterColumnDropNotNullAction::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterColumnDropNotNullAction(this, data);
+}
+
+void ASTAlterColumnDropGeneratedAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterColumnDropGeneratedAction(this, data);
 }
 
 void ASTGrantToClause::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1434,6 +1446,26 @@ void ASTDefineMacroStatement::Accept(ParseTreeVisitor* visitor, void* data) cons
 
 void ASTUndropStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTUndropStatement(this, data);
+}
+
+void ASTIdentityColumnInfo::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTIdentityColumnInfo(this, data);
+}
+
+void ASTIdentityColumnStartWith::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTIdentityColumnStartWith(this, data);
+}
+
+void ASTIdentityColumnIncrementBy::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTIdentityColumnIncrementBy(this, data);
+}
+
+void ASTIdentityColumnMaxValue::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTIdentityColumnMaxValue(this, data);
+}
+
+void ASTIdentityColumnMinValue::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTIdentityColumnMinValue(this, data);
 }
 
 absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2140,6 +2172,10 @@ absl::StatusOr<VisitResult> ASTCreateSchemaStatement::Accept(NonRecursiveParseTr
   return visitor->visitASTCreateSchemaStatement(this);
 }
 
+absl::StatusOr<VisitResult> ASTCreateExternalSchemaStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTCreateExternalSchemaStatement(this);
+}
+
 absl::StatusOr<VisitResult> ASTAliasedQueryList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAliasedQueryList(this);
 }
@@ -2194,6 +2230,10 @@ absl::StatusOr<VisitResult> ASTDefineTableStatement::Accept(NonRecursiveParseTre
 
 absl::StatusOr<VisitResult> ASTWithPartitionColumnsClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTWithPartitionColumnsClause(this);
+}
+
+absl::StatusOr<VisitResult> ASTCreateSnapshotStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTCreateSnapshotStatement(this);
 }
 
 absl::StatusOr<VisitResult> ASTCreateSnapshotTableStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2450,6 +2490,10 @@ absl::StatusOr<VisitResult> ASTAlterColumnDropDefaultAction::Accept(NonRecursive
 
 absl::StatusOr<VisitResult> ASTAlterColumnDropNotNullAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAlterColumnDropNotNullAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTAlterColumnDropGeneratedAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterColumnDropGeneratedAction(this);
 }
 
 absl::StatusOr<VisitResult> ASTGrantToClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2870,6 +2914,26 @@ absl::StatusOr<VisitResult> ASTDefineMacroStatement::Accept(NonRecursiveParseTre
 
 absl::StatusOr<VisitResult> ASTUndropStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTUndropStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTIdentityColumnInfo::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTIdentityColumnInfo(this);
+}
+
+absl::StatusOr<VisitResult> ASTIdentityColumnStartWith::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTIdentityColumnStartWith(this);
+}
+
+absl::StatusOr<VisitResult> ASTIdentityColumnIncrementBy::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTIdentityColumnIncrementBy(this);
+}
+
+absl::StatusOr<VisitResult> ASTIdentityColumnMaxValue::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTIdentityColumnMaxValue(this);
+}
+
+absl::StatusOr<VisitResult> ASTIdentityColumnMinValue::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTIdentityColumnMinValue(this);
 }
 
 }  // namespace zetasql

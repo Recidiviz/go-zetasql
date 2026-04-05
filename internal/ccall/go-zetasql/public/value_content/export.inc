@@ -4,6 +4,5 @@
 #include "zetasql/public/value_content.h"
 // include sources
 // include dependencies
-#include "go-absl/base/core_headers/export.inc"
 
 #endif

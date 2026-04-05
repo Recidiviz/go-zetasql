@@ -228,6 +228,18 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_public_strings_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_public_strings_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_public_strings_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_public_strings_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_public_strings_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_public_strings_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_public_strings_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_public_strings_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_public_strings_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_public_strings_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_public_strings_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_public_strings_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_public_strings_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_public_strings_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_public_strings_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_public_strings_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -243,6 +255,7 @@
 // include dependencies
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
@@ -252,6 +265,7 @@
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/utf_util/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+#include "go-absl/algorithm/container/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

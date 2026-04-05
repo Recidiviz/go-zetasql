@@ -352,6 +352,8 @@ class ResolvedAlterColumnOptionsAction;
 class ResolvedAlterColumnOptionsActionBuilder;
 class ResolvedAlterColumnDropNotNullAction;
 class ResolvedAlterColumnDropNotNullActionBuilder;
+class ResolvedAlterColumnDropGeneratedAction;
+class ResolvedAlterColumnDropGeneratedActionBuilder;
 class ResolvedAlterColumnSetDataTypeAction;
 class ResolvedAlterColumnSetDataTypeActionBuilder;
 class ResolvedAlterColumnSetDefaultAction;
@@ -466,6 +468,8 @@ class ResolvedAuxLoadDataStmt;
 class ResolvedAuxLoadDataStmtBuilder;
 class ResolvedUndropStmt;
 class ResolvedUndropStmtBuilder;
+class ResolvedIdentityColumnInfo;
+class ResolvedIdentityColumnInfoBuilder;
 
 // Argument nodes are not self-contained nodes in the tree.  They exist
 // only to describe parameters to another node (e.g. columns in an OrderBy).
@@ -476,7 +480,7 @@ class ResolvedArgument  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 81;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 83;
 
  public:
 
@@ -581,6 +585,7 @@ class ResolvedArgument  : public ResolvedNode {
   friend class ResolvedUnpivotArgBuilder;
   friend class ResolvedTableAndColumnInfoBuilder;
   friend class ResolvedAuxLoadDataPartitionFilterBuilder;
+  friend class ResolvedIdentityColumnInfoBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -8386,48 +8391,99 @@ inline std::unique_ptr<ResolvedJoinScan> MakeResolvedJoinScan() {
       new ResolvedJoinScan());
 }
 
-// Scan an array value, produced from some expression.
+// Scan one or more (N) array values produced by evaluating N expressions,
+// merging them positionally. Without FEATURE_V_1_4_MULTIWAY_UNNEST, it must
+// be exactly one array (N=1).
 //
-// If input_scan is NULL, this scans the given array value and produces
-// one row per array element.  This can occur when using UNNEST(expression).
+// If `input_scan` is NULL, this produces one row for each array offset.
+// This can occur when using syntax:
+//   UNNEST(expression [, expression [, ...]])
 //
-// If <input_scan> is non-NULL, for each row in the stream produced by
-// input_scan, this evaluates the expression <array_expr> (which must return
-// an array type) and then produces a stream with one row per array element.
+// If `input_scan` is non-NULL, for each row in the stream produced by
+// `input_scan`, this evaluates the expressions in `array_expr_list` (each of
+// which must return an array type), and then produces a stream with one row
+// for each array offset.
 //
-// If <join_expr> is non-NULL, then this condition is evaluated as an ON
-// clause for the array join.  The named column produced in <array_expr>
-// may be used inside <join_expr>.
+// If `join_expr` is non-NULL, then this condition is evaluated as an ON
+// clause for the array join. The named columns produced by any array in
+// `array_expr_list` may be used inside `join_expr`.
 //
-// If the array is empty (after evaluating <join_expr>), then
-// 1. If <is_outer> is false, the scan produces zero rows.
-// 2. If <is_outer> is true, the scan produces one row with a NULL value for
-//    the <element_column>.
+// If the array is empty (after evaluating `join_expr`), then
+// 1. If `is_outer` is false, the scan produces zero rows.
+// 2. If `is_outer` is true, the scan produces one row with N NULL values.
 //
-// <element_column> is the new column produced by this scan that stores the
-// array element value for each row.
+// `element_column_list` are the new columns produced by this scan that store
+// the array element values for each row. `element_column_list` and
+// `array_expr_list` must have the same size N.
 //
-// If present, <array_offset_column> defines the column produced by this
+// If present, `array_offset_column` defines the column produced by this
 // scan that stores the array offset (0-based) for the corresponding
-// <element_column>.
+// `element_column_list`.
 //
-// This node's column_list can have columns from input_scan, <element_column>
-// and <array_offset_column>.
+// This node's `column_list` can have columns from `input_scan`,
+// `element_column_list` and `array_offset_column`.
+//
+// `array_zip_mode` specifies the zipping behavior when there are multiple
+// arrays in `array_expr_list` and they have different sizes. It must be NULL
+// when there is only one given array.
+//
+// The getters and setters for legacy fields `array_expr` and
+// `element_column` are added for backward compatibility purposes. If the
+// corresponding vector field has more than 1 element and only legacy
+// accessors are called, the field is not considered as accessed.
 class ResolvedArrayScan final : public ResolvedScan {
  public:
   typedef ResolvedScan SUPER;
 
   static const ResolvedNodeKind TYPE = RESOLVED_ARRAY_SCAN;
 
+  ABSL_DEPRECATED("Use `array_expr_list()` instead")
+  const ResolvedExpr* array_expr() const {
+    if (array_expr_list_.size() == 1) {
+      accessed_ |= (1<<1);
+    }
+    return array_expr_list_[0].get();
+  }
+  ABSL_DEPRECATED("Use `set_array_expr_list()` instead")
+  void set_array_expr(std::unique_ptr<const ResolvedExpr> v) {
+    if (array_expr_list_.empty()) {
+      array_expr_list_.push_back(std::move(v));
+    } else {
+      array_expr_list_[0] = std::move(v);
+    }
+  }
+  ABSL_DEPRECATED("Use `release_array_expr_list()` instead")
+  std::unique_ptr<const ResolvedExpr> release_array_expr() {
+    std::unique_ptr<const ResolvedExpr> first_array_expr;
+    array_expr_list_[0].swap(first_array_expr);
+    return first_array_expr;
+  }
+  ABSL_DEPRECATED("Use `element_column_list()` instead")
+  const ResolvedColumn& element_column() const {
+    if (element_column_list_.size() == 1) {
+      accessed_ |= (1<<2);
+    }
+    return element_column_list_[0];
+  }
+  ABSL_DEPRECATED("Use `set_element_column_list()` instead")
+  void set_element_column(const ResolvedColumn& v) {
+    if (element_column_list_.empty()) {
+      element_column_list_.push_back(v);
+    } else {
+      element_column_list_[0] = v;
+    }
+  }
+
  protected:
   ResolvedArrayScan()
       : ResolvedScan()
       , input_scan_()
-      , array_expr_()
-      , element_column_()
+      , array_expr_list_()
+      , element_column_list_()
       , array_offset_column_()
       , join_expr_()
       , is_outer_()
+      , array_zip_mode_()
   {}
 
  public:
@@ -8438,11 +8494,12 @@ class ResolvedArrayScan final : public ResolvedScan {
   friend std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan(
       const std::vector<ResolvedColumn>& column_list,
       std::unique_ptr<const ResolvedScan> input_scan,
-      std::unique_ptr<const ResolvedExpr> array_expr,
-      const ResolvedColumn& element_column,
+      std::vector<std::unique_ptr<const ResolvedExpr>> array_expr_list,
+      const std::vector<ResolvedColumn>& element_column_list,
       std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
       std::unique_ptr<const ResolvedExpr> join_expr,
-      bool is_outer
+      bool is_outer,
+      std::unique_ptr<const ResolvedExpr> array_zip_mode
   );
   ~ResolvedArrayScan() final;
 
@@ -8505,24 +8562,52 @@ class ResolvedArrayScan final : public ResolvedScan {
     return std::move(input_scan_);
   }
 
-  const ResolvedExpr* array_expr() const {
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& array_expr_list() const {
     accessed_ |= (1<<1);
-    return array_expr_.get();
+    return array_expr_list_;
   }
-  void set_array_expr(std::unique_ptr<const ResolvedExpr> v) {
-    array_expr_ = std::move(v);
+  int array_expr_list_size() const {
+    if (array_expr_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(array_expr_list_.size());
+  }
+  const ResolvedExpr* array_expr_list(int i) const {
+    accessed_ |= (1<<1);
+    return array_expr_list_.at(i).get();
+  }
+  void add_array_expr_list(std::unique_ptr<const ResolvedExpr> v) {
+    array_expr_list_.emplace_back(std::move(v));
+  }
+  void set_array_expr_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    array_expr_list_ = std::move(v);
   }
 
-  std::unique_ptr<const ResolvedExpr> release_array_expr() {
-    return std::move(array_expr_);
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_array_expr_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    array_expr_list_.swap(tmp);
+    return tmp;
   }
 
-  const ResolvedColumn& element_column() const {
+  const std::vector<ResolvedColumn>& element_column_list() const {
     accessed_ |= (1<<2);
-    return element_column_;
+    return element_column_list_;
   }
-  void set_element_column(const ResolvedColumn& v) {
-    element_column_ = v;
+  int element_column_list_size() const {
+    if (element_column_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(element_column_list_.size());
+  }
+  const ResolvedColumn& element_column_list(int i) const {
+    accessed_ |= (1<<2);
+    return element_column_list_.at(i);
+  }
+  void add_element_column_list(ResolvedColumn v) {
+    element_column_list_.push_back(v);
+  }
+  void set_element_column_list(const std::vector<ResolvedColumn>& v) {
+    element_column_list_ = v;
+  }
+  std::vector<ResolvedColumn>* mutable_element_column_list() {
+    accessed_ |= (1<<2);
+    return &element_column_list_;
   }
 
   const ResolvedColumnHolder* array_offset_column() const {
@@ -8557,25 +8642,41 @@ class ResolvedArrayScan final : public ResolvedScan {
     is_outer_ = v;
   }
 
+  // Stores a builtin ENUM ARRAY_ZIP_MODE with three possible values:
+  // PAD, TRUNCATE or STRICT.
+  const ResolvedExpr* array_zip_mode() const {
+    accessed_ |= (1<<6);
+    return array_zip_mode_.get();
+  }
+  void set_array_zip_mode(std::unique_ptr<const ResolvedExpr> v) {
+    array_zip_mode_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_array_zip_mode() {
+    return std::move(array_zip_mode_);
+  }
+
  protected:
   explicit ResolvedArrayScan(
       const std::vector<ResolvedColumn>& column_list,
       std::unique_ptr<const ResolvedScan> input_scan,
-      std::unique_ptr<const ResolvedExpr> array_expr,
-      const ResolvedColumn& element_column,
+      std::vector<std::unique_ptr<const ResolvedExpr>> array_expr_list,
+      const std::vector<ResolvedColumn>& element_column_list,
       std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
       std::unique_ptr<const ResolvedExpr> join_expr,
       bool is_outer,
+      std::unique_ptr<const ResolvedExpr> array_zip_mode,
       ConstructorOverload)
       : ResolvedScan(
             column_list,
             ConstructorOverload::NEW_CONSTRUCTOR),
       input_scan_(std::move(input_scan)),
-      array_expr_(std::move(array_expr)),
-      element_column_(element_column),
+      array_expr_list_(std::move(array_expr_list)),
+      element_column_list_(element_column_list),
       array_offset_column_(std::move(array_offset_column)),
       join_expr_(std::move(join_expr)),
-      is_outer_(is_outer) {
+      is_outer_(is_outer),
+      array_zip_mode_(std::move(array_zip_mode)) {
   }
 
   void CollectDebugStringFields(
@@ -8591,10 +8692,10 @@ class ResolvedArrayScan final : public ResolvedScan {
   bool input_scan_accessed() const {
     return accessed_ & (1<<0);
  }
-  bool array_expr_accessed() const {
+  bool array_expr_list_accessed() const {
     return accessed_ & (1<<1);
  }
-  bool element_column_accessed() const {
+  bool element_column_list_accessed() const {
     return accessed_ & (1<<2);
  }
   bool array_offset_column_accessed() const {
@@ -8606,32 +8707,77 @@ class ResolvedArrayScan final : public ResolvedScan {
   bool is_outer_accessed() const {
     return accessed_ & (1<<5);
  }
+  bool array_zip_mode_accessed() const {
+    return accessed_ & (1<<6);
+ }
   std::unique_ptr<const ResolvedScan> input_scan_;
-  std::unique_ptr<const ResolvedExpr> array_expr_;
-  ResolvedColumn element_column_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> array_expr_list_;
+  std::vector<ResolvedColumn> element_column_list_;
   std::unique_ptr<const ResolvedColumnHolder> array_offset_column_;
   std::unique_ptr<const ResolvedExpr> join_expr_;
   bool is_outer_;
+  std::unique_ptr<const ResolvedExpr> array_zip_mode_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
 inline std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan(
     const std::vector<ResolvedColumn>& column_list,
     std::unique_ptr<const ResolvedScan> input_scan,
-    std::unique_ptr<const ResolvedExpr> array_expr,
-    const ResolvedColumn& element_column,
+    std::vector<std::unique_ptr<const ResolvedExpr>> array_expr_list,
+    const std::vector<ResolvedColumn>& element_column_list,
     std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
     std::unique_ptr<const ResolvedExpr> join_expr,
-    bool is_outer) {
+    bool is_outer,
+    std::unique_ptr<const ResolvedExpr> array_zip_mode) {
   return std::unique_ptr<ResolvedArrayScan>(new ResolvedArrayScan(
         column_list,
         std::move(input_scan),
-        std::move(array_expr),
-        element_column,
+        std::move(array_expr_list),
+        element_column_list,
         std::move(array_offset_column),
         std::move(join_expr),
         is_outer,
+        std::move(array_zip_mode),
         ResolvedArrayScan::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedArrayScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  array_expr_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename array_expr_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>>
+std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    array_expr_list_t array_expr_list,
+    const std::vector<ResolvedColumn>& element_column_list,
+    std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
+    std::unique_ptr<const ResolvedExpr> join_expr,
+    bool is_outer,
+    std::unique_ptr<const ResolvedExpr> array_zip_mode) {
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(array_expr_list.begin()))>::type>::value,
+      "array_expr_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
+  return MakeResolvedArrayScan(
+      column_list,
+      std::move(input_scan),
+      {std::make_move_iterator(array_expr_list.begin()),
+       std::make_move_iterator(array_expr_list.end())},
+      element_column_list,
+      std::move(array_offset_column),
+      std::move(join_expr),
+      is_outer,
+      std::move(array_zip_mode));
 }
 
 inline std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan() {
@@ -10162,8 +10308,9 @@ inline std::unique_ptr<ResolvedAggregateScan> MakeResolvedAggregateScan() {
 // from input_scan, and output anonymized rows.
 // Spec: (broken link)
 //
-// <k_threshold_expr> when non-null, points to a function call in
-// the <aggregate_list> and adds a filter that acts like:
+// <k_threshold_expr> when non-null, is a function call that uses one or more
+// items from the <aggregate_list> as arguments.
+// The engine then adds a filter that acts like:
 //   HAVING <k_threshold_expr> >= <implementation-defined k-threshold>
 // omitting any rows that would not pass this condition.
 // TODO: Update this comment after splitting the rewriter out
@@ -10466,8 +10613,10 @@ inline std::unique_ptr<ResolvedAnonymizedAggregateScan> MakeResolvedAnonymizedAg
 // from input_scan, and output anonymized rows.
 // Spec: (broken link)
 //
-// <group_selection_threshold_expr> when non-null, points to a function call
-// in the <aggregate_list> and adds a filter that acts like:
+//
+// <group_selection_threshold_expr> when non-null, is a function call that
+// uses one or more items from the <aggregate_list> as arguments.
+// The engine then adds a filter that acts like:
 //   HAVING <group_selection_threshold_expr> >=
 //   <implementation-defined group_selection_threshold>
 // omitting any rows that would not pass this condition.
@@ -13168,6 +13317,22 @@ inline std::unique_ptr<ResolvedColumnAnnotations> MakeResolvedColumnAnnotations(
 //        function (e.g. RAND).
 //   - 'STORED_VOLATILE': The <expression> must be computed at write time and
 //        may call volatile functions (e.g. RAND).
+//
+// `generated_mode` dictates how the generated column is populated. Values
+// are:
+//   - 'ALWAYS' the generated value is always applied to the column,
+//       meaning users cannot write to the column.
+//   - 'BY_DEFAULT', the generated value is applied to to the column only if
+//        the user does not write to the column.
+//   This field is set to ALWAYS by default.
+//
+// `identity_column_info` contains the sequence attributes that dictate how
+// values are generated for the column.
+//   - Each table can have at most one identity column.
+//
+// Note: Exactly one of `expression` and `identity_column_info` must be
+// populated.
+//
 // See (broken link) and
 // (broken link).
 class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
@@ -13177,15 +13342,20 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
   static const ResolvedNodeKind TYPE = RESOLVED_GENERATED_COLUMN_INFO;
 
   typedef ResolvedGeneratedColumnInfoEnums::StoredMode StoredMode;
+  typedef ResolvedGeneratedColumnInfoEnums::GeneratedMode GeneratedMode;
   static const StoredMode NON_STORED = ResolvedGeneratedColumnInfoEnums::NON_STORED;
   static const StoredMode STORED = ResolvedGeneratedColumnInfoEnums::STORED;
   static const StoredMode STORED_VOLATILE = ResolvedGeneratedColumnInfoEnums::STORED_VOLATILE;
+  static const GeneratedMode ALWAYS = ResolvedGeneratedColumnInfoEnums::ALWAYS;
+  static const GeneratedMode BY_DEFAULT = ResolvedGeneratedColumnInfoEnums::BY_DEFAULT;
 
  protected:
   ResolvedGeneratedColumnInfo()
       : ResolvedArgument()
       , expression_()
       , stored_mode_()
+      , generated_mode_()
+      , identity_column_info_()
   {}
 
  public:
@@ -13195,7 +13365,9 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
 
   friend std::unique_ptr<ResolvedGeneratedColumnInfo> MakeResolvedGeneratedColumnInfo(
       std::unique_ptr<const ResolvedExpr> expression,
-      ResolvedGeneratedColumnInfo::StoredMode stored_mode
+      ResolvedGeneratedColumnInfo::StoredMode stored_mode,
+      ResolvedGeneratedColumnInfo::GeneratedMode generated_mode,
+      std::unique_ptr<const ResolvedIdentityColumnInfo> identity_column_info
   );
   ~ResolvedGeneratedColumnInfo() final;
 
@@ -13266,15 +13438,39 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
     stored_mode_ = v;
   }
 
+  ResolvedGeneratedColumnInfo::GeneratedMode generated_mode() const {
+    accessed_ |= (1<<2);
+    return generated_mode_;
+  }
+  void set_generated_mode(ResolvedGeneratedColumnInfo::GeneratedMode v) {
+    generated_mode_ = v;
+  }
+
+  const ResolvedIdentityColumnInfo* identity_column_info() const {
+    accessed_ |= (1<<3);
+    return identity_column_info_.get();
+  }
+  void set_identity_column_info(std::unique_ptr<const ResolvedIdentityColumnInfo> v) {
+    identity_column_info_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedIdentityColumnInfo> release_identity_column_info() {
+    return std::move(identity_column_info_);
+  }
+
  protected:
   explicit ResolvedGeneratedColumnInfo(
       std::unique_ptr<const ResolvedExpr> expression,
       ResolvedGeneratedColumnInfo::StoredMode stored_mode,
+      ResolvedGeneratedColumnInfo::GeneratedMode generated_mode,
+      std::unique_ptr<const ResolvedIdentityColumnInfo> identity_column_info,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
       expression_(std::move(expression)),
-      stored_mode_(stored_mode) {
+      stored_mode_(stored_mode),
+      generated_mode_(generated_mode),
+      identity_column_info_(std::move(identity_column_info)) {
   }
 
   void CollectDebugStringFields(
@@ -13293,17 +13489,29 @@ class ResolvedGeneratedColumnInfo final : public ResolvedArgument {
   bool stored_mode_accessed() const {
     return accessed_ & (1<<1);
  }
+  bool generated_mode_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool identity_column_info_accessed() const {
+    return accessed_ & (1<<3);
+ }
   std::unique_ptr<const ResolvedExpr> expression_;
   ResolvedGeneratedColumnInfo::StoredMode stored_mode_;
+  ResolvedGeneratedColumnInfo::GeneratedMode generated_mode_;
+  std::unique_ptr<const ResolvedIdentityColumnInfo> identity_column_info_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
 inline std::unique_ptr<ResolvedGeneratedColumnInfo> MakeResolvedGeneratedColumnInfo(
     std::unique_ptr<const ResolvedExpr> expression,
-    ResolvedGeneratedColumnInfo::StoredMode stored_mode) {
+    ResolvedGeneratedColumnInfo::StoredMode stored_mode,
+    ResolvedGeneratedColumnInfo::GeneratedMode generated_mode,
+    std::unique_ptr<const ResolvedIdentityColumnInfo> identity_column_info) {
   return std::unique_ptr<ResolvedGeneratedColumnInfo>(new ResolvedGeneratedColumnInfo(
         std::move(expression),
         stored_mode,
+        generated_mode,
+        std::move(identity_column_info),
         ResolvedGeneratedColumnInfo::NEW_CONSTRUCTOR));
 }
 
@@ -24482,7 +24690,7 @@ inline std::unique_ptr<ResolvedWithEntry> MakeResolvedWithEntry() {
       new ResolvedWithEntry());
 }
 
-// This represents one SQL hint key/value pair.
+// This represents one SQL hint or option key/value pair.
 // The SQL syntax @{ key1=value1, key2=value2, some_db.key3=value3 }
 // will expand to three ResolvedOptions.  Keyword hints (e.g. LOOKUP JOIN)
 // are interpreted as shorthand, and will be expanded to a ResolvedOption
@@ -24493,16 +24701,20 @@ inline std::unique_ptr<ResolvedWithEntry> MakeResolvedWithEntry() {
 // See (broken link) for more detail.
 // Hint semantics are implementation defined.
 //
-// Each hint is resolved as a [<qualifier>.]<name>:=<value> pair.
+// Each hint or option is resolved as a [<qualifier>.]<name>:=<value> pair.
 //   <qualifier> will be empty if no qualifier was present.
 //   <name> is always non-empty.
 //   <value> can be a ResolvedLiteral or a ResolvedParameter,
 //           a cast of a ResolvedParameter (for typed hints only),
 //           or a general expression (on constant inputs).
+//   <assignment_op> is an enum that indicates the assignment operation for
+//                   array type options.
 //
 // If AllowedHintsAndOptions was set in AnalyzerOptions, and this hint or
 // option was included there and had an expected type, the type of <value>
-// will match that expected type.  Unknown hints (not listed in
+// will match that expected type. For assignment_op that's not the default
+// value, also checks whether the expected type is Array and whether
+// allow_alter_array is true. Unknown hints and options(not listed in
 // AllowedHintsAndOptions) are not stripped and will still show up here.
 //
 // If non-empty, <qualifier> should be interpreted as a target system name,
@@ -24512,6 +24724,11 @@ inline std::unique_ptr<ResolvedWithEntry> MakeResolvedWithEntry() {
 // <qualifier> is set only for hints, and will always be empty in options
 // lists.
 //
+// <assignment_op> will always be DEFAULT_ASSIGN (i.e. "=") for hints, and
+//                 defaults to the same value for options. Can be set to
+//                 ADD_ASSIGN ("+=") and SUB_ASSIGN ("-=") for options with
+//                 Array type.
+//
 // The SQL syntax allows using an identifier as a hint value.
 // Such values are stored here as ResolvedLiterals with string type.
 class ResolvedOption final : public ResolvedArgument {
@@ -24520,12 +24737,18 @@ class ResolvedOption final : public ResolvedArgument {
 
   static const ResolvedNodeKind TYPE = RESOLVED_OPTION;
 
+  typedef ResolvedOptionEnums::AssignmentOp AssignmentOp;
+  static const AssignmentOp DEFAULT_ASSIGN = ResolvedOptionEnums::DEFAULT_ASSIGN;
+  static const AssignmentOp ADD_ASSIGN = ResolvedOptionEnums::ADD_ASSIGN;
+  static const AssignmentOp SUB_ASSIGN = ResolvedOptionEnums::SUB_ASSIGN;
+
  protected:
   ResolvedOption()
       : ResolvedArgument()
       , qualifier_()
       , name_()
       , value_()
+      , assignment_op_()
   {}
 
  public:
@@ -24615,6 +24838,14 @@ class ResolvedOption final : public ResolvedArgument {
     return std::move(value_);
   }
 
+  ResolvedOption::AssignmentOp assignment_op() const {
+    accessed_ |= (1<<3);
+    return assignment_op_;
+  }
+  void set_assignment_op(ResolvedOption::AssignmentOp v) {
+    assignment_op_ = v;
+  }
+
  protected:
   explicit ResolvedOption(
       const std::string& qualifier,
@@ -24625,7 +24856,8 @@ class ResolvedOption final : public ResolvedArgument {
             ConstructorOverload::NEW_CONSTRUCTOR),
       qualifier_(qualifier),
       name_(name),
-      value_(std::move(value)) {
+      value_(std::move(value)),
+      assignment_op_() {
   }
 
   void CollectDebugStringFields(
@@ -24648,9 +24880,13 @@ class ResolvedOption final : public ResolvedArgument {
   bool value_accessed() const {
     return accessed_ & (1<<2);
  }
+  bool assignment_op_accessed() const {
+    return accessed_ & (1<<3);
+ }
   std::string qualifier_;
   std::string name_;
   std::unique_ptr<const ResolvedExpr> value_;
+  ResolvedOption::AssignmentOp assignment_op_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -26318,6 +26554,15 @@ inline std::unique_ptr<ResolvedInsertRow> MakeResolvedInsertRow() {
 // The returning clause has a <output_column_list> to represent the data
 // sent back to clients. It can only access columns from the <table_scan>.
 //
+// <topologically_sorted_generated_column_id_list> is set for queries to
+// tables having generated columns. It provides the resolved column ids of
+// the generated columns in topological order, which the computed generated
+// column expressions can be computed in.
+//
+// <generated_expr_list> has generated expressions for the corresponding
+// generated column in the topologically_sorted_generated_column_id_list.
+// Hence, these lists have the same size.
+//
 // <column_access_list> indicates for each column in <table_scan.column_list>
 // whether it was read and/or written. The query engine may also require
 // read or write permissions across all columns, including unreferenced
@@ -26350,7 +26595,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       , query_output_column_list_()
       , row_list_()
       , column_access_list_()
-      , topologically_sorted_generated_column_index_list_()
+      , topologically_sorted_generated_column_id_list_()
+      , generated_column_expr_list_()
   {}
 
  public:
@@ -26368,7 +26614,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedScan> query,
       const std::vector<ResolvedColumn>& query_output_column_list,
       std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
-      const std::vector<int>& topologically_sorted_generated_column_index_list
+      const std::vector<int>& topologically_sorted_generated_column_id_list,
+      std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list
   );
   ~ResolvedInsertStmt() final;
 
@@ -26597,7 +26844,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   }
 
   // This returns a topologically sorted list of generated columns
-  //  indexes in the table accessed by insert statement.
+  //  resolved ids in the table accessed by insert statement.
   //  For example for below table
   //  CREATE TABLE T(
   //  k1 INT64 NOT NULL,
@@ -26611,27 +26858,60 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   //   *  ------------------------------->gen3
   // the vector would have corresponding indexes of one of these values
   // gen1 gen2 gen3 OR gen1 gen3 gen2.
-  const std::vector<int>& topologically_sorted_generated_column_index_list() const {
+  const std::vector<int>& topologically_sorted_generated_column_id_list() const {
     accessed_ |= (1<<10);
-    return topologically_sorted_generated_column_index_list_;
+    return topologically_sorted_generated_column_id_list_;
   }
-  int topologically_sorted_generated_column_index_list_size() const {
-    if (topologically_sorted_generated_column_index_list_.empty()) accessed_ |= (1<<10);
-    return static_cast<int>(topologically_sorted_generated_column_index_list_.size());
+  int topologically_sorted_generated_column_id_list_size() const {
+    if (topologically_sorted_generated_column_id_list_.empty()) accessed_ |= (1<<10);
+    return static_cast<int>(topologically_sorted_generated_column_id_list_.size());
   }
-  int topologically_sorted_generated_column_index_list(int i) const {
+  int topologically_sorted_generated_column_id_list(int i) const {
     accessed_ |= (1<<10);
-    return topologically_sorted_generated_column_index_list_.at(i);
+    return topologically_sorted_generated_column_id_list_.at(i);
   }
-  void add_topologically_sorted_generated_column_index_list(int v) {
-    topologically_sorted_generated_column_index_list_.push_back(v);
+  void add_topologically_sorted_generated_column_id_list(int v) {
+    topologically_sorted_generated_column_id_list_.push_back(v);
   }
-  void set_topologically_sorted_generated_column_index_list(const std::vector<int>& v) {
-    topologically_sorted_generated_column_index_list_ = v;
+  void set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) {
+    topologically_sorted_generated_column_id_list_ = v;
   }
-  std::vector<int>* mutable_topologically_sorted_generated_column_index_list() {
+  std::vector<int>* mutable_topologically_sorted_generated_column_id_list() {
     accessed_ |= (1<<10);
-    return &topologically_sorted_generated_column_index_list_;
+    return &topologically_sorted_generated_column_id_list_;
+  }
+
+  // This field returns the vector of generated column expressions
+  // corresponding to the column ids in
+  // topologically_sorted_generated_column_id_list. Both the lists have
+  // the same size and 1-to-1 mapping for the column id with its
+  // corresponding expression. This field is not directly accessed
+  // from the catalog since these expressions are rewritten to replace
+  // the ResolvedExpressionColumn for the referred columns in the
+  // catalog to corresponding ResolvedColumnRef.
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
+    accessed_ |= (1<<11);
+    return generated_column_expr_list_;
+  }
+  int generated_column_expr_list_size() const {
+    if (generated_column_expr_list_.empty()) accessed_ |= (1<<11);
+    return static_cast<int>(generated_column_expr_list_.size());
+  }
+  const ResolvedExpr* generated_column_expr_list(int i) const {
+    accessed_ |= (1<<11);
+    return generated_column_expr_list_.at(i).get();
+  }
+  void add_generated_column_expr_list(std::unique_ptr<const ResolvedExpr> v) {
+    generated_column_expr_list_.emplace_back(std::move(v));
+  }
+  void set_generated_column_expr_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    generated_column_expr_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_generated_column_expr_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    generated_column_expr_list_.swap(tmp);
+    return tmp;
   }
 
  protected:
@@ -26645,7 +26925,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedScan> query,
       const std::vector<ResolvedColumn>& query_output_column_list,
       std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
-      const std::vector<int>& topologically_sorted_generated_column_index_list,
+      const std::vector<int>& topologically_sorted_generated_column_id_list,
+      std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list,
       ConstructorOverload)
       : ResolvedStatement(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -26659,7 +26940,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       query_output_column_list_(query_output_column_list),
       row_list_(std::move(row_list)),
       column_access_list_(),
-      topologically_sorted_generated_column_index_list_(topologically_sorted_generated_column_index_list) {
+      topologically_sorted_generated_column_id_list_(topologically_sorted_generated_column_id_list),
+      generated_column_expr_list_(std::move(generated_column_expr_list)) {
   }
 
   void CollectDebugStringFields(
@@ -26702,8 +26984,11 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   bool column_access_list_accessed() const {
     return accessed_ & (1<<9);
  }
-  bool topologically_sorted_generated_column_index_list_accessed() const {
+  bool topologically_sorted_generated_column_id_list_accessed() const {
     return accessed_ & (1<<10);
+ }
+  bool generated_column_expr_list_accessed() const {
+    return accessed_ & (1<<11);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   ResolvedInsertStmt::InsertMode insert_mode_;
@@ -26715,7 +27000,8 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   std::vector<ResolvedColumn> query_output_column_list_;
   std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list_;
   std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
-  std::vector<int> topologically_sorted_generated_column_index_list_;
+  std::vector<int> topologically_sorted_generated_column_id_list_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -26729,7 +27015,8 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
     std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
-    const std::vector<int>& topologically_sorted_generated_column_index_list) {
+    const std::vector<int>& topologically_sorted_generated_column_id_list,
+    std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list) {
   return std::unique_ptr<ResolvedInsertStmt>(new ResolvedInsertStmt(
         std::move(table_scan),
         insert_mode,
@@ -26740,7 +27027,8 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
         std::move(query),
         query_output_column_list,
         std::move(row_list),
-        topologically_sorted_generated_column_index_list,
+        topologically_sorted_generated_column_id_list,
+        std::move(generated_column_expr_list),
         ResolvedInsertStmt::NEW_CONSTRUCTOR));
 }
 inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
@@ -26763,7 +27051,8 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       std::move(query),
       query_output_column_list,
       std::move(row_list),
-      /*topologically_sorted_generated_column_index_list=*/{});
+      /*topologically_sorted_generated_column_id_list=*/{},
+      /*generated_column_expr_list=*/{});
 }
 
 // Overloaded factory method for the construction of ResolvedInsertStmt with
@@ -26773,14 +27062,16 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
 // 3. input container can be any object with a `begin()` and `end()`.
 //
 // Note, initializer lists cannot be used to pass
-//  query_parameter_list, row_list
+//  query_parameter_list, row_list, generated_column_expr_list
 // due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
 // instead.
 template <
   typename query_parameter_list_t
       = std::vector<std::unique_ptr<const ResolvedColumnRef>>,
   typename row_list_t
-      = std::vector<std::unique_ptr<const ResolvedInsertRow>>>
+      = std::vector<std::unique_ptr<const ResolvedInsertRow>>,
+  typename generated_column_expr_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>>
 std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::unique_ptr<const ResolvedTableScan> table_scan,
     ResolvedInsertStmt::InsertMode insert_mode,
@@ -26791,7 +27082,8 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
     row_list_t row_list,
-    const std::vector<int>& topologically_sorted_generated_column_index_list) {
+    const std::vector<int>& topologically_sorted_generated_column_id_list,
+    generated_column_expr_list_t generated_column_expr_list) {
   static_assert(std::is_base_of<
       ResolvedColumnRef,
       typename std::decay<decltype(**(query_parameter_list.begin()))>::type>::value,
@@ -26802,6 +27094,11 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       typename std::decay<decltype(**(row_list.begin()))>::type>::value,
       "row_list must be a container of unique_ptr with elements of type "
       "ResolvedInsertRow (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(generated_column_expr_list.begin()))>::type>::value,
+      "generated_column_expr_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
   return MakeResolvedInsertStmt(
       std::move(table_scan),
       insert_mode,
@@ -26814,7 +27111,9 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       query_output_column_list,
       {std::make_move_iterator(row_list.begin()),
        std::make_move_iterator(row_list.end())},
-      topologically_sorted_generated_column_index_list);
+      topologically_sorted_generated_column_id_list,
+      {std::make_move_iterator(generated_column_expr_list.begin()),
+       std::make_move_iterator(generated_column_expr_list.end())});
 }
 
 inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt() {
@@ -27779,6 +28078,15 @@ inline std::unique_ptr<ResolvedUpdateArrayItem> MakeResolvedUpdateArrayItem() {
 // sent back to clients. It can only access columns from the <table_scan>.
 // The columns in <from_scan> are not allowed.
 // TODO: allow columns in <from_scan> to be referenced.
+//
+// <topologically_sorted_generated_column_id_list> is set for queries to
+// tables having generated columns. This field is similar to the INSERT case,
+// more details can be found in ResolvedInsertStmt.
+//
+// <generated_expr_list> has generated expressions for the corresponding
+// generated column in the topologically_sorted_generated_column_id_list.
+// Hence, these lists have the same size. This field is similar to the
+// INSERT case, more details can be found in ResolvedInsertStmt.
 class ResolvedUpdateStmt final : public ResolvedStatement {
  public:
   typedef ResolvedStatement SUPER;
@@ -27796,6 +28104,8 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
       , where_expr_()
       , update_item_list_()
       , from_scan_()
+      , topologically_sorted_generated_column_id_list_()
+      , generated_column_expr_list_()
   {}
 
  public:
@@ -27810,7 +28120,9 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
       std::unique_ptr<const ResolvedExpr> where_expr,
       std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
-      std::unique_ptr<const ResolvedScan> from_scan
+      std::unique_ptr<const ResolvedScan> from_scan,
+      const std::vector<int>& topologically_sorted_generated_column_id_list,
+      std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list
   );
   ~ResolvedUpdateStmt() final;
 
@@ -27981,6 +28293,56 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
     return std::move(from_scan_);
   }
 
+  // TODO: refactor it with INSERT case.
+  const std::vector<int>& topologically_sorted_generated_column_id_list() const {
+    accessed_ |= (1<<8);
+    return topologically_sorted_generated_column_id_list_;
+  }
+  int topologically_sorted_generated_column_id_list_size() const {
+    if (topologically_sorted_generated_column_id_list_.empty()) accessed_ |= (1<<8);
+    return static_cast<int>(topologically_sorted_generated_column_id_list_.size());
+  }
+  int topologically_sorted_generated_column_id_list(int i) const {
+    accessed_ |= (1<<8);
+    return topologically_sorted_generated_column_id_list_.at(i);
+  }
+  void add_topologically_sorted_generated_column_id_list(int v) {
+    topologically_sorted_generated_column_id_list_.push_back(v);
+  }
+  void set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) {
+    topologically_sorted_generated_column_id_list_ = v;
+  }
+  std::vector<int>* mutable_topologically_sorted_generated_column_id_list() {
+    accessed_ |= (1<<8);
+    return &topologically_sorted_generated_column_id_list_;
+  }
+
+  // TODO: refactor it with INSERT case.
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
+    accessed_ |= (1<<9);
+    return generated_column_expr_list_;
+  }
+  int generated_column_expr_list_size() const {
+    if (generated_column_expr_list_.empty()) accessed_ |= (1<<9);
+    return static_cast<int>(generated_column_expr_list_.size());
+  }
+  const ResolvedExpr* generated_column_expr_list(int i) const {
+    accessed_ |= (1<<9);
+    return generated_column_expr_list_.at(i).get();
+  }
+  void add_generated_column_expr_list(std::unique_ptr<const ResolvedExpr> v) {
+    generated_column_expr_list_.emplace_back(std::move(v));
+  }
+  void set_generated_column_expr_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    generated_column_expr_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_generated_column_expr_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    generated_column_expr_list_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedUpdateStmt(
       std::unique_ptr<const ResolvedTableScan> table_scan,
@@ -27990,6 +28352,8 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedExpr> where_expr,
       std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
       std::unique_ptr<const ResolvedScan> from_scan,
+      const std::vector<int>& topologically_sorted_generated_column_id_list,
+      std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list,
       ConstructorOverload)
       : ResolvedStatement(
             ConstructorOverload::NEW_CONSTRUCTOR),
@@ -28000,7 +28364,9 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
       array_offset_column_(std::move(array_offset_column)),
       where_expr_(std::move(where_expr)),
       update_item_list_(std::move(update_item_list)),
-      from_scan_(std::move(from_scan)) {
+      from_scan_(std::move(from_scan)),
+      topologically_sorted_generated_column_id_list_(topologically_sorted_generated_column_id_list),
+      generated_column_expr_list_(std::move(generated_column_expr_list)) {
   }
 
   void CollectDebugStringFields(
@@ -28037,6 +28403,12 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
   bool from_scan_accessed() const {
     return accessed_ & (1<<7);
  }
+  bool topologically_sorted_generated_column_id_list_accessed() const {
+    return accessed_ & (1<<8);
+ }
+  bool generated_column_expr_list_accessed() const {
+    return accessed_ & (1<<9);
+ }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
   std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified_;
@@ -28045,6 +28417,8 @@ class ResolvedUpdateStmt final : public ResolvedStatement {
   std::unique_ptr<const ResolvedExpr> where_expr_;
   std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list_;
   std::unique_ptr<const ResolvedScan> from_scan_;
+  std::vector<int> topologically_sorted_generated_column_id_list_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -28055,7 +28429,9 @@ inline std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
     std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
     std::unique_ptr<const ResolvedExpr> where_expr,
     std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
-    std::unique_ptr<const ResolvedScan> from_scan) {
+    std::unique_ptr<const ResolvedScan> from_scan,
+    const std::vector<int>& topologically_sorted_generated_column_id_list,
+    std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list) {
   return std::unique_ptr<ResolvedUpdateStmt>(new ResolvedUpdateStmt(
         std::move(table_scan),
         std::move(assert_rows_modified),
@@ -28064,7 +28440,28 @@ inline std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
         std::move(where_expr),
         std::move(update_item_list),
         std::move(from_scan),
+        topologically_sorted_generated_column_id_list,
+        std::move(generated_column_expr_list),
         ResolvedUpdateStmt::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
+    std::unique_ptr<const ResolvedTableScan> table_scan,
+    std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified,
+    std::unique_ptr<const ResolvedReturningClause> returning,
+    std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
+    std::unique_ptr<const ResolvedExpr> where_expr,
+    std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
+    std::unique_ptr<const ResolvedScan> from_scan) {
+  return MakeResolvedUpdateStmt(
+      std::move(table_scan),
+      std::move(assert_rows_modified),
+      std::move(returning),
+      std::move(array_offset_column),
+      std::move(where_expr),
+      std::move(update_item_list),
+      std::move(from_scan),
+      /*topologically_sorted_generated_column_id_list=*/{},
+      /*generated_column_expr_list=*/{});
 }
 
 // Overloaded factory method for the construction of ResolvedUpdateStmt with
@@ -28074,12 +28471,14 @@ inline std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
 // 3. input container can be any object with a `begin()` and `end()`.
 //
 // Note, initializer lists cannot be used to pass
-//  update_item_list
+//  update_item_list, generated_column_expr_list
 // due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
 // instead.
 template <
   typename update_item_list_t
-      = std::vector<std::unique_ptr<const ResolvedUpdateItem>>>
+      = std::vector<std::unique_ptr<const ResolvedUpdateItem>>,
+  typename generated_column_expr_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>>
 std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
     std::unique_ptr<const ResolvedTableScan> table_scan,
     std::unique_ptr<const ResolvedAssertRowsModified> assert_rows_modified,
@@ -28087,12 +28486,19 @@ std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
     std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
     std::unique_ptr<const ResolvedExpr> where_expr,
     update_item_list_t update_item_list,
-    std::unique_ptr<const ResolvedScan> from_scan) {
+    std::unique_ptr<const ResolvedScan> from_scan,
+    const std::vector<int>& topologically_sorted_generated_column_id_list,
+    generated_column_expr_list_t generated_column_expr_list) {
   static_assert(std::is_base_of<
       ResolvedUpdateItem,
       typename std::decay<decltype(**(update_item_list.begin()))>::type>::value,
       "update_item_list must be a container of unique_ptr with elements of type "
       "ResolvedUpdateItem (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(generated_column_expr_list.begin()))>::type>::value,
+      "generated_column_expr_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
   return MakeResolvedUpdateStmt(
       std::move(table_scan),
       std::move(assert_rows_modified),
@@ -28101,7 +28507,10 @@ std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt(
       std::move(where_expr),
       {std::make_move_iterator(update_item_list.begin()),
        std::make_move_iterator(update_item_list.end())},
-      std::move(from_scan));
+      std::move(from_scan),
+      topologically_sorted_generated_column_id_list,
+      {std::make_move_iterator(generated_column_expr_list.begin()),
+       std::make_move_iterator(generated_column_expr_list.end())});
 }
 
 inline std::unique_ptr<ResolvedUpdateStmt> MakeResolvedUpdateStmt() {
@@ -30870,7 +31279,7 @@ class ResolvedAlterAction  : public ResolvedArgument {
   typedef ResolvedArgument SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 24;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 25;
 
  public:
 
@@ -30959,7 +31368,7 @@ class ResolvedAlterColumnAction  : public ResolvedAlterAction {
   typedef ResolvedAlterAction SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 5;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 6;
 
  public:
 
@@ -31053,6 +31462,7 @@ class ResolvedAlterColumnAction  : public ResolvedAlterAction {
  private:
   friend class ResolvedAlterColumnOptionsActionBuilder;
   friend class ResolvedAlterColumnDropNotNullActionBuilder;
+  friend class ResolvedAlterColumnDropGeneratedActionBuilder;
   friend class ResolvedAlterColumnSetDataTypeActionBuilder;
   friend class ResolvedAlterColumnSetDefaultActionBuilder;
   friend class ResolvedAlterColumnDropDefaultActionBuilder;
@@ -32615,6 +33025,101 @@ inline std::unique_ptr<ResolvedAlterColumnDropNotNullAction> MakeResolvedAlterCo
 inline std::unique_ptr<ResolvedAlterColumnDropNotNullAction> MakeResolvedAlterColumnDropNotNullAction() {
   return std::unique_ptr<ResolvedAlterColumnDropNotNullAction>(
       new ResolvedAlterColumnDropNotNullAction());
+}
+
+// This ALTER action:
+//   ALTER COLUMN [IF EXISTS] <column> DROP GENERATED
+//
+// Removes the generated value (either an expression or identity column)
+// from the given column.
+class ResolvedAlterColumnDropGeneratedAction final : public ResolvedAlterColumnAction {
+ public:
+  typedef ResolvedAlterColumnAction SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_ALTER_COLUMN_DROP_GENERATED_ACTION;
+
+ protected:
+  ResolvedAlterColumnDropGeneratedAction()
+      : ResolvedAlterColumnAction()
+  {}
+
+ public:
+
+  ResolvedAlterColumnDropGeneratedAction(const ResolvedAlterColumnDropGeneratedAction&) = delete;
+  ResolvedAlterColumnDropGeneratedAction& operator=(const ResolvedAlterColumnDropGeneratedAction&) = delete;
+
+  friend std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> MakeResolvedAlterColumnDropGeneratedAction(
+      bool is_if_exists,
+      const std::string& column
+  );
+  ~ResolvedAlterColumnDropGeneratedAction() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_ALTER_COLUMN_DROP_GENERATED_ACTION; }
+  std::string node_kind_string() const final { return "AlterColumnDropGeneratedAction"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedAlterColumnDropGeneratedActionProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedAlterColumnActionProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedAlterColumnDropGeneratedAction>> RestoreFrom(
+      const ResolvedAlterColumnDropGeneratedActionProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedAlterColumnDropGeneratedAction(
+      bool is_if_exists,
+      const std::string& column,
+      ConstructorOverload)
+      : ResolvedAlterColumnAction(
+            is_if_exists,
+            column,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> MakeResolvedAlterColumnDropGeneratedAction();
+  friend class ResolvedAlterColumnDropGeneratedActionBuilder;
+  friend ResolvedAlterColumnDropGeneratedActionBuilder ToBuilder(std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> MakeResolvedAlterColumnDropGeneratedAction(
+    bool is_if_exists,
+    const std::string& column) {
+  return std::unique_ptr<ResolvedAlterColumnDropGeneratedAction>(new ResolvedAlterColumnDropGeneratedAction(
+        is_if_exists,
+        column,
+        ResolvedAlterColumnDropGeneratedAction::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> MakeResolvedAlterColumnDropGeneratedAction() {
+  return std::unique_ptr<ResolvedAlterColumnDropGeneratedAction>(
+      new ResolvedAlterColumnDropGeneratedAction());
 }
 
 // ALTER COLUMN <column> SET DATA TYPE action for ALTER TABLE
@@ -45107,6 +45612,220 @@ inline std::unique_ptr<ResolvedUndropStmt> MakeResolvedUndropStmt() {
       new ResolvedUndropStmt());
 }
 
+// This argument represents the identity column clause for a generated
+// column:
+//     GENERATED AS IDENTITY (
+//                    [ START WITH <signed_numeric_literal> ]
+//                    [ INCREMENT BY <signed_numeric_literal> ]
+//                    [ MAXVALUE <signed_numeric_literal>]
+//                    [ MINVALUE <signed_numeric_literal>]
+//                    [ CYCLE | NO CYCLE]
+//                  )
+// If attributes are not specified, the resolver fills in the fields using
+// default values.
+// Note: Only integer-typed columns can be identity columns.
+//
+// `start_with_value` is the start/first value generated for the column.
+//
+// `increment_by_value` is the minimum difference between two successive
+// generated values.
+//   - Can be negative or positive but not 0.
+//
+// `max_value` is the maximum value that can be generated in the column.
+//
+// `min_value` is the minimum value that can be generated in the column.
+//
+// `cycling_enabled`: If true, the generated identity value will cycle around
+// after overflow, when `min_value` or `max_value` is exceeded.
+//
+// See (broken link).
+class ResolvedIdentityColumnInfo final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_IDENTITY_COLUMN_INFO;
+
+ protected:
+  ResolvedIdentityColumnInfo()
+      : ResolvedArgument()
+      , start_with_value_()
+      , increment_by_value_()
+      , max_value_()
+      , min_value_()
+      , cycling_enabled_()
+  {}
+
+ public:
+
+  ResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo&) = delete;
+  ResolvedIdentityColumnInfo& operator=(const ResolvedIdentityColumnInfo&) = delete;
+
+  friend std::unique_ptr<ResolvedIdentityColumnInfo> MakeResolvedIdentityColumnInfo(
+      const Value& start_with_value,
+      const Value& increment_by_value,
+      const Value& max_value,
+      const Value& min_value,
+      bool cycling_enabled
+  );
+  ~ResolvedIdentityColumnInfo() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_IDENTITY_COLUMN_INFO; }
+  std::string node_kind_string() const final { return "IdentityColumnInfo"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedIdentityColumnInfoProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedIdentityColumnInfo>> RestoreFrom(
+      const ResolvedIdentityColumnInfoProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const Value& start_with_value() const {
+    accessed_ |= (1<<0);
+    return start_with_value_;
+  }
+  void set_start_with_value(const Value& v) {
+    start_with_value_ = v;
+  }
+
+  const Value& increment_by_value() const {
+    accessed_ |= (1<<1);
+    return increment_by_value_;
+  }
+  void set_increment_by_value(const Value& v) {
+    increment_by_value_ = v;
+  }
+
+  const Value& max_value() const {
+    accessed_ |= (1<<2);
+    return max_value_;
+  }
+  void set_max_value(const Value& v) {
+    max_value_ = v;
+  }
+
+  const Value& min_value() const {
+    accessed_ |= (1<<3);
+    return min_value_;
+  }
+  void set_min_value(const Value& v) {
+    min_value_ = v;
+  }
+
+  bool cycling_enabled() const {
+    accessed_ |= (1<<4);
+    return cycling_enabled_;
+  }
+  void set_cycling_enabled(bool v) {
+    cycling_enabled_ = v;
+  }
+
+ protected:
+  explicit ResolvedIdentityColumnInfo(
+      const Value& start_with_value,
+      const Value& increment_by_value,
+      const Value& max_value,
+      const Value& min_value,
+      bool cycling_enabled,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      start_with_value_(start_with_value),
+      increment_by_value_(increment_by_value),
+      max_value_(max_value),
+      min_value_(min_value),
+      cycling_enabled_(cycling_enabled) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedIdentityColumnInfo> MakeResolvedIdentityColumnInfo();
+  friend class ResolvedIdentityColumnInfoBuilder;
+  friend ResolvedIdentityColumnInfoBuilder ToBuilder(std::unique_ptr<const ResolvedIdentityColumnInfo>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool start_with_value_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool increment_by_value_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool max_value_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool min_value_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  bool cycling_enabled_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  Value start_with_value_;
+  Value increment_by_value_;
+  Value max_value_;
+  Value min_value_;
+  bool cycling_enabled_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedIdentityColumnInfo> MakeResolvedIdentityColumnInfo(
+    const Value& start_with_value,
+    const Value& increment_by_value,
+    const Value& max_value,
+    const Value& min_value,
+    bool cycling_enabled) {
+  return std::unique_ptr<ResolvedIdentityColumnInfo>(new ResolvedIdentityColumnInfo(
+        start_with_value,
+        increment_by_value,
+        max_value,
+        min_value,
+        cycling_enabled,
+        ResolvedIdentityColumnInfo::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedIdentityColumnInfo> MakeResolvedIdentityColumnInfo() {
+  return std::unique_ptr<ResolvedIdentityColumnInfo>(
+      new ResolvedIdentityColumnInfo());
+}
+
 inline std::unique_ptr<ResolvedLiteral> MakeResolvedLiteral(
     const Value& value) {
   // The float_literal_id is 0 for any ResolvedLiterals whose original images
@@ -45341,6 +46060,30 @@ std::unique_ptr<ResolvedAggregateScan> MakeResolvedAggregateScan(
       {std::make_move_iterator(rollup_column_list.begin()),
        std::make_move_iterator(rollup_column_list.end())},
       /*grouping_call_list=*/{});
+}
+
+// Special overwrite for backward compatibility purpose.
+inline std::unique_ptr<ResolvedArrayScan> MakeResolvedArrayScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::unique_ptr<const ResolvedExpr> array_expr,
+    const ResolvedColumn& element_column,
+    std::unique_ptr<const ResolvedColumnHolder> array_offset_column,
+    std::unique_ptr<const ResolvedExpr> join_expr,
+    bool is_outer) {
+  std::vector<std::unique_ptr<const ResolvedExpr>> array_expr_list;
+  array_expr_list.push_back(std::move(array_expr));
+  std::vector<ResolvedColumn> element_column_list;
+  element_column_list.push_back(element_column);
+  return MakeResolvedArrayScan(
+        column_list,
+        std::move(input_scan),
+        std::move(array_expr_list),
+        std::move(element_column_list),
+        std::move(array_offset_column),
+        std::move(join_expr),
+        is_outer,
+        /*array_zip_mode=*/nullptr);
 }
 
 }  // namespace zetasql

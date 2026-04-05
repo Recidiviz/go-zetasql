@@ -6,7 +6,6 @@
 #include "zetasql/common/aggregate_null_handling.cc"
 // include dependencies
 #include "go-zetasql/base/case/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 

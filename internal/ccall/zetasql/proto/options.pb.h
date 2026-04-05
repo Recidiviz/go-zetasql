@@ -1233,6 +1233,7 @@ class AllowedHintsAndOptionsProto_OptionProto final :
     kNameFieldNumber = 1,
     kTypeFieldNumber = 2,
     kResolvingKindFieldNumber = 3,
+    kAllowAlterArrayFieldNumber = 4,
   };
   // optional string name = 1;
   bool has_name() const;
@@ -1280,6 +1281,17 @@ class AllowedHintsAndOptionsProto_OptionProto final :
   void _internal_set_resolving_kind(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind value);
 
   public:
+  // optional bool allow_alter_array = 4;
+  bool has_allow_alter_array() const;
+  void clear_allow_alter_array() ;
+  bool allow_alter_array() const;
+  void set_allow_alter_array(bool value);
+
+  private:
+  bool _internal_allow_alter_array() const;
+  void _internal_set_allow_alter_array(bool value);
+
+  public:
   // @@protoc_insertion_point(class_scope:zetasql.AllowedHintsAndOptionsProto.OptionProto)
  private:
   class _Internal;
@@ -1293,6 +1305,7 @@ class AllowedHintsAndOptionsProto_OptionProto final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::zetasql::TypeProto* type_;
     int resolving_kind_;
+    bool allow_alter_array_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fproto_2foptions_2eproto;
@@ -2120,6 +2133,7 @@ class AnalyzerOptionsProto final :
     kParseLocationRecordTypeFieldNumber = 23,
     kPreserveUnnecessaryCastFieldNumber = 24,
     kShowFunctionSignatureMismatchDetailsFieldNumber = 27,
+    kReplaceTableNotFoundErrorWithTvfErrorIfApplicableFieldNumber = 29,
     kDefaultAnonKappaValueFieldNumber = 26,
   };
   // repeated .zetasql.AnalyzerOptionsProto.QueryParameterProto query_parameters = 2;
@@ -2471,6 +2485,17 @@ class AnalyzerOptionsProto final :
   void _internal_set_show_function_signature_mismatch_details(bool value);
 
   public:
+  // optional bool replace_table_not_found_error_with_tvf_error_if_applicable = 29;
+  bool has_replace_table_not_found_error_with_tvf_error_if_applicable() const;
+  void clear_replace_table_not_found_error_with_tvf_error_if_applicable() ;
+  bool replace_table_not_found_error_with_tvf_error_if_applicable() const;
+  void set_replace_table_not_found_error_with_tvf_error_if_applicable(bool value);
+
+  private:
+  bool _internal_replace_table_not_found_error_with_tvf_error_if_applicable() const;
+  void _internal_set_replace_table_not_found_error_with_tvf_error_if_applicable(bool value);
+
+  public:
   // optional int64 default_anon_kappa_value = 26;
   bool has_default_anon_kappa_value() const;
   void clear_default_anon_kappa_value() ;
@@ -2515,6 +2540,7 @@ class AnalyzerOptionsProto final :
     int parse_location_record_type_;
     bool preserve_unnecessary_cast_;
     bool show_function_signature_mismatch_details_;
+    bool replace_table_not_found_error_with_tvf_error_if_applicable_;
     ::int64_t default_anon_kappa_value_;
   };
   union { Impl_ _impl_; };
@@ -3687,6 +3713,31 @@ inline void AllowedHintsAndOptionsProto_OptionProto::_internal_set_resolving_kin
   assert(::zetasql::AllowedHintsAndOptionsProto_OptionProto_ResolvingKind_IsValid(value));
   _impl_._has_bits_[0] |= 0x00000004u;
   _impl_.resolving_kind_ = value;
+}
+
+// optional bool allow_alter_array = 4;
+inline bool AllowedHintsAndOptionsProto_OptionProto::has_allow_alter_array() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline void AllowedHintsAndOptionsProto_OptionProto::clear_allow_alter_array() {
+  _impl_.allow_alter_array_ = false;
+  _impl_._has_bits_[0] &= ~0x00000008u;
+}
+inline bool AllowedHintsAndOptionsProto_OptionProto::allow_alter_array() const {
+  // @@protoc_insertion_point(field_get:zetasql.AllowedHintsAndOptionsProto.OptionProto.allow_alter_array)
+  return _internal_allow_alter_array();
+}
+inline void AllowedHintsAndOptionsProto_OptionProto::set_allow_alter_array(bool value) {
+  _internal_set_allow_alter_array(value);
+  // @@protoc_insertion_point(field_set:zetasql.AllowedHintsAndOptionsProto.OptionProto.allow_alter_array)
+}
+inline bool AllowedHintsAndOptionsProto_OptionProto::_internal_allow_alter_array() const {
+  return _impl_.allow_alter_array_;
+}
+inline void AllowedHintsAndOptionsProto_OptionProto::_internal_set_allow_alter_array(bool value) {
+  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_.allow_alter_array_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -5340,12 +5391,12 @@ inline void AnalyzerOptionsProto::set_allocated_default_anon_function_report_for
 
 // optional int64 default_anon_kappa_value = 26;
 inline bool AnalyzerOptionsProto::has_default_anon_kappa_value() const {
-  bool value = (_impl_._has_bits_[0] & 0x00010000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00020000u) != 0;
   return value;
 }
 inline void AnalyzerOptionsProto::clear_default_anon_kappa_value() {
   _impl_.default_anon_kappa_value_ = ::int64_t{0};
-  _impl_._has_bits_[0] &= ~0x00010000u;
+  _impl_._has_bits_[0] &= ~0x00020000u;
 }
 inline ::int64_t AnalyzerOptionsProto::default_anon_kappa_value() const {
   // @@protoc_insertion_point(field_get:zetasql.AnalyzerOptionsProto.default_anon_kappa_value)
@@ -5359,7 +5410,7 @@ inline ::int64_t AnalyzerOptionsProto::_internal_default_anon_kappa_value() cons
   return _impl_.default_anon_kappa_value_;
 }
 inline void AnalyzerOptionsProto::_internal_set_default_anon_kappa_value(::int64_t value) {
-  _impl_._has_bits_[0] |= 0x00010000u;
+  _impl_._has_bits_[0] |= 0x00020000u;
   _impl_.default_anon_kappa_value_ = value;
 }
 
@@ -5445,6 +5496,31 @@ inline void AnalyzerOptionsProto::set_allocated_rewrite_options(::zetasql::Rewri
   }
   _impl_.rewrite_options_ = rewrite_options;
   // @@protoc_insertion_point(field_set_allocated:zetasql.AnalyzerOptionsProto.rewrite_options)
+}
+
+// optional bool replace_table_not_found_error_with_tvf_error_if_applicable = 29;
+inline bool AnalyzerOptionsProto::has_replace_table_not_found_error_with_tvf_error_if_applicable() const {
+  bool value = (_impl_._has_bits_[0] & 0x00010000u) != 0;
+  return value;
+}
+inline void AnalyzerOptionsProto::clear_replace_table_not_found_error_with_tvf_error_if_applicable() {
+  _impl_.replace_table_not_found_error_with_tvf_error_if_applicable_ = false;
+  _impl_._has_bits_[0] &= ~0x00010000u;
+}
+inline bool AnalyzerOptionsProto::replace_table_not_found_error_with_tvf_error_if_applicable() const {
+  // @@protoc_insertion_point(field_get:zetasql.AnalyzerOptionsProto.replace_table_not_found_error_with_tvf_error_if_applicable)
+  return _internal_replace_table_not_found_error_with_tvf_error_if_applicable();
+}
+inline void AnalyzerOptionsProto::set_replace_table_not_found_error_with_tvf_error_if_applicable(bool value) {
+  _internal_set_replace_table_not_found_error_with_tvf_error_if_applicable(value);
+  // @@protoc_insertion_point(field_set:zetasql.AnalyzerOptionsProto.replace_table_not_found_error_with_tvf_error_if_applicable)
+}
+inline bool AnalyzerOptionsProto::_internal_replace_table_not_found_error_with_tvf_error_if_applicable() const {
+  return _impl_.replace_table_not_found_error_with_tvf_error_if_applicable_;
+}
+inline void AnalyzerOptionsProto::_internal_set_replace_table_not_found_error_with_tvf_error_if_applicable(bool value) {
+  _impl_._has_bits_[0] |= 0x00010000u;
+  _impl_.replace_table_not_found_error_with_tvf_error_if_applicable_ = value;
 }
 
 #ifdef __GNUC__

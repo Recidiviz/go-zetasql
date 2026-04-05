@@ -29,6 +29,7 @@
 #include "zetasql/base/atomic_sequence_num.h"
 #include "zetasql/parser/parser.h"
 #include "zetasql/public/catalog.h"
+#include "zetasql/public/error_helpers.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/type.h"
@@ -76,6 +77,7 @@ struct AllowedOptionProperties {
   AllowedHintsAndOptionsProto::OptionProto::ResolvingKind resolving_kind =
       AllowedHintsAndOptionsProto::OptionProto::
           CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER;
+  bool allow_alter_array = false;
 };
 
 // This class specifies a set of allowed hints and options, and their expected
@@ -120,7 +122,8 @@ struct AllowedHintsAndOptions {
   }
 
   // Add an option.  <type> may be NULL to indicate that all Types are allowed.
-  void AddOption(absl::string_view name, const Type* type);
+  void AddOption(absl::string_view name, const Type* type,
+                 bool allow_alter_array = false);
 
   // Add an anonymization option. <type> may be NULL to indicate that all Types
   // are allowed.
@@ -194,6 +197,7 @@ struct AllowedHintsAndOptions {
           {"max_rows_contributed", {types::Int64Type()}},
           {"group_selection_strategy",
            {types::DifferentialPrivacyGroupSelectionStrategyEnumType()}},
+          {"min_privacy_units_per_group", {types::Int64Type()}},
   };
 
   // Options allowed in ResolvedDifferentialPrivacyAggregateScan.
@@ -208,6 +212,7 @@ struct AllowedHintsAndOptions {
                          FROM_NAME_SCOPE_IDENTIFIER}},
           {"group_selection_strategy",
            {types::DifferentialPrivacyGroupSelectionStrategyEnumType()}},
+          {"min_privacy_units_per_group", {types::Int64Type()}},
   };
 
  private:
@@ -215,7 +220,7 @@ struct AllowedHintsAndOptions {
                            const Type* type, bool allow_unqualified = true);
   absl::Status AddOptionImpl(
       absl::flat_hash_map<std::string, AllowedOptionProperties>& options_map,
-      absl::string_view name, const Type* type,
+      absl::string_view name, const Type* type, bool allow_alter_array,
       AllowedHintsAndOptionsProto::OptionProto::ResolvingKind resolving_kind =
           AllowedHintsAndOptionsProto::OptionProto::
               CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER);
@@ -683,6 +688,14 @@ class AnalyzerOptions {
     return data_->show_function_signature_mismatch_details;
   }
 
+  void set_replace_table_not_found_error_with_tvf_error_if_applicable(
+      bool value) {
+    data_->replace_table_not_found_error_with_tvf_error_if_applicable = value;
+  }
+  bool replace_table_not_found_error_with_tvf_error_if_applicable() const {
+    return data_->replace_table_not_found_error_with_tvf_error_if_applicable;
+  }
+
   // If true (default), the analyzer will attempt to fold cast of literals
   // into target types.
   void set_fold_literal_cast(bool value) { data_->fold_literal_cast = value; }
@@ -769,6 +782,33 @@ class AnalyzerOptions {
   // FieldsAccessed bits are cleared on return.
   FieldsAccessedMode fields_accessed_mode() const {
     return data_->fields_accessed_mode;
+  }
+
+  // Controls the stability of error messages. Generally, exact error message
+  // text is not part of ZetaSQL's API contract and ZetaSQL reserves the
+  // ability to improve the text of our error messages to address user needs.
+  // External tests should avoid tight coupling with the exact message.
+  // 1. TEST_STABLE returns a stable, terse message like "SQL ERROR", which
+  //    serves the case of external code described above.
+  // 2. PRODUCTION shows the full message a user will see, without visible
+  //    salting.
+  // 3. After migration, we will add a mode: SALTED, which shows the error
+  //    message like production but with an explicitly visible salt added, to
+  //    prevent any code from taking dependence on the exact text.
+  ErrorMessageStability error_message_stability() const {
+    return data_->error_message_stability;
+  }
+  void set_error_message_stability(ErrorMessageStability stability) {
+    data_->error_message_stability = stability;
+  }
+
+  // Returns the ErrorMessageOptions to use for this AnalyzerOptions.
+  ErrorMessageOptions error_message_options() const {
+    return ErrorMessageOptions{
+        .mode = data_->error_message_mode,
+        .attach_error_location_payload = data_->attach_error_location_payload,
+        .stability = data_->error_message_stability,
+    };
   }
 
  private:
@@ -962,6 +1002,13 @@ class AnalyzerOptions {
 
     bool show_function_signature_mismatch_details = false;
 
+    // If true, and a Catalog FindTable lookup for a Table name fails, then
+    // check the name to see if it is a valid TVF name. If it is a valid TVF
+    // name, then emit an error that the TVF was invoked without parens, rather
+    // than the usual 'Table Not Found' error. This is a more useful, actionable
+    // error message.
+    bool replace_table_not_found_error_with_tvf_error_if_applicable = true;
+
     // Controls if CAST of literal is implicitly folded to the target type.
     bool fold_literal_cast = true;
 
@@ -974,6 +1021,7 @@ class AnalyzerOptions {
 
     // These options determine the behaviors of rewrites.
     RewriteOptions rewrite_options;
+    ErrorMessageStability error_message_stability;
   };
   std::unique_ptr<Data> data_;
 

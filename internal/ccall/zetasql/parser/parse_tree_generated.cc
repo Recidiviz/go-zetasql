@@ -207,6 +207,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_CREATE_DATABASE_STATEMENT] = "CreateDatabaseStatement";
   map[AST_CREATE_PROCEDURE_STATEMENT] = "CreateProcedureStatement";
   map[AST_CREATE_SCHEMA_STATEMENT] = "CreateSchemaStatement";
+  map[AST_CREATE_EXTERNAL_SCHEMA_STATEMENT] = "CreateExternalSchemaStatement";
   map[AST_ALIASED_QUERY_LIST] = "AliasedQueryList";
   map[AST_TRANSFORM_CLAUSE] = "TransformClause";
   map[AST_CREATE_MODEL_STATEMENT] = "CreateModelStatement";
@@ -221,6 +222,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_CALL_STATEMENT] = "CallStatement";
   map[AST_DEFINE_TABLE_STATEMENT] = "DefineTableStatement";
   map[AST_WITH_PARTITION_COLUMNS_CLAUSE] = "WithPartitionColumnsClause";
+  map[AST_CREATE_SNAPSHOT_STATEMENT] = "CreateSnapshotStatement";
   map[AST_CREATE_SNAPSHOT_TABLE_STATEMENT] = "CreateSnapshotTableStatement";
   map[AST_TYPE_PARAMETER_LIST] = "TypeParameterList";
   map[AST_TVF_SCHEMA] = "TVFSchema";
@@ -285,6 +287,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_ALTER_COLUMN_SET_DEFAULT_ACTION] = "AlterColumnSetDefaultAction";
   map[AST_ALTER_COLUMN_DROP_DEFAULT_ACTION] = "AlterColumnDropDefaultAction";
   map[AST_ALTER_COLUMN_DROP_NOT_NULL_ACTION] = "AlterColumnDropNotNullAction";
+  map[AST_ALTER_COLUMN_DROP_GENERATED_ACTION] = "AlterColumnDropGeneratedAction";
   map[AST_GRANT_TO_CLAUSE] = "GrantToClause";
   map[AST_RESTRICT_TO_CLAUSE] = "RestrictToClause";
   map[AST_ADD_TO_RESTRICTEE_LIST_CLAUSE] = "AddToRestricteeListClause";
@@ -390,6 +393,11 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_MACRO_BODY] = "MacroBody";
   map[AST_DEFINE_MACRO_STATEMENT] = "DefineMacroStatement";
   map[AST_UNDROP_STATEMENT] = "UndropStatement";
+  map[AST_IDENTITY_COLUMN_INFO] = "IdentityColumnInfo";
+  map[AST_IDENTITY_COLUMN_START_WITH] = "IdentityColumnStartWith";
+  map[AST_IDENTITY_COLUMN_INCREMENT_BY] = "IdentityColumnIncrementBy";
+  map[AST_IDENTITY_COLUMN_MAX_VALUE] = "IdentityColumnMaxValue";
+  map[AST_IDENTITY_COLUMN_MIN_VALUE] = "IdentityColumnMinValue";
 
   for (int kind = kFirstASTNodeKind; kind <= kLastASTNodeKind;
        ++kind) {

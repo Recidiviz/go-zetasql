@@ -22,13 +22,13 @@
 
 namespace zetasql {
 
-// TODO: Update this test case to test ANY_K and ARRAY_ANY_K for k
-// = 4, 5.
 std::vector<SignatureArgumentKindGroup> GetRelatedSignatureArgumentGroup() {
   return {
       {.kind = ARG_TYPE_ANY_1, .array_kind = ARG_ARRAY_TYPE_ANY_1},
       {.kind = ARG_TYPE_ANY_2, .array_kind = ARG_ARRAY_TYPE_ANY_2},
       {.kind = ARG_TYPE_ANY_3, .array_kind = ARG_ARRAY_TYPE_ANY_3},
+      {.kind = ARG_TYPE_ANY_4, .array_kind = ARG_ARRAY_TYPE_ANY_4},
+      {.kind = ARG_TYPE_ANY_5, .array_kind = ARG_ARRAY_TYPE_ANY_5},
   };
 }
 

@@ -360,6 +360,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTCreateSchemaStatement(const ASTCreateSchemaStatement* node, void* data) = 0;
 
+  virtual void visitASTCreateExternalSchemaStatement(const ASTCreateExternalSchemaStatement* node, void* data) = 0;
+
   virtual void visitASTAliasedQueryList(const ASTAliasedQueryList* node, void* data) = 0;
 
   virtual void visitASTTransformClause(const ASTTransformClause* node, void* data) = 0;
@@ -387,6 +389,8 @@ class ParseTreeVisitor {
   virtual void visitASTDefineTableStatement(const ASTDefineTableStatement* node, void* data) = 0;
 
   virtual void visitASTWithPartitionColumnsClause(const ASTWithPartitionColumnsClause* node, void* data) = 0;
+
+  virtual void visitASTCreateSnapshotStatement(const ASTCreateSnapshotStatement* node, void* data) = 0;
 
   virtual void visitASTCreateSnapshotTableStatement(const ASTCreateSnapshotTableStatement* node, void* data) = 0;
 
@@ -515,6 +519,8 @@ class ParseTreeVisitor {
   virtual void visitASTAlterColumnDropDefaultAction(const ASTAlterColumnDropDefaultAction* node, void* data) = 0;
 
   virtual void visitASTAlterColumnDropNotNullAction(const ASTAlterColumnDropNotNullAction* node, void* data) = 0;
+
+  virtual void visitASTAlterColumnDropGeneratedAction(const ASTAlterColumnDropGeneratedAction* node, void* data) = 0;
 
   virtual void visitASTGrantToClause(const ASTGrantToClause* node, void* data) = 0;
 
@@ -725,6 +731,16 @@ class ParseTreeVisitor {
   virtual void visitASTDefineMacroStatement(const ASTDefineMacroStatement* node, void* data) = 0;
 
   virtual void visitASTUndropStatement(const ASTUndropStatement* node, void* data) = 0;
+
+  virtual void visitASTIdentityColumnInfo(const ASTIdentityColumnInfo* node, void* data) = 0;
+
+  virtual void visitASTIdentityColumnStartWith(const ASTIdentityColumnStartWith* node, void* data) = 0;
+
+  virtual void visitASTIdentityColumnIncrementBy(const ASTIdentityColumnIncrementBy* node, void* data) = 0;
+
+  virtual void visitASTIdentityColumnMaxValue(const ASTIdentityColumnMaxValue* node, void* data) = 0;
+
+  virtual void visitASTIdentityColumnMinValue(const ASTIdentityColumnMinValue* node, void* data) = 0;
 
 };
 
@@ -1438,6 +1454,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTCreateExternalSchemaStatement(const ASTCreateExternalSchemaStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTAliasedQueryList(const ASTAliasedQueryList* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -1491,6 +1511,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTWithPartitionColumnsClause(const ASTWithPartitionColumnsClause* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTCreateSnapshotStatement(const ASTCreateSnapshotStatement* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -1747,6 +1771,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTAlterColumnDropNotNullAction(const ASTAlterColumnDropNotNullAction* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTAlterColumnDropGeneratedAction(const ASTAlterColumnDropGeneratedAction* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2170,6 +2198,26 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTIdentityColumnInfo(const ASTIdentityColumnInfo* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTIdentityColumnStartWith(const ASTIdentityColumnStartWith* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTIdentityColumnIncrementBy(const ASTIdentityColumnIncrementBy* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTIdentityColumnMaxValue(const ASTIdentityColumnMaxValue* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTIdentityColumnMinValue(const ASTIdentityColumnMinValue* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
 };
 
 class NonRecursiveParseTreeVisitor {
@@ -2531,6 +2579,8 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTCreateSchemaStatement(const ASTCreateSchemaStatement* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTCreateExternalSchemaStatement(const ASTCreateExternalSchemaStatement* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTAliasedQueryList(const ASTAliasedQueryList* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTTransformClause(const ASTTransformClause* node) {return defaultVisit(node);};
@@ -2558,6 +2608,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTDefineTableStatement(const ASTDefineTableStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTWithPartitionColumnsClause(const ASTWithPartitionColumnsClause* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTCreateSnapshotStatement(const ASTCreateSnapshotStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTCreateSnapshotTableStatement(const ASTCreateSnapshotTableStatement* node) {return defaultVisit(node);};
 
@@ -2686,6 +2738,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTAlterColumnDropDefaultAction(const ASTAlterColumnDropDefaultAction* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTAlterColumnDropNotNullAction(const ASTAlterColumnDropNotNullAction* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTAlterColumnDropGeneratedAction(const ASTAlterColumnDropGeneratedAction* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTGrantToClause(const ASTGrantToClause* node) {return defaultVisit(node);};
 
@@ -2896,6 +2950,16 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTDefineMacroStatement(const ASTDefineMacroStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTUndropStatement(const ASTUndropStatement* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTIdentityColumnInfo(const ASTIdentityColumnInfo* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTIdentityColumnStartWith(const ASTIdentityColumnStartWith* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTIdentityColumnIncrementBy(const ASTIdentityColumnIncrementBy* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTIdentityColumnMaxValue(const ASTIdentityColumnMaxValue* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTIdentityColumnMinValue(const ASTIdentityColumnMinValue* node) {return defaultVisit(node);};
 
 };
 }  // namespace zetasql

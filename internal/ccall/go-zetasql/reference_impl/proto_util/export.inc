@@ -18,7 +18,6 @@
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-absl/base/base/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"

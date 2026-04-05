@@ -235,6 +235,25 @@ absl::Status CollectColumnRefs(
   return node.Accept(&column_ref_collector);
 }
 
+absl::Status RemoveUnusedColumnRefs(
+    const ResolvedNode& node,
+    std::vector<std::unique_ptr<const ResolvedColumnRef>>& column_refs) {
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> refs;
+  ZETASQL_RETURN_IF_ERROR(CollectColumnRefs(node, &refs));
+  absl::flat_hash_set<int> referenced_column_ids;
+  for (const auto& ref : refs) {
+    referenced_column_ids.insert(ref->column().column_id());
+  }
+
+  column_refs.erase(std::remove_if(column_refs.begin(), column_refs.end(),
+                                   [&](const auto& ref) {
+                                     return !referenced_column_ids.contains(
+                                         ref->column().column_id());
+                                   }),
+                    column_refs.end());
+  return absl::OkStatus();
+}
+
 void SortUniqueColumnRefs(
     std::vector<std::unique_ptr<const ResolvedColumnRef>>& column_refs) {
   // Compare two referenced columns.
@@ -671,6 +690,30 @@ FunctionCallBuilder::Subtract(std::unique_ptr<const ResolvedExpr> minuend,
   return MakeResolvedFunctionCall(signature.result_type().type(), subtract_fn,
                                   signature, std::move(arguments),
                                   ResolvedFunctionCall::DEFAULT_ERROR_MODE);
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
+FunctionCallBuilder::SafeSubtract(
+    std::unique_ptr<const ResolvedExpr> minuend,
+    std::unique_ptr<const ResolvedExpr> subtrahend) {
+  ZETASQL_RET_CHECK_NE(minuend.get(), nullptr);
+  ZETASQL_RET_CHECK_NE(subtrahend.get(), nullptr);
+  const Function* safe_subtract_fn = nullptr;
+  ZETASQL_RETURN_IF_ERROR(
+      GetBuiltinFunctionFromCatalog("safe_subtract", &safe_subtract_fn));
+  ZETASQL_ASSIGN_OR_RETURN(FunctionSignature signature,
+                   GetBinaryFunctionSignatureFromArgumentTypes(
+                       safe_subtract_fn, minuend->type(), subtrahend->type()));
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> arguments;
+  arguments.emplace_back(std::move(minuend));
+  arguments.emplace_back(std::move(subtrahend));
+
+  // Below, the error mode is chosen to be `DEFAULT_ERROR_MODE`, because
+  // F1 does not support `SAFE_ERROR_MODE` in combination with `SAFE_SUBTRACT`.
+  return MakeResolvedFunctionCall(
+      signature.result_type().type(), safe_subtract_fn, signature,
+      std::move(arguments), ResolvedFunctionCall::DEFAULT_ERROR_MODE);
 }
 
 absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>

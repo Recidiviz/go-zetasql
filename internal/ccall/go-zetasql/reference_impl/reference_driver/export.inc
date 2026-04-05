@@ -24,6 +24,7 @@
 #include "go-zetasql/public/analyzer/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output/export.inc"
+#include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/multi_catalog/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"

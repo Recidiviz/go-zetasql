@@ -5,6 +5,7 @@
 // include sources
 #include "zetasql/parser/keywords.cc"
 // include dependencies
+#include "go-zetasql/parser/bison_token_codes/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/map_util/export.inc"

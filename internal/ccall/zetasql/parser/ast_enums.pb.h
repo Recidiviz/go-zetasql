@@ -116,6 +116,9 @@ extern ASTMergeActionEnumsDefaultTypeInternal _ASTMergeActionEnums_default_insta
 class ASTMergeWhenClauseEnums;
 struct ASTMergeWhenClauseEnumsDefaultTypeInternal;
 extern ASTMergeWhenClauseEnumsDefaultTypeInternal _ASTMergeWhenClauseEnums_default_instance_;
+class ASTOptionsEntryEnums;
+struct ASTOptionsEntryEnumsDefaultTypeInternal;
+extern ASTOptionsEntryEnumsDefaultTypeInternal _ASTOptionsEntryEnums_default_instance_;
 class ASTOrderingExpressionEnums;
 struct ASTOrderingExpressionEnumsDefaultTypeInternal;
 extern ASTOrderingExpressionEnumsDefaultTypeInternal _ASTOrderingExpressionEnums_default_instance_;
@@ -194,6 +197,8 @@ template <>
 template <>
 ::zetasql::ASTMergeWhenClauseEnums* Arena::CreateMaybeMessage<::zetasql::ASTMergeWhenClauseEnums>(Arena*);
 template <>
+::zetasql::ASTOptionsEntryEnums* Arena::CreateMaybeMessage<::zetasql::ASTOptionsEntryEnums>(Arena*);
+template <>
 ::zetasql::ASTOrderingExpressionEnums* Arena::CreateMaybeMessage<::zetasql::ASTOrderingExpressionEnums>(Arena*);
 template <>
 ::zetasql::ASTSampleSizeEnums* Arena::CreateMaybeMessage<::zetasql::ASTSampleSizeEnums>(Arena*);
@@ -262,6 +267,36 @@ inline const std::string& ASTBinaryExpressionEnums_Op_Name(ASTBinaryExpressionEn
 inline bool ASTBinaryExpressionEnums_Op_Parse(absl::string_view name, ASTBinaryExpressionEnums_Op* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTBinaryExpressionEnums_Op>(
       ASTBinaryExpressionEnums_Op_descriptor(), name, value);
+}
+enum ASTOptionsEntryEnums_AssignmentOp : int {
+  ASTOptionsEntryEnums_AssignmentOp_NOT_SET = 0,
+  ASTOptionsEntryEnums_AssignmentOp_ASSIGN = 1,
+  ASTOptionsEntryEnums_AssignmentOp_ADD_ASSIGN = 2,
+  ASTOptionsEntryEnums_AssignmentOp_SUB_ASSIGN = 3,
+};
+
+bool ASTOptionsEntryEnums_AssignmentOp_IsValid(int value);
+constexpr ASTOptionsEntryEnums_AssignmentOp ASTOptionsEntryEnums_AssignmentOp_AssignmentOp_MIN = static_cast<ASTOptionsEntryEnums_AssignmentOp>(0);
+constexpr ASTOptionsEntryEnums_AssignmentOp ASTOptionsEntryEnums_AssignmentOp_AssignmentOp_MAX = static_cast<ASTOptionsEntryEnums_AssignmentOp>(3);
+constexpr int ASTOptionsEntryEnums_AssignmentOp_AssignmentOp_ARRAYSIZE = 3 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ASTOptionsEntryEnums_AssignmentOp_descriptor();
+template <typename T>
+const std::string& ASTOptionsEntryEnums_AssignmentOp_Name(T value) {
+  static_assert(std::is_same<T, ASTOptionsEntryEnums_AssignmentOp>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to AssignmentOp_Name().");
+  return ASTOptionsEntryEnums_AssignmentOp_Name(static_cast<ASTOptionsEntryEnums_AssignmentOp>(value));
+}
+template <>
+inline const std::string& ASTOptionsEntryEnums_AssignmentOp_Name(ASTOptionsEntryEnums_AssignmentOp value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ASTOptionsEntryEnums_AssignmentOp_descriptor,
+                                                 0, 3>(
+      static_cast<int>(value));
+}
+inline bool ASTOptionsEntryEnums_AssignmentOp_Parse(absl::string_view name, ASTOptionsEntryEnums_AssignmentOp* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTOptionsEntryEnums_AssignmentOp>(
+      ASTOptionsEntryEnums_AssignmentOp_descriptor(), name, value);
 }
 enum ASTOrderingExpressionEnums_OrderingSpec : int {
   ASTOrderingExpressionEnums_OrderingSpec_NOT_SET = 0,
@@ -949,6 +984,34 @@ inline bool ASTGeneratedColumnInfoEnums_StoredMode_Parse(absl::string_view name,
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTGeneratedColumnInfoEnums_StoredMode>(
       ASTGeneratedColumnInfoEnums_StoredMode_descriptor(), name, value);
 }
+enum ASTGeneratedColumnInfoEnums_GeneratedMode : int {
+  ASTGeneratedColumnInfoEnums_GeneratedMode_ALWAYS = 0,
+  ASTGeneratedColumnInfoEnums_GeneratedMode_BY_DEFAULT = 1,
+};
+
+bool ASTGeneratedColumnInfoEnums_GeneratedMode_IsValid(int value);
+constexpr ASTGeneratedColumnInfoEnums_GeneratedMode ASTGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MIN = static_cast<ASTGeneratedColumnInfoEnums_GeneratedMode>(0);
+constexpr ASTGeneratedColumnInfoEnums_GeneratedMode ASTGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MAX = static_cast<ASTGeneratedColumnInfoEnums_GeneratedMode>(1);
+constexpr int ASTGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_ARRAYSIZE = 1 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ASTGeneratedColumnInfoEnums_GeneratedMode_descriptor();
+template <typename T>
+const std::string& ASTGeneratedColumnInfoEnums_GeneratedMode_Name(T value) {
+  static_assert(std::is_same<T, ASTGeneratedColumnInfoEnums_GeneratedMode>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to GeneratedMode_Name().");
+  return ASTGeneratedColumnInfoEnums_GeneratedMode_Name(static_cast<ASTGeneratedColumnInfoEnums_GeneratedMode>(value));
+}
+template <>
+inline const std::string& ASTGeneratedColumnInfoEnums_GeneratedMode_Name(ASTGeneratedColumnInfoEnums_GeneratedMode value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ASTGeneratedColumnInfoEnums_GeneratedMode_descriptor,
+                                                 0, 1>(
+      static_cast<int>(value));
+}
+inline bool ASTGeneratedColumnInfoEnums_GeneratedMode_Parse(absl::string_view name, ASTGeneratedColumnInfoEnums_GeneratedMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTGeneratedColumnInfoEnums_GeneratedMode>(
+      ASTGeneratedColumnInfoEnums_GeneratedMode_descriptor(), name, value);
+}
 enum ASTColumnPositionEnums_RelativePositionType : int {
   ASTColumnPositionEnums_RelativePositionType_PRECEDING = 1,
   ASTColumnPositionEnums_RelativePositionType_FOLLOWING = 2,
@@ -1574,6 +1637,152 @@ class ASTBinaryExpressionEnums final :
   friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
 };// -------------------------------------------------------------------
 
+class ASTOptionsEntryEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ASTOptionsEntryEnums) */ {
+ public:
+  inline ASTOptionsEntryEnums() : ASTOptionsEntryEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ASTOptionsEntryEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ASTOptionsEntryEnums(const ASTOptionsEntryEnums& from);
+  ASTOptionsEntryEnums(ASTOptionsEntryEnums&& from) noexcept
+    : ASTOptionsEntryEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ASTOptionsEntryEnums& operator=(const ASTOptionsEntryEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ASTOptionsEntryEnums& operator=(ASTOptionsEntryEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ASTOptionsEntryEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ASTOptionsEntryEnums* internal_default_instance() {
+    return reinterpret_cast<const ASTOptionsEntryEnums*>(
+               &_ASTOptionsEntryEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(ASTOptionsEntryEnums& a, ASTOptionsEntryEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ASTOptionsEntryEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ASTOptionsEntryEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ASTOptionsEntryEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ASTOptionsEntryEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ASTOptionsEntryEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ASTOptionsEntryEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ASTOptionsEntryEnums";
+  }
+  protected:
+  explicit ASTOptionsEntryEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using AssignmentOp = ASTOptionsEntryEnums_AssignmentOp;
+  static constexpr AssignmentOp NOT_SET = ASTOptionsEntryEnums_AssignmentOp_NOT_SET;
+  static constexpr AssignmentOp ASSIGN = ASTOptionsEntryEnums_AssignmentOp_ASSIGN;
+  static constexpr AssignmentOp ADD_ASSIGN = ASTOptionsEntryEnums_AssignmentOp_ADD_ASSIGN;
+  static constexpr AssignmentOp SUB_ASSIGN = ASTOptionsEntryEnums_AssignmentOp_SUB_ASSIGN;
+  static inline bool AssignmentOp_IsValid(int value) {
+    return ASTOptionsEntryEnums_AssignmentOp_IsValid(value);
+  }
+  static constexpr AssignmentOp AssignmentOp_MIN = ASTOptionsEntryEnums_AssignmentOp_AssignmentOp_MIN;
+  static constexpr AssignmentOp AssignmentOp_MAX = ASTOptionsEntryEnums_AssignmentOp_AssignmentOp_MAX;
+  static constexpr int AssignmentOp_ARRAYSIZE = ASTOptionsEntryEnums_AssignmentOp_AssignmentOp_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AssignmentOp_descriptor() {
+    return ASTOptionsEntryEnums_AssignmentOp_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& AssignmentOp_Name(T value) {
+    return ASTOptionsEntryEnums_AssignmentOp_Name(value);
+  }
+  static inline bool AssignmentOp_Parse(absl::string_view name, AssignmentOp* value) {
+    return ASTOptionsEntryEnums_AssignmentOp_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ASTOptionsEntryEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
 class ASTOrderingExpressionEnums final :
     public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ASTOrderingExpressionEnums) */ {
  public:
@@ -1629,7 +1838,7 @@ class ASTOrderingExpressionEnums final :
                &_ASTOrderingExpressionEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(ASTOrderingExpressionEnums& a, ASTOrderingExpressionEnums& b) {
     a.Swap(&b);
@@ -1775,7 +1984,7 @@ class ASTJoinEnums final :
                &_ASTJoinEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(ASTJoinEnums& a, ASTJoinEnums& b) {
     a.Swap(&b);
@@ -1945,7 +2154,7 @@ class ASTSelectAsEnums final :
                &_ASTSelectAsEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(ASTSelectAsEnums& a, ASTSelectAsEnums& b) {
     a.Swap(&b);
@@ -2091,7 +2300,7 @@ class ASTFunctionCallEnums final :
                &_ASTFunctionCallEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(ASTFunctionCallEnums& a, ASTFunctionCallEnums& b) {
     a.Swap(&b);
@@ -2236,7 +2445,7 @@ class ASTExpressionSubqueryEnums final :
                &_ASTExpressionSubqueryEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(ASTExpressionSubqueryEnums& a, ASTExpressionSubqueryEnums& b) {
     a.Swap(&b);
@@ -2381,7 +2590,7 @@ class ASTHavingModifierEnums final :
                &_ASTHavingModifierEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(ASTHavingModifierEnums& a, ASTHavingModifierEnums& b) {
     a.Swap(&b);
@@ -2526,7 +2735,7 @@ class ASTSetOperationEnums final :
                &_ASTSetOperationEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(ASTSetOperationEnums& a, ASTSetOperationEnums& b) {
     a.Swap(&b);
@@ -2736,7 +2945,7 @@ class ASTUnaryExpressionEnums final :
                &_ASTUnaryExpressionEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(ASTUnaryExpressionEnums& a, ASTUnaryExpressionEnums& b) {
     a.Swap(&b);
@@ -2885,7 +3094,7 @@ class ASTWindowFrameEnums final :
                &_ASTWindowFrameEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(ASTWindowFrameEnums& a, ASTWindowFrameEnums& b) {
     a.Swap(&b);
@@ -3029,7 +3238,7 @@ class ASTWindowFrameExprEnums final :
                &_ASTWindowFrameExprEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(ASTWindowFrameExprEnums& a, ASTWindowFrameExprEnums& b) {
     a.Swap(&b);
@@ -3176,7 +3385,7 @@ class ASTAnySomeAllOpEnums final :
                &_ASTAnySomeAllOpEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(ASTAnySomeAllOpEnums& a, ASTAnySomeAllOpEnums& b) {
     a.Swap(&b);
@@ -3322,7 +3531,7 @@ class ASTTransactionReadWriteModeEnums final :
                &_ASTTransactionReadWriteModeEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(ASTTransactionReadWriteModeEnums& a, ASTTransactionReadWriteModeEnums& b) {
     a.Swap(&b);
@@ -3467,7 +3676,7 @@ class ASTImportStatementEnums final :
                &_ASTImportStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(ASTImportStatementEnums& a, ASTImportStatementEnums& b) {
     a.Swap(&b);
@@ -3611,7 +3820,7 @@ class ASTUnpivotClauseEnums final :
                &_ASTUnpivotClauseEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(ASTUnpivotClauseEnums& a, ASTUnpivotClauseEnums& b) {
     a.Swap(&b);
@@ -3756,7 +3965,7 @@ class ASTCreateStatementEnums final :
                &_ASTCreateStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(ASTCreateStatementEnums& a, ASTCreateStatementEnums& b) {
     a.Swap(&b);
@@ -3923,7 +4132,7 @@ class ASTFunctionParameterEnums final :
                &_ASTFunctionParameterEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(ASTFunctionParameterEnums& a, ASTFunctionParameterEnums& b) {
     a.Swap(&b);
@@ -4069,7 +4278,7 @@ class ASTTemplatedParameterTypeEnums final :
                &_ASTTemplatedParameterTypeEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(ASTTemplatedParameterTypeEnums& a, ASTTemplatedParameterTypeEnums& b) {
     a.Swap(&b);
@@ -4218,7 +4427,7 @@ class ASTGeneratedColumnInfoEnums final :
                &_ASTGeneratedColumnInfoEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(ASTGeneratedColumnInfoEnums& a, ASTGeneratedColumnInfoEnums& b) {
     a.Swap(&b);
@@ -4294,6 +4503,26 @@ class ASTGeneratedColumnInfoEnums final :
     return ASTGeneratedColumnInfoEnums_StoredMode_Parse(name, value);
   }
 
+  using GeneratedMode = ASTGeneratedColumnInfoEnums_GeneratedMode;
+  static constexpr GeneratedMode ALWAYS = ASTGeneratedColumnInfoEnums_GeneratedMode_ALWAYS;
+  static constexpr GeneratedMode BY_DEFAULT = ASTGeneratedColumnInfoEnums_GeneratedMode_BY_DEFAULT;
+  static inline bool GeneratedMode_IsValid(int value) {
+    return ASTGeneratedColumnInfoEnums_GeneratedMode_IsValid(value);
+  }
+  static constexpr GeneratedMode GeneratedMode_MIN = ASTGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MIN;
+  static constexpr GeneratedMode GeneratedMode_MAX = ASTGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_MAX;
+  static constexpr int GeneratedMode_ARRAYSIZE = ASTGeneratedColumnInfoEnums_GeneratedMode_GeneratedMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* GeneratedMode_descriptor() {
+    return ASTGeneratedColumnInfoEnums_GeneratedMode_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& GeneratedMode_Name(T value) {
+    return ASTGeneratedColumnInfoEnums_GeneratedMode_Name(value);
+  }
+  static inline bool GeneratedMode_Parse(absl::string_view name, GeneratedMode* value) {
+    return ASTGeneratedColumnInfoEnums_GeneratedMode_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:zetasql.ASTGeneratedColumnInfoEnums)
@@ -4363,7 +4592,7 @@ class ASTColumnPositionEnums final :
                &_ASTColumnPositionEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(ASTColumnPositionEnums& a, ASTColumnPositionEnums& b) {
     a.Swap(&b);
@@ -4507,7 +4736,7 @@ class ASTInsertStatementEnums final :
                &_ASTInsertStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(ASTInsertStatementEnums& a, ASTInsertStatementEnums& b) {
     a.Swap(&b);
@@ -4676,7 +4905,7 @@ class ASTMergeActionEnums final :
                &_ASTMergeActionEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(ASTMergeActionEnums& a, ASTMergeActionEnums& b) {
     a.Swap(&b);
@@ -4822,7 +5051,7 @@ class ASTMergeWhenClauseEnums final :
                &_ASTMergeWhenClauseEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    23;
 
   friend void swap(ASTMergeWhenClauseEnums& a, ASTMergeWhenClauseEnums& b) {
     a.Swap(&b);
@@ -4968,7 +5197,7 @@ class ASTFilterFieldsArgEnums final :
                &_ASTFilterFieldsArgEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    24;
 
   friend void swap(ASTFilterFieldsArgEnums& a, ASTFilterFieldsArgEnums& b) {
     a.Swap(&b);
@@ -5113,7 +5342,7 @@ class ASTSampleSizeEnums final :
                &_ASTSampleSizeEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    25;
 
   friend void swap(ASTSampleSizeEnums& a, ASTSampleSizeEnums& b) {
     a.Swap(&b);
@@ -5258,7 +5487,7 @@ class ASTForeignKeyActionsEnums final :
                &_ASTForeignKeyActionsEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    26;
 
   friend void swap(ASTForeignKeyActionsEnums& a, ASTForeignKeyActionsEnums& b) {
     a.Swap(&b);
@@ -5404,7 +5633,7 @@ class ASTForeignKeyReferenceEnums final :
                &_ASTForeignKeyReferenceEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    27;
 
   friend void swap(ASTForeignKeyReferenceEnums& a, ASTForeignKeyReferenceEnums& b) {
     a.Swap(&b);
@@ -5549,7 +5778,7 @@ class ASTBreakContinueStatementEnums final :
                &_ASTBreakContinueStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    28;
 
   friend void swap(ASTBreakContinueStatementEnums& a, ASTBreakContinueStatementEnums& b) {
     a.Swap(&b);
@@ -5695,7 +5924,7 @@ class ASTDropStatementEnums final :
                &_ASTDropStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    29;
 
   friend void swap(ASTDropStatementEnums& a, ASTDropStatementEnums& b) {
     a.Swap(&b);
@@ -5840,7 +6069,7 @@ class ASTCreateFunctionStmtBaseEnums final :
                &_ASTCreateFunctionStmtBaseEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    30;
 
   friend void swap(ASTCreateFunctionStmtBaseEnums& a, ASTCreateFunctionStmtBaseEnums& b) {
     a.Swap(&b);
@@ -5988,7 +6217,7 @@ class ASTAuxLoadDataStatementEnums final :
                &_ASTAuxLoadDataStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    31;
 
   friend void swap(ASTAuxLoadDataStatementEnums& a, ASTAuxLoadDataStatementEnums& b) {
     a.Swap(&b);
@@ -6133,7 +6362,7 @@ class ASTSpannerInterleaveClauseEnums final :
                &_ASTSpannerInterleaveClauseEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    32;
 
   friend void swap(ASTSpannerInterleaveClauseEnums& a, ASTSpannerInterleaveClauseEnums& b) {
     a.Swap(&b);
@@ -6238,6 +6467,10 @@ class ASTSpannerInterleaveClauseEnums final :
 // -------------------------------------------------------------------
 
 // ASTBinaryExpressionEnums
+
+// -------------------------------------------------------------------
+
+// ASTOptionsEntryEnums
 
 // -------------------------------------------------------------------
 
@@ -6380,6 +6613,12 @@ inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTBinaryExpressionEnu
   return ::zetasql::ASTBinaryExpressionEnums_Op_descriptor();
 }
 template <>
+struct is_proto_enum<::zetasql::ASTOptionsEntryEnums_AssignmentOp> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTOptionsEntryEnums_AssignmentOp>() {
+  return ::zetasql::ASTOptionsEntryEnums_AssignmentOp_descriptor();
+}
+template <>
 struct is_proto_enum<::zetasql::ASTOrderingExpressionEnums_OrderingSpec> : std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTOrderingExpressionEnums_OrderingSpec>() {
@@ -6516,6 +6755,12 @@ struct is_proto_enum<::zetasql::ASTGeneratedColumnInfoEnums_StoredMode> : std::t
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTGeneratedColumnInfoEnums_StoredMode>() {
   return ::zetasql::ASTGeneratedColumnInfoEnums_StoredMode_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ASTGeneratedColumnInfoEnums_GeneratedMode> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTGeneratedColumnInfoEnums_GeneratedMode>() {
+  return ::zetasql::ASTGeneratedColumnInfoEnums_GeneratedMode_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::ASTColumnPositionEnums_RelativePositionType> : std::true_type {};

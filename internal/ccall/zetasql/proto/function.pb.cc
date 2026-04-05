@@ -171,6 +171,8 @@ PROTOBUF_CONSTEXPR FunctionArgumentTypeOptionsProto::FunctionArgumentTypeOptions
 
   , /*decltype(_impl_.named_argument_kind_)*/ 0
 
+  , /*decltype(_impl_.must_be_constant_expression_)*/ false
+
   , /*decltype(_impl_.argument_alias_kind_)*/ 1
 
   , /*decltype(_impl_.descriptor_resolution_table_offset_)*/ -1
@@ -615,6 +617,7 @@ const ::uint32_t TableStruct_zetasql_2fproto_2ffunction_2eproto::offsets[] PROTO
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionArgumentTypeOptionsProto, _impl_.array_element_must_support_grouping_),
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionArgumentTypeOptionsProto, _impl_.named_argument_kind_),
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionArgumentTypeOptionsProto, _impl_.argument_alias_kind_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FunctionArgumentTypeOptionsProto, _impl_.must_be_constant_expression_),
     6,
     7,
     8,
@@ -630,16 +633,17 @@ const ::uint32_t TableStruct_zetasql_2fproto_2ffunction_2eproto::offsets[] PROTO
     3,
     17,
     15,
-    24,
+    25,
     4,
     5,
-    25,
+    26,
     16,
     18,
     19,
     20,
     21,
     22,
+    24,
     23,
     PROTOBUF_FIELD_OFFSET(::zetasql::ArgumentTypeLambdaProto, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::ArgumentTypeLambdaProto, _internal_metadata_),
@@ -897,21 +901,21 @@ static const ::_pbi::MigrationSchema
         { 32, 42, -1, sizeof(::zetasql::TVFModelProto)},
         { 44, 54, -1, sizeof(::zetasql::TVFConnectionProto)},
         { 56, -1, -1, sizeof(::zetasql::TVFDescriptorProto)},
-        { 65, 99, -1, sizeof(::zetasql::FunctionArgumentTypeOptionsProto)},
-        { 125, 135, -1, sizeof(::zetasql::ArgumentTypeLambdaProto)},
-        { 137, 150, -1, sizeof(::zetasql::FunctionArgumentTypeProto)},
-        { 155, 166, -1, sizeof(::zetasql::FunctionSignatureRewriteOptionsProto)},
-        { 169, 185, -1, sizeof(::zetasql::FunctionSignatureOptionsProto)},
-        { 193, 205, -1, sizeof(::zetasql::FunctionSignatureProto)},
-        { 209, 234, -1, sizeof(::zetasql::FunctionOptionsProto)},
-        { 251, 267, -1, sizeof(::zetasql::FunctionProto)},
-        { 275, -1, -1, sizeof(::zetasql::ResolvedFunctionCallInfoProto)},
-        { 283, 292, -1, sizeof(::zetasql::TableValuedFunctionOptionsProto)},
-        { 293, 310, -1, sizeof(::zetasql::TableValuedFunctionProto)},
-        { 319, 332, -1, sizeof(::zetasql::TVFArgumentProto)},
-        { 337, -1, -1, sizeof(::zetasql::TVFSignatureOptionsProto)},
-        { 346, 357, -1, sizeof(::zetasql::TVFSignatureProto)},
-        { 360, 370, -1, sizeof(::zetasql::ProcedureProto)},
+        { 65, 100, -1, sizeof(::zetasql::FunctionArgumentTypeOptionsProto)},
+        { 127, 137, -1, sizeof(::zetasql::ArgumentTypeLambdaProto)},
+        { 139, 152, -1, sizeof(::zetasql::FunctionArgumentTypeProto)},
+        { 157, 168, -1, sizeof(::zetasql::FunctionSignatureRewriteOptionsProto)},
+        { 171, 187, -1, sizeof(::zetasql::FunctionSignatureOptionsProto)},
+        { 195, 207, -1, sizeof(::zetasql::FunctionSignatureProto)},
+        { 211, 236, -1, sizeof(::zetasql::FunctionOptionsProto)},
+        { 253, 269, -1, sizeof(::zetasql::FunctionProto)},
+        { 277, -1, -1, sizeof(::zetasql::ResolvedFunctionCallInfoProto)},
+        { 285, 294, -1, sizeof(::zetasql::TableValuedFunctionOptionsProto)},
+        { 295, 312, -1, sizeof(::zetasql::TableValuedFunctionProto)},
+        { 321, 334, -1, sizeof(::zetasql::TVFArgumentProto)},
+        { 339, -1, -1, sizeof(::zetasql::TVFSignatureOptionsProto)},
+        { 348, 359, -1, sizeof(::zetasql::TVFSignatureProto)},
+        { 362, 372, -1, sizeof(::zetasql::ProcedureProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -961,7 +965,7 @@ const char descriptor_table_protodef_zetasql_2fproto_2ffunction_2eproto[] PROTOB
     "ModelProto\022\014\n\004name\030\001 \001(\t\022\021\n\tfull_name\030\002 "
     "\001(\t\"5\n\022TVFConnectionProto\022\014\n\004name\030\001 \001(\t\022"
     "\021\n\tfull_name\030\002 \001(\t\")\n\022TVFDescriptorProto"
-    "\022\023\n\013column_name\030\001 \003(\t\"\224\n\n FunctionArgume"
+    "\022\023\n\013column_name\030\001 \003(\t\"\271\n\n FunctionArgume"
     "ntTypeOptionsProto\022\?\n\013cardinality\030\001 \001(\0162"
     "*.zetasql.FunctionEnums.ArgumentCardinal"
     "ity\022\030\n\020must_be_constant\030\002 \001(\010\022\030\n\020must_be"
@@ -994,95 +998,96 @@ const char descriptor_table_protodef_zetasql_2fproto_2ffunction_2eproto[] PROTOB
     "FunctionEnums.NamedArgumentKind\022[\n\023argum"
     "ent_alias_kind\030\032 \001(\0162(.zetasql.FunctionE"
     "nums.ArgumentAliasKind:\024ARGUMENT_NON_ALI"
-    "ASED\"\201\001\n\027ArgumentTypeLambdaProto\0224\n\010argu"
-    "ment\030\005 \003(\0132\".zetasql.FunctionArgumentTyp"
-    "eProto\0220\n\004body\030\006 \001(\0132\".zetasql.FunctionA"
-    "rgumentTypeProto\"\362\001\n\031FunctionArgumentTyp"
-    "eProto\022,\n\004kind\030\001 \001(\0162\036.zetasql.Signature"
-    "ArgumentKind\022 \n\004type\030\002 \001(\0132\022.zetasql.Typ"
-    "eProto\022\027\n\017num_occurrences\030\004 \001(\005\022:\n\007optio"
-    "ns\030\003 \001(\0132).zetasql.FunctionArgumentTypeO"
-    "ptionsProto\0220\n\006lambda\030\005 \001(\0132 .zetasql.Ar"
-    "gumentTypeLambdaProto\"s\n$FunctionSignatu"
-    "reRewriteOptionsProto\022\017\n\007enabled\030\001 \001(\010\022-"
-    "\n\010rewriter\030\002 \001(\0162\033.zetasql.ResolvedASTRe"
-    "write\022\013\n\003sql\030\003 \001(\t\"\247\003\n\035FunctionSignature"
-    "OptionsProto\022\034\n\ris_deprecated\030\002 \001(\010:\005fal"
-    "se\022O\n\036additional_deprecation_warning\030\003 \003"
-    "(\0132\'.zetasql.FreestandingDeprecationWarn"
-    "ing\022;\n\031required_language_feature\030\004 \003(\0162\030"
-    ".zetasql.LanguageFeature\022#\n\024is_aliased_s"
-    "ignature\030\005 \001(\010:\005false\022\"\n\024propagates_coll"
-    "ation\030\006 \001(\010:\004true\022\'\n\030uses_operation_coll"
-    "ation\030\007 \001(\010:\005false\022 \n\021rejects_collation\030"
-    "\010 \001(\010:\005false\022F\n\017rewrite_options\030\t \001(\0132-."
-    "zetasql.FunctionSignatureRewriteOptionsP"
-    "roto\"\324\001\n\026FunctionSignatureProto\0224\n\010argum"
-    "ent\030\001 \003(\0132\".zetasql.FunctionArgumentType"
-    "Proto\0227\n\013return_type\030\002 \001(\0132\".zetasql.Fun"
-    "ctionArgumentTypeProto\022\022\n\ncontext_id\030\003 \001"
-    "(\003\0227\n\007options\030\004 \001(\0132&.zetasql.FunctionSi"
-    "gnatureOptionsProto\"\353\005\n\024FunctionOptionsP"
-    "roto\022#\n\024supports_over_clause\030\001 \001(\010:\005fals"
-    "e\022]\n\027window_ordering_support\030\002 \001(\0162).zet"
-    "asql.FunctionEnums.WindowOrderSupport:\021O"
-    "RDER_UNSUPPORTED\022&\n\027supports_window_fram"
-    "ing\030\003 \001(\010:\005false\022%\n\027arguments_are_coerci"
-    "ble\030\004 \001(\010:\004true\022\034\n\ris_deprecated\030\005 \001(\010:\005"
-    "false\022\022\n\nalias_name\030\006 \001(\t\022\020\n\010sql_name\030\007 "
-    "\001(\t\022\"\n\024allow_external_usage\030\010 \001(\010:\004true\022"
-    "@\n\nvolatility\030\t \001(\0162!.zetasql.FunctionEn"
-    "ums.Volatility:\tIMMUTABLE\022 \n\021supports_or"
-    "der_by\030\n \001(\010:\005false\022;\n\031required_language"
-    "_feature\030\013 \003(\0162\030.zetasql.LanguageFeature"
-    "\022\035\n\016supports_limit\030\014 \001(\010:\005false\022.\n\037suppo"
-    "rts_null_handling_modifier\030\r \001(\010:\005false\022"
-    "&\n\030supports_safe_error_mode\030\016 \001(\010:\004true\022"
-    "&\n\030supports_having_modifier\030\017 \001(\010:\004true\022"
-    "0\n!supports_clamped_between_modifier\030\020 \001"
-    "(\010:\005false\022&\n\030uses_upper_case_sql_name\030\021 "
-    "\001(\010:\004true\"\223\003\n\rFunctionProto\022\021\n\tname_path"
-    "\030\001 \003(\t\022\r\n\005group\030\002 \001(\t\022)\n\004mode\030\003 \001(\0162\033.ze"
-    "tasql.FunctionEnums.Mode\0222\n\tsignature\030\004 "
-    "\003(\0132\037.zetasql.FunctionSignatureProto\022.\n\007"
-    "options\030\005 \001(\0132\035.zetasql.FunctionOptionsP"
-    "roto\022@\n\025parse_resume_location\030\010 \001(\0132!.ze"
-    "tasql.ParseResumeLocationProto\022,\n$templa"
-    "ted_sql_function_argument_name\030\007 \003(\t\022a\n\014"
-    "sql_security\030\t \001(\01621.zetasql.ResolvedCre"
-    "ateStatementEnums.SqlSecurity:\030SQL_SECUR"
-    "ITY_UNSPECIFIED\"\037\n\035ResolvedFunctionCallI"
-    "nfoProto\"I\n\037TableValuedFunctionOptionsPr"
-    "oto\022&\n\030uses_upper_case_sql_name\030\001 \001(\010:\004t"
-    "rue\"\305\003\n\030TableValuedFunctionProto\022\021\n\tname"
-    "_path\030\001 \003(\t\0222\n\tsignature\030\002 \001(\0132\037.zetasql"
-    ".FunctionSignatureProto\0229\n\007options\030\t \001(\013"
-    "2(.zetasql.TableValuedFunctionOptionsPro"
-    "to\022<\n\004type\030\003 \001(\0162..zetasql.FunctionEnums"
-    ".TableValuedFunctionType\0225\n\nvolatility\030\010"
-    " \001(\0162!.zetasql.FunctionEnums.Volatility\022"
-    "@\n\025parse_resume_location\030\006 \001(\0132!.zetasql"
-    ".ParseResumeLocationProto\022\025\n\rargument_na"
-    "me\030\005 \003(\t\022\026\n\016custom_context\030\007 \001(\t\022A\n\022anon"
-    "ymization_info\030\n \001(\0132%.zetasql.SimpleAno"
-    "nymizationInfoProto\"\242\002\n\020TVFArgumentProto"
-    "\0224\n\017scalar_argument\030\001 \001(\0132\033.zetasql.Valu"
-    "eWithTypeProto\0224\n\021relation_argument\030\002 \001("
-    "\0132\031.zetasql.TVFRelationProto\022.\n\016model_ar"
-    "gument\030\003 \001(\0132\026.zetasql.TVFModelProto\0228\n\023"
-    "connection_argument\030\004 \001(\0132\033.zetasql.TVFC"
-    "onnectionProto\0228\n\023descriptor_argument\030\005 "
-    "\001(\0132\033.zetasql.TVFDescriptorProto\"k\n\030TVFS"
-    "ignatureOptionsProto\022O\n\036additional_depre"
-    "cation_warning\030\001 \003(\0132\'.zetasql.Freestand"
-    "ingDeprecationWarning\"\246\001\n\021TVFSignaturePr"
-    "oto\022+\n\010argument\030\001 \003(\0132\031.zetasql.TVFArgum"
-    "entProto\0220\n\routput_schema\030\002 \001(\0132\031.zetasq"
-    "l.TVFRelationProto\0222\n\007options\030\003 \001(\0132!.ze"
-    "tasql.TVFSignatureOptionsProto\"W\n\016Proced"
-    "ureProto\022\021\n\tname_path\030\001 \003(\t\0222\n\tsignature"
-    "\030\002 \001(\0132\037.zetasql.FunctionSignatureProtoB"
-    "$\n\022com.google.zetasqlB\016FunctionProtos"
+    "ASED\022#\n\033must_be_constant_expression\030\033 \001("
+    "\010\"\201\001\n\027ArgumentTypeLambdaProto\0224\n\010argumen"
+    "t\030\005 \003(\0132\".zetasql.FunctionArgumentTypePr"
+    "oto\0220\n\004body\030\006 \001(\0132\".zetasql.FunctionArgu"
+    "mentTypeProto\"\362\001\n\031FunctionArgumentTypePr"
+    "oto\022,\n\004kind\030\001 \001(\0162\036.zetasql.SignatureArg"
+    "umentKind\022 \n\004type\030\002 \001(\0132\022.zetasql.TypePr"
+    "oto\022\027\n\017num_occurrences\030\004 \001(\005\022:\n\007options\030"
+    "\003 \001(\0132).zetasql.FunctionArgumentTypeOpti"
+    "onsProto\0220\n\006lambda\030\005 \001(\0132 .zetasql.Argum"
+    "entTypeLambdaProto\"s\n$FunctionSignatureR"
+    "ewriteOptionsProto\022\017\n\007enabled\030\001 \001(\010\022-\n\010r"
+    "ewriter\030\002 \001(\0162\033.zetasql.ResolvedASTRewri"
+    "te\022\013\n\003sql\030\003 \001(\t\"\247\003\n\035FunctionSignatureOpt"
+    "ionsProto\022\034\n\ris_deprecated\030\002 \001(\010:\005false\022"
+    "O\n\036additional_deprecation_warning\030\003 \003(\0132"
+    "\'.zetasql.FreestandingDeprecationWarning"
+    "\022;\n\031required_language_feature\030\004 \003(\0162\030.ze"
+    "tasql.LanguageFeature\022#\n\024is_aliased_sign"
+    "ature\030\005 \001(\010:\005false\022\"\n\024propagates_collati"
+    "on\030\006 \001(\010:\004true\022\'\n\030uses_operation_collati"
+    "on\030\007 \001(\010:\005false\022 \n\021rejects_collation\030\010 \001"
+    "(\010:\005false\022F\n\017rewrite_options\030\t \001(\0132-.zet"
+    "asql.FunctionSignatureRewriteOptionsProt"
+    "o\"\324\001\n\026FunctionSignatureProto\0224\n\010argument"
+    "\030\001 \003(\0132\".zetasql.FunctionArgumentTypePro"
+    "to\0227\n\013return_type\030\002 \001(\0132\".zetasql.Functi"
+    "onArgumentTypeProto\022\022\n\ncontext_id\030\003 \001(\003\022"
+    "7\n\007options\030\004 \001(\0132&.zetasql.FunctionSigna"
+    "tureOptionsProto\"\353\005\n\024FunctionOptionsProt"
+    "o\022#\n\024supports_over_clause\030\001 \001(\010:\005false\022]"
+    "\n\027window_ordering_support\030\002 \001(\0162).zetasq"
+    "l.FunctionEnums.WindowOrderSupport:\021ORDE"
+    "R_UNSUPPORTED\022&\n\027supports_window_framing"
+    "\030\003 \001(\010:\005false\022%\n\027arguments_are_coercible"
+    "\030\004 \001(\010:\004true\022\034\n\ris_deprecated\030\005 \001(\010:\005fal"
+    "se\022\022\n\nalias_name\030\006 \001(\t\022\020\n\010sql_name\030\007 \001(\t"
+    "\022\"\n\024allow_external_usage\030\010 \001(\010:\004true\022@\n\n"
+    "volatility\030\t \001(\0162!.zetasql.FunctionEnums"
+    ".Volatility:\tIMMUTABLE\022 \n\021supports_order"
+    "_by\030\n \001(\010:\005false\022;\n\031required_language_fe"
+    "ature\030\013 \003(\0162\030.zetasql.LanguageFeature\022\035\n"
+    "\016supports_limit\030\014 \001(\010:\005false\022.\n\037supports"
+    "_null_handling_modifier\030\r \001(\010:\005false\022&\n\030"
+    "supports_safe_error_mode\030\016 \001(\010:\004true\022&\n\030"
+    "supports_having_modifier\030\017 \001(\010:\004true\0220\n!"
+    "supports_clamped_between_modifier\030\020 \001(\010:"
+    "\005false\022&\n\030uses_upper_case_sql_name\030\021 \001(\010"
+    ":\004true\"\223\003\n\rFunctionProto\022\021\n\tname_path\030\001 "
+    "\003(\t\022\r\n\005group\030\002 \001(\t\022)\n\004mode\030\003 \001(\0162\033.zetas"
+    "ql.FunctionEnums.Mode\0222\n\tsignature\030\004 \003(\013"
+    "2\037.zetasql.FunctionSignatureProto\022.\n\007opt"
+    "ions\030\005 \001(\0132\035.zetasql.FunctionOptionsProt"
+    "o\022@\n\025parse_resume_location\030\010 \001(\0132!.zetas"
+    "ql.ParseResumeLocationProto\022,\n$templated"
+    "_sql_function_argument_name\030\007 \003(\t\022a\n\014sql"
+    "_security\030\t \001(\01621.zetasql.ResolvedCreate"
+    "StatementEnums.SqlSecurity:\030SQL_SECURITY"
+    "_UNSPECIFIED\"\037\n\035ResolvedFunctionCallInfo"
+    "Proto\"I\n\037TableValuedFunctionOptionsProto"
+    "\022&\n\030uses_upper_case_sql_name\030\001 \001(\010:\004true"
+    "\"\305\003\n\030TableValuedFunctionProto\022\021\n\tname_pa"
+    "th\030\001 \003(\t\0222\n\tsignature\030\002 \001(\0132\037.zetasql.Fu"
+    "nctionSignatureProto\0229\n\007options\030\t \001(\0132(."
+    "zetasql.TableValuedFunctionOptionsProto\022"
+    "<\n\004type\030\003 \001(\0162..zetasql.FunctionEnums.Ta"
+    "bleValuedFunctionType\0225\n\nvolatility\030\010 \001("
+    "\0162!.zetasql.FunctionEnums.Volatility\022@\n\025"
+    "parse_resume_location\030\006 \001(\0132!.zetasql.Pa"
+    "rseResumeLocationProto\022\025\n\rargument_name\030"
+    "\005 \003(\t\022\026\n\016custom_context\030\007 \001(\t\022A\n\022anonymi"
+    "zation_info\030\n \001(\0132%.zetasql.SimpleAnonym"
+    "izationInfoProto\"\242\002\n\020TVFArgumentProto\0224\n"
+    "\017scalar_argument\030\001 \001(\0132\033.zetasql.ValueWi"
+    "thTypeProto\0224\n\021relation_argument\030\002 \001(\0132\031"
+    ".zetasql.TVFRelationProto\022.\n\016model_argum"
+    "ent\030\003 \001(\0132\026.zetasql.TVFModelProto\0228\n\023con"
+    "nection_argument\030\004 \001(\0132\033.zetasql.TVFConn"
+    "ectionProto\0228\n\023descriptor_argument\030\005 \001(\013"
+    "2\033.zetasql.TVFDescriptorProto\"k\n\030TVFSign"
+    "atureOptionsProto\022O\n\036additional_deprecat"
+    "ion_warning\030\001 \003(\0132\'.zetasql.Freestanding"
+    "DeprecationWarning\"\246\001\n\021TVFSignatureProto"
+    "\022+\n\010argument\030\001 \003(\0132\031.zetasql.TVFArgument"
+    "Proto\0220\n\routput_schema\030\002 \001(\0132\031.zetasql.T"
+    "VFRelationProto\0222\n\007options\030\003 \001(\0132!.zetas"
+    "ql.TVFSignatureOptionsProto\"W\n\016Procedure"
+    "Proto\022\021\n\tname_path\030\001 \003(\t\0222\n\tsignature\030\002 "
+    "\001(\0132\037.zetasql.FunctionSignatureProtoB$\n\022"
+    "com.google.zetasqlB\016FunctionProtos"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2ffunction_2eproto_deps[11] =
     {
@@ -1102,7 +1107,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fproto_2ffunction_2eproto_onc
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2ffunction_2eproto = {
     false,
     false,
-    5837,
+    5874,
     descriptor_table_protodef_zetasql_2fproto_2ffunction_2eproto,
     "zetasql/proto/function.proto",
     &descriptor_table_zetasql_2fproto_2ffunction_2eproto_once,
@@ -2623,7 +2628,7 @@ class FunctionArgumentTypeOptionsProto::_Internal {
     (*has_bits)[0] |= 32768u;
   }
   static void set_has_descriptor_resolution_table_offset(HasBits* has_bits) {
-    (*has_bits)[0] |= 16777216u;
+    (*has_bits)[0] |= 33554432u;
   }
   static const ::zetasql::ValueProto& default_value(const FunctionArgumentTypeOptionsProto* msg);
   static void set_has_default_value(HasBits* has_bits) {
@@ -2634,7 +2639,7 @@ class FunctionArgumentTypeOptionsProto::_Internal {
     (*has_bits)[0] |= 32u;
   }
   static void set_has_argument_collation_mode(HasBits* has_bits) {
-    (*has_bits)[0] |= 33554432u;
+    (*has_bits)[0] |= 67108864u;
   }
   static void set_has_uses_array_element_for_collation(HasBits* has_bits) {
     (*has_bits)[0] |= 65536u;
@@ -2655,6 +2660,9 @@ class FunctionArgumentTypeOptionsProto::_Internal {
     (*has_bits)[0] |= 4194304u;
   }
   static void set_has_argument_alias_kind(HasBits* has_bits) {
+    (*has_bits)[0] |= 16777216u;
+  }
+  static void set_has_must_be_constant_expression(HasBits* has_bits) {
     (*has_bits)[0] |= 8388608u;
   }
 };
@@ -2747,6 +2755,8 @@ FunctionArgumentTypeOptionsProto::FunctionArgumentTypeOptionsProto(const Functio
 
     , decltype(_impl_.named_argument_kind_) {}
 
+    , decltype(_impl_.must_be_constant_expression_) {}
+
     , decltype(_impl_.argument_alias_kind_) {}
 
     , decltype(_impl_.descriptor_resolution_table_offset_) {}
@@ -2829,6 +2839,8 @@ inline void FunctionArgumentTypeOptionsProto::SharedCtor(::_pb::Arena* arena) {
 
     , decltype(_impl_.named_argument_kind_) { 0 }
 
+    , decltype(_impl_.must_be_constant_expression_) { false }
+
     , decltype(_impl_.argument_alias_kind_) { 1 }
 
     , decltype(_impl_.descriptor_resolution_table_offset_) { -1 }
@@ -2909,11 +2921,11 @@ void FunctionArgumentTypeOptionsProto::Clear() {
   }
   if (cached_has_bits & 0x00ff0000u) {
     ::memset(&_impl_.uses_array_element_for_collation_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.named_argument_kind_) -
-        reinterpret_cast<char*>(&_impl_.uses_array_element_for_collation_)) + sizeof(_impl_.named_argument_kind_));
-    _impl_.argument_alias_kind_ = 1;
+        reinterpret_cast<char*>(&_impl_.must_be_constant_expression_) -
+        reinterpret_cast<char*>(&_impl_.uses_array_element_for_collation_)) + sizeof(_impl_.must_be_constant_expression_));
   }
-  if (cached_has_bits & 0x03000000u) {
+  if (cached_has_bits & 0x07000000u) {
+    _impl_.argument_alias_kind_ = 1;
     _impl_.descriptor_resolution_table_offset_ = -1;
     _impl_.argument_collation_mode_ = 3;
   }
@@ -3206,6 +3218,16 @@ const char* FunctionArgumentTypeOptionsProto::_InternalParse(const char* ptr, ::
           goto handle_unusual;
         }
         continue;
+      // optional bool must_be_constant_expression = 27;
+      case 27:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 216)) {
+          _Internal::set_has_must_be_constant_expression(&has_bits);
+          _impl_.must_be_constant_expression_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -3344,7 +3366,7 @@ failure:
   }
 
   // optional int32 descriptor_resolution_table_offset = 16 [default = -1];
-  if (cached_has_bits & 0x01000000u) {
+  if (cached_has_bits & 0x02000000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
         16, this->_internal_descriptor_resolution_table_offset(), target);
@@ -3365,7 +3387,7 @@ failure:
   }
 
   // optional .zetasql.FunctionEnums.ArgumentCollationMode argument_collation_mode = 19 [default = AFFECTS_OPERATION_AND_PROPAGATION];
-  if (cached_has_bits & 0x02000000u) {
+  if (cached_has_bits & 0x04000000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
         19, this->_internal_argument_collation_mode(), target);
@@ -3414,10 +3436,17 @@ failure:
   }
 
   // optional .zetasql.FunctionEnums.ArgumentAliasKind argument_alias_kind = 26 [default = ARGUMENT_NON_ALIASED];
-  if (cached_has_bits & 0x00800000u) {
+  if (cached_has_bits & 0x01000000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
         26, this->_internal_argument_alias_kind(), target);
+  }
+
+  // optional bool must_be_constant_expression = 27;
+  if (cached_has_bits & 0x00800000u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        27, this->_internal_must_be_constant_expression(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3573,22 +3602,27 @@ failure:
                     ::_pbi::WireFormatLite::EnumSize(this->_internal_named_argument_kind());
     }
 
-    // optional .zetasql.FunctionEnums.ArgumentAliasKind argument_alias_kind = 26 [default = ARGUMENT_NON_ALIASED];
+    // optional bool must_be_constant_expression = 27;
     if (cached_has_bits & 0x00800000u) {
+      total_size += 3;
+    }
+
+  }
+  if (cached_has_bits & 0x07000000u) {
+    // optional .zetasql.FunctionEnums.ArgumentAliasKind argument_alias_kind = 26 [default = ARGUMENT_NON_ALIASED];
+    if (cached_has_bits & 0x01000000u) {
       total_size += 2 +
                     ::_pbi::WireFormatLite::EnumSize(this->_internal_argument_alias_kind());
     }
 
-  }
-  if (cached_has_bits & 0x03000000u) {
     // optional int32 descriptor_resolution_table_offset = 16 [default = -1];
-    if (cached_has_bits & 0x01000000u) {
+    if (cached_has_bits & 0x02000000u) {
       total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                       this->_internal_descriptor_resolution_table_offset());
     }
 
     // optional .zetasql.FunctionEnums.ArgumentCollationMode argument_collation_mode = 19 [default = AFFECTS_OPERATION_AND_PROPAGATION];
-    if (cached_has_bits & 0x02000000u) {
+    if (cached_has_bits & 0x04000000u) {
       total_size += 2 +
                     ::_pbi::WireFormatLite::EnumSize(this->_internal_argument_collation_mode());
     }
@@ -3695,15 +3729,18 @@ void FunctionArgumentTypeOptionsProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Messag
       _this->_impl_.named_argument_kind_ = from._impl_.named_argument_kind_;
     }
     if (cached_has_bits & 0x00800000u) {
-      _this->_impl_.argument_alias_kind_ = from._impl_.argument_alias_kind_;
+      _this->_impl_.must_be_constant_expression_ = from._impl_.must_be_constant_expression_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (cached_has_bits & 0x03000000u) {
+  if (cached_has_bits & 0x07000000u) {
     if (cached_has_bits & 0x01000000u) {
-      _this->_impl_.descriptor_resolution_table_offset_ = from._impl_.descriptor_resolution_table_offset_;
+      _this->_impl_.argument_alias_kind_ = from._impl_.argument_alias_kind_;
     }
     if (cached_has_bits & 0x02000000u) {
+      _this->_impl_.descriptor_resolution_table_offset_ = from._impl_.descriptor_resolution_table_offset_;
+    }
+    if (cached_has_bits & 0x04000000u) {
       _this->_impl_.argument_collation_mode_ = from._impl_.argument_collation_mode_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;

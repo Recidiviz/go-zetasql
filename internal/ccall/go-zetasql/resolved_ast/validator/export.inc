@@ -26,6 +26,7 @@
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/aggregation_threshold_utils/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
+#include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/constant/export.inc"
 #include "go-zetasql/public/function/export.inc"

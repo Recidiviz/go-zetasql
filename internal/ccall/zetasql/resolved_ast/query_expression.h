@@ -25,6 +25,7 @@
 
 #include "zetasql/analyzer/query_resolver_helper.h"
 #include "absl/container/flat_hash_map.h"
+#include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 
@@ -74,12 +75,16 @@ class QueryExpression {
       std::vector<std::unique_ptr<QueryExpression>>* set_op_scan_list,
       const std::string& set_op_type, const std::string& set_op_modifier,
       const std::string& set_op_column_match_mode,
+      const std::string& set_op_column_propagation_mode,
       const std::string& query_hints);
   bool TrySetGroupByClause(
       const std::map<int, std::string>& group_by_list,
       const std::string& group_by_hints,
       const std::vector<GroupingSetIds>& grouping_set_id_list,
       const std::vector<int>& rollup_column_id_list);
+  absl::Status SetGroupByAllClause(
+      const std::map<int, std::string>& group_by_list,
+      const std::string& group_by_hints);
   bool TrySetOrderByClause(const std::vector<std::string>& order_by_list,
                            const std::string& order_by_hints);
   bool TrySetLimitClause(const std::string& limit);
@@ -111,7 +116,9 @@ class QueryExpression {
   bool HasFromClause() const { return !from_.empty(); }
   bool HasWhereClause() const { return !where_.empty(); }
   bool HasSetOpScanList() const { return !set_op_scan_list_.empty(); }
-  bool HasGroupByClause() const { return !group_by_list_.empty(); }
+  bool HasGroupByClause() const {
+    return !group_by_list_.empty() || group_by_all_;
+  }
   bool HasOrderByClause() const { return !order_by_list_.empty(); }
   bool HasLimitClause() const { return !limit_.empty(); }
   bool HasOffsetClause() const { return !offset_.empty(); }
@@ -176,6 +183,8 @@ class QueryExpression {
       std::pair<std::string /* with_alias */, std::string /* with_query */>>
       with_list_;
   bool with_recursive_ = false;
+  bool group_by_all_ = false;
+
   std::vector<std::pair<std::string /* select column */,
                         std::string /* select alias */>>
       select_list_;
@@ -199,8 +208,11 @@ class QueryExpression {
   // For a set operation, contains either ALL or DISTINCT.
   std::string set_op_modifier_;
   // For a set operation, contains one of ["", "CORRESPONDING",
-  // "CORRESPONDING_BY"]; for non set operations it is "".
+  // "CORRESPONDING BY"]; for non set operations it is "".
   std::string set_op_column_match_mode_;
+  // For a set operation, contains one of "", "FULL", "LEFT", "STRICT"; for
+  // non set operations it is "".
+  std::string set_op_column_propagation_mode_;
   // For QueryExpression of a SetOperationScan, the set_op_scan_list will
   // contain QueryExpression for each of the input queries in the set
   // operation.

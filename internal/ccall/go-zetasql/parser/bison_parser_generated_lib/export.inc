@@ -3,16 +3,17 @@
 
 #include "zetasql/parser/bison_parser.bison.h"
 #include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/bison_parser_mode.h"
 #include "zetasql/parser/join_processor.h"
-#include "zetasql/parser/location.hh"
 #include "zetasql/parser/parser_internal.h"
 #include "zetasql/parser/parser_runtime_info.h"
 #include "zetasql/parser/statement_properties.h"
 // include sources
 // include dependencies
+#include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+#include "go-zetasql/parser/location/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/tokenizer/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -35,6 +36,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
+#include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #endif

@@ -526,6 +526,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedAlterColumnDropNotNullAction(const ResolvedAlterColumnDropNotNullAction* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedAlterColumnDropGeneratedAction(const ResolvedAlterColumnDropGeneratedAction* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedAlterColumnSetDataTypeAction(const ResolvedAlterColumnSetDataTypeAction* node) {
     return DefaultVisit(node);
   }
@@ -695,6 +698,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedUndropStmt(const ResolvedUndropStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo* node) {
     return DefaultVisit(node);
   }
 };

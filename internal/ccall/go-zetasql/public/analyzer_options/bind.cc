@@ -228,6 +228,18 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_public_analyzer_options_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_public_analyzer_options_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_public_analyzer_options_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_public_analyzer_options_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_public_analyzer_options_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_public_analyzer_options_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_public_analyzer_options_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_public_analyzer_options_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_public_analyzer_options_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_public_analyzer_options_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_public_analyzer_options_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_public_analyzer_options_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_public_analyzer_options_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_public_analyzer_options_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_public_analyzer_options_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_public_analyzer_options_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -242,11 +254,13 @@
 
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
+#include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/rewriter_interface/export.inc"
 #include "go-zetasql/public/time_zone_util/export.inc"
 #include "go-zetasql/public/type/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
@@ -259,6 +273,7 @@
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"
 

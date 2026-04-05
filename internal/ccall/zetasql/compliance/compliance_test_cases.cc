@@ -16,6 +16,7 @@
 
 #include "zetasql/compliance/compliance_test_cases.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <iterator>
@@ -56,7 +57,6 @@
 #include "gtest/gtest.h"
 #include "absl/base/attributes.h"
 #include "absl/base/casts.h"
-#include <cstdint>
 #include "absl/container/flat_hash_set.h"
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
@@ -1524,8 +1524,35 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonRemove, 1) {
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonSet, 1) {
   SetNamePrefix("JsonSet");
-  RunFunctionCalls(
-      Shard(EnableJsonMutatorFunctionsForTest(GetFunctionTestsJsonSet())));
+
+  auto fn_expr = [](const FunctionTestCall& f) {
+    std::string arguments;
+    size_t size = f.params.params().size();
+
+    // Function Signature:
+    // JSON_SET(JSON json_doc, path, value[, path, value]...,
+    // create_if_missing => {true, false}).
+    if (size % 2 == 0) {
+      // There is an even number of parameters which means a value was
+      // provided for `create_if_missing` at the last positional argument.
+      for (int i = 0; i < f.params.params().size() - 1; ++i) {
+        absl::StrAppend(&arguments, "@p", i, ", ");
+      }
+      absl::StrAppend(&arguments, "create_if_missing=>@p", size - 1);
+    } else {
+      // There is an odd number of parameters which means no value is
+      // provided for `create_if_missing`. The specified default value is
+      // automatically used.
+      for (int i = 0; i < f.params.params().size(); ++i) {
+        absl::StrAppend(&arguments, "@p", i, ", ");
+      }
+      arguments.resize(arguments.size() - 2);
+    }
+    return absl::Substitute("$0($1)", f.function_name, arguments);
+  };
+  RunFunctionTestsCustom(
+      Shard(EnableJsonMutatorFunctionsForTest(GetFunctionTestsJsonSet())),
+      fn_expr);
 }
 
 SHARDED_TEST_F(ComplianceCodebasedTests, TestJsonArrayInsert, 1) {
@@ -2595,6 +2622,17 @@ SHARDED_TEST_F(ComplianceCodebasedTests, TestEditDistance, 1) {
       test_case.params.AddRequiredFeature(FEATURE_NAMED_ARGUMENTS);
     }
   }
+  std::vector<FunctionTestCall> tests_bytes =
+      GetFunctionTestsEditDistanceBytes();
+  for (auto& test_case : tests_bytes) {
+    test_case.params.AddRequiredFeature(
+        FEATURE_V_1_4_ENABLE_EDIT_DISTANCE_BYTES);
+    if (test_case.params.params().size() == 3) {
+      test_case.params.AddRequiredFeature(FEATURE_NAMED_ARGUMENTS);
+    }
+  }
+  tests.insert(tests.end(), tests_bytes.begin(), tests_bytes.end());
+
   RunFunctionTestsCustom(Shard(tests), edit_distance_fn);
 }
 

@@ -95,12 +95,13 @@ struct AlgebrizerOptions {
 };
 
 struct AnonymizationOptions {
-  std::optional<Value> epsilon;                    // double Value
-  std::optional<Value> delta;                      // double Value
-  std::optional<Value> max_groups_contributed;     // int64_t Value
-  std::optional<Value> max_rows_contributed;       // int64_t Value
-  std::optional<Value> group_selection_threshold;  // int64_t Value
-  std::optional<Value> group_selection_strategy;   // enum Value
+  std::optional<Value> epsilon;                      // double Value
+  std::optional<Value> delta;                        // double Value
+  std::optional<Value> max_groups_contributed;       // int64_t Value
+  std::optional<Value> max_rows_contributed;         // int64_t Value
+  std::optional<Value> group_selection_threshold;    // int64_t Value
+  std::optional<Value> min_privacy_units_per_group;  // int64_t Value
+  std::optional<Value> group_selection_strategy;     // enum Value
 };
 
 class Algebrizer {
@@ -259,6 +260,35 @@ class Algebrizer {
       std::unique_ptr<ValueExpr> in_value,
       std::unique_ptr<ValueExpr> array_value,
       const ResolvedCollation& collation);
+
+  absl::StatusOr<std::unique_ptr<RelationalOp>> AlgebrizeUdaCall(
+      const AnonymizationOptions* anonymization_options,
+      const ResolvedExpr& function_expr,
+      const std::vector<const ResolvedExpr*>& aggregate_exprs,
+      const ResolvedColumnList& aggregate_expr_columns,
+      std::vector<std::string> argument_names,
+      const LanguageOptions& language_options,
+      const AlgebrizerOptions& algebrizer_options, TypeFactory* type_factory);
+
+  absl::StatusOr<std::unique_ptr<AggregateFunctionBody>>
+  CreateCallbackUserDefinedAggregateFn(
+      const ResolvedNonScalarFunctionCallBase* aggregate_function,
+      const AnonymizationOptions* anonymization_options);
+
+  absl::StatusOr<std::unique_ptr<AggregateFunctionBody>>
+  CreateTemplatedUserDefinedAggregateFn(
+      const ResolvedNonScalarFunctionCallBase* aggregate_function,
+      const AnonymizationOptions* anonymization_options);
+
+  absl::StatusOr<std::unique_ptr<AggregateFunctionBody>>
+  CreateNonTemplatedUserDefinedAggregateFn(
+      const ResolvedNonScalarFunctionCallBase* aggregate_function,
+      const AnonymizationOptions* anonymization_options);
+
+  absl::StatusOr<std::unique_ptr<AggregateFunctionBody>>
+  CreateUserDefinedAggregateFn(
+      const ResolvedNonScalarFunctionCallBase* aggregate_function,
+      const AnonymizationOptions* anonymization_options);
 
   // TODO: Remove the special collation logics in this function.
   absl::StatusOr<std::unique_ptr<ValueExpr>>
@@ -626,8 +656,15 @@ class Algebrizer {
 
   // Algebrize expressions of columns with default values or generated columns
   // in 'table', and put them into the output argument, 'column_expr_map'.
-  absl::Status AlgebrizeDefaultExpressions(const ResolvedTableScan* table_scan,
-                                           ColumnExprMap* column_expr_map);
+  // generated_column_exprs contain the rewritten generated column expressions
+  // corresponding to each generated column represented by the column id in
+  // the topologically_sorted_generated_column_ids and hence have same size and
+  // 1-to-1 mapping.
+  absl::Status AlgebrizeDefaultAndGeneratedExpressions(
+      const ResolvedTableScan* table_scan, ColumnExprMap* column_expr_map,
+      const std::vector<std::unique_ptr<const ResolvedExpr>>&
+          generated_column_exprs,
+      std::vector<int> topologically_sorted_generated_column_ids);
 
   // Given a list of ResolvedComputedColumn and a column_id, return in
   // (*definition) the expression that defines that column, or nullptr if not
@@ -674,8 +711,7 @@ class Algebrizer {
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeIfNull(
       const Type* output_type, std::vector<std::unique_ptr<ValueExpr>> args);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeNullIf(
-      const Type* output_type, std::vector<std::unique_ptr<ValueExpr>> args,
-      const std::vector<ResolvedCollation>& collation_list);
+      const Type* output_type, std::vector<std::unique_ptr<ValueExpr>> args);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeCoalesce(
       const Type* output_type, std::vector<std::unique_ptr<ValueExpr>> args);
   absl::StatusOr<std::unique_ptr<ValueExpr>> AlgebrizeCaseNoValue(

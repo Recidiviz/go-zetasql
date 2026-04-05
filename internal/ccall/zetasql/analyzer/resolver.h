@@ -17,6 +17,7 @@
 #ifndef ZETASQL_ANALYZER_RESOLVER_H_
 #define ZETASQL_ANALYZER_RESOLVER_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <map>
@@ -25,6 +26,7 @@
 #include <set>
 #include <stack>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -36,6 +38,7 @@
 #include "zetasql/analyzer/expr_resolver_helper.h"
 #include "zetasql/analyzer/name_scope.h"
 #include "zetasql/analyzer/named_argument_info.h"
+#include "zetasql/analyzer/path_expression_span.h"
 #include "zetasql/analyzer/query_resolver_helper.h"
 #include "zetasql/parser/parse_tree.h"
 #include "zetasql/public/analyzer_options.h"
@@ -44,11 +47,13 @@
 #include "zetasql/public/coercer.h"
 #include "zetasql/public/deprecation_warning.pb.h"
 #include "zetasql/public/function.h"
+#include "zetasql/public/function_signature.h"
 #include "zetasql/public/functions/datetime.pb.h"
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/options.pb.h"
 #include "zetasql/public/parse_location.h"
+#include "zetasql/public/select_with_mode.h"
 #include "zetasql/public/signature_match_result.h"
 #include "zetasql/public/table_valued_function.h"
 #include "zetasql/public/type.h"
@@ -67,13 +72,12 @@
 #include "zetasql/resolved_ast/resolved_column.h"
 #include "zetasql/resolved_ast/resolved_node.h"
 #include "zetasql/base/case.h"
+#include "gtest/gtest_prod.h"
 #include "absl/base/attributes.h"
-#include "absl/base/macros.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/container/node_hash_map.h"
-#include "absl/functional/any_invocable.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
@@ -116,6 +120,12 @@ class Resolver {
     DifferentialPrivacyOption,
     AggregationThresholdOption,
   };
+
+  struct GeneratedColumnIndexAndResolvedId {
+    int column_index;
+    int resolved_column_id;
+  };
+
   // <*analyzer_options> should outlive the constructed Resolver. It must have
   // all arenas initialized.
   Resolver(Catalog* catalog, TypeFactory* type_factory,
@@ -353,6 +363,8 @@ class Resolver {
  private:
   // Case-insensitive map of a column name to its position in a list of columns.
   typedef std::map<IdString, int, IdStringCaseLess> ColumnIndexMap;
+  typedef absl::flat_hash_map<ResolvedColumn, const Column*>
+      ResolvedColumnToCatalogColumnHashMap;
 
   // These indicate arguments that require special treatment during resolution,
   // and are related to special syntaxes in the grammar.  The grammar should
@@ -382,14 +394,19 @@ class Resolver {
 
   class GeneratedColumnTopoSorter : public ResolvedASTVisitor {
    public:
-    explicit GeneratedColumnTopoSorter(const Table* table,
-                                       CycleDetector* cycle_detector,
-                                       std::vector<int>& generated_columns)
+    explicit GeneratedColumnTopoSorter(
+        const Table* table, CycleDetector* cycle_detector,
+        std::vector<int>& generated_column_indices,
+        absl::node_hash_map<const Column*, ResolvedColumn>&
+            catalog_columns_to_resolved_columns_map)
         : table_(table),
           cycle_detector_(cycle_detector),
-          generated_columns_(generated_columns) {}
-    std::vector<int> release_topologically_sorted_generated_columns() {
-      std::vector<int> tmp;
+          generated_column_indices_(generated_column_indices),
+          catalog_columns_to_resolved_columns_map_(
+              catalog_columns_to_resolved_columns_map) {}
+    std::vector<GeneratedColumnIndexAndResolvedId>
+    release_topologically_sorted_generated_columns() {
+      std::vector<GeneratedColumnIndexAndResolvedId> tmp;
       topologically_sorted_generated_columns_.swap(tmp);
       return tmp;
     }
@@ -399,15 +416,24 @@ class Resolver {
     absl::Status DefaultVisit(const ResolvedNode* node) override;
     const Table* table_;
     CycleDetector* cycle_detector_;
-    const std::vector<int>& generated_columns_;
-    absl::flat_hash_set<int> visited_columns_;
-    std::vector<int> topologically_sorted_generated_columns_;
+    const std::vector<int>& generated_column_indices_;
+    // absl::node_hash_map is used for pointer stability since this is a map
+    // of a pointer vs value(ResolvedColumn) and ResolvedColumn is owned by the
+    // map.
+    absl::node_hash_map<const Column*, ResolvedColumn>&
+        catalog_columns_to_resolved_columns_map_;
+    absl::flat_hash_set<int> visited_column_indices_;
+    std::vector<GeneratedColumnIndexAndResolvedId>
+        topologically_sorted_generated_columns_;
   };
 
   absl::Status TopologicallySortGeneratedColumns(
       std::vector<int>& generated_columns, const Table* table,
       CycleDetector* cycle_detector,
-      std::vector<int>& out_topologically_sorted_generated_columns);
+      absl::node_hash_map<const Column*, ResolvedColumn>&
+          catalog_columns_to_resolved_columns_map,
+      std::vector<GeneratedColumnIndexAndResolvedId>&
+          out_topologically_sorted_generated_columns);
 
   static const std::map<int, SpecialArgumentType>* const
       kEmptyArgumentOptionMap;
@@ -580,7 +606,7 @@ class Resolver {
   void AddNamedSubquery(const std::vector<IdString>& alias,
                         std::unique_ptr<NamedSubquery> named_subquery);
   bool IsPathExpressionStartingFromNamedSubquery(
-      const ASTPathExpression* path_expr);
+      const ASTPathExpression& path_expr) const;
 
   // Set of unique WITH aliases seen so far.  If there are duplicate WITH
   // aliases in the query (visible in different scopes), we'll give them
@@ -633,8 +659,7 @@ class Resolver {
   // Column::IsWritableColumn().
   // Note that this is filled in only for ResolvedColumns directly produced in a
   // ResolvedTableScan, not any derived columns.
-  absl::flat_hash_map<ResolvedColumn, const Column*, ResolvedColumnHasher>
-      resolved_columns_from_table_scans_;
+  ResolvedColumnToCatalogColumnHashMap resolved_columns_from_table_scans_;
 
   // Maps resolved floating point literal IDs to their original textual image.
   absl::flat_hash_map<int, std::string> float_literal_images_;
@@ -688,14 +713,6 @@ class Resolver {
   std::unique_ptr<const ResolvedLiteral> MakeResolvedLiteral(
       const ASTNode* ast_location, const Value& value,
       bool set_has_explicit_type = false) const;
-
-  ABSL_DEPRECATED("Inline me!")
-  std::unique_ptr<const ResolvedLiteral> MakeResolvedLiteral(
-      const ASTNode* ast_location, const Type* type, const Value& value,
-      bool has_explicit_type) const {
-    return MakeResolvedLiteral(ast_location, {type, /*annotation_map=*/nullptr},
-                               value, has_explicit_type);
-  }
 
   // Same as the previous method but <annotated_type> is used to contain
   // both target type and its annotation information.
@@ -822,6 +839,26 @@ class Resolver {
       const ASTGeneratedColumnInfo* ast_generated_column,
       const NameList& column_name_list, const Type* opt_type,
       std::unique_ptr<ResolvedGeneratedColumnInfo>* output);
+
+  // Creates the ResolvedIdentityColumnInfo from an ASTIdentityColumnInfo.
+  // - `ast_identity_column`: Is a pointer to the identity column.
+  // - `type`: The type of the column and expected type of the expression.
+  // - `output`: The resolved identity column.
+  absl::Status ResolveIdentityColumnInfo(
+      const ASTIdentityColumnInfo* ast_identity_column,
+      const NameList& column_name_list, const Type* type,
+      std::unique_ptr<ResolvedIdentityColumnInfo>* output);
+
+  // Returns a Value from an ASTExpression representing an identity column
+  // sequence attribute. The output Value is expected to be a member of
+  // ResolvedIdentityColumnInfo.
+  // - `attribute_expr`: A pointer to the ASTExpression object holding the
+  // attribute expression.
+  // - `type`: The type of the column and expected type of the expression.
+  // - `attribute_name`: The name of the sequence attribute.
+  absl::StatusOr<Value> ResolveIdentityColumnAttribute(
+      const ASTExpression* attribute_expr, const Type* type,
+      absl::string_view attribute_name);
 
   // Creates a ResolvedExpr from an ASTExpression representing a column
   // default value. The output ResolvedExpr is expected to be a member of
@@ -1356,7 +1393,9 @@ class Resolver {
       const ASTPathExpression* target_path, const ASTAlias* target_path_alias,
       const ASTHint* hint, IdString* alias,
       std::unique_ptr<const ResolvedTableScan>* resolved_table_scan,
-      std::shared_ptr<const NameList>* name_list);
+      std::shared_ptr<const NameList>* name_list,
+      ResolvedColumnToCatalogColumnHashMap&
+          resolved_columns_to_catalog_columns_for_target_scan);
 
   absl::Status ResolveInsertStatement(
       const ASTInsertStatement* ast_statement,
@@ -1367,7 +1406,8 @@ class Resolver {
       std::unique_ptr<const ResolvedTableScan> table_scan,
       const ResolvedColumnList& insert_columns,
       const NameScope* nested_scope,  // NULL for non-nested INSERTs.
-      std::vector<int> topologically_sorted_generated_column_index_list,
+      ResolvedColumnToCatalogColumnHashMap&
+          resolved_columns_to_catalog_columns_for_target_scan,
       std::unique_ptr<ResolvedInsertStmt>* output);
 
   absl::Status ResolveUpdateStatement(
@@ -1387,6 +1427,8 @@ class Resolver {
       const NameScope* update_scope,
       std::unique_ptr<const ResolvedTableScan> table_scan,
       std::unique_ptr<const ResolvedScan> from_scan,
+      ResolvedColumnToCatalogColumnHashMap&
+          resolved_columns_to_catalog_columns_for_target_scan,
       std::unique_ptr<ResolvedUpdateStmt>* output);
 
   absl::Status ResolveMergeStatement(
@@ -1509,6 +1551,12 @@ class Resolver {
   absl::Status ResolveAlterColumnDropDefaultAction(
       const Table* table, const ASTAlterColumnDropDefaultAction* action,
       std::unique_ptr<const ResolvedAlterAction>* alter_action);
+
+  // `table` can be nullptr. If the table does not exist in the catalog, we try
+  // to resolve the ALTER statement anyway.
+  absl::Status ResolveAlterColumnDropGeneratedAction(
+      const Table* table, const ASTAlterColumnDropGeneratedAction& action,
+      std::unique_ptr<const ResolvedAlterAction>& alter_action);
 
   absl::Status ResolveSetCollateClause(
       const ASTSetCollateClause* action,
@@ -1940,12 +1988,24 @@ class Resolver {
       std::unique_ptr<const ResolvedScan>* output_scan,
       std::shared_ptr<const NameList>* output_name_list);
 
-  // Add a ResolvedProjectScan wrapping <current_scan> and computing
-  // <computed_columns> if <computed_columns> is non-empty.
-  // <current_scan> will be updated to point at the wrapper scan.
-  static void MaybeAddProjectForComputedColumns(
+  // Add ResolvedProjectScan(s) wrapping `current_scan` and computing
+  // `computed_columns` if `computed_columns` is non-empty.
+  // `current_scan` will be updated to point at the wrapper scan.
+  // In general, a single ResolvedProjectScan is added to wrap `current_scan`;
+  // an additional 2nd scan may be added if any columns in `computed_columns`
+  // depend on other columns in `computed_columns` for their computation result.
+  // If the dependency tree depth between `computed_columns` exceeds 2, an
+  // internal error is returned.
+  static absl::Status MaybeAddProjectForComputedColumns(
       std::vector<std::unique_ptr<const ResolvedComputedColumn>>
           computed_columns,
+      std::unique_ptr<const ResolvedScan>* current_scan);
+
+  // Add a ResolvedProjectScan wrapping `current_scan` but keeping only the
+  // visible columns from `name_list` in its column_list.
+  // No-op if there are no columns to prune away.
+  absl::Status MaybeAddProjectForColumnPruning(
+      const NameList& name_list,
       std::unique_ptr<const ResolvedScan>* current_scan);
 
   // Add all remaining scans for this SELECT query on top of <current_scan>,
@@ -2372,14 +2432,9 @@ class Resolver {
     // operation. Returns a sql error if the validation fails.
     absl::Status ValidateHint() const;
 
-    // TODO: Update the doc string to include the validations for
-    // CORRESPONDING BY as we implement the features.
     // Validates the corresponding clause if it presents. Specifically, it
-    // validates:
-    // - FULL, LEFT, and STRICT, if present, are used with CORRESPONDING or
-    //   CORRESPONDING BY.
-    // - FULL, LEFT, STRICT are not used.
-    // - CORRESPONDING BY is not used.
+    // validates FULL, LEFT, and STRICT, if present, are used with CORRESPONDING
+    // or CORRESPONDING BY.
     absl::Status ValidateCorresponding() const;
 
     // Do not allow CORRESPONDING clauses to be used in WITH RECURSIVE.
@@ -2442,12 +2497,25 @@ class Resolver {
     CalculateFinalColumnNamesForCorresponding(
         const std::vector<ResolvedInputResult>& resolved_inputs) const;
 
+    // Returns the final column names of the set operation, which are the same
+    // as the identifiers in the corresponding by list.
+    //
+    // This function should only be called when column_match_mode is
+    // CORRESPONDING_BY.
+    absl::StatusOr<std::vector<IdString>>
+    CalculateFinalColumnNamesForCorrespondingBy(
+        const std::vector<ResolvedInputResult>& resolved_inputs) const;
+
     // This class provides a two-way index mapping between the columns in the
     // <output_column_list> of each input and the final columns of the set
     // operation.
     class IndexMapper {
      public:
-      IndexMapper() = default;
+      explicit IndexMapper(size_t num_queries) {
+        for (int query_idx = 0; query_idx < num_queries; ++query_idx) {
+          index_mapping_[query_idx] = {};
+        }
+      }
 
       // Returns std::nullopt if the `final_column_idx` -th final column does
       // not have a corresponding column in the <output_column_list> of the
@@ -2544,6 +2612,12 @@ class Resolver {
     std::vector<InputArgumentType> BuildColumnTypeList(
         const ResolvedInputResult& resolved_input) const;
 
+    // Returns a union of column names provided in `resolved_inputs`. It is ok
+    // for an input scan to have duplicate column names.
+    absl::flat_hash_set<IdString, IdStringCaseHash, IdStringCaseEqualFunc>
+    GetAllColumnNames(
+        const std::vector<ResolvedInputResult>& resolved_inputs) const;
+
     const ASTSetOperation* const set_operation_;
     Resolver* const resolver_;
     const IdString op_type_str_;
@@ -2595,9 +2669,18 @@ class Resolver {
       std::unique_ptr<const ResolvedExpr>* resolved_expr,
       ResolvedColumn* group_by_column);
 
-  // Validate that GROUP BY ALL syntax does not show up when not supported by
-  // the language option.
-  absl::Status ValidateGroupByAll(const ASTGroupBy* ast_group_by);
+  // Add a select list column to the group by list of GROUP BY ALL.
+  absl::Status AddSelectColumnToGroupByAllComputedColumn(
+      const SelectColumnState* select_column_state,
+      QueryResolutionInfo* query_resolution_info);
+
+  // Resolves GROUP BY ALL to group by selected columns that are non-aggregate,
+  // non-analytic, and reference at least a name from the current query's FROM
+  // clause name scope. GROUP BY ALL syntax is mutually exclusive with any other
+  // GROUP BY `grouping items` syntax.
+  absl::Status ResolveGroupByAll(const ASTGroupBy* group_by,
+                                 const NameScope* from_clause_scope,
+                                 QueryResolutionInfo* query_resolution_info);
 
   absl::Status ResolveQualifyExpr(
       const ASTQualify* qualify, const NameScope* having_and_order_by_scope,
@@ -2731,9 +2814,8 @@ class Resolver {
 
   // Return true if the first identifier on the path is a name that exists in
   // <scope>.
-  static bool IsPathExpressionStartingFromScope(
-      const ASTPathExpression* expr,
-      const NameScope* scope);
+  static bool IsPathExpressionStartingFromScope(const ASTPathExpression& expr,
+                                                const NameScope& scope);
 
   // Return true if <table_ref> should be resolved as an array scan.
   // This happens if it has UNNEST, or it is a path with at least two
@@ -2835,10 +2917,14 @@ class Resolver {
       std::shared_ptr<const NameList>* output_name_list);
 
   // Table referenced through a path expression.
+  // `external_scope` is the scope with nothing from this FROM clause, to be
+  //    used for parts of the FROM clause that can't see local names such as
+  //    PIVOT and UNPIVOT.
+  // `local_scope` includes all names visible in `external_scope` plus
+  //    names earlier in the same FROM clause that are visible.
   absl::Status ResolveTablePathExpression(
-      const ASTTablePathExpression* table_ref,
-      const NameScope* scope,
-      std::unique_ptr<const ResolvedScan>* output,
+      const ASTTablePathExpression* table_ref, const NameScope* external_scope,
+      const NameScope* local_scope, std::unique_ptr<const ResolvedScan>* output,
       std::shared_ptr<const NameList>* output_name_list);
 
   // Resolve a path expression <path_expr> as a argument of table type within
@@ -3304,7 +3390,9 @@ class Resolver {
       const NameScope* scope,
       std::unique_ptr<PathExpressionSpan>* remaining_names,
       std::unique_ptr<const ResolvedTableScan>* output,
-      std::shared_ptr<const NameList>* output_name_list);
+      std::shared_ptr<const NameList>* output_name_list,
+      ResolvedColumnToCatalogColumnHashMap&
+          out_resolved_columns_to_catalog_columns_for_scan);
 
   // Resolves a path expression to a Type.  If <is_single_identifier> then
   // the path expression is treated as a single (quoted) identifier. Otherwise
@@ -3706,6 +3794,16 @@ class Resolver {
       const std::shared_ptr<const NameList>& from_clause_name_list,
       const NameScope* from_scan_scope,
       std::unique_ptr<const ResolvedReturningClause>* output);
+
+  // Populates generate column topological order related informations for DML.
+  // This is later used to evaluate the updated generated columns in order.
+  absl::Status ResolveGeneratedColumnsForDml(
+      const Table* target_table,
+      const ResolvedColumnToCatalogColumnHashMap&
+          resolved_columns_to_catalog_columns_for_target_scan,
+      std::vector<int>* out_topologically_sorted_generated_column_ids,
+      std::vector<std::unique_ptr<const ResolvedExpr>>*
+          out_generated_column_expr_list);
 
   absl::Status FinishResolvingAggregateFunction(
       const ASTFunctionCall* ast_function_call,
@@ -4224,6 +4322,7 @@ class Resolver {
       const ASTExpression* ast_value, const ASTIdentifier* ast_qualifier,
       const ASTIdentifier* ast_name, HintOrOptionType hint_or_option_type,
       const AllowedHintsAndOptions& allowed, const NameScope* from_name_scope,
+      ASTOptionsEntry::AssignmentOp option_assignment_op,
       std::vector<std::unique_ptr<const ResolvedOption>>* option_list);
 
   // Resolve <ast_hint> and add entries into <hints>.
@@ -4435,11 +4534,11 @@ class Resolver {
       const CorrelatedColumnsSet& correlated_columns_set,
       std::vector<std::unique_ptr<const ResolvedColumnRef>>* parameters);
 
-  const absl::TimeZone default_time_zone() const {
+  absl::TimeZone default_time_zone() const {
     return analyzer_options_.default_time_zone();
   }
 
-  const absl::string_view default_anon_function_report_format() const {
+  absl::string_view default_anon_function_report_format() const {
     return analyzer_options_.default_anon_function_report_format();
   }
 
@@ -4452,8 +4551,8 @@ class Resolver {
   // Check our assumptions about value tables.
   // These errors shouldn't show up to users. They only happen if an engine
   // gives us a bad Table in the Catalog.
-  absl::Status CheckValidValueTable(const ASTPathExpression* path_expr,
-                                    const Table* table) const;
+  absl::Status CheckValidValueTable(const ASTPathExpression& path_expr,
+                                    const Table& table) const;
   absl::Status CheckValidValueTableFromTVF(const ASTTVF* path_expr,
                                            absl::string_view full_tvf_name,
                                            const TVFRelation& schema) const;
@@ -4579,7 +4678,7 @@ class Resolver {
       SignatureMatchResult* signature_match_result);
 
   // Prepares a list of TVF input arguments and a result signature. This
-  // includes addding necessary casts and coercions, and wrapping the resolved
+  // includes adding necessary casts and coercions, and wrapping the resolved
   // input arguments with TVFInputArgumentType as appropriate.
   // `resolved_tvf_args` may be non-empty to pass in initial positional
   // arguments that will precede the arguments from `ast_tvf`.
@@ -4747,7 +4846,7 @@ class Resolver {
       std::vector<std::unique_ptr<const ResolvedUnpivotArg>>* resolved_in_items,
       const std::vector<ResolvedColumn>* input_scan_columns,
       absl::flat_hash_set<ResolvedColumn>* in_clause_input_columns,
-      std::vector<const Type*>* val_column_type, const Type** label_type,
+      std::vector<const Type*>* value_column_types, const Type** label_type,
       std::vector<std::unique_ptr<const ResolvedLiteral>>* resolved_label_list,
       const ASTUnpivotClause* ast_unpivot_clause, const NameScope* scope);
 

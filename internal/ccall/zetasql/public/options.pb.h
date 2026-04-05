@@ -139,6 +139,7 @@ enum LanguageFeature : int {
   FEATURE_DIFFERENTIAL_PRIVACY_THRESHOLDING = 90,
   FEATURE_DIFFERENTIAL_PRIVACY_MAX_ROWS_CONTRIBUTED = 95,
   FEATURE_DIFFERENTIAL_PRIVACY_PUBLIC_GROUPS = 100,
+  FEATURE_DIFFERENTIAL_PRIVACY_MIN_PRIVACY_UNITS_PER_GROUP = 104,
   FEATURE_AGGREGATION_THRESHOLD = 92,
   FEATURE_GEOGRAPHY = 25,
   FEATURE_STRATIFIED_RESERVOIR_TABLESAMPLE = 26,
@@ -156,6 +157,7 @@ enum LanguageFeature : int {
   FEATURE_EXTENDED_TYPES = 42,
   FEATURE_JSON_TYPE = 43,
   FEATURE_JSON_STRICT_NUMBER_PARSING = 52,
+  FEATURE_ENABLE_CONSTANT_EXPRESSION_IN_JSON_PATH = 53,
   FEATURE_JSON_ARRAY_FUNCTIONS = 58,
   FEATURE_JSON_VALUE_EXTRACTION_FUNCTIONS = 68,
   FEATURE_JSON_LAX_VALUE_EXTRACTION_FUNCTIONS = 81,
@@ -195,6 +197,14 @@ enum LanguageFeature : int {
   FEATURE_EXTERNAL_SECURITY_PROCEDURE = 96,
   FEATURE_CREATE_MATERIALIZED_VIEW_AS_REPLICA_OF = 97,
   FEATURE_ENABLE_ALTER_ARRAY_OPTIONS = 102,
+  FEATURE_GENERATED_BY_DEFAULT = 103,
+  FEATURE_ENFORCE_MICROS_MODE_IN_INTERVAL_TYPE = 105,
+  FEATURE_ALTER_COLUMN_DROP_GENERATED = 106,
+  FEATURE_TEXTMAPPER_PARSER = 999004,
+  FEATURE_SHADOW_PARSING = 999005,
+  FEATURE_DISABLE_TEXTMAPPER_PARSER = 107,
+  FEATURE_DISABLE_PIVOT_REWRITER_UDA_ERRORS = 108,
+  FEATURE_IDENTITY_COLUMNS = 109,
   FEATURE_V_1_1_ORDER_BY_COLLATE = 11001,
   FEATURE_V_1_1_WITH_ON_SUBQUERY = 11002,
   FEATURE_V_1_1_SELECT_STAR_EXCEPT_REPLACE = 11003,
@@ -294,6 +304,11 @@ enum LanguageFeature : int {
   FEATURE_V_1_4_SINGLETON_UNNEST_INFERS_ALIAS = 14031,
   FEATURE_V_1_4_ARRAY_ZIP = 14032,
   FEATURE_V_1_4_MULTIWAY_UNNEST = 14033,
+  FEATURE_V_1_4_USE_OPERATION_COLLATION_FOR_NULLIF = 14034,
+  FEATURE_V_1_4_ENABLE_EDIT_DISTANCE_BYTES = 14035,
+  FEATURE_V_1_4_ENABLE_FLOAT_DISTANCE_FUNCTIONS = 14037,
+  FEATURE_V_1_4_ENABLE_MEASURES = 14038,
+  FEATURE_V_1_4_GROUP_BY_ALL = 14039,
   FEATURE_EXPERIMENTAL_MODULES = 999002,
   FEATURE_TEST_IDEALLY_ENABLED_BUT_IN_DEVELOPMENT = 999991,
   FEATURE_TEST_IDEALLY_DISABLED = 999992,
@@ -475,6 +490,35 @@ inline const std::string& ErrorMessageMode_Name(ErrorMessageMode value) {
 inline bool ErrorMessageMode_Parse(absl::string_view name, ErrorMessageMode* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ErrorMessageMode>(
       ErrorMessageMode_descriptor(), name, value);
+}
+enum ErrorMessageStability : int {
+  ERROR_MESSAGE_STABILITY_UNSPECIFIED = 0,
+  ERROR_MESSAGE_STABILITY_PRODUCTION = 1,
+  ERROR_MESSAGE_STABILITY_TEST_REDACTED = 2,
+};
+
+bool ErrorMessageStability_IsValid(int value);
+constexpr ErrorMessageStability ErrorMessageStability_MIN = static_cast<ErrorMessageStability>(0);
+constexpr ErrorMessageStability ErrorMessageStability_MAX = static_cast<ErrorMessageStability>(2);
+constexpr int ErrorMessageStability_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ErrorMessageStability_descriptor();
+template <typename T>
+const std::string& ErrorMessageStability_Name(T value) {
+  static_assert(std::is_same<T, ErrorMessageStability>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to ErrorMessageStability_Name().");
+  return ErrorMessageStability_Name(static_cast<ErrorMessageStability>(value));
+}
+template <>
+inline const std::string& ErrorMessageStability_Name(ErrorMessageStability value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ErrorMessageStability_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ErrorMessageStability_Parse(absl::string_view name, ErrorMessageStability* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ErrorMessageStability>(
+      ErrorMessageStability_descriptor(), name, value);
 }
 enum ParameterMode : int {
   PARAMETER_NAMED = 0,
@@ -1874,6 +1918,12 @@ struct is_proto_enum<::zetasql::ErrorMessageMode> : std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ErrorMessageMode>() {
   return ::zetasql::ErrorMessageMode_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ErrorMessageStability> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ErrorMessageStability>() {
+  return ::zetasql::ErrorMessageStability_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::ParameterMode> : std::true_type {};

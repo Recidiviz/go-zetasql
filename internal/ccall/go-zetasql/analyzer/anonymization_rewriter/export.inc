@@ -20,6 +20,7 @@
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/anon_function/export.inc"
 #include "go-zetasql/public/anonymization_utils/export.inc"
+#include "go-zetasql/public/builtin_function/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/function/export.inc"

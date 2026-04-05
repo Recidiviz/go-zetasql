@@ -64,7 +64,6 @@
 #include "zetasql/testing/using_test_value.cc"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include <cstdint>
 #include "absl/container/flat_hash_map.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
@@ -1291,14 +1290,14 @@ TEST_F(DMLValueExprEvalTest, DMLDeleteValueExpr) {
 TEST_F(DMLValueExprEvalTest, DMLUpdateValueExpr) {
   // Build a resolved AST for updating str_val from null to 'unknown' in the
   // table.
-  std::unique_ptr<ResolvedTableScan> table_scan = MakeResolvedTableScan(
+  std::unique_ptr<const ResolvedTableScan> table_scan = MakeResolvedTableScan(
       {ResolvedColumn{1, zetasql::IdString::MakeGlobal("test_table"),
                       zetasql::IdString::MakeGlobal("int_val"), Int64Type()},
        ResolvedColumn{2, zetasql::IdString::MakeGlobal("test_table"),
                       zetasql::IdString::MakeGlobal("str_val"),
                       StringType()}},
       table(), /*for_system_time_expr=*/nullptr);
-  std::vector<std::unique_ptr<ResolvedUpdateItem>> update_item_list;
+  std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list;
   update_item_list.push_back(MakeResolvedUpdateItem(
       MakeResolvedColumnRef(table_scan->column_list(1).type(),
                             table_scan->column_list(1),
@@ -1462,14 +1461,14 @@ TEST_F(DMLValueExprEvalTest,
        DMLUpdateValueExprModifiesPrimaryKeyWhenDisallowed) {
   // Build a resolved AST for updating str_val from null to 'unknown' in the
   // table.
-  std::unique_ptr<ResolvedTableScan> table_scan = MakeResolvedTableScan(
+  std::unique_ptr<const ResolvedTableScan> table_scan = MakeResolvedTableScan(
       {ResolvedColumn{1, zetasql::IdString::MakeGlobal("test_table"),
                       zetasql::IdString::MakeGlobal("int_val"), Int64Type()},
        ResolvedColumn{2, zetasql::IdString::MakeGlobal("test_table"),
                       zetasql::IdString::MakeGlobal("str_val"),
                       StringType()}},
       table(), /*for_system_time_expr=*/nullptr);
-  std::vector<std::unique_ptr<ResolvedUpdateItem>> update_item_list;
+  std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list;
   update_item_list.push_back(MakeResolvedUpdateItem(
       MakeResolvedColumnRef(table_scan->column_list(0).type(),
                             table_scan->column_list(0),
@@ -1631,14 +1630,14 @@ TEST_F(DMLValueExprEvalTest,
        DMLUpdateValueExprSetsPrimaryKeyValuesToNullWhenDisallowed) {
   // Build a resolved AST for updating str_val from null to 'unknown' in the
   // table.
-  std::unique_ptr<ResolvedTableScan> table_scan = MakeResolvedTableScan(
+  std::unique_ptr<const ResolvedTableScan> table_scan = MakeResolvedTableScan(
       {ResolvedColumn{1, zetasql::IdString::MakeGlobal("test_table"),
                       zetasql::IdString::MakeGlobal("int_val"), Int64Type()},
        ResolvedColumn{2, zetasql::IdString::MakeGlobal("test_table"),
                       zetasql::IdString::MakeGlobal("str_val"),
                       StringType()}},
       table(), /*for_system_time_expr=*/nullptr);
-  std::vector<std::unique_ptr<ResolvedUpdateItem>> update_item_list;
+  std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list;
   update_item_list.push_back(MakeResolvedUpdateItem(
       MakeResolvedColumnRef(table_scan->column_list(0).type(),
                             table_scan->column_list(0),

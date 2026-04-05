@@ -11,6 +11,7 @@
 #include "google/protobuf/generated_message_reflection.h"
 #include "google/protobuf/reflection_ops.h"
 #include "google/protobuf/wire_format.h"
+#include "absl/strings/internal/string_constant.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -204,7 +205,7 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\032zetasql/public/value.proto\022\007zetasql\032\037g"
-    "oogle/protobuf/timestamp.proto\"\363\007\n\nValue"
+    "oogle/protobuf/timestamp.proto\"\367\007\n\nValue"
     "Proto\022\025\n\013int32_value\030\001 \001(\005H\000\022\025\n\013int64_va"
     "lue\030\002 \001(\003H\000\022\026\n\014uint32_value\030\003 \001(\rH\000\022\026\n\014u"
     "int64_value\030\004 \001(\004H\000\022\024\n\nbool_value\030\005 \001(\010H"
@@ -214,24 +215,24 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF
     "\nenum_value\030\014 \001(\005H\000\0220\n\013array_value\030\r \001(\013"
     "2\031.zetasql.ValueProto.ArrayH\000\0222\n\014struct_"
     "value\030\016 \001(\0132\032.zetasql.ValueProto.StructH"
-    "\000\022\025\n\013proto_value\030\017 \001(\014H\000\0225\n\017timestamp_va"
-    "lue\030\020 \001(\0132\032.google.protobuf.TimestampH\000\022"
-    "6\n\016datetime_value\030\021 \001(\0132\034.zetasql.ValueP"
-    "roto.DatetimeH\000\022\024\n\ntime_value\030\022 \001(\003H\000\022\031\n"
-    "\017geography_value\030\023 \001(\014H\000\022\027\n\rnumeric_valu"
-    "e\030\024 \001(\014H\000\022\032\n\020bignumeric_value\030\025 \001(\014H\000\022\024\n"
-    "\njson_value\030\027 \001(\tH\000\022\030\n\016interval_value\030\030 "
-    "\001(\014H\000\0220\n\013range_value\030\032 \001(\0132\031.zetasql.Val"
-    "ueProto.RangeH\000\0223\n(__ValueProto__switch_"
-    "must_have_a_default\030\377\001 \001(\010H\000\032-\n\005Array\022$\n"
-    "\007element\030\001 \003(\0132\023.zetasql.ValueProto\032,\n\006S"
-    "truct\022\"\n\005field\030\001 \003(\0132\023.zetasql.ValueProt"
-    "o\032=\n\010Datetime\022\"\n\032bit_field_datetime_seco"
-    "nds\030\001 \001(\003\022\r\n\005nanos\030\002 \001(\005\032M\n\005Range\022\"\n\005sta"
-    "rt\030\001 \001(\0132\023.zetasql.ValueProto\022 \n\003end\030\002 \001"
-    "(\0132\023.zetasql.ValueProtoB\007\n\005valueJ\004\010\013\020\014J\004"
-    "\010\026\020\027B%\n\022com.google.zetasqlB\014ZetaSQLValue"
-    "\370\001\001"
+    "\000\022\031\n\013proto_value\030\017 \001(\014B\002\010\001H\000\0225\n\017timestam"
+    "p_value\030\020 \001(\0132\032.google.protobuf.Timestam"
+    "pH\000\0226\n\016datetime_value\030\021 \001(\0132\034.zetasql.Va"
+    "lueProto.DatetimeH\000\022\024\n\ntime_value\030\022 \001(\003H"
+    "\000\022\031\n\017geography_value\030\023 \001(\014H\000\022\027\n\rnumeric_"
+    "value\030\024 \001(\014H\000\022\032\n\020bignumeric_value\030\025 \001(\014H"
+    "\000\022\024\n\njson_value\030\027 \001(\tH\000\022\030\n\016interval_valu"
+    "e\030\030 \001(\014H\000\0220\n\013range_value\030\032 \001(\0132\031.zetasql"
+    ".ValueProto.RangeH\000\0223\n(__ValueProto__swi"
+    "tch_must_have_a_default\030\377\001 \001(\010H\000\032-\n\005Arra"
+    "y\022$\n\007element\030\001 \003(\0132\023.zetasql.ValueProto\032"
+    ",\n\006Struct\022\"\n\005field\030\001 \003(\0132\023.zetasql.Value"
+    "Proto\032=\n\010Datetime\022\"\n\032bit_field_datetime_"
+    "seconds\030\001 \001(\003\022\r\n\005nanos\030\002 \001(\005\032M\n\005Range\022\"\n"
+    "\005start\030\001 \001(\0132\023.zetasql.ValueProto\022 \n\003end"
+    "\030\002 \001(\0132\023.zetasql.ValueProtoB\007\n\005valueJ\004\010\013"
+    "\020\014J\004\010\026\020\027B%\n\022com.google.zetasqlB\014ZetaSQLV"
+    "alue\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps[1] =
     {
@@ -241,7 +242,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fvalue_2eproto = {
     false,
     false,
-    1123,
+    1127,
     descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto,
     "zetasql/public/value.proto",
     &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
@@ -1465,7 +1466,9 @@ void ValueProto::clear_value() {
       break;
     }
     case kProtoValue: {
-      _impl_.value_.proto_value_.Destroy();
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.value_.proto_value_;
+      }
       break;
     }
     case kTimestampValue: {
@@ -1660,11 +1663,11 @@ const char* ValueProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
           goto handle_unusual;
         }
         continue;
-      // bytes proto_value = 15;
+      // bytes proto_value = 15 [ctype = CORD];
       case 15:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 122)) {
           auto str = _internal_mutable_proto_value();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          ptr = ::_pbi::InlineCordParser(str, ptr, ctx);
           CHK_(ptr);
         } else {
           goto handle_unusual;
@@ -1877,8 +1880,7 @@ failure:
       break;
     }
     case kProtoValue: {
-      const std::string& _s = this->_internal_proto_value();
-      target = stream->WriteBytesMaybeAliased(15, _s, target);
+      target = stream->WriteBytes(15, this->_internal_proto_value(), target);
       break;
     }
     case kTimestampValue: {
@@ -2034,10 +2036,11 @@ failure:
           *_impl_.value_.struct_value_);
       break;
     }
-    // bytes proto_value = 15;
+    // bytes proto_value = 15 [ctype = CORD];
     case kProtoValue: {
-      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
-                                      this->_internal_proto_value());
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+          this->_internal_proto_value());
       break;
     }
     // .google.protobuf.Timestamp timestamp_value = 16;

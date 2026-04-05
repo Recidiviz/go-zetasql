@@ -11,6 +11,7 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"
+#include "go-zetasql/public/civil_time/export.inc"
 #include "go-zetasql/public/interval_value/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"

@@ -319,13 +319,6 @@ typedef flex_uint8_t YY_CHAR;
 
 #define yytext_ptr yytext
 
-int yyFlexLexer::yywrap() { return 1; }
-int yyFlexLexer::yylex()
-	{
-	LexerError( "yyFlexLexer::yylex invoked but %option yyclass used" );
-	return 0;
-	}
-
 #define YY_DECL int FlexTokenizer::yylex()
 
 static const flex_int16_t yy_nxt[][256] =

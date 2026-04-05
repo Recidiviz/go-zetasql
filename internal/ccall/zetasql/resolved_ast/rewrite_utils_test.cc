@@ -25,6 +25,7 @@
 #include "zetasql/public/analyzer.h"
 #include "zetasql/public/analyzer_options.h"
 #include "zetasql/public/analyzer_output.h"
+#include "zetasql/public/id_string.h"
 #include "zetasql/public/simple_catalog.h"
 #include "zetasql/public/types/annotation.h"
 #include "zetasql/public/types/simple_type.h"
@@ -42,7 +43,9 @@
 namespace zetasql {
 namespace {
 
+using ::testing::IsEmpty;
 using ::testing::Not;
+using ::testing::SizeIs;
 using ::testing::Values;
 using ::zetasql_base::testing::IsOk;
 using ::zetasql_base::testing::StatusIs;
@@ -197,6 +200,40 @@ TEST(RewriteUtilsTest, CopyAndReplaceColumns) {
     EXPECT_EQ(map.size(), i);
     input = std::move(output);
   }
+}
+
+TEST(RewriteUtilsTest, RemoveUnusedColumnRefs) {
+  const Type* type = types::BoolType();
+  zetasql_base::SequenceNumber sequence;
+  IdStringPool id_string_pool;
+  ColumnFactory factory(0, &id_string_pool, &sequence);
+  ResolvedColumn cola = factory.MakeCol("table", "cola", type);
+  ResolvedColumn colb = factory.MakeCol("table", "colb", type);
+  std::vector<std::unique_ptr<const ResolvedColumnRef>> column_refs;
+  column_refs.emplace_back(
+      MakeResolvedColumnRef(type, cola, /*is_correlated=*/true));
+  column_refs.emplace_back(
+      MakeResolvedColumnRef(type, colb, /*is_correlated=*/false));
+
+  std::unique_ptr<const ResolvedScan> single_row_scan =
+      MakeResolvedSingleRowScan(/*column_list=*/{});
+  ZETASQL_ASSERT_OK(RemoveUnusedColumnRefs(*single_row_scan, column_refs));
+  EXPECT_THAT(column_refs, IsEmpty());
+
+  std::unique_ptr<const ResolvedExpr> filter_expr =
+      MakeResolvedColumnRef(type, colb, /*is_correlated=*/true);
+  std::unique_ptr<const ResolvedScan> filter_scan =
+      MakeResolvedFilterScan(/*column_list=*/{},
+                             /*input_scan=*/std::move(single_row_scan),
+                             /*filter_expr=*/std::move(filter_expr));
+
+  column_refs.emplace_back(
+      MakeResolvedColumnRef(type, cola, /*is_correlated=*/true));
+  column_refs.emplace_back(
+      MakeResolvedColumnRef(type, colb, /*is_correlated=*/false));
+  ZETASQL_ASSERT_OK(RemoveUnusedColumnRefs(*filter_scan, column_refs));
+  EXPECT_THAT(column_refs, SizeIs(1));
+  EXPECT_EQ(column_refs.front()->column(), colb);
 }
 
 TEST(RewriteUtilsTest, SortUniqueColumnRefs) {
@@ -647,6 +684,40 @@ TEST_F(FunctionCallBuilderTest,
                           /*has_explicit_type=*/true);
 
   EXPECT_THAT(fn_builder_.Subtract(std::move(input1), std::move(input2)),
+              StatusIs(absl::StatusCode::kInternal));
+}
+
+TEST_F(FunctionCallBuilderTest, SafeSubtractionTestForInt64) {
+  // Int64 - Int64 is a built-in signature type in the `SimpleCatalog`.
+  std::unique_ptr<ResolvedExpr> input1 =
+      MakeResolvedLiteral(types::Int64Type(), Value::Int64(1),
+                          /*has_explicit_type=*/true);
+  std::unique_ptr<ResolvedExpr> input2 =
+      MakeResolvedLiteral(types::Int64Type(), Value::Int64(2),
+                          /*has_explicit_type=*/true);
+
+  ZETASQL_ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<const ResolvedExpr> function,
+      fn_builder_.SafeSubtract(std::move(input1), std::move(input2)));
+  EXPECT_EQ(function->DebugString(), absl::StripLeadingAsciiWhitespace(R"(
+FunctionCall(ZetaSQL:safe_subtract(INT64, INT64) -> INT64)
++-Literal(type=INT64, value=1, has_explicit_type=TRUE)
++-Literal(type=INT64, value=2, has_explicit_type=TRUE)
+)"));
+}
+
+TEST_F(FunctionCallBuilderTest,
+       SafeSubtractRefusesToWorkOnSignedAndUnsignedIntegers) {
+  // Int64 - Uint64 is *not* a built-in function in `SimpleCatalog`.
+  std::unique_ptr<ResolvedExpr> input1 =
+      MakeResolvedLiteral(types::Int64Type(), Value::Int64(1),
+                          /*has_explicit_type=*/true);
+
+  std::unique_ptr<ResolvedExpr> input2 =
+      MakeResolvedLiteral(types::Uint64Type(), Value::Uint64(1),
+                          /*has_explicit_type=*/true);
+
+  EXPECT_THAT(fn_builder_.SafeSubtract(std::move(input1), std::move(input2)),
               StatusIs(absl::StatusCode::kInternal));
 }
 

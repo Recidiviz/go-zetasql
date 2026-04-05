@@ -37,7 +37,6 @@
 #include "go-zetasql/public/functions/string/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/algorithm/container/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"

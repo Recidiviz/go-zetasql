@@ -17,7 +17,6 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/functional/function_ref/export.inc"

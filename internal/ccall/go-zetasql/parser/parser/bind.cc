@@ -230,12 +230,21 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_parser_parser_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_parser_parser_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_parser_parser_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_parser_parser_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_parser_parser_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_parser_parser_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_parser_parser_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_parser_parser_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_parser_parser_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_parser_parser_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_parser_parser_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_parser_parser_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_parser_parser_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_parser_parser_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_parser_parser_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_parser_parser_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
-
-// Suppress flex_tokenizer.h inline yywrap/yylex; flex_tokenizer.flex.cc provides them.
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
 
 // include headers
 //#define private public
@@ -269,16 +278,18 @@
 #include "zetasql/parser/flex_tokenizer.cc"
 
 #include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/bison_parser_mode.h"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
 
 // include dependencies
 #include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
 #include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
+#include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/flex_istream/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+#include "go-zetasql/parser/location/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/tokenizer/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -312,6 +323,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
 #include "go-absl/types/variant/export.inc"
 #include "go-re2/re2/export.inc"

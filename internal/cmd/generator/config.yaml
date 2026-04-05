@@ -432,10 +432,6 @@ cclib:
         - zetasql/parser/flex_tokenizer.h
         - zetasql/parser/flex_tokenizer.cc
   bind_cc_prelude_before_headers:
-    - pkg: zetasql/parser/parser
-      lines: |
-        // Suppress flex_tokenizer.h inline yywrap/yylex; flex_tokenizer.flex.cc provides them.
-        #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
     - pkg: zetasql/public/parse_helpers
       lines: |
         // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.

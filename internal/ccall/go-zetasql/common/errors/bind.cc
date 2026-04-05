@@ -228,6 +228,18 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_common_errors_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_common_errors_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_common_errors_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_common_errors_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_common_errors_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_common_errors_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_common_errors_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_common_errors_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_common_errors_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_common_errors_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_common_errors_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_common_errors_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_common_errors_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_common_errors_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_common_errors_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_common_errors_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -244,7 +256,6 @@
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
@@ -257,7 +268,6 @@
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #include "bridge.h"

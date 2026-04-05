@@ -228,6 +228,18 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_resolved_ast_sql_builder_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_resolved_ast_sql_builder_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_resolved_ast_sql_builder_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_resolved_ast_sql_builder_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_resolved_ast_sql_builder_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_resolved_ast_sql_builder_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_resolved_ast_sql_builder_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_resolved_ast_sql_builder_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_resolved_ast_sql_builder_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_resolved_ast_sql_builder_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_resolved_ast_sql_builder_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_resolved_ast_sql_builder_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_resolved_ast_sql_builder_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_resolved_ast_sql_builder_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_resolved_ast_sql_builder_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_resolved_ast_sql_builder_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -248,10 +260,12 @@
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
+#include "go-zetasql/resolved_ast/target_syntax/export.inc"
 #include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -277,6 +291,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 #include "go-re2/re2/export.inc"
 
 #include "bridge.h"

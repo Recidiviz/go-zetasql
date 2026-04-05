@@ -762,6 +762,8 @@ class ASTOrExpr final : public ASTExpression {
 
 // Represents a grouping item, which is either an expression (a regular
 // group by key), or a rollup list, or a cube list, or a grouping set list.
+// The item "()", meaning an empty grouping list, is represented as an
+// ASTGroupingItem with no children.
 class ASTGroupingItem final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_GROUPING_ITEM;
@@ -771,7 +773,6 @@ class ASTGroupingItem final : public ASTNode {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  // Exactly one of expression() and rollup() will be non-NULL.
   const ASTExpression* expression() const { return expression_; }
 
   // A rollup() containing multiple expressions.
@@ -5286,11 +5287,26 @@ class ASTOptionsEntry final : public ASTNode {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
+  // This enum is equivalent to ASTOptionsEntryEnums::AssignmentOp in ast_enums.proto
+  enum AssignmentOp {
+    NOT_SET = ASTOptionsEntryEnums::NOT_SET,
+    ASSIGN = ASTOptionsEntryEnums::ASSIGN,
+    ADD_ASSIGN = ASTOptionsEntryEnums::ADD_ASSIGN,
+    SUB_ASSIGN = ASTOptionsEntryEnums::SUB_ASSIGN
+  };
+
+  // See description of Op values in ast_enums.proto.
+  void set_assignment_op(ASTOptionsEntry::AssignmentOp assignment_op) { assignment_op_ = assignment_op; }
+  ASTOptionsEntry::AssignmentOp assignment_op() const { return assignment_op_; }
+
   const ASTIdentifier* name() const { return name_; }
 
   // Value may be any expression; engines can decide whether they
   // support identifiers, literals, parameters, constants, etc.
   const ASTExpression* value() const { return value_; }
+
+      // Returns name of the assignment operator in SQL.
+      std::string GetSQLForOperator() const;
 
   friend class ParseTreeSerializer;
 
@@ -5304,6 +5320,7 @@ class ASTOptionsEntry final : public ASTNode {
 
   const ASTIdentifier* name_ = nullptr;
   const ASTExpression* value_ = nullptr;
+  ASTOptionsEntry::AssignmentOp assignment_op_ = ASTOptionsEntry::NOT_SET;
 };
 
 // Common superclass of CREATE statements supporting the common
@@ -5938,22 +5955,36 @@ class ASTCreateProcedureStatement final : public ASTCreateStatement {
   ASTCreateStatement::SqlSecurity external_security_ = ASTCreateStatement::SQL_SECURITY_UNSPECIFIED;
 };
 
+// A base class to be used by statements that create schemas, including
+// CREATE SCHEMA and CREATE EXTERNAL SCHEMA.
+class ASTCreateSchemaStmtBase : public ASTCreateStatement {
+ public:
+  explicit ASTCreateSchemaStmtBase(ASTNodeKind kind) : ASTCreateStatement(kind) {}
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ protected:
+  const ASTPathExpression* name_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
 // This represents a CREATE SCHEMA statement, i.e.,
 // CREATE SCHEMA <name> [OPTIONS (name=value, ...)];
-class ASTCreateSchemaStatement final : public ASTCreateStatement {
+class ASTCreateSchemaStatement final : public ASTCreateSchemaStmtBase {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SCHEMA_STATEMENT;
 
-  ASTCreateSchemaStatement() : ASTCreateStatement(kConcreteNodeKind) {}
+  ASTCreateSchemaStatement() : ASTCreateSchemaStmtBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  const ASTPathExpression* name() const { return name_; }
   const ASTCollate* collate() const { return collate_; }
-  const ASTOptionsList* options_list() const { return options_list_; }
-
-  const ASTPathExpression* GetDdlTarget() const override { return name_; }
 
   friend class ParseTreeSerializer;
 
@@ -5966,9 +5997,35 @@ class ASTCreateSchemaStatement final : public ASTCreateStatement {
     return fl.Finalize();
   }
 
-  const ASTPathExpression* name_ = nullptr;
   const ASTCollate* collate_ = nullptr;
-  const ASTOptionsList* options_list_ = nullptr;
+};
+
+// This represents a CREATE EXTERNAL SCHEMA statement, i.e.,
+// CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] EXTERNAL SCHEMA [IF
+// NOT EXISTS] <name> WITH CONNECTION <connection> OPTIONS (name=value, ...);
+class ASTCreateExternalSchemaStatement final : public ASTCreateSchemaStmtBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_EXTERNAL_SCHEMA_STATEMENT;
+
+  ASTCreateExternalSchemaStatement() : ASTCreateSchemaStmtBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTWithConnectionClause* with_connection_clause() const { return with_connection_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTWithConnectionClause* with_connection_clause_ = nullptr;
 };
 
 class ASTAliasedQueryList final : public ASTNode {
@@ -6412,6 +6469,44 @@ class ASTWithPartitionColumnsClause final : public ASTNode {
   const ASTTableElementList* table_element_list_ = nullptr;
 };
 
+// Represents a generic CREATE SNAPSHOT statement.
+// Currently used for CREATE SNAPSHOT SCHEMA statement.
+class ASTCreateSnapshotStatement final : public ASTCreateStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SNAPSHOT_STATEMENT;
+
+  ASTCreateSnapshotStatement() : ASTCreateStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  void set_schema_object_kind(SchemaObjectKind schema_object_kind) { schema_object_kind_ = schema_object_kind; }
+  SchemaObjectKind schema_object_kind() const { return schema_object_kind_; }
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTCloneDataSource* clone_data_source() const { return clone_data_source_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&clone_data_source_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  SchemaObjectKind schema_object_kind_ = kInvalidSchemaObjectKind;
+  const ASTPathExpression* name_ = nullptr;
+  const ASTCloneDataSource* clone_data_source_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+// Represents a CREATE SNAPSHOT TABLE statement.
 class ASTCreateSnapshotTableStatement final : public ASTCreateStatement {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SNAPSHOT_TABLE_STATEMENT;
@@ -6961,7 +7056,7 @@ class ASTGeneratedColumnInfo final : public ASTNode {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  // Adds stored_mode (if needed) to the debug string.
+  // Adds stored_mode and generated_mode to the debug string.
   std::string SingleNodeDebugString() const override;
 
   // This enum is equivalent to ASTGeneratedColumnInfoEnums::StoredMode in ast_enums.proto
@@ -6971,24 +7066,37 @@ class ASTGeneratedColumnInfo final : public ASTNode {
     STORED_VOLATILE = ASTGeneratedColumnInfoEnums::STORED_VOLATILE
   };
 
+  // This enum is equivalent to ASTGeneratedColumnInfoEnums::GeneratedMode in ast_enums.proto
+  enum GeneratedMode {
+    ALWAYS = ASTGeneratedColumnInfoEnums::ALWAYS,
+    BY_DEFAULT = ASTGeneratedColumnInfoEnums::BY_DEFAULT
+  };
+
   void set_stored_mode(ASTGeneratedColumnInfo::StoredMode stored_mode) { stored_mode_ = stored_mode; }
   ASTGeneratedColumnInfo::StoredMode stored_mode() const { return stored_mode_; }
+  void set_generated_mode(ASTGeneratedColumnInfo::GeneratedMode generated_mode) { generated_mode_ = generated_mode; }
+  ASTGeneratedColumnInfo::GeneratedMode generated_mode() const { return generated_mode_; }
 
   const ASTExpression* expression() const { return expression_; }
+  const ASTIdentityColumnInfo* identity_column_info() const { return identity_column_info_; }
 
   std::string GetSqlForStoredMode() const;
+  std::string GetSqlForGeneratedMode() const;
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    fl.AddOptionalExpression(&expression_);
+    fl.AddOptional(&identity_column_info_, AST_IDENTITY_COLUMN_INFO);
     return fl.Finalize();
   }
 
   const ASTExpression* expression_ = nullptr;
   ASTGeneratedColumnInfo::StoredMode stored_mode_ = ASTGeneratedColumnInfo::NON_STORED;
+  ASTGeneratedColumnInfo::GeneratedMode generated_mode_ = ASTGeneratedColumnInfo::ALWAYS;
+  const ASTIdentityColumnInfo* identity_column_info_ = nullptr;
 };
 
 // Base class for CREATE TABLE elements, including column definitions and
@@ -8504,6 +8612,38 @@ class ASTAlterColumnDropNotNullAction final : public ASTAlterAction {
   static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_COLUMN_DROP_NOT_NULL_ACTION;
 
   ASTAlterColumnDropNotNullAction() : ASTAlterAction(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_is_if_exists(bool is_if_exists) { is_if_exists_ = is_if_exists; }
+  bool is_if_exists() const { return is_if_exists_; }
+
+  const ASTIdentifier* column_name() const { return column_name_; }
+
+  std::string GetSQLForAlterAction() const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* column_name_ = nullptr;
+  bool is_if_exists_ = false;
+};
+
+// ALTER table action for "ALTER COLUMN DROP GENERATED" clause
+class ASTAlterColumnDropGeneratedAction final : public ASTAlterAction {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_COLUMN_DROP_GENERATED_ACTION;
+
+  ASTAlterColumnDropGeneratedAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -11933,6 +12073,134 @@ class ASTUndropStatement final : public ASTDdlStatement {
   const ASTPathExpression* name_ = nullptr;
   bool is_if_not_exists_ = false;
   const ASTForSystemTime* for_system_time_ = nullptr;
+};
+
+class ASTIdentityColumnInfo final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_INFO;
+
+  ASTIdentityColumnInfo() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  void set_cycling_enabled(bool cycling_enabled) { cycling_enabled_ = cycling_enabled; }
+  bool cycling_enabled() const { return cycling_enabled_; }
+
+  const ASTIdentityColumnStartWith* start_with_value() const { return start_with_value_; }
+  const ASTIdentityColumnIncrementBy* increment_by_value() const { return increment_by_value_; }
+  const ASTIdentityColumnMaxValue* max_value() const { return max_value_; }
+  const ASTIdentityColumnMinValue* min_value() const { return min_value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&start_with_value_, AST_IDENTITY_COLUMN_START_WITH);
+    fl.AddOptional(&increment_by_value_, AST_IDENTITY_COLUMN_INCREMENT_BY);
+    fl.AddOptional(&max_value_, AST_IDENTITY_COLUMN_MAX_VALUE);
+    fl.AddOptional(&min_value_, AST_IDENTITY_COLUMN_MIN_VALUE);
+    return fl.Finalize();
+  }
+
+  const ASTIdentityColumnStartWith* start_with_value_ = nullptr;
+  const ASTIdentityColumnIncrementBy* increment_by_value_ = nullptr;
+  const ASTIdentityColumnMaxValue* max_value_ = nullptr;
+  const ASTIdentityColumnMinValue* min_value_ = nullptr;
+  bool cycling_enabled_ = false;
+};
+
+class ASTIdentityColumnStartWith final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_START_WITH;
+
+  ASTIdentityColumnStartWith() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTIdentityColumnIncrementBy final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_INCREMENT_BY;
+
+  ASTIdentityColumnIncrementBy() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTIdentityColumnMaxValue final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_MAX_VALUE;
+
+  ASTIdentityColumnMaxValue() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTIdentityColumnMinValue final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_MIN_VALUE;
+
+  ASTIdentityColumnMinValue() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
 };
 
 }  // namespace zetasql

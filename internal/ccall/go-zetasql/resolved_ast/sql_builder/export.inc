@@ -12,10 +12,12 @@
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
+#include "go-zetasql/resolved_ast/target_syntax/export.inc"
 #include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -41,6 +43,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 #include "go-re2/re2/export.inc"
 
 #endif

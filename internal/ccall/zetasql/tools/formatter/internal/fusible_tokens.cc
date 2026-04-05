@@ -27,6 +27,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 
 namespace zetasql::formatter::internal {
 namespace {
@@ -343,7 +344,9 @@ const std::vector<FusibleTokens>* GetFusibleTokens() {
       {.t{"INSERT", "VALUES"}},
       {.t{"INTERSECT", "ALL"}},
       {.t{"INTERSECT", "DISTINCT"}},
+      {.t{"IS", "DISTINCT", "FROM"}, .full_match_only = true},
       {.t{"IS", "FALSE"}},
+      {.t{"IS", "NOT", "DISTINCT", "FROM"}, .full_match_only = true},
       {.t{"IS", "NOT", "FALSE"}},
       {.t{"IS", "NOT", "NULL"}},
       {.t{"IS", "NOT", "TRUE"}},
@@ -428,7 +431,7 @@ const FusibleGroup* GetFusibleGroups() {
 }
 
 const FusibleGroup* FusibleGroupsFromTokens(
-    const std::vector<FusibleTokens>& fusible_tokens) {
+    absl::Span<const FusibleTokens> fusible_tokens) {
   auto* root = new FusibleGroup();
   root->token = FusibleGroup::kRoot;
   for (const auto& tokens : fusible_tokens) {

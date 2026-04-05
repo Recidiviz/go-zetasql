@@ -6,11 +6,13 @@
 #include "zetasql/public/analyzer_options.cc"
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
+#include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/rewriter_interface/export.inc"
 #include "go-zetasql/public/time_zone_util/export.inc"
 #include "go-zetasql/public/type/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
@@ -23,5 +25,6 @@
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/strings/export.inc"
 
 #endif

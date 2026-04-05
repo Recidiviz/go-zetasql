@@ -228,6 +228,18 @@
 #define zetasql_2fscripting_2fvariable_2eproto zetasql_parser_bison_parser_generated_lib_zetasql_2fscripting_2fvariable_2eproto
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_zetasql_2fscripting_2fvariable_2eproto
+#define proto_2fconfidence_2dinterval_2eproto zetasql_parser_bison_parser_generated_lib_proto_2fconfidence_2dinterval_2eproto
+#define descriptor_table_proto_2fconfidence_2dinterval_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_proto_2fconfidence_2dinterval_2eproto
+#define TableStruct_proto_2fconfidence_2dinterval_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_proto_2fconfidence_2dinterval_2eproto
+#define proto_2fdata_2eproto zetasql_parser_bison_parser_generated_lib_proto_2fdata_2eproto
+#define descriptor_table_proto_2fdata_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_proto_2fdata_2eproto
+#define TableStruct_proto_2fdata_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_proto_2fdata_2eproto
+#define proto_2fnumerical_2dmechanism_2eproto zetasql_parser_bison_parser_generated_lib_proto_2fnumerical_2dmechanism_2eproto
+#define descriptor_table_proto_2fnumerical_2dmechanism_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_proto_2fnumerical_2dmechanism_2eproto
+#define TableStruct_proto_2fnumerical_2dmechanism_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_proto_2fnumerical_2dmechanism_2eproto
+#define proto_2fsummary_2eproto zetasql_parser_bison_parser_generated_lib_proto_2fsummary_2eproto
+#define descriptor_table_proto_2fsummary_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_proto_2fsummary_2eproto
+#define TableStruct_proto_2fsummary_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_proto_2fsummary_2eproto
 
 #define GO_EXPORT(def) export_zetasql_parser_bison_parser_generated_lib_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -236,9 +248,7 @@
 //#define private public
 #include "zetasql/parser/bison_parser.bison.h"
 #include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/bison_parser_mode.h"
 #include "zetasql/parser/join_processor.h"
-#include "zetasql/parser/location.hh"
 #include "zetasql/parser/parser_internal.h"
 #include "zetasql/parser/parser_runtime_info.h"
 #include "zetasql/parser/statement_properties.h"
@@ -247,8 +257,11 @@
 // include sources
 
 // include dependencies
+#include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+#include "go-zetasql/parser/location/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/tokenizer/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -271,6 +284,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
+#include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #include "bridge.h"

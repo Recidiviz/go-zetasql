@@ -30,6 +30,7 @@
 #include "google/protobuf/message.h"
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
+#include "absl/strings/cord.h"
 #include "google/protobuf/unknown_field_set.h"
 #include "google/protobuf/timestamp.pb.h"
 // @@protoc_insertion_point(includes)
@@ -1127,26 +1128,16 @@ class ValueProto final :
   void unsafe_arena_set_allocated_struct_value(
       ::zetasql::ValueProto_Struct* struct_value);
   ::zetasql::ValueProto_Struct* unsafe_arena_release_struct_value();
-  // bytes proto_value = 15;
+  // bytes proto_value = 15 [ctype = CORD];
   bool has_proto_value() const;
   void clear_proto_value() ;
-  const std::string& proto_value() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_proto_value(Arg_&& arg, Args_... args);
-  std::string* mutable_proto_value();
-  PROTOBUF_NODISCARD std::string* release_proto_value();
-  void set_allocated_proto_value(std::string* ptr);
-
+  const ::absl::Cord& proto_value() const;
+  void set_proto_value(const ::absl::Cord& value);
+  void set_proto_value(::absl::string_view value);
   private:
-  const std::string& _internal_proto_value() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_proto_value(
-      const std::string& value);
-  std::string* _internal_mutable_proto_value();
-
+  const ::absl::Cord& _internal_proto_value() const;
+  void _internal_set_proto_value(const ::absl::Cord& value);
+  ::absl::Cord* _internal_mutable_proto_value();
   public:
   // .google.protobuf.Timestamp timestamp_value = 16;
   bool has_timestamp_value() const;
@@ -1382,7 +1373,7 @@ class ValueProto final :
       ::int32_t enum_value_;
       ::zetasql::ValueProto_Array* array_value_;
       ::zetasql::ValueProto_Struct* struct_value_;
-      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr proto_value_;
+      ::absl::Cord *proto_value_;
       ::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp_value_;
       ::zetasql::ValueProto_Datetime* datetime_value_;
       ::int64_t time_value_;
@@ -2375,7 +2366,7 @@ inline ::zetasql::ValueProto_Struct* ValueProto::mutable_struct_value() {
   return _msg;
 }
 
-// bytes proto_value = 15;
+// bytes proto_value = 15 [ctype = CORD];
 inline bool ValueProto::has_proto_value() const {
   return value_case() == kProtoValue;
 }
@@ -2384,74 +2375,59 @@ inline void ValueProto::set_has_proto_value() {
 }
 inline void ValueProto::clear_proto_value() {
   if (value_case() == kProtoValue) {
-    _impl_.value_.proto_value_.Destroy();
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.value_.proto_value_;
+    }
     clear_has_value();
   }
 }
-inline const std::string& ValueProto::proto_value() const {
+inline const ::absl::Cord& ValueProto::_internal_proto_value() const {
+  if (value_case() == kProtoValue) {
+    return *_impl_.value_.proto_value_;
+  }
+  return PROTOBUF_NAMESPACE_ID::internal::GetEmptyCordAlreadyInited();
+}
+inline const ::absl::Cord& ValueProto::proto_value() const {
   // @@protoc_insertion_point(field_get:zetasql.ValueProto.proto_value)
   return _internal_proto_value();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ValueProto::set_proto_value(Arg_&& arg,
-                                                     Args_... args) {
+inline void ValueProto::_internal_set_proto_value(const ::absl::Cord& value) {
   if (value_case() != kProtoValue) {
     clear_value();
-
     set_has_proto_value();
-    _impl_.value_.proto_value_.InitDefault();
+    _impl_.value_.proto_value_ = new ::absl::Cord;
+    if (GetArenaForAllocation() != nullptr) {
+      GetArenaForAllocation()->Own(_impl_.value_.proto_value_);
+    }
   }
-  _impl_.value_.proto_value_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  *_impl_.value_.proto_value_ = value;
+}
+inline void ValueProto::set_proto_value(const ::absl::Cord& value) {
+  _internal_set_proto_value(value);
   // @@protoc_insertion_point(field_set:zetasql.ValueProto.proto_value)
 }
-inline std::string* ValueProto::mutable_proto_value() {
-  std::string* _s = _internal_mutable_proto_value();
-  // @@protoc_insertion_point(field_mutable:zetasql.ValueProto.proto_value)
-  return _s;
-}
-inline const std::string& ValueProto::_internal_proto_value() const {
-  if (value_case() != kProtoValue) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
-  }
-  return _impl_.value_.proto_value_.Get();
-}
-inline void ValueProto::_internal_set_proto_value(const std::string& value) {
+inline void ValueProto::set_proto_value(::absl::string_view value) {
   if (value_case() != kProtoValue) {
     clear_value();
-
     set_has_proto_value();
-    _impl_.value_.proto_value_.InitDefault();
+    _impl_.value_.proto_value_ = new ::absl::Cord;
+    if (GetArenaForAllocation() != nullptr) {
+      GetArenaForAllocation()->Own(_impl_.value_.proto_value_);
+    }
   }
-
-
-  _impl_.value_.proto_value_.Set(value, GetArenaForAllocation());
+  *_impl_.value_.proto_value_ = value;
+  // @@protoc_insertion_point(field_set_string_piece:zetasql.ValueProto.proto_value)
 }
-inline std::string* ValueProto::_internal_mutable_proto_value() {
+inline ::absl::Cord* ValueProto::_internal_mutable_proto_value() {
   if (value_case() != kProtoValue) {
     clear_value();
-
     set_has_proto_value();
-    _impl_.value_.proto_value_.InitDefault();
+    _impl_.value_.proto_value_ = new ::absl::Cord;
+    if (GetArenaForAllocation() != nullptr) {
+      GetArenaForAllocation()->Own(_impl_.value_.proto_value_);
+    }
   }
-  return _impl_.value_.proto_value_.Mutable( GetArenaForAllocation());
-}
-inline std::string* ValueProto::release_proto_value() {
-  // @@protoc_insertion_point(field_release:zetasql.ValueProto.proto_value)
-  if (value_case() != kProtoValue) {
-    return nullptr;
-  }
-  clear_has_value();
-  return _impl_.value_.proto_value_.Release();
-}
-inline void ValueProto::set_allocated_proto_value(std::string* value) {
-  if (has_value()) {
-    clear_value();
-  }
-  if (value != nullptr) {
-    set_has_proto_value();
-    _impl_.value_.proto_value_.InitAllocated(value, GetArenaForAllocation());
-  }
-  // @@protoc_insertion_point(field_set_allocated:zetasql.ValueProto.proto_value)
+  return _impl_.value_.proto_value_;
 }
 
 // .google.protobuf.Timestamp timestamp_value = 16;

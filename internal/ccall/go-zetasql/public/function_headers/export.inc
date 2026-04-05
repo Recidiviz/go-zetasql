@@ -8,6 +8,7 @@
 // include dependencies
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
+#include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/type/export.inc"

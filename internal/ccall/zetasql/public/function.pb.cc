@@ -81,29 +81,31 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTO
     "ITIONAL_OR_NAMED\020\002\022\016\n\nNAMED_ONLY\020\003\"h\n\021Ar"
     "gumentAliasKind\022#\n\037ARGUMENT_ALIAS_KIND_U"
     "NSPECIFIED\020\000\022\030\n\024ARGUMENT_NON_ALIASED\020\001\022\024"
-    "\n\020ARGUMENT_ALIASED\020\002*\315\004\n\025SignatureArgume"
+    "\n\020ARGUMENT_ALIASED\020\002*\251\005\n\025SignatureArgume"
     "ntKind\022\022\n\016ARG_TYPE_FIXED\020\000\022\022\n\016ARG_TYPE_A"
     "NY_1\020\001\022\022\n\016ARG_TYPE_ANY_2\020\002\022\022\n\016ARG_TYPE_A"
-    "NY_3\020\027\022\030\n\024ARG_ARRAY_TYPE_ANY_1\020\003\022\030\n\024ARG_"
+    "NY_3\020\027\022\022\n\016ARG_TYPE_ANY_4\020\031\022\022\n\016ARG_TYPE_A"
+    "NY_5\020\033\022\030\n\024ARG_ARRAY_TYPE_ANY_1\020\003\022\030\n\024ARG_"
     "ARRAY_TYPE_ANY_2\020\004\022\030\n\024ARG_ARRAY_TYPE_ANY"
-    "_3\020\030\022\025\n\021ARG_PROTO_MAP_ANY\020\016\022\031\n\025ARG_PROTO"
-    "_MAP_KEY_ANY\020\017\022\033\n\027ARG_PROTO_MAP_VALUE_AN"
-    "Y\020\020\022\021\n\rARG_PROTO_ANY\020\005\022\022\n\016ARG_STRUCT_ANY"
-    "\020\006\022\020\n\014ARG_ENUM_ANY\020\007\022\026\n\022ARG_TYPE_ARBITRA"
-    "RY\020\010\022\025\n\021ARG_TYPE_RELATION\020\t\022\021\n\rARG_TYPE_"
-    "VOID\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027\n\023ARG_TYPE_C"
-    "ONNECTION\020\014\022\027\n\023ARG_TYPE_DESCRIPTOR\020\r\022\023\n\017"
-    "ARG_TYPE_LAMBDA\020\021\022\026\n\022ARG_RANGE_TYPE_ANY\020"
-    "\022\022\025\n\021ARG_TYPE_SEQUENCE\020\026\022B\n5__SignatureA"
-    "rgumentKind__switch_must_have_a_default_"
-    "_\020\377\377\377\377\377\377\377\377\377\001B&\n\022com.google.zetasqlB\020Zeta"
-    "SQLFunctions"
+    "_3\020\030\022\030\n\024ARG_ARRAY_TYPE_ANY_4\020\032\022\030\n\024ARG_AR"
+    "RAY_TYPE_ANY_5\020\034\022\025\n\021ARG_PROTO_MAP_ANY\020\016\022"
+    "\031\n\025ARG_PROTO_MAP_KEY_ANY\020\017\022\033\n\027ARG_PROTO_"
+    "MAP_VALUE_ANY\020\020\022\021\n\rARG_PROTO_ANY\020\005\022\022\n\016AR"
+    "G_STRUCT_ANY\020\006\022\020\n\014ARG_ENUM_ANY\020\007\022\026\n\022ARG_"
+    "TYPE_ARBITRARY\020\010\022\025\n\021ARG_TYPE_RELATION\020\t\022"
+    "\021\n\rARG_TYPE_VOID\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027"
+    "\n\023ARG_TYPE_CONNECTION\020\014\022\027\n\023ARG_TYPE_DESC"
+    "RIPTOR\020\r\022\023\n\017ARG_TYPE_LAMBDA\020\021\022\026\n\022ARG_RAN"
+    "GE_TYPE_ANY\020\022\022\025\n\021ARG_TYPE_SEQUENCE\020\026\022B\n5"
+    "__SignatureArgumentKind__switch_must_hav"
+    "e_a_default__\020\377\377\377\377\377\377\377\377\377\001B&\n\022com.google.z"
+    "etasqlB\020ZetaSQLFunctions"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunction_2eproto = {
     false,
     false,
-    1572,
+    1664,
     descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto,
     "zetasql/public/function.proto",
     &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once,
@@ -409,6 +411,10 @@ bool SignatureArgumentKind_IsValid(int value) {
     case 22:
     case 23:
     case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
       return true;
     default:
       return false;

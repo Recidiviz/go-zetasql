@@ -24,6 +24,7 @@
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/public/analyzer/export.inc"
@@ -44,5 +45,6 @@
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/time/time/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

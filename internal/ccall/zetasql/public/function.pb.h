@@ -334,9 +334,13 @@ enum SignatureArgumentKind : int {
   ARG_TYPE_ANY_1 = 1,
   ARG_TYPE_ANY_2 = 2,
   ARG_TYPE_ANY_3 = 23,
+  ARG_TYPE_ANY_4 = 25,
+  ARG_TYPE_ANY_5 = 27,
   ARG_ARRAY_TYPE_ANY_1 = 3,
   ARG_ARRAY_TYPE_ANY_2 = 4,
   ARG_ARRAY_TYPE_ANY_3 = 24,
+  ARG_ARRAY_TYPE_ANY_4 = 26,
+  ARG_ARRAY_TYPE_ANY_5 = 28,
   ARG_PROTO_MAP_ANY = 14,
   ARG_PROTO_MAP_KEY_ANY = 15,
   ARG_PROTO_MAP_VALUE_ANY = 16,
@@ -357,8 +361,8 @@ enum SignatureArgumentKind : int {
 
 bool SignatureArgumentKind_IsValid(int value);
 constexpr SignatureArgumentKind SignatureArgumentKind_MIN = static_cast<SignatureArgumentKind>(-1);
-constexpr SignatureArgumentKind SignatureArgumentKind_MAX = static_cast<SignatureArgumentKind>(24);
-constexpr int SignatureArgumentKind_ARRAYSIZE = 24 + 1;
+constexpr SignatureArgumentKind SignatureArgumentKind_MAX = static_cast<SignatureArgumentKind>(28);
+constexpr int SignatureArgumentKind_ARRAYSIZE = 28 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 SignatureArgumentKind_descriptor();
 template <typename T>
@@ -371,7 +375,7 @@ const std::string& SignatureArgumentKind_Name(T value) {
 template <>
 inline const std::string& SignatureArgumentKind_Name(SignatureArgumentKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<SignatureArgumentKind_descriptor,
-                                                 -1, 24>(
+                                                 -1, 28>(
       static_cast<int>(value));
 }
 inline bool SignatureArgumentKind_Parse(absl::string_view name, SignatureArgumentKind* value) {

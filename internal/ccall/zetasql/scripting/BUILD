@@ -54,6 +54,7 @@ cc_library(
         "//zetasql/base:strings",
         "//zetasql/common:errors",
         "//zetasql/parser",
+        "//zetasql/public:error_helpers",
         "//zetasql/public:options_cc_proto",
         "//zetasql/public:parse_location",
         "//zetasql/public:type",
@@ -171,6 +172,7 @@ cc_library(
         "//zetasql/base:map_util",
         "//zetasql/base:ret_check",
         "//zetasql/base:status",
+        "//zetasql/common:errors",
         "//zetasql/common:status_payload_utils",
         "//zetasql/parser",
         "//zetasql/public:analyzer",
@@ -191,6 +193,7 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:span",
     ],
 )
 

@@ -128,6 +128,12 @@ absl::Status CollectColumnRefs(
     std::vector<std::unique_ptr<const ResolvedColumnRef>>* column_refs,
     bool correlate = false);
 
+// Removes column refs from `column_refs` that are not used in `node`.
+// Uses `CollectColumnRefs` for collecting used column references in `node`.
+absl::Status RemoveUnusedColumnRefs(
+    const ResolvedNode& node,
+    std::vector<std::unique_ptr<const ResolvedColumnRef>>& column_refs);
+
 // Sorts and removes duplicates from the ResolvedColumnRefs in 'column_refs'.
 // This is used in conjunction with 'CollectColumnRefs' to construct an
 // appropriate parameter list for a subquery expression. Among other potential
@@ -361,6 +367,19 @@ class FunctionCallBuilder {
   // The signature for the built-in function "$subtract" must be available in
   // `catalog` or an error status is returned.
   absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Subtract(
+      std::unique_ptr<const ResolvedExpr> minuend,
+      std::unique_ptr<const ResolvedExpr> subtrahend);
+
+  // Construct a ResolvedFunctionCall for `minuend` - `subtrahend` such that
+  // if there is in overflow, then the result will be NULL.
+  //
+  // Requires: `minuend` and `subtrahend` must be of types compatible with one
+  // of the function signatures of the built-in function "safe_subtract"
+  // present in the `catalog`.
+  //
+  // The signature for the built-in function "safe_subtract" must be available
+  // in `catalog` or an error status is returned.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> SafeSubtract(
       std::unique_ptr<const ResolvedExpr> minuend,
       std::unique_ptr<const ResolvedExpr> subtrahend);
 

@@ -37,7 +37,6 @@
 #include "zetasql/public/type.pb.h"
 #include "zetasql/public/value.h"
 #include "zetasql/public/value.pb.h"
-#include <cstdint>
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
@@ -456,7 +455,7 @@ absl::Status MergeValueToProtoField(const Value& value,
               : reflection->MutableMessage(proto_out, field, message_factory);
       ValueProto value_proto;
       ZETASQL_RETURN_IF_ERROR(value.Serialize(&value_proto));
-      ZETASQL_RET_CHECK(submessage->ParseFromString(value_proto.proto_value()));
+      ZETASQL_RET_CHECK(submessage->ParseFromCord(value_proto.proto_value()));
 
       return absl::OkStatus();
     }
