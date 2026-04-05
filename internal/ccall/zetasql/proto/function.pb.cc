@@ -333,6 +333,8 @@ PROTOBUF_CONSTEXPR FunctionOptionsProto::FunctionOptionsProto(
 
   , /*decltype(_impl_.supports_clamped_between_modifier_)*/ false
 
+  , /*decltype(_impl_.may_suppress_side_effects_)*/ false
+
   , /*decltype(_impl_.arguments_are_coercible_)*/ true
 
   , /*decltype(_impl_.allow_external_usage_)*/ true
@@ -754,23 +756,25 @@ const ::uint32_t TableStruct_zetasql_2fproto_2ffunction_2eproto::offsets[] PROTO
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionOptionsProto, _impl_.supports_having_modifier_),
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionOptionsProto, _impl_.supports_clamped_between_modifier_),
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionOptionsProto, _impl_.uses_upper_case_sql_name_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::FunctionOptionsProto, _impl_.may_suppress_side_effects_),
     3,
     2,
     4,
-    11,
+    12,
     5,
     0,
     1,
-    12,
+    13,
     7,
     6,
     ~0u,
     8,
     9,
-    13,
     14,
-    10,
     15,
+    10,
+    16,
+    11,
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionProto, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::FunctionProto, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -907,15 +911,15 @@ static const ::_pbi::MigrationSchema
         { 157, 168, -1, sizeof(::zetasql::FunctionSignatureRewriteOptionsProto)},
         { 171, 187, -1, sizeof(::zetasql::FunctionSignatureOptionsProto)},
         { 195, 207, -1, sizeof(::zetasql::FunctionSignatureProto)},
-        { 211, 236, -1, sizeof(::zetasql::FunctionOptionsProto)},
-        { 253, 269, -1, sizeof(::zetasql::FunctionProto)},
-        { 277, -1, -1, sizeof(::zetasql::ResolvedFunctionCallInfoProto)},
-        { 285, 294, -1, sizeof(::zetasql::TableValuedFunctionOptionsProto)},
-        { 295, 312, -1, sizeof(::zetasql::TableValuedFunctionProto)},
-        { 321, 334, -1, sizeof(::zetasql::TVFArgumentProto)},
-        { 339, -1, -1, sizeof(::zetasql::TVFSignatureOptionsProto)},
-        { 348, 359, -1, sizeof(::zetasql::TVFSignatureProto)},
-        { 362, 372, -1, sizeof(::zetasql::ProcedureProto)},
+        { 211, 237, -1, sizeof(::zetasql::FunctionOptionsProto)},
+        { 255, 271, -1, sizeof(::zetasql::FunctionProto)},
+        { 279, -1, -1, sizeof(::zetasql::ResolvedFunctionCallInfoProto)},
+        { 287, 296, -1, sizeof(::zetasql::TableValuedFunctionOptionsProto)},
+        { 297, 314, -1, sizeof(::zetasql::TableValuedFunctionProto)},
+        { 323, 336, -1, sizeof(::zetasql::TVFArgumentProto)},
+        { 341, -1, -1, sizeof(::zetasql::TVFSignatureOptionsProto)},
+        { 350, 361, -1, sizeof(::zetasql::TVFSignatureProto)},
+        { 364, 374, -1, sizeof(::zetasql::ProcedureProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1027,7 +1031,7 @@ const char descriptor_table_protodef_zetasql_2fproto_2ffunction_2eproto[] PROTOB
     "to\0227\n\013return_type\030\002 \001(\0132\".zetasql.Functi"
     "onArgumentTypeProto\022\022\n\ncontext_id\030\003 \001(\003\022"
     "7\n\007options\030\004 \001(\0132&.zetasql.FunctionSigna"
-    "tureOptionsProto\"\353\005\n\024FunctionOptionsProt"
+    "tureOptionsProto\"\225\006\n\024FunctionOptionsProt"
     "o\022#\n\024supports_over_clause\030\001 \001(\010:\005false\022]"
     "\n\027window_ordering_support\030\002 \001(\0162).zetasq"
     "l.FunctionEnums.WindowOrderSupport:\021ORDE"
@@ -1046,48 +1050,49 @@ const char descriptor_table_protodef_zetasql_2fproto_2ffunction_2eproto[] PROTOB
     "supports_having_modifier\030\017 \001(\010:\004true\0220\n!"
     "supports_clamped_between_modifier\030\020 \001(\010:"
     "\005false\022&\n\030uses_upper_case_sql_name\030\021 \001(\010"
-    ":\004true\"\223\003\n\rFunctionProto\022\021\n\tname_path\030\001 "
-    "\003(\t\022\r\n\005group\030\002 \001(\t\022)\n\004mode\030\003 \001(\0162\033.zetas"
-    "ql.FunctionEnums.Mode\0222\n\tsignature\030\004 \003(\013"
-    "2\037.zetasql.FunctionSignatureProto\022.\n\007opt"
-    "ions\030\005 \001(\0132\035.zetasql.FunctionOptionsProt"
-    "o\022@\n\025parse_resume_location\030\010 \001(\0132!.zetas"
-    "ql.ParseResumeLocationProto\022,\n$templated"
-    "_sql_function_argument_name\030\007 \003(\t\022a\n\014sql"
-    "_security\030\t \001(\01621.zetasql.ResolvedCreate"
-    "StatementEnums.SqlSecurity:\030SQL_SECURITY"
-    "_UNSPECIFIED\"\037\n\035ResolvedFunctionCallInfo"
-    "Proto\"I\n\037TableValuedFunctionOptionsProto"
-    "\022&\n\030uses_upper_case_sql_name\030\001 \001(\010:\004true"
-    "\"\305\003\n\030TableValuedFunctionProto\022\021\n\tname_pa"
-    "th\030\001 \003(\t\0222\n\tsignature\030\002 \001(\0132\037.zetasql.Fu"
-    "nctionSignatureProto\0229\n\007options\030\t \001(\0132(."
-    "zetasql.TableValuedFunctionOptionsProto\022"
-    "<\n\004type\030\003 \001(\0162..zetasql.FunctionEnums.Ta"
-    "bleValuedFunctionType\0225\n\nvolatility\030\010 \001("
-    "\0162!.zetasql.FunctionEnums.Volatility\022@\n\025"
-    "parse_resume_location\030\006 \001(\0132!.zetasql.Pa"
-    "rseResumeLocationProto\022\025\n\rargument_name\030"
-    "\005 \003(\t\022\026\n\016custom_context\030\007 \001(\t\022A\n\022anonymi"
-    "zation_info\030\n \001(\0132%.zetasql.SimpleAnonym"
-    "izationInfoProto\"\242\002\n\020TVFArgumentProto\0224\n"
-    "\017scalar_argument\030\001 \001(\0132\033.zetasql.ValueWi"
-    "thTypeProto\0224\n\021relation_argument\030\002 \001(\0132\031"
-    ".zetasql.TVFRelationProto\022.\n\016model_argum"
-    "ent\030\003 \001(\0132\026.zetasql.TVFModelProto\0228\n\023con"
-    "nection_argument\030\004 \001(\0132\033.zetasql.TVFConn"
-    "ectionProto\0228\n\023descriptor_argument\030\005 \001(\013"
-    "2\033.zetasql.TVFDescriptorProto\"k\n\030TVFSign"
-    "atureOptionsProto\022O\n\036additional_deprecat"
-    "ion_warning\030\001 \003(\0132\'.zetasql.Freestanding"
-    "DeprecationWarning\"\246\001\n\021TVFSignatureProto"
-    "\022+\n\010argument\030\001 \003(\0132\031.zetasql.TVFArgument"
-    "Proto\0220\n\routput_schema\030\002 \001(\0132\031.zetasql.T"
-    "VFRelationProto\0222\n\007options\030\003 \001(\0132!.zetas"
-    "ql.TVFSignatureOptionsProto\"W\n\016Procedure"
-    "Proto\022\021\n\tname_path\030\001 \003(\t\0222\n\tsignature\030\002 "
-    "\001(\0132\037.zetasql.FunctionSignatureProtoB$\n\022"
-    "com.google.zetasqlB\016FunctionProtos"
+    ":\004true\022(\n\031may_suppress_side_effects\030\022 \001("
+    "\010:\005false\"\223\003\n\rFunctionProto\022\021\n\tname_path\030"
+    "\001 \003(\t\022\r\n\005group\030\002 \001(\t\022)\n\004mode\030\003 \001(\0162\033.zet"
+    "asql.FunctionEnums.Mode\0222\n\tsignature\030\004 \003"
+    "(\0132\037.zetasql.FunctionSignatureProto\022.\n\007o"
+    "ptions\030\005 \001(\0132\035.zetasql.FunctionOptionsPr"
+    "oto\022@\n\025parse_resume_location\030\010 \001(\0132!.zet"
+    "asql.ParseResumeLocationProto\022,\n$templat"
+    "ed_sql_function_argument_name\030\007 \003(\t\022a\n\014s"
+    "ql_security\030\t \001(\01621.zetasql.ResolvedCrea"
+    "teStatementEnums.SqlSecurity:\030SQL_SECURI"
+    "TY_UNSPECIFIED\"\037\n\035ResolvedFunctionCallIn"
+    "foProto\"I\n\037TableValuedFunctionOptionsPro"
+    "to\022&\n\030uses_upper_case_sql_name\030\001 \001(\010:\004tr"
+    "ue\"\305\003\n\030TableValuedFunctionProto\022\021\n\tname_"
+    "path\030\001 \003(\t\0222\n\tsignature\030\002 \001(\0132\037.zetasql."
+    "FunctionSignatureProto\0229\n\007options\030\t \001(\0132"
+    "(.zetasql.TableValuedFunctionOptionsProt"
+    "o\022<\n\004type\030\003 \001(\0162..zetasql.FunctionEnums."
+    "TableValuedFunctionType\0225\n\nvolatility\030\010 "
+    "\001(\0162!.zetasql.FunctionEnums.Volatility\022@"
+    "\n\025parse_resume_location\030\006 \001(\0132!.zetasql."
+    "ParseResumeLocationProto\022\025\n\rargument_nam"
+    "e\030\005 \003(\t\022\026\n\016custom_context\030\007 \001(\t\022A\n\022anony"
+    "mization_info\030\n \001(\0132%.zetasql.SimpleAnon"
+    "ymizationInfoProto\"\242\002\n\020TVFArgumentProto\022"
+    "4\n\017scalar_argument\030\001 \001(\0132\033.zetasql.Value"
+    "WithTypeProto\0224\n\021relation_argument\030\002 \001(\013"
+    "2\031.zetasql.TVFRelationProto\022.\n\016model_arg"
+    "ument\030\003 \001(\0132\026.zetasql.TVFModelProto\0228\n\023c"
+    "onnection_argument\030\004 \001(\0132\033.zetasql.TVFCo"
+    "nnectionProto\0228\n\023descriptor_argument\030\005 \001"
+    "(\0132\033.zetasql.TVFDescriptorProto\"k\n\030TVFSi"
+    "gnatureOptionsProto\022O\n\036additional_deprec"
+    "ation_warning\030\001 \003(\0132\'.zetasql.Freestandi"
+    "ngDeprecationWarning\"\246\001\n\021TVFSignaturePro"
+    "to\022+\n\010argument\030\001 \003(\0132\031.zetasql.TVFArgume"
+    "ntProto\0220\n\routput_schema\030\002 \001(\0132\031.zetasql"
+    ".TVFRelationProto\0222\n\007options\030\003 \001(\0132!.zet"
+    "asql.TVFSignatureOptionsProto\"W\n\016Procedu"
+    "reProto\022\021\n\tname_path\030\001 \003(\t\0222\n\tsignature\030"
+    "\002 \001(\0132\037.zetasql.FunctionSignatureProtoB$"
+    "\n\022com.google.zetasqlB\016FunctionProtos"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2ffunction_2eproto_deps[11] =
     {
@@ -1107,7 +1112,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fproto_2ffunction_2eproto_onc
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2ffunction_2eproto = {
     false,
     false,
-    5874,
+    5916,
     descriptor_table_protodef_zetasql_2fproto_2ffunction_2eproto,
     "zetasql/proto/function.proto",
     &descriptor_table_zetasql_2fproto_2ffunction_2eproto_once,
@@ -5561,7 +5566,7 @@ class FunctionOptionsProto::_Internal {
     (*has_bits)[0] |= 16u;
   }
   static void set_has_arguments_are_coercible(HasBits* has_bits) {
-    (*has_bits)[0] |= 2048u;
+    (*has_bits)[0] |= 4096u;
   }
   static void set_has_is_deprecated(HasBits* has_bits) {
     (*has_bits)[0] |= 32u;
@@ -5573,7 +5578,7 @@ class FunctionOptionsProto::_Internal {
     (*has_bits)[0] |= 2u;
   }
   static void set_has_allow_external_usage(HasBits* has_bits) {
-    (*has_bits)[0] |= 4096u;
+    (*has_bits)[0] |= 8192u;
   }
   static void set_has_volatility(HasBits* has_bits) {
     (*has_bits)[0] |= 128u;
@@ -5588,16 +5593,19 @@ class FunctionOptionsProto::_Internal {
     (*has_bits)[0] |= 512u;
   }
   static void set_has_supports_safe_error_mode(HasBits* has_bits) {
-    (*has_bits)[0] |= 8192u;
+    (*has_bits)[0] |= 16384u;
   }
   static void set_has_supports_having_modifier(HasBits* has_bits) {
-    (*has_bits)[0] |= 16384u;
+    (*has_bits)[0] |= 32768u;
   }
   static void set_has_supports_clamped_between_modifier(HasBits* has_bits) {
     (*has_bits)[0] |= 1024u;
   }
   static void set_has_uses_upper_case_sql_name(HasBits* has_bits) {
-    (*has_bits)[0] |= 32768u;
+    (*has_bits)[0] |= 65536u;
+  }
+  static void set_has_may_suppress_side_effects(HasBits* has_bits) {
+    (*has_bits)[0] |= 2048u;
   }
 };
 
@@ -5635,6 +5643,8 @@ FunctionOptionsProto::FunctionOptionsProto(const FunctionOptionsProto& from)
     , decltype(_impl_.supports_null_handling_modifier_) {}
 
     , decltype(_impl_.supports_clamped_between_modifier_) {}
+
+    , decltype(_impl_.may_suppress_side_effects_) {}
 
     , decltype(_impl_.arguments_are_coercible_) {}
 
@@ -5696,6 +5706,8 @@ inline void FunctionOptionsProto::SharedCtor(::_pb::Arena* arena) {
     , decltype(_impl_.supports_null_handling_modifier_) { false }
 
     , decltype(_impl_.supports_clamped_between_modifier_) { false }
+
+    , decltype(_impl_.may_suppress_side_effects_) { false }
 
     , decltype(_impl_.arguments_are_coercible_) { true }
 
@@ -5761,14 +5773,14 @@ void FunctionOptionsProto::Clear() {
   }
   if (cached_has_bits & 0x0000ff00u) {
     ::memset(&_impl_.supports_limit_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.supports_clamped_between_modifier_) -
-        reinterpret_cast<char*>(&_impl_.supports_limit_)) + sizeof(_impl_.supports_clamped_between_modifier_));
+        reinterpret_cast<char*>(&_impl_.may_suppress_side_effects_) -
+        reinterpret_cast<char*>(&_impl_.supports_limit_)) + sizeof(_impl_.may_suppress_side_effects_));
     _impl_.arguments_are_coercible_ = true;
     _impl_.allow_external_usage_ = true;
     _impl_.supports_safe_error_mode_ = true;
     _impl_.supports_having_modifier_ = true;
-    _impl_.uses_upper_case_sql_name_ = true;
   }
+  _impl_.uses_upper_case_sql_name_ = true;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -5976,6 +5988,16 @@ const char* FunctionOptionsProto::_InternalParse(const char* ptr, ::_pbi::ParseC
           goto handle_unusual;
         }
         continue;
+      // optional bool may_suppress_side_effects = 18 [default = false];
+      case 18:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 144)) {
+          _Internal::set_has_may_suppress_side_effects(&has_bits);
+          _impl_.may_suppress_side_effects_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -6029,7 +6051,7 @@ failure:
   }
 
   // optional bool arguments_are_coercible = 4 [default = true];
-  if (cached_has_bits & 0x00000800u) {
+  if (cached_has_bits & 0x00001000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteBoolToArray(
         4, this->_internal_arguments_are_coercible(), target);
@@ -6059,7 +6081,7 @@ failure:
   }
 
   // optional bool allow_external_usage = 8 [default = true];
-  if (cached_has_bits & 0x00001000u) {
+  if (cached_has_bits & 0x00002000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteBoolToArray(
         8, this->_internal_allow_external_usage(), target);
@@ -6101,14 +6123,14 @@ failure:
   }
 
   // optional bool supports_safe_error_mode = 14 [default = true];
-  if (cached_has_bits & 0x00002000u) {
+  if (cached_has_bits & 0x00004000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteBoolToArray(
         14, this->_internal_supports_safe_error_mode(), target);
   }
 
   // optional bool supports_having_modifier = 15 [default = true];
-  if (cached_has_bits & 0x00004000u) {
+  if (cached_has_bits & 0x00008000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteBoolToArray(
         15, this->_internal_supports_having_modifier(), target);
@@ -6122,10 +6144,17 @@ failure:
   }
 
   // optional bool uses_upper_case_sql_name = 17 [default = true];
-  if (cached_has_bits & 0x00008000u) {
+  if (cached_has_bits & 0x00010000u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteBoolToArray(
         17, this->_internal_uses_upper_case_sql_name(), target);
+  }
+
+  // optional bool may_suppress_side_effects = 18 [default = false];
+  if (cached_has_bits & 0x00000800u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        18, this->_internal_may_suppress_side_effects(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -6220,32 +6249,37 @@ failure:
       total_size += 3;
     }
 
-    // optional bool arguments_are_coercible = 4 [default = true];
+    // optional bool may_suppress_side_effects = 18 [default = false];
     if (cached_has_bits & 0x00000800u) {
-      total_size += 2;
+      total_size += 3;
     }
 
-    // optional bool allow_external_usage = 8 [default = true];
+    // optional bool arguments_are_coercible = 4 [default = true];
     if (cached_has_bits & 0x00001000u) {
       total_size += 2;
     }
 
-    // optional bool supports_safe_error_mode = 14 [default = true];
+    // optional bool allow_external_usage = 8 [default = true];
     if (cached_has_bits & 0x00002000u) {
       total_size += 2;
     }
 
-    // optional bool supports_having_modifier = 15 [default = true];
+    // optional bool supports_safe_error_mode = 14 [default = true];
     if (cached_has_bits & 0x00004000u) {
       total_size += 2;
     }
 
-    // optional bool uses_upper_case_sql_name = 17 [default = true];
+    // optional bool supports_having_modifier = 15 [default = true];
     if (cached_has_bits & 0x00008000u) {
-      total_size += 3;
+      total_size += 2;
     }
 
   }
+  // optional bool uses_upper_case_sql_name = 17 [default = true];
+  if (cached_has_bits & 0x00010000u) {
+    total_size += 3;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -6304,21 +6338,24 @@ void FunctionOptionsProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, c
       _this->_impl_.supports_clamped_between_modifier_ = from._impl_.supports_clamped_between_modifier_;
     }
     if (cached_has_bits & 0x00000800u) {
-      _this->_impl_.arguments_are_coercible_ = from._impl_.arguments_are_coercible_;
+      _this->_impl_.may_suppress_side_effects_ = from._impl_.may_suppress_side_effects_;
     }
     if (cached_has_bits & 0x00001000u) {
-      _this->_impl_.allow_external_usage_ = from._impl_.allow_external_usage_;
+      _this->_impl_.arguments_are_coercible_ = from._impl_.arguments_are_coercible_;
     }
     if (cached_has_bits & 0x00002000u) {
-      _this->_impl_.supports_safe_error_mode_ = from._impl_.supports_safe_error_mode_;
+      _this->_impl_.allow_external_usage_ = from._impl_.allow_external_usage_;
     }
     if (cached_has_bits & 0x00004000u) {
-      _this->_impl_.supports_having_modifier_ = from._impl_.supports_having_modifier_;
+      _this->_impl_.supports_safe_error_mode_ = from._impl_.supports_safe_error_mode_;
     }
     if (cached_has_bits & 0x00008000u) {
-      _this->_impl_.uses_upper_case_sql_name_ = from._impl_.uses_upper_case_sql_name_;
+      _this->_impl_.supports_having_modifier_ = from._impl_.supports_having_modifier_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
+  }
+  if (cached_has_bits & 0x00010000u) {
+    _this->_internal_set_uses_upper_case_sql_name(from._internal_uses_upper_case_sql_name());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }

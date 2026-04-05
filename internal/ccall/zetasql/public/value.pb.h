@@ -839,6 +839,7 @@ class ValueProto final :
     kBignumericValue = 21,
     kJsonValue = 23,
     kIntervalValue = 24,
+    kTokenlistValue = 25,
     kRangeValue = 26,
     kValueProtoSwitchMustHaveADefault = 255,
     VALUE_NOT_SET = 0,
@@ -948,6 +949,7 @@ class ValueProto final :
     kBignumericValueFieldNumber = 21,
     kJsonValueFieldNumber = 23,
     kIntervalValueFieldNumber = 24,
+    kTokenlistValueFieldNumber = 25,
     kRangeValueFieldNumber = 26,
     kValueProtoSwitchMustHaveADefaultFieldNumber = 255,
   };
@@ -1291,6 +1293,27 @@ class ValueProto final :
   std::string* _internal_mutable_interval_value();
 
   public:
+  // bytes tokenlist_value = 25;
+  bool has_tokenlist_value() const;
+  void clear_tokenlist_value() ;
+  const std::string& tokenlist_value() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_tokenlist_value(Arg_&& arg, Args_... args);
+  std::string* mutable_tokenlist_value();
+  PROTOBUF_NODISCARD std::string* release_tokenlist_value();
+  void set_allocated_tokenlist_value(std::string* ptr);
+
+  private:
+  const std::string& _internal_tokenlist_value() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_tokenlist_value(
+      const std::string& value);
+  std::string* _internal_mutable_tokenlist_value();
+
+  public:
   // .zetasql.ValueProto.Range range_value = 26;
   bool has_range_value() const;
   private:
@@ -1347,6 +1370,7 @@ class ValueProto final :
   void set_has_bignumeric_value();
   void set_has_json_value();
   void set_has_interval_value();
+  void set_has_tokenlist_value();
   void set_has_range_value();
   void set_has___valueproto__switch_must_have_a_default();
 
@@ -1382,6 +1406,7 @@ class ValueProto final :
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr bignumeric_value_;
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr json_value_;
       ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr interval_value_;
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tokenlist_value_;
       ::zetasql::ValueProto_Range* range_value_;
       bool __valueproto__switch_must_have_a_default_;
     } value_;
@@ -2998,6 +3023,85 @@ inline void ValueProto::set_allocated_interval_value(std::string* value) {
     _impl_.value_.interval_value_.InitAllocated(value, GetArenaForAllocation());
   }
   // @@protoc_insertion_point(field_set_allocated:zetasql.ValueProto.interval_value)
+}
+
+// bytes tokenlist_value = 25;
+inline bool ValueProto::has_tokenlist_value() const {
+  return value_case() == kTokenlistValue;
+}
+inline void ValueProto::set_has_tokenlist_value() {
+  _impl_._oneof_case_[0] = kTokenlistValue;
+}
+inline void ValueProto::clear_tokenlist_value() {
+  if (value_case() == kTokenlistValue) {
+    _impl_.value_.tokenlist_value_.Destroy();
+    clear_has_value();
+  }
+}
+inline const std::string& ValueProto::tokenlist_value() const {
+  // @@protoc_insertion_point(field_get:zetasql.ValueProto.tokenlist_value)
+  return _internal_tokenlist_value();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ValueProto::set_tokenlist_value(Arg_&& arg,
+                                                     Args_... args) {
+  if (value_case() != kTokenlistValue) {
+    clear_value();
+
+    set_has_tokenlist_value();
+    _impl_.value_.tokenlist_value_.InitDefault();
+  }
+  _impl_.value_.tokenlist_value_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.ValueProto.tokenlist_value)
+}
+inline std::string* ValueProto::mutable_tokenlist_value() {
+  std::string* _s = _internal_mutable_tokenlist_value();
+  // @@protoc_insertion_point(field_mutable:zetasql.ValueProto.tokenlist_value)
+  return _s;
+}
+inline const std::string& ValueProto::_internal_tokenlist_value() const {
+  if (value_case() != kTokenlistValue) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+  }
+  return _impl_.value_.tokenlist_value_.Get();
+}
+inline void ValueProto::_internal_set_tokenlist_value(const std::string& value) {
+  if (value_case() != kTokenlistValue) {
+    clear_value();
+
+    set_has_tokenlist_value();
+    _impl_.value_.tokenlist_value_.InitDefault();
+  }
+
+
+  _impl_.value_.tokenlist_value_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ValueProto::_internal_mutable_tokenlist_value() {
+  if (value_case() != kTokenlistValue) {
+    clear_value();
+
+    set_has_tokenlist_value();
+    _impl_.value_.tokenlist_value_.InitDefault();
+  }
+  return _impl_.value_.tokenlist_value_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ValueProto::release_tokenlist_value() {
+  // @@protoc_insertion_point(field_release:zetasql.ValueProto.tokenlist_value)
+  if (value_case() != kTokenlistValue) {
+    return nullptr;
+  }
+  clear_has_value();
+  return _impl_.value_.tokenlist_value_.Release();
+}
+inline void ValueProto::set_allocated_tokenlist_value(std::string* value) {
+  if (has_value()) {
+    clear_value();
+  }
+  if (value != nullptr) {
+    set_has_tokenlist_value();
+    _impl_.value_.tokenlist_value_.InitAllocated(value, GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(field_set_allocated:zetasql.ValueProto.tokenlist_value)
 }
 
 // .zetasql.ValueProto.Range range_value = 26;

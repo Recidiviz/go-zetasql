@@ -64,12 +64,24 @@ void ASTStringLiteral::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTStringLiteral(this, data);
 }
 
+void ASTStringLiteralComponent::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTStringLiteralComponent(this, data);
+}
+
 void ASTStar::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTStar(this, data);
 }
 
 void ASTOrExpr::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTOrExpr(this, data);
+}
+
+void ASTOrderingExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTOrderingExpression(this, data);
+}
+
+void ASTOrderBy::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTOrderBy(this, data);
 }
 
 void ASTGroupingItem::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -82,14 +94,6 @@ void ASTGroupBy::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTGroupByAll::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTGroupByAll(this, data);
-}
-
-void ASTOrderingExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
-  visitor->visitASTOrderingExpression(this, data);
-}
-
-void ASTOrderBy::Accept(ParseTreeVisitor* visitor, void* data) const {
-  visitor->visitASTOrderBy(this, data);
 }
 
 void ASTLimitOffset::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -218,6 +222,10 @@ void ASTBigNumericLiteral::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTBytesLiteral::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTBytesLiteral(this, data);
+}
+
+void ASTBytesLiteralComponent::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTBytesLiteralComponent(this, data);
 }
 
 void ASTDateOrTimeLiteral::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -626,6 +634,10 @@ void ASTBracedConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTBracedNewConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTBracedNewConstructor(this, data);
+}
+
+void ASTStructBracedConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTStructBracedConstructor(this, data);
 }
 
 void ASTOptionsList::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1304,6 +1316,10 @@ void ASTAlterSchemaStatement::Accept(ParseTreeVisitor* visitor, void* data) cons
   visitor->visitASTAlterSchemaStatement(this, data);
 }
 
+void ASTAlterExternalSchemaStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterExternalSchemaStatement(this, data);
+}
+
 void ASTAlterTableStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterTableStatement(this, data);
 }
@@ -1468,6 +1484,18 @@ void ASTIdentityColumnMinValue::Accept(ParseTreeVisitor* visitor, void* data) co
   visitor->visitASTIdentityColumnMinValue(this, data);
 }
 
+void ASTAliasedQueryModifiers::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAliasedQueryModifiers(this, data);
+}
+
+void ASTIntOrUnbounded::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTIntOrUnbounded(this, data);
+}
+
+void ASTRecursionDepthModifier::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRecursionDepthModifier(this, data);
+}
+
 absl::StatusOr<VisitResult> ASTQueryStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTQueryStatement(this);
 }
@@ -1532,12 +1560,24 @@ absl::StatusOr<VisitResult> ASTStringLiteral::Accept(NonRecursiveParseTreeVisito
   return visitor->visitASTStringLiteral(this);
 }
 
+absl::StatusOr<VisitResult> ASTStringLiteralComponent::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTStringLiteralComponent(this);
+}
+
 absl::StatusOr<VisitResult> ASTStar::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTStar(this);
 }
 
 absl::StatusOr<VisitResult> ASTOrExpr::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTOrExpr(this);
+}
+
+absl::StatusOr<VisitResult> ASTOrderingExpression::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTOrderingExpression(this);
+}
+
+absl::StatusOr<VisitResult> ASTOrderBy::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTOrderBy(this);
 }
 
 absl::StatusOr<VisitResult> ASTGroupingItem::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1550,14 +1590,6 @@ absl::StatusOr<VisitResult> ASTGroupBy::Accept(NonRecursiveParseTreeVisitor* vis
 
 absl::StatusOr<VisitResult> ASTGroupByAll::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTGroupByAll(this);
-}
-
-absl::StatusOr<VisitResult> ASTOrderingExpression::Accept(NonRecursiveParseTreeVisitor* visitor) const {
-  return visitor->visitASTOrderingExpression(this);
-}
-
-absl::StatusOr<VisitResult> ASTOrderBy::Accept(NonRecursiveParseTreeVisitor* visitor) const {
-  return visitor->visitASTOrderBy(this);
 }
 
 absl::StatusOr<VisitResult> ASTLimitOffset::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -1686,6 +1718,10 @@ absl::StatusOr<VisitResult> ASTBigNumericLiteral::Accept(NonRecursiveParseTreeVi
 
 absl::StatusOr<VisitResult> ASTBytesLiteral::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTBytesLiteral(this);
+}
+
+absl::StatusOr<VisitResult> ASTBytesLiteralComponent::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTBytesLiteralComponent(this);
 }
 
 absl::StatusOr<VisitResult> ASTDateOrTimeLiteral::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2094,6 +2130,10 @@ absl::StatusOr<VisitResult> ASTBracedConstructor::Accept(NonRecursiveParseTreeVi
 
 absl::StatusOr<VisitResult> ASTBracedNewConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTBracedNewConstructor(this);
+}
+
+absl::StatusOr<VisitResult> ASTStructBracedConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTStructBracedConstructor(this);
 }
 
 absl::StatusOr<VisitResult> ASTOptionsList::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2772,6 +2812,10 @@ absl::StatusOr<VisitResult> ASTAlterSchemaStatement::Accept(NonRecursiveParseTre
   return visitor->visitASTAlterSchemaStatement(this);
 }
 
+absl::StatusOr<VisitResult> ASTAlterExternalSchemaStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterExternalSchemaStatement(this);
+}
+
 absl::StatusOr<VisitResult> ASTAlterTableStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAlterTableStatement(this);
 }
@@ -2934,6 +2978,18 @@ absl::StatusOr<VisitResult> ASTIdentityColumnMaxValue::Accept(NonRecursiveParseT
 
 absl::StatusOr<VisitResult> ASTIdentityColumnMinValue::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTIdentityColumnMinValue(this);
+}
+
+absl::StatusOr<VisitResult> ASTAliasedQueryModifiers::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAliasedQueryModifiers(this);
+}
+
+absl::StatusOr<VisitResult> ASTIntOrUnbounded::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTIntOrUnbounded(this);
+}
+
+absl::StatusOr<VisitResult> ASTRecursionDepthModifier::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRecursionDepthModifier(this);
 }
 
 }  // namespace zetasql

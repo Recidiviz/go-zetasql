@@ -13,6 +13,7 @@
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/parser/macros/macro_catalog/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"

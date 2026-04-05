@@ -60,7 +60,6 @@ class ResolvedFlattenBuilder;
 class ResolvedFlattenedArgBuilder;
 class ResolvedReplaceFieldItemBuilder;
 class ResolvedReplaceFieldBuilder;
-class ResolvedGetProtoOneofBuilder;
 class ResolvedSubqueryExprBuilder;
 class ResolvedWithExprBuilder;
 class ResolvedExecuteAsRoleScanBuilder;
@@ -177,7 +176,6 @@ class ResolvedDropConstraintActionBuilder;
 class ResolvedDropPrimaryKeyActionBuilder;
 class ResolvedAlterColumnOptionsActionBuilder;
 class ResolvedAlterColumnDropNotNullActionBuilder;
-class ResolvedAlterColumnDropGeneratedActionBuilder;
 class ResolvedAlterColumnSetDataTypeActionBuilder;
 class ResolvedAlterColumnSetDefaultActionBuilder;
 class ResolvedAlterColumnDropDefaultActionBuilder;
@@ -235,7 +233,6 @@ class ResolvedAnalyzeStmtBuilder;
 class ResolvedAuxLoadDataPartitionFilterBuilder;
 class ResolvedAuxLoadDataStmtBuilder;
 class ResolvedUndropStmtBuilder;
-class ResolvedIdentityColumnInfoBuilder;
 
 class ResolvedLiteralBuilder final {
  public:
@@ -6707,194 +6704,6 @@ inline ResolvedReplaceFieldBuilder ToBuilder(
   return builder;
 }
 
-class ResolvedGetProtoOneofBuilder final {
- public:
-  ResolvedGetProtoOneofBuilder() : ResolvedGetProtoOneofBuilder(absl::WrapUnique(new ResolvedGetProtoOneof)) {}
-
-  ResolvedGetProtoOneofBuilder(const ResolvedGetProtoOneofBuilder&) = delete;
-  ResolvedGetProtoOneofBuilder& operator=(const ResolvedGetProtoOneofBuilder&) = delete;
-  ResolvedGetProtoOneofBuilder(ResolvedGetProtoOneofBuilder&& other)
-      : ResolvedGetProtoOneofBuilder(std::move(other.node_)) {
-    deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
-  }
-
-  ResolvedGetProtoOneofBuilder& operator=(ResolvedGetProtoOneofBuilder&& other) {
-    node_ = std::move(other.node_);
-    deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
-    return *this;
-  };
-
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
-  // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGetProtoOneof>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
-    node_->accessed_ = 0;
-    if (!field_is_set_.test(0)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedGetProtoOneof::type was not set on the builder");
-    }
-    if (!field_is_set_.test(2)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedGetProtoOneof::expr was not set on the builder");
-    }
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedGetProtoOneof::oneof_descriptor was not set on the builder");
-    }
-    if (deferred_build_status_.ok()) {
-      return std::move(node_);
-    }
-
-    return deferred_build_status_;
-  }
-
-  // Getters and chained setters
-  const ResolvedExpr* expr() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->expr();
-  }
-
-  std::unique_ptr<const ResolvedExpr> release_expr() {
-    return node_->release_expr();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedGetProtoOneofBuilder&& set_expr(T v) && {
-    node_->set_expr(std::move(v));
-    field_is_set_.set(2, true);
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedGetProtoOneofBuilder& set_expr(T v) & {
-    node_->set_expr(std::move(v));
-    field_is_set_.set(2, true);
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedGetProtoOneofBuilder&& set_expr(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_expr(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-    field_is_set_.set(2, true);
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedGetProtoOneofBuilder& set_expr(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_expr(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-    field_is_set_.set(2, true);
-
-    return *this;
-  }
-
-  // The google::protobuf::OneofDescriptor for a Oneof contained in <expr>.
-  // This descriptor provides google::protobuf::FieldDescriptors for each of
-  // the fields contained in the Oneof.
-  const google::protobuf::OneofDescriptor* oneof_descriptor() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->oneof_descriptor();
-  }
-
-  ResolvedGetProtoOneofBuilder&& set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) && {
-    node_->set_oneof_descriptor(v);
-    field_is_set_.set(3, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedGetProtoOneofBuilder& set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) & {
-    node_->set_oneof_descriptor(v);
-    field_is_set_.set(3, true);
-
-    return *this;
-  }
-
-  const Type* type() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->type();
-  }
-
-  ResolvedGetProtoOneofBuilder&& set_type(const Type* v) && {
-    node_->set_type(v);
-    field_is_set_.set(0, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedGetProtoOneofBuilder& set_type(const Type* v) & {
-    node_->set_type(v);
-    field_is_set_.set(0, true);
-
-    return *this;
-  }
-
-  const AnnotationMap* type_annotation_map() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->type_annotation_map();
-  }
-
-  ResolvedGetProtoOneofBuilder&& set_type_annotation_map(const AnnotationMap* v) && {
-    node_->set_type_annotation_map(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedGetProtoOneofBuilder& set_type_annotation_map(const AnnotationMap* v) & {
-    node_->set_type_annotation_map(v);
-
-    return *this;
-  }
-
- private:
-  std::unique_ptr<ResolvedGetProtoOneof> node_;
-
-  absl::Status deferred_build_status_;
-  std::bitset<4> field_is_set_ = {0};
-  friend ResolvedGetProtoOneofBuilder ToBuilder(
-      std::unique_ptr<const ResolvedGetProtoOneof> node);
-
-  ResolvedGetProtoOneofBuilder(std::unique_ptr<ResolvedGetProtoOneof> node)
-      : node_(std::move(node)) {
-    ABSL_DCHECK(node_ != nullptr);
-  }
-};
-
-inline ResolvedGetProtoOneofBuilder ToBuilder(
-    std::unique_ptr<const ResolvedGetProtoOneof> node) {
-  ResolvedGetProtoOneofBuilder builder(absl::WrapUnique<ResolvedGetProtoOneof>(
-      const_cast<ResolvedGetProtoOneof*>(node.release())));
-  // All required nodes are evidently already set
-  builder.field_is_set_.set(0, true);
-  builder.field_is_set_.set(2, true);
-  builder.field_is_set_.set(3, true);
-  return builder;
-}
-
 class ResolvedSubqueryExprBuilder final {
  public:
     typedef ResolvedSubqueryExprEnums::SubqueryType SubqueryType;
@@ -9089,11 +8898,13 @@ class ResolvedArrayScanBuilder final {
   ResolvedArrayScanBuilder(ResolvedArrayScanBuilder&& other)
       : ResolvedArrayScanBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
   }
 
   ResolvedArrayScanBuilder& operator=(ResolvedArrayScanBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
     return *this;
   };
 
@@ -9104,6 +8915,18 @@ class ResolvedArrayScanBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
+    if (!field_is_set_.test(5)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedArrayScan::array_expr was not set on the builder");
+    }
+    if (!field_is_set_.test(6)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedArrayScan::element_column was not set on the builder");
+    }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -9161,114 +8984,74 @@ class ResolvedArrayScanBuilder final {
     return *this;
   }
 
-  const std::vector<std::unique_ptr<const ResolvedExpr>>& array_expr_list() const {
+  const ResolvedExpr* array_expr() const {
     ABSL_DCHECK(node_ != nullptr);
-    return node_->array_expr_list();
+    return node_->array_expr();
   }
 
-  int array_expr_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->array_expr_list_size();
-  }
-
-  const ResolvedExpr* array_expr_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->array_expr_list(i);
+  std::unique_ptr<const ResolvedExpr> release_array_expr() {
+    return node_->release_array_expr();
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder&& add_array_expr_list(T v) && {
-    node_->add_array_expr_list(std::move(v));
+  ResolvedArrayScanBuilder&& set_array_expr(T v) && {
+    node_->set_array_expr(std::move(v));
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder& add_array_expr_list(T v) & {
-    node_->add_array_expr_list(std::move(v));
+  ResolvedArrayScanBuilder& set_array_expr(T v) & {
+    node_->set_array_expr(std::move(v));
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
   template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder&& add_array_expr_list(TBuilder&& b) && {
+  ResolvedArrayScanBuilder&& set_array_expr(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
-      add_array_expr_list(std::move(*status_or_node));
+      set_array_expr(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
+    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder& add_array_expr_list(TBuilder&& b) & {
+  ResolvedArrayScanBuilder& set_array_expr(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
-      add_array_expr_list(std::move(*status_or_node));
+      set_array_expr(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
+    field_is_set_.set(5, true);
 
     return *this;
   }
 
-  std::vector<std::unique_ptr<const ResolvedExpr>> release_array_expr_list() {
-    return node_->release_array_expr_list();
+  const ResolvedColumn& element_column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->element_column();
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedArrayScanBuilder&& set_array_expr_list(T v) && {
-    node_->set_array_expr_list(std::move(v));
+  ResolvedArrayScanBuilder&& set_element_column(const ResolvedColumn& v) && {
+    node_->set_element_column(v);
+    field_is_set_.set(6, true);
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedArrayScanBuilder& set_array_expr_list(T v) & {
-    node_->set_array_expr_list(std::move(v));
-
-    return *this;
-  }
-
-  const std::vector<ResolvedColumn>& element_column_list() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->element_column_list();
-  }
-
-  int element_column_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->element_column_list_size();
-  }
-
-  const ResolvedColumn& element_column_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->element_column_list(i);
-  }
-
-  ResolvedArrayScanBuilder&& add_element_column_list(ResolvedColumn v) && {
-    node_->add_element_column_list(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedArrayScanBuilder& add_element_column_list(ResolvedColumn v) & {
-    node_->add_element_column_list(v);
-
-    return *this;
-  }
-
-  ResolvedArrayScanBuilder&& set_element_column_list(const std::vector<ResolvedColumn>& v) && {
-    node_->set_element_column_list(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedArrayScanBuilder& set_element_column_list(const std::vector<ResolvedColumn>& v) & {
-    node_->set_element_column_list(v);
+  ResolvedArrayScanBuilder& set_element_column(const ResolvedColumn& v) & {
+    node_->set_element_column(v);
+    field_is_set_.set(6, true);
 
     return *this;
   }
@@ -9384,57 +9167,6 @@ class ResolvedArrayScanBuilder final {
 
   ResolvedArrayScanBuilder& set_is_outer(bool v) & {
     node_->set_is_outer(v);
-
-    return *this;
-  }
-
-  // Stores a builtin ENUM ARRAY_ZIP_MODE with three possible values:
-  // PAD, TRUNCATE or STRICT.
-  const ResolvedExpr* array_zip_mode() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->array_zip_mode();
-  }
-
-  std::unique_ptr<const ResolvedExpr> release_array_zip_mode() {
-    return node_->release_array_zip_mode();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder&& set_array_zip_mode(T v) && {
-    node_->set_array_zip_mode(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder& set_array_zip_mode(T v) & {
-    node_->set_array_zip_mode(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder&& set_array_zip_mode(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_array_zip_mode(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder& set_array_zip_mode(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_array_zip_mode(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
 
     return *this;
   }
@@ -9589,6 +9321,7 @@ class ResolvedArrayScanBuilder final {
   std::unique_ptr<ResolvedArrayScan> node_;
 
   absl::Status deferred_build_status_;
+  std::bitset<10> field_is_set_ = {0};
   friend ResolvedArrayScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedArrayScan> node);
 
@@ -9603,6 +9336,8 @@ inline ResolvedArrayScanBuilder ToBuilder(
   ResolvedArrayScanBuilder builder(absl::WrapUnique<ResolvedArrayScan>(
       const_cast<ResolvedArrayScan*>(node.release())));
   // All required nodes are evidently already set
+  builder.field_is_set_.set(5, true);
+  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -16540,12 +16275,9 @@ inline ResolvedColumnAnnotationsBuilder ToBuilder(
 class ResolvedGeneratedColumnInfoBuilder final {
  public:
     typedef ResolvedGeneratedColumnInfoEnums::StoredMode StoredMode;
-  typedef ResolvedGeneratedColumnInfoEnums::GeneratedMode GeneratedMode;
   static const StoredMode NON_STORED = ResolvedGeneratedColumnInfoEnums::NON_STORED;
   static const StoredMode STORED = ResolvedGeneratedColumnInfoEnums::STORED;
   static const StoredMode STORED_VOLATILE = ResolvedGeneratedColumnInfoEnums::STORED_VOLATILE;
-  static const GeneratedMode ALWAYS = ResolvedGeneratedColumnInfoEnums::ALWAYS;
-  static const GeneratedMode BY_DEFAULT = ResolvedGeneratedColumnInfoEnums::BY_DEFAULT;
 
   ResolvedGeneratedColumnInfoBuilder() : ResolvedGeneratedColumnInfoBuilder(absl::WrapUnique(new ResolvedGeneratedColumnInfo)) {}
 
@@ -16554,11 +16286,13 @@ class ResolvedGeneratedColumnInfoBuilder final {
   ResolvedGeneratedColumnInfoBuilder(ResolvedGeneratedColumnInfoBuilder&& other)
       : ResolvedGeneratedColumnInfoBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
   }
 
   ResolvedGeneratedColumnInfoBuilder& operator=(ResolvedGeneratedColumnInfoBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
     return *this;
   };
 
@@ -16569,6 +16303,18 @@ class ResolvedGeneratedColumnInfoBuilder final {
   // Performs an emptiness check on node.fields to determine if accessed_ should
   // be created. In the case of a concrete node without fields it will not be.
     node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGeneratedColumnInfo::expression was not set on the builder");
+    }
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGeneratedColumnInfo::stored_mode was not set on the builder");
+    }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
@@ -16589,6 +16335,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedGeneratedColumnInfoBuilder&& set_expression(T v) && {
     node_->set_expression(std::move(v));
+    field_is_set_.set(0, true);
 
     return std::move(*this);
   }
@@ -16596,6 +16343,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedGeneratedColumnInfoBuilder& set_expression(T v) & {
     node_->set_expression(std::move(v));
+    field_is_set_.set(0, true);
 
     return *this;
   }
@@ -16609,6 +16357,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
+    field_is_set_.set(0, true);
 
     return std::move(*this);
   }
@@ -16622,6 +16371,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
+    field_is_set_.set(0, true);
 
     return *this;
   }
@@ -16633,78 +16383,14 @@ class ResolvedGeneratedColumnInfoBuilder final {
 
   ResolvedGeneratedColumnInfoBuilder&& set_stored_mode(ResolvedGeneratedColumnInfo::StoredMode v) && {
     node_->set_stored_mode(v);
+    field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
   ResolvedGeneratedColumnInfoBuilder& set_stored_mode(ResolvedGeneratedColumnInfo::StoredMode v) & {
     node_->set_stored_mode(v);
-
-    return *this;
-  }
-
-  ResolvedGeneratedColumnInfo::GeneratedMode generated_mode() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_mode();
-  }
-
-  ResolvedGeneratedColumnInfoBuilder&& set_generated_mode(ResolvedGeneratedColumnInfo::GeneratedMode v) && {
-    node_->set_generated_mode(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedGeneratedColumnInfoBuilder& set_generated_mode(ResolvedGeneratedColumnInfo::GeneratedMode v) & {
-    node_->set_generated_mode(v);
-
-    return *this;
-  }
-
-  const ResolvedIdentityColumnInfo* identity_column_info() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->identity_column_info();
-  }
-
-  std::unique_ptr<const ResolvedIdentityColumnInfo> release_identity_column_info() {
-    return node_->release_identity_column_info();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
-  ResolvedGeneratedColumnInfoBuilder&& set_identity_column_info(T v) && {
-    node_->set_identity_column_info(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
-  ResolvedGeneratedColumnInfoBuilder& set_identity_column_info(T v) & {
-    node_->set_identity_column_info(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
-  ResolvedGeneratedColumnInfoBuilder&& set_identity_column_info(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_identity_column_info(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
-  ResolvedGeneratedColumnInfoBuilder& set_identity_column_info(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      set_identity_column_info(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
+    field_is_set_.set(1, true);
 
     return *this;
   }
@@ -16713,6 +16399,7 @@ class ResolvedGeneratedColumnInfoBuilder final {
   std::unique_ptr<ResolvedGeneratedColumnInfo> node_;
 
   absl::Status deferred_build_status_;
+  std::bitset<2> field_is_set_ = {0};
   friend ResolvedGeneratedColumnInfoBuilder ToBuilder(
       std::unique_ptr<const ResolvedGeneratedColumnInfo> node);
 
@@ -16727,6 +16414,8 @@ inline ResolvedGeneratedColumnInfoBuilder ToBuilder(
   ResolvedGeneratedColumnInfoBuilder builder(absl::WrapUnique<ResolvedGeneratedColumnInfo>(
       const_cast<ResolvedGeneratedColumnInfo*>(node.release())));
   // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(1, true);
   return builder;
 }
 
@@ -19629,44 +19318,6 @@ class ResolvedFunctionArgumentBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-
-    return *this;
-  }
-
-  // Stores the alias of the argument, either provided by the user or
-  // generated by the resolver. This can only be populated if allowed
-  // by `FunctionArgumentTypeOptions::argument_alias_kind`.
-  //
-  // An argument alias is an identifier associated with a function
-  // argument in the form of F(<arg> AS <alias>), where <alias> is the
-  // argument alias for the function argument <arg>.
-  //
-  // Examples include
-  //   * STRUCT(1 AS x, 2 AS y)
-  //   * ARRAY_ZIP(arr1 AS a, arr2 AS b)
-  // where the argument alias is used as a field name in an output
-  // STRUCT value. For dynamic types like JSON, these aliases may be
-  // used at run-time.
-  //
-  // This field will be empty if the argument does not support aliases,
-  // or an alias could not be inferred.
-  //
-  // The current implementation only allows an argument to have an
-  // alias if its type is `expr`, but the support may be extended to
-  // other types, e.g. `scan` or `model` in the future.
-  const std::string& argument_alias() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->argument_alias();
-  }
-
-  ResolvedFunctionArgumentBuilder&& set_argument_alias(const std::string& v) && {
-    node_->set_argument_alias(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedFunctionArgumentBuilder& set_argument_alias(const std::string& v) & {
-    node_->set_argument_alias(v);
 
     return *this;
   }
@@ -31179,11 +30830,6 @@ inline ResolvedWithEntryBuilder ToBuilder(
 
 class ResolvedOptionBuilder final {
  public:
-    typedef ResolvedOptionEnums::AssignmentOp AssignmentOp;
-  static const AssignmentOp DEFAULT_ASSIGN = ResolvedOptionEnums::DEFAULT_ASSIGN;
-  static const AssignmentOp ADD_ASSIGN = ResolvedOptionEnums::ADD_ASSIGN;
-  static const AssignmentOp SUB_ASSIGN = ResolvedOptionEnums::SUB_ASSIGN;
-
   ResolvedOptionBuilder() : ResolvedOptionBuilder(absl::WrapUnique(new ResolvedOption)) {}
 
   ResolvedOptionBuilder(const ResolvedOptionBuilder&) = delete;
@@ -31317,28 +30963,11 @@ class ResolvedOptionBuilder final {
     return *this;
   }
 
-  ResolvedOption::AssignmentOp assignment_op() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->assignment_op();
-  }
-
-  ResolvedOptionBuilder&& set_assignment_op(ResolvedOption::AssignmentOp v) && {
-    node_->set_assignment_op(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedOptionBuilder& set_assignment_op(ResolvedOption::AssignmentOp v) & {
-    node_->set_assignment_op(v);
-
-    return *this;
-  }
-
  private:
   std::unique_ptr<ResolvedOption> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<4> field_is_set_ = {0};
+  std::bitset<3> field_is_set_ = {0};
   friend ResolvedOptionBuilder ToBuilder(
       std::unique_ptr<const ResolvedOption> node);
 
@@ -33586,141 +33215,6 @@ class ResolvedInsertStmtBuilder final {
     return *this;
   }
 
-  // This returns a topologically sorted list of generated columns
-  //  resolved ids in the table accessed by insert statement.
-  //  For example for below table
-  //  CREATE TABLE T(
-  //  k1 INT64 NOT NULL,
-  //  data INT64,
-  //  gen1 INT64 AS data+1,
-  //  gen2 INT64 AS gen1*2,
-  //  gen3 INT64 AS data*2 + gen1,
-  //  ) PRIMARY KEY(k1);
-  // data------------------->gen1--------------------->gen2
-  //   *                      *----------> *
-  //   *  ------------------------------->gen3
-  // the vector would have corresponding indexes of one of these values
-  // gen1 gen2 gen3 OR gen1 gen3 gen2.
-  const std::vector<int>& topologically_sorted_generated_column_id_list() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->topologically_sorted_generated_column_id_list();
-  }
-
-  int topologically_sorted_generated_column_id_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->topologically_sorted_generated_column_id_list_size();
-  }
-
-  int topologically_sorted_generated_column_id_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->topologically_sorted_generated_column_id_list(i);
-  }
-
-  ResolvedInsertStmtBuilder&& add_topologically_sorted_generated_column_id_list(int v) && {
-    node_->add_topologically_sorted_generated_column_id_list(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedInsertStmtBuilder& add_topologically_sorted_generated_column_id_list(int v) & {
-    node_->add_topologically_sorted_generated_column_id_list(v);
-
-    return *this;
-  }
-
-  ResolvedInsertStmtBuilder&& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) && {
-    node_->set_topologically_sorted_generated_column_id_list(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedInsertStmtBuilder& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) & {
-    node_->set_topologically_sorted_generated_column_id_list(v);
-
-    return *this;
-  }
-
-  // This field returns the vector of generated column expressions
-  // corresponding to the column ids in
-  // topologically_sorted_generated_column_id_list. Both the lists have
-  // the same size and 1-to-1 mapping for the column id with its
-  // corresponding expression. This field is not directly accessed
-  // from the catalog since these expressions are rewritten to replace
-  // the ResolvedExpressionColumn for the referred columns in the
-  // catalog to corresponding ResolvedColumnRef.
-  const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_column_expr_list();
-  }
-
-  int generated_column_expr_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_column_expr_list_size();
-  }
-
-  const ResolvedExpr* generated_column_expr_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_column_expr_list(i);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedInsertStmtBuilder&& add_generated_column_expr_list(T v) && {
-    node_->add_generated_column_expr_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedInsertStmtBuilder& add_generated_column_expr_list(T v) & {
-    node_->add_generated_column_expr_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedInsertStmtBuilder&& add_generated_column_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_generated_column_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedInsertStmtBuilder& add_generated_column_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_generated_column_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  std::vector<std::unique_ptr<const ResolvedExpr>> release_generated_column_expr_list() {
-    return node_->release_generated_column_expr_list();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedInsertStmtBuilder&& set_generated_column_expr_list(T v) && {
-    node_->set_generated_column_expr_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedInsertStmtBuilder& set_generated_column_expr_list(T v) & {
-    node_->set_generated_column_expr_list(std::move(v));
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -35458,120 +34952,6 @@ class ResolvedUpdateStmtBuilder final {
     return *this;
   }
 
-  // TODO: refactor it with INSERT case.
-  const std::vector<int>& topologically_sorted_generated_column_id_list() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->topologically_sorted_generated_column_id_list();
-  }
-
-  int topologically_sorted_generated_column_id_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->topologically_sorted_generated_column_id_list_size();
-  }
-
-  int topologically_sorted_generated_column_id_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->topologically_sorted_generated_column_id_list(i);
-  }
-
-  ResolvedUpdateStmtBuilder&& add_topologically_sorted_generated_column_id_list(int v) && {
-    node_->add_topologically_sorted_generated_column_id_list(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedUpdateStmtBuilder& add_topologically_sorted_generated_column_id_list(int v) & {
-    node_->add_topologically_sorted_generated_column_id_list(v);
-
-    return *this;
-  }
-
-  ResolvedUpdateStmtBuilder&& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) && {
-    node_->set_topologically_sorted_generated_column_id_list(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedUpdateStmtBuilder& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) & {
-    node_->set_topologically_sorted_generated_column_id_list(v);
-
-    return *this;
-  }
-
-  // TODO: refactor it with INSERT case.
-  const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_column_expr_list();
-  }
-
-  int generated_column_expr_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_column_expr_list_size();
-  }
-
-  const ResolvedExpr* generated_column_expr_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->generated_column_expr_list(i);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedUpdateStmtBuilder&& add_generated_column_expr_list(T v) && {
-    node_->add_generated_column_expr_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedUpdateStmtBuilder& add_generated_column_expr_list(T v) & {
-    node_->add_generated_column_expr_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedUpdateStmtBuilder&& add_generated_column_expr_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_generated_column_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedUpdateStmtBuilder& add_generated_column_expr_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_generated_column_expr_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  std::vector<std::unique_ptr<const ResolvedExpr>> release_generated_column_expr_list() {
-    return node_->release_generated_column_expr_list();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedUpdateStmtBuilder&& set_generated_column_expr_list(T v) && {
-    node_->set_generated_column_expr_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
-  ResolvedUpdateStmtBuilder& set_generated_column_expr_list(T v) & {
-    node_->set_generated_column_expr_list(std::move(v));
-
-    return *this;
-  }
-
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -35649,7 +35029,7 @@ class ResolvedUpdateStmtBuilder final {
   std::unique_ptr<ResolvedUpdateStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<11> field_is_set_ = {0};
+  std::bitset<9> field_is_set_ = {0};
   friend ResolvedUpdateStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedUpdateStmt> node);
 
@@ -40867,104 +40247,6 @@ inline ResolvedAlterColumnDropNotNullActionBuilder ToBuilder(
     std::unique_ptr<const ResolvedAlterColumnDropNotNullAction> node) {
   ResolvedAlterColumnDropNotNullActionBuilder builder(absl::WrapUnique<ResolvedAlterColumnDropNotNullAction>(
       const_cast<ResolvedAlterColumnDropNotNullAction*>(node.release())));
-  // All required nodes are evidently already set
-  builder.field_is_set_.set(1, true);
-  return builder;
-}
-
-class ResolvedAlterColumnDropGeneratedActionBuilder final {
- public:
-  ResolvedAlterColumnDropGeneratedActionBuilder() : ResolvedAlterColumnDropGeneratedActionBuilder(absl::WrapUnique(new ResolvedAlterColumnDropGeneratedAction)) {}
-
-  ResolvedAlterColumnDropGeneratedActionBuilder(const ResolvedAlterColumnDropGeneratedActionBuilder&) = delete;
-  ResolvedAlterColumnDropGeneratedActionBuilder& operator=(const ResolvedAlterColumnDropGeneratedActionBuilder&) = delete;
-  ResolvedAlterColumnDropGeneratedActionBuilder(ResolvedAlterColumnDropGeneratedActionBuilder&& other)
-      : ResolvedAlterColumnDropGeneratedActionBuilder(std::move(other.node_)) {
-    deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
-  }
-
-  ResolvedAlterColumnDropGeneratedActionBuilder& operator=(ResolvedAlterColumnDropGeneratedActionBuilder&& other) {
-    node_ = std::move(other.node_);
-    deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
-    return *this;
-  };
-
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
-  // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
-    if (!field_is_set_.test(1)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedAlterColumnDropGeneratedAction::column was not set on the builder");
-    }
-    if (deferred_build_status_.ok()) {
-      return std::move(node_);
-    }
-
-    return deferred_build_status_;
-  }
-
-  // Getters and chained setters
-  bool is_if_exists() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->is_if_exists();
-  }
-
-  ResolvedAlterColumnDropGeneratedActionBuilder&& set_is_if_exists(bool v) && {
-    node_->set_is_if_exists(v);
-
-    return std::move(*this);
-  }
-
-  ResolvedAlterColumnDropGeneratedActionBuilder& set_is_if_exists(bool v) & {
-    node_->set_is_if_exists(v);
-
-    return *this;
-  }
-
-  const std::string& column() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->column();
-  }
-
-  ResolvedAlterColumnDropGeneratedActionBuilder&& set_column(const std::string& v) && {
-    node_->set_column(v);
-    field_is_set_.set(1, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedAlterColumnDropGeneratedActionBuilder& set_column(const std::string& v) & {
-    node_->set_column(v);
-    field_is_set_.set(1, true);
-
-    return *this;
-  }
-
- private:
-  std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> node_;
-
-  absl::Status deferred_build_status_;
-  std::bitset<2> field_is_set_ = {0};
-  friend ResolvedAlterColumnDropGeneratedActionBuilder ToBuilder(
-      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node);
-
-  ResolvedAlterColumnDropGeneratedActionBuilder(std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> node)
-      : node_(std::move(node)) {
-    ABSL_DCHECK(node_ != nullptr);
-  }
-};
-
-inline ResolvedAlterColumnDropGeneratedActionBuilder ToBuilder(
-    std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node) {
-  ResolvedAlterColumnDropGeneratedActionBuilder builder(absl::WrapUnique<ResolvedAlterColumnDropGeneratedAction>(
-      const_cast<ResolvedAlterColumnDropGeneratedAction*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(1, true);
   return builder;
@@ -56666,192 +55948,6 @@ inline ResolvedUndropStmtBuilder ToBuilder(
       const_cast<ResolvedUndropStmt*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(1, true);
-  return builder;
-}
-
-class ResolvedIdentityColumnInfoBuilder final {
- public:
-  ResolvedIdentityColumnInfoBuilder() : ResolvedIdentityColumnInfoBuilder(absl::WrapUnique(new ResolvedIdentityColumnInfo)) {}
-
-  ResolvedIdentityColumnInfoBuilder(const ResolvedIdentityColumnInfoBuilder&) = delete;
-  ResolvedIdentityColumnInfoBuilder& operator=(const ResolvedIdentityColumnInfoBuilder&) = delete;
-  ResolvedIdentityColumnInfoBuilder(ResolvedIdentityColumnInfoBuilder&& other)
-      : ResolvedIdentityColumnInfoBuilder(std::move(other.node_)) {
-    deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
-  }
-
-  ResolvedIdentityColumnInfoBuilder& operator=(ResolvedIdentityColumnInfoBuilder&& other) {
-    node_ = std::move(other.node_);
-    deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
-    return *this;
-  };
-
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
-  // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedIdentityColumnInfo>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
-    node_->accessed_ = 0;
-    if (!field_is_set_.test(0)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedIdentityColumnInfo::start_with_value was not set on the builder");
-    }
-    if (!field_is_set_.test(1)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedIdentityColumnInfo::increment_by_value was not set on the builder");
-    }
-    if (!field_is_set_.test(2)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedIdentityColumnInfo::max_value was not set on the builder");
-    }
-    if (!field_is_set_.test(3)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedIdentityColumnInfo::min_value was not set on the builder");
-    }
-    if (!field_is_set_.test(4)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedIdentityColumnInfo::cycling_enabled was not set on the builder");
-    }
-    if (deferred_build_status_.ok()) {
-      return std::move(node_);
-    }
-
-    return deferred_build_status_;
-  }
-
-  // Getters and chained setters
-  const Value& start_with_value() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->start_with_value();
-  }
-
-  ResolvedIdentityColumnInfoBuilder&& set_start_with_value(const Value& v) && {
-    node_->set_start_with_value(v);
-    field_is_set_.set(0, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedIdentityColumnInfoBuilder& set_start_with_value(const Value& v) & {
-    node_->set_start_with_value(v);
-    field_is_set_.set(0, true);
-
-    return *this;
-  }
-
-  const Value& increment_by_value() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->increment_by_value();
-  }
-
-  ResolvedIdentityColumnInfoBuilder&& set_increment_by_value(const Value& v) && {
-    node_->set_increment_by_value(v);
-    field_is_set_.set(1, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedIdentityColumnInfoBuilder& set_increment_by_value(const Value& v) & {
-    node_->set_increment_by_value(v);
-    field_is_set_.set(1, true);
-
-    return *this;
-  }
-
-  const Value& max_value() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->max_value();
-  }
-
-  ResolvedIdentityColumnInfoBuilder&& set_max_value(const Value& v) && {
-    node_->set_max_value(v);
-    field_is_set_.set(2, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedIdentityColumnInfoBuilder& set_max_value(const Value& v) & {
-    node_->set_max_value(v);
-    field_is_set_.set(2, true);
-
-    return *this;
-  }
-
-  const Value& min_value() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->min_value();
-  }
-
-  ResolvedIdentityColumnInfoBuilder&& set_min_value(const Value& v) && {
-    node_->set_min_value(v);
-    field_is_set_.set(3, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedIdentityColumnInfoBuilder& set_min_value(const Value& v) & {
-    node_->set_min_value(v);
-    field_is_set_.set(3, true);
-
-    return *this;
-  }
-
-  bool cycling_enabled() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->cycling_enabled();
-  }
-
-  ResolvedIdentityColumnInfoBuilder&& set_cycling_enabled(bool v) && {
-    node_->set_cycling_enabled(v);
-    field_is_set_.set(4, true);
-
-    return std::move(*this);
-  }
-
-  ResolvedIdentityColumnInfoBuilder& set_cycling_enabled(bool v) & {
-    node_->set_cycling_enabled(v);
-    field_is_set_.set(4, true);
-
-    return *this;
-  }
-
- private:
-  std::unique_ptr<ResolvedIdentityColumnInfo> node_;
-
-  absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
-  friend ResolvedIdentityColumnInfoBuilder ToBuilder(
-      std::unique_ptr<const ResolvedIdentityColumnInfo> node);
-
-  ResolvedIdentityColumnInfoBuilder(std::unique_ptr<ResolvedIdentityColumnInfo> node)
-      : node_(std::move(node)) {
-    ABSL_DCHECK(node_ != nullptr);
-  }
-};
-
-inline ResolvedIdentityColumnInfoBuilder ToBuilder(
-    std::unique_ptr<const ResolvedIdentityColumnInfo> node) {
-  ResolvedIdentityColumnInfoBuilder builder(absl::WrapUnique<ResolvedIdentityColumnInfo>(
-      const_cast<ResolvedIdentityColumnInfo*>(node.release())));
-  // All required nodes are evidently already set
-  builder.field_is_set_.set(0, true);
-  builder.field_is_set_.set(1, true);
-  builder.field_is_set_.set(2, true);
-  builder.field_is_set_.set(3, true);
-  builder.field_is_set_.set(4, true);
   return builder;
 }
 

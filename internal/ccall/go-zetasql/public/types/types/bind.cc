@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_types_types_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_types_types_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_types_types_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_types_types_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_types_types_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_types_types_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_types_types_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_types_types_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_types_types_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -252,6 +255,7 @@
 #include "zetasql/public/types/container_type.h"
 #include "zetasql/public/types/enum_type.h"
 #include "zetasql/public/types/extended_type.h"
+#include "zetasql/public/types/map_type.h"
 #include "zetasql/public/types/proto_type.h"
 #include "zetasql/public/types/range_type.h"
 #include "zetasql/public/types/simple_type.h"
@@ -274,6 +278,7 @@
 #include "zetasql/public/types/extended_type.cc"
 #include "zetasql/public/types/internal_utils.cc"
 #include "zetasql/public/types/internal_utils.h"
+#include "zetasql/public/types/map_type.cc"
 #include "zetasql/public/types/proto_type.cc"
 #include "zetasql/public/types/range_type.cc"
 #define TypeKindInfo zetasql_public_types_types_TypeKindInfo
@@ -303,6 +308,7 @@
 #include "go-zetasql/common/float_margin/export.inc"
 #include "go-zetasql/common/proto_helper/export.inc"
 #include "go-zetasql/common/string_util/export.inc"
+#include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/common/unicode_utils/export.inc"
 #include "go-zetasql/public/annotation_cc_proto/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
@@ -313,6 +319,7 @@
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/simple_value_cc_proto/export.inc"
 #include "go-zetasql/public/strings/export.inc"
+#include "go-zetasql/public/token_list/export.inc"
 #include "go-zetasql/public/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/type_modifiers_cc_proto/export.inc"

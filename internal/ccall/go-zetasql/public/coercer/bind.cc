@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_coercer_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_coercer_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_coercer_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_coercer_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_coercer_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_coercer_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_coercer_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_coercer_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_coercer_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -269,7 +272,6 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/internal_value/export.inc"
@@ -292,9 +294,10 @@
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"
+#include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/optional/export.inc"
-#include "go-protobuf/protobuf/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

@@ -384,10 +384,25 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 	if err != nil {
 		return err
 	}
+	output = wrapParserBindTokenDisambiguatorInclude(lib, output)
 	if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), output, 0o600); err != nil {
 		return err
 	}
 	return g.syncExportInc(outputDir, output)
+}
+
+// wrapParserBindTokenDisambiguatorInclude matches exportinc.wrapParserTokenDisambiguatorFlexInclude:
+// parser amalgamation already includes flex_tokenizer.cc; downstream export.inc files must see
+// ZETASQL_PARSER_AMALGAMATION_HAS_FLEX while expanding token_disambiguator.
+func wrapParserBindTokenDisambiguatorInclude(lib *Lib, bindCC []byte) []byte {
+	if lib.BasePkg != "zetasql/parser" || lib.Name != "parser" {
+		return bindCC
+	}
+	const direct = `#include "go-zetasql/parser/token_disambiguator/export.inc"`
+	repl := "#define ZETASQL_PARSER_AMALGAMATION_HAS_FLEX\n" +
+		direct + "\n" +
+		"#undef ZETASQL_PARSER_AMALGAMATION_HAS_FLEX"
+	return bytes.Replace(bindCC, []byte(direct), []byte(repl), 1)
 }
 
 func (g *Generator) syncExportInc(outputDir string, bindCC []byte) error {
@@ -768,6 +783,12 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param.Sources = sources
 	deps := make([]string, 0, len(lib.Deps))
 	for _, dep := range lib.Deps {
+		// Parser amalgamation inlines flex_tokenizer.{h,flex.cc,cc}; including
+		// flex_tokenizer/export.inc again duplicates the TU (ABSL_FLAG + methods).
+		if lib.BasePkg == "zetasql/parser" && lib.Name == "parser" &&
+			dep.BasePkg == "zetasql/parser" && dep.Pkg == "flex_tokenizer" {
+			continue
+		}
 		deps = append(deps, goPkgPath(dep.BasePkg, dep.Pkg))
 	}
 	param.Deps = deps
@@ -822,7 +843,7 @@ func (t *Type) GoToC(index int) string {
 }
 
 var reservedKeywords = []string{
-	"case", "range", "type",
+	"case", "map", "range", "type",
 }
 
 func sanitizeIdentifier(v string) string {

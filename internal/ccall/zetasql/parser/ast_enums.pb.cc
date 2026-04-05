@@ -891,7 +891,7 @@ const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PR
     "dDataStatementEnums\"7\n\rInsertionMode\022\013\n\007"
     "NOT_SET\020\000\022\n\n\006APPEND\020\001\022\r\n\tOVERWRITE\020\002\"M\n\037"
     "ASTSpannerInterleaveClauseEnums\"*\n\004Type\022"
-    "\013\n\007NOT_SET\020\000\022\006\n\002IN\020\001\022\r\n\tIN_PARENT\020\002*\344\002\n\020"
+    "\013\n\007NOT_SET\020\000\022\006\n\002IN\020\001\022\r\n\tIN_PARENT\020\002*\371\002\n\020"
     "SchemaObjectKind\022=\n0__SchemaObjectKind__"
     "switch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\022"
     "\034\n\030kInvalidSchemaObjectKind\020\001\022\026\n\022kAggreg"
@@ -900,14 +900,15 @@ const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PR
     "\022\r\n\tkFunction\020\006\022\n\n\006kIndex\020\007\022\025\n\021kMaterial"
     "izedView\020\010\022\n\n\006kModel\020\t\022\016\n\nkProcedure\020\n\022\013"
     "\n\007kSchema\020\013\022\n\n\006kTable\020\014\022\022\n\016kTableFunctio"
-    "n\020\r\022\t\n\005kView\020\016\022\022\n\016kSnapshotTable\020\017B\035\n\031co"
-    "m.google.zetasql.parserP\001"
+    "n\020\r\022\t\n\005kView\020\016\022\022\n\016kSnapshotTable\020\017\022\023\n\017kE"
+    "xternalSchema\020\022B\035\n\031com.google.zetasql.pa"
+    "rserP\001"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto = {
     false,
     false,
-    4305,
+    4326,
     descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto,
     "zetasql/parser/ast_enums.proto",
     &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
@@ -2091,6 +2092,7 @@ bool SchemaObjectKind_IsValid(int value) {
     case 14:
     case 15:
     case 17:
+    case 18:
       return true;
     default:
       return false;

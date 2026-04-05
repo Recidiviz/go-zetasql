@@ -13,6 +13,7 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
+#include "go-zetasql/public/coercer/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
@@ -20,5 +21,6 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_all_rewriters_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_all_rewriters_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_all_rewriters_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_all_rewriters_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_all_rewriters_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_all_rewriters_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_all_rewriters_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_all_rewriters_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_all_rewriters_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -253,17 +256,19 @@
 #include "zetasql/analyzer/all_rewriters.cc"
 
 // include dependencies
-#include "go-zetasql/analyzer/anonymization_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/aggregation_threshold_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/anonymization_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/array_functions_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/builtin_function_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/flatten_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/grouping_set_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/insert_dml_values_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/like_any_all_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/map_function_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/multiway_unnest_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/nulliferror_function_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/pivot_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/registration/export.inc"
-#include "go-zetasql/analyzer/rewriters/set_operation_corresponding_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/sql_function_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/sql_view_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/typeof_function_rewriter/export.inc"

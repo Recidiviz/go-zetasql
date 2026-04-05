@@ -421,9 +421,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedReplaceField(
       const ResolvedReplaceField* node);
 
-  absl::Status CopyVisitResolvedGetProtoOneof(
-      const ResolvedGetProtoOneof* node);
-
   absl::Status CopyVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node);
 
@@ -772,9 +769,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAlterColumnDropNotNullAction(
       const ResolvedAlterColumnDropNotNullAction* node);
 
-  absl::Status CopyVisitResolvedAlterColumnDropGeneratedAction(
-      const ResolvedAlterColumnDropGeneratedAction* node);
-
   absl::Status CopyVisitResolvedAlterColumnSetDataTypeAction(
       const ResolvedAlterColumnSetDataTypeAction* node);
 
@@ -946,9 +940,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedUndropStmt(
       const ResolvedUndropStmt* node);
 
-  absl::Status CopyVisitResolvedIdentityColumnInfo(
-      const ResolvedIdentityColumnInfo* node);
-
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
   // The individual visit methods for each of the node types. We will copy
@@ -1036,9 +1027,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedReplaceField(
       const ResolvedReplaceField* node) override;
-
-  absl::Status VisitResolvedGetProtoOneof(
-      const ResolvedGetProtoOneof* node) override;
 
   absl::Status VisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node) override;
@@ -1388,9 +1376,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAlterColumnDropNotNullAction(
       const ResolvedAlterColumnDropNotNullAction* node) override;
 
-  absl::Status VisitResolvedAlterColumnDropGeneratedAction(
-      const ResolvedAlterColumnDropGeneratedAction* node) override;
-
   absl::Status VisitResolvedAlterColumnSetDataTypeAction(
       const ResolvedAlterColumnSetDataTypeAction* node) override;
 
@@ -1562,31 +1547,16 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedUndropStmt(
       const ResolvedUndropStmt* node) override;
 
-  absl::Status VisitResolvedIdentityColumnInfo(
-      const ResolvedIdentityColumnInfo* node) override;
-
-  // Assumes that 'ResolvedNodeType' contains 'hint_list' and copies it
-  // 'from' -> 'to'.
-  template <typename ResolvedNodeType>
-  ABSL_DEPRECATED("Use new signature of CopyHintList() instead")
-  absl::Status CopyHintList(const ResolvedNodeType *from,
-      ResolvedNodeType *to) {
-    return CopyHintList(from->hint_list(), [to](
-      std::unique_ptr<const zetasql::ResolvedOption> hint) {
-        to->add_hint_list(std::move(hint));
-      });
-  }
-  // The following function calls 'append_func' on each hint in 'hints' to copy
-  // them to a target hint list.
-  // Caller must supply a 'HintAppender' function that appends 'ResolvedOption'
-  // type to a target hint list.
-  template <typename HintAppender> absl::Status CopyHintList(
-    const std::vector<std::unique_ptr<const zetasql::ResolvedOption>>& hints,
-    const HintAppender& append_func) {
-    for (const std::unique_ptr<const zetasql::ResolvedOption>& hint : hints) {
+  // Copies the hint list from the original node to the copied node. This is
+  // required, as hint_list is not a constructor arg, and the only way to
+  // transfer ownership is to explicitly set it after constructing the copy.
+  template <typename ResolvedNodeType> absl::Status CopyHintList(
+      const ResolvedNodeType *from, ResolvedNodeType *to) {
+    for (const std::unique_ptr<const zetasql::ResolvedOption>& hint :
+        from->hint_list()) {
       ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<zetasql::ResolvedOption> copied_hint,
                        ProcessNode(hint.get()));
-      append_func(std::move(copied_hint));
+      to->add_hint_list(std::move(copied_hint));
     }
     return absl::OkStatus();
   }

@@ -107,7 +107,7 @@ void GO_EXPORT(ParserOptions_new)(void ** arg0)
 void GO_EXPORT(ParserOptions_set_language_options)(void * arg0,void * arg1)
 {
   zetasql::ParserOptions *opt = (zetasql::ParserOptions *)arg0;
-  opt->set_language_options((const zetasql::LanguageOptions *)arg1);
+  opt->set_language_options(*(const zetasql::LanguageOptions *)arg1);
 }
 
 void GO_EXPORT(ParserOptions_language_options)(void * arg0,void ** arg1)
@@ -541,14 +541,14 @@ void GO_EXPORT(ASTExpression_IsAllowedInComparison)(void * arg0,char* arg1)
 
 void GO_EXPORT(ASTLeaf_image)(void * arg0,void ** arg1)
 {
-  zetasql::ASTLeaf *leaf = (zetasql::ASTLeaf *)arg0;
+  zetasql::ASTPrintableLeaf *leaf = (zetasql::ASTPrintableLeaf *)arg0;
   *arg1 = (void *)leaf->image().data();
 }
 
 void GO_EXPORT(ASTLeaf_set_image)(void * arg0,void * arg1)
 {
-  zetasql::ASTLeaf *leaf = (zetasql::ASTLeaf *)arg0;
-  leaf->set_image((char *)arg1);
+  zetasql::ASTPrintableLeaf *leaf = (zetasql::ASTPrintableLeaf *)arg0;
+  leaf->set_image(std::string((char *)arg1));
 }
 
 void GO_EXPORT(ASTIntLiteral_is_hex)(void * arg0,char* arg1)

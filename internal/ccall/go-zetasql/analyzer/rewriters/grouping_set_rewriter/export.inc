@@ -18,6 +18,7 @@
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
+#include "go-absl/algorithm/container/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

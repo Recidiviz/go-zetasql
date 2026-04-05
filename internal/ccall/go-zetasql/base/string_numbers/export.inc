@@ -5,8 +5,8 @@
 // include sources
 #include "zetasql/base/string_numbers.cc"
 // include dependencies
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/logging/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

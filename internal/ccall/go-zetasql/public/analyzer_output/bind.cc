@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_analyzer_output_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_analyzer_output_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_analyzer_output_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_analyzer_output_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_analyzer_output_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_analyzer_output_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_analyzer_output_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_analyzer_output_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_analyzer_output_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -255,6 +258,7 @@
 // include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
+#include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/enum_utils/export.inc"
@@ -264,7 +268,6 @@
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/str_format/export.inc"

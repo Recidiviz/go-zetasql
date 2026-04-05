@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_value_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_value_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_value_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_value_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_value_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -262,16 +265,20 @@
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/token_list/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value_cc_proto/export.inc"
 #include "go-zetasql/public/value_content/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/compact_reference_counted/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
+#include "go-zetasql/base/map_view/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/float_margin/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/public/functions/arithmetics/export.inc"
@@ -283,11 +290,13 @@
 #include "go-zetasql/public/types/value_representations/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/hash/hash/export.inc"
+#include "go-absl/log/log/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

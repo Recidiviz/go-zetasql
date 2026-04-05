@@ -35,6 +35,7 @@ PROTOBUF_CONSTEXPR TypeProto::TypeProto(
   , /*decltype(_impl_.proto_type_)*/nullptr
   , /*decltype(_impl_.enum_type_)*/nullptr
   , /*decltype(_impl_.range_type_)*/nullptr
+  , /*decltype(_impl_.map_type_)*/nullptr
   , /*decltype(_impl_.type_kind_)*/ -1
 } {}
 struct TypeProtoDefaultTypeInternal {
@@ -98,6 +99,23 @@ struct StructTypeProtoDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StructTypeProtoDefaultTypeInternal _StructTypeProto_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR MapTypeProto::MapTypeProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.key_type_)*/nullptr
+  , /*decltype(_impl_.value_type_)*/nullptr} {}
+struct MapTypeProtoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR MapTypeProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~MapTypeProtoDefaultTypeInternal() {}
+  union {
+    MapTypeProto _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MapTypeProtoDefaultTypeInternal _MapTypeProto_default_instance_;
 template <typename>
 PROTOBUF_CONSTEXPR ProtoTypeProto::ProtoTypeProto(
     ::_pbi::ConstantInitialized): _impl_{
@@ -205,7 +223,7 @@ struct OpaqueEnumValueOptionsDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 OpaqueEnumValueOptionsDefaultTypeInternal _OpaqueEnumValueOptions_default_instance_;
 }  // namespace zetasql
-static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ftype_2eproto[9];
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ftype_2eproto[10];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ftype_2eproto[1];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_zetasql_2fpublic_2ftype_2eproto = nullptr;
@@ -225,14 +243,16 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets[] PROTOBUF
     PROTOBUF_FIELD_OFFSET(::zetasql::TypeProto, _impl_.proto_type_),
     PROTOBUF_FIELD_OFFSET(::zetasql::TypeProto, _impl_.enum_type_),
     PROTOBUF_FIELD_OFFSET(::zetasql::TypeProto, _impl_.range_type_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::TypeProto, _impl_.map_type_),
     PROTOBUF_FIELD_OFFSET(::zetasql::TypeProto, _impl_.file_descriptor_set_),
     PROTOBUF_FIELD_OFFSET(::zetasql::TypeProto, _impl_.extended_type_name_),
-    6,
+    7,
     1,
     2,
     3,
     4,
     5,
+    6,
     ~0u,
     0,
     PROTOBUF_FIELD_OFFSET(::zetasql::ArrayTypeProto, _impl_._has_bits_),
@@ -266,6 +286,18 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets[] PROTOBUF
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::zetasql::StructTypeProto, _impl_.field_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::MapTypeProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::MapTypeProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::MapTypeProto, _impl_.key_type_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::MapTypeProto, _impl_.value_type_),
+    0,
+    1,
     PROTOBUF_FIELD_OFFSET(::zetasql::ProtoTypeProto, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::ProtoTypeProto, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -334,15 +366,16 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets[] PROTOBUF
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, 16, -1, sizeof(::zetasql::TypeProto)},
-        { 24, 33, -1, sizeof(::zetasql::ArrayTypeProto)},
-        { 34, 44, -1, sizeof(::zetasql::StructFieldProto)},
-        { 46, -1, -1, sizeof(::zetasql::StructTypeProto)},
-        { 55, 67, -1, sizeof(::zetasql::ProtoTypeProto)},
-        { 71, 84, -1, sizeof(::zetasql::EnumTypeProto)},
-        { 89, 98, -1, sizeof(::zetasql::RangeTypeProto)},
-        { 99, 108, -1, sizeof(::zetasql::OpaqueEnumTypeOptions)},
-        { 109, 118, -1, sizeof(::zetasql::OpaqueEnumValueOptions)},
+        { 0, 17, -1, sizeof(::zetasql::TypeProto)},
+        { 26, 35, -1, sizeof(::zetasql::ArrayTypeProto)},
+        { 36, 46, -1, sizeof(::zetasql::StructFieldProto)},
+        { 48, -1, -1, sizeof(::zetasql::StructTypeProto)},
+        { 57, 67, -1, sizeof(::zetasql::MapTypeProto)},
+        { 69, 81, -1, sizeof(::zetasql::ProtoTypeProto)},
+        { 85, 98, -1, sizeof(::zetasql::EnumTypeProto)},
+        { 103, 112, -1, sizeof(::zetasql::RangeTypeProto)},
+        { 113, 122, -1, sizeof(::zetasql::OpaqueEnumTypeOptions)},
+        { 123, 132, -1, sizeof(::zetasql::OpaqueEnumValueOptions)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -350,6 +383,7 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_ArrayTypeProto_default_instance_._instance,
     &::zetasql::_StructFieldProto_default_instance_._instance,
     &::zetasql::_StructTypeProto_default_instance_._instance,
+    &::zetasql::_MapTypeProto_default_instance_._instance,
     &::zetasql::_ProtoTypeProto_default_instance_._instance,
     &::zetasql::_EnumTypeProto_default_instance_._instance,
     &::zetasql::_RangeTypeProto_default_instance_._instance,
@@ -358,51 +392,56 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\031zetasql/public/type.proto\022\007zetasql\032 go"
-    "ogle/protobuf/descriptor.proto\"\373\002\n\tTypeP"
+    "ogle/protobuf/descriptor.proto\"\244\003\n\tTypeP"
     "roto\022$\n\ttype_kind\030\001 \001(\0162\021.zetasql.TypeKi"
     "nd\022+\n\narray_type\030\002 \001(\0132\027.zetasql.ArrayTy"
     "peProto\022-\n\013struct_type\030\003 \001(\0132\030.zetasql.S"
     "tructTypeProto\022+\n\nproto_type\030\004 \001(\0132\027.zet"
     "asql.ProtoTypeProto\022)\n\tenum_type\030\005 \001(\0132\026"
     ".zetasql.EnumTypeProto\022+\n\nrange_type\030\010 \001"
-    "(\0132\027.zetasql.RangeTypeProto\022\?\n\023file_desc"
-    "riptor_set\030\006 \003(\0132\".google.protobuf.FileD"
-    "escriptorSet\022\032\n\022extended_type_name\030\007 \001(\t"
-    "*\n\010\240\215\006\020\200\200\200\200\002\":\n\016ArrayTypeProto\022(\n\014elemen"
-    "t_type\030\001 \001(\0132\022.zetasql.TypeProto\"N\n\020Stru"
-    "ctFieldProto\022\022\n\nfield_name\030\001 \001(\t\022&\n\nfiel"
-    "d_type\030\002 \001(\0132\022.zetasql.TypeProto\";\n\017Stru"
-    "ctTypeProto\022(\n\005field\030\001 \003(\0132\031.zetasql.Str"
-    "uctFieldProto\"~\n\016ProtoTypeProto\022\022\n\nproto"
-    "_name\030\001 \001(\t\022\027\n\017proto_file_name\030\002 \001(\t\022$\n\031"
-    "file_descriptor_set_index\030\003 \001(\005:\0010\022\031\n\021ca"
-    "talog_name_path\030\004 \003(\t\"\216\001\n\rEnumTypeProto\022"
-    "\021\n\tenum_name\030\001 \001(\t\022\026\n\016enum_file_name\030\002 \001"
-    "(\t\022$\n\031file_descriptor_set_index\030\003 \001(\005:\0010"
-    "\022\031\n\021catalog_name_path\030\004 \003(\t\022\021\n\tis_opaque"
-    "\030\005 \001(\010\":\n\016RangeTypeProto\022(\n\014element_type"
-    "\030\001 \001(\0132\022.zetasql.TypeProto\"5\n\025OpaqueEnum"
-    "TypeOptions\022\034\n\024sql_opaque_enum_name\030\001 \001("
-    "\t\"4\n\026OpaqueEnumValueOptions\022\032\n\022invalid_e"
-    "num_value\030\001 \001(\010*\353\003\n\010TypeKind\0225\n(__TypeKi"
-    "nd__switch_must_have_a_default__\020\377\377\377\377\377\377\377"
-    "\377\377\001\022\020\n\014TYPE_UNKNOWN\020\000\022\016\n\nTYPE_INT32\020\001\022\016\n"
-    "\nTYPE_INT64\020\002\022\017\n\013TYPE_UINT32\020\003\022\017\n\013TYPE_U"
-    "INT64\020\004\022\r\n\tTYPE_BOOL\020\005\022\016\n\nTYPE_FLOAT\020\006\022\017"
-    "\n\013TYPE_DOUBLE\020\007\022\017\n\013TYPE_STRING\020\010\022\016\n\nTYPE"
-    "_BYTES\020\t\022\r\n\tTYPE_DATE\020\n\022\022\n\016TYPE_TIMESTAM"
-    "P\020\023\022\r\n\tTYPE_ENUM\020\017\022\016\n\nTYPE_ARRAY\020\020\022\017\n\013TY"
-    "PE_STRUCT\020\021\022\016\n\nTYPE_PROTO\020\022\022\r\n\tTYPE_TIME"
-    "\020\024\022\021\n\rTYPE_DATETIME\020\025\022\022\n\016TYPE_GEOGRAPHY\020"
-    "\026\022\020\n\014TYPE_NUMERIC\020\027\022\023\n\017TYPE_BIGNUMERIC\020\030"
-    "\022\021\n\rTYPE_EXTENDED\020\031\022\r\n\tTYPE_JSON\020\032\022\021\n\rTY"
-    "PE_INTERVAL\020\033\022\016\n\nTYPE_RANGE\020\035:b\n\030opaque_"
-    "enum_type_options\022\034.google.protobuf.Enum"
-    "Options\030\206\372\245\337\001 \001(\0132\036.zetasql.OpaqueEnumTy"
-    "peOptions:i\n\031opaque_enum_value_options\022!"
-    ".google.protobuf.EnumValueOptions\030\246\216\246\342\001 "
-    "\001(\0132\037.zetasql.OpaqueEnumValueOptionsB$\n\022"
-    "com.google.zetasqlB\013ZetaSQLType\370\001\001"
+    "(\0132\027.zetasql.RangeTypeProto\022\'\n\010map_type\030"
+    "\n \001(\0132\025.zetasql.MapTypeProto\022\?\n\023file_des"
+    "criptor_set\030\006 \003(\0132\".google.protobuf.File"
+    "DescriptorSet\022\032\n\022extended_type_name\030\007 \001("
+    "\t*\n\010\240\215\006\020\200\200\200\200\002\":\n\016ArrayTypeProto\022(\n\014eleme"
+    "nt_type\030\001 \001(\0132\022.zetasql.TypeProto\"N\n\020Str"
+    "uctFieldProto\022\022\n\nfield_name\030\001 \001(\t\022&\n\nfie"
+    "ld_type\030\002 \001(\0132\022.zetasql.TypeProto\";\n\017Str"
+    "uctTypeProto\022(\n\005field\030\001 \003(\0132\031.zetasql.St"
+    "ructFieldProto\"\\\n\014MapTypeProto\022$\n\010key_ty"
+    "pe\030\001 \001(\0132\022.zetasql.TypeProto\022&\n\nvalue_ty"
+    "pe\030\002 \001(\0132\022.zetasql.TypeProto\"~\n\016ProtoTyp"
+    "eProto\022\022\n\nproto_name\030\001 \001(\t\022\027\n\017proto_file"
+    "_name\030\002 \001(\t\022$\n\031file_descriptor_set_index"
+    "\030\003 \001(\005:\0010\022\031\n\021catalog_name_path\030\004 \003(\t\"\216\001\n"
+    "\rEnumTypeProto\022\021\n\tenum_name\030\001 \001(\t\022\026\n\016enu"
+    "m_file_name\030\002 \001(\t\022$\n\031file_descriptor_set"
+    "_index\030\003 \001(\005:\0010\022\031\n\021catalog_name_path\030\004 \003"
+    "(\t\022\021\n\tis_opaque\030\005 \001(\010\":\n\016RangeTypeProto\022"
+    "(\n\014element_type\030\001 \001(\0132\022.zetasql.TypeProt"
+    "o\"5\n\025OpaqueEnumTypeOptions\022\034\n\024sql_opaque"
+    "_enum_name\030\001 \001(\t\"4\n\026OpaqueEnumValueOptio"
+    "ns\022\032\n\022invalid_enum_value\030\001 \001(\010*\215\004\n\010TypeK"
+    "ind\0225\n(__TypeKind__switch_must_have_a_de"
+    "fault__\020\377\377\377\377\377\377\377\377\377\001\022\020\n\014TYPE_UNKNOWN\020\000\022\016\n\n"
+    "TYPE_INT32\020\001\022\016\n\nTYPE_INT64\020\002\022\017\n\013TYPE_UIN"
+    "T32\020\003\022\017\n\013TYPE_UINT64\020\004\022\r\n\tTYPE_BOOL\020\005\022\016\n"
+    "\nTYPE_FLOAT\020\006\022\017\n\013TYPE_DOUBLE\020\007\022\017\n\013TYPE_S"
+    "TRING\020\010\022\016\n\nTYPE_BYTES\020\t\022\r\n\tTYPE_DATE\020\n\022\022"
+    "\n\016TYPE_TIMESTAMP\020\023\022\r\n\tTYPE_ENUM\020\017\022\016\n\nTYP"
+    "E_ARRAY\020\020\022\017\n\013TYPE_STRUCT\020\021\022\016\n\nTYPE_PROTO"
+    "\020\022\022\r\n\tTYPE_TIME\020\024\022\021\n\rTYPE_DATETIME\020\025\022\022\n\016"
+    "TYPE_GEOGRAPHY\020\026\022\020\n\014TYPE_NUMERIC\020\027\022\023\n\017TY"
+    "PE_BIGNUMERIC\020\030\022\021\n\rTYPE_EXTENDED\020\031\022\r\n\tTY"
+    "PE_JSON\020\032\022\021\n\rTYPE_INTERVAL\020\033\022\022\n\016TYPE_TOK"
+    "ENLIST\020\034\022\016\n\nTYPE_RANGE\020\035\022\014\n\010TYPE_MAP\020\037:b"
+    "\n\030opaque_enum_type_options\022\034.google.prot"
+    "obuf.EnumOptions\030\206\372\245\337\001 \001(\0132\036.zetasql.Opa"
+    "queEnumTypeOptions:i\n\031opaque_enum_value_"
+    "options\022!.google.protobuf.EnumValueOptio"
+    "ns\030\246\216\246\342\001 \001(\0132\037.zetasql.OpaqueEnumValueOp"
+    "tionsB$\n\022com.google.zetasqlB\013ZetaSQLType"
+    "\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps[1] =
     {
@@ -412,13 +451,13 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ftype_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ftype_2eproto = {
     false,
     false,
-    1834,
+    2003,
     descriptor_table_protodef_zetasql_2fpublic_2ftype_2eproto,
     "zetasql/public/type.proto",
     &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
     descriptor_table_zetasql_2fpublic_2ftype_2eproto_deps,
     1,
-    9,
+    10,
     schemas,
     file_default_instances,
     TableStruct_zetasql_2fpublic_2ftype_2eproto::offsets,
@@ -476,7 +515,9 @@ bool TypeKind_IsValid(int value) {
     case 25:
     case 26:
     case 27:
+    case 28:
     case 29:
+    case 31:
       return true;
     default:
       return false;
@@ -490,7 +531,7 @@ class TypeProto::_Internal {
   static constexpr ::int32_t kHasBitsOffset =
     8 * PROTOBUF_FIELD_OFFSET(TypeProto, _impl_._has_bits_);
   static void set_has_type_kind(HasBits* has_bits) {
-    (*has_bits)[0] |= 64u;
+    (*has_bits)[0] |= 128u;
   }
   static const ::zetasql::ArrayTypeProto& array_type(const TypeProto* msg);
   static void set_has_array_type(HasBits* has_bits) {
@@ -511,6 +552,10 @@ class TypeProto::_Internal {
   static const ::zetasql::RangeTypeProto& range_type(const TypeProto* msg);
   static void set_has_range_type(HasBits* has_bits) {
     (*has_bits)[0] |= 32u;
+  }
+  static const ::zetasql::MapTypeProto& map_type(const TypeProto* msg);
+  static void set_has_map_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 64u;
   }
   static void set_has_extended_type_name(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -537,6 +582,10 @@ const ::zetasql::RangeTypeProto&
 TypeProto::_Internal::range_type(const TypeProto* msg) {
   return *msg->_impl_.range_type_;
 }
+const ::zetasql::MapTypeProto&
+TypeProto::_Internal::map_type(const TypeProto* msg) {
+  return *msg->_impl_.map_type_;
+}
 void TypeProto::clear_file_descriptor_set() {
   _internal_mutable_file_descriptor_set()->Clear();
 }
@@ -560,6 +609,7 @@ TypeProto::TypeProto(const TypeProto& from)
     , decltype(_impl_.proto_type_){nullptr}
     , decltype(_impl_.enum_type_){nullptr}
     , decltype(_impl_.range_type_){nullptr}
+    , decltype(_impl_.map_type_){nullptr}
     , decltype(_impl_.type_kind_) {}
   };
 
@@ -587,6 +637,9 @@ TypeProto::TypeProto(const TypeProto& from)
   if ((from._impl_._has_bits_[0] & 0x00000020u) != 0) {
     _this->_impl_.range_type_ = new ::zetasql::RangeTypeProto(*from._impl_.range_type_);
   }
+  if ((from._impl_._has_bits_[0] & 0x00000040u) != 0) {
+    _this->_impl_.map_type_ = new ::zetasql::MapTypeProto(*from._impl_.map_type_);
+  }
   _this->_impl_.type_kind_ = from._impl_.type_kind_;
   // @@protoc_insertion_point(copy_constructor:zetasql.TypeProto)
 }
@@ -605,6 +658,7 @@ inline void TypeProto::SharedCtor(::_pb::Arena* arena) {
     , decltype(_impl_.proto_type_){nullptr}
     , decltype(_impl_.enum_type_){nullptr}
     , decltype(_impl_.range_type_){nullptr}
+    , decltype(_impl_.map_type_){nullptr}
     , decltype(_impl_.type_kind_) { -1 }
 
   };
@@ -633,6 +687,7 @@ inline void TypeProto::SharedDtor() {
   if (this != internal_default_instance()) delete _impl_.proto_type_;
   if (this != internal_default_instance()) delete _impl_.enum_type_;
   if (this != internal_default_instance()) delete _impl_.range_type_;
+  if (this != internal_default_instance()) delete _impl_.map_type_;
 }
 
 void TypeProto::SetCachedSize(int size) const {
@@ -648,7 +703,7 @@ void TypeProto::Clear() {
   _impl_._extensions_.Clear();
   _internal_mutable_file_descriptor_set()->Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000007fu) {
+  if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
       _impl_.extended_type_name_.ClearNonDefaultToEmpty();
     }
@@ -671,6 +726,10 @@ void TypeProto::Clear() {
     if (cached_has_bits & 0x00000020u) {
       ABSL_DCHECK(_impl_.range_type_ != nullptr);
       _impl_.range_type_->Clear();
+    }
+    if (cached_has_bits & 0x00000040u) {
+      ABSL_DCHECK(_impl_.map_type_ != nullptr);
+      _impl_.map_type_->Clear();
     }
     _impl_.type_kind_ = -1;
   }
@@ -771,6 +830,15 @@ const char* TypeProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx
           goto handle_unusual;
         }
         continue;
+      // optional .zetasql.MapTypeProto map_type = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 82)) {
+          ptr = ctx->ParseMessage(_internal_mutable_map_type(), ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -808,7 +876,7 @@ failure:
 
   cached_has_bits = _impl_._has_bits_[0];
   // optional .zetasql.TypeKind type_kind = 1;
-  if (cached_has_bits & 0x00000040u) {
+  if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
         1, this->_internal_type_kind(), target);
@@ -865,6 +933,13 @@ failure:
         _Internal::range_type(this).GetCachedSize(), target, stream);
   }
 
+  // optional .zetasql.MapTypeProto map_type = 10;
+  if (cached_has_bits & 0x00000040u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(10, _Internal::map_type(this),
+        _Internal::map_type(this).GetCachedSize(), target, stream);
+  }
+
   // Extension range [100000, 536870912)
   target = _impl_._extensions_._InternalSerialize(
   internal_default_instance(), 100000, 536870912, target, stream);
@@ -895,7 +970,7 @@ failure:
   }
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000007fu) {
+  if (cached_has_bits & 0x000000ffu) {
     // optional string extended_type_name = 7;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -937,8 +1012,15 @@ failure:
           *_impl_.range_type_);
     }
 
-    // optional .zetasql.TypeKind type_kind = 1;
+    // optional .zetasql.MapTypeProto map_type = 10;
     if (cached_has_bits & 0x00000040u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.map_type_);
+    }
+
+    // optional .zetasql.TypeKind type_kind = 1;
+    if (cached_has_bits & 0x00000080u) {
       total_size += 1 +
                     ::_pbi::WireFormatLite::EnumSize(this->_internal_type_kind());
     }
@@ -964,7 +1046,7 @@ void TypeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROT
 
   _this->_internal_mutable_file_descriptor_set()->MergeFrom(from._internal_file_descriptor_set());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x0000007fu) {
+  if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
       _this->_internal_set_extended_type_name(from._internal_extended_type_name());
     }
@@ -989,6 +1071,10 @@ void TypeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROT
           from._internal_range_type());
     }
     if (cached_has_bits & 0x00000040u) {
+      _this->_internal_mutable_map_type()->::zetasql::MapTypeProto::MergeFrom(
+          from._internal_map_type());
+    }
+    if (cached_has_bits & 0x00000080u) {
       _this->_impl_.type_kind_ = from._impl_.type_kind_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -1019,6 +1105,9 @@ bool TypeProto::IsInitialized() const {
   }
   if ((_impl_._has_bits_[0] & 0x00000020u) != 0) {
     if (!_impl_.range_type_->IsInitialized()) return false;
+  }
+  if ((_impl_._has_bits_[0] & 0x00000040u) != 0) {
+    if (!_impl_.map_type_->IsInitialized()) return false;
   }
   return true;
 }
@@ -1711,6 +1800,274 @@ void StructTypeProto::InternalSwap(StructTypeProto* other) {
 }
 // ===================================================================
 
+class MapTypeProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<MapTypeProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(MapTypeProto, _impl_._has_bits_);
+  static const ::zetasql::TypeProto& key_type(const MapTypeProto* msg);
+  static void set_has_key_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static const ::zetasql::TypeProto& value_type(const MapTypeProto* msg);
+  static void set_has_value_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
+
+const ::zetasql::TypeProto&
+MapTypeProto::_Internal::key_type(const MapTypeProto* msg) {
+  return *msg->_impl_.key_type_;
+}
+const ::zetasql::TypeProto&
+MapTypeProto::_Internal::value_type(const MapTypeProto* msg) {
+  return *msg->_impl_.value_type_;
+}
+MapTypeProto::MapTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:zetasql.MapTypeProto)
+}
+MapTypeProto::MapTypeProto(const MapTypeProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  MapTypeProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.key_type_){nullptr}
+    , decltype(_impl_.value_type_){nullptr}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.key_type_ = new ::zetasql::TypeProto(*from._impl_.key_type_);
+  }
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.value_type_ = new ::zetasql::TypeProto(*from._impl_.value_type_);
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.MapTypeProto)
+}
+
+inline void MapTypeProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.key_type_){nullptr}
+    , decltype(_impl_.value_type_){nullptr}
+  };
+}
+
+MapTypeProto::~MapTypeProto() {
+  // @@protoc_insertion_point(destructor:zetasql.MapTypeProto)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void MapTypeProto::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.key_type_;
+  if (this != internal_default_instance()) delete _impl_.value_type_;
+}
+
+void MapTypeProto::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void MapTypeProto::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.MapTypeProto)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      ABSL_DCHECK(_impl_.key_type_ != nullptr);
+      _impl_.key_type_->Clear();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      ABSL_DCHECK(_impl_.value_type_ != nullptr);
+      _impl_.value_type_->Clear();
+    }
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* MapTypeProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional .zetasql.TypeProto key_type = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_key_type(), ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // optional .zetasql.TypeProto value_type = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_value_type(), ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* MapTypeProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.MapTypeProto)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // optional .zetasql.TypeProto key_type = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::key_type(this),
+        _Internal::key_type(this).GetCachedSize(), target, stream);
+  }
+
+  // optional .zetasql.TypeProto value_type = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, _Internal::value_type(this),
+        _Internal::value_type(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.MapTypeProto)
+  return target;
+}
+
+::size_t MapTypeProto::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.MapTypeProto)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // optional .zetasql.TypeProto key_type = 1;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.key_type_);
+    }
+
+    // optional .zetasql.TypeProto value_type = 2;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.value_type_);
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MapTypeProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    MapTypeProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MapTypeProto::GetClassData() const { return &_class_data_; }
+
+
+void MapTypeProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<MapTypeProto*>(&to_msg);
+  auto& from = static_cast<const MapTypeProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.MapTypeProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_mutable_key_type()->::zetasql::TypeProto::MergeFrom(
+          from._internal_key_type());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_mutable_value_type()->::zetasql::TypeProto::MergeFrom(
+          from._internal_value_type());
+    }
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void MapTypeProto::CopyFrom(const MapTypeProto& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.MapTypeProto)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MapTypeProto::IsInitialized() const {
+  if ((_impl_._has_bits_[0] & 0x00000001u) != 0) {
+    if (!_impl_.key_type_->IsInitialized()) return false;
+  }
+  if ((_impl_._has_bits_[0] & 0x00000002u) != 0) {
+    if (!_impl_.value_type_->IsInitialized()) return false;
+  }
+  return true;
+}
+
+void MapTypeProto::InternalSwap(MapTypeProto* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(MapTypeProto, _impl_.value_type_)
+      + sizeof(MapTypeProto::_impl_.value_type_)
+      - PROTOBUF_FIELD_OFFSET(MapTypeProto, _impl_.key_type_)>(
+          reinterpret_cast<char*>(&_impl_.key_type_),
+          reinterpret_cast<char*>(&other->_impl_.key_type_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata MapTypeProto::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[4]);
+}
+// ===================================================================
+
 class ProtoTypeProto::_Internal {
  public:
   using HasBits = decltype(std::declval<ProtoTypeProto>()._impl_._has_bits_);
@@ -2061,7 +2418,7 @@ void ProtoTypeProto::InternalSwap(ProtoTypeProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ProtoTypeProto::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[4]);
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[5]);
 }
 // ===================================================================
 
@@ -2457,7 +2814,7 @@ void EnumTypeProto::InternalSwap(EnumTypeProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata EnumTypeProto::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[5]);
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[6]);
 }
 // ===================================================================
 
@@ -2665,7 +3022,7 @@ void RangeTypeProto::InternalSwap(RangeTypeProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata RangeTypeProto::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[6]);
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[7]);
 }
 // ===================================================================
 
@@ -2880,7 +3237,7 @@ void OpaqueEnumTypeOptions::InternalSwap(OpaqueEnumTypeOptions* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata OpaqueEnumTypeOptions::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[7]);
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[8]);
 }
 // ===================================================================
 
@@ -3067,7 +3424,7 @@ void OpaqueEnumValueOptions::InternalSwap(OpaqueEnumValueOptions* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata OpaqueEnumValueOptions::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2ftype_2eproto_getter, &descriptor_table_zetasql_2fpublic_2ftype_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[8]);
+      file_level_metadata_zetasql_2fpublic_2ftype_2eproto[9]);
 }
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESPACE_ID::EnumOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::zetasql::OpaqueEnumTypeOptions >, 11, false>
@@ -3093,6 +3450,10 @@ Arena::CreateMaybeMessage< ::zetasql::StructFieldProto >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::zetasql::StructTypeProto*
 Arena::CreateMaybeMessage< ::zetasql::StructTypeProto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::StructTypeProto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::MapTypeProto*
+Arena::CreateMaybeMessage< ::zetasql::MapTypeProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::MapTypeProto >(arena);
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ProtoTypeProto*
 Arena::CreateMaybeMessage< ::zetasql::ProtoTypeProto >(Arena* arena) {

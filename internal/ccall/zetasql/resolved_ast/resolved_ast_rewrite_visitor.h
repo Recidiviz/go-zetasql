@@ -413,17 +413,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedGetProtoOneof(
-      const ResolvedGetProtoOneof&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGetProtoOneof (
-      std::unique_ptr<const ResolvedGetProtoOneof> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr&) {
     return absl::OkStatus();
@@ -1700,17 +1689,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedAlterColumnDropGeneratedAction(
-      const ResolvedAlterColumnDropGeneratedAction&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterColumnDropGeneratedAction (
-      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedAlterColumnSetDataTypeAction(
       const ResolvedAlterColumnSetDataTypeAction&) {
     return absl::OkStatus();
@@ -2338,17 +2316,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedIdentityColumnInfo(
-      const ResolvedIdentityColumnInfo&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedIdentityColumnInfo (
-      std::unique_ptr<const ResolvedIdentityColumnInfo> node) {
-    return node;
-  }
-
  private:
   template <typename ExpectedReturnT>
   static absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> VerifyType(
@@ -2428,8 +2395,6 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedReplaceFieldItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedReplaceField> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGetProtoOneof> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSubqueryExpr> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2663,8 +2628,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnDropNotNullAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnSetDefaultAction> node);
@@ -2778,8 +2741,6 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAuxLoadDataStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedUndropStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedIdentityColumnInfo> node);
   template <typename TypeName>
   std::unique_ptr<const TypeName> CastUniquePtr(std::unique_ptr<const ResolvedNode> node) {
     return absl::WrapUnique(static_cast<const TypeName*>(node.release()));
@@ -2985,13 +2946,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedReplaceField>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedReplaceField>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGetProtoOneof::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGetProtoOneof>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGetProtoOneof>(std::move(node)));
         }
         break;
       }
@@ -3807,13 +3761,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedAlterColumnDropGeneratedAction::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterColumnDropGeneratedAction>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterColumnDropGeneratedAction>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedAlterColumnSetDataTypeAction::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterColumnSetDataTypeAction>) {
@@ -4210,13 +4157,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedUndropStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedUndropStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedIdentityColumnInfo::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedIdentityColumnInfo>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedIdentityColumnInfo>(std::move(node)));
         }
         break;
       }

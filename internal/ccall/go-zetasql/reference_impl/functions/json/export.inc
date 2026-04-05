@@ -8,6 +8,7 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/public/json_value/export.inc"
+#include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/functions/json/export.inc"

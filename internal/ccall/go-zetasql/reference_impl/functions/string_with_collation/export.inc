@@ -5,10 +5,16 @@
 // include sources
 #include "zetasql/reference_impl/functions/string_with_collation.cc"
 // include dependencies
+#include "go-zetasql/reference_impl/functions/like/export.inc"
+#include "go-zetasql/base/ret_check/export.inc"
+#include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/collator/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/functions/string_with_collation/export.inc"
+#include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/cord/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

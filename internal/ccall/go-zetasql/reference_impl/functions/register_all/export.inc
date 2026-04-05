@@ -7,6 +7,7 @@
 // include dependencies
 #include "go-zetasql/reference_impl/functions/hash/export.inc"
 #include "go-zetasql/reference_impl/functions/json/export.inc"
+#include "go-zetasql/reference_impl/functions/map/export.inc"
 #include "go-zetasql/reference_impl/functions/range/export.inc"
 #include "go-zetasql/reference_impl/functions/string_with_collation/export.inc"
 #include "go-zetasql/reference_impl/functions/uuid/export.inc"

@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_rewriters_sql_function_inliner_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_rewriters_sql_function_inliner_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_rewriters_sql_function_inliner_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_rewriters_sql_function_inliner_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_rewriters_sql_function_inliner_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_rewriters_sql_function_inliner_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_rewriters_sql_function_inliner_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_rewriters_sql_function_inliner_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_rewriters_sql_function_inliner_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -258,7 +261,6 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/varsetter/export.inc"
 #include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
@@ -278,6 +280,7 @@
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
+#include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"

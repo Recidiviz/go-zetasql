@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_parse_helpers_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_parse_helpers_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_public_parse_helpers_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_parse_helpers_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_parse_helpers_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_public_parse_helpers_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_parse_helpers_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_parse_helpers_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_public_parse_helpers_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -266,6 +269,7 @@
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
@@ -274,6 +278,7 @@
 #include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+#include "go-zetasql/parser/token_disambiguator/export.inc"
 #include "go-zetasql/public/functions/convert_string/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

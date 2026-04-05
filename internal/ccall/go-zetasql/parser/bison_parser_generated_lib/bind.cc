@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_parser_bison_parser_generated_lib_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_parser_bison_parser_generated_lib_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_parser_bison_parser_generated_lib_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_parser_bison_parser_generated_lib_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_parser_bison_parser_generated_lib_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -259,9 +262,7 @@
 // include dependencies
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
-#include "go-zetasql/parser/location/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
-#include "go-zetasql/parser/tokenizer/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -270,6 +271,8 @@
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/timer_util/export.inc"
+#include "go-zetasql/parser/macros/macro_catalog/export.inc"
+#include "go-zetasql/parser/macros/token_with_location/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
@@ -282,6 +285,7 @@
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
+#include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"

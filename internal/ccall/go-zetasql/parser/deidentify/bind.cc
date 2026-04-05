@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_parser_deidentify_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_parser_deidentify_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_parser_deidentify_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_parser_deidentify_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_parser_deidentify_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_parser_deidentify_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_parser_deidentify_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_parser_deidentify_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_parser_deidentify_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -259,12 +262,17 @@
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_resume_location/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
 #include "go-zetasql/public/strings/export.inc"
+#include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/strings/str_format/export.inc"
 
 #include "bridge.h"
 

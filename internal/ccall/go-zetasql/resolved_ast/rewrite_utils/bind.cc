@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_resolved_ast_rewrite_utils_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_resolved_ast_rewrite_utils_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_resolved_ast_rewrite_utils_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_resolved_ast_rewrite_utils_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_resolved_ast_rewrite_utils_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_resolved_ast_rewrite_utils_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_resolved_ast_rewrite_utils_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_resolved_ast_rewrite_utils_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_resolved_ast_rewrite_utils_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -261,6 +264,7 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
+#include "go-zetasql/public/coercer/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
@@ -268,6 +272,7 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

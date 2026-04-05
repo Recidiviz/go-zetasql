@@ -47,13 +47,14 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_AND_EXPR] = "AndExpr";
   map[AST_BINARY_EXPRESSION] = "BinaryExpression";
   map[AST_STRING_LITERAL] = "StringLiteral";
+  map[AST_STRING_LITERAL_COMPONENT] = "StringLiteralComponent";
   map[AST_STAR] = "Star";
   map[AST_OR_EXPR] = "OrExpr";
+  map[AST_ORDERING_EXPRESSION] = "OrderingExpression";
+  map[AST_ORDER_BY] = "OrderBy";
   map[AST_GROUPING_ITEM] = "GroupingItem";
   map[AST_GROUP_BY] = "GroupBy";
   map[AST_GROUP_BY_ALL] = "GroupByAll";
-  map[AST_ORDERING_EXPRESSION] = "OrderingExpression";
-  map[AST_ORDER_BY] = "OrderBy";
   map[AST_LIMIT_OFFSET] = "LimitOffset";
   map[AST_FLOAT_LITERAL] = "FloatLiteral";
   map[AST_NULL_LITERAL] = "NullLiteral";
@@ -86,6 +87,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_NUMERIC_LITERAL] = "NumericLiteral";
   map[AST_BIGNUMERIC_LITERAL] = "BigNumericLiteral";
   map[AST_BYTES_LITERAL] = "BytesLiteral";
+  map[AST_BYTES_LITERAL_COMPONENT] = "BytesLiteralComponent";
   map[AST_DATE_OR_TIME_LITERAL] = "DateOrTimeLiteral";
   map[AST_MAX_LITERAL] = "MaxLiteral";
   map[AST_JSON_LITERAL] = "JSONLiteral";
@@ -188,6 +190,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_BRACED_CONSTRUCTOR_FIELD] = "BracedConstructorField";
   map[AST_BRACED_CONSTRUCTOR] = "BracedConstructor";
   map[AST_BRACED_NEW_CONSTRUCTOR] = "BracedNewConstructor";
+  map[AST_STRUCT_BRACED_CONSTRUCTOR] = "StructBracedConstructor";
   map[AST_OPTIONS_LIST] = "OptionsList";
   map[AST_OPTIONS_ENTRY] = "OptionsEntry";
   map[AST_FUNCTION_PARAMETER] = "FunctionParameter";
@@ -357,6 +360,7 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_FOR_IN_STATEMENT] = "ForInStatement";
   map[AST_ALTER_DATABASE_STATEMENT] = "AlterDatabaseStatement";
   map[AST_ALTER_SCHEMA_STATEMENT] = "AlterSchemaStatement";
+  map[AST_ALTER_EXTERNAL_SCHEMA_STATEMENT] = "AlterExternalSchemaStatement";
   map[AST_ALTER_TABLE_STATEMENT] = "AlterTableStatement";
   map[AST_ALTER_VIEW_STATEMENT] = "AlterViewStatement";
   map[AST_ALTER_MATERIALIZED_VIEW_STATEMENT] = "AlterMaterializedViewStatement";
@@ -398,6 +402,9 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
   map[AST_IDENTITY_COLUMN_INCREMENT_BY] = "IdentityColumnIncrementBy";
   map[AST_IDENTITY_COLUMN_MAX_VALUE] = "IdentityColumnMaxValue";
   map[AST_IDENTITY_COLUMN_MIN_VALUE] = "IdentityColumnMinValue";
+  map[AST_ALIASED_QUERY_MODIFIERS] = "AliasedQueryModifiers";
+  map[AST_INT_OR_UNBOUNDED] = "IntOrUnbounded";
+  map[AST_RECURSION_DEPTH_MODIFIER] = "RecursionDepthModifier";
 
   for (int kind = kFirstASTNodeKind; kind <= kLastASTNodeKind;
        ++kind) {

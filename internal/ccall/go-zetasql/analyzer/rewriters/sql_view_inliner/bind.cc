@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_rewriters_sql_view_inliner_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_rewriters_sql_view_inliner_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_analyzer_rewriters_sql_view_inliner_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_rewriters_sql_view_inliner_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_rewriters_sql_view_inliner_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_analyzer_rewriters_sql_view_inliner_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_rewriters_sql_view_inliner_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_rewriters_sql_view_inliner_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_analyzer_rewriters_sql_view_inliner_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -253,6 +256,7 @@
 #include "zetasql/analyzer/rewriters/sql_view_inliner.cc"
 
 // include dependencies
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
@@ -263,13 +267,11 @@
 #include "go-zetasql/public/sql_view/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/str_format/export.inc"
-#include "go-absl/types/optional/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

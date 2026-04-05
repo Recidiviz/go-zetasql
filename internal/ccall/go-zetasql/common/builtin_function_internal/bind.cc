@@ -174,6 +174,9 @@
 #define zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_common_builtin_function_internal_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_common_builtin_function_internal_descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto
 #define TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto zetasql_common_builtin_function_internal_TableStruct_zetasql_2fpublic_2fsimple_5fvalue_2eproto
+#define zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_common_builtin_function_internal_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_common_builtin_function_internal_descriptor_table_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
+#define TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto zetasql_common_builtin_function_internal_TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto
 #define zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_common_builtin_function_internal_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_common_builtin_function_internal_descriptor_table_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto zetasql_common_builtin_function_internal_TableStruct_zetasql_2fpublic_2ffunctions_2fdatetime_2eproto
@@ -250,16 +253,20 @@
 //#undef private
 
 // include sources
+#include "zetasql/common/builtin_enum_type.cc"
 #define SetDefinitionForInlining zetasql_common_builtin_function_internal_array_SetDefinitionForInlining
 #include "zetasql/common/builtin_function_array.cc"
 #undef SetDefinitionForInlining
 
+#include "zetasql/common/builtin_function_differential_privacy.cc"
+#include "zetasql/common/builtin_function_distance.cc"
 #include "zetasql/common/builtin_function_internal_1.cc"
 #include "zetasql/common/builtin_function_internal_2.cc"
 #define SetDefinitionForInlining zetasql_common_builtin_function_internal_internal3_SetDefinitionForInlining
 #include "zetasql/common/builtin_function_internal_3.cc"
 #undef SetDefinitionForInlining
 
+#include "zetasql/common/builtin_function_map.cc"
 #include "zetasql/common/builtin_function_range.cc"
 
 // include dependencies
@@ -271,6 +278,7 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
 #include "go-zetasql/proto/options_cc_proto/export.inc"
+#include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/anon_function/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/builtin_function_options/export.inc"

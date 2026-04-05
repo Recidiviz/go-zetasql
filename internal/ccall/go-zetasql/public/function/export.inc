@@ -15,6 +15,7 @@
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
+#include "go-zetasql/public/evaluator_table_iterator/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
 #include "go-zetasql/public/function_headers/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
@@ -28,6 +29,7 @@
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

@@ -264,17 +264,51 @@ class ASTExpression : public ASTNode {
   bool parenthesized_ = false;
 };
 
+// The name ASTLeaf is kept for backward compatibility alone. However, not
+// all subclasses are necessarily leaf nodes. ASTStringLiteral and
+// ASTBytesLiteral both have children which are the one or more components
+// of literal concatenations. Similarly, ASTDateOrTimeLiteral and
+// ASTRangeLiteral each contain a child ASTStringLiteral, which itself is not
+// a leaf.
+//
+// The grouping does not make much sense at this point, given that it
+// encompasses not only literals, but also ASTStar.
+//
+// Its main function was intended to be the nodes that get printed through
+// image(), but this is no longer applicable. This functionality is now
+// handled by a stricted abstract class ASTPrintableLeaf.
+//
+// This class should be removed, and subclasses should directly inherit from
+// ASTExpression (just as ASTDateOrTimeLiteral does right now). Once all
+// callers have been updated as such, we should remove this class from the
+// hierarchy and directly inherit from ASTExpression.
 class ASTLeaf : public ASTExpression {
  public:
   explicit ASTLeaf(ASTNodeKind kind) : ASTExpression(kind) {}
 
+  bool IsLeaf() const override { return true; }
+
+  friend class ParseTreeSerializer;
+};
+
+// Intermediate subclass of ASTLeaf which is the parent of nodes that are
+// still using image(). Ideally image() should be hidden, and only used to
+// print back to the user, but it is currently being abused in some places
+// to represent the value as well, such as with ASTIntLiteral and
+// ASTFloatLiteral.
+//
+// Generally, image() should be removed, and location offsets of the node,
+// leaf or not, should be enough to print back the image, for example within
+// error messages.
+class ASTPrintableLeaf : public ASTLeaf {
+ public:
+  explicit ASTPrintableLeaf(ASTNodeKind kind) : ASTLeaf(kind) {}
+
   std::string SingleNodeDebugString() const override;
 
   // image() references data with the same lifetime as this ASTLeaf object.
-  absl::string_view image() const { return image_; }
   void set_image(std::string image) { image_ = std::move(image); }
-
-  bool IsLeaf() const override { return true; }
+  absl::string_view image() const { return image_; }
 
   friend class ParseTreeSerializer;
 
@@ -282,11 +316,11 @@ class ASTLeaf : public ASTExpression {
   std::string image_;
 };
 
-class ASTIntLiteral final : public ASTLeaf {
+class ASTIntLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_INT_LITERAL;
 
-  ASTIntLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTIntLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -568,11 +602,11 @@ class ASTWhereClause final : public ASTNode {
   const ASTExpression* expression_ = nullptr;
 };
 
-class ASTBooleanLiteral final : public ASTLeaf {
+class ASTBooleanLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BOOLEAN_LITERAL;
 
-  ASTBooleanLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTBooleanLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -687,11 +721,46 @@ class ASTBinaryExpression final : public ASTExpression {
   const ASTExpression* rhs_ = nullptr;
 };
 
+// Represents a string literal which could be just a singleton or a whole
+// concatenation.
 class ASTStringLiteral final : public ASTLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_STRING_LITERAL;
 
   ASTStringLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTStringLiteralComponent* const>& components() const {
+    return components_;
+  }
+  const ASTStringLiteralComponent* components(int i) const { return components_[i]; }
+
+  // The parsed and validated value of this literal.
+  const std::string& string_value() const { return string_value_; }
+  void set_string_value(absl::string_view string_value) {
+    string_value_ = std::string(string_value);
+  }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRepeatedWhileIsExpression(&components_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTStringLiteralComponent* const> components_;
+  std::string string_value_;
+};
+
+class ASTStringLiteralComponent final : public ASTPrintableLeaf {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_STRING_LITERAL_COMPONENT;
+
+  ASTStringLiteralComponent() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -714,11 +783,11 @@ class ASTStringLiteral final : public ASTLeaf {
   std::string string_value_;
 };
 
-class ASTStar final : public ASTLeaf {
+class ASTStar final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_STAR;
 
-  ASTStar() : ASTLeaf(kConcreteNodeKind) {}
+  ASTStar() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -758,6 +827,81 @@ class ASTOrExpr final : public ASTExpression {
   }
 
   absl::Span<const ASTExpression* const> disjuncts_;
+};
+
+class ASTOrderingExpression final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDERING_EXPRESSION;
+
+  ASTOrderingExpression() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // This enum is equivalent to ASTOrderingExpressionEnums::OrderingSpec in ast_enums.proto
+  enum OrderingSpec {
+    NOT_SET = ASTOrderingExpressionEnums::NOT_SET,
+    ASC = ASTOrderingExpressionEnums::ASC,
+    DESC = ASTOrderingExpressionEnums::DESC,
+    UNSPECIFIED = ASTOrderingExpressionEnums::UNSPECIFIED
+  };
+
+  void set_ordering_spec(ASTOrderingExpression::OrderingSpec ordering_spec) { ordering_spec_ = ordering_spec; }
+  ASTOrderingExpression::OrderingSpec ordering_spec() const { return ordering_spec_; }
+
+  const ASTExpression* expression() const { return expression_; }
+  const ASTCollate* collate() const { return collate_; }
+  const ASTNullOrder* null_order() const { return null_order_; }
+
+  bool descending() const { return ordering_spec_ == DESC; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    fl.AddOptional(&collate_, AST_COLLATE);
+    fl.AddOptional(&null_order_, AST_NULL_ORDER);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* expression_ = nullptr;
+  const ASTCollate* collate_ = nullptr;
+  const ASTNullOrder* null_order_ = nullptr;
+  ASTOrderingExpression::OrderingSpec ordering_spec_ = ASTOrderingExpression::UNSPECIFIED;
+};
+
+class ASTOrderBy final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDER_BY;
+
+  ASTOrderBy() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+
+  const absl::Span<const ASTOrderingExpression* const>& ordering_expressions() const {
+    return ordering_expressions_;
+  }
+  const ASTOrderingExpression* ordering_expressions(int i) const { return ordering_expressions_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddRestAsRepeated(&ordering_expressions_);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  absl::Span<const ASTOrderingExpression* const> ordering_expressions_;
 };
 
 // Represents a grouping item, which is either an expression (a regular
@@ -860,81 +1004,6 @@ class ASTGroupByAll final : public ASTNode {
   }
 };
 
-class ASTOrderingExpression final : public ASTNode {
- public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDERING_EXPRESSION;
-
-  ASTOrderingExpression() : ASTNode(kConcreteNodeKind) {}
-  void Accept(ParseTreeVisitor* visitor, void* data) const override;
-  absl::StatusOr<VisitResult> Accept(
-      NonRecursiveParseTreeVisitor* visitor) const override;
-
-  std::string SingleNodeDebugString() const override;
-
-  // This enum is equivalent to ASTOrderingExpressionEnums::OrderingSpec in ast_enums.proto
-  enum OrderingSpec {
-    NOT_SET = ASTOrderingExpressionEnums::NOT_SET,
-    ASC = ASTOrderingExpressionEnums::ASC,
-    DESC = ASTOrderingExpressionEnums::DESC,
-    UNSPECIFIED = ASTOrderingExpressionEnums::UNSPECIFIED
-  };
-
-  void set_ordering_spec(ASTOrderingExpression::OrderingSpec ordering_spec) { ordering_spec_ = ordering_spec; }
-  ASTOrderingExpression::OrderingSpec ordering_spec() const { return ordering_spec_; }
-
-  const ASTExpression* expression() const { return expression_; }
-  const ASTCollate* collate() const { return collate_; }
-  const ASTNullOrder* null_order() const { return null_order_; }
-
-  bool descending() const { return ordering_spec_ == DESC; }
-
-  friend class ParseTreeSerializer;
-
- private:
-  absl::Status InitFields() final {
-    FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
-    fl.AddOptional(&collate_, AST_COLLATE);
-    fl.AddOptional(&null_order_, AST_NULL_ORDER);
-    return fl.Finalize();
-  }
-
-  const ASTExpression* expression_ = nullptr;
-  const ASTCollate* collate_ = nullptr;
-  const ASTNullOrder* null_order_ = nullptr;
-  ASTOrderingExpression::OrderingSpec ordering_spec_ = ASTOrderingExpression::UNSPECIFIED;
-};
-
-class ASTOrderBy final : public ASTNode {
- public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDER_BY;
-
-  ASTOrderBy() : ASTNode(kConcreteNodeKind) {}
-  void Accept(ParseTreeVisitor* visitor, void* data) const override;
-  absl::StatusOr<VisitResult> Accept(
-      NonRecursiveParseTreeVisitor* visitor) const override;
-
-  const ASTHint* hint() const { return hint_; }
-
-  const absl::Span<const ASTOrderingExpression* const>& ordering_expressions() const {
-    return ordering_expressions_;
-  }
-  const ASTOrderingExpression* ordering_expressions(int i) const { return ordering_expressions_[i]; }
-
-  friend class ParseTreeSerializer;
-
- private:
-  absl::Status InitFields() final {
-    FieldLoader fl(this);
-    fl.AddOptional(&hint_, AST_HINT);
-    fl.AddRestAsRepeated(&ordering_expressions_);
-    return fl.Finalize();
-  }
-
-  const ASTHint* hint_ = nullptr;
-  absl::Span<const ASTOrderingExpression* const> ordering_expressions_;
-};
-
 class ASTLimitOffset final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_LIMIT_OFFSET;
@@ -964,11 +1033,11 @@ class ASTLimitOffset final : public ASTNode {
   const ASTExpression* offset_ = nullptr;
 };
 
-class ASTFloatLiteral final : public ASTLeaf {
+class ASTFloatLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_FLOAT_LITERAL;
 
-  ASTFloatLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTFloatLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -982,11 +1051,11 @@ class ASTFloatLiteral final : public ASTLeaf {
   }
 };
 
-class ASTNullLiteral final : public ASTLeaf {
+class ASTNullLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_NULL_LITERAL;
 
-  ASTNullLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTNullLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -1034,6 +1103,7 @@ class ASTAliasedQuery final : public ASTNode {
 
   const ASTIdentifier* alias() const { return alias_; }
   const ASTQuery* query() const { return query_; }
+  const ASTAliasedQueryModifiers* modifiers() const { return modifiers_; }
 
   friend class ParseTreeSerializer;
 
@@ -1042,11 +1112,13 @@ class ASTAliasedQuery final : public ASTNode {
     FieldLoader fl(this);
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    fl.AddOptional(&modifiers_, AST_ALIASED_QUERY_MODIFIERS);
     return fl.Finalize();
   }
 
   const ASTIdentifier* alias_ = nullptr;
   const ASTQuery* query_ = nullptr;
+  const ASTAliasedQueryModifiers* modifiers_ = nullptr;
 };
 
 // Joins could introduce multiple scans and cannot have aliases.
@@ -2051,13 +2123,18 @@ class ASTNumericLiteral final : public ASTLeaf {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
+  const ASTStringLiteral* string_literal() const { return string_literal_; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
+
+  const ASTStringLiteral* string_literal_ = nullptr;
 };
 
 class ASTBigNumericLiteral final : public ASTLeaf {
@@ -2069,20 +2146,60 @@ class ASTBigNumericLiteral final : public ASTLeaf {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
+  const ASTStringLiteral* string_literal() const { return string_literal_; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
+
+  const ASTStringLiteral* string_literal_ = nullptr;
 };
 
+// Represents a bytes literal which could be just a singleton or a whole
+// concatenation.
 class ASTBytesLiteral final : public ASTLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BYTES_LITERAL;
 
   ASTBytesLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTBytesLiteralComponent* const>& components() const {
+    return components_;
+  }
+  const ASTBytesLiteralComponent* components(int i) const { return components_[i]; }
+
+  // The parsed and validated value of this literal.
+  const std::string& bytes_value() const { return bytes_value_; }
+  void set_bytes_value(std::string bytes_value) {
+    bytes_value_ = std::move(bytes_value);
+  }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRepeatedWhileIsExpression(&components_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTBytesLiteralComponent* const> components_;
+  std::string bytes_value_;
+};
+
+class ASTBytesLiteralComponent final : public ASTPrintableLeaf {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BYTES_LITERAL_COMPONENT;
+
+  ASTBytesLiteralComponent() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -2135,11 +2252,11 @@ class ASTDateOrTimeLiteral final : public ASTExpression {
 
 // This represents the value MAX that shows up in type parameter lists.
 // It will not show up as a general expression anywhere else.
-class ASTMaxLiteral final : public ASTLeaf {
+class ASTMaxLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_MAX_LITERAL;
 
-  ASTMaxLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTMaxLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -2162,13 +2279,18 @@ class ASTJSONLiteral final : public ASTLeaf {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
+  const ASTStringLiteral* string_literal() const { return string_literal_; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
+
+  const ASTStringLiteral* string_literal_ = nullptr;
 };
 
 class ASTCaseValueExpression final : public ASTExpression {
@@ -5146,14 +5268,20 @@ class ASTNewConstructor final : public ASTExpression {
   absl::Span<const ASTNewConstructorArg* const> arguments_;
 };
 
-class ASTBracedConstructorFieldValue final : public ASTExpression {
+class ASTBracedConstructorFieldValue final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD_VALUE;
 
-  ASTBracedConstructorFieldValue() : ASTExpression(kConcreteNodeKind) {}
+  ASTBracedConstructorFieldValue() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // True if "field:value" syntax is used.
+  // False if "field value" syntax is used.
+  // The later is only allowed in proto instead of struct.
+  void set_colon_prefixed(bool colon_prefixed) { colon_prefixed_ = colon_prefixed; }
+  bool colon_prefixed() const { return colon_prefixed_; }
 
   const ASTExpression* expression() const { return expression_; }
 
@@ -5167,6 +5295,7 @@ class ASTBracedConstructorFieldValue final : public ASTExpression {
   }
 
   const ASTExpression* expression_ = nullptr;
+  bool colon_prefixed_ = false;
 };
 
 // Exactly one of 'identifier' and 'parenthesized_path' is
@@ -5179,6 +5308,13 @@ class ASTBracedConstructorField final : public ASTNode {
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // True if this field is separated by comma from the previous one,
+  // e.g.all e.g. "a:1,b:2".
+  // False if separated by whitespace, e.g. "a:1 b:2".
+  // The latter is only allowed in proto instead of struct.
+  void set_comma_separated(bool comma_separated) { comma_separated_ = comma_separated; }
+  bool comma_separated() const { return comma_separated_; }
 
   const ASTIdentifier* identifier() const { return identifier_; }
   const ASTPathExpression* parenthesized_path() const { return parenthesized_path_; }
@@ -5198,6 +5334,7 @@ class ASTBracedConstructorField final : public ASTNode {
   const ASTIdentifier* identifier_ = nullptr;
   const ASTPathExpression* parenthesized_path_ = nullptr;
   const ASTBracedConstructorFieldValue* value_ = nullptr;
+  bool comma_separated_ = false;
 };
 
 class ASTBracedConstructor final : public ASTExpression {
@@ -5249,6 +5386,32 @@ class ASTBracedNewConstructor final : public ASTExpression {
   }
 
   const ASTSimpleType* type_name_ = nullptr;
+  const ASTBracedConstructor* braced_constructor_ = nullptr;
+};
+
+class ASTStructBracedConstructor final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_STRUCT_BRACED_CONSTRUCTOR;
+
+  ASTStructBracedConstructor() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTType* type_name() const { return type_name_; }
+  const ASTBracedConstructor* braced_constructor() const { return braced_constructor_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptionalType(&type_name_);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_));
+    return fl.Finalize();
+  }
+
+  const ASTType* type_name_ = nullptr;
   const ASTBracedConstructor* braced_constructor_ = nullptr;
 };
 
@@ -6134,11 +6297,11 @@ class ASTCreateModelStatement final : public ASTCreateStatement {
 };
 
 // Represents 'ALL COLUMNS' index key expression.
-class ASTIndexAllColumns final : public ASTLeaf {
+class ASTIndexAllColumns final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_INDEX_ALL_COLUMNS;
 
-  ASTIndexAllColumns() : ASTLeaf(kConcreteNodeKind) {}
+  ASTIndexAllColumns() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -9546,7 +9709,7 @@ class ASTUnpivotInItemLabel final : public ASTNode {
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  const ASTLeaf* label() const {
+  const ASTExpression* label() const {
     if (string_label_ != nullptr) {
       return string_label_;
     }
@@ -11022,6 +11185,26 @@ class ASTAlterSchemaStatement final : public ASTAlterStatementBase {
   }
 };
 
+class ASTAlterExternalSchemaStatement final : public ASTAlterStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_EXTERNAL_SCHEMA_STATEMENT;
+
+  ASTAlterExternalSchemaStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_, AST_PATH_EXPRESSION);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    return fl.Finalize();
+  }
+};
+
 class ASTAlterTableStatement final : public ASTAlterStatementBase {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_TABLE_STATEMENT;
@@ -11994,11 +12177,11 @@ class ASTColumnWithOptionsList final : public ASTNode {
 };
 
 // Represents the body of a DEFINE MACRO statement.
-class ASTMacroBody final : public ASTLeaf {
+class ASTMacroBody final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_MACRO_BODY;
 
-  ASTMacroBody() : ASTLeaf(kConcreteNodeKind) {}
+  ASTMacroBody() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
@@ -12056,6 +12239,7 @@ class ASTUndropStatement final : public ASTDdlStatement {
 
   const ASTPathExpression* name() const { return name_; }
   const ASTForSystemTime* for_system_time() const { return for_system_time_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
 
   const ASTPathExpression* GetDdlTarget() const override { return name_; }
 
@@ -12066,6 +12250,7 @@ class ASTUndropStatement final : public ASTDdlStatement {
     FieldLoader fl(this);
     ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
 
@@ -12073,6 +12258,7 @@ class ASTUndropStatement final : public ASTDdlStatement {
   const ASTPathExpression* name_ = nullptr;
   bool is_if_not_exists_ = false;
   const ASTForSystemTime* for_system_time_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
 };
 
 class ASTIdentityColumnInfo final : public ASTNode {
@@ -12201,6 +12387,87 @@ class ASTIdentityColumnMinValue final : public ASTNode {
   }
 
   const ASTExpression* value_ = nullptr;
+};
+
+class ASTAliasedQueryModifiers final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALIASED_QUERY_MODIFIERS;
+
+  ASTAliasedQueryModifiers() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTRecursionDepthModifier* recursion_depth_modifier() const { return recursion_depth_modifier_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&recursion_depth_modifier_, AST_RECURSION_DEPTH_MODIFIER);
+    return fl.Finalize();
+  }
+
+  const ASTRecursionDepthModifier* recursion_depth_modifier_ = nullptr;
+};
+
+// This represents an integer or an unbounded integer.
+// The semantic of unbounded integer depends on the context.
+class ASTIntOrUnbounded final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_INT_OR_UNBOUNDED;
+
+  ASTIntOrUnbounded() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* bound() const { return bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptionalExpression(&bound_);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* bound_ = nullptr;
+};
+
+class ASTRecursionDepthModifier final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_RECURSION_DEPTH_MODIFIER;
+
+  ASTRecursionDepthModifier() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTAlias* alias() const { return alias_; }
+
+  // lower bound is 0 when the node's `bound` field is unset.
+  const ASTIntOrUnbounded* lower_bound() const { return lower_bound_; }
+
+  // upper_bound is infinity when the node's `bound` field is unset.
+  const ASTIntOrUnbounded* upper_bound() const { return upper_bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&alias_, AST_ALIAS);
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lower_bound_));
+    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&upper_bound_));
+    return fl.Finalize();
+  }
+
+  const ASTAlias* alias_ = nullptr;
+  const ASTIntOrUnbounded* lower_bound_ = nullptr;
+  const ASTIntOrUnbounded* upper_bound_ = nullptr;
 };
 
 }  // namespace zetasql

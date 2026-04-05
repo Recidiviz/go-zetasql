@@ -13,5 +13,6 @@
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
+#include "go-absl/strings/strings/export.inc"
 
 #endif

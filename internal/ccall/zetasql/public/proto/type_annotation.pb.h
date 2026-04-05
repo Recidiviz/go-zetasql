@@ -84,6 +84,7 @@ enum FieldFormat_Format : int {
   FieldFormat_Format_BIGNUMERIC = 11,
   FieldFormat_Format_JSON = 12,
   FieldFormat_Format_INTERVAL = 14,
+  FieldFormat_Format_TOKENLIST = 15,
   FieldFormat_Format_RANGE_DATES_ENCODED = 16,
   FieldFormat_Format_RANGE_DATETIMES_ENCODED = 17,
   FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED = 18,
@@ -274,6 +275,7 @@ class FieldFormat final :
   static constexpr Format BIGNUMERIC = FieldFormat_Format_BIGNUMERIC;
   static constexpr Format JSON = FieldFormat_Format_JSON;
   static constexpr Format INTERVAL = FieldFormat_Format_INTERVAL;
+  static constexpr Format TOKENLIST = FieldFormat_Format_TOKENLIST;
   static constexpr Format RANGE_DATES_ENCODED = FieldFormat_Format_RANGE_DATES_ENCODED;
   static constexpr Format RANGE_DATETIMES_ENCODED = FieldFormat_Format_RANGE_DATETIMES_ENCODED;
   static constexpr Format RANGE_TIMESTAMPS_ENCODED = FieldFormat_Format_RANGE_TIMESTAMPS_ENCODED;

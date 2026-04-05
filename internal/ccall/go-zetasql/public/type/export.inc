@@ -20,6 +20,7 @@
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/node_hash_map/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 

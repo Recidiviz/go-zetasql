@@ -19,5 +19,6 @@
 #include "go-absl/hash/hash/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

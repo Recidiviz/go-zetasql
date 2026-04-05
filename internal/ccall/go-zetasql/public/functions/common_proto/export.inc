@@ -11,6 +11,7 @@
 #include "go-zetasql/common/utf_util/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"
 #include "go-google/type/latlng_cc_proto/export.inc"
 #include "go-google/type/timeofday_cc_proto/export.inc"

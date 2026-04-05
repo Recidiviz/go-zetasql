@@ -5,7 +5,6 @@
 // include sources
 #include "zetasql/base/time_proto_util.cc"
 // include dependencies
-#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

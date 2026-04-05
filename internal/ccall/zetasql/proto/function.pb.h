@@ -2886,6 +2886,7 @@ class FunctionOptionsProto final :
     kSupportsLimitFieldNumber = 12,
     kSupportsNullHandlingModifierFieldNumber = 13,
     kSupportsClampedBetweenModifierFieldNumber = 16,
+    kMaySuppressSideEffectsFieldNumber = 18,
     kArgumentsAreCoercibleFieldNumber = 4,
     kAllowExternalUsageFieldNumber = 8,
     kSupportsSafeErrorModeFieldNumber = 14,
@@ -3054,6 +3055,17 @@ class FunctionOptionsProto final :
   void _internal_set_supports_clamped_between_modifier(bool value);
 
   public:
+  // optional bool may_suppress_side_effects = 18 [default = false];
+  bool has_may_suppress_side_effects() const;
+  void clear_may_suppress_side_effects() ;
+  bool may_suppress_side_effects() const;
+  void set_may_suppress_side_effects(bool value);
+
+  private:
+  bool _internal_may_suppress_side_effects() const;
+  void _internal_set_may_suppress_side_effects(bool value);
+
+  public:
   // optional bool arguments_are_coercible = 4 [default = true];
   bool has_arguments_are_coercible() const;
   void clear_arguments_are_coercible() ;
@@ -3131,6 +3143,7 @@ class FunctionOptionsProto final :
     bool supports_limit_;
     bool supports_null_handling_modifier_;
     bool supports_clamped_between_modifier_;
+    bool may_suppress_side_effects_;
     bool arguments_are_coercible_;
     bool allow_external_usage_;
     bool supports_safe_error_mode_;
@@ -7950,12 +7963,12 @@ inline void FunctionOptionsProto::_internal_set_supports_window_framing(bool val
 
 // optional bool arguments_are_coercible = 4 [default = true];
 inline bool FunctionOptionsProto::has_arguments_are_coercible() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000800u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
   return value;
 }
 inline void FunctionOptionsProto::clear_arguments_are_coercible() {
   _impl_.arguments_are_coercible_ = true;
-  _impl_._has_bits_[0] &= ~0x00000800u;
+  _impl_._has_bits_[0] &= ~0x00001000u;
 }
 inline bool FunctionOptionsProto::arguments_are_coercible() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionOptionsProto.arguments_are_coercible)
@@ -7969,7 +7982,7 @@ inline bool FunctionOptionsProto::_internal_arguments_are_coercible() const {
   return _impl_.arguments_are_coercible_;
 }
 inline void FunctionOptionsProto::_internal_set_arguments_are_coercible(bool value) {
-  _impl_._has_bits_[0] |= 0x00000800u;
+  _impl_._has_bits_[0] |= 0x00001000u;
   _impl_.arguments_are_coercible_ = value;
 }
 
@@ -8130,12 +8143,12 @@ inline void FunctionOptionsProto::set_allocated_sql_name(std::string* value) {
 
 // optional bool allow_external_usage = 8 [default = true];
 inline bool FunctionOptionsProto::has_allow_external_usage() const {
-  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00002000u) != 0;
   return value;
 }
 inline void FunctionOptionsProto::clear_allow_external_usage() {
   _impl_.allow_external_usage_ = true;
-  _impl_._has_bits_[0] &= ~0x00001000u;
+  _impl_._has_bits_[0] &= ~0x00002000u;
 }
 inline bool FunctionOptionsProto::allow_external_usage() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionOptionsProto.allow_external_usage)
@@ -8149,7 +8162,7 @@ inline bool FunctionOptionsProto::_internal_allow_external_usage() const {
   return _impl_.allow_external_usage_;
 }
 inline void FunctionOptionsProto::_internal_set_allow_external_usage(bool value) {
-  _impl_._has_bits_[0] |= 0x00001000u;
+  _impl_._has_bits_[0] |= 0x00002000u;
   _impl_.allow_external_usage_ = value;
 }
 
@@ -8301,12 +8314,12 @@ inline void FunctionOptionsProto::_internal_set_supports_null_handling_modifier(
 
 // optional bool supports_safe_error_mode = 14 [default = true];
 inline bool FunctionOptionsProto::has_supports_safe_error_mode() const {
-  bool value = (_impl_._has_bits_[0] & 0x00002000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00004000u) != 0;
   return value;
 }
 inline void FunctionOptionsProto::clear_supports_safe_error_mode() {
   _impl_.supports_safe_error_mode_ = true;
-  _impl_._has_bits_[0] &= ~0x00002000u;
+  _impl_._has_bits_[0] &= ~0x00004000u;
 }
 inline bool FunctionOptionsProto::supports_safe_error_mode() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionOptionsProto.supports_safe_error_mode)
@@ -8320,18 +8333,18 @@ inline bool FunctionOptionsProto::_internal_supports_safe_error_mode() const {
   return _impl_.supports_safe_error_mode_;
 }
 inline void FunctionOptionsProto::_internal_set_supports_safe_error_mode(bool value) {
-  _impl_._has_bits_[0] |= 0x00002000u;
+  _impl_._has_bits_[0] |= 0x00004000u;
   _impl_.supports_safe_error_mode_ = value;
 }
 
 // optional bool supports_having_modifier = 15 [default = true];
 inline bool FunctionOptionsProto::has_supports_having_modifier() const {
-  bool value = (_impl_._has_bits_[0] & 0x00004000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00008000u) != 0;
   return value;
 }
 inline void FunctionOptionsProto::clear_supports_having_modifier() {
   _impl_.supports_having_modifier_ = true;
-  _impl_._has_bits_[0] &= ~0x00004000u;
+  _impl_._has_bits_[0] &= ~0x00008000u;
 }
 inline bool FunctionOptionsProto::supports_having_modifier() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionOptionsProto.supports_having_modifier)
@@ -8345,7 +8358,7 @@ inline bool FunctionOptionsProto::_internal_supports_having_modifier() const {
   return _impl_.supports_having_modifier_;
 }
 inline void FunctionOptionsProto::_internal_set_supports_having_modifier(bool value) {
-  _impl_._has_bits_[0] |= 0x00004000u;
+  _impl_._has_bits_[0] |= 0x00008000u;
   _impl_.supports_having_modifier_ = value;
 }
 
@@ -8376,12 +8389,12 @@ inline void FunctionOptionsProto::_internal_set_supports_clamped_between_modifie
 
 // optional bool uses_upper_case_sql_name = 17 [default = true];
 inline bool FunctionOptionsProto::has_uses_upper_case_sql_name() const {
-  bool value = (_impl_._has_bits_[0] & 0x00008000u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00010000u) != 0;
   return value;
 }
 inline void FunctionOptionsProto::clear_uses_upper_case_sql_name() {
   _impl_.uses_upper_case_sql_name_ = true;
-  _impl_._has_bits_[0] &= ~0x00008000u;
+  _impl_._has_bits_[0] &= ~0x00010000u;
 }
 inline bool FunctionOptionsProto::uses_upper_case_sql_name() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionOptionsProto.uses_upper_case_sql_name)
@@ -8395,8 +8408,33 @@ inline bool FunctionOptionsProto::_internal_uses_upper_case_sql_name() const {
   return _impl_.uses_upper_case_sql_name_;
 }
 inline void FunctionOptionsProto::_internal_set_uses_upper_case_sql_name(bool value) {
-  _impl_._has_bits_[0] |= 0x00008000u;
+  _impl_._has_bits_[0] |= 0x00010000u;
   _impl_.uses_upper_case_sql_name_ = value;
+}
+
+// optional bool may_suppress_side_effects = 18 [default = false];
+inline bool FunctionOptionsProto::has_may_suppress_side_effects() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000800u) != 0;
+  return value;
+}
+inline void FunctionOptionsProto::clear_may_suppress_side_effects() {
+  _impl_.may_suppress_side_effects_ = false;
+  _impl_._has_bits_[0] &= ~0x00000800u;
+}
+inline bool FunctionOptionsProto::may_suppress_side_effects() const {
+  // @@protoc_insertion_point(field_get:zetasql.FunctionOptionsProto.may_suppress_side_effects)
+  return _internal_may_suppress_side_effects();
+}
+inline void FunctionOptionsProto::set_may_suppress_side_effects(bool value) {
+  _internal_set_may_suppress_side_effects(value);
+  // @@protoc_insertion_point(field_set:zetasql.FunctionOptionsProto.may_suppress_side_effects)
+}
+inline bool FunctionOptionsProto::_internal_may_suppress_side_effects() const {
+  return _impl_.may_suppress_side_effects_;
+}
+inline void FunctionOptionsProto::_internal_set_may_suppress_side_effects(bool value) {
+  _impl_._has_bits_[0] |= 0x00000800u;
+  _impl_.may_suppress_side_effects_ = value;
 }
 
 // -------------------------------------------------------------------

@@ -1445,12 +1445,13 @@ enum SchemaObjectKind : int {
   kTableFunction = 13,
   kView = 14,
   kSnapshotTable = 15,
+  kExternalSchema = 18,
 };
 
 bool SchemaObjectKind_IsValid(int value);
 constexpr SchemaObjectKind SchemaObjectKind_MIN = static_cast<SchemaObjectKind>(-1);
-constexpr SchemaObjectKind SchemaObjectKind_MAX = static_cast<SchemaObjectKind>(17);
-constexpr int SchemaObjectKind_ARRAYSIZE = 17 + 1;
+constexpr SchemaObjectKind SchemaObjectKind_MAX = static_cast<SchemaObjectKind>(18);
+constexpr int SchemaObjectKind_ARRAYSIZE = 18 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 SchemaObjectKind_descriptor();
 template <typename T>
@@ -1463,7 +1464,7 @@ const std::string& SchemaObjectKind_Name(T value) {
 template <>
 inline const std::string& SchemaObjectKind_Name(SchemaObjectKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<SchemaObjectKind_descriptor,
-                                                 -1, 17>(
+                                                 -1, 18>(
       static_cast<int>(value));
 }
 inline bool SchemaObjectKind_Parse(absl::string_view name, SchemaObjectKind* value) {

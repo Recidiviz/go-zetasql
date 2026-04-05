@@ -8,7 +8,6 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
-#include "go-zetasql/public/analyzer_output/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
@@ -22,8 +21,6 @@
 #include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
-#include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #endif

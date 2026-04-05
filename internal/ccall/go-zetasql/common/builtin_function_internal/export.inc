@@ -3,14 +3,18 @@
 
 #include "zetasql/common/builtin_function_internal.h"
 // include sources
+#include "zetasql/common/builtin_enum_type.cc"
 #define SetDefinitionForInlining zetasql_common_builtin_function_internal_array_SetDefinitionForInlining
 #include "zetasql/common/builtin_function_array.cc"
 #undef SetDefinitionForInlining
+#include "zetasql/common/builtin_function_differential_privacy.cc"
+#include "zetasql/common/builtin_function_distance.cc"
 #include "zetasql/common/builtin_function_internal_1.cc"
 #include "zetasql/common/builtin_function_internal_2.cc"
 #define SetDefinitionForInlining zetasql_common_builtin_function_internal_internal3_SetDefinitionForInlining
 #include "zetasql/common/builtin_function_internal_3.cc"
 #undef SetDefinitionForInlining
+#include "zetasql/common/builtin_function_map.cc"
 #include "zetasql/common/builtin_function_range.cc"
 // include dependencies
 #include "go-zetasql/common/errors/export.inc"
@@ -21,6 +25,7 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
 #include "go-zetasql/proto/options_cc_proto/export.inc"
+#include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/anon_function/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/builtin_function_options/export.inc"

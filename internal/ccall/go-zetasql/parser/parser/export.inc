@@ -32,9 +32,10 @@
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/flex_istream/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
-#include "go-zetasql/parser/location/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
-#include "go-zetasql/parser/tokenizer/export.inc"
+#define ZETASQL_PARSER_AMALGAMATION_HAS_FLEX
+#include "go-zetasql/parser/token_disambiguator/export.inc"
+#undef ZETASQL_PARSER_AMALGAMATION_HAS_FLEX
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -47,6 +48,8 @@
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/common/timer_util/export.inc"
 #include "go-zetasql/common/utf_util/export.inc"
+#include "go-zetasql/parser/macros/macro_catalog/export.inc"
+#include "go-zetasql/parser/macros/macro_expander/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
 #include "go-zetasql/public/error_location_cc_proto/export.inc"
 #include "go-zetasql/public/id_string/export.inc"

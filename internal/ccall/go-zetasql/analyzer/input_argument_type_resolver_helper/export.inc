@@ -6,13 +6,13 @@
 #include "zetasql/analyzer/input_argument_type_resolver_helper.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
-#include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #endif
