@@ -21,6 +21,9 @@ full_export.inc
 # Ephemeral tree for scripts/gen-protobuf-vendor-patches.sh (upstream + amalgamation)
 .genpatch-baseline/
 
+# CGO ephemeral output (not checked in)
+internal/ccall/go-zetasql/_obj/
+
 # Local Python deps / resolved_ast codegen output (not checked in)
 internal/gen/
 __pycache__/
