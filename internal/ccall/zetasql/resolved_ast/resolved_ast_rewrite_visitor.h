@@ -413,6 +413,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedGetProtoOneof(
+      const ResolvedGetProtoOneof&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedGetProtoOneof (
+      std::unique_ptr<const ResolvedGetProtoOneof> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr&) {
     return absl::OkStatus();
@@ -721,6 +732,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedDeferredComputedColumn(
+      const ResolvedDeferredComputedColumn&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedDeferredComputedColumn (
+      std::unique_ptr<const ResolvedDeferredComputedColumn> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedOrderByItem(
       const ResolvedOrderByItem&) {
     return absl::OkStatus();
@@ -938,6 +960,17 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedCreateSchemaStmt (
       std::unique_ptr<const ResolvedCreateSchemaStmt> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedCreateExternalSchemaStmt(
+      const ResolvedCreateExternalSchemaStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedCreateExternalSchemaStmt (
+      std::unique_ptr<const ResolvedCreateExternalSchemaStmt> node) {
     return node;
   }
 
@@ -1213,6 +1246,17 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedRecursiveRefScan (
       std::unique_ptr<const ResolvedRecursiveRefScan> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedRecursionDepthModifier(
+      const ResolvedRecursionDepthModifier&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedRecursionDepthModifier (
+      std::unique_ptr<const ResolvedRecursionDepthModifier> node) {
     return node;
   }
 
@@ -1546,6 +1590,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedAlterExternalSchemaStmt(
+      const ResolvedAlterExternalSchemaStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAlterExternalSchemaStmt (
+      std::unique_ptr<const ResolvedAlterExternalSchemaStmt> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedAlterModelStmt(
       const ResolvedAlterModelStmt&) {
     return absl::OkStatus();
@@ -1686,6 +1741,17 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedAlterColumnDropNotNullAction (
       std::unique_ptr<const ResolvedAlterColumnDropNotNullAction> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedAlterColumnDropGeneratedAction(
+      const ResolvedAlterColumnDropGeneratedAction&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAlterColumnDropGeneratedAction (
+      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node) {
     return node;
   }
 
@@ -2316,6 +2382,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedIdentityColumnInfo(
+      const ResolvedIdentityColumnInfo&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedIdentityColumnInfo (
+      std::unique_ptr<const ResolvedIdentityColumnInfo> node) {
+    return node;
+  }
+
  private:
   template <typename ExpectedReturnT>
   static absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> VerifyType(
@@ -2396,6 +2473,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedReplaceField> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedGetProtoOneof> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSubqueryExpr> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedWithExpr> node);
@@ -2452,6 +2531,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedComputedColumn> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedDeferredComputedColumn> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedOrderByItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedColumnAnnotations> node);
@@ -2491,6 +2572,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedCreateIndexStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateSchemaStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedCreateExternalSchemaStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateTableStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2541,6 +2624,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedDropSnapshotTableStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedRecursiveRefScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedRecursionDepthModifier> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedRecursiveScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2602,6 +2687,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterSchemaStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAlterExternalSchemaStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterModelStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterTableStmt> node);
@@ -2627,6 +2714,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAlterColumnOptionsAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnDropNotNullAction> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -2741,6 +2830,8 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAuxLoadDataStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedUndropStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedIdentityColumnInfo> node);
   template <typename TypeName>
   std::unique_ptr<const TypeName> CastUniquePtr(std::unique_ptr<const ResolvedNode> node) {
     return absl::WrapUnique(static_cast<const TypeName*>(node.release()));
@@ -2949,6 +3040,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedGetProtoOneof::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedGetProtoOneof>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedGetProtoOneof>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedSubqueryExpr::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedSubqueryExpr>) {
@@ -3145,6 +3243,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedDeferredComputedColumn::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedDeferredComputedColumn>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedDeferredComputedColumn>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedOrderByItem::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedOrderByItem>) {
@@ -3282,6 +3387,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedCreateSchemaStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateSchemaStmt>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedCreateExternalSchemaStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedCreateExternalSchemaStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateExternalSchemaStmt>(std::move(node)));
         }
         break;
       }
@@ -3457,6 +3569,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedRecursiveRefScan>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedRecursiveRefScan>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedRecursionDepthModifier::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedRecursionDepthModifier>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedRecursionDepthModifier>(std::move(node)));
         }
         break;
       }
@@ -3670,6 +3789,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedAlterExternalSchemaStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAlterExternalSchemaStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterExternalSchemaStmt>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedAlterModelStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterModelStmt>) {
@@ -3758,6 +3884,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterColumnDropNotNullAction>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterColumnDropNotNullAction>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedAlterColumnDropGeneratedAction::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAlterColumnDropGeneratedAction>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterColumnDropGeneratedAction>(std::move(node)));
         }
         break;
       }
@@ -4157,6 +4290,13 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedUndropStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedUndropStmt>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedIdentityColumnInfo::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedIdentityColumnInfo>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedIdentityColumnInfo>(std::move(node)));
         }
         break;
       }

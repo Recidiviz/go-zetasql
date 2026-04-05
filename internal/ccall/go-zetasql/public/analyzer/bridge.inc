@@ -2553,7 +2553,7 @@ void GO_EXPORT(ResolvedAggregateScanBase_aggregate_list)(void * arg0,void ** arg
 
 void GO_EXPORT(ResolvedAggregateScanBase_set_aggregate_list)(void * arg0,void * arg1){
   zetasql::ResolvedAggregateScanBase *node = (zetasql::ResolvedAggregateScanBase *)arg0;
-  SET_UNIQUE_PTR_LIST(node->set_aggregate_list, ResolvedComputedColumn, arg1);
+  SET_UNIQUE_PTR_COMPUTED_COLUMN_BASE_LIST(node->set_aggregate_list, arg1);
 }
 
 void GO_EXPORT(ResolvedAggregateScanBase_add_aggregate_list)(void * arg0,void * arg1){

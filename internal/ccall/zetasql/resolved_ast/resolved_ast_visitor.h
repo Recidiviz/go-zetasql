@@ -139,6 +139,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedReplaceField(const ResolvedReplaceField* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedGetProtoOneof(const ResolvedGetProtoOneof* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedSubqueryExpr(const ResolvedSubqueryExpr* node) {
     return DefaultVisit(node);
   }
@@ -229,7 +232,16 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedSampleScan(const ResolvedSampleScan* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedComputedColumnBase(const ResolvedComputedColumnBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedComputedColumnImpl(const ResolvedComputedColumnImpl* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedComputedColumn(const ResolvedComputedColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDeferredComputedColumn(const ResolvedDeferredComputedColumn* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedOrderByItem(const ResolvedOrderByItem* node) {
@@ -298,7 +310,13 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedCreateIndexStmt(const ResolvedCreateIndexStmt* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedCreateSchemaStmtBase(const ResolvedCreateSchemaStmtBase* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedCreateSchemaStmt(const ResolvedCreateSchemaStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateExternalSchemaStmt(const ResolvedCreateExternalSchemaStmt* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedCreateTableStmtBase(const ResolvedCreateTableStmtBase* node) {
@@ -380,6 +398,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedRecursiveRefScan(const ResolvedRecursiveRefScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRecursionDepthModifier(const ResolvedRecursionDepthModifier* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedRecursiveScan(const ResolvedRecursiveScan* node) {
@@ -478,6 +499,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedAlterSchemaStmt(const ResolvedAlterSchemaStmt* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedAlterExternalSchemaStmt(const ResolvedAlterExternalSchemaStmt* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedAlterModelStmt(const ResolvedAlterModelStmt* node) {
     return DefaultVisit(node);
   }
@@ -521,6 +545,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAlterColumnDropNotNullAction(const ResolvedAlterColumnDropNotNullAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnDropGeneratedAction(const ResolvedAlterColumnDropGeneratedAction* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAlterColumnSetDataTypeAction(const ResolvedAlterColumnSetDataTypeAction* node) {
@@ -692,6 +719,9 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedUndropStmt(const ResolvedUndropStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo* node) {
     return DefaultVisit(node);
   }
 };

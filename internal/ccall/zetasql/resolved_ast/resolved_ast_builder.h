@@ -60,6 +60,7 @@ class ResolvedFlattenBuilder;
 class ResolvedFlattenedArgBuilder;
 class ResolvedReplaceFieldItemBuilder;
 class ResolvedReplaceFieldBuilder;
+class ResolvedGetProtoOneofBuilder;
 class ResolvedSubqueryExprBuilder;
 class ResolvedWithExprBuilder;
 class ResolvedExecuteAsRoleScanBuilder;
@@ -88,6 +89,7 @@ class ResolvedWithRefScanBuilder;
 class ResolvedAnalyticScanBuilder;
 class ResolvedSampleScanBuilder;
 class ResolvedComputedColumnBuilder;
+class ResolvedDeferredComputedColumnBuilder;
 class ResolvedOrderByItemBuilder;
 class ResolvedColumnAnnotationsBuilder;
 class ResolvedGeneratedColumnInfoBuilder;
@@ -108,6 +110,7 @@ class ResolvedIndexItemBuilder;
 class ResolvedUnnestItemBuilder;
 class ResolvedCreateIndexStmtBuilder;
 class ResolvedCreateSchemaStmtBuilder;
+class ResolvedCreateExternalSchemaStmtBuilder;
 class ResolvedCreateTableStmtBuilder;
 class ResolvedCreateTableAsSelectStmtBuilder;
 class ResolvedCreateModelAliasedQueryBuilder;
@@ -133,6 +136,7 @@ class ResolvedDropStmtBuilder;
 class ResolvedDropMaterializedViewStmtBuilder;
 class ResolvedDropSnapshotTableStmtBuilder;
 class ResolvedRecursiveRefScanBuilder;
+class ResolvedRecursionDepthModifierBuilder;
 class ResolvedRecursiveScanBuilder;
 class ResolvedWithScanBuilder;
 class ResolvedWithEntryBuilder;
@@ -163,6 +167,7 @@ class ResolvedAlterDatabaseStmtBuilder;
 class ResolvedAlterMaterializedViewStmtBuilder;
 class ResolvedAlterApproxViewStmtBuilder;
 class ResolvedAlterSchemaStmtBuilder;
+class ResolvedAlterExternalSchemaStmtBuilder;
 class ResolvedAlterModelStmtBuilder;
 class ResolvedAlterTableStmtBuilder;
 class ResolvedAlterViewStmtBuilder;
@@ -176,6 +181,7 @@ class ResolvedDropConstraintActionBuilder;
 class ResolvedDropPrimaryKeyActionBuilder;
 class ResolvedAlterColumnOptionsActionBuilder;
 class ResolvedAlterColumnDropNotNullActionBuilder;
+class ResolvedAlterColumnDropGeneratedActionBuilder;
 class ResolvedAlterColumnSetDataTypeActionBuilder;
 class ResolvedAlterColumnSetDefaultActionBuilder;
 class ResolvedAlterColumnDropDefaultActionBuilder;
@@ -233,6 +239,7 @@ class ResolvedAnalyzeStmtBuilder;
 class ResolvedAuxLoadDataPartitionFilterBuilder;
 class ResolvedAuxLoadDataStmtBuilder;
 class ResolvedUndropStmtBuilder;
+class ResolvedIdentityColumnInfoBuilder;
 
 class ResolvedLiteralBuilder final {
  public:
@@ -253,12 +260,13 @@ class ResolvedLiteralBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedLiteral>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedLiteral>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -275,8 +283,12 @@ class ResolvedLiteralBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedLiteral>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -442,12 +454,13 @@ class ResolvedParameterBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedParameter>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedParameter>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -458,8 +471,12 @@ class ResolvedParameterBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedParameter>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -472,13 +489,13 @@ class ResolvedParameterBuilder final {
     return node_->name();
   }
 
-  ResolvedParameterBuilder&& set_name(const std::string& v) && {
+  ResolvedParameterBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
 
     return std::move(*this);
   }
 
-  ResolvedParameterBuilder& set_name(const std::string& v) & {
+  ResolvedParameterBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
 
     return *this;
@@ -604,12 +621,13 @@ class ResolvedExpressionColumnBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExpressionColumn>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExpressionColumn>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -626,8 +644,12 @@ class ResolvedExpressionColumnBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExpressionColumn>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -636,14 +658,14 @@ class ResolvedExpressionColumnBuilder final {
     return node_->name();
   }
 
-  ResolvedExpressionColumnBuilder&& set_name(const std::string& v) && {
+  ResolvedExpressionColumnBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
     return std::move(*this);
   }
 
-  ResolvedExpressionColumnBuilder& set_name(const std::string& v) & {
+  ResolvedExpressionColumnBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
@@ -729,12 +751,13 @@ class ResolvedCatalogColumnRefBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCatalogColumnRef>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCatalogColumnRef>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -751,8 +774,12 @@ class ResolvedCatalogColumnRefBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCatalogColumnRef>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -854,12 +881,13 @@ class ResolvedColumnRefBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedColumnRef>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedColumnRef>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -882,8 +910,12 @@ class ResolvedColumnRefBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedColumnRef>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1003,18 +1035,23 @@ class ResolvedGroupingSetMultiColumnBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGroupingSetMultiColumn>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGroupingSetMultiColumn>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1131,12 +1168,13 @@ class ResolvedConstantBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedConstant>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedConstant>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -1153,8 +1191,12 @@ class ResolvedConstantBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedConstant>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1257,12 +1299,13 @@ class ResolvedSystemVariableBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSystemVariable>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSystemVariable>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -1273,8 +1316,12 @@ class ResolvedSystemVariableBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSystemVariable>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1396,12 +1443,13 @@ class ResolvedInlineLambdaBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedInlineLambda>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedInlineLambda>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(2)) {
       zetasql::internal::UpdateStatus(
@@ -1412,8 +1460,12 @@ class ResolvedInlineLambdaBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedInlineLambda>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1624,12 +1676,13 @@ class ResolvedSequenceBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSequence>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSequence>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -1640,8 +1693,12 @@ class ResolvedSequenceBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSequence>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1706,12 +1763,13 @@ class ResolvedFilterFieldArgBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFilterFieldArg>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFilterFieldArg>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -1722,8 +1780,12 @@ class ResolvedFilterFieldArgBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFilterFieldArg>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -1833,12 +1895,13 @@ class ResolvedFilterFieldBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFilterField>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFilterField>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -1861,8 +1924,12 @@ class ResolvedFilterFieldBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFilterField>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -2096,12 +2163,13 @@ class ResolvedFunctionCallBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFunctionCall>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -2124,8 +2192,12 @@ class ResolvedFunctionCallBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -2562,12 +2634,13 @@ class ResolvedAggregateFunctionCallBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAggregateFunctionCall>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -2590,8 +2663,12 @@ class ResolvedAggregateFunctionCallBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAggregateFunctionCall>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -3388,12 +3465,13 @@ class ResolvedAnalyticFunctionCallBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAnalyticFunctionCall>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionCall>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -3422,8 +3500,12 @@ class ResolvedAnalyticFunctionCallBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAnalyticFunctionCall>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -4071,12 +4153,13 @@ class ResolvedExtendedCastElementBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExtendedCastElement>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExtendedCastElement>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -4099,8 +4182,12 @@ class ResolvedExtendedCastElementBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExtendedCastElement>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -4203,18 +4290,23 @@ class ResolvedExtendedCastBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExtendedCast>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExtendedCast>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExtendedCast>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -4349,12 +4441,13 @@ class ResolvedCastBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCast>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCast>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -4371,8 +4464,12 @@ class ResolvedCastBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCast>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -4726,12 +4823,13 @@ class ResolvedMakeStructBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedMakeStruct>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedMakeStruct>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -4742,8 +4840,12 @@ class ResolvedMakeStructBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedMakeStruct>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -4898,12 +5000,13 @@ class ResolvedMakeProtoBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedMakeProto>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedMakeProto>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -4914,8 +5017,12 @@ class ResolvedMakeProtoBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedMakeProto>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -5070,12 +5177,13 @@ class ResolvedMakeProtoFieldBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedMakeProtoField>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedMakeProtoField>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -5092,8 +5200,12 @@ class ResolvedMakeProtoFieldBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedMakeProtoField>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -5232,12 +5344,13 @@ class ResolvedGetStructFieldBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGetStructField>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGetStructField>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -5260,8 +5373,12 @@ class ResolvedGetStructFieldBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGetStructField>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -5437,12 +5554,13 @@ class ResolvedGetProtoFieldBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGetProtoField>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGetProtoField>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -5471,8 +5589,12 @@ class ResolvedGetProtoFieldBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGetProtoField>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -5748,12 +5870,13 @@ class ResolvedGetJsonFieldBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGetJsonField>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGetJsonField>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -5776,8 +5899,12 @@ class ResolvedGetJsonFieldBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGetJsonField>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -5839,14 +5966,14 @@ class ResolvedGetJsonFieldBuilder final {
     return node_->field_name();
   }
 
-  ResolvedGetJsonFieldBuilder&& set_field_name(const std::string& v) && {
+  ResolvedGetJsonFieldBuilder&& set_field_name(absl::string_view v) && {
     node_->set_field_name(v);
     field_is_set_.set(3, true);
 
     return std::move(*this);
   }
 
-  ResolvedGetJsonFieldBuilder& set_field_name(const std::string& v) & {
+  ResolvedGetJsonFieldBuilder& set_field_name(absl::string_view v) & {
     node_->set_field_name(v);
     field_is_set_.set(3, true);
 
@@ -5933,12 +6060,13 @@ class ResolvedFlattenBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFlatten>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFlatten>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -5955,8 +6083,12 @@ class ResolvedFlattenBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFlatten>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -6173,12 +6305,13 @@ class ResolvedFlattenedArgBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFlattenedArg>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFlattenedArg>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -6188,8 +6321,12 @@ class ResolvedFlattenedArgBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFlattenedArg>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -6271,12 +6408,13 @@ class ResolvedReplaceFieldItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedReplaceFieldItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedReplaceFieldItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -6287,8 +6425,12 @@ class ResolvedReplaceFieldItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedReplaceFieldItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -6481,12 +6623,13 @@ class ResolvedReplaceFieldBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedReplaceField>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedReplaceField>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -6503,8 +6646,12 @@ class ResolvedReplaceFieldBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedReplaceField>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -6704,6 +6851,199 @@ inline ResolvedReplaceFieldBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedGetProtoOneofBuilder final {
+ public:
+  ResolvedGetProtoOneofBuilder() : ResolvedGetProtoOneofBuilder(absl::WrapUnique(new ResolvedGetProtoOneof)) {}
+
+  ResolvedGetProtoOneofBuilder(const ResolvedGetProtoOneofBuilder&) = delete;
+  ResolvedGetProtoOneofBuilder& operator=(const ResolvedGetProtoOneofBuilder&) = delete;
+  ResolvedGetProtoOneofBuilder(ResolvedGetProtoOneofBuilder&& other)
+      : ResolvedGetProtoOneofBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedGetProtoOneofBuilder& operator=(ResolvedGetProtoOneofBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedGetProtoOneof>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGetProtoOneof::type was not set on the builder");
+    }
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGetProtoOneof::expr was not set on the builder");
+    }
+    if (!field_is_set_.test(3)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedGetProtoOneof::oneof_descriptor was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGetProtoOneof>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const ResolvedExpr* expr() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->expr();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return node_->release_expr();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder&& set_expr(T v) && {
+    node_->set_expr(std::move(v));
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder& set_expr(T v) & {
+    node_->set_expr(std::move(v));
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder&& set_expr(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedGetProtoOneofBuilder& set_expr(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  // The google::protobuf::OneofDescriptor for a Oneof contained in <expr>.
+  // This descriptor provides google::protobuf::FieldDescriptors for each of
+  // the fields contained in the Oneof.
+  const google::protobuf::OneofDescriptor* oneof_descriptor() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->oneof_descriptor();
+  }
+
+  ResolvedGetProtoOneofBuilder&& set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) && {
+    node_->set_oneof_descriptor(v);
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetProtoOneofBuilder& set_oneof_descriptor(const google::protobuf::OneofDescriptor* v) & {
+    node_->set_oneof_descriptor(v);
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  const Type* type() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->type();
+  }
+
+  ResolvedGetProtoOneofBuilder&& set_type(const Type* v) && {
+    node_->set_type(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetProtoOneofBuilder& set_type(const Type* v) & {
+    node_->set_type(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const AnnotationMap* type_annotation_map() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->type_annotation_map();
+  }
+
+  ResolvedGetProtoOneofBuilder&& set_type_annotation_map(const AnnotationMap* v) && {
+    node_->set_type_annotation_map(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedGetProtoOneofBuilder& set_type_annotation_map(const AnnotationMap* v) & {
+    node_->set_type_annotation_map(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedGetProtoOneof> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<4> field_is_set_ = {0};
+  friend ResolvedGetProtoOneofBuilder ToBuilder(
+      std::unique_ptr<const ResolvedGetProtoOneof> node);
+
+  ResolvedGetProtoOneofBuilder(std::unique_ptr<ResolvedGetProtoOneof> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedGetProtoOneofBuilder ToBuilder(
+    std::unique_ptr<const ResolvedGetProtoOneof> node) {
+  ResolvedGetProtoOneofBuilder builder(absl::WrapUnique<ResolvedGetProtoOneof>(
+      const_cast<ResolvedGetProtoOneof*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(2, true);
+  builder.field_is_set_.set(3, true);
+  return builder;
+}
+
 class ResolvedSubqueryExprBuilder final {
  public:
     typedef ResolvedSubqueryExprEnums::SubqueryType SubqueryType;
@@ -6731,12 +7071,13 @@ class ResolvedSubqueryExprBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSubqueryExpr>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSubqueryExpr>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -6759,8 +7100,12 @@ class ResolvedSubqueryExprBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSubqueryExpr>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -7135,12 +7480,13 @@ class ResolvedWithExprBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWithExpr>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWithExpr>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -7157,8 +7503,12 @@ class ResolvedWithExprBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWithExpr>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -7367,12 +7717,13 @@ class ResolvedExecuteAsRoleScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExecuteAsRoleScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExecuteAsRoleScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -7395,8 +7746,12 @@ class ResolvedExecuteAsRoleScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExecuteAsRoleScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -7632,13 +7987,13 @@ class ResolvedExecuteAsRoleScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedExecuteAsRoleScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedExecuteAsRoleScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedExecuteAsRoleScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedExecuteAsRoleScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -7688,12 +8043,13 @@ class ResolvedModelBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedModel>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedModel>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -7704,8 +8060,12 @@ class ResolvedModelBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedModel>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -7770,12 +8130,13 @@ class ResolvedConnectionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedConnection>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedConnection>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -7786,8 +8147,12 @@ class ResolvedConnectionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedConnection>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -7850,18 +8215,23 @@ class ResolvedDescriptorBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDescriptor>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDescriptor>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDescriptor>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -7981,17 +8351,22 @@ class ResolvedSingleRowScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSingleRowScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSingleRowScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSingleRowScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -8129,13 +8504,13 @@ class ResolvedSingleRowScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedSingleRowScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedSingleRowScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedSingleRowScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedSingleRowScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -8181,12 +8556,13 @@ class ResolvedTableScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedTableScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedTableScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -8197,8 +8573,12 @@ class ResolvedTableScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedTableScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -8314,13 +8694,13 @@ class ResolvedTableScanBuilder final {
     return node_->alias();
   }
 
-  ResolvedTableScanBuilder&& set_alias(const std::string& v) && {
+  ResolvedTableScanBuilder&& set_alias(absl::string_view v) && {
     node_->set_alias(v);
 
     return std::move(*this);
   }
 
-  ResolvedTableScanBuilder& set_alias(const std::string& v) & {
+  ResolvedTableScanBuilder& set_alias(absl::string_view v) & {
     node_->set_alias(v);
 
     return *this;
@@ -8460,13 +8840,13 @@ class ResolvedTableScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedTableScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedTableScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedTableScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedTableScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -8520,12 +8900,13 @@ class ResolvedJoinScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedJoinScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedJoinScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -8542,8 +8923,12 @@ class ResolvedJoinScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedJoinScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -8719,6 +9104,28 @@ class ResolvedJoinScanBuilder final {
     return *this;
   }
 
+  // This indicates this join was generated from syntax with USING.
+  // The sql_builder will use this field only as a suggestion.
+  // JOIN USING(...) syntax will be used if and only if
+  // `has_using` is True and `join_expr` has the correct shape.
+  // Otherwise the sql_builder will generate JOIN ON.
+  bool has_using() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->has_using();
+  }
+
+  ResolvedJoinScanBuilder&& set_has_using(bool v) && {
+    node_->set_has_using(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedJoinScanBuilder& set_has_using(bool v) & {
+    node_->set_has_using(v);
+
+    return *this;
+  }
+
   const std::vector<ResolvedColumn>& column_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->column_list();
@@ -8853,13 +9260,13 @@ class ResolvedJoinScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedJoinScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedJoinScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedJoinScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedJoinScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -8869,7 +9276,7 @@ class ResolvedJoinScanBuilder final {
   std::unique_ptr<ResolvedJoinScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<8> field_is_set_ = {0};
+  std::bitset<9> field_is_set_ = {0};
   friend ResolvedJoinScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedJoinScan> node);
 
@@ -8898,40 +9305,31 @@ class ResolvedArrayScanBuilder final {
   ResolvedArrayScanBuilder(ResolvedArrayScanBuilder&& other)
       : ResolvedArrayScanBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
   }
 
   ResolvedArrayScanBuilder& operator=(ResolvedArrayScanBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedArrayScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedArrayScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(5)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedArrayScan::array_expr was not set on the builder");
-    }
-    if (!field_is_set_.test(6)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedArrayScan::element_column was not set on the builder");
-    }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedArrayScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -8984,74 +9382,114 @@ class ResolvedArrayScanBuilder final {
     return *this;
   }
 
-  const ResolvedExpr* array_expr() const {
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& array_expr_list() const {
     ABSL_DCHECK(node_ != nullptr);
-    return node_->array_expr();
+    return node_->array_expr_list();
   }
 
-  std::unique_ptr<const ResolvedExpr> release_array_expr() {
-    return node_->release_array_expr();
+  int array_expr_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->array_expr_list_size();
+  }
+
+  const ResolvedExpr* array_expr_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->array_expr_list(i);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder&& set_array_expr(T v) && {
-    node_->set_array_expr(std::move(v));
-    field_is_set_.set(5, true);
+  ResolvedArrayScanBuilder&& add_array_expr_list(T v) && {
+    node_->add_array_expr_list(std::move(v));
 
     return std::move(*this);
   }
 
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder& set_array_expr(T v) & {
-    node_->set_array_expr(std::move(v));
-    field_is_set_.set(5, true);
+  ResolvedArrayScanBuilder& add_array_expr_list(T v) & {
+    node_->add_array_expr_list(std::move(v));
 
     return *this;
   }
 
   template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder&& set_array_expr(TBuilder&& b) && {
+  ResolvedArrayScanBuilder&& add_array_expr_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
-      set_array_expr(std::move(*status_or_node));
+      add_array_expr_list(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
   template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
-  ResolvedArrayScanBuilder& set_array_expr(TBuilder&& b) & {
+  ResolvedArrayScanBuilder& add_array_expr_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
-      set_array_expr(std::move(*status_or_node));
+      add_array_expr_list(std::move(*status_or_node));
     } else {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(5, true);
 
     return *this;
   }
 
-  const ResolvedColumn& element_column() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->element_column();
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_array_expr_list() {
+    return node_->release_array_expr_list();
   }
 
-  ResolvedArrayScanBuilder&& set_element_column(const ResolvedColumn& v) && {
-    node_->set_element_column(v);
-    field_is_set_.set(6, true);
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
+  ResolvedArrayScanBuilder&& set_array_expr_list(T v) && {
+    node_->set_array_expr_list(std::move(v));
 
     return std::move(*this);
   }
 
-  ResolvedArrayScanBuilder& set_element_column(const ResolvedColumn& v) & {
-    node_->set_element_column(v);
-    field_is_set_.set(6, true);
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
+  ResolvedArrayScanBuilder& set_array_expr_list(T v) & {
+    node_->set_array_expr_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<ResolvedColumn>& element_column_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->element_column_list();
+  }
+
+  int element_column_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->element_column_list_size();
+  }
+
+  const ResolvedColumn& element_column_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->element_column_list(i);
+  }
+
+  ResolvedArrayScanBuilder&& add_element_column_list(ResolvedColumn v) && {
+    node_->add_element_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedArrayScanBuilder& add_element_column_list(ResolvedColumn v) & {
+    node_->add_element_column_list(v);
+
+    return *this;
+  }
+
+  ResolvedArrayScanBuilder&& set_element_column_list(const std::vector<ResolvedColumn>& v) && {
+    node_->set_element_column_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedArrayScanBuilder& set_element_column_list(const std::vector<ResolvedColumn>& v) & {
+    node_->set_element_column_list(v);
 
     return *this;
   }
@@ -9167,6 +9605,57 @@ class ResolvedArrayScanBuilder final {
 
   ResolvedArrayScanBuilder& set_is_outer(bool v) & {
     node_->set_is_outer(v);
+
+    return *this;
+  }
+
+  // Stores a builtin ENUM ARRAY_ZIP_MODE with three possible values:
+  // PAD, TRUNCATE or STRICT.
+  const ResolvedExpr* array_zip_mode() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->array_zip_mode();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_array_zip_mode() {
+    return node_->release_array_zip_mode();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedArrayScanBuilder&& set_array_zip_mode(T v) && {
+    node_->set_array_zip_mode(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedArrayScanBuilder& set_array_zip_mode(T v) & {
+    node_->set_array_zip_mode(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedArrayScanBuilder&& set_array_zip_mode(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_array_zip_mode(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedArrayScanBuilder& set_array_zip_mode(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_array_zip_mode(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
 
     return *this;
   }
@@ -9305,13 +9794,13 @@ class ResolvedArrayScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedArrayScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedArrayScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedArrayScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedArrayScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -9321,7 +9810,6 @@ class ResolvedArrayScanBuilder final {
   std::unique_ptr<ResolvedArrayScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<10> field_is_set_ = {0};
   friend ResolvedArrayScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedArrayScan> node);
 
@@ -9336,8 +9824,6 @@ inline ResolvedArrayScanBuilder ToBuilder(
   ResolvedArrayScanBuilder builder(absl::WrapUnique<ResolvedArrayScan>(
       const_cast<ResolvedArrayScan*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(5, true);
-  builder.field_is_set_.set(6, true);
   return builder;
 }
 
@@ -9360,12 +9846,13 @@ class ResolvedColumnHolderBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedColumnHolder>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedColumnHolder>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -9376,8 +9863,12 @@ class ResolvedColumnHolderBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedColumnHolder>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -9442,12 +9933,13 @@ class ResolvedFilterScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFilterScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFilterScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -9464,8 +9956,12 @@ class ResolvedFilterScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFilterScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -9709,13 +10205,13 @@ class ResolvedFilterScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedFilterScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedFilterScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedFilterScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedFilterScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -9764,12 +10260,13 @@ class ResolvedGroupingCallBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGroupingCall>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGroupingCall>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -9786,8 +10283,12 @@ class ResolvedGroupingCallBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGroupingCall>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -9904,18 +10405,23 @@ class ResolvedGroupingSetBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGroupingSet>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGroupingSet>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGroupingSet>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -10030,18 +10536,23 @@ class ResolvedRollupBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRollup>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRollup>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRollup>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -10156,18 +10667,23 @@ class ResolvedCubeBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCube>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCube>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCube>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -10284,12 +10800,13 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAggregateScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAggregateScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -10299,8 +10816,12 @@ class ResolvedAggregateScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAggregateScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -10438,13 +10959,13 @@ class ResolvedAggregateScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedAggregateScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedAggregateScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedAggregateScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedAggregateScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -10615,7 +11136,7 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
-  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& aggregate_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
@@ -10625,26 +11146,26 @@ class ResolvedAggregateScanBuilder final {
     return node_->aggregate_list_size();
   }
 
-  const ResolvedComputedColumn* aggregate_list(int i) const {
+  const ResolvedComputedColumnBase* aggregate_list(int i) const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregateScanBuilder&& add_aggregate_list(T v) && {
     node_->add_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregateScanBuilder& add_aggregate_list(T v) & {
     node_->add_aggregate_list(std::move(v));
 
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregateScanBuilder&& add_aggregate_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -10657,7 +11178,7 @@ class ResolvedAggregateScanBuilder final {
     return std::move(*this);
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregateScanBuilder& add_aggregate_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -10670,18 +11191,18 @@ class ResolvedAggregateScanBuilder final {
     return *this;
   }
 
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_aggregate_list() {
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_aggregate_list() {
     return node_->release_aggregate_list();
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedAggregateScanBuilder&& set_aggregate_list(T v) && {
     node_->set_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedAggregateScanBuilder& set_aggregate_list(T v) & {
     node_->set_aggregate_list(std::move(v));
 
@@ -10949,12 +11470,13 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAnonymizedAggregateScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAnonymizedAggregateScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -10971,8 +11493,12 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAnonymizedAggregateScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -11236,13 +11762,13 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedAnonymizedAggregateScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedAnonymizedAggregateScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedAnonymizedAggregateScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedAnonymizedAggregateScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -11413,7 +11939,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
-  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& aggregate_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
@@ -11423,26 +11949,26 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return node_->aggregate_list_size();
   }
 
-  const ResolvedComputedColumn* aggregate_list(int i) const {
+  const ResolvedComputedColumnBase* aggregate_list(int i) const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& add_aggregate_list(T v) && {
     node_->add_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& add_aggregate_list(T v) & {
     node_->add_aggregate_list(std::move(v));
 
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& add_aggregate_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -11455,7 +11981,7 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return std::move(*this);
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& add_aggregate_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -11468,18 +11994,18 @@ class ResolvedAnonymizedAggregateScanBuilder final {
     return *this;
   }
 
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_aggregate_list() {
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_aggregate_list() {
     return node_->release_aggregate_list();
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedAnonymizedAggregateScanBuilder&& set_aggregate_list(T v) && {
     node_->set_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedAnonymizedAggregateScanBuilder& set_aggregate_list(T v) & {
     node_->set_aggregate_list(std::move(v));
 
@@ -11748,12 +12274,13 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDifferentialPrivacyAggregateScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -11770,8 +12297,12 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDifferentialPrivacyAggregateScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -12035,13 +12566,13 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedDifferentialPrivacyAggregateScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedDifferentialPrivacyAggregateScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedDifferentialPrivacyAggregateScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -12212,7 +12743,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return *this;
   }
 
-  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& aggregate_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
@@ -12222,26 +12753,26 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return node_->aggregate_list_size();
   }
 
-  const ResolvedComputedColumn* aggregate_list(int i) const {
+  const ResolvedComputedColumnBase* aggregate_list(int i) const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder&& add_aggregate_list(T v) && {
     node_->add_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder& add_aggregate_list(T v) & {
     node_->add_aggregate_list(std::move(v));
 
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder&& add_aggregate_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -12254,7 +12785,7 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return std::move(*this);
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder& add_aggregate_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -12267,18 +12798,18 @@ class ResolvedDifferentialPrivacyAggregateScanBuilder final {
     return *this;
   }
 
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_aggregate_list() {
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_aggregate_list() {
     return node_->release_aggregate_list();
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder&& set_aggregate_list(T v) && {
     node_->set_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedDifferentialPrivacyAggregateScanBuilder& set_aggregate_list(T v) & {
     node_->set_aggregate_list(std::move(v));
 
@@ -12547,12 +13078,13 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAggregationThresholdAggregateScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAggregationThresholdAggregateScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -12563,8 +13095,12 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAggregationThresholdAggregateScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -12775,13 +13311,13 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedAggregationThresholdAggregateScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedAggregationThresholdAggregateScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedAggregationThresholdAggregateScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedAggregationThresholdAggregateScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -12952,7 +13488,7 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return *this;
   }
 
-  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& aggregate_list() const {
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& aggregate_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list();
   }
@@ -12962,26 +13498,26 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return node_->aggregate_list_size();
   }
 
-  const ResolvedComputedColumn* aggregate_list(int i) const {
+  const ResolvedComputedColumnBase* aggregate_list(int i) const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->aggregate_list(i);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder&& add_aggregate_list(T v) && {
     node_->add_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder& add_aggregate_list(T v) & {
     node_->add_aggregate_list(std::move(v));
 
     return *this;
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder&& add_aggregate_list(TBuilder&& b) && {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -12994,7 +13530,7 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return std::move(*this);
   }
 
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumn>>::value>>
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedComputedColumnBase>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder& add_aggregate_list(TBuilder&& b) & {
     auto status_or_node = std::move(b).Build();
     if (status_or_node.ok()) {
@@ -13007,18 +13543,18 @@ class ResolvedAggregationThresholdAggregateScanBuilder final {
     return *this;
   }
 
-  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_aggregate_list() {
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_aggregate_list() {
     return node_->release_aggregate_list();
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder&& set_aggregate_list(T v) && {
     node_->set_aggregate_list(std::move(v));
 
     return std::move(*this);
   }
 
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumn>>>::value>>
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>::value>>
   ResolvedAggregationThresholdAggregateScanBuilder& set_aggregate_list(T v) & {
     node_->set_aggregate_list(std::move(v));
 
@@ -13286,12 +13822,13 @@ class ResolvedSetOperationItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSetOperationItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSetOperationItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -13302,8 +13839,12 @@ class ResolvedSetOperationItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSetOperationItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -13458,12 +13999,13 @@ class ResolvedSetOperationScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSetOperationScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSetOperationScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -13474,8 +14016,12 @@ class ResolvedSetOperationScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSetOperationScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -13739,13 +14285,13 @@ class ResolvedSetOperationScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedSetOperationScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedSetOperationScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedSetOperationScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedSetOperationScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -13793,12 +14339,13 @@ class ResolvedOrderByScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedOrderByScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedOrderByScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -13809,8 +14356,12 @@ class ResolvedOrderByScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedOrderByScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -14074,13 +14625,13 @@ class ResolvedOrderByScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedOrderByScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedOrderByScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedOrderByScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedOrderByScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -14128,12 +14679,13 @@ class ResolvedLimitOffsetScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedLimitOffsetScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedLimitOffsetScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -14156,8 +14708,12 @@ class ResolvedLimitOffsetScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedLimitOffsetScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -14454,13 +15010,13 @@ class ResolvedLimitOffsetScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedLimitOffsetScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedLimitOffsetScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedLimitOffsetScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedLimitOffsetScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -14510,12 +15066,13 @@ class ResolvedWithRefScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWithRefScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWithRefScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -14526,8 +15083,12 @@ class ResolvedWithRefScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWithRefScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -14536,14 +15097,14 @@ class ResolvedWithRefScanBuilder final {
     return node_->with_query_name();
   }
 
-  ResolvedWithRefScanBuilder&& set_with_query_name(const std::string& v) && {
+  ResolvedWithRefScanBuilder&& set_with_query_name(absl::string_view v) && {
     node_->set_with_query_name(v);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
-  ResolvedWithRefScanBuilder& set_with_query_name(const std::string& v) & {
+  ResolvedWithRefScanBuilder& set_with_query_name(absl::string_view v) & {
     node_->set_with_query_name(v);
     field_is_set_.set(4, true);
 
@@ -14684,13 +15245,13 @@ class ResolvedWithRefScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedWithRefScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedWithRefScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedWithRefScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedWithRefScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -14738,12 +15299,13 @@ class ResolvedAnalyticScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAnalyticScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAnalyticScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -14754,8 +15316,12 @@ class ResolvedAnalyticScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAnalyticScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -15019,13 +15585,13 @@ class ResolvedAnalyticScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedAnalyticScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedAnalyticScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedAnalyticScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedAnalyticScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -15077,12 +15643,13 @@ class ResolvedSampleScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSampleScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSampleScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -15117,8 +15684,12 @@ class ResolvedSampleScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSampleScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -15180,14 +15751,14 @@ class ResolvedSampleScanBuilder final {
     return node_->method();
   }
 
-  ResolvedSampleScanBuilder&& set_method(const std::string& v) && {
+  ResolvedSampleScanBuilder&& set_method(absl::string_view v) && {
     node_->set_method(v);
     field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
-  ResolvedSampleScanBuilder& set_method(const std::string& v) & {
+  ResolvedSampleScanBuilder& set_method(absl::string_view v) & {
     node_->set_method(v);
     field_is_set_.set(5, true);
 
@@ -15575,13 +16146,13 @@ class ResolvedSampleScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedSampleScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedSampleScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedSampleScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedSampleScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -15633,12 +16204,13 @@ class ResolvedComputedColumnBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedComputedColumn>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedComputedColumn>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -15655,8 +16227,12 @@ class ResolvedComputedColumnBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedComputedColumn>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -15756,6 +16332,183 @@ inline ResolvedComputedColumnBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedDeferredComputedColumnBuilder final {
+ public:
+  ResolvedDeferredComputedColumnBuilder() : ResolvedDeferredComputedColumnBuilder(absl::WrapUnique(new ResolvedDeferredComputedColumn)) {}
+
+  ResolvedDeferredComputedColumnBuilder(const ResolvedDeferredComputedColumnBuilder&) = delete;
+  ResolvedDeferredComputedColumnBuilder& operator=(const ResolvedDeferredComputedColumnBuilder&) = delete;
+  ResolvedDeferredComputedColumnBuilder(ResolvedDeferredComputedColumnBuilder&& other)
+      : ResolvedDeferredComputedColumnBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedDeferredComputedColumnBuilder& operator=(ResolvedDeferredComputedColumnBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedDeferredComputedColumn>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedDeferredComputedColumn::column was not set on the builder");
+    }
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedDeferredComputedColumn::expr was not set on the builder");
+    }
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedDeferredComputedColumn::side_effect_column was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDeferredComputedColumn>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const ResolvedColumn& column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column();
+  }
+
+  ResolvedDeferredComputedColumnBuilder&& set_column(const ResolvedColumn& v) && {
+    node_->set_column(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedDeferredComputedColumnBuilder& set_column(const ResolvedColumn& v) & {
+    node_->set_column(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const ResolvedExpr* expr() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->expr();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return node_->release_expr();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDeferredComputedColumnBuilder&& set_expr(T v) && {
+    node_->set_expr(std::move(v));
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDeferredComputedColumnBuilder& set_expr(T v) & {
+    node_->set_expr(std::move(v));
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDeferredComputedColumnBuilder&& set_expr(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedDeferredComputedColumnBuilder& set_expr(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_expr(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  // Creates the companion side effects columns for this
+  // computation, of type BYTES. Instead of immediately exposing the
+  // side effect (e.g. an error), the side effect is captured in the
+  // side_effects_column.
+  const ResolvedColumn& side_effect_column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->side_effect_column();
+  }
+
+  ResolvedDeferredComputedColumnBuilder&& set_side_effect_column(const ResolvedColumn& v) && {
+    node_->set_side_effect_column(v);
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedDeferredComputedColumnBuilder& set_side_effect_column(const ResolvedColumn& v) & {
+    node_->set_side_effect_column(v);
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedDeferredComputedColumn> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<3> field_is_set_ = {0};
+  friend ResolvedDeferredComputedColumnBuilder ToBuilder(
+      std::unique_ptr<const ResolvedDeferredComputedColumn> node);
+
+  ResolvedDeferredComputedColumnBuilder(std::unique_ptr<ResolvedDeferredComputedColumn> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedDeferredComputedColumnBuilder ToBuilder(
+    std::unique_ptr<const ResolvedDeferredComputedColumn> node) {
+  ResolvedDeferredComputedColumnBuilder builder(absl::WrapUnique<ResolvedDeferredComputedColumn>(
+      const_cast<ResolvedDeferredComputedColumn*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(1, true);
+  builder.field_is_set_.set(2, true);
+  return builder;
+}
+
 class ResolvedOrderByItemBuilder final {
  public:
     typedef ResolvedOrderByItemEnums::NullOrderMode NullOrderMode;
@@ -15780,12 +16533,13 @@ class ResolvedOrderByItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedOrderByItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedOrderByItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -15796,8 +16550,12 @@ class ResolvedOrderByItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedOrderByItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -15999,18 +16757,23 @@ class ResolvedColumnAnnotationsBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedColumnAnnotations>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedColumnAnnotations>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedColumnAnnotations>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -16275,9 +17038,12 @@ inline ResolvedColumnAnnotationsBuilder ToBuilder(
 class ResolvedGeneratedColumnInfoBuilder final {
  public:
     typedef ResolvedGeneratedColumnInfoEnums::StoredMode StoredMode;
+  typedef ResolvedGeneratedColumnInfoEnums::GeneratedMode GeneratedMode;
   static const StoredMode NON_STORED = ResolvedGeneratedColumnInfoEnums::NON_STORED;
   static const StoredMode STORED = ResolvedGeneratedColumnInfoEnums::STORED;
   static const StoredMode STORED_VOLATILE = ResolvedGeneratedColumnInfoEnums::STORED_VOLATILE;
+  static const GeneratedMode ALWAYS = ResolvedGeneratedColumnInfoEnums::ALWAYS;
+  static const GeneratedMode BY_DEFAULT = ResolvedGeneratedColumnInfoEnums::BY_DEFAULT;
 
   ResolvedGeneratedColumnInfoBuilder() : ResolvedGeneratedColumnInfoBuilder(absl::WrapUnique(new ResolvedGeneratedColumnInfo)) {}
 
@@ -16286,40 +17052,31 @@ class ResolvedGeneratedColumnInfoBuilder final {
   ResolvedGeneratedColumnInfoBuilder(ResolvedGeneratedColumnInfoBuilder&& other)
       : ResolvedGeneratedColumnInfoBuilder(std::move(other.node_)) {
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
   }
 
   ResolvedGeneratedColumnInfoBuilder& operator=(ResolvedGeneratedColumnInfoBuilder&& other) {
     node_ = std::move(other.node_);
     deferred_build_status_ = std::move(other.deferred_build_status_);
-    field_is_set_ = std::move(other.field_is_set_);
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGeneratedColumnInfo>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGeneratedColumnInfo>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
-    if (!field_is_set_.test(0)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedGeneratedColumnInfo::expression was not set on the builder");
-    }
-    if (!field_is_set_.test(1)) {
-      zetasql::internal::UpdateStatus(
-          &deferred_build_status_,
-          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-            << "ResolvedGeneratedColumnInfo::stored_mode was not set on the builder");
-    }
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGeneratedColumnInfo>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -16335,7 +17092,6 @@ class ResolvedGeneratedColumnInfoBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedGeneratedColumnInfoBuilder&& set_expression(T v) && {
     node_->set_expression(std::move(v));
-    field_is_set_.set(0, true);
 
     return std::move(*this);
   }
@@ -16343,7 +17099,6 @@ class ResolvedGeneratedColumnInfoBuilder final {
   template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
   ResolvedGeneratedColumnInfoBuilder& set_expression(T v) & {
     node_->set_expression(std::move(v));
-    field_is_set_.set(0, true);
 
     return *this;
   }
@@ -16357,7 +17112,6 @@ class ResolvedGeneratedColumnInfoBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(0, true);
 
     return std::move(*this);
   }
@@ -16371,7 +17125,6 @@ class ResolvedGeneratedColumnInfoBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-    field_is_set_.set(0, true);
 
     return *this;
   }
@@ -16383,14 +17136,78 @@ class ResolvedGeneratedColumnInfoBuilder final {
 
   ResolvedGeneratedColumnInfoBuilder&& set_stored_mode(ResolvedGeneratedColumnInfo::StoredMode v) && {
     node_->set_stored_mode(v);
-    field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
   ResolvedGeneratedColumnInfoBuilder& set_stored_mode(ResolvedGeneratedColumnInfo::StoredMode v) & {
     node_->set_stored_mode(v);
-    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  ResolvedGeneratedColumnInfo::GeneratedMode generated_mode() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_mode();
+  }
+
+  ResolvedGeneratedColumnInfoBuilder&& set_generated_mode(ResolvedGeneratedColumnInfo::GeneratedMode v) && {
+    node_->set_generated_mode(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedGeneratedColumnInfoBuilder& set_generated_mode(ResolvedGeneratedColumnInfo::GeneratedMode v) & {
+    node_->set_generated_mode(v);
+
+    return *this;
+  }
+
+  const ResolvedIdentityColumnInfo* identity_column_info() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->identity_column_info();
+  }
+
+  std::unique_ptr<const ResolvedIdentityColumnInfo> release_identity_column_info() {
+    return node_->release_identity_column_info();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
+  ResolvedGeneratedColumnInfoBuilder&& set_identity_column_info(T v) && {
+    node_->set_identity_column_info(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
+  ResolvedGeneratedColumnInfoBuilder& set_identity_column_info(T v) & {
+    node_->set_identity_column_info(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
+  ResolvedGeneratedColumnInfoBuilder&& set_identity_column_info(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_identity_column_info(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedIdentityColumnInfo>>::value>>
+  ResolvedGeneratedColumnInfoBuilder& set_identity_column_info(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_identity_column_info(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
 
     return *this;
   }
@@ -16399,7 +17216,6 @@ class ResolvedGeneratedColumnInfoBuilder final {
   std::unique_ptr<ResolvedGeneratedColumnInfo> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<2> field_is_set_ = {0};
   friend ResolvedGeneratedColumnInfoBuilder ToBuilder(
       std::unique_ptr<const ResolvedGeneratedColumnInfo> node);
 
@@ -16414,8 +17230,6 @@ inline ResolvedGeneratedColumnInfoBuilder ToBuilder(
   ResolvedGeneratedColumnInfoBuilder builder(absl::WrapUnique<ResolvedGeneratedColumnInfo>(
       const_cast<ResolvedGeneratedColumnInfo*>(node.release())));
   // All required nodes are evidently already set
-  builder.field_is_set_.set(0, true);
-  builder.field_is_set_.set(1, true);
   return builder;
 }
 
@@ -16438,12 +17252,13 @@ class ResolvedColumnDefaultValueBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedColumnDefaultValue>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedColumnDefaultValue>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -16460,8 +17275,12 @@ class ResolvedColumnDefaultValueBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedColumnDefaultValue>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -16523,14 +17342,14 @@ class ResolvedColumnDefaultValueBuilder final {
     return node_->sql();
   }
 
-  ResolvedColumnDefaultValueBuilder&& set_sql(const std::string& v) && {
+  ResolvedColumnDefaultValueBuilder&& set_sql(absl::string_view v) && {
     node_->set_sql(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedColumnDefaultValueBuilder& set_sql(const std::string& v) & {
+  ResolvedColumnDefaultValueBuilder& set_sql(absl::string_view v) & {
     node_->set_sql(v);
     field_is_set_.set(1, true);
 
@@ -16585,12 +17404,13 @@ class ResolvedColumnDefinitionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedColumnDefinition>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedColumnDefinition>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -16613,8 +17433,12 @@ class ResolvedColumnDefinitionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedColumnDefinition>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -16623,14 +17447,14 @@ class ResolvedColumnDefinitionBuilder final {
     return node_->name();
   }
 
-  ResolvedColumnDefinitionBuilder&& set_name(const std::string& v) && {
+  ResolvedColumnDefinitionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedColumnDefinitionBuilder& set_name(const std::string& v) & {
+  ResolvedColumnDefinitionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
@@ -16881,18 +17705,23 @@ class ResolvedPrimaryKeyBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedPrimaryKey>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedPrimaryKey>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedPrimaryKey>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -17030,13 +17859,13 @@ class ResolvedPrimaryKeyBuilder final {
     return node_->constraint_name();
   }
 
-  ResolvedPrimaryKeyBuilder&& set_constraint_name(const std::string& v) && {
+  ResolvedPrimaryKeyBuilder&& set_constraint_name(absl::string_view v) && {
     node_->set_constraint_name(v);
 
     return std::move(*this);
   }
 
-  ResolvedPrimaryKeyBuilder& set_constraint_name(const std::string& v) & {
+  ResolvedPrimaryKeyBuilder& set_constraint_name(absl::string_view v) & {
     node_->set_constraint_name(v);
 
     return *this;
@@ -17131,12 +17960,13 @@ class ResolvedForeignKeyBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedForeignKey>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedForeignKey>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -17177,8 +18007,12 @@ class ResolvedForeignKeyBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedForeignKey>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -17187,14 +18021,14 @@ class ResolvedForeignKeyBuilder final {
     return node_->constraint_name();
   }
 
-  ResolvedForeignKeyBuilder&& set_constraint_name(const std::string& v) && {
+  ResolvedForeignKeyBuilder&& set_constraint_name(absl::string_view v) && {
     node_->set_constraint_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedForeignKeyBuilder& set_constraint_name(const std::string& v) & {
+  ResolvedForeignKeyBuilder& set_constraint_name(absl::string_view v) & {
     node_->set_constraint_name(v);
     field_is_set_.set(0, true);
 
@@ -17533,12 +18367,13 @@ class ResolvedCheckConstraintBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCheckConstraint>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCheckConstraint>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -17561,8 +18396,12 @@ class ResolvedCheckConstraintBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCheckConstraint>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -17571,14 +18410,14 @@ class ResolvedCheckConstraintBuilder final {
     return node_->constraint_name();
   }
 
-  ResolvedCheckConstraintBuilder&& set_constraint_name(const std::string& v) && {
+  ResolvedCheckConstraintBuilder&& set_constraint_name(absl::string_view v) && {
     node_->set_constraint_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedCheckConstraintBuilder& set_constraint_name(const std::string& v) & {
+  ResolvedCheckConstraintBuilder& set_constraint_name(absl::string_view v) & {
     node_->set_constraint_name(v);
     field_is_set_.set(0, true);
 
@@ -17774,12 +18613,13 @@ class ResolvedOutputColumnBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedOutputColumn>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedOutputColumn>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -17796,8 +18636,12 @@ class ResolvedOutputColumnBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedOutputColumn>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -17806,14 +18650,14 @@ class ResolvedOutputColumnBuilder final {
     return node_->name();
   }
 
-  ResolvedOutputColumnBuilder&& set_name(const std::string& v) && {
+  ResolvedOutputColumnBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedOutputColumnBuilder& set_name(const std::string& v) & {
+  ResolvedOutputColumnBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
@@ -17882,12 +18726,13 @@ class ResolvedProjectScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedProjectScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedProjectScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -17898,8 +18743,12 @@ class ResolvedProjectScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedProjectScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -18163,13 +19012,13 @@ class ResolvedProjectScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedProjectScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedProjectScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedProjectScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedProjectScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -18217,12 +19066,13 @@ class ResolvedTVFScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedTVFScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedTVFScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -18245,8 +19095,12 @@ class ResolvedTVFScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedTVFScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -18405,14 +19259,14 @@ class ResolvedTVFScanBuilder final {
     return node_->alias();
   }
 
-  ResolvedTVFScanBuilder&& set_alias(const std::string& v) && {
+  ResolvedTVFScanBuilder&& set_alias(absl::string_view v) && {
     node_->set_alias(v);
     field_is_set_.set(8, true);
 
     return std::move(*this);
   }
 
-  ResolvedTVFScanBuilder& set_alias(const std::string& v) & {
+  ResolvedTVFScanBuilder& set_alias(absl::string_view v) & {
     node_->set_alias(v);
     field_is_set_.set(8, true);
 
@@ -18570,13 +19424,13 @@ class ResolvedTVFScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedTVFScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedTVFScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedTVFScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedTVFScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -18626,12 +19480,13 @@ class ResolvedGroupRowsScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGroupRowsScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGroupRowsScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -18642,8 +19497,12 @@ class ResolvedGroupRowsScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGroupRowsScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -18725,14 +19584,14 @@ class ResolvedGroupRowsScanBuilder final {
     return node_->alias();
   }
 
-  ResolvedGroupRowsScanBuilder&& set_alias(const std::string& v) && {
+  ResolvedGroupRowsScanBuilder&& set_alias(absl::string_view v) && {
     node_->set_alias(v);
     field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
-  ResolvedGroupRowsScanBuilder& set_alias(const std::string& v) & {
+  ResolvedGroupRowsScanBuilder& set_alias(absl::string_view v) & {
     node_->set_alias(v);
     field_is_set_.set(5, true);
 
@@ -18873,13 +19732,13 @@ class ResolvedGroupRowsScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedGroupRowsScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedGroupRowsScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedGroupRowsScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedGroupRowsScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -18925,18 +19784,23 @@ class ResolvedFunctionArgumentBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFunctionArgument>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFunctionArgument>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionArgument>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -19322,6 +20186,44 @@ class ResolvedFunctionArgumentBuilder final {
     return *this;
   }
 
+  // Stores the alias of the argument, either provided by the user or
+  // generated by the resolver. This can only be populated if allowed
+  // by `FunctionArgumentTypeOptions::argument_alias_kind`.
+  //
+  // An argument alias is an identifier associated with a function
+  // argument in the form of F(<arg> AS <alias>), where <alias> is the
+  // argument alias for the function argument <arg>.
+  //
+  // Examples include
+  //   * STRUCT(1 AS x, 2 AS y)
+  //   * ARRAY_ZIP(arr1 AS a, arr2 AS b)
+  // where the argument alias is used as a field name in an output
+  // STRUCT value. For dynamic types like JSON, these aliases may be
+  // used at run-time.
+  //
+  // This field will be empty if the argument does not support aliases,
+  // or an alias could not be inferred.
+  //
+  // The current implementation only allows an argument to have an
+  // alias if its type is `expr`, but the support may be extended to
+  // other types, e.g. `scan` or `model` in the future.
+  const std::string& argument_alias() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->argument_alias();
+  }
+
+  ResolvedFunctionArgumentBuilder&& set_argument_alias(absl::string_view v) && {
+    node_->set_argument_alias(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedFunctionArgumentBuilder& set_argument_alias(absl::string_view v) & {
+    node_->set_argument_alias(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedFunctionArgument> node_;
 
@@ -19362,12 +20264,13 @@ class ResolvedExplainStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExplainStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExplainStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -19378,8 +20281,12 @@ class ResolvedExplainStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExplainStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -19551,12 +20458,13 @@ class ResolvedQueryStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedQueryStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedQueryStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(3)) {
       zetasql::internal::UpdateStatus(
@@ -19567,8 +20475,12 @@ class ResolvedQueryStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedQueryStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -19832,18 +20744,23 @@ class ResolvedCreateDatabaseStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateDatabaseStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateDatabaseStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateDatabaseStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -20072,12 +20989,13 @@ class ResolvedIndexItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedIndexItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedIndexItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -20094,8 +21012,12 @@ class ResolvedIndexItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedIndexItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -20214,12 +21136,13 @@ class ResolvedUnnestItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUnnestItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUnnestItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -20236,8 +21159,12 @@ class ResolvedUnnestItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUnnestItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -20405,12 +21332,13 @@ class ResolvedCreateIndexStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateIndexStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateIndexStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -20427,8 +21355,12 @@ class ResolvedCreateIndexStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateIndexStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -21146,18 +22078,23 @@ class ResolvedCreateSchemaStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateSchemaStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateSchemaStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateSchemaStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -21206,79 +22143,6 @@ class ResolvedCreateSchemaStmtBuilder final {
       zetasql::internal::UpdateStatus(&deferred_build_status_,
                                         status_or_node.status());
     }
-
-    return *this;
-  }
-
-  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->option_list();
-  }
-
-  int option_list_size() const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->option_list_size();
-  }
-
-  const ResolvedOption* option_list(int i) const {
-    ABSL_DCHECK(node_ != nullptr);
-    return node_->option_list(i);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedCreateSchemaStmtBuilder&& add_option_list(T v) && {
-    node_->add_option_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedCreateSchemaStmtBuilder& add_option_list(T v) & {
-    node_->add_option_list(std::move(v));
-
-    return *this;
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedCreateSchemaStmtBuilder&& add_option_list(TBuilder&& b) && {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return std::move(*this);
-  }
-
-  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
-  ResolvedCreateSchemaStmtBuilder& add_option_list(TBuilder&& b) & {
-    auto status_or_node = std::move(b).Build();
-    if (status_or_node.ok()) {
-      add_option_list(std::move(*status_or_node));
-    } else {
-      zetasql::internal::UpdateStatus(&deferred_build_status_,
-                                        status_or_node.status());
-    }
-
-    return *this;
-  }
-
-  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
-    return node_->release_option_list();
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSchemaStmtBuilder&& set_option_list(T v) && {
-    node_->set_option_list(std::move(v));
-
-    return std::move(*this);
-  }
-
-  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
-  ResolvedCreateSchemaStmtBuilder& set_option_list(T v) & {
-    node_->set_option_list(std::move(v));
 
     return *this;
   }
@@ -21429,6 +22293,79 @@ class ResolvedCreateSchemaStmtBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateSchemaStmtBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateSchemaStmtBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateSchemaStmtBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateSchemaStmtBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateSchemaStmtBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateSchemaStmtBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedCreateSchemaStmt> node_;
 
@@ -21450,6 +22387,332 @@ inline ResolvedCreateSchemaStmtBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedCreateExternalSchemaStmtBuilder final {
+ public:
+  ResolvedCreateExternalSchemaStmtBuilder() : ResolvedCreateExternalSchemaStmtBuilder(absl::WrapUnique(new ResolvedCreateExternalSchemaStmt)) {}
+
+  ResolvedCreateExternalSchemaStmtBuilder(const ResolvedCreateExternalSchemaStmtBuilder&) = delete;
+  ResolvedCreateExternalSchemaStmtBuilder& operator=(const ResolvedCreateExternalSchemaStmtBuilder&) = delete;
+  ResolvedCreateExternalSchemaStmtBuilder(ResolvedCreateExternalSchemaStmtBuilder&& other)
+      : ResolvedCreateExternalSchemaStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder& operator=(ResolvedCreateExternalSchemaStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateExternalSchemaStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateExternalSchemaStmt>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const ResolvedConnection* connection() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->connection();
+  }
+
+  std::unique_ptr<const ResolvedConnection> release_connection() {
+    return node_->release_connection();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& set_connection(T v) && {
+    node_->set_connection(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& set_connection(T v) & {
+    node_->set_connection(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& set_connection(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedConnection>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& set_connection(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_connection(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::CreateScope create_scope() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->create_scope();
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder&& set_create_scope(ResolvedCreateStatement::CreateScope v) && {
+    node_->set_create_scope(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder& set_create_scope(ResolvedCreateStatement::CreateScope v) & {
+    node_->set_create_scope(v);
+
+    return *this;
+  }
+
+  ResolvedCreateStatement::CreateMode create_mode() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->create_mode();
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder&& set_create_mode(ResolvedCreateStatement::CreateMode v) && {
+    node_->set_create_mode(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedCreateExternalSchemaStmtBuilder& set_create_mode(ResolvedCreateStatement::CreateMode v) & {
+    node_->set_create_mode(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedCreateExternalSchemaStmtBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedCreateExternalSchemaStmt> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedCreateExternalSchemaStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedCreateExternalSchemaStmt> node);
+
+  ResolvedCreateExternalSchemaStmtBuilder(std::unique_ptr<ResolvedCreateExternalSchemaStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedCreateExternalSchemaStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedCreateExternalSchemaStmt> node) {
+  ResolvedCreateExternalSchemaStmtBuilder builder(absl::WrapUnique<ResolvedCreateExternalSchemaStmt>(
+      const_cast<ResolvedCreateExternalSchemaStmt*>(node.release())));
+  // All required nodes are evidently already set
+  return builder;
+}
+
 class ResolvedCreateTableStmtBuilder final {
  public:
   ResolvedCreateTableStmtBuilder() : ResolvedCreateTableStmtBuilder(absl::WrapUnique(new ResolvedCreateTableStmt)) {}
@@ -21467,18 +22730,23 @@ class ResolvedCreateTableStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateTableStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateTableStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateTableStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -22424,12 +23692,13 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateTableAsSelectStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateTableAsSelectStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(17)) {
       zetasql::internal::UpdateStatus(
@@ -22440,8 +23709,12 @@ class ResolvedCreateTableAsSelectStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateTableAsSelectStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -23417,12 +24690,13 @@ class ResolvedCreateModelAliasedQueryBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateModelAliasedQuery>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateModelAliasedQuery>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -23439,8 +24713,12 @@ class ResolvedCreateModelAliasedQueryBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateModelAliasedQuery>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -23449,14 +24727,14 @@ class ResolvedCreateModelAliasedQueryBuilder final {
     return node_->alias();
   }
 
-  ResolvedCreateModelAliasedQueryBuilder&& set_alias(const std::string& v) && {
+  ResolvedCreateModelAliasedQueryBuilder&& set_alias(absl::string_view v) && {
     node_->set_alias(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateModelAliasedQueryBuilder& set_alias(const std::string& v) & {
+  ResolvedCreateModelAliasedQueryBuilder& set_alias(absl::string_view v) & {
     node_->set_alias(v);
     field_is_set_.set(0, true);
 
@@ -23632,12 +24910,13 @@ class ResolvedCreateModelStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateModelStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateModelStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
@@ -23648,8 +24927,12 @@ class ResolvedCreateModelStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateModelStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -24617,12 +25900,13 @@ class ResolvedCreateViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -24644,8 +25928,12 @@ class ResolvedCreateViewStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -25016,14 +26304,14 @@ class ResolvedCreateViewStmtBuilder final {
     return node_->sql();
   }
 
-  ResolvedCreateViewStmtBuilder&& set_sql(const std::string& v) && {
+  ResolvedCreateViewStmtBuilder&& set_sql(absl::string_view v) && {
     node_->set_sql(v);
     field_is_set_.set(8, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateViewStmtBuilder& set_sql(const std::string& v) & {
+  ResolvedCreateViewStmtBuilder& set_sql(absl::string_view v) & {
     node_->set_sql(v);
     field_is_set_.set(8, true);
 
@@ -25204,18 +26492,23 @@ class ResolvedWithPartitionColumnsBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWithPartitionColumns>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWithPartitionColumns>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWithPartitionColumns>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -25332,12 +26625,13 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateSnapshotTableStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateSnapshotTableStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -25348,8 +26642,12 @@ class ResolvedCreateSnapshotTableStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateSnapshotTableStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -25665,18 +26963,23 @@ class ResolvedCreateExternalTableStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateExternalTableStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateExternalTableStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateExternalTableStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -26425,18 +27728,23 @@ class ResolvedExportModelStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExportModelStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExportModelStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExportModelStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -26714,12 +28022,13 @@ class ResolvedExportDataStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExportDataStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExportDataStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -26730,8 +28039,12 @@ class ResolvedExportDataStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExportDataStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -27119,12 +28432,13 @@ class ResolvedExportMetadataStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExportMetadataStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExportMetadataStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -27135,8 +28449,12 @@ class ResolvedExportMetadataStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExportMetadataStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -27145,14 +28463,14 @@ class ResolvedExportMetadataStmtBuilder final {
     return node_->schema_object_kind();
   }
 
-  ResolvedExportMetadataStmtBuilder&& set_schema_object_kind(const std::string& v) && {
+  ResolvedExportMetadataStmtBuilder&& set_schema_object_kind(absl::string_view v) && {
     node_->set_schema_object_kind(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedExportMetadataStmtBuilder& set_schema_object_kind(const std::string& v) & {
+  ResolvedExportMetadataStmtBuilder& set_schema_object_kind(absl::string_view v) & {
     node_->set_schema_object_kind(v);
     field_is_set_.set(1, true);
 
@@ -27433,18 +28751,23 @@ class ResolvedDefineTableStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDefineTableStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDefineTableStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDefineTableStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -27673,12 +28996,13 @@ class ResolvedDescribeStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDescribeStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDescribeStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -27689,8 +29013,12 @@ class ResolvedDescribeStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDescribeStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -27699,14 +29027,14 @@ class ResolvedDescribeStmtBuilder final {
     return node_->object_type();
   }
 
-  ResolvedDescribeStmtBuilder&& set_object_type(const std::string& v) && {
+  ResolvedDescribeStmtBuilder&& set_object_type(absl::string_view v) && {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDescribeStmtBuilder& set_object_type(const std::string& v) & {
+  ResolvedDescribeStmtBuilder& set_object_type(absl::string_view v) & {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
@@ -27906,12 +29234,13 @@ class ResolvedShowStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedShowStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedShowStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -27922,8 +29251,12 @@ class ResolvedShowStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedShowStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -27932,14 +29265,14 @@ class ResolvedShowStmtBuilder final {
     return node_->identifier();
   }
 
-  ResolvedShowStmtBuilder&& set_identifier(const std::string& v) && {
+  ResolvedShowStmtBuilder&& set_identifier(absl::string_view v) && {
     node_->set_identifier(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedShowStmtBuilder& set_identifier(const std::string& v) & {
+  ResolvedShowStmtBuilder& set_identifier(absl::string_view v) & {
     node_->set_identifier(v);
     field_is_set_.set(1, true);
 
@@ -28152,18 +29485,23 @@ class ResolvedBeginStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedBeginStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedBeginStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedBeginStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -28336,18 +29674,23 @@ class ResolvedSetTransactionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSetTransactionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSetTransactionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSetTransactionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -28518,17 +29861,22 @@ class ResolvedCommitStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCommitStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCommitStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCommitStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -28643,17 +29991,22 @@ class ResolvedRollbackStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRollbackStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRollbackStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRollbackStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -28768,18 +30121,23 @@ class ResolvedStartBatchStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedStartBatchStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedStartBatchStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedStartBatchStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -28788,13 +30146,13 @@ class ResolvedStartBatchStmtBuilder final {
     return node_->batch_type();
   }
 
-  ResolvedStartBatchStmtBuilder&& set_batch_type(const std::string& v) && {
+  ResolvedStartBatchStmtBuilder&& set_batch_type(absl::string_view v) && {
     node_->set_batch_type(v);
 
     return std::move(*this);
   }
 
-  ResolvedStartBatchStmtBuilder& set_batch_type(const std::string& v) & {
+  ResolvedStartBatchStmtBuilder& set_batch_type(absl::string_view v) & {
     node_->set_batch_type(v);
 
     return *this;
@@ -28911,17 +30269,22 @@ class ResolvedRunBatchStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRunBatchStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRunBatchStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRunBatchStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -29036,17 +30399,22 @@ class ResolvedAbortBatchStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAbortBatchStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAbortBatchStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAbortBatchStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -29168,12 +30536,13 @@ class ResolvedDropStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -29190,8 +30559,12 @@ class ResolvedDropStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -29200,14 +30573,14 @@ class ResolvedDropStmtBuilder final {
     return node_->object_type();
   }
 
-  ResolvedDropStmtBuilder&& set_object_type(const std::string& v) && {
+  ResolvedDropStmtBuilder&& set_object_type(absl::string_view v) && {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropStmtBuilder& set_object_type(const std::string& v) & {
+  ResolvedDropStmtBuilder& set_object_type(absl::string_view v) & {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
@@ -29405,12 +30778,13 @@ class ResolvedDropMaterializedViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropMaterializedViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropMaterializedViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -29421,8 +30795,12 @@ class ResolvedDropMaterializedViewStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropMaterializedViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -29599,12 +30977,13 @@ class ResolvedDropSnapshotTableStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropSnapshotTableStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropSnapshotTableStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -29615,8 +30994,12 @@ class ResolvedDropSnapshotTableStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropSnapshotTableStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -29791,17 +31174,22 @@ class ResolvedRecursiveRefScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRecursiveRefScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRecursiveRefScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRecursiveRefScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -29939,13 +31327,13 @@ class ResolvedRecursiveRefScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedRecursiveRefScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedRecursiveRefScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedRecursiveRefScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedRecursiveRefScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -29972,6 +31360,225 @@ inline ResolvedRecursiveRefScanBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedRecursionDepthModifierBuilder final {
+ public:
+  ResolvedRecursionDepthModifierBuilder() : ResolvedRecursionDepthModifierBuilder(absl::WrapUnique(new ResolvedRecursionDepthModifier)) {}
+
+  ResolvedRecursionDepthModifierBuilder(const ResolvedRecursionDepthModifierBuilder&) = delete;
+  ResolvedRecursionDepthModifierBuilder& operator=(const ResolvedRecursionDepthModifierBuilder&) = delete;
+  ResolvedRecursionDepthModifierBuilder(ResolvedRecursionDepthModifierBuilder&& other)
+      : ResolvedRecursionDepthModifierBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedRecursionDepthModifierBuilder& operator=(ResolvedRecursionDepthModifierBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedRecursionDepthModifier>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedRecursionDepthModifier::recursion_depth_column was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRecursionDepthModifier>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const ResolvedExpr* lower_bound() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->lower_bound();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_lower_bound() {
+    return node_->release_lower_bound();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder&& set_lower_bound(T v) && {
+    node_->set_lower_bound(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder& set_lower_bound(T v) & {
+    node_->set_lower_bound(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder&& set_lower_bound(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_lower_bound(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder& set_lower_bound(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_lower_bound(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  const ResolvedExpr* upper_bound() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->upper_bound();
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_upper_bound() {
+    return node_->release_upper_bound();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder&& set_upper_bound(T v) && {
+    node_->set_upper_bound(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder& set_upper_bound(T v) & {
+    node_->set_upper_bound(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder&& set_upper_bound(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_upper_bound(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedRecursionDepthModifierBuilder& set_upper_bound(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_upper_bound(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  const ResolvedColumnHolder* recursion_depth_column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->recursion_depth_column();
+  }
+
+  std::unique_ptr<const ResolvedColumnHolder> release_recursion_depth_column() {
+    return node_->release_recursion_depth_column();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnHolder>>::value>>
+  ResolvedRecursionDepthModifierBuilder&& set_recursion_depth_column(T v) && {
+    node_->set_recursion_depth_column(std::move(v));
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedColumnHolder>>::value>>
+  ResolvedRecursionDepthModifierBuilder& set_recursion_depth_column(T v) & {
+    node_->set_recursion_depth_column(std::move(v));
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnHolder>>::value>>
+  ResolvedRecursionDepthModifierBuilder&& set_recursion_depth_column(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_recursion_depth_column(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedColumnHolder>>::value>>
+  ResolvedRecursionDepthModifierBuilder& set_recursion_depth_column(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_recursion_depth_column(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedRecursionDepthModifier> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<3> field_is_set_ = {0};
+  friend ResolvedRecursionDepthModifierBuilder ToBuilder(
+      std::unique_ptr<const ResolvedRecursionDepthModifier> node);
+
+  ResolvedRecursionDepthModifierBuilder(std::unique_ptr<ResolvedRecursionDepthModifier> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedRecursionDepthModifierBuilder ToBuilder(
+    std::unique_ptr<const ResolvedRecursionDepthModifier> node) {
+  ResolvedRecursionDepthModifierBuilder builder(absl::WrapUnique<ResolvedRecursionDepthModifier>(
+      const_cast<ResolvedRecursionDepthModifier*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(2, true);
+  return builder;
+}
+
 class ResolvedRecursiveScanBuilder final {
  public:
     typedef ResolvedRecursiveScanEnums::RecursiveSetOperationType RecursiveSetOperationType;
@@ -29995,12 +31602,13 @@ class ResolvedRecursiveScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRecursiveScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRecursiveScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -30023,8 +31631,12 @@ class ResolvedRecursiveScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRecursiveScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -30149,6 +31761,55 @@ class ResolvedRecursiveScanBuilder final {
                                         status_or_node.status());
     }
     field_is_set_.set(6, true);
+
+    return *this;
+  }
+
+  const ResolvedRecursionDepthModifier* recursion_depth_modifier() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->recursion_depth_modifier();
+  }
+
+  std::unique_ptr<const ResolvedRecursionDepthModifier> release_recursion_depth_modifier() {
+    return node_->release_recursion_depth_modifier();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedRecursionDepthModifier>>::value>>
+  ResolvedRecursiveScanBuilder&& set_recursion_depth_modifier(T v) && {
+    node_->set_recursion_depth_modifier(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedRecursionDepthModifier>>::value>>
+  ResolvedRecursiveScanBuilder& set_recursion_depth_modifier(T v) & {
+    node_->set_recursion_depth_modifier(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedRecursionDepthModifier>>::value>>
+  ResolvedRecursiveScanBuilder&& set_recursion_depth_modifier(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_recursion_depth_modifier(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedRecursionDepthModifier>>::value>>
+  ResolvedRecursiveScanBuilder& set_recursion_depth_modifier(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      set_recursion_depth_modifier(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
 
     return *this;
   }
@@ -30287,13 +31948,13 @@ class ResolvedRecursiveScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedRecursiveScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedRecursiveScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedRecursiveScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedRecursiveScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -30303,7 +31964,7 @@ class ResolvedRecursiveScanBuilder final {
   std::unique_ptr<ResolvedRecursiveScan> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<7> field_is_set_ = {0};
+  std::bitset<8> field_is_set_ = {0};
   friend ResolvedRecursiveScanBuilder ToBuilder(
       std::unique_ptr<const ResolvedRecursiveScan> node);
 
@@ -30343,12 +32004,13 @@ class ResolvedWithScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWithScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWithScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -30365,8 +32027,12 @@ class ResolvedWithScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWithScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -30650,13 +32316,13 @@ class ResolvedWithScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedWithScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedWithScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedWithScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedWithScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -30705,12 +32371,13 @@ class ResolvedWithEntryBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWithEntry>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWithEntry>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -30727,8 +32394,12 @@ class ResolvedWithEntryBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWithEntry>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -30737,14 +32408,14 @@ class ResolvedWithEntryBuilder final {
     return node_->with_query_name();
   }
 
-  ResolvedWithEntryBuilder&& set_with_query_name(const std::string& v) && {
+  ResolvedWithEntryBuilder&& set_with_query_name(absl::string_view v) && {
     node_->set_with_query_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedWithEntryBuilder& set_with_query_name(const std::string& v) & {
+  ResolvedWithEntryBuilder& set_with_query_name(absl::string_view v) & {
     node_->set_with_query_name(v);
     field_is_set_.set(0, true);
 
@@ -30830,6 +32501,11 @@ inline ResolvedWithEntryBuilder ToBuilder(
 
 class ResolvedOptionBuilder final {
  public:
+    typedef ResolvedOptionEnums::AssignmentOp AssignmentOp;
+  static const AssignmentOp DEFAULT_ASSIGN = ResolvedOptionEnums::DEFAULT_ASSIGN;
+  static const AssignmentOp ADD_ASSIGN = ResolvedOptionEnums::ADD_ASSIGN;
+  static const AssignmentOp SUB_ASSIGN = ResolvedOptionEnums::SUB_ASSIGN;
+
   ResolvedOptionBuilder() : ResolvedOptionBuilder(absl::WrapUnique(new ResolvedOption)) {}
 
   ResolvedOptionBuilder(const ResolvedOptionBuilder&) = delete;
@@ -30847,12 +32523,13 @@ class ResolvedOptionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedOption>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedOption>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -30869,8 +32546,12 @@ class ResolvedOptionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedOption>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -30879,13 +32560,13 @@ class ResolvedOptionBuilder final {
     return node_->qualifier();
   }
 
-  ResolvedOptionBuilder&& set_qualifier(const std::string& v) && {
+  ResolvedOptionBuilder&& set_qualifier(absl::string_view v) && {
     node_->set_qualifier(v);
 
     return std::move(*this);
   }
 
-  ResolvedOptionBuilder& set_qualifier(const std::string& v) & {
+  ResolvedOptionBuilder& set_qualifier(absl::string_view v) & {
     node_->set_qualifier(v);
 
     return *this;
@@ -30896,14 +32577,14 @@ class ResolvedOptionBuilder final {
     return node_->name();
   }
 
-  ResolvedOptionBuilder&& set_name(const std::string& v) && {
+  ResolvedOptionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedOptionBuilder& set_name(const std::string& v) & {
+  ResolvedOptionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -30963,11 +32644,28 @@ class ResolvedOptionBuilder final {
     return *this;
   }
 
+  ResolvedOption::AssignmentOp assignment_op() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->assignment_op();
+  }
+
+  ResolvedOptionBuilder&& set_assignment_op(ResolvedOption::AssignmentOp v) && {
+    node_->set_assignment_op(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedOptionBuilder& set_assignment_op(ResolvedOption::AssignmentOp v) & {
+    node_->set_assignment_op(v);
+
+    return *this;
+  }
+
  private:
   std::unique_ptr<ResolvedOption> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<3> field_is_set_ = {0};
+  std::bitset<4> field_is_set_ = {0};
   friend ResolvedOptionBuilder ToBuilder(
       std::unique_ptr<const ResolvedOption> node);
 
@@ -31004,18 +32702,23 @@ class ResolvedWindowPartitioningBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWindowPartitioning>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWindowPartitioning>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWindowPartitioning>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -31242,18 +32945,23 @@ class ResolvedWindowOrderingBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWindowOrdering>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWindowOrdering>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWindowOrdering>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -31450,12 +33158,13 @@ class ResolvedWindowFrameBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWindowFrame>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWindowFrame>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -31478,8 +33187,12 @@ class ResolvedWindowFrameBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWindowFrame>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -31652,12 +33365,13 @@ class ResolvedAnalyticFunctionGroupBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAnalyticFunctionGroup>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionGroup>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -31674,8 +33388,12 @@ class ResolvedAnalyticFunctionGroupBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAnalyticFunctionGroup>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -31911,12 +33629,13 @@ class ResolvedWindowFrameExprBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedWindowFrameExpr>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedWindowFrameExpr>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -31933,8 +33652,12 @@ class ResolvedWindowFrameExprBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedWindowFrameExpr>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -32053,12 +33776,13 @@ class ResolvedDMLValueBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDMLValue>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDMLValue>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -32069,8 +33793,12 @@ class ResolvedDMLValueBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDMLValue>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -32169,12 +33897,13 @@ class ResolvedDMLDefaultBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDMLDefault>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDMLDefault>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -32184,8 +33913,12 @@ class ResolvedDMLDefaultBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDMLDefault>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -32267,12 +34000,13 @@ class ResolvedAssertStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAssertStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAssertStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -32283,8 +34017,12 @@ class ResolvedAssertStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAssertStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -32346,13 +34084,13 @@ class ResolvedAssertStmtBuilder final {
     return node_->description();
   }
 
-  ResolvedAssertStmtBuilder&& set_description(const std::string& v) && {
+  ResolvedAssertStmtBuilder&& set_description(absl::string_view v) && {
     node_->set_description(v);
 
     return std::move(*this);
   }
 
-  ResolvedAssertStmtBuilder& set_description(const std::string& v) & {
+  ResolvedAssertStmtBuilder& set_description(absl::string_view v) & {
     node_->set_description(v);
 
     return *this;
@@ -32473,12 +34211,13 @@ class ResolvedAssertRowsModifiedBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAssertRowsModified>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAssertRowsModified>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -32489,8 +34228,12 @@ class ResolvedAssertRowsModifiedBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAssertRowsModified>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -32587,18 +34330,23 @@ class ResolvedInsertRowBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedInsertRow>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedInsertRow>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedInsertRow>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -32722,18 +34470,23 @@ class ResolvedInsertStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedInsertStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedInsertStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedInsertStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -33215,6 +34968,141 @@ class ResolvedInsertStmtBuilder final {
     return *this;
   }
 
+  // This returns a topologically sorted list of generated columns
+  //  resolved ids in the table accessed by insert statement.
+  //  For example for below table
+  //  CREATE TABLE T(
+  //  k1 INT64 NOT NULL,
+  //  data INT64,
+  //  gen1 INT64 AS data+1,
+  //  gen2 INT64 AS gen1*2,
+  //  gen3 INT64 AS data*2 + gen1,
+  //  ) PRIMARY KEY(k1);
+  // data------------------->gen1--------------------->gen2
+  //   *                      *----------> *
+  //   *  ------------------------------->gen3
+  // the vector would have corresponding indexes of one of these values
+  // gen1 gen2 gen3 OR gen1 gen3 gen2.
+  const std::vector<int>& topologically_sorted_generated_column_id_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_id_list();
+  }
+
+  int topologically_sorted_generated_column_id_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_id_list_size();
+  }
+
+  int topologically_sorted_generated_column_id_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_id_list(i);
+  }
+
+  ResolvedInsertStmtBuilder&& add_topologically_sorted_generated_column_id_list(int v) && {
+    node_->add_topologically_sorted_generated_column_id_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedInsertStmtBuilder& add_topologically_sorted_generated_column_id_list(int v) & {
+    node_->add_topologically_sorted_generated_column_id_list(v);
+
+    return *this;
+  }
+
+  ResolvedInsertStmtBuilder&& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) && {
+    node_->set_topologically_sorted_generated_column_id_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedInsertStmtBuilder& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) & {
+    node_->set_topologically_sorted_generated_column_id_list(v);
+
+    return *this;
+  }
+
+  // This field returns the vector of generated column expressions
+  // corresponding to the column ids in
+  // topologically_sorted_generated_column_id_list. Both the lists have
+  // the same size and 1-to-1 mapping for the column id with its
+  // corresponding expression. This field is not directly accessed
+  // from the catalog since these expressions are rewritten to replace
+  // the ResolvedExpressionColumn for the referred columns in the
+  // catalog to corresponding ResolvedColumnRef.
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_column_expr_list();
+  }
+
+  int generated_column_expr_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_column_expr_list_size();
+  }
+
+  const ResolvedExpr* generated_column_expr_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_column_expr_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedInsertStmtBuilder&& add_generated_column_expr_list(T v) && {
+    node_->add_generated_column_expr_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedInsertStmtBuilder& add_generated_column_expr_list(T v) & {
+    node_->add_generated_column_expr_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedInsertStmtBuilder&& add_generated_column_expr_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_generated_column_expr_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedInsertStmtBuilder& add_generated_column_expr_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_generated_column_expr_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_generated_column_expr_list() {
+    return node_->release_generated_column_expr_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
+  ResolvedInsertStmtBuilder&& set_generated_column_expr_list(T v) && {
+    node_->set_generated_column_expr_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
+  ResolvedInsertStmtBuilder& set_generated_column_expr_list(T v) & {
+    node_->set_generated_column_expr_list(std::move(v));
+
+    return *this;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -33328,12 +35216,13 @@ class ResolvedDeleteStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDeleteStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDeleteStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
@@ -33344,8 +35233,12 @@ class ResolvedDeleteStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDeleteStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -33752,12 +35645,13 @@ class ResolvedUpdateItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUpdateItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUpdateItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -33774,8 +35668,12 @@ class ResolvedUpdateItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUpdateItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -34343,12 +36241,13 @@ class ResolvedUpdateArrayItemBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUpdateArrayItem>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUpdateArrayItem>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -34365,8 +36264,12 @@ class ResolvedUpdateArrayItemBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUpdateArrayItem>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -34521,12 +36424,13 @@ class ResolvedUpdateStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUpdateStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUpdateStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
@@ -34537,8 +36441,12 @@ class ResolvedUpdateStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUpdateStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -34952,6 +36860,120 @@ class ResolvedUpdateStmtBuilder final {
     return *this;
   }
 
+  // TODO: refactor it with INSERT case.
+  const std::vector<int>& topologically_sorted_generated_column_id_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_id_list();
+  }
+
+  int topologically_sorted_generated_column_id_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_id_list_size();
+  }
+
+  int topologically_sorted_generated_column_id_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->topologically_sorted_generated_column_id_list(i);
+  }
+
+  ResolvedUpdateStmtBuilder&& add_topologically_sorted_generated_column_id_list(int v) && {
+    node_->add_topologically_sorted_generated_column_id_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedUpdateStmtBuilder& add_topologically_sorted_generated_column_id_list(int v) & {
+    node_->add_topologically_sorted_generated_column_id_list(v);
+
+    return *this;
+  }
+
+  ResolvedUpdateStmtBuilder&& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) && {
+    node_->set_topologically_sorted_generated_column_id_list(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedUpdateStmtBuilder& set_topologically_sorted_generated_column_id_list(const std::vector<int>& v) & {
+    node_->set_topologically_sorted_generated_column_id_list(v);
+
+    return *this;
+  }
+
+  // TODO: refactor it with INSERT case.
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_column_expr_list();
+  }
+
+  int generated_column_expr_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_column_expr_list_size();
+  }
+
+  const ResolvedExpr* generated_column_expr_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->generated_column_expr_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUpdateStmtBuilder&& add_generated_column_expr_list(T v) && {
+    node_->add_generated_column_expr_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUpdateStmtBuilder& add_generated_column_expr_list(T v) & {
+    node_->add_generated_column_expr_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUpdateStmtBuilder&& add_generated_column_expr_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_generated_column_expr_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedExpr>>::value>>
+  ResolvedUpdateStmtBuilder& add_generated_column_expr_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_generated_column_expr_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_generated_column_expr_list() {
+    return node_->release_generated_column_expr_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
+  ResolvedUpdateStmtBuilder&& set_generated_column_expr_list(T v) && {
+    node_->set_generated_column_expr_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedExpr>>>::value>>
+  ResolvedUpdateStmtBuilder& set_generated_column_expr_list(T v) & {
+    node_->set_generated_column_expr_list(std::move(v));
+
+    return *this;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -35029,7 +37051,7 @@ class ResolvedUpdateStmtBuilder final {
   std::unique_ptr<ResolvedUpdateStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<9> field_is_set_ = {0};
+  std::bitset<11> field_is_set_ = {0};
   friend ResolvedUpdateStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedUpdateStmt> node);
 
@@ -35076,12 +37098,13 @@ class ResolvedMergeWhenBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedMergeWhen>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedMergeWhen>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -35104,8 +37127,12 @@ class ResolvedMergeWhenBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedMergeWhen>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -35405,12 +37432,13 @@ class ResolvedMergeStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedMergeStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedMergeStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -35433,8 +37461,12 @@ class ResolvedMergeStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedMergeStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -35826,12 +37858,13 @@ class ResolvedTruncateStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedTruncateStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedTruncateStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -35848,8 +37881,12 @@ class ResolvedTruncateStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedTruncateStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -36073,18 +38110,23 @@ class ResolvedObjectUnitBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedObjectUnit>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedObjectUnit>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedObjectUnit>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -36167,12 +38209,13 @@ class ResolvedPrivilegeBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedPrivilege>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedPrivilege>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -36183,8 +38226,12 @@ class ResolvedPrivilegeBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedPrivilege>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -36193,14 +38240,14 @@ class ResolvedPrivilegeBuilder final {
     return node_->action_type();
   }
 
-  ResolvedPrivilegeBuilder&& set_action_type(const std::string& v) && {
+  ResolvedPrivilegeBuilder&& set_action_type(absl::string_view v) && {
     node_->set_action_type(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedPrivilegeBuilder& set_action_type(const std::string& v) & {
+  ResolvedPrivilegeBuilder& set_action_type(absl::string_view v) & {
     node_->set_action_type(v);
     field_is_set_.set(0, true);
 
@@ -36320,17 +38367,22 @@ class ResolvedGrantStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGrantStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGrantStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGrantStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -36708,17 +38760,22 @@ class ResolvedRevokeStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRevokeStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRevokeStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRevokeStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -37096,17 +39153,22 @@ class ResolvedAlterDatabaseStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterDatabaseStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterDatabaseStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterDatabaseStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -37350,17 +39412,22 @@ class ResolvedAlterMaterializedViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterMaterializedViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterMaterializedViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterMaterializedViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -37604,17 +39671,22 @@ class ResolvedAlterApproxViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterApproxViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterApproxViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterApproxViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -37858,17 +39930,22 @@ class ResolvedAlterSchemaStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterSchemaStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterSchemaStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterSchemaStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -38095,6 +40172,265 @@ inline ResolvedAlterSchemaStmtBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedAlterExternalSchemaStmtBuilder final {
+ public:
+  ResolvedAlterExternalSchemaStmtBuilder() : ResolvedAlterExternalSchemaStmtBuilder(absl::WrapUnique(new ResolvedAlterExternalSchemaStmt)) {}
+
+  ResolvedAlterExternalSchemaStmtBuilder(const ResolvedAlterExternalSchemaStmtBuilder&) = delete;
+  ResolvedAlterExternalSchemaStmtBuilder& operator=(const ResolvedAlterExternalSchemaStmtBuilder&) = delete;
+  ResolvedAlterExternalSchemaStmtBuilder(ResolvedAlterExternalSchemaStmtBuilder&& other)
+      : ResolvedAlterExternalSchemaStmtBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder& operator=(ResolvedAlterExternalSchemaStmtBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterExternalSchemaStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterExternalSchemaStmt>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list();
+  }
+
+  int hint_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list_size();
+  }
+
+  const ResolvedOption* hint_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->hint_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder&& add_hint_list(T v) && {
+    node_->add_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder& add_hint_list(T v) & {
+    node_->add_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder&& add_hint_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder& add_hint_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_hint_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_hint_list() {
+    return node_->release_hint_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder&& set_hint_list(T v) && {
+    node_->set_hint_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder& set_hint_list(T v) & {
+    node_->set_hint_list(std::move(v));
+
+    return *this;
+  }
+
+  const std::vector<std::string>& name_path() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path();
+  }
+
+  int name_path_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path_size();
+  }
+
+  const std::string& name_path(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->name_path(i);
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder&& add_name_path(std::string v) && {
+    node_->add_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder& add_name_path(std::string v) & {
+    node_->add_name_path(v);
+
+    return *this;
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder&& set_name_path(const std::vector<std::string>& v) && {
+    node_->set_name_path(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder& set_name_path(const std::vector<std::string>& v) & {
+    node_->set_name_path(v);
+
+    return *this;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedAlterAction>>& alter_action_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list();
+  }
+
+  int alter_action_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list_size();
+  }
+
+  const ResolvedAlterAction* alter_action_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->alter_action_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder&& add_alter_action_list(T v) && {
+    node_->add_alter_action_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder& add_alter_action_list(T v) & {
+    node_->add_alter_action_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder&& add_alter_action_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_alter_action_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedAlterAction>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder& add_alter_action_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_alter_action_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedAlterAction>> release_alter_action_list() {
+    return node_->release_alter_action_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder&& set_alter_action_list(T v) && {
+    node_->set_alter_action_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedAlterAction>>>::value>>
+  ResolvedAlterExternalSchemaStmtBuilder& set_alter_action_list(T v) & {
+    node_->set_alter_action_list(std::move(v));
+
+    return *this;
+  }
+
+  bool is_if_exists() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_if_exists();
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder&& set_is_if_exists(bool v) && {
+    node_->set_is_if_exists(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterExternalSchemaStmtBuilder& set_is_if_exists(bool v) & {
+    node_->set_is_if_exists(v);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAlterExternalSchemaStmt> node_;
+
+  absl::Status deferred_build_status_;
+  friend ResolvedAlterExternalSchemaStmtBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAlterExternalSchemaStmt> node);
+
+  ResolvedAlterExternalSchemaStmtBuilder(std::unique_ptr<ResolvedAlterExternalSchemaStmt> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAlterExternalSchemaStmtBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAlterExternalSchemaStmt> node) {
+  ResolvedAlterExternalSchemaStmtBuilder builder(absl::WrapUnique<ResolvedAlterExternalSchemaStmt>(
+      const_cast<ResolvedAlterExternalSchemaStmt*>(node.release())));
+  // All required nodes are evidently already set
+  return builder;
+}
+
 class ResolvedAlterModelStmtBuilder final {
  public:
   ResolvedAlterModelStmtBuilder() : ResolvedAlterModelStmtBuilder(absl::WrapUnique(new ResolvedAlterModelStmt)) {}
@@ -38112,17 +40448,22 @@ class ResolvedAlterModelStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterModelStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterModelStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterModelStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -38366,17 +40707,22 @@ class ResolvedAlterTableStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterTableStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterTableStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterTableStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -38620,17 +40966,22 @@ class ResolvedAlterViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -38874,18 +41225,23 @@ class ResolvedSetOptionsActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSetOptionsAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSetOptionsAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSetOptionsAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39002,12 +41358,13 @@ class ResolvedAlterSubEntityActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterSubEntityAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterSubEntityAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39030,8 +41387,12 @@ class ResolvedAlterSubEntityActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterSubEntityAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39040,14 +41401,14 @@ class ResolvedAlterSubEntityActionBuilder final {
     return node_->entity_type();
   }
 
-  ResolvedAlterSubEntityActionBuilder&& set_entity_type(const std::string& v) && {
+  ResolvedAlterSubEntityActionBuilder&& set_entity_type(absl::string_view v) && {
     node_->set_entity_type(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterSubEntityActionBuilder& set_entity_type(const std::string& v) & {
+  ResolvedAlterSubEntityActionBuilder& set_entity_type(absl::string_view v) & {
     node_->set_entity_type(v);
     field_is_set_.set(0, true);
 
@@ -39059,14 +41420,14 @@ class ResolvedAlterSubEntityActionBuilder final {
     return node_->name();
   }
 
-  ResolvedAlterSubEntityActionBuilder&& set_name(const std::string& v) && {
+  ResolvedAlterSubEntityActionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterSubEntityActionBuilder& set_name(const std::string& v) & {
+  ResolvedAlterSubEntityActionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -39187,12 +41548,13 @@ class ResolvedAddSubEntityActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAddSubEntityAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAddSubEntityAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39209,8 +41571,12 @@ class ResolvedAddSubEntityActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAddSubEntityAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39219,14 +41585,14 @@ class ResolvedAddSubEntityActionBuilder final {
     return node_->entity_type();
   }
 
-  ResolvedAddSubEntityActionBuilder&& set_entity_type(const std::string& v) && {
+  ResolvedAddSubEntityActionBuilder&& set_entity_type(absl::string_view v) && {
     node_->set_entity_type(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedAddSubEntityActionBuilder& set_entity_type(const std::string& v) & {
+  ResolvedAddSubEntityActionBuilder& set_entity_type(absl::string_view v) & {
     node_->set_entity_type(v);
     field_is_set_.set(0, true);
 
@@ -39238,14 +41604,14 @@ class ResolvedAddSubEntityActionBuilder final {
     return node_->name();
   }
 
-  ResolvedAddSubEntityActionBuilder&& set_name(const std::string& v) && {
+  ResolvedAddSubEntityActionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAddSubEntityActionBuilder& set_name(const std::string& v) & {
+  ResolvedAddSubEntityActionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -39385,12 +41751,13 @@ class ResolvedDropSubEntityActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropSubEntityAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropSubEntityAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39407,8 +41774,12 @@ class ResolvedDropSubEntityActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropSubEntityAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39417,14 +41788,14 @@ class ResolvedDropSubEntityActionBuilder final {
     return node_->entity_type();
   }
 
-  ResolvedDropSubEntityActionBuilder&& set_entity_type(const std::string& v) && {
+  ResolvedDropSubEntityActionBuilder&& set_entity_type(absl::string_view v) && {
     node_->set_entity_type(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropSubEntityActionBuilder& set_entity_type(const std::string& v) & {
+  ResolvedDropSubEntityActionBuilder& set_entity_type(absl::string_view v) & {
     node_->set_entity_type(v);
     field_is_set_.set(0, true);
 
@@ -39436,14 +41807,14 @@ class ResolvedDropSubEntityActionBuilder final {
     return node_->name();
   }
 
-  ResolvedDropSubEntityActionBuilder&& set_name(const std::string& v) && {
+  ResolvedDropSubEntityActionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropSubEntityActionBuilder& set_name(const std::string& v) & {
+  ResolvedDropSubEntityActionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -39510,12 +41881,13 @@ class ResolvedAddColumnActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAddColumnAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAddColumnAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39532,8 +41904,12 @@ class ResolvedAddColumnActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAddColumnAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39652,12 +42028,13 @@ class ResolvedAddConstraintActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAddConstraintAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAddConstraintAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39674,8 +42051,12 @@ class ResolvedAddConstraintActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAddConstraintAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39811,12 +42192,13 @@ class ResolvedDropConstraintActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropConstraintAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropConstraintAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39833,8 +42215,12 @@ class ResolvedDropConstraintActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropConstraintAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -39862,14 +42248,14 @@ class ResolvedDropConstraintActionBuilder final {
     return node_->name();
   }
 
-  ResolvedDropConstraintActionBuilder&& set_name(const std::string& v) && {
+  ResolvedDropConstraintActionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropConstraintActionBuilder& set_name(const std::string& v) & {
+  ResolvedDropConstraintActionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -39919,12 +42305,13 @@ class ResolvedDropPrimaryKeyActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropPrimaryKeyAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropPrimaryKeyAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -39935,8 +42322,12 @@ class ResolvedDropPrimaryKeyActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropPrimaryKeyAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40001,12 +42392,13 @@ class ResolvedAlterColumnOptionsActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnOptionsAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterColumnOptionsAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -40017,8 +42409,12 @@ class ResolvedAlterColumnOptionsActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnOptionsAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40117,14 +42513,14 @@ class ResolvedAlterColumnOptionsActionBuilder final {
     return node_->column();
   }
 
-  ResolvedAlterColumnOptionsActionBuilder&& set_column(const std::string& v) && {
+  ResolvedAlterColumnOptionsActionBuilder&& set_column(absl::string_view v) && {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterColumnOptionsActionBuilder& set_column(const std::string& v) & {
+  ResolvedAlterColumnOptionsActionBuilder& set_column(absl::string_view v) & {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
@@ -40173,12 +42569,13 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropNotNullAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterColumnDropNotNullAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40188,8 +42585,12 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropNotNullAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40215,14 +42616,14 @@ class ResolvedAlterColumnDropNotNullActionBuilder final {
     return node_->column();
   }
 
-  ResolvedAlterColumnDropNotNullActionBuilder&& set_column(const std::string& v) && {
+  ResolvedAlterColumnDropNotNullActionBuilder&& set_column(absl::string_view v) && {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterColumnDropNotNullActionBuilder& set_column(const std::string& v) & {
+  ResolvedAlterColumnDropNotNullActionBuilder& set_column(absl::string_view v) & {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
@@ -40252,6 +42653,109 @@ inline ResolvedAlterColumnDropNotNullActionBuilder ToBuilder(
   return builder;
 }
 
+class ResolvedAlterColumnDropGeneratedActionBuilder final {
+ public:
+  ResolvedAlterColumnDropGeneratedActionBuilder() : ResolvedAlterColumnDropGeneratedActionBuilder(absl::WrapUnique(new ResolvedAlterColumnDropGeneratedAction)) {}
+
+  ResolvedAlterColumnDropGeneratedActionBuilder(const ResolvedAlterColumnDropGeneratedActionBuilder&) = delete;
+  ResolvedAlterColumnDropGeneratedActionBuilder& operator=(const ResolvedAlterColumnDropGeneratedActionBuilder&) = delete;
+  ResolvedAlterColumnDropGeneratedActionBuilder(ResolvedAlterColumnDropGeneratedActionBuilder&& other)
+      : ResolvedAlterColumnDropGeneratedActionBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedAlterColumnDropGeneratedActionBuilder& operator=(ResolvedAlterColumnDropGeneratedActionBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterColumnDropGeneratedAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedAlterColumnDropGeneratedAction::column was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  bool is_if_exists() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->is_if_exists();
+  }
+
+  ResolvedAlterColumnDropGeneratedActionBuilder&& set_is_if_exists(bool v) && {
+    node_->set_is_if_exists(v);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterColumnDropGeneratedActionBuilder& set_is_if_exists(bool v) & {
+    node_->set_is_if_exists(v);
+
+    return *this;
+  }
+
+  const std::string& column() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->column();
+  }
+
+  ResolvedAlterColumnDropGeneratedActionBuilder&& set_column(absl::string_view v) && {
+    node_->set_column(v);
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedAlterColumnDropGeneratedActionBuilder& set_column(absl::string_view v) & {
+    node_->set_column(v);
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<2> field_is_set_ = {0};
+  friend ResolvedAlterColumnDropGeneratedActionBuilder ToBuilder(
+      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node);
+
+  ResolvedAlterColumnDropGeneratedActionBuilder(std::unique_ptr<ResolvedAlterColumnDropGeneratedAction> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedAlterColumnDropGeneratedActionBuilder ToBuilder(
+    std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node) {
+  ResolvedAlterColumnDropGeneratedActionBuilder builder(absl::WrapUnique<ResolvedAlterColumnDropGeneratedAction>(
+      const_cast<ResolvedAlterColumnDropGeneratedAction*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(1, true);
+  return builder;
+}
+
 class ResolvedAlterColumnSetDataTypeActionBuilder final {
  public:
   ResolvedAlterColumnSetDataTypeActionBuilder() : ResolvedAlterColumnSetDataTypeActionBuilder(absl::WrapUnique(new ResolvedAlterColumnSetDataTypeAction)) {}
@@ -40271,12 +42775,13 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterColumnSetDataTypeAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -40299,8 +42804,12 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40423,14 +42932,14 @@ class ResolvedAlterColumnSetDataTypeActionBuilder final {
     return node_->column();
   }
 
-  ResolvedAlterColumnSetDataTypeActionBuilder&& set_column(const std::string& v) && {
+  ResolvedAlterColumnSetDataTypeActionBuilder&& set_column(absl::string_view v) && {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterColumnSetDataTypeActionBuilder& set_column(const std::string& v) & {
+  ResolvedAlterColumnSetDataTypeActionBuilder& set_column(absl::string_view v) & {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
@@ -40481,12 +42990,13 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnSetDefaultAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterColumnSetDefaultAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -40503,8 +43013,12 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnSetDefaultAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40583,14 +43097,14 @@ class ResolvedAlterColumnSetDefaultActionBuilder final {
     return node_->column();
   }
 
-  ResolvedAlterColumnSetDefaultActionBuilder&& set_column(const std::string& v) && {
+  ResolvedAlterColumnSetDefaultActionBuilder&& set_column(absl::string_view v) && {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterColumnSetDefaultActionBuilder& set_column(const std::string& v) & {
+  ResolvedAlterColumnSetDefaultActionBuilder& set_column(absl::string_view v) & {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
@@ -40640,12 +43154,13 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropDefaultAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterColumnDropDefaultAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -40655,8 +43170,12 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterColumnDropDefaultAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40682,14 +43201,14 @@ class ResolvedAlterColumnDropDefaultActionBuilder final {
     return node_->column();
   }
 
-  ResolvedAlterColumnDropDefaultActionBuilder&& set_column(const std::string& v) && {
+  ResolvedAlterColumnDropDefaultActionBuilder&& set_column(absl::string_view v) && {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterColumnDropDefaultActionBuilder& set_column(const std::string& v) & {
+  ResolvedAlterColumnDropDefaultActionBuilder& set_column(absl::string_view v) & {
     node_->set_column(v);
     field_is_set_.set(1, true);
 
@@ -40738,12 +43257,13 @@ class ResolvedDropColumnActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropColumnAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropColumnAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -40760,8 +43280,12 @@ class ResolvedDropColumnActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropColumnAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40789,14 +43313,14 @@ class ResolvedDropColumnActionBuilder final {
     return node_->name();
   }
 
-  ResolvedDropColumnActionBuilder&& set_name(const std::string& v) && {
+  ResolvedDropColumnActionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropColumnActionBuilder& set_name(const std::string& v) & {
+  ResolvedDropColumnActionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -40846,12 +43370,13 @@ class ResolvedRenameColumnActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRenameColumnAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRenameColumnAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -40868,8 +43393,12 @@ class ResolvedRenameColumnActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRenameColumnAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40895,14 +43424,14 @@ class ResolvedRenameColumnActionBuilder final {
     return node_->name();
   }
 
-  ResolvedRenameColumnActionBuilder&& set_name(const std::string& v) && {
+  ResolvedRenameColumnActionBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedRenameColumnActionBuilder& set_name(const std::string& v) & {
+  ResolvedRenameColumnActionBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(1, true);
 
@@ -40914,14 +43443,14 @@ class ResolvedRenameColumnActionBuilder final {
     return node_->new_name();
   }
 
-  ResolvedRenameColumnActionBuilder&& set_new_name(const std::string& v) && {
+  ResolvedRenameColumnActionBuilder&& set_new_name(absl::string_view v) && {
     node_->set_new_name(v);
     field_is_set_.set(2, true);
 
     return std::move(*this);
   }
 
-  ResolvedRenameColumnActionBuilder& set_new_name(const std::string& v) & {
+  ResolvedRenameColumnActionBuilder& set_new_name(absl::string_view v) & {
     node_->set_new_name(v);
     field_is_set_.set(2, true);
 
@@ -40969,18 +43498,23 @@ class ResolvedSetAsActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSetAsAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSetAsAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSetAsAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -40989,13 +43523,13 @@ class ResolvedSetAsActionBuilder final {
     return node_->entity_body_json();
   }
 
-  ResolvedSetAsActionBuilder&& set_entity_body_json(const std::string& v) && {
+  ResolvedSetAsActionBuilder&& set_entity_body_json(absl::string_view v) && {
     node_->set_entity_body_json(v);
 
     return std::move(*this);
   }
 
-  ResolvedSetAsActionBuilder& set_entity_body_json(const std::string& v) & {
+  ResolvedSetAsActionBuilder& set_entity_body_json(absl::string_view v) & {
     node_->set_entity_body_json(v);
 
     return *this;
@@ -41006,13 +43540,13 @@ class ResolvedSetAsActionBuilder final {
     return node_->entity_body_text();
   }
 
-  ResolvedSetAsActionBuilder&& set_entity_body_text(const std::string& v) && {
+  ResolvedSetAsActionBuilder&& set_entity_body_text(absl::string_view v) && {
     node_->set_entity_body_text(v);
 
     return std::move(*this);
   }
 
-  ResolvedSetAsActionBuilder& set_entity_body_text(const std::string& v) & {
+  ResolvedSetAsActionBuilder& set_entity_body_text(absl::string_view v) & {
     node_->set_entity_body_text(v);
 
     return *this;
@@ -41058,12 +43592,13 @@ class ResolvedSetCollateClauseBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedSetCollateClause>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedSetCollateClause>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -41074,8 +43609,12 @@ class ResolvedSetCollateClauseBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedSetCollateClause>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -41172,18 +43711,23 @@ class ResolvedAlterTableSetOptionsStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterTableSetOptionsStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterTableSetOptionsStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterTableSetOptionsStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -41429,12 +43973,13 @@ class ResolvedRenameStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRenameStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRenameStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -41445,8 +43990,12 @@ class ResolvedRenameStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRenameStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -41455,14 +44004,14 @@ class ResolvedRenameStmtBuilder final {
     return node_->object_type();
   }
 
-  ResolvedRenameStmtBuilder&& set_object_type(const std::string& v) && {
+  ResolvedRenameStmtBuilder&& set_object_type(absl::string_view v) && {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedRenameStmtBuilder& set_object_type(const std::string& v) & {
+  ResolvedRenameStmtBuilder& set_object_type(absl::string_view v) & {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
@@ -41662,12 +44211,13 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreatePrivilegeRestrictionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreatePrivilegeRestrictionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -41678,8 +44228,12 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreatePrivilegeRestrictionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -41761,14 +44315,14 @@ class ResolvedCreatePrivilegeRestrictionStmtBuilder final {
     return node_->object_type();
   }
 
-  ResolvedCreatePrivilegeRestrictionStmtBuilder&& set_object_type(const std::string& v) && {
+  ResolvedCreatePrivilegeRestrictionStmtBuilder&& set_object_type(absl::string_view v) && {
     node_->set_object_type(v);
     field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreatePrivilegeRestrictionStmtBuilder& set_object_type(const std::string& v) & {
+  ResolvedCreatePrivilegeRestrictionStmtBuilder& set_object_type(absl::string_view v) & {
     node_->set_object_type(v);
     field_is_set_.set(5, true);
 
@@ -42038,12 +44592,13 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateRowAccessPolicyStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateRowAccessPolicyStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(6)) {
       zetasql::internal::UpdateStatus(
@@ -42066,8 +44621,12 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateRowAccessPolicyStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -42093,13 +44652,13 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     return node_->name();
   }
 
-  ResolvedCreateRowAccessPolicyStmtBuilder&& set_name(const std::string& v) && {
+  ResolvedCreateRowAccessPolicyStmtBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateRowAccessPolicyStmtBuilder& set_name(const std::string& v) & {
+  ResolvedCreateRowAccessPolicyStmtBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
 
     return *this;
@@ -42367,14 +44926,14 @@ class ResolvedCreateRowAccessPolicyStmtBuilder final {
     return node_->predicate_str();
   }
 
-  ResolvedCreateRowAccessPolicyStmtBuilder&& set_predicate_str(const std::string& v) && {
+  ResolvedCreateRowAccessPolicyStmtBuilder&& set_predicate_str(absl::string_view v) && {
     node_->set_predicate_str(v);
     field_is_set_.set(8, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateRowAccessPolicyStmtBuilder& set_predicate_str(const std::string& v) & {
+  ResolvedCreateRowAccessPolicyStmtBuilder& set_predicate_str(absl::string_view v) & {
     node_->set_predicate_str(v);
     field_is_set_.set(8, true);
 
@@ -42498,12 +45057,13 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropPrivilegeRestrictionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropPrivilegeRestrictionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -42514,8 +45074,12 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropPrivilegeRestrictionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -42524,14 +45088,14 @@ class ResolvedDropPrivilegeRestrictionStmtBuilder final {
     return node_->object_type();
   }
 
-  ResolvedDropPrivilegeRestrictionStmtBuilder&& set_object_type(const std::string& v) && {
+  ResolvedDropPrivilegeRestrictionStmtBuilder&& set_object_type(absl::string_view v) && {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropPrivilegeRestrictionStmtBuilder& set_object_type(const std::string& v) & {
+  ResolvedDropPrivilegeRestrictionStmtBuilder& set_object_type(absl::string_view v) & {
     node_->set_object_type(v);
     field_is_set_.set(1, true);
 
@@ -42780,18 +45344,23 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropRowAccessPolicyStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropRowAccessPolicyStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropRowAccessPolicyStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -42834,13 +45403,13 @@ class ResolvedDropRowAccessPolicyStmtBuilder final {
     return node_->name();
   }
 
-  ResolvedDropRowAccessPolicyStmtBuilder&& set_name(const std::string& v) && {
+  ResolvedDropRowAccessPolicyStmtBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
 
     return std::move(*this);
   }
 
-  ResolvedDropRowAccessPolicyStmtBuilder& set_name(const std::string& v) & {
+  ResolvedDropRowAccessPolicyStmtBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
 
     return *this;
@@ -43006,12 +45575,13 @@ class ResolvedDropIndexStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropIndexStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropIndexStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -43028,8 +45598,12 @@ class ResolvedDropIndexStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropIndexStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -43057,14 +45631,14 @@ class ResolvedDropIndexStmtBuilder final {
     return node_->name();
   }
 
-  ResolvedDropIndexStmtBuilder&& set_name(const std::string& v) && {
+  ResolvedDropIndexStmtBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
     return std::move(*this);
   }
 
-  ResolvedDropIndexStmtBuilder& set_name(const std::string& v) & {
+  ResolvedDropIndexStmtBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
@@ -43241,18 +45815,23 @@ class ResolvedGrantToActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedGrantToAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedGrantToAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedGrantToAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -43367,18 +45946,23 @@ class ResolvedRestrictToActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRestrictToAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRestrictToAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRestrictToAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -43493,18 +46077,23 @@ class ResolvedAddToRestricteeListActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAddToRestricteeListAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAddToRestricteeListAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAddToRestricteeListAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -43636,18 +46225,23 @@ class ResolvedRemoveFromRestricteeListActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRemoveFromRestricteeListAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRemoveFromRestricteeListAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRemoveFromRestricteeListAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -43781,12 +46375,13 @@ class ResolvedFilterUsingActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFilterUsingAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFilterUsingAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -43803,8 +46398,12 @@ class ResolvedFilterUsingActionBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFilterUsingAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -43866,14 +46465,14 @@ class ResolvedFilterUsingActionBuilder final {
     return node_->predicate_str();
   }
 
-  ResolvedFilterUsingActionBuilder&& set_predicate_str(const std::string& v) && {
+  ResolvedFilterUsingActionBuilder&& set_predicate_str(absl::string_view v) && {
     node_->set_predicate_str(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedFilterUsingActionBuilder& set_predicate_str(const std::string& v) & {
+  ResolvedFilterUsingActionBuilder& set_predicate_str(absl::string_view v) & {
     node_->set_predicate_str(v);
     field_is_set_.set(1, true);
 
@@ -43921,18 +46520,23 @@ class ResolvedRevokeFromActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRevokeFromAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRevokeFromAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRevokeFromAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -44064,18 +46668,23 @@ class ResolvedRenameToActionBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRenameToAction>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRenameToAction>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRenameToAction>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -44158,12 +46767,13 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterPrivilegeRestrictionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterPrivilegeRestrictionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -44174,8 +46784,12 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterPrivilegeRestrictionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -44257,14 +46871,14 @@ class ResolvedAlterPrivilegeRestrictionStmtBuilder final {
     return node_->object_type();
   }
 
-  ResolvedAlterPrivilegeRestrictionStmtBuilder&& set_object_type(const std::string& v) && {
+  ResolvedAlterPrivilegeRestrictionStmtBuilder&& set_object_type(absl::string_view v) && {
     node_->set_object_type(v);
     field_is_set_.set(5, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterPrivilegeRestrictionStmtBuilder& set_object_type(const std::string& v) & {
+  ResolvedAlterPrivilegeRestrictionStmtBuilder& set_object_type(absl::string_view v) & {
     node_->set_object_type(v);
     field_is_set_.set(5, true);
 
@@ -44515,12 +47129,13 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterRowAccessPolicyStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterRowAccessPolicyStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -44537,8 +47152,12 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterRowAccessPolicyStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -44547,14 +47166,14 @@ class ResolvedAlterRowAccessPolicyStmtBuilder final {
     return node_->name();
   }
 
-  ResolvedAlterRowAccessPolicyStmtBuilder&& set_name(const std::string& v) && {
+  ResolvedAlterRowAccessPolicyStmtBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterRowAccessPolicyStmtBuilder& set_name(const std::string& v) & {
+  ResolvedAlterRowAccessPolicyStmtBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(4, true);
 
@@ -44859,12 +47478,13 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterAllRowAccessPoliciesStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterAllRowAccessPoliciesStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -44875,8 +47495,12 @@ class ResolvedAlterAllRowAccessPoliciesStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterAllRowAccessPoliciesStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -45177,12 +47801,13 @@ class ResolvedCreateConstantStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateConstantStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateConstantStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -45193,8 +47818,12 @@ class ResolvedCreateConstantStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateConstantStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -45446,12 +48075,13 @@ class ResolvedCreateFunctionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateFunctionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateFunctionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -45486,8 +48116,12 @@ class ResolvedCreateFunctionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateFunctionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -45607,13 +48241,13 @@ class ResolvedCreateFunctionStmtBuilder final {
     return node_->language();
   }
 
-  ResolvedCreateFunctionStmtBuilder&& set_language(const std::string& v) && {
+  ResolvedCreateFunctionStmtBuilder&& set_language(absl::string_view v) && {
     node_->set_language(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateFunctionStmtBuilder& set_language(const std::string& v) & {
+  ResolvedCreateFunctionStmtBuilder& set_language(absl::string_view v) & {
     node_->set_language(v);
 
     return *this;
@@ -45624,14 +48258,14 @@ class ResolvedCreateFunctionStmtBuilder final {
     return node_->code();
   }
 
-  ResolvedCreateFunctionStmtBuilder&& set_code(const std::string& v) && {
+  ResolvedCreateFunctionStmtBuilder&& set_code(absl::string_view v) && {
     node_->set_code(v);
     field_is_set_.set(10, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateFunctionStmtBuilder& set_code(const std::string& v) & {
+  ResolvedCreateFunctionStmtBuilder& set_code(absl::string_view v) & {
     node_->set_code(v);
     field_is_set_.set(10, true);
 
@@ -46136,12 +48770,13 @@ class ResolvedArgumentDefBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedArgumentDef>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedArgumentDef>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -46158,8 +48793,12 @@ class ResolvedArgumentDefBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedArgumentDef>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -46168,14 +48807,14 @@ class ResolvedArgumentDefBuilder final {
     return node_->name();
   }
 
-  ResolvedArgumentDefBuilder&& set_name(const std::string& v) && {
+  ResolvedArgumentDefBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedArgumentDefBuilder& set_name(const std::string& v) & {
+  ResolvedArgumentDefBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
@@ -46266,12 +48905,13 @@ class ResolvedArgumentRefBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedArgumentRef>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedArgumentRef>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -46294,8 +48934,12 @@ class ResolvedArgumentRefBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedArgumentRef>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -46304,14 +48948,14 @@ class ResolvedArgumentRefBuilder final {
     return node_->name();
   }
 
-  ResolvedArgumentRefBuilder&& set_name(const std::string& v) && {
+  ResolvedArgumentRefBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
     return std::move(*this);
   }
 
-  ResolvedArgumentRefBuilder& set_name(const std::string& v) & {
+  ResolvedArgumentRefBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(2, true);
 
@@ -46417,12 +49061,13 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateTableFunctionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateTableFunctionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -46445,8 +49090,12 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateTableFunctionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -46605,13 +49254,13 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     return node_->language();
   }
 
-  ResolvedCreateTableFunctionStmtBuilder&& set_language(const std::string& v) && {
+  ResolvedCreateTableFunctionStmtBuilder&& set_language(absl::string_view v) && {
     node_->set_language(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateTableFunctionStmtBuilder& set_language(const std::string& v) & {
+  ResolvedCreateTableFunctionStmtBuilder& set_language(absl::string_view v) & {
     node_->set_language(v);
 
     return *this;
@@ -46622,14 +49271,14 @@ class ResolvedCreateTableFunctionStmtBuilder final {
     return node_->code();
   }
 
-  ResolvedCreateTableFunctionStmtBuilder&& set_code(const std::string& v) && {
+  ResolvedCreateTableFunctionStmtBuilder&& set_code(absl::string_view v) && {
     node_->set_code(v);
     field_is_set_.set(9, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateTableFunctionStmtBuilder& set_code(const std::string& v) & {
+  ResolvedCreateTableFunctionStmtBuilder& set_code(absl::string_view v) & {
     node_->set_code(v);
     field_is_set_.set(9, true);
 
@@ -46982,12 +49631,13 @@ class ResolvedRelationArgumentScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedRelationArgumentScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedRelationArgumentScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -46998,8 +49648,12 @@ class ResolvedRelationArgumentScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedRelationArgumentScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -47012,14 +49666,14 @@ class ResolvedRelationArgumentScanBuilder final {
     return node_->name();
   }
 
-  ResolvedRelationArgumentScanBuilder&& set_name(const std::string& v) && {
+  ResolvedRelationArgumentScanBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
-  ResolvedRelationArgumentScanBuilder& set_name(const std::string& v) & {
+  ResolvedRelationArgumentScanBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(4, true);
 
@@ -47180,13 +49834,13 @@ class ResolvedRelationArgumentScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedRelationArgumentScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedRelationArgumentScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedRelationArgumentScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedRelationArgumentScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -47232,18 +49886,23 @@ class ResolvedArgumentListBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedArgumentList>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedArgumentList>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedArgumentList>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -47360,12 +50019,13 @@ class ResolvedFunctionSignatureHolderBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedFunctionSignatureHolder>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedFunctionSignatureHolder>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -47376,8 +50036,12 @@ class ResolvedFunctionSignatureHolderBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedFunctionSignatureHolder>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -47442,12 +50106,13 @@ class ResolvedDropFunctionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropFunctionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropFunctionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -47470,8 +50135,12 @@ class ResolvedDropFunctionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropFunctionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -47764,12 +50433,13 @@ class ResolvedDropTableFunctionStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedDropTableFunctionStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedDropTableFunctionStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -47780,8 +50450,12 @@ class ResolvedDropTableFunctionStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedDropTableFunctionStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -47958,12 +50632,13 @@ class ResolvedCallStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCallStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCallStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -47980,8 +50655,12 @@ class ResolvedCallStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCallStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -48220,12 +50899,13 @@ class ResolvedImportStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedImportStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedImportStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -48236,8 +50916,12 @@ class ResolvedImportStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedImportStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -48304,13 +50988,13 @@ class ResolvedImportStmtBuilder final {
     return node_->file_path();
   }
 
-  ResolvedImportStmtBuilder&& set_file_path(const std::string& v) && {
+  ResolvedImportStmtBuilder&& set_file_path(absl::string_view v) && {
     node_->set_file_path(v);
 
     return std::move(*this);
   }
 
-  ResolvedImportStmtBuilder& set_file_path(const std::string& v) & {
+  ResolvedImportStmtBuilder& set_file_path(absl::string_view v) & {
     node_->set_file_path(v);
 
     return *this;
@@ -48580,18 +51264,23 @@ class ResolvedModuleStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedModuleStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedModuleStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedModuleStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -48828,12 +51517,13 @@ class ResolvedAggregateHavingModifierBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAggregateHavingModifier>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAggregateHavingModifier>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -48850,8 +51540,12 @@ class ResolvedAggregateHavingModifierBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAggregateHavingModifier>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -48970,12 +51664,13 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateMaterializedViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateMaterializedViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
@@ -48998,8 +51693,12 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateMaterializedViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -49565,14 +52264,14 @@ class ResolvedCreateMaterializedViewStmtBuilder final {
     return node_->sql();
   }
 
-  ResolvedCreateMaterializedViewStmtBuilder&& set_sql(const std::string& v) && {
+  ResolvedCreateMaterializedViewStmtBuilder&& set_sql(absl::string_view v) && {
     node_->set_sql(v);
     field_is_set_.set(8, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateMaterializedViewStmtBuilder& set_sql(const std::string& v) & {
+  ResolvedCreateMaterializedViewStmtBuilder& set_sql(absl::string_view v) & {
     node_->set_sql(v);
     field_is_set_.set(8, true);
 
@@ -49755,12 +52454,13 @@ class ResolvedCreateApproxViewStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateApproxViewStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateApproxViewStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     if (!field_is_set_.test(7)) {
       zetasql::internal::UpdateStatus(
           &deferred_build_status_,
@@ -49782,8 +52482,12 @@ class ResolvedCreateApproxViewStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateApproxViewStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -50154,14 +52858,14 @@ class ResolvedCreateApproxViewStmtBuilder final {
     return node_->sql();
   }
 
-  ResolvedCreateApproxViewStmtBuilder&& set_sql(const std::string& v) && {
+  ResolvedCreateApproxViewStmtBuilder&& set_sql(absl::string_view v) && {
     node_->set_sql(v);
     field_is_set_.set(8, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateApproxViewStmtBuilder& set_sql(const std::string& v) & {
+  ResolvedCreateApproxViewStmtBuilder& set_sql(absl::string_view v) & {
     node_->set_sql(v);
     field_is_set_.set(8, true);
 
@@ -50344,12 +53048,13 @@ class ResolvedCreateProcedureStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateProcedureStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateProcedureStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(5)) {
       zetasql::internal::UpdateStatus(
@@ -50360,8 +53065,12 @@ class ResolvedCreateProcedureStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateProcedureStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -50501,13 +53210,13 @@ class ResolvedCreateProcedureStmtBuilder final {
     return node_->procedure_body();
   }
 
-  ResolvedCreateProcedureStmtBuilder&& set_procedure_body(const std::string& v) && {
+  ResolvedCreateProcedureStmtBuilder&& set_procedure_body(absl::string_view v) && {
     node_->set_procedure_body(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateProcedureStmtBuilder& set_procedure_body(const std::string& v) & {
+  ResolvedCreateProcedureStmtBuilder& set_procedure_body(absl::string_view v) & {
     node_->set_procedure_body(v);
 
     return *this;
@@ -50567,13 +53276,13 @@ class ResolvedCreateProcedureStmtBuilder final {
     return node_->language();
   }
 
-  ResolvedCreateProcedureStmtBuilder&& set_language(const std::string& v) && {
+  ResolvedCreateProcedureStmtBuilder&& set_language(absl::string_view v) && {
     node_->set_language(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateProcedureStmtBuilder& set_language(const std::string& v) & {
+  ResolvedCreateProcedureStmtBuilder& set_language(absl::string_view v) & {
     node_->set_language(v);
 
     return *this;
@@ -50584,13 +53293,13 @@ class ResolvedCreateProcedureStmtBuilder final {
     return node_->code();
   }
 
-  ResolvedCreateProcedureStmtBuilder&& set_code(const std::string& v) && {
+  ResolvedCreateProcedureStmtBuilder&& set_code(absl::string_view v) && {
     node_->set_code(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateProcedureStmtBuilder& set_code(const std::string& v) & {
+  ResolvedCreateProcedureStmtBuilder& set_code(absl::string_view v) & {
     node_->set_code(v);
 
     return *this;
@@ -50801,12 +53510,13 @@ class ResolvedExecuteImmediateArgumentBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExecuteImmediateArgument>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExecuteImmediateArgument>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -50823,8 +53533,12 @@ class ResolvedExecuteImmediateArgumentBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExecuteImmediateArgument>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -50833,14 +53547,14 @@ class ResolvedExecuteImmediateArgumentBuilder final {
     return node_->name();
   }
 
-  ResolvedExecuteImmediateArgumentBuilder&& set_name(const std::string& v) && {
+  ResolvedExecuteImmediateArgumentBuilder&& set_name(absl::string_view v) && {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
     return std::move(*this);
   }
 
-  ResolvedExecuteImmediateArgumentBuilder& set_name(const std::string& v) & {
+  ResolvedExecuteImmediateArgumentBuilder& set_name(absl::string_view v) & {
     node_->set_name(v);
     field_is_set_.set(0, true);
 
@@ -50943,12 +53657,13 @@ class ResolvedExecuteImmediateStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedExecuteImmediateStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedExecuteImmediateStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -50959,8 +53674,12 @@ class ResolvedExecuteImmediateStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedExecuteImmediateStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -51244,12 +53963,13 @@ class ResolvedAssignmentStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAssignmentStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAssignmentStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -51266,8 +53986,12 @@ class ResolvedAssignmentStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAssignmentStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -51498,12 +54222,13 @@ class ResolvedCreateEntityStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCreateEntityStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCreateEntityStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -51514,8 +54239,12 @@ class ResolvedCreateEntityStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCreateEntityStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -51524,14 +54253,14 @@ class ResolvedCreateEntityStmtBuilder final {
     return node_->entity_type();
   }
 
-  ResolvedCreateEntityStmtBuilder&& set_entity_type(const std::string& v) && {
+  ResolvedCreateEntityStmtBuilder&& set_entity_type(absl::string_view v) && {
     node_->set_entity_type(v);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
-  ResolvedCreateEntityStmtBuilder& set_entity_type(const std::string& v) & {
+  ResolvedCreateEntityStmtBuilder& set_entity_type(absl::string_view v) & {
     node_->set_entity_type(v);
     field_is_set_.set(4, true);
 
@@ -51543,13 +54272,13 @@ class ResolvedCreateEntityStmtBuilder final {
     return node_->entity_body_json();
   }
 
-  ResolvedCreateEntityStmtBuilder&& set_entity_body_json(const std::string& v) && {
+  ResolvedCreateEntityStmtBuilder&& set_entity_body_json(absl::string_view v) && {
     node_->set_entity_body_json(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateEntityStmtBuilder& set_entity_body_json(const std::string& v) & {
+  ResolvedCreateEntityStmtBuilder& set_entity_body_json(absl::string_view v) & {
     node_->set_entity_body_json(v);
 
     return *this;
@@ -51560,13 +54289,13 @@ class ResolvedCreateEntityStmtBuilder final {
     return node_->entity_body_text();
   }
 
-  ResolvedCreateEntityStmtBuilder&& set_entity_body_text(const std::string& v) && {
+  ResolvedCreateEntityStmtBuilder&& set_entity_body_text(absl::string_view v) && {
     node_->set_entity_body_text(v);
 
     return std::move(*this);
   }
 
-  ResolvedCreateEntityStmtBuilder& set_entity_body_text(const std::string& v) & {
+  ResolvedCreateEntityStmtBuilder& set_entity_body_text(absl::string_view v) & {
     node_->set_entity_body_text(v);
 
     return *this;
@@ -51833,12 +54562,13 @@ class ResolvedAlterEntityStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAlterEntityStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAlterEntityStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -51849,8 +54579,12 @@ class ResolvedAlterEntityStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAlterEntityStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -51859,14 +54593,14 @@ class ResolvedAlterEntityStmtBuilder final {
     return node_->entity_type();
   }
 
-  ResolvedAlterEntityStmtBuilder&& set_entity_type(const std::string& v) && {
+  ResolvedAlterEntityStmtBuilder&& set_entity_type(absl::string_view v) && {
     node_->set_entity_type(v);
     field_is_set_.set(4, true);
 
     return std::move(*this);
   }
 
-  ResolvedAlterEntityStmtBuilder& set_entity_type(const std::string& v) & {
+  ResolvedAlterEntityStmtBuilder& set_entity_type(absl::string_view v) & {
     node_->set_entity_type(v);
     field_is_set_.set(4, true);
 
@@ -52117,12 +54851,13 @@ class ResolvedPivotColumnBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedPivotColumn>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedPivotColumn>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -52145,8 +54880,12 @@ class ResolvedPivotColumnBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedPivotColumn>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -52259,12 +54998,13 @@ class ResolvedPivotScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedPivotScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedPivotScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -52281,8 +55021,12 @@ class ResolvedPivotScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedPivotScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -52845,13 +55589,13 @@ class ResolvedPivotScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedPivotScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedPivotScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedPivotScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedPivotScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -52900,12 +55644,13 @@ class ResolvedReturningClauseBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedReturningClause>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedReturningClause>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -52916,8 +55661,12 @@ class ResolvedReturningClauseBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedReturningClause>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -53171,18 +55920,23 @@ class ResolvedUnpivotArgBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUnpivotArg>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUnpivotArg>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUnpivotArg>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -53302,12 +56056,13 @@ class ResolvedUnpivotScanBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUnpivotScan>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUnpivotScan>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(4)) {
       zetasql::internal::UpdateStatus(
@@ -53330,8 +56085,12 @@ class ResolvedUnpivotScanBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUnpivotScan>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -53840,13 +56599,13 @@ class ResolvedUnpivotScanBuilder final {
     return node_->node_source();
   }
 
-  ResolvedUnpivotScanBuilder&& set_node_source(const std::string& v) && {
+  ResolvedUnpivotScanBuilder&& set_node_source(absl::string_view v) && {
     node_->set_node_source(v);
 
     return std::move(*this);
   }
 
-  ResolvedUnpivotScanBuilder& set_node_source(const std::string& v) & {
+  ResolvedUnpivotScanBuilder& set_node_source(absl::string_view v) & {
     node_->set_node_source(v);
 
     return *this;
@@ -53896,12 +56655,13 @@ class ResolvedCloneDataStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedCloneDataStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedCloneDataStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -53918,8 +56678,12 @@ class ResolvedCloneDataStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedCloneDataStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -54143,18 +56907,23 @@ class ResolvedTableAndColumnInfoBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedTableAndColumnInfo>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedTableAndColumnInfo>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedTableAndColumnInfo>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -54252,18 +57021,23 @@ class ResolvedAnalyzeStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAnalyzeStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAnalyzeStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAnalyzeStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -54526,12 +57300,13 @@ class ResolvedAuxLoadDataPartitionFilterBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAuxLoadDataPartitionFilter>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(0)) {
       zetasql::internal::UpdateStatus(
@@ -54542,8 +57317,12 @@ class ResolvedAuxLoadDataPartitionFilterBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAuxLoadDataPartitionFilter>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -54671,12 +57450,13 @@ class ResolvedAuxLoadDataStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedAuxLoadDataStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedAuxLoadDataStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -54693,8 +57473,12 @@ class ResolvedAuxLoadDataStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedAuxLoadDataStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -55710,12 +58494,13 @@ class ResolvedUndropStmtBuilder final {
     return *this;
   };
 
-  // Build() releases the current inner node, so it is callable only on an
-  // r-value, where the builder is expected to be going away. Resets the
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
   // `accessed_` bits.
-  absl::StatusOr<std::unique_ptr<const ResolvedUndropStmt>> Build() && {
-  // Performs an emptiness check on node.fields to determine if accessed_ should
-  // be created. In the case of a concrete node without fields it will not be.
+  absl::StatusOr<std::unique_ptr<ResolvedUndropStmt>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
     node_->accessed_ = 0;
     if (!field_is_set_.test(1)) {
       zetasql::internal::UpdateStatus(
@@ -55726,8 +58511,12 @@ class ResolvedUndropStmtBuilder final {
     if (deferred_build_status_.ok()) {
       return std::move(node_);
     }
-
     return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedUndropStmt>> Build() && {
+    return std::move(*this).BuildMutable();
   }
 
   // Getters and chained setters
@@ -55736,14 +58525,14 @@ class ResolvedUndropStmtBuilder final {
     return node_->schema_object_kind();
   }
 
-  ResolvedUndropStmtBuilder&& set_schema_object_kind(const std::string& v) && {
+  ResolvedUndropStmtBuilder&& set_schema_object_kind(absl::string_view v) && {
     node_->set_schema_object_kind(v);
     field_is_set_.set(1, true);
 
     return std::move(*this);
   }
 
-  ResolvedUndropStmtBuilder& set_schema_object_kind(const std::string& v) & {
+  ResolvedUndropStmtBuilder& set_schema_object_kind(absl::string_view v) & {
     node_->set_schema_object_kind(v);
     field_is_set_.set(1, true);
 
@@ -55855,6 +58644,79 @@ class ResolvedUndropStmtBuilder final {
     return *this;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list();
+  }
+
+  int option_list_size() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list_size();
+  }
+
+  const ResolvedOption* option_list(int i) const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->option_list(i);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder&& add_option_list(T v) && {
+    node_->add_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder& add_option_list(T v) & {
+    node_->add_option_list(std::move(v));
+
+    return *this;
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder&& add_option_list(TBuilder&& b) && {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return std::move(*this);
+  }
+
+  template<typename TBuilder, typename = typename std::enable_if_t<!std::is_convertible<TBuilder, std::unique_ptr<const ResolvedOption>>::value>>
+  ResolvedUndropStmtBuilder& add_option_list(TBuilder&& b) & {
+    auto status_or_node = std::move(b).Build();
+    if (status_or_node.ok()) {
+      add_option_list(std::move(*status_or_node));
+    } else {
+      zetasql::internal::UpdateStatus(&deferred_build_status_,
+                                        status_or_node.status());
+    }
+
+    return *this;
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    return node_->release_option_list();
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedUndropStmtBuilder&& set_option_list(T v) && {
+    node_->set_option_list(std::move(v));
+
+    return std::move(*this);
+  }
+
+  template<typename T, typename = typename std::enable_if_t<std::is_convertible<T, std::vector<std::unique_ptr<const ResolvedOption>>>::value>>
+  ResolvedUndropStmtBuilder& set_option_list(T v) & {
+    node_->set_option_list(std::move(v));
+
+    return *this;
+  }
+
   const std::vector<std::unique_ptr<const ResolvedOption>>& hint_list() const {
     ABSL_DCHECK(node_ != nullptr);
     return node_->hint_list();
@@ -55932,7 +58794,7 @@ class ResolvedUndropStmtBuilder final {
   std::unique_ptr<ResolvedUndropStmt> node_;
 
   absl::Status deferred_build_status_;
-  std::bitset<5> field_is_set_ = {0};
+  std::bitset<6> field_is_set_ = {0};
   friend ResolvedUndropStmtBuilder ToBuilder(
       std::unique_ptr<const ResolvedUndropStmt> node);
 
@@ -55948,6 +58810,197 @@ inline ResolvedUndropStmtBuilder ToBuilder(
       const_cast<ResolvedUndropStmt*>(node.release())));
   // All required nodes are evidently already set
   builder.field_is_set_.set(1, true);
+  return builder;
+}
+
+class ResolvedIdentityColumnInfoBuilder final {
+ public:
+  ResolvedIdentityColumnInfoBuilder() : ResolvedIdentityColumnInfoBuilder(absl::WrapUnique(new ResolvedIdentityColumnInfo)) {}
+
+  ResolvedIdentityColumnInfoBuilder(const ResolvedIdentityColumnInfoBuilder&) = delete;
+  ResolvedIdentityColumnInfoBuilder& operator=(const ResolvedIdentityColumnInfoBuilder&) = delete;
+  ResolvedIdentityColumnInfoBuilder(ResolvedIdentityColumnInfoBuilder&& other)
+      : ResolvedIdentityColumnInfoBuilder(std::move(other.node_)) {
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+  }
+
+  ResolvedIdentityColumnInfoBuilder& operator=(ResolvedIdentityColumnInfoBuilder&& other) {
+    node_ = std::move(other.node_);
+    deferred_build_status_ = std::move(other.deferred_build_status_);
+    field_is_set_ = std::move(other.field_is_set_);
+    return *this;
+  };
+
+  // BuildMutable() releases the current inner node, so it is callable only on
+  // an r-value, where the builder is expected to be going away. Resets the
+  // `accessed_` bits.
+  absl::StatusOr<std::unique_ptr<ResolvedIdentityColumnInfo>> BuildMutable() && {
+    // Performs an emptiness check on node.fields to determine if accessed_
+    // should be created. In the case of a concrete node without fields it will
+    // not be.
+    node_->accessed_ = 0;
+    if (!field_is_set_.test(0)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedIdentityColumnInfo::start_with_value was not set on the builder");
+    }
+    if (!field_is_set_.test(1)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedIdentityColumnInfo::increment_by_value was not set on the builder");
+    }
+    if (!field_is_set_.test(2)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedIdentityColumnInfo::max_value was not set on the builder");
+    }
+    if (!field_is_set_.test(3)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedIdentityColumnInfo::min_value was not set on the builder");
+    }
+    if (!field_is_set_.test(4)) {
+      zetasql::internal::UpdateStatus(
+          &deferred_build_status_,
+          ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+            << "ResolvedIdentityColumnInfo::cycling_enabled was not set on the builder");
+    }
+    if (deferred_build_status_.ok()) {
+      return std::move(node_);
+    }
+    return deferred_build_status_;
+  }
+
+  // Same as the above method, except that it returns an immutable object.
+  absl::StatusOr<std::unique_ptr<const ResolvedIdentityColumnInfo>> Build() && {
+    return std::move(*this).BuildMutable();
+  }
+
+  // Getters and chained setters
+  const Value& start_with_value() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->start_with_value();
+  }
+
+  ResolvedIdentityColumnInfoBuilder&& set_start_with_value(const Value& v) && {
+    node_->set_start_with_value(v);
+    field_is_set_.set(0, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedIdentityColumnInfoBuilder& set_start_with_value(const Value& v) & {
+    node_->set_start_with_value(v);
+    field_is_set_.set(0, true);
+
+    return *this;
+  }
+
+  const Value& increment_by_value() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->increment_by_value();
+  }
+
+  ResolvedIdentityColumnInfoBuilder&& set_increment_by_value(const Value& v) && {
+    node_->set_increment_by_value(v);
+    field_is_set_.set(1, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedIdentityColumnInfoBuilder& set_increment_by_value(const Value& v) & {
+    node_->set_increment_by_value(v);
+    field_is_set_.set(1, true);
+
+    return *this;
+  }
+
+  const Value& max_value() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->max_value();
+  }
+
+  ResolvedIdentityColumnInfoBuilder&& set_max_value(const Value& v) && {
+    node_->set_max_value(v);
+    field_is_set_.set(2, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedIdentityColumnInfoBuilder& set_max_value(const Value& v) & {
+    node_->set_max_value(v);
+    field_is_set_.set(2, true);
+
+    return *this;
+  }
+
+  const Value& min_value() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->min_value();
+  }
+
+  ResolvedIdentityColumnInfoBuilder&& set_min_value(const Value& v) && {
+    node_->set_min_value(v);
+    field_is_set_.set(3, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedIdentityColumnInfoBuilder& set_min_value(const Value& v) & {
+    node_->set_min_value(v);
+    field_is_set_.set(3, true);
+
+    return *this;
+  }
+
+  bool cycling_enabled() const {
+    ABSL_DCHECK(node_ != nullptr);
+    return node_->cycling_enabled();
+  }
+
+  ResolvedIdentityColumnInfoBuilder&& set_cycling_enabled(bool v) && {
+    node_->set_cycling_enabled(v);
+    field_is_set_.set(4, true);
+
+    return std::move(*this);
+  }
+
+  ResolvedIdentityColumnInfoBuilder& set_cycling_enabled(bool v) & {
+    node_->set_cycling_enabled(v);
+    field_is_set_.set(4, true);
+
+    return *this;
+  }
+
+ private:
+  std::unique_ptr<ResolvedIdentityColumnInfo> node_;
+
+  absl::Status deferred_build_status_;
+  std::bitset<5> field_is_set_ = {0};
+  friend ResolvedIdentityColumnInfoBuilder ToBuilder(
+      std::unique_ptr<const ResolvedIdentityColumnInfo> node);
+
+  ResolvedIdentityColumnInfoBuilder(std::unique_ptr<ResolvedIdentityColumnInfo> node)
+      : node_(std::move(node)) {
+    ABSL_DCHECK(node_ != nullptr);
+  }
+};
+
+inline ResolvedIdentityColumnInfoBuilder ToBuilder(
+    std::unique_ptr<const ResolvedIdentityColumnInfo> node) {
+  ResolvedIdentityColumnInfoBuilder builder(absl::WrapUnique<ResolvedIdentityColumnInfo>(
+      const_cast<ResolvedIdentityColumnInfo*>(node.release())));
+  // All required nodes are evidently already set
+  builder.field_is_set_.set(0, true);
+  builder.field_is_set_.set(1, true);
+  builder.field_is_set_.set(2, true);
+  builder.field_is_set_.set(3, true);
+  builder.field_is_set_.set(4, true);
   return builder;
 }
 

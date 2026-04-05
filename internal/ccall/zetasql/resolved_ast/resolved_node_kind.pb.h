@@ -111,6 +111,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_ANALYTIC_SCAN = 30,
   RESOLVED_SAMPLE_SCAN = 31,
   RESOLVED_COMPUTED_COLUMN = 32,
+  RESOLVED_DEFERRED_COMPUTED_COLUMN = 255,
   RESOLVED_ORDER_BY_ITEM = 33,
   RESOLVED_COLUMN_ANNOTATIONS = 104,
   RESOLVED_GENERATED_COLUMN_INFO = 105,
@@ -131,6 +132,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_UNNEST_ITEM = 126,
   RESOLVED_CREATE_INDEX_STMT = 97,
   RESOLVED_CREATE_SCHEMA_STMT = 157,
+  RESOLVED_CREATE_EXTERNAL_SCHEMA_STMT = 249,
   RESOLVED_CREATE_TABLE_STMT = 90,
   RESOLVED_CREATE_TABLE_AS_SELECT_STMT = 40,
   RESOLVED_CREATE_MODEL_ALIASED_QUERY = 226,
@@ -156,6 +158,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_DROP_MATERIALIZED_VIEW_STMT = 121,
   RESOLVED_DROP_SNAPSHOT_TABLE_STMT = 183,
   RESOLVED_RECURSIVE_REF_SCAN = 147,
+  RESOLVED_RECURSION_DEPTH_MODIFIER = 256,
   RESOLVED_RECURSIVE_SCAN = 148,
   RESOLVED_WITH_SCAN = 51,
   RESOLVED_WITH_ENTRY = 52,
@@ -186,6 +189,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_ALTER_MATERIALIZED_VIEW_STMT = 127,
   RESOLVED_ALTER_APPROX_VIEW_STMT = 236,
   RESOLVED_ALTER_SCHEMA_STMT = 160,
+  RESOLVED_ALTER_EXTERNAL_SCHEMA_STMT = 250,
   RESOLVED_ALTER_MODEL_STMT = 205,
   RESOLVED_ALTER_TABLE_STMT = 115,
   RESOLVED_ALTER_VIEW_STMT = 118,
@@ -263,8 +267,8 @@ enum ResolvedNodeKind : int {
 
 bool ResolvedNodeKind_IsValid(int value);
 constexpr ResolvedNodeKind ResolvedNodeKind_MIN = static_cast<ResolvedNodeKind>(-1);
-constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(244);
-constexpr int ResolvedNodeKind_ARRAYSIZE = 244 + 1;
+constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(256);
+constexpr int ResolvedNodeKind_ARRAYSIZE = 256 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 ResolvedNodeKind_descriptor();
 template <typename T>
@@ -277,7 +281,7 @@ const std::string& ResolvedNodeKind_Name(T value) {
 template <>
 inline const std::string& ResolvedNodeKind_Name(ResolvedNodeKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedNodeKind_descriptor,
-                                                 -1, 244>(
+                                                 -1, 256>(
       static_cast<int>(value));
 }
 inline bool ResolvedNodeKind_Parse(absl::string_view name, ResolvedNodeKind* value) {

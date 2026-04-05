@@ -147,6 +147,27 @@ std::vector<std::string> slice_to_strs(void *slice)
     list(std::move(vec));                                           \
   } while (0)
 
+// ResolvedAggregateScanBase::aggregate_list uses ResolvedComputedColumnBase (subclasses include
+// ResolvedComputedColumn and ResolvedDeferredComputedColumn).
+#define SET_UNIQUE_PTR_COMPUTED_COLUMN_BASE_LIST(list, v) do {              \
+    std::vector<std::unique_ptr<const zetasql::ResolvedComputedColumn>> vec; \
+    GoSlice *goslice = (GoSlice *)v;                                          \
+    zetasql::ResolvedComputedColumn **data =                                \
+        (zetasql::ResolvedComputedColumn **)goslice->data;                  \
+    for (int i = 0; i < goslice->len; i++) {                                \
+      auto p = zetasql::MakeResolvedComputedColumn();                       \
+      memcpy((void *)p.get(), (void *)data[i],                              \
+             sizeof(zetasql::ResolvedComputedColumn));                      \
+      vec.push_back(std::move(p));                                          \
+    }                                                                       \
+    std::vector<std::unique_ptr<const zetasql::ResolvedComputedColumnBase>> base_vec; \
+    base_vec.reserve(vec.size());                                           \
+    for (size_t i = 0; i < vec.size(); i++) {                               \
+      base_vec.push_back(std::move(vec[i]));                                \
+    }                                                                       \
+    list(std::move(base_vec));                                              \
+  } while (0)
+
 // ResolvedAggregateScan stores grouping_set_list as unique_ptr<const ResolvedGroupingSetBase>.
 #define SET_UNIQUE_PTR_GROUPING_SET_LIST(list, v) do {              \
     std::vector<std::unique_ptr<const zetasql::ResolvedGroupingSet>> vec; \
