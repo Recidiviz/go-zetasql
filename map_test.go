@@ -33,7 +33,10 @@ func TestNodeMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	node, err := zetasql.ParseStatement(query, nil)
+	// ParserOptions live in the parser CGO shard; LanguageOptions from the root
+	// shard cannot be passed across (distinct C++ namespaces). Default parser
+	// options are sufficient for this parse.
+	node, err := zetasql.ParseStatement(query, zetasql.NewParserOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
