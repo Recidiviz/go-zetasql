@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_parser_macros_macro_expander_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_parser_macros_macro_expander_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_parser_macros_macro_expander_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_parser_macros_macro_expander_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_parser_macros_macro_expander_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_parser_macros_macro_expander_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_parser_macros_macro_expander_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_parser_macros_macro_expander_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_parser_macros_macro_expander_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -275,6 +278,7 @@
 #include "zetasql/parser/macros/macro_expander.cc"
 
 // include dependencies
+#include "go-zetasql/parser/macros/diagnostic/export.inc"
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
 #include "go-zetasql/parser/macros/quoting/export.inc"
 #include "go-zetasql/parser/macros/standalone_macro_expansion/export.inc"
@@ -285,17 +289,16 @@
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
 #include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/error_location_cc_proto/export.inc"
-#include "go-zetasql/public/language_options/export.inc"
-#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
+#include "go-absl/base/nullability/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

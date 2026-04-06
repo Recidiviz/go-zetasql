@@ -8,9 +8,9 @@
 #include "go-zetasql/parser/macros/token_splicing_utils/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/btree/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"
 

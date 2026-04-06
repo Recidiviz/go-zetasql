@@ -11,7 +11,6 @@
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #endif

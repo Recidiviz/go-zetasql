@@ -10,10 +10,6 @@
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/memory/memory/export.inc"
-#include "go-absl/strings/strings/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
-#include "go-absl/types/optional/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #endif

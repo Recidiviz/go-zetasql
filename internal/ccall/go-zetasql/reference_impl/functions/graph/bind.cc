@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_functions_graph_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_functions_graph_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_functions_graph_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_functions_graph_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_functions_graph_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_functions_graph_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_functions_graph_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_functions_graph_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_functions_graph_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -275,12 +278,20 @@
 #include "zetasql/reference_impl/functions/graph.cc"
 
 // include dependencies
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/base/strings/export.inc"
+#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/public/coercer/export.inc"
+#include "go-zetasql/public/json_value/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/type/export.inc"
+#include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
+#include "go-zetasql/public/functions/json/export.inc"
 #include "go-zetasql/public/functions/json_format/export.inc"
+#include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"

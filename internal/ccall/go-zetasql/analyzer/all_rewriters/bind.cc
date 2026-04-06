@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_all_rewriters_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_all_rewriters_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_all_rewriters_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_all_rewriters_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_all_rewriters_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_all_rewriters_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_all_rewriters_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_all_rewriters_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_all_rewriters_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -277,13 +280,16 @@
 // include dependencies
 #include "go-zetasql/analyzer/rewriters/aggregation_threshold_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/anonymization_rewriter/export.inc"
-#include "go-zetasql/analyzer/rewriters/array_functions_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/builtin_function_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/flatten_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/generalized_query_stmt_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/grouping_set_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/insert_dml_values_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/is_first_is_last_function_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/like_any_all_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/map_function_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/match_recognize_function_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/measure_type_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/multiway_unnest_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/nulliferror_function_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter/export.inc"
@@ -295,9 +301,9 @@
 #include "go-zetasql/analyzer/rewriters/sql_view_inliner/export.inc"
 #include "go-zetasql/analyzer/rewriters/typeof_function_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/unpivot_rewriter/export.inc"
+#include "go-zetasql/analyzer/rewriters/update_constructor_rewriter/export.inc"
 #include "go-zetasql/analyzer/rewriters/with_expr_rewriter/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
-#include "go-zetasql/public/rewriter_interface/export.inc"
 #include "go-absl/base/base/export.inc"
 
 #include "bridge.h"

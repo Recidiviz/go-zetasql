@@ -16,7 +16,9 @@
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-absl/status/status/export.inc"
+#include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

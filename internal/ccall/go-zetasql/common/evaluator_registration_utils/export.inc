@@ -9,5 +9,6 @@
 #include "go-zetasql/public/collator/export.inc"
 #include "go-zetasql/reference_impl/functions/register_all/export.inc"
 #include "go-absl/base/base/export.inc"
+#include "go-absl/strings/string_view/export.inc"
 
 #endif

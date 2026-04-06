@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_evaluation_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_evaluation_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_evaluation_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_evaluation_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_evaluation_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_evaluation_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_evaluation_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_evaluation_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_evaluation_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -300,9 +303,11 @@
 #include "go-protobuf/protobuf/export.inc"
 #include "go-google/type/date_cc_proto/export.inc"
 #include "go-google/type/timeofday_cc_proto/export.inc"
+#include "go-zetasql/common/string_util/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/public/functions/array_zip_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
+#include "go-zetasql/public/functions/rounding_mode_cc_proto/export.inc"
 #include "go-zetasql/public/types/timestamp_util/export.inc"
 #include "go-zetasql/public/anonymization_utils/export.inc"
 #include "go-zetasql/common/errors/export.inc"
@@ -323,6 +328,8 @@
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/proto_value_conversion/export.inc"
+#include "go-zetasql/public/sql_tvf/export.inc"
+#include "go-zetasql/public/templated_sql_tvf/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/uuid_value/export.inc"
@@ -363,7 +370,6 @@
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/node_hash_map/export.inc"
-#include "go-absl/container/node_hash_set/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/hash/hash/export.inc"
 #include "go-zetasql/base/check/export.inc"
@@ -378,10 +384,8 @@
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
 #include "go-absl/time/time/export.inc"
-#include "go-absl/types/optional/export.inc"
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-absl/types/variant/export.inc"
 #include "go-proto/confidence_interval_cc_proto/export.inc"
 #include "go-proto/data_cc_proto/export.inc"
 #include "go-algorithms/algorithm/export.inc"

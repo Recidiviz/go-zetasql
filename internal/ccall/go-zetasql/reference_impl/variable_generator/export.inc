@@ -7,13 +7,11 @@
 // include dependencies
 #include "go-zetasql/reference_impl/common/export.inc"
 #include "go-zetasql/reference_impl/parameters/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/analyzer/export.inc"
+#include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/variant/export.inc"
 
 #endif

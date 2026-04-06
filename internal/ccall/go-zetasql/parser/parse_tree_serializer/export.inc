@@ -8,6 +8,7 @@
 #include "zetasql/parser/parse_tree_serializer.cc"
 // include dependencies
 #include "go-zetasql/parser/bison_parser_generated_lib/export.inc"
+#include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/parser/parse_tree_cc_proto/export.inc"
 #include "go-zetasql/base/arena/export.inc"

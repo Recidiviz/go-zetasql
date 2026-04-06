@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_rewrite_resolved_ast_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_rewrite_resolved_ast_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_rewrite_resolved_ast_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_rewrite_resolved_ast_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_rewrite_resolved_ast_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_rewrite_resolved_ast_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_rewrite_resolved_ast_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_rewrite_resolved_ast_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_rewrite_resolved_ast_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -276,8 +279,10 @@
 
 // include dependencies
 #include "go-zetasql/analyzer/analyzer_output_mutator/export.inc"
+#include "go-zetasql/analyzer/builtin_only_catalog/export.inc"
 #include "go-zetasql/analyzer/rewriters/registration/export.inc"
 #include "go-zetasql/analyzer/rewriters/rewriter_relevance_checker/export.inc"
+#include "go-zetasql/analyzer/rewriters/templated_function_call_rewriter/export.inc"
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -294,10 +299,10 @@
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/validator/export.inc"
 #include "go-absl/algorithm/container/export.inc"
+#include "go-absl/cleanup/cleanup/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

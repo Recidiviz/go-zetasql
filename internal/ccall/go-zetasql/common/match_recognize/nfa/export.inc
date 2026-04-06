@@ -10,6 +10,7 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-absl/base/nullability/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
+#include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"

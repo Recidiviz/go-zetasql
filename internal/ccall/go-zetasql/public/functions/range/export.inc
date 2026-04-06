@@ -6,6 +6,7 @@
 #include "zetasql/public/functions/range.cc"
 // include dependencies
 #include "go-zetasql/public/functions/date_time_util/export.inc"
+#include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/endian/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

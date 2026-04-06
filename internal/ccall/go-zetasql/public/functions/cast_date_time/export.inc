@@ -28,6 +28,7 @@
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/utf_util/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
+#include "go-zetasql/public/pico_time/export.inc"
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"

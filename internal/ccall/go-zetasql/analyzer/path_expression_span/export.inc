@@ -9,7 +9,10 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
+#include "go-zetasql/public/parse_location/export.inc"
 #include "go-zetasql/public/strings/export.inc"
+#include "go-absl/base/base/export.inc"
+#include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

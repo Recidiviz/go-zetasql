@@ -12,6 +12,7 @@
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/rewriter_interface/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-zetasql/resolved_ast/column_factory/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/status/statusor/export.inc"
 

@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_reference_driver_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_reference_driver_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_reference_impl_reference_driver_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_reference_driver_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_reference_driver_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_reference_impl_reference_driver_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_reference_driver_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_reference_driver_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_reference_impl_reference_driver_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -283,7 +286,6 @@
 #include "go-zetasql/reference_impl/statement_evaluator/export.inc"
 #include "go-zetasql/reference_impl/type_helpers/export.inc"
 #include "go-zetasql/reference_impl/variable_generator/export.inc"
-#include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/clock/export.inc"
@@ -294,8 +296,7 @@
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/compliance/test_database_catalog/export.inc"
 #include "go-zetasql/compliance/test_driver/export.inc"
-#include "go-zetasql/parser/parse_tree/export.inc"
-#include "go-zetasql/parser/parse_tree_serializer/export.inc"
+#include "go-zetasql/proto/script_exception_cc_proto/export.inc"
 #include "go-zetasql/public/analyzer/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output/export.inc"
@@ -310,7 +311,6 @@
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
 #include "go-zetasql/public/simple_catalog_util/export.inc"
-#include "go-zetasql/public/sql_function/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"

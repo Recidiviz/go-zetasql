@@ -6,6 +6,7 @@
 #include "zetasql/analyzer/expr_matching_helpers.cc"
 // include dependencies
 #include "go-zetasql/analyzer/name_scope/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/function/export.inc"

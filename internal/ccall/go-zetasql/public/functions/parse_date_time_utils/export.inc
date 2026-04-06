@@ -6,8 +6,7 @@
 #include "zetasql/public/functions/parse_date_time_utils.cc"
 // include dependencies
 #include "go-zetasql/public/functions/date_time_util/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/public/strings/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/time/time/export.inc"
 
 #endif

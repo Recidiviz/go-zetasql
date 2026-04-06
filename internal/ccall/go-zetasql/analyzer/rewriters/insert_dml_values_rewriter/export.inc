@@ -20,8 +20,6 @@
 #include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
-#include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/status/statusor/export.inc"
-#include "go-absl/types/optional/export.inc"
 
 #endif

@@ -15,6 +15,7 @@
 #include "go-absl/debugging/stacktrace/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/log/log/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"

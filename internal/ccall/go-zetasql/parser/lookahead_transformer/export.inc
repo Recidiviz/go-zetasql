@@ -18,6 +18,7 @@
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
 #include "go-zetasql/parser/macros/macro_expander/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

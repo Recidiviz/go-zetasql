@@ -9,6 +9,7 @@
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-absl/algorithm/container/export.inc"
+#include "go-absl/base/nullability/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/log/log/export.inc"
 #include "go-absl/strings/strings/export.inc"

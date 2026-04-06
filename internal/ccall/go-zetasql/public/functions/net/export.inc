@@ -11,6 +11,7 @@
 #include "go-zetasql/base/net/ipaddress/export.inc"
 #include "go-zetasql/base/net/public_suffix/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/functional/function_ref/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

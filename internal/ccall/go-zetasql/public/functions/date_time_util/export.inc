@@ -16,6 +16,7 @@
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
 #include "go-zetasql/public/interval_value/export.inc"
+#include "go-zetasql/public/pico_time/export.inc"
 #include "go-zetasql/public/time_zone_util/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/timestamp_util/export.inc"

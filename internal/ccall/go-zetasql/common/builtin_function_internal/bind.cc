@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_common_builtin_function_internal_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_common_builtin_function_internal_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_common_builtin_function_internal_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_common_builtin_function_internal_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_common_builtin_function_internal_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_common_builtin_function_internal_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_common_builtin_function_internal_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_common_builtin_function_internal_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_common_builtin_function_internal_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -287,6 +290,8 @@
 #undef SetDefinitionForInlining
 
 #include "zetasql/common/builtin_function_map.cc"
+#include "zetasql/common/builtin_function_match_recognize.cc"
+#include "zetasql/common/builtin_function_measure.cc"
 #include "zetasql/common/builtin_function_range.cc"
 #include "zetasql/common/builtin_function_sketches.cc"
 
@@ -295,6 +300,7 @@
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/check/export.inc"
+#include "go-zetasql/base/flat_set/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/no_destructor/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
@@ -318,12 +324,14 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/functions/array_zip_mode_cc_proto/export.inc"
+#include "go-zetasql/public/functions/bitwise_agg_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
 #include "go-zetasql/public/functions/string_format/export.inc"
 #include "go-zetasql/public/functions/unsupported_fields_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-absl/base/nullability/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/functional/bind_front/export.inc"

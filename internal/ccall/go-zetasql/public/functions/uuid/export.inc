@@ -9,5 +9,7 @@
 #include "go-zetasql/public/uuid_value/export.inc"
 #include "go-absl/random/random/export.inc"
 #include "go-absl/random/bit_gen_ref/export.inc"
+#include "go-absl/random/distributions/export.inc"
+#include "go-absl/strings/string_view/export.inc"
 
 #endif

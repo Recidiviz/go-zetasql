@@ -13,6 +13,7 @@
 #include "go-zetasql/common/multiprecision_int/export.inc"
 #include "go-zetasql/public/collator/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

@@ -10,7 +10,6 @@
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/parser/flex_tokenizer/export.inc"
 #include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-absl/status/statusor/export.inc"

@@ -205,6 +205,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_resolver_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_resolver_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_analyzer_resolver_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_resolver_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_resolver_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_analyzer_resolver_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_resolver_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_resolver_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_analyzer_resolver_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -272,7 +275,7 @@
 #include "zetasql/analyzer/column_cycle_detector.h"
 #include "zetasql/analyzer/expr_resolver_helper.h"
 #include "zetasql/analyzer/function_resolver.h"
-#include "zetasql/analyzer/graph_label_expr_resolver.h"
+#include "zetasql/analyzer/graph_expr_resolver_helper.h"
 #include "zetasql/analyzer/graph_query_resolver.h"
 #include "zetasql/analyzer/graph_stmt_resolver.h"
 #include "zetasql/analyzer/named_argument_info.h"
@@ -285,7 +288,7 @@
 #include "zetasql/analyzer/column_cycle_detector.cc"
 #include "zetasql/analyzer/expr_resolver_helper.cc"
 #include "zetasql/analyzer/function_resolver.cc"
-#include "zetasql/analyzer/graph_label_expr_resolver.cc"
+#include "zetasql/analyzer/graph_expr_resolver_helper.cc"
 #include "zetasql/analyzer/graph_query_resolver.cc"
 #include "zetasql/analyzer/graph_stmt_resolver.cc"
 #include "zetasql/analyzer/query_resolver_helper.cc"
@@ -321,6 +324,7 @@
 #include "go-zetasql/analyzer/name_scope/export.inc"
 #include "go-zetasql/analyzer/path_expression_span/export.inc"
 #include "go-zetasql/analyzer/set_operation_resolver_base/export.inc"
+#include "go-zetasql/analyzer/rewriters/rewrite_subpipeline/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/general_trie/export.inc"
@@ -335,7 +339,6 @@
 #include "go-zetasql/common/internal_analyzer_options/export.inc"
 #include "go-zetasql/common/internal_analyzer_output_properties/export.inc"
 #include "go-zetasql/common/status_payload_utils/export.inc"
-#include "go-zetasql/common/string_util/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/common/warning_sink/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
@@ -343,6 +346,7 @@
 #include "go-zetasql/public/aggregation_threshold_utils/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
+#include "go-zetasql/public/anon_function/export.inc"
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
@@ -404,17 +408,15 @@
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/node_hash_map/export.inc"
 #include "go-absl/flags/flag/export.inc"
+#include "go-absl/functional/any_invocable/export.inc"
 #include "go-absl/log/log/export.inc"
 #include "go-absl/memory/memory/export.inc"
-#include "go-absl/meta/type_traits/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"
-#include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-absl/types/variant/export.inc"
 #include "go-googletest/googletest/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"

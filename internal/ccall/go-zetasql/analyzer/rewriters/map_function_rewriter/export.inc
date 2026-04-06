@@ -5,6 +5,7 @@
 // include sources
 #include "zetasql/analyzer/rewriters/map_function_rewriter.cc"
 // include dependencies
+#include "go-zetasql/analyzer/builtin_only_catalog/export.inc"
 #include "go-zetasql/analyzer/substitute/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

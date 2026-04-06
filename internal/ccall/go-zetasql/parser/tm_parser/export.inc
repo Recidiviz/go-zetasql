@@ -23,6 +23,7 @@
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/parser/token/export.inc"
 #include "go-zetasql/parser/token_codes/export.inc"
+#include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"

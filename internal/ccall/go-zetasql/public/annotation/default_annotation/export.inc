@@ -5,8 +5,12 @@
 // include sources
 #include "zetasql/public/annotation/default_annotation_spec.cc"
 // include dependencies
+#include "go-zetasql/base/ret_check/export.inc"
+#include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/status/status/export.inc"
+#include "go-absl/strings/strings/export.inc"
 
 #endif
